@@ -1,0 +1,48 @@
+import React from 'react';
+import { View, StyleSheet, FlatList } from 'react-native';
+import { Text, List, Divider } from 'react-native-paper';
+import mockTopics from '../data/mockData.json';
+
+const LibraryScreen = (props) => {
+    const { navigation } = props;
+    return (
+        <View style={styles.container}>
+            <Text variant="headlineMedium" style={styles.header}>Library</Text>
+            <FlatList
+                data={mockTopics}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                    <List.Item
+                        title={item.title}
+                        description={item.description}
+                        left={props => <List.Icon {...props} icon="book" />}
+                        onPress={() => {
+                            if (item.subsections) {
+                                navigation.navigate('SubTopics', { title: item.title, items: item.subsections });
+                            } else {
+                                navigation.navigate('Reading', {
+                                    title: item.title,
+                                    content: item.content || "# No Content\n\nThis topic has no content yet."
+                                });
+                            }
+                        }}
+                    />
+                )}
+                ItemSeparatorComponent={Divider}
+            />
+        </View>
+    );
+};
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 16,
+        backgroundColor: '#ffffff',
+    },
+    header: {
+        marginBottom: 16,
+    },
+});
+
+export default LibraryScreen;

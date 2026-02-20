@@ -1,0 +1,39 @@
+name: Update Data
+
+on:
+  push:
+    paths:
+      - 'data_source/**' # Assuming PDFs are pushed here
+  workflow_dispatch:
+
+jobs:
+  update-json:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install pypdf2 # Example dependency
+
+      - name: Run extraction script
+        run: |
+          mkdir -p src/data
+          # Find all PDFs in data_source and convert them
+          # This is a simplification. Real script would iterate.
+          # python scripts/pdf_to_json.py data_source/topic.pdf --output src/data/topic.json
+          echo "Running mock extraction for demo"
+          python scripts/pdf_to_json.py README.md --output src/data/extracted_readme.json
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          git add src/data/*.json
+          git commit -m "Update content JSON" || echo "No changes to commit"
+          git push

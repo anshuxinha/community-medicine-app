@@ -1,0 +1,167 @@
+[
+    {
+        "id": "1",
+        "title": "Man and Medicine: Towards Health for All",
+        "content": "# MAN AND MEDICINE: TOWARDS HEALTH FOR ALL\n\nMEDICAL REVOLUTION\nMedicine has evolved from the organism to the organ, to the cell, and now to the molecular level. Modern medicine has acquired a vast body of knowledge and become highly technical.\n\nHISTORY OF MEDICINE\n- INDIAN MEDICINE: Ayurveda is the knowledge of life, derived from Atharvaveda. The Tri-Dosha theory explains disease as a disturbance in the equilibrium of three humors: Vata, Pitta, and Kapha. Charaka is the Father of Indian Medicine, and Sushruta is the Father of Indian Surgery.\n- GREEK MEDICINE: Hippocrates is the Father of Medicine and the first true epidemiologist. Greek medicine is based on four humors: Phlegm, Yellow Bile, Black Bile, and Blood.\n- MODERN MEDICINE: Andreas Vesalius is the first man of modern medicine, and Ambroise Pare is the father of modern surgery.\n\nCOMMUNITY MEDICINE\nCommunity Medicine is a specialty dealing with populations. It comprises doctors who try to measure the needs of the population, plan and administer services, and engage in research and teaching. It is the successor of what was previously known as Preventive and Social Medicine."
+    },
+    {
+        "id": "2",
+        "title": "Concept of Health and Disease",
+        "content": "# CONCEPT OF HEALTH AND DISEASE\n\nCHANGING CONCEPTS OF HEALTH\nHealth has evolved from an individual concern to a worldwide social goal.\n- BIOMEDICAL CONCEPT: Health is being free from disease, based on the germ theory.\n- ECOLOGICAL CONCEPT: Health is a dynamic equilibrium between man and his environment.\n- HOLISTIC CONCEPT: Sound mind, healthy body, strong family, and harmony with the environment.\n\nDIMENSIONS AND DETERMINANTS\n- DIMENSIONS: Physical, mental, social, spiritual, emotional, vocational, cultural, economical, environmental, and nutritional.\n- DETERMINANTS: Biological, behavioral, environmental, socio-economic, health systems, ageing, and gender.\n\nINDICATORS OF HEALTH\n- MORTALITY: Crude death rate, infant mortality rate, and proportional mortality rate.\n- DISABILITY: DALY (Disability Adjusted Life Years) where one DALY equals one year of healthy life lost. QALY (Quality Adjusted Life Years).\n- SOCIO-ECONOMIC: PQLI (Physical Quality Life Index) and HDI (Human Development Index).\n\nDISEASE CAUSATION AND PREVENTION\n- EPIDEMIOLOGICAL TRIAD: Interaction of agent, host, and environment.\n- ICEBERG PHENOMENON: The floating tip represents clinical cases, while the submerged portion represents latent or inapparent cases.\n- LEVELS OF PREVENTION:\n  1. PRIMORDIAL: Prevention of the emergence of risk factors.\n  2. PRIMARY: Action taken prior to the onset of disease, including health promotion and specific protection.\n  3. SECONDARY: Early diagnosis and treatment to halt disease progress.\n  4. TERTIARY: Disability limitation and rehabilitation."
+    },
+    {
+        "id": "3",
+        "title": "Principles of Epidemiology and Epidemiologic Methods",
+        "content": "# PRINCIPLES OF EPIDEMIOLOGY AND EPIDEMIOLOGIC METHODS\n\nDEFINITION AND MEASUREMENTS\n- Epidemiology is the study of the distribution and determinants of health-related events in specified populations.\n- Incidence: Number of NEW cases occurring in a defined population during a specified time.\n- Prevalence: All CURRENT cases (old + new) existing at a given point or period of time.\n- Relationship: Prevalence = Incidence multiplied by Duration of disease.\n\nEPIDEMIOLOGICAL METHODS\n1. Observational Studies:\n   - Descriptive Studies: Focus on Time, Place, and Person. Helps in hypothesis formulation.\n   - Analytical Studies: Helps in hypothesis testing.\n     - Case-Control Study: Proceeds from effect to cause (retrospective). Uses Odds Ratio.\n     - Cohort Study: Proceeds from cause to effect (prospective). Uses Relative Risk and Attributable Risk.\n2. Experimental Studies (Hypothesis confirmation):\n   - Randomized Control Trials: Gold standard for clinical research. Uses blinding and randomization to eliminate bias and confounding."
+    },
+    {
+        "id": "4",
+        "title": "Screening for Disease",
+        "content": "# SCREENING FOR DISEASE\n\nCONCEPT OF SCREENING\nSearch of unrecognized disease by means of rapidly applied tests in apparently healthy individuals. It is applied to people who are NOT seeking health care.\n- Types: Mass Screening (whole population), High-Risk or Selective Screening (most economical), Multiphasic Screening.\n- Prescriptive Screening: For the individual's own benefit.\n- Prospective Screening: For the benefit of others.\n\nEVALUATION OF SCREENING TESTS\n- Sensitivity: Ability of a test to correctly identify all those who have the disease (True Positives).\n- Specificity: Ability of a test to correctly identify those who do not have the disease (True Negatives).\n- Positive Predictive Value: Probability that a person with a positive test actually has the disease.\n- Lead Time: The period between diagnosis by early detection and the usual time of diagnosis."
+    },
+    {
+        "id": "5",
+        "title": "Epidemiology of Communicable Diseases",
+        "content": "# EPIDEMIOLOGY OF COMMUNICABLE DISEASES\n\nDISEASE TRANSMISSION AND IMMUNIZATION\n- Disease Control vs Elimination vs Eradication: Control reduces disease burden; Elimination interrupts transmission in a region; Eradication tears the disease out by roots globally.\n- Cold Chain: System of storage and transport of vaccine at low temperatures (+2 to +8 degrees Celsius in ILR, -15 to -25 degrees Celsius in Deep Freezer).\n- Heat Sensitive Vaccines: OPV, Measles, BCG.\n- Freeze Sensitive Vaccines: Hep B, DPT, TT."
+    },
+    {
+        "id": "6",
+        "title": "Respiratory Infections",
+        "content": "# RESPIRATORY INFECTIONS\n\nKEY DISEASES\n- Measles: RNA paramyxovirus. Highly infectious 4 days before and after rash. Koplik's spots are a hallmark prodromal sign. Vaccine given at 9 months.\n- Rubella: Risk of Congenital Rubella Syndrome characterized by deafness, cardiac malformation, and cataracts if the mother is infected during early pregnancy.\n- Influenza: Antigenic shifts and drifts. H1N1 and H5N1 have pandemic potential. Oseltamivir is the drug of choice.\n- Tuberculosis: Caused by M. tuberculosis. Diagnosed via sputum smear and CBNAAT. Treated with first-line and second-line drugs under DOTS."
+    },
+    {
+        "id": "7",
+        "title": "Intestinal Infections",
+        "content": "# INTESTINAL INFECTIONS\n\nKEY DISEASES\n- Poliomyelitis: Fecal-oral transmission. India is certified polio-free. The Switch from tOPV to bOPV occurred in 2016. IPV is administered at 6 and 14 weeks.\n- Hepatitis A and E: Fecal-oral transmission. Outbreaks linked to contaminated water.\n- Hepatitis B and C: Parenteral and perinatal transmission. Hep B carrier state defined by persistence of HBsAg.\n- Cholera: Acute diarrheal disease caused by V. cholerae. Management relies heavily on Oral Rehydration Salts and fluid replacement."
+    },
+    {
+        "id": "8",
+        "title": "Arthropod-Borne Infections",
+        "content": "# ARTHROPOD-BORNE INFECTIONS\n\nKEY DISEASES\n- Malaria: Transmitted by female Anopheles mosquito. Plasmodium falciparum causes cerebral malaria. Treated with Artemisinin-based Combination Therapy.\n- Dengue: Transmitted by Aedes aegypti (day biter). Presents with high fever, severe headache, retro-orbital pain, and bleeding manifestations in severe cases.\n- Chikungunya: Also transmitted by Aedes mosquitoes. Characterized by severe and prolonged joint pain.\n- Japanese Encephalitis: Transmitted by Culex mosquitoes. Pigs and water birds act as amplifying hosts."
+    },
+    {
+        "id": "9",
+        "title": "Zoonoses",
+        "content": "# ZOONOSES\n\nKEY DISEASES\n- Rabies: 100% fatal viral disease transmitted by animal bites (mainly dogs). Management includes thorough wound washing, Rabies Immunoglobulin for Category III bites, and Anti-Rabies Vaccine.\n- Plague: Caused by Yersinia pestis, transmitted by rat fleas. Types include Bubonic, Pneumonic, and Septicemic.\n- Brucellosis: Transmitted through unpasteurized milk or direct contact with infected animals. Causes undulating fever."
+    },
+    {
+        "id": "10",
+        "title": "Surface Infections",
+        "content": "# SURFACE INFECTIONS\n\nKEY DISEASES\n- Trachoma: Caused by Chlamydia trachomatis. Leading cause of preventable blindness globally. SAFE strategy: Surgery, Antibiotics, Facial cleanliness, Environmental improvement.\n- Tetanus: Caused by Clostridium tetani. Spores enter through wounds. Prevented by TT or Td vaccination and proper wound management.\n- Leprosy: Caused by Mycobacterium leprae. Affects skin and peripheral nerves. Treated with Multi-Drug Therapy (Rifampicin, Dapsone, Clofazimine)."
+    },
+    {
+        "id": "11",
+        "title": "Sexually Transmitted Diseases",
+        "content": "# SEXUALLY TRANSMITTED DISEASES\n\nKEY DISEASES\n- HIV and AIDS: Caused by Human Immunodeficiency Virus. Targets CD4 T-cells. Transmission via unprotected sex, infected blood, and mother-to-child. Managed with Anti-Retroviral Therapy.\n- Syphilis: Caused by Treponema pallidum. Primary stage presents with a painless chancre. Treated with Benzathine Penicillin.\n- Gonorrhea: Caused by Neisseria gonorrhoeae. Presents with purulent discharge. Co-infection with Chlamydia is common."
+    },
+    {
+        "id": "12",
+        "title": "Epidemiology of Non-communicable Diseases",
+        "content": "# EPIDEMIOLOGY OF NON-COMMUNICABLE DISEASES\n\nGENERAL CONCEPTS\n- Non-communicable diseases are chronic conditions that do not result from an acute infectious process.\n- Shared Risk Factors: Tobacco use, unhealthy diet, physical inactivity, and harmful use of alcohol.\n- Surveillance: The WHO STEPwise approach is used for surveillance (Questionnaire, Physical measurements, Biochemical measurements)."
+    },
+    {
+        "id": "13",
+        "title": "Epidemiology of Chronic Diseases",
+        "content": "# EPIDEMIOLOGY OF CHRONIC DISEASES\n\nKEY CONDITIONS\n- Coronary Heart Disease: Risk factors include high BP, high LDL, diabetes, and smoking. Prevention emphasizes a prudent diet and physical activity.\n- Hypertension: Follows the rule of halves. Classified into optimal, normal, high-normal, and varying grades of hypertension.\n- Diabetes Mellitus: Fasting blood glucose 126 mg/dl or higher. Associated with microvascular and macrovascular complications.\n- Obesity: Assessed using Body Mass Index and Waist-Hip Ratio. Central obesity is a major cardiovascular risk."
+    },
+    {
+        "id": "14",
+        "title": "Epidemiology of Accidents and Injuries",
+        "content": "# EPIDEMIOLOGY OF ACCIDENTS AND INJURIES\n\nTYPES AND PREVENTION\n- Road Traffic Accidents: Major cause of mortality in young adults. Prevention involves Haddon's Matrix (Host, Agent, Environment factors evaluated Pre-crash, Crash, and Post-crash).\n- Domestic Accidents: Includes burns, falls, poisoning, and drowning. Vulnerable groups are children under 5 and the elderly."
+    },
+    {
+        "id": "15",
+        "title": "Nutrition and Health",
+        "content": "# NUTRITION AND HEALTH\n\nKEY NUTRIENTS AND DEFICIENCIES\n- Vitamin A: Deficiency leads to nutritional blindness. Addressed by the National Program for Prevention of Nutritional Blindness.\n- Iron: Nutritional anemia is addressed through the Anemia Mukt Bharat initiative.\n- Iodine: Iodine Deficiency Disorders are managed via the National IDD Control Programme.\n\nDIETARY ASSESSMENT\n- Consumption Unit: Used to measure food intake in a community. An average adult male doing sedentary work represents 1 Unit (2400 Kcal per day)."
+    },
+    {
+        "id": "16",
+        "title": "Preventive Medicine in Obstetrics, Paediatrics and Geriatrics",
+        "content": "# PREVENTIVE MEDICINE IN OBSTETRICS, PAEDIATRICS AND GERIATRICS\n\nMATERNAL AND CHILD HEALTH\n- Low Birth Weight: A major public health problem reflecting maternal malnutrition.\n- Infant Mortality Rate: Ratio of infant deaths to live births, a sensitive indicator of overall community health.\n- Under-5 Clinic: Comprehensive health care for children, focusing on preventive care, growth monitoring, and nutrition.\n\nNATIONAL PROGRAMMES\n- Rashtriya Bal Swasthya Karyakram: Focuses on screening children from 0 to 18 years for the 4 Ds: Defects at birth, Diseases, Deficiencies, and Developmental delays including disabilities."
+    },
+    {
+        "id": "17",
+        "title": "Genetics and Health",
+        "content": "# GENETICS AND HEALTH\n\nGENETIC DISORDERS\n- Chromosomal Abnormalities: The overall incidence is approximately 5.6 per 1000 live births.\n- Klinefelter Syndrome: An XXY chromosome configuration in males, often presenting with gynecomastia.\n- Turner Syndrome: An XO configuration in females, making it the most common chromosomal disorder in humans.\n\nPRENATAL DIAGNOSIS\n- Amniocentesis: Can be performed as early as 14 to 16 weeks of pregnancy to detect conditions like Down syndrome and neural tube defects."
+    },
+    {
+        "id": "18",
+        "title": "Mental Health",
+        "content": "# MENTAL HEALTH\n\nOVERVIEW\n- Definition: The capacity of an individual to form harmonious relations with others and to participate constructively in their social and physical environment.\n- Indicators of Health: A mentally healthy person accepts their own shortcomings, has self-respect, trusts others, and meets the daily demands of life.\n\nSUBSTANCE ABUSE\n- Drug Dependence: Tackled through a combination of legal approaches, educational programs, detoxication, and vocational rehabilitation."
+    },
+    {
+        "id": "19",
+        "title": "Occupational Health",
+        "content": "# OCCUPATIONAL HEALTH\n\nERGONOMICS AND HAZARDS\n- Ergonomics: The science of fitting the job to the worker. It aims to mutually adjust man and his work to improve efficiency and well-being.\n- Hazards: Includes conditions like pneumoconiosis, lead poisoning, occupational dermatitis, and radiation hazards.\n\nLEGISLATION\n- Factories Act: Ensures the safety, health, and welfare of industrial workers.\n- Employees State Insurance Act: Provides comprehensive medical, sickness, maternity, disablement, and dependents benefits to workers."
+    },
+    {
+        "id": "20",
+        "title": "Environment and Health",
+        "content": "# ENVIRONMENT AND HEALTH\n\nGENERAL CONCEPTS\n- The environment consists of physical, biological, and social components that directly impact human health.\n- Environmental sanitation aims at the control of all those factors in man's physical environment which exercise or may exercise a deleterious effect on his physical development, health, and survival."
+    },
+    {
+        "id": "21",
+        "title": "Water and Health",
+        "content": "# WATER AND HEALTH\n\nSAFE WATER\n- Safe Water: Must be free from pathogenic agents, harmful chemicals, pleasant to taste, and usable for domestic purposes.\n- Daily Requirement: Estimated at 40 to 60 liters per capita per day in rural areas, and 150 to 200 liters in urban areas."
+    },
+    {
+        "id": "22",
+        "title": "Air Pollution",
+        "content": "# AIR POLLUTION\n\nPOLLUTANTS AND EFFECTS\n- Major pollutants include carbon monoxide, sulfur dioxide, nitrogen oxides, and particulate matter.\n- Effects range from acute respiratory infections to chronic obstructive pulmonary disease and exacerbation of asthma."
+    },
+    {
+        "id": "23",
+        "title": "Housing",
+        "content": "# HOUSING\n\nSTANDARDS\n- Adequate housing must provide physical protection, adequate space, proper ventilation, and sanitary facilities to prevent the spread of communicable diseases and promote psychological well-being."
+    },
+    {
+        "id": "24",
+        "title": "Waste Disposal",
+        "content": "# WASTE DISPOSAL\n\nHOSPITAL WASTE MANAGEMENT\n- Bio-Medical Waste: Any waste generated during research, diagnosis, treatment, or immunization.\n- Spill Management: Mercury spills must not be collected with bare hands. Blood spills should be treated with Sodium Hypochlorite for 20 minutes and discarded in a Yellow container."
+    },
+    {
+        "id": "25",
+        "title": "Food Hygiene",
+        "content": "# FOOD HYGIENE\n\nSANITATION AND SAFETY\n- Encompasses the proper handling, preparation, and storage of food to prevent foodborne illness.\n- Includes measures for milk pasteurization, meat inspection, and environmental control of food establishments."
+    },
+    {
+        "id": "26",
+        "title": "Radiation Health",
+        "content": "# RADIATION HEALTH\n\nHAZARDS AND PROTECTION\n- Ionizing radiation sources include medical X-rays and radioactive isotopes. Non-ionizing sources include ultraviolet and microwave radiation.\n- Protection involves maximizing distance from the source, minimizing time of exposure, and using appropriate shielding."
+    },
+    {
+        "id": "27",
+        "title": "Health Education and Communication",
+        "content": "# HEALTH EDUCATION AND COMMUNICATION\n\nCOMMUNICATION PROCESS\n- Definition: A two-way process for exchanging ideas, feelings, and information to bring a change in the desired direction.\n- Goals: Cognitive (increased knowledge), Affective (changing attitudes), and Psychomotor (acquiring new skills).\n\nIEC VS BCC\n- IEC (Information, Education, Communication): Used for generating awareness.\n- BCC (Behavior Change Communication): Used for enabling action and providing a supportive environment to initiate and sustain positive behavior."
+    },
+    {
+        "id": "28",
+        "title": "Health Planning and Management",
+        "content": "# HEALTH PLANNING AND MANAGEMENT\n\nHEALTH PLANNING CYCLE\n- Process of defining a problem, formulating goals and objectives, choosing strategies, initiating action, and evaluating the results.\n- Terminology: Goals are ultimate desired states. Objectives are precise and measurable end points. Targets are discrete activities to measure attainment."
+    },
+    {
+        "id": "29",
+        "title": "Health Care of the Community",
+        "content": "# HEALTH CARE OF THE COMMUNITY\n\nCOMMUNITY HEALTH\n- Involves environmental, social, and economic resources designed to sustain emotional and physical well-being.\n- Family: Functions as the primary unit of health care and plays a central role in both the transmission and management of diseases.\n\nHEALTH ECONOMICS\n- Ayushman Bharat: Provides a health cover of Rs. 5 lakhs per family per year for secondary and tertiary care hospitalizations, significantly reducing out-of-pocket expenditure."
+    },
+    {
+        "id": "30",
+        "title": "National Health Programmes",
+        "content": "# NATIONAL HEALTH PROGRAMMES\n\n## COMMUNICABLE DISEASE PROGRAMMES\n- National Center for Vector Borne Diseases Control (NCVBDC): Covers Malaria, Dengue, Chikungunya, Kala-azar, JE, and Filaria. Strategies include Integrated Vector Management, Long Lasting Insecticidal Nets (LLINs), and early diagnosis.\n- National Tuberculosis Elimination Programme (NTEP): Aims to eliminate TB by 2025. Key strategies include active case finding, molecular diagnostics (CBNAAT/Truenat), and daily regimen DOTS. Includes NIKSHAY Poshan Yojana.\n- National Leprosy Eradication Programme (NLEP): Goal is zero leprosy. Focuses on early case detection, MDT, and Disability Prevention and Medical Rehabilitation (DPMR).\n- National AIDS Control Programme (NACP): Phase V aims to reduce new infections and AIDS-related deaths. Focuses on Targeted Interventions, 95-95-95 targets, and elimination of mother-to-child transmission.\n\n## NON-COMMUNICABLE DISEASE PROGRAMMES\n- National Programme for Prevention & Control of Non-Communicable Diseases (NP-NCD): Formerly NPCDCS. Focuses on opportunistic and population-based screening for hypertension, diabetes, and common cancers (oral, breast, cervical) at primary care levels.\n- National Programme for Control of Blindness and Visual Impairment (NPCBVI): Aims to reduce prevalence of blindness to 0.25%. Focuses on cataract surgeries, school eye screening, and developing eye care infrastructure.\n- National Mental Health Programme (NMHP): Implemented through District Mental Health Programme (DMHP) to provide community-based psychiatric care and integration with primary care.\n- National Iodine Deficiency Disorders Control Programme (NIDDCP): Focuses on 100% consumption of adequately iodized salt (15 ppm).\n\n## MATERNAL, CHILD HEALTH & NUTRITION\n- Reproductive, Maternal, Newborn, Child and Adolescent Health (RMNCH+A): Uses a life-cycle approach. Includes Janani Suraksha Yojana (JSY), Janani Shishu Suraksha Karyakram (JSSK), and Rashtriya Kishor Swasthya Karyakram (RKSK).\n- Universal Immunization Programme (UIP) & Mission Indradhanush: Aims to rapidly increase full immunization coverage against vaccine-preventable diseases.\n- POSHAN Abhiyaan (National Nutrition Mission): Aims to reduce stunting, under-nutrition, anemia, and low birth weight.\n\n## HEALTH SYSTEM STRENGTHENING\n- Ayushman Bharat: Comprises two pillars - Ayushman Arogya Mandirs (Health and Wellness Centres) for comprehensive primary health care, and Pradhan Mantri Jan Arogya Yojana (PM-JAY) providing Rs 5 lakh health cover per family per year for secondary/tertiary care.\n- National Health Mission (NHM): Includes NRHM and NUHM to provide accessible, affordable, and quality healthcare to rural and urban populations."
+    },
+    {
+        "id": "31",
+        "title": "Health Information and Basic Medical Statistics",
+        "content": "# HEALTH INFORMATION AND BASIC MEDICAL STATISTICS\n\nCORE CONCEPTS\n- Statistics: Science of collecting, processing, and analyzing data to make inferences.\n- Vital Statistics: Demographic data pertaining to vital events like births, marriages, and deaths.\n- Notifiable Diseases: Diseases strictly notifiable to the World Health Organization include Paralytic Polio, Plague, Yellow Fever, and Cholera."
+    },
+    {
+        "id": "32",
+        "title": "Health Administration and Organization",
+        "content": "# HEALTH ADMINISTRATION AND ORGANIZATION\n\nNATIONAL HEALTH POLICY 2017\n- Goal: Attainment of the highest possible level of health and well-being for all at all ages.\n- Key Targets: Increase life expectancy at birth to 70 years, reduce TFR to 2.1, reduce Under-5 Mortality Rate to 23, and increase health expenditure to 2.5 percent of GDP."
+    },
+    {
+        "id": "33",
+        "title": "International Health",
+        "content": "# INTERNATIONAL HEALTH\n\nMAJOR HEALTH AGENCIES\n- WHO: Specialized agency of the UN directing and coordinating international health.\n- UNICEF: Focuses on child health, nutrition, education, and welfare.\n- USAID: Supports communicable disease control, water supply, and nutrition programs.\n\nBIOTERRORISM AGENTS\n- Category A: High mortality rates, easily disseminated. Includes Anthrax, Smallpox, Plague, Ebola, Tularemia, and Viral Hemorrhagic Fevers."
+    }
+]

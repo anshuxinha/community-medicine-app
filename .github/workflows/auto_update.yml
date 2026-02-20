@@ -1,0 +1,36 @@
+name: Auto Update Health Guidelines
+
+on:
+  schedule:
+    - cron: '0 0 * * 1' # Runs every Monday at midnight UTC
+  workflow_dispatch: # Allows manual triggering from GitHub Actions UI
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10' 
+
+      - name: Run Fetch Script
+        run: python scripts/fetch_updates.py
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/data/updates.json
+          
+          # Check if there are any changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Auto-update national health guidelines"
+            git push
+          fi
