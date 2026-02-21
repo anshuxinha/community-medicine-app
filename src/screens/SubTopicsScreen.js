@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
 import { Text, List, Divider } from 'react-native-paper';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const SubTopicsScreen = ({ route, navigation }) => {
     const { title, items } = route.params;
@@ -14,14 +15,16 @@ const SubTopicsScreen = ({ route, navigation }) => {
                     <List.Item
                         title={item.title}
                         description={item.description}
-                        left={props => <List.Icon {...props} icon="file-document-outline" />}
+                        left={props => <List.Icon {...props} icon={({ color }) => <MaterialIcons name="description" size={24} color={color} />} />}
                         onPress={() => {
                             if (item.subsections) {
                                 navigation.push('SubTopics', { title: item.title, items: item.subsections });
                             } else {
                                 navigation.navigate('Reading', {
+                                    id: item.id,
                                     title: item.title,
-                                    content: item.content || "# No Content\n\nThis topic has no content yet."
+                                    content: item.content || "# No Content\n\nThis topic has no content yet.",
+                                    quizzes: item.quizzes
                                 });
                             }
                         }}

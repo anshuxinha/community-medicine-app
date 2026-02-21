@@ -1,0 +1,39 @@
+name: Verify Mock Data
+
+on:
+  schedule:
+    # Runs at 00:00 UTC every Sunday
+    - cron: '0 0 * * 0'
+  workflow_dispatch: # Allows manual triggering from the GitHub Actions tab
+
+jobs:
+  verify-data:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run Verification Script
+        run: python scripts/verify_mock_data.py
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/data/mockData.json
+          # Commit only if there are changes
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore(data): Automated weekly medical verification by Gemini AI" && git push)

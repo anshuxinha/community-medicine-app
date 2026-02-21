@@ -1,67 +1,338 @@
-import React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
-import { Text, Card } from 'react-native-paper';
+import React, { useRef, useState, useEffect, useContext } from 'react';
+import { View, StyleSheet, Modal, TouchableOpacity } from 'react-native';
+import { WebView } from 'react-native-webview';
+import { Text, Portal } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { AppContext } from './../context/AppContext';
+import { MaterialIcons } from '@expo/vector-icons';
 
-const ReadingView = ({ content }) => {
-    // Simple markdown-like rendering for demo purposes
-    // In a real app, use a library like react-native-markdown-display
+const ReadingView = ({ content, topicId, isBookmarked, onToggleBookmark, isSpeaking, onToggleSpeak }) => {
+    const webViewRef = useRef(null);
+    const { highlights, saveHighlight } = useContext(AppContext);
+    const insets = useSafeAreaInsets();
 
-    const renderContent = (text) => {
-        return text.split('\n').map((line, index) => {
-            if (line.startsWith('# ')) {
-                return <Text key={index} variant="headlineLarge" style={styles.h1}>{line.replace('# ', '')}</Text>;
-            } else if (line.startsWith('## ')) {
-                return <Text key={index} variant="headlineMedium" style={styles.h2}>{line.replace('## ', '')}</Text>;
-            } else if (line.startsWith('* ') || line.startsWith('- ')) {
-                return <Text key={index} style={styles.listItem}>• {line.replace(/^[\*\-] /, '')}</Text>;
-            } else if (line.trim() === '') {
-                return <Text key={index} style={styles.spacing}> </Text>;
-            } else {
-                return <Text key={index} variant="bodyMedium" style={styles.body}>{line}</Text>;
+    const [htmlContent, setHtmlContent] = useState('');
+    const [showColorPicker, setShowColorPicker] = useState(false);
+
+    useEffect(() => {
+        // Load existing highlights if available, otherwise generate HTML
+        if (highlights[topicId]) {
+            let loadedHtml = highlights[topicId];
+            // Ensure the bookmark icon reflects the current state, even if changed since highlight was saved
+            loadedHtml = loadedHtml.replace(
+                /<span id="bookmark-icon" class="bookmark-icon material-icons">.*?<\/span>/,
+                `<span id="bookmark-icon" class="bookmark-icon material-icons">${isBookmarked ? 'bookmark' : 'bookmark_border'}</span>`
+            );
+            // Ensure the TTS icon reflects the current state
+            loadedHtml = loadedHtml.replace(
+                /<span id="tts-icon" class="tts-icon material-icons">.*?<\/span>/,
+                `<span id="tts-icon" class="tts-icon material-icons">${isSpeaking ? 'stop' : 'volume_up'}</span>`
+            );
+            setHtmlContent(loadedHtml);
+        } else {
+            // Convert markdown-like syntax to HTML for the WebView
+            let parsedHtml = content
+                .split('\n')
+                .map(line => {
+                    if (line.startsWith('# ')) return `<h1 class="h1">${line.replace('# ', '')}</h1>`;
+                    if (line.startsWith('## ')) return `<h2 class="h2">${line.replace('## ', '')}</h2>`;
+                    if (line.startsWith('* ') || line.startsWith('- ')) return `<li class="listItem">${line.replace(/^[\*\-] /, '')}</li>`;
+                    if (line.trim() === '') return `<div class="spacing"></div>`;
+                    return `<p class="body">${line}</p>`;
+                })
+                .join('');
+
+            // Wrap in ul if there are list items
+            parsedHtml = parsedHtml.replace(/(<li.*<\/li>)+/g, '<ul>$&</ul>');
+
+            const fullHtml = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+                <style>
+                    body {
+                        font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                        padding: 16px;
+                        padding-bottom: 140px;
+                        color: #1c1b1f;
+                        line-height: 1.6;
+                        background-color: #ffffff;
+                    }
+                    .h1 { color: #6200ee; font-size: 24px; margin-top: 16px; margin-bottom: 8px; padding-right: 110px; }
+                    .h2 { color: #333333; font-size: 20px; margin-top: 14px; margin-bottom: 6px; }
+                    .body { font-size: 16px; margin: 8px 0; }
+                    .listItem { font-size: 16px; margin-left: 8px; margin-bottom: 4px; }
+                    .spacing { height: 16px; }
+                    mark { border-radius: 2px; padding: 0 2px; }
+                    ::selection { background: #b3d4fc; }
+
+                    .bookmark-btn {
+                        position: absolute;
+                        top: 16px;
+                        right: 16px;
+                        width: 44px;
+                        height: 44px;
+                        background-color: #ffffff;
+                        border-radius: 12px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                        cursor: pointer;
+                        z-index: 100;
+                    }
+                    .bookmark-icon {
+                        font-size: 24px;
+                        line-height: 24px;
+                        color: #6200ee;
+                    }
+
+                    .tts-btn {
+                        position: absolute;
+                        top: 16px;
+                        right: 76px;
+                        width: 44px;
+                        height: 44px;
+                        background-color: #ffffff;
+                        border-radius: 12px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                        cursor: pointer;
+                        z-index: 100;
+                    }
+                    .tts-icon {
+                        font-size: 24px;
+                        line-height: 24px;
+                        color: #6200ee;
+                    }
+                </style>
+                <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+                <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+                <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+            </head>
+            <body>
+                <div id="content-container">
+                    <div class="bookmark-btn" onclick="toggleBookmark()">
+                        <span id="bookmark-icon" class="bookmark-icon material-icons">${isBookmarked ? 'bookmark' : 'bookmark_border'}</span>
+                    </div>
+                    <div class="tts-btn" onclick="toggleTTS()">
+                        <span id="tts-icon" class="tts-icon material-icons">${isSpeaking ? 'stop' : 'volume_up'}</span>
+                    </div>
+                    ${parsedHtml}
+                </div>
+                <script>
+                    function toggleBookmark() {
+                        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'TOGGLE_BOOKMARK' }));
+                    }
+                    function toggleTTS() {
+                        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'TOGGLE_TTS' }));
+                    }
+                    function highlightSelection(color) {
+                        const selection = window.getSelection();
+                        if (!selection.rangeCount || selection.isCollapsed) return "";
+                        
+                        const range = selection.getRangeAt(0);
+                        const mark = document.createElement("mark");
+                        mark.style.backgroundColor = color;
+                        
+                        try {
+                            range.surroundContents(mark);
+                        } catch(e) {
+                            // If selection crosses block elements, surroundContents fails
+                            // A more robust implementation is needed for complex selections, 
+                            // but this handles simple text highlights gracefully
+                            console.log("Cross-block selection not supported yet");
+                        }
+                        
+                        selection.removeAllRanges();
+                        
+                        // Send updated HTML back to React Native
+                        const currentHtml = document.getElementById("content-container").innerHTML;
+                        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'HIGHLIGHT_SAVED', html: currentHtml }));
+                    }
+                    
+                    document.addEventListener("message", function(event) {
+                        try {
+                            const data = JSON.parse(event.data);
+                            if (data.action === "highlight") highlightSelection(data.color);
+                            if (data.action === "updateBookmark") {
+                                document.getElementById("bookmark-icon").innerText = data.isBookmarked ? 'bookmark' : 'bookmark_border';
+                            }
+                            if (data.action === "updateTTS") {
+                                document.getElementById("tts-icon").innerText = data.isSpeaking ? 'stop' : 'volume_up';
+                            }
+                        } catch(e) {}
+                    });
+                     // For iOS WKWebView
+                    window.addEventListener("message", function(event) {
+                        try {
+                            const data = JSON.parse(event.data);
+                            if (data.action === "highlight") highlightSelection(data.color);
+                            if (data.action === "updateBookmark") {
+                                document.getElementById("bookmark-icon").innerText = data.isBookmarked ? 'bookmark' : 'bookmark_border';
+                            }
+                            if (data.action === "updateTTS") {
+                                document.getElementById("tts-icon").innerText = data.isSpeaking ? 'stop' : 'volume_up';
+                            }
+                        } catch(e) {}
+                    });
+                </script>
+            </body>
+            </html>
+            `;
+            setHtmlContent(fullHtml);
+        }
+    }, [content, topicId]);
+
+    // Send an update message to the WebView whenever the isBookmarked prop changes
+    useEffect(() => {
+        if (webViewRef.current && htmlContent) {
+            webViewRef.current.postMessage(JSON.stringify({ action: "updateBookmark", isBookmarked }));
+        }
+    }, [isBookmarked]);
+
+    // Send an update message to the WebView whenever the isSpeaking prop changes
+    useEffect(() => {
+        if (webViewRef.current && htmlContent) {
+            webViewRef.current.postMessage(JSON.stringify({ action: "updateTTS", isSpeaking }));
+        }
+    }, [isSpeaking]);
+
+    const handleMessage = (event) => {
+        try {
+            const data = JSON.parse(event.nativeEvent.data);
+            if (data.type === 'HIGHLIGHT_SAVED') {
+                // We recreate the full HTML structure with the new innerHTML
+                const newFullHtml = htmlContent.replace(/<div id="content-container">[\s\S]*?<\/div>/, `<div id="content-container">${data.html}</div>`);
+                setHtmlContent(newFullHtml);
+                saveHighlight(topicId, newFullHtml);
+                setShowColorPicker(false);
+            } else if (data.type === 'TOGGLE_BOOKMARK') {
+                if (onToggleBookmark) onToggleBookmark();
+            } else if (data.type === 'TOGGLE_TTS') {
+                if (onToggleSpeak) onToggleSpeak();
             }
-        });
+        } catch (e) {
+            console.error("Error parsing webview message", e);
+        }
+    };
+
+    const applyHighlight = (color) => {
+        if (webViewRef.current) {
+            webViewRef.current.postMessage(JSON.stringify({ action: "highlight", color }));
+        }
     };
 
     return (
-        <ScrollView style={styles.container}>
-            <Card style={styles.card}>
-                <Card.Content>
-                    {renderContent(content)}
-                </Card.Content>
-            </Card>
-        </ScrollView>
+        <View style={styles.container}>
+            <WebView
+                ref={webViewRef}
+                source={{ html: htmlContent }}
+                style={styles.webview}
+                onMessage={handleMessage}
+                javaScriptEnabled={true}
+                domStorageEnabled={true}
+            />
+
+            <TouchableOpacity
+                style={[styles.highlightBtn, { bottom: Math.max(16, insets.bottom + 16) }]}
+                onPress={() => setShowColorPicker(true)}
+            >
+                <MaterialIcons name="brush" size={24} color="#FFF" />
+            </TouchableOpacity>
+
+            <Portal>
+                <Modal visible={showColorPicker} onDismiss={() => setShowColorPicker(false)} transparent={true}>
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.colorPickerContainer}>
+                            <Text variant="titleMedium" style={styles.pickerTitle}>Choose Highlight Color</Text>
+                            <View style={styles.colorRow}>
+                                <TouchableOpacity style={[styles.colorCircle, { backgroundColor: '#ffff00' }]} onPress={() => applyHighlight('#ffff00')} />
+                                <TouchableOpacity style={[styles.colorCircle, { backgroundColor: '#00ff00' }]} onPress={() => applyHighlight('#00ff00')} />
+                                <TouchableOpacity style={[styles.colorCircle, { backgroundColor: '#ffc0cb' }]} onPress={() => applyHighlight('#ffc0cb')} />
+                                <TouchableOpacity style={[styles.colorCircle, { backgroundColor: '#00ffff' }]} onPress={() => applyHighlight('#00ffff')} />
+                            </View>
+                            <TouchableOpacity style={styles.closeBtn} onPress={() => setShowColorPicker(false)}>
+                                <Text>Cancel</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+            </Portal>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        marginHorizontal: 16,
+        marginVertical: 8,
+        borderRadius: 12,
+        overflow: 'hidden',
+        backgroundColor: '#fff',
+        elevation: 2,
     },
-    card: {
-        margin: 16,
+    webview: {
+        flex: 1,
+        backgroundColor: 'transparent',
+    },
+    highlightBtn: {
+        position: 'absolute',
+        bottom: 16,
+        right: 16,
+        backgroundColor: '#6200ee',
+        width: 48,
+        height: 48,
+        borderRadius: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 6,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.27,
+        shadowRadius: 4.65,
+    },
+    btnText: {
+        fontSize: 24,
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.4)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    colorPickerContainer: {
+        backgroundColor: 'white',
+        padding: 24,
+        borderRadius: 16,
+        width: '80%',
+        alignItems: 'center',
+    },
+    pickerTitle: {
+        marginBottom: 20,
+        fontWeight: 'bold',
+    },
+    colorRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: '100%',
+        marginBottom: 24,
+    },
+    colorCircle: {
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        borderWidth: 1,
+        borderColor: '#ddd',
+    },
+    closeBtn: {
         padding: 8,
-    },
-    h1: {
-        marginVertical: 12,
-        fontWeight: 'bold',
-        color: '#6200ee',
-    },
-    h2: {
-        marginVertical: 10,
-        fontWeight: 'bold',
-        color: '#333',
-    },
-    body: {
-        marginVertical: 4,
-        lineHeight: 22,
-    },
-    listItem: {
-        marginLeft: 16,
-        marginVertical: 2,
-    },
-    spacing: {
-        height: 10,
-    },
+    }
 });
 
 export default ReadingView;

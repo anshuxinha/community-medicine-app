@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Searchbar, Text, Card } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import mockData from '../data/mockData.json';
 
 const SearchScreen = ({ navigation }) => {
@@ -25,7 +26,12 @@ const SearchScreen = ({ navigation }) => {
         // Create a brief snippet by removing markdown hash and taking the first few characters
         const cleanContent = item.content.replace(/[#*]/g, '').trim();
         return (
-            <TouchableOpacity onPress={() => navigation.navigate('ReadingScreen', { chapter: item })}>
+            <TouchableOpacity onPress={() => navigation.navigate('Reading', {
+                id: item.id,
+                title: item.title,
+                content: item.content,
+                quizzes: item.quizzes
+            })}>
                 <Card style={styles.card}>
                     <Card.Content>
                         <Text variant="titleMedium" style={styles.cardTitle}>{item.title}</Text>
@@ -39,32 +45,38 @@ const SearchScreen = ({ navigation }) => {
     };
 
     return (
-        <View style={styles.container}>
-            <Searchbar
-                placeholder="Search topics..."
-                onChangeText={handleSearch}
-                value={searchQuery}
-                style={styles.searchBar}
-            />
-            {searchResults.length > 0 ? (
-                <FlatList
-                    data={searchResults}
-                    keyExtractor={item => item.id}
-                    renderItem={renderItem}
-                    contentContainerStyle={styles.listContainer}
+        <SafeAreaView style={styles.safeArea}>
+            <View style={styles.container}>
+                <Searchbar
+                    placeholder="Search topics..."
+                    onChangeText={handleSearch}
+                    value={searchQuery}
+                    style={styles.searchBar}
                 />
-            ) : (
-                <View style={styles.content}>
-                    <Text variant="bodyLarge">
-                        {searchQuery.trim() === '' ? 'Start typing to search...' : 'No results found.'}
-                    </Text>
-                </View>
-            )}
-        </View>
+                {searchResults.length > 0 ? (
+                    <FlatList
+                        data={searchResults}
+                        keyExtractor={item => item.id}
+                        renderItem={renderItem}
+                        contentContainerStyle={styles.listContainer}
+                    />
+                ) : (
+                    <View style={styles.content}>
+                        <Text variant="bodyLarge">
+                            {searchQuery.trim() === '' ? 'Start typing to search...' : 'No results found.'}
+                        </Text>
+                    </View>
+                )}
+            </View>
+        </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        backgroundColor: '#ffffff',
+    },
     container: {
         flex: 1,
         padding: 16,
