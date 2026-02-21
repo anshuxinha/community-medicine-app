@@ -1,4 +1,5 @@
-import requests
+import requests # type: ignore
+from typing import List, Dict, Any
 import json
 import time
 
@@ -32,7 +33,7 @@ def send_push_notifications(tokens):
 
     print(f"Preparing to send notifications to {len(tokens)} recipients...")
 
-    messages = []
+    messages: List[Dict[str, Any]] = []
     for token in tokens:
         messages.append({
             "to": token,
@@ -45,7 +46,7 @@ def send_push_notifications(tokens):
     # Chunk the messages (Expo recommends max 100 per request)
     chunk_size = 100
     for i in range(0, len(messages), chunk_size):
-        chunk = messages[i:i + chunk_size]
+        chunk = messages[i:i + chunk_size] # type: ignore
         try:
             response = requests.post(
                 EXPO_PUSH_URL,
