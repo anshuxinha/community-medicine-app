@@ -37,3 +37,6 @@ jobs:
           git add src/data/mockData.json
           # Commit only if there are changes
           git diff --quiet && git diff --staged --quiet || (git commit -m "chore(data): Automated weekly medical verification by Gemini AI" && git push)
+          
+      - name: Broadcast Push Notifications
+        run: python scripts/push_notifications.py

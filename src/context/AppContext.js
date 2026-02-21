@@ -1,6 +1,19 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import { db } from '../config/firebase';
+import { doc, updateDoc } from 'firebase/firestore';
 import mockData from '../data/mockData.json';
+
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: false,
+    }),
+});
 
 export const AppContext = createContext();
 
@@ -24,6 +37,10 @@ export const AppProvider = ({ children }) => {
     const [currentStreak, setCurrentStreak] = useState(0);
     const [lastReadDate, setLastReadDate] = useState(null);
     const [studyScore, setStudyScore] = useState(0);
+
+    // Auth & Premium State
+    const [user, setUser] = useState(null);
+    const [isPremium, setIsPremium] = useState(false);
 
     // Initialize state from AsyncStorage
     useEffect(() => {
@@ -57,6 +74,16 @@ export const AppProvider = ({ children }) => {
                 const storedScore = await AsyncStorage.getItem('studyScore');
                 if (storedScore) {
                     setStudyScore(parseInt(storedScore, 10));
+                }
+
+                const storedUser = await AsyncStorage.getItem('user');
+                if (storedUser) {
+                    setUser(JSON.parse(storedUser));
+                }
+
+                const storedPremium = await AsyncStorage.getItem('isPremium');
+                if (storedPremium) {
+                    setIsPremium(JSON.parse(storedPremium));
                 }
 
                 // Check streak validity on load
@@ -93,13 +120,58 @@ export const AppProvider = ({ children }) => {
                 await AsyncStorage.setItem('currentStreak', currentStreak.toString());
                 if (lastReadDate) await AsyncStorage.setItem('lastReadDate', lastReadDate);
                 await AsyncStorage.setItem('studyScore', studyScore.toString());
+                if (user) await AsyncStorage.setItem('user', JSON.stringify(user));
+                else await AsyncStorage.removeItem('user');
+                await AsyncStorage.setItem('isPremium', JSON.stringify(isPremium));
             } catch (error) {
                 console.error("Failed to save state to AsyncStorage:", error);
             }
         };
 
         saveState();
-    }, [readItems, bookmarks, highlights, currentStreak, lastReadDate, studyScore]);
+    }, [readItems, bookmarks, highlights, currentStreak, lastReadDate, studyScore, user, isPremium]);
+
+    // Push token registration
+    useEffect(() => {
+        if (user && user.uid) {
+            registerForPushNotificationsAsync().then(token => {
+                if (token) {
+                    updateDoc(doc(db, 'users', user.uid), {
+                        pushToken: token
+                    }).catch(err => console.log('Error saving push token', err));
+                }
+            });
+        }
+    }, [user]);
+
+    async function registerForPushNotificationsAsync() {
+        let token;
+        if (Device.isDevice) {
+            const { status: existingStatus } = await Notifications.getPermissionsAsync();
+            let finalStatus = existingStatus;
+            if (existingStatus !== 'granted') {
+                const { status } = await Notifications.requestPermissionsAsync();
+                finalStatus = status;
+            }
+            if (finalStatus !== 'granted') {
+                console.log('Push notification permission denied.');
+                return;
+            }
+            token = (await Notifications.getExpoPushTokenAsync()).data;
+        } else {
+            console.log('Must use physical device for Push Notifications');
+        }
+
+        if (Platform.OS === 'android') {
+            await Notifications.setNotificationChannelAsync('default', {
+                name: 'default',
+                importance: Notifications.AndroidImportance.MAX,
+                vibrationPattern: [0, 250, 250, 250],
+                lightColor: '#FF231F7C',
+            });
+        }
+        return token;
+    }
 
     // Derived properties and actions
     const readingProgress = totalItems === 0 ? 0 : Math.min(readItems.length / totalItems, 1);
@@ -169,6 +241,21 @@ export const AppProvider = ({ children }) => {
         setCurrentStreak(0);
         setLastReadDate(null);
         setStudyScore(0);
+        setUser(null);
+        setIsPremium(false);
+    };
+
+    const login = (userData) => {
+        setUser(userData);
+    };
+
+    const logout = () => {
+        setUser(null);
+        setIsPremium(false);
+    };
+
+    const upgradeToPremium = () => {
+        setIsPremium(true);
     };
 
     return (
@@ -185,7 +272,12 @@ export const AppProvider = ({ children }) => {
                 toggleBookmark,
                 saveHighlight,
                 completeQuiz,
-                clearStorage
+                clearStorage,
+                user,
+                isPremium,
+                login,
+                logout,
+                upgradeToPremium
             }}
         >
             {children}
