@@ -3,8 +3,8 @@ import os
 import requests
 import time
 
-# Use the hardcoded key for the script since it's already in the repo per user setup
-GEMINI_API_KEY = "AIzaSyAtcVnqlN2oYlfdDGms35rx_lV_TGYUE3c"
+# Prefer environment variable (GitHub Secrets), fallback to hardcoded key for local testing
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyAtcVnqlN2oYlfdDGms35rx_lV_TGYUE3c")
 GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
 
 MOCK_DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'src', 'data', 'mockData.json')
