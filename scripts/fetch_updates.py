@@ -1,28 +1,15 @@
 import json
 import os
 import uuid
-import requests
+import requests  # type: ignore
 from datetime import datetime
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup  # type: ignore
+from typing import List, Dict, Any
 
 GEMINI_API_KEY = "AIzaSyAtcVnqlN2oYlfdDGms35rx_lV_TGYUE3c"
 GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
 
-def generate_summary_with_gemini(raw_text):
-    """Uses Gemini API to extract a title and a 60-word English summary"""
-    prompt = f"""
-    You are a public health journalist. I will give you the raw text scraped from a Press Information Bureau (PIB) India or Ministry of Health webpage. 
-    It might be in Hindi or English and might contain navigation links.
-    
-    Extract the main press release or health update.
-    Respond ONLY with a valid RAW JSON object (no markdown, no backticks) containing:
-    "title": "A short English headline",
-    "summary": "An English summary of the update, constrained to EXACTLY 60 words."
-    
-    Text to parse:
-    {raw_text[:6000]}
-    """
-    
+def call_gemini(prompt):
     try:
         response = requests.post(
             GEMINI_API_URL,
@@ -30,32 +17,30 @@ def generate_summary_with_gemini(raw_text):
             json={
                 "contents": [{"parts": [{"text": prompt}]}]
             },
-            timeout=20
+            timeout=30
         )
         response.raise_for_status()
         data = response.json()
         
         if data and "candidates" in data and len(data["candidates"]) > 0:
             text_response = data["candidates"][0]["content"]["parts"][0]["text"].strip()
-            # Clean up potential markdown formatting if Gemini disobeys
+            # Clean up potential markdown formatting
             text_response = text_response.replace('```json', '').replace('```', '').strip()
-            result = json.loads(text_response)
-            return result.get("title", ""), result.get("summary", "")
+            return json.loads(text_response)
             
     except Exception as e:
         print(f"Gemini API Error: {e}")
         
-    return None, None
+    return None
 
 def fetch_health_updates():
-    """Fetches real updates from the Government of India PIB Health Ministry feed."""
-    # PIB India - Ministry of Health and Family Welfare (MenuId=30)
-    url = "https://pib.gov.in/AllRelease.aspx?MenuId=30"  
+    """Fetches real updates from the Government of India PIB feed."""
+    url = "https://www.pib.gov.in/allRel.aspx?reg=3&lang=1"  
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
     }
     
-    updates = []
+    updates: List[Dict[str, Any]] = []
     
     try:
         response = requests.get(url, headers=headers, timeout=15)
@@ -63,46 +48,98 @@ def fetch_health_updates():
         
         soup = BeautifulSoup(response.text, 'html.parser')
         
-        # Find all press release links in the content area
-        links = []
-        for ul in soup.find_all('ul', class_='num'):
-            for a in ul.find_all('a', href=True):
-                # Only grab absolute PR links
-                if 'PRID' in a['href']:
-                    href = a['href']
-                    if not href.startswith('http'):
-                        href = f"https://pib.gov.in/{href.lstrip('/')}"
-                    links.append(href)
+        feed_items: List[Dict[str, Any]] = []
+        for a in soup.find_all('a'):
+            href = a.get('href', '')
+            text = a.text.strip()
+            if text and 'PRID=' in href:
+                prid = href.split('PRID=')[-1].split('&')[0]
+                link = f"https://pib.gov.in/PressReleasePage.aspx?PRID={prid}"
+                
+                if not any(i['link'] == link for i in feed_items):
+                    feed_items.append({"id": len(feed_items), "title": text, "link": link})
                     
-        # Limit to 3 to adhere to Gemini Rate limits and speed
-        links = links[:3]
+        # Only take top 50 to avoid passing too much text
+        feed_items = feed_items[:50]  # type: ignore
+        
+        if not feed_items:
+            print("No links found on PIB page.")
+            _generate_fallback_data(updates)
+            return
+            
+        filter_prompt = f"""
+        You are an expert in Community Medicine and Public Health. 
+        I have a list of press releases from the Government of India published this month.
+        Review the list of titles and select up to 3 that are the MOST relevant to Community Medicine, public health, vaccines, disease control, or healthcare infrastructure.
+        DO NOT select duplicates or highly similar topics.
+        Return ONLY a JSON array of objects containing the "id" of the selected items. 
+        Example: [{{"id": 4}}, {{"id": 12}}]
+        
+        List:
+        {json.dumps(feed_items, indent=2)}
+        """
+        
+        print("Filtering relevant Community Medicine articles with Gemini...")
+        selected_ids_response = call_gemini(filter_prompt)
+        
+        if not selected_ids_response:
+            print("Failed to filter articles.")
+            _generate_fallback_data(updates)
+            return
+            
+        selected_ids = [item['id'] for item in selected_ids_response if 'id' in item]
+        selected_items = [item for item in feed_items if item['id'] in selected_ids]
         
         today_date = datetime.now().strftime('%Y-%m-%d')
         
-        for link in links:
+        for item in selected_items:
             try:
-                print(f"Fetching: {link}")
-                pr_response = requests.get(link, headers=headers, timeout=15)
+                print(f"Fetching: {item['link']}")
+                pr_response = requests.get(item['link'], headers=headers, timeout=15)
                 pr_soup = BeautifulSoup(pr_response.text, 'html.parser')
                 
                 # Extract all text, replacing multiple newlines
-                raw_text = " ".join(pr_soup.get_text(separator=' ', strip=True).split())
+                raw_text: str = " ".join(pr_soup.get_text(separator=' ', strip=True).split())
+                truncated_text = raw_text[:6000]  # type: ignore
+                
+                summary_prompt = f"""
+                You are a public health journalist. I give you raw text from a Press Information Bureau (PIB) India release.
+                Extract the main health update.
+                Respond ONLY with a valid RAW JSON object (no markdown, no backticks) containing:
+                "title": "A short English headline",
+                "summary": "An English summary of the update, constrained to EXACTLY 60 words.",
+                "date": "The exact date of the release in YYYY-MM-DD format based on the text (default to today if unseen)"
+                
+                Text to parse:
+                {truncated_text}
+                """
                 
                 print("Generating summary...")
-                title, summary = generate_summary_with_gemini(raw_text)
+                summary_data = call_gemini(summary_prompt)
                 
-                if title and summary:
-                    updates.append({
-                        "id": str(uuid.uuid4()),
-                        "date": today_date,
-                        "title": title,
-                        "summary": summary
-                    })
+                if summary_data and "title" in summary_data and "summary" in summary_data:
+                    title = summary_data["title"]
+                    summary = summary_data["summary"]
+                    article_date = summary_data.get("date", today_date)
+                    
+                    # Deduplication logic
+                    is_duplicate = any(u['title'].lower() == title.lower() for u in updates)
+                    
+                    if title and summary and not is_duplicate:
+                        updates.append({
+                            "id": str(uuid.uuid4()),
+                            "date": article_date if article_date else today_date,
+                            "title": title,
+                            "summary": summary,
+                            "link": item['link']
+                        })
+                    elif is_duplicate:
+                        print(f"Skipping duplicate: {title}")
                 else:
-                    print(f"Failed to generate summary for {link}")
+                    print(f"Failed to generate summary for {item['link']}")
                     
             except Exception as e:
-                print(f"Error processing {link}: {e}")
+                print(f"Error processing {item['link']}: {e}")
                 
     except requests.exceptions.RequestException as e:
         print(f"Error fetching PIB feed: {e}")

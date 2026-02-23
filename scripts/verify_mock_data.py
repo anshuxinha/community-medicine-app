@@ -1,7 +1,8 @@
 import json
 import os
-import requests
+import requests  # type: ignore
 import time
+from typing import List, Dict, Any
 
 # Prefer environment variable (GitHub Secrets), fallback to hardcoded key for local testing
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyAtcVnqlN2oYlfdDGms35rx_lV_TGYUE3c")
@@ -58,11 +59,20 @@ def call_gemini_to_verify(text_content):
 def verify_and_update_data():
     try:
         with open(MOCK_DATA_PATH, 'r', encoding='utf-8') as f:
-            data = json.load(f)
+            data: List[Dict[str, Any]] = json.load(f)
             
         print(f"Loaded {len(data)} chapters for verification.")
         
-        updates_made = 0
+        # 1. Strip all existing 'recentlyUpdated' flags globally from previous weeks
+        for item in data:
+            if 'recentlyUpdated' in item:
+                del item['recentlyUpdated']
+            if 'subsections' in item:
+                for sub in item['subsections']:
+                    if 'recentlyUpdated' in sub:
+                         del sub['recentlyUpdated']
+                         
+        updates_made: int = 0
         
         for index, item in enumerate(data):
             print(f"Verifying [{index + 1}/{len(data)}]: {item.get('title', 'Unknown')}")
@@ -76,7 +86,8 @@ def verify_and_update_data():
                     # Double check it didn't just return empty or slightly stripped space
                     if len(new_content) > 100: 
                         item['content'] = new_content
-                        updates_made += 1
+                        item['recentlyUpdated'] = True
+                        updates_made = int(updates_made) + 1  # type: ignore
                         print(f"  -> Updates found and applied to {item['title']}.")
                         
             # Check if this chapter has subsections (like National Health Programmes)
@@ -90,13 +101,14 @@ def verify_and_update_data():
                         if new_sub_content and new_sub_content != original_sub_content:
                             if len(new_sub_content) > 100:
                                 subsection['content'] = new_sub_content
-                                updates_made += 1
+                                subsection['recentlyUpdated'] = True
+                                updates_made = int(updates_made) + 1  # type: ignore
                                 print(f"    -> Updates found and applied to {subsection['title']}.")
                                 
             # Sleep slightly to avoid hitting Gemini rate limits rapidly
             time.sleep(2)
             
-        if updates_made > 0:
+        if int(updates_made) > 0:
             print(f"\nVerification complete. {updates_made} sections were updated.")
             with open(MOCK_DATA_PATH, 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=4)

@@ -1,19 +1,22 @@
 [
     {
-        "id": "06990a83-716d-430e-8861-f062169cb6a5",
+        "id": "5d812d9d-f309-437e-9af7-ebd6bd9a41c3",
         "date": "2026-02-21",
-        "title": "Union Health Minister Launches Indigenous Tetanus and Adult Diphtheria Vaccine",
-        "summary": "Union Health Minister Shri Jagat Prakash Nadda launched India's indigenously manufactured Tetanus and Adult Diphtheria (Td) vaccine. The launch occurred at Himachal Pradesh's Central Research Institute. This milestone furthers national self-reliance in vaccine production. The Td vaccine strengthens India's immunization program, protecting adults and adolescents from these diseases. This initiative ensures accessible, life-saving vaccines for all citizens, upholding public health."
+        "title": "Delhi-NCR Industries Face Stricter Particulate Matter Emission Norms",
+        "summary": "The Commission for Air Quality Management (CAQM) issued new statutory directions imposing stricter particulate matter (PM) emission standards for industries across Delhi-NCR. A uniform limit of 50 mg/Nm\u00b3 will apply to 17 highly polluting, red category, food, textile, and metal industries. This measure, effective August and October 2026, aims to significantly reduce industrial emissions, improve regional air quality, and benefit public health by mitigating air pollution, based on expert recommendations.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2231145"
     },
     {
-        "id": "a3de06c9-c981-4efe-8d57-6f888c048ec5",
+        "id": "5183b02a-31d9-4b59-a73b-f424f8e7e86c",
         "date": "2026-02-21",
-        "title": "Union Health Minister Launches Indigenous Td Vaccine in Himachal Pradesh",
-        "summary": "Union Health Minister Shri Jagat Prakash Nadda launched an indigenous Tetanus and Adult Diphtheria (Td) vaccine at Himachal Pradesh\u2019s Central Research Institute. This enhances India's public health self-reliance, boosting domestic vaccine production. Crucial for preventing tetanus and diphtheria, it benefits millions. The initiative underscores the Ministry's commitment to strengthening pharmaceutical capacities, ensuring wider access to essential immunizations and bolstering national health security."
+        "title": "India Launches First Indigenous Tetanus & Adult Diphtheria (Td) Vaccine",
+        "summary": "Union Health Minister Shri J.P. Nadda launched India's indigenously manufactured Tetanus and Adult Diphtheria (Td) Vaccine at the Central Research Institute, Kasauli. This launch marks a significant step towards national health security and self-reliance in the health sector, aligning with Atmanirbhar Bharat. The vaccine will be supplied to the Universal Immunization Programme, with CRI committing 55 lakh doses by April 2026. This strengthens India's public health infrastructure and builds on its near 99% vaccine coverage.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2231147"
     },
     {
-        "id": "6f4cb658-15a2-4ce7-ada1-80616352c16a",
+        "id": "c78f3bcb-634c-49aa-a647-aaffb36c7100",
         "date": "2026-02-21",
+<<<<<<< HEAD
         "title": "Union Health Minister Launches Indigenous Tetanus-Diphtheria Vaccine",
         "summary": "Union Health Minister Shri Jagat Prakash Nadda launched an indigenously manufactured Tetanus and Adult Diphtheria (Td) vaccine at Himachal Pradesh's Central Research Institute. This initiative significantly boosts India's self-reliance in vaccine production and strengthens public health infrastructure. The new Td vaccine will bolster the national immunization program, providing crucial protection against Tetanus and Diphtheria for adults, enhancing healthcare capabilities and vaccine accessibility nationwide."
     },
@@ -46,5 +49,10 @@
         "date": "2026-02-05",
         "title": "Over four million girls still at risk of female genital mutilation: UN leaders call for sustained commitment and investment to end FGM",
         "summary": "Read the full article at: https://www.who.int/news/item/05-02-2026-over-four-million-girls-still-at-risk-of-female-genital-mutilation--un-leaders-call-for-sustained-commitment-and-investment-to-end-fgm"
+=======
+        "title": "NIPER-Boehringer MoU & AMRITVA Cohort 2 Boost India's Pharma Research",
+        "summary": "NIPER Raebareli and Boehringer Ingelheim India signed an MoU, boosting pharmaceutical education, research, and novel drug delivery. Boehringer offers opnMe\u00ae platform access. AMRITVA Cohort 2 also launched, granting five innovators: \u20b98 lakh for three faculty projects, \u20b96 lakh for two scholar projects. This CSR initiative strengthens India's pharma innovation, translating research into viable products, advancing cost-effective healthcare aligned with Viksit Bharat 2047.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2231194"
+>>>>>>> b69ddbf (Disable New Architecture to fix C++ Native Compilation)
     }
 ]

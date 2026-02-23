@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { ScrollView, View, StyleSheet } from 'react-native';
+import { ScrollView, View, StyleSheet, Linking } from 'react-native';
 import { Text, Card, ProgressBar, Button, Dialog, Portal, Paragraph } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import recentUpdates from '../data/updates.json';
@@ -28,7 +28,7 @@ const DashboardScreen = () => {
                 </View>
 
                 <Card style={styles.progressCard}>
-                    <Card.Title title="Reading Progress" titleStyle={styles.cardTitle} />
+                    <Card.Title title="Learning Progress" titleStyle={styles.cardTitle} />
                     <Card.Content>
                         <ProgressBar
                             progress={readingProgress}
@@ -85,7 +85,20 @@ const DashboardScreen = () => {
                 <Dialog visible={visible} onDismiss={hideDialog}>
                     <Dialog.Title>{selectedUpdate?.title}</Dialog.Title>
                     <Dialog.Content>
-                        <Paragraph>{selectedUpdate?.summary}</Paragraph>
+                        <Text variant="labelSmall" style={{ marginBottom: 16, color: '#6750a4', fontWeight: 'bold' }}>
+                            {selectedUpdate?.date}
+                        </Text>
+                        <Paragraph style={{ lineHeight: 22 }}>{selectedUpdate?.summary}</Paragraph>
+                        {selectedUpdate?.link && (
+                            <Button
+                                mode="text"
+                                onPress={() => Linking.openURL(selectedUpdate.link)}
+                                style={{ marginTop: 16, alignSelf: 'flex-start', marginLeft: -8 }}
+                                icon="open-in-new"
+                            >
+                                Source Article
+                            </Button>
+                        )}
                     </Dialog.Content>
                     <Dialog.Actions>
                         <Button onPress={hideDialog}>Close</Button>

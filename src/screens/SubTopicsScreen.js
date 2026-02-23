@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
-import { Text, List, Divider } from 'react-native-paper';
+import { Text, List, Divider, Badge } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const SubTopicsScreen = ({ route, navigation }) => {
@@ -16,15 +16,19 @@ const SubTopicsScreen = ({ route, navigation }) => {
                         title={item.title}
                         description={item.description}
                         left={props => <List.Icon {...props} icon={({ color }) => <MaterialIcons name="description" size={24} color={color} />} />}
+                        right={props => item.recentlyUpdated ? <Badge {...props} style={[styles.badge, props.style]}>NEW</Badge> : null}
                         onPress={() => {
                             if (item.subsections) {
-                                navigation.push('SubTopics', { title: item.title, items: item.subsections });
+                                navigation.push('PremiumGuard', { destination: 'SubTopics', subTopicsParams: { title: item.title, items: item.subsections } });
                             } else {
-                                navigation.navigate('Reading', {
-                                    id: item.id,
-                                    title: item.title,
-                                    content: item.content || "# No Content\n\nThis topic has no content yet.",
-                                    quizzes: item.quizzes
+                                navigation.navigate('PremiumGuard', {
+                                    destination: 'Reading',
+                                    readingParams: {
+                                        id: item.id,
+                                        title: item.title,
+                                        content: item.content || "# No Content\n\nThis topic has no content yet.",
+                                        quizzes: item.quizzes
+                                    }
                                 });
                             }
                         }}
@@ -41,6 +45,13 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#ffffff',
     },
+    badge: {
+        alignSelf: 'center',
+        marginRight: 8,
+        backgroundColor: '#4CAF50', // Green badge for positive 'updated' reinforcement
+        color: 'white',
+        fontWeight: 'bold'
+    }
 });
 
 export default SubTopicsScreen;

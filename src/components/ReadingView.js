@@ -12,7 +12,6 @@ const ReadingView = ({ content, topicId, isBookmarked, onToggleBookmark, isSpeak
     const insets = useSafeAreaInsets();
 
     const [htmlContent, setHtmlContent] = useState('');
-    const [showColorPicker, setShowColorPicker] = useState(false);
 
     useEffect(() => {
         // Load existing highlights if available, otherwise generate HTML
@@ -122,6 +121,18 @@ const ReadingView = ({ content, topicId, isBookmarked, onToggleBookmark, isSpeak
                     <div class="tts-btn" onclick="toggleTTS()">
                         <span id="tts-icon" class="tts-icon material-icons">${isSpeaking ? 'stop' : 'volume_up'}</span>
                     </div>
+                    
+                    <div id="color-picker" style="display: none; position: fixed; bottom: 80px; right: 16px; background: white; padding: 16px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; border: 1px solid #eee;">
+                        <div style="font-weight: bold; margin-bottom: 12px; font-family: sans-serif; text-align: center;">Choose Color</div>
+                        <div style="display: flex; gap: 12px; justify-content: center;">
+                            <div onclick="highlightSelection('#ffff00')" style="width: 36px; height: 36px; border-radius: 18px; background: #ffff00; cursor: pointer; border: 1px solid #ccc;"></div>
+                            <div onclick="highlightSelection('#00ff00')" style="width: 36px; height: 36px; border-radius: 18px; background: #00ff00; cursor: pointer; border: 1px solid #ccc;"></div>
+                            <div onclick="highlightSelection('#ffc0cb')" style="width: 36px; height: 36px; border-radius: 18px; background: #ffc0cb; cursor: pointer; border: 1px solid #ccc;"></div>
+                            <div onclick="highlightSelection('#00ffff')" style="width: 36px; height: 36px; border-radius: 18px; background: #00ffff; cursor: pointer; border: 1px solid #ccc;"></div>
+                        </div>
+                        <div onclick="document.getElementById('color-picker').style.display = 'none';" style="margin-top: 12px; text-align: center; color: #6200ee; cursor: pointer; font-weight: bold; font-family: sans-serif;">Cancel</div>
+                    </div>
+
                     ${parsedHtml}
                 </div>
                 <script>
@@ -133,7 +144,11 @@ const ReadingView = ({ content, topicId, isBookmarked, onToggleBookmark, isSpeak
                     }
                     function highlightSelection(color) {
                         const selection = window.getSelection();
-                        if (!selection.rangeCount || selection.isCollapsed) return "";
+                        if (!selection.rangeCount || selection.isCollapsed) {
+                            // Close picker if nothing selected
+                            document.getElementById('color-picker').style.display = 'none';
+                            return "";
+                        }
                         
                         const range = selection.getRangeAt(0);
                         const mark = document.createElement("mark");
@@ -153,6 +168,9 @@ const ReadingView = ({ content, topicId, isBookmarked, onToggleBookmark, isSpeak
                         // Send updated HTML back to React Native
                         const currentHtml = document.getElementById("content-container").innerHTML;
                         window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'HIGHLIGHT_SAVED', html: currentHtml }));
+                        
+                        // Close picker
+                        document.getElementById('color-picker').style.display = 'none';
                     }
                     
                     document.addEventListener("message", function(event) {
@@ -172,6 +190,10 @@ const ReadingView = ({ content, topicId, isBookmarked, onToggleBookmark, isSpeak
                         try {
                             const data = JSON.parse(event.data);
                             if (data.action === "highlight") highlightSelection(data.color);
+                            if (data.action === "togglePicker") {
+                                const picker = document.getElementById('color-picker');
+                                picker.style.display = picker.style.display === 'none' ? 'block' : 'none';
+                            }
                             if (data.action === "updateBookmark") {
                                 document.getElementById("bookmark-icon").innerText = data.isBookmarked ? 'bookmark' : 'bookmark_border';
                             }
@@ -210,7 +232,6 @@ const ReadingView = ({ content, topicId, isBookmarked, onToggleBookmark, isSpeak
                 const newFullHtml = htmlContent.replace(/<div id="content-container">[\s\S]*?<\/div>/, `<div id="content-container">${data.html}</div>`);
                 setHtmlContent(newFullHtml);
                 saveHighlight(topicId, newFullHtml);
-                setShowColorPicker(false);
             } else if (data.type === 'TOGGLE_BOOKMARK') {
                 if (onToggleBookmark) onToggleBookmark();
             } else if (data.type === 'TOGGLE_TTS') {
@@ -222,9 +243,7 @@ const ReadingView = ({ content, topicId, isBookmarked, onToggleBookmark, isSpeak
     };
 
     const applyHighlight = (color) => {
-        if (webViewRef.current) {
-            webViewRef.current.postMessage(JSON.stringify({ action: "highlight", color }));
-        }
+        // Obsolete function. Handled inside webview.
     };
 
     return (
@@ -240,29 +259,14 @@ const ReadingView = ({ content, topicId, isBookmarked, onToggleBookmark, isSpeak
 
             <TouchableOpacity
                 style={[styles.highlightBtn, { bottom: Math.max(16, insets.bottom + 16) }]}
-                onPress={() => setShowColorPicker(true)}
+                onPress={() => {
+                    if (webViewRef.current) {
+                        webViewRef.current.postMessage(JSON.stringify({ action: "togglePicker" }));
+                    }
+                }}
             >
                 <MaterialIcons name="brush" size={24} color="#FFF" />
             </TouchableOpacity>
-
-            <Portal>
-                <Modal visible={showColorPicker} onDismiss={() => setShowColorPicker(false)} transparent={true}>
-                    <View style={styles.modalOverlay}>
-                        <View style={styles.colorPickerContainer}>
-                            <Text variant="titleMedium" style={styles.pickerTitle}>Choose Highlight Color</Text>
-                            <View style={styles.colorRow}>
-                                <TouchableOpacity style={[styles.colorCircle, { backgroundColor: '#ffff00' }]} onPress={() => applyHighlight('#ffff00')} />
-                                <TouchableOpacity style={[styles.colorCircle, { backgroundColor: '#00ff00' }]} onPress={() => applyHighlight('#00ff00')} />
-                                <TouchableOpacity style={[styles.colorCircle, { backgroundColor: '#ffc0cb' }]} onPress={() => applyHighlight('#ffc0cb')} />
-                                <TouchableOpacity style={[styles.colorCircle, { backgroundColor: '#00ffff' }]} onPress={() => applyHighlight('#00ffff')} />
-                            </View>
-                            <TouchableOpacity style={styles.closeBtn} onPress={() => setShowColorPicker(false)}>
-                                <Text>Cancel</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </Modal>
-            </Portal>
         </View>
     );
 };
@@ -299,39 +303,6 @@ const styles = StyleSheet.create({
     },
     btnText: {
         fontSize: 24,
-    },
-    modalOverlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.4)',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    colorPickerContainer: {
-        backgroundColor: 'white',
-        padding: 24,
-        borderRadius: 16,
-        width: '80%',
-        alignItems: 'center',
-    },
-    pickerTitle: {
-        marginBottom: 20,
-        fontWeight: 'bold',
-    },
-    colorRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        width: '100%',
-        marginBottom: 24,
-    },
-    colorCircle: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-        borderWidth: 1,
-        borderColor: '#ddd',
-    },
-    closeBtn: {
-        padding: 8,
     }
 });
 
