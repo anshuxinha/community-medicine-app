@@ -3,6 +3,12 @@ import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Searchbar, Text, Card } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import mockData from '../data/mockData.json';
+import practicalData from '../data/practical.json';
+
+const allData = [
+    ...mockData.map(item => ({ ...item, uniqueId: 'theory_' + item.id })),
+    ...practicalData.map(item => ({ ...item, uniqueId: 'practical_' + item.id }))
+];
 
 const SearchScreen = ({ navigation }) => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -14,9 +20,9 @@ const SearchScreen = ({ navigation }) => {
             setSearchResults([]);
         } else {
             const lowercasedText = text.toLowerCase();
-            const filteredData = mockData.filter(item =>
-                item.title.toLowerCase().includes(lowercasedText) ||
-                item.content.toLowerCase().includes(lowercasedText)
+            const filteredData = allData.filter(item =>
+                (item.title || '').toLowerCase().includes(lowercasedText) ||
+                (item.content || '').toLowerCase().includes(lowercasedText)
             );
             setSearchResults(filteredData);
         }
@@ -24,23 +30,31 @@ const SearchScreen = ({ navigation }) => {
 
     const renderItem = ({ item }) => {
         // Create a brief snippet by removing markdown hash and taking the first few characters
-        const cleanContent = item.content.replace(/[#*]/g, '').trim();
+        const cleanContent = (item.content || '').replace(/[#*]/g, '').trim();
         return (
-            <TouchableOpacity onPress={() => navigation.navigate('Reading', {
-                id: item.id,
-                title: item.title,
-                content: item.content,
-                quizzes: item.quizzes
-            })}>
-                <Card style={styles.card}>
-                    <Card.Content>
-                        <Text variant="titleMedium" style={styles.cardTitle}>{item.title}</Text>
-                        <Text variant="bodyMedium" numberOfLines={2} style={styles.snippet}>
-                            {cleanContent}
-                        </Text>
-                    </Card.Content>
-                </Card>
-            </TouchableOpacity>
+            <Card style={styles.card} onPress={() => {
+                const readingParams = {
+                    id: item.id,
+                    title: item.title,
+                    content: item.content,
+                    quizzes: item.quizzes
+                };
+
+                const isFree = item.id === '1' || item.title === 'Man and Medicine';
+
+                if (isFree) {
+                    navigation.navigate('Reading', readingParams);
+                } else {
+                    navigation.navigate('PremiumGuard', { destination: 'Reading', readingParams });
+                }
+            }}>
+                <Card.Content>
+                    <Text variant="titleMedium" style={styles.cardTitle}>{item.title}</Text>
+                    <Text variant="bodyMedium" numberOfLines={2} style={styles.snippet}>
+                        {cleanContent}
+                    </Text>
+                </Card.Content>
+            </Card>
         );
     };
 
@@ -52,11 +66,14 @@ const SearchScreen = ({ navigation }) => {
                     onChangeText={handleSearch}
                     value={searchQuery}
                     style={styles.searchBar}
+                    inputStyle={styles.searchBarInput}
+                    iconColor="#9CA3AF"
+                    elevation={0}
                 />
                 {searchResults.length > 0 ? (
                     <FlatList
                         data={searchResults}
-                        keyExtractor={item => item.id}
+                        keyExtractor={item => item.uniqueId}
                         renderItem={renderItem}
                         contentContainerStyle={styles.listContainer}
                     />
@@ -83,7 +100,17 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffffff',
     },
     searchBar: {
+        backgroundColor: '#F3F4F6', // Very light gray from library
+        borderRadius: 12, // More rounded corners
+        elevation: 0,
+        height: 48,
         marginBottom: 16,
+    },
+    searchBarInput: {
+        fontSize: 16,
+        color: '#111827',
+        minHeight: 48,
+        alignSelf: 'center',
     },
     content: {
         flex: 1,

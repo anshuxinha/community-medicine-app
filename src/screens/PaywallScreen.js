@@ -1,160 +1,309 @@
-import React, { useContext } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, Linking } from 'react-native';
-import { Text, Button, Card, Divider } from 'react-native-paper';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, TouchableOpacity, Platform, Alert, Linking } from 'react-native';
+import { Text, Button, Card } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppContext } from '../context/AppContext';
 import { MaterialIcons } from '@expo/vector-icons';
+import Purchases from 'react-native-purchases';
+
+const plans = [
+    { id: 'monthly', name: 'Monthly', duration: 'Monthly Plan', price: '₹399 / month', desc: 'Cancel anytime', badge: null, saveText: null },
+    { id: 'yearly', name: 'Yearly', duration: 'Yearly Plan', price: '₹999 / year', desc: 'Billed annually', badge: 'Best Value', saveText: 'SAVE 20%' },
+    { id: 'lifetime', name: 'Lifetime', duration: 'Lifetime', price: '₹25000 once', desc: 'One-time payment', badge: null, saveText: null },
+];
 
 const PaywallScreen = ({ navigation }) => {
-    const { upgradeToPremium } = useContext(AppContext);
+    const [selectedPlan, setSelectedPlan] = useState('yearly');
+    const [isPurchasing, setIsPurchasing] = useState(false);
 
-    const handleSubscribe = () => {
-        // Because a native SDK would break Expo Go, we'll simulate a payment link behavior.
-        // In a real environment, this opens a Stripe/Razorpay link.
-        // For demonstration purposes, we will mock the "successful checkout".
-        alert("Simulating successful Razorpay/Stripe checkout for ₹999...");
-        upgradeToPremium();
-        navigation.navigate('Main');
+    const handlePurchase = async () => {
+        if (!selectedPlan) return;
+        setIsPurchasing(true);
+        try {
+            // Note: In a real environment, you map `selectedPlan` to your exact Store Product ID assigned in RevenueCat dashboard
+            // Example: const product = await Purchases.getOfferings();...
+            // await Purchases.purchasePackage(product);
+
+            Alert.alert(
+                "Purchase Simulator",
+                `The RevenueCat SDK will intercept this action and trigger the native Google Play Billing sheet for the [${selectedPlan}] tier.\n\nPlease assign your actual Google Play package ID in the RevenueCat dashboard first.`
+            );
+        } catch (error) {
+            if (!error.userCancelled) {
+                Alert.alert("Error purchasing package", error.message);
+            }
+        } finally {
+            setIsPurchasing(false);
+        }
+    };
+
+    const handleRestore = async () => {
+        try {
+            const customerInfo = await Purchases.restorePurchases();
+            if (customerInfo.entitlements.active['Premium'] !== undefined) {
+                Alert.alert("Success", "Your purchases were restored!");
+            } else {
+                Alert.alert("Notice", "No active premium subscriptions found.");
+            }
+        } catch (e) {
+            Alert.alert("Error restoring purchases", e.message);
+        }
     };
 
     return (
         <SafeAreaView style={styles.safeArea}>
-            <ScrollView contentContainerStyle={styles.scrollContent}>
-
+            <View style={styles.container}>
                 <View style={styles.header}>
-                    <MaterialIcons name="workspace-premium" size={80} color="#FBBF24" />
-                    <Text variant="headlineLarge" style={styles.title}>Unlock Premium</Text>
-                    <Text variant="bodyLarge" style={styles.subtitle}>
-                        Get unlimited access to the entire Community Medicine library and your personal AI Tutor.
-                    </Text>
+                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.closeButton}>
+                        <MaterialIcons name="close" size={28} color="#9CA3AF" />
+                    </TouchableOpacity>
                 </View>
 
-                <Card style={styles.card}>
-                    <Card.Content>
-                        <Text variant="titleLarge" style={styles.planName}>Annual Subscription</Text>
-                        <Text variant="displayMedium" style={styles.price}>₹999<Text style={styles.period}>/year</Text></Text>
+                <View style={styles.heroSection}>
+                    <View style={styles.iconWrapper}>
+                        <MaterialIcons name="menu-book" size={60} color="#3B82F6" style={styles.iconBg} />
+                        <MaterialIcons name="add" size={30} color="#FFFFFF" style={styles.iconFg} />
+                    </View>
+                    <Text variant="displaySmall" style={styles.title}>Go Pro</Text>
+                </View>
 
-                        <Divider style={styles.divider} />
+                <View style={styles.featuresList}>
+                    <FeatureItem text="Unlimited Library Access" />
+                    <FeatureItem text="Advanced AI Tutor Assistance" />
+                    <FeatureItem text="Offline Content Downloads" />
+                    <FeatureItem text="Exclusive Study Resources" />
+                    <FeatureItem text="Ad-Free Experience" />
+                    <FeatureItem text="Priority Support" />
+                </View>
 
-                        <View style={styles.featureRow}>
-                            <MaterialIcons name="check-circle" size={24} color="#10B981" />
-                            <Text style={styles.featureText}>Full Library Access (All Chapters)</Text>
-                        </View>
-                        <View style={styles.featureRow}>
-                            <MaterialIcons name="check-circle" size={24} color="#10B981" />
-                            <Text style={styles.featureText}>Unlimited AI Medical Tutor</Text>
-                        </View>
-                        <View style={styles.featureRow}>
-                            <MaterialIcons name="check-circle" size={24} color="#10B981" />
-                            <Text style={styles.featureText}>Weekly Auto-Updated Guidelines</Text>
-                        </View>
-                    </Card.Content>
-                </Card>
+                <View style={styles.pricingSection}>
+                    <View style={styles.pricingCardsContainer}>
+                        {plans.map((plan) => (
+                            <TouchableOpacity
+                                key={plan.id}
+                                style={[styles.pricingCard, selectedPlan === plan.id && styles.pricingCardActive]}
+                                onPress={() => setSelectedPlan(plan.id)}
+                                activeOpacity={0.8}
+                            >
+                                {plan.badge && (
+                                    <View style={styles.badgeContainer}><Text style={styles.badgeText}>{plan.badge}</Text></View>
+                                )}
+                                <Card.Content style={styles.pricingContent}>
+                                    {plan.saveText && (
+                                        <Text style={styles.saveBadge}>{plan.saveText}</Text>
+                                    )}
+                                    <Text style={styles.planName}>{plan.name}</Text>
+                                    <Text style={styles.planDuration}>{plan.duration}</Text>
+                                    <Text style={styles.priceText}>{plan.price}</Text>
+                                    <Text style={styles.planDesc}>{plan.desc}</Text>
+                                </Card.Content>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
 
-                <Button
-                    mode="contained"
-                    onPress={handleSubscribe}
-                    style={styles.subscribeButton}
-                    labelStyle={styles.subscribeButtonLabel}
-                >
-                    Subscribe Now
-                </Button>
+                    <Button
+                        mode="contained"
+                        style={styles.subscribeButton}
+                        labelStyle={styles.subscribeButtonText}
+                        loading={isPurchasing}
+                        disabled={isPurchasing}
+                        onPress={handlePurchase}
+                    >
+                        Subscribe Now
+                    </Button>
 
-                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.cancelContainer}>
-                    <Text style={styles.cancelText}>Maybe Later</Text>
-                </TouchableOpacity>
-
-            </ScrollView>
+                    <View style={styles.footerLinks}>
+                        <TouchableOpacity onPress={handleRestore}>
+                            <Text style={styles.footerLinkText}>Restore Purchase</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => Linking.openURL('https://anshuxinha.github.io/community-medicine-app/privacy.html')}>
+                            <Text style={styles.footerLinkText}>Terms & Privacy</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
         </SafeAreaView>
     );
 };
 
+const FeatureItem = ({ text }) => (
+    <View style={styles.featureItem}>
+        <MaterialIcons name="check-circle" size={24} color="#A855F7" style={styles.featureIcon} />
+        <Text style={styles.featureText}>{text}</Text>
+    </View>
+);
+
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#F3F4F6', // Light gray standard premium background
+        backgroundColor: '#FBFCFE',
     },
-    scrollContent: {
+    container: {
         flexGrow: 1,
-        padding: 24,
-        alignItems: 'center',
-        justifyContent: 'center',
+        paddingHorizontal: 20,
+        paddingBottom: 40,
     },
     header: {
+        alignItems: 'flex-end',
+        marginTop: 0,
+    },
+    closeButton: {
+        padding: 4,
+    },
+    heroSection: {
         alignItems: 'center',
-        marginBottom: 32,
+        marginTop: 0,
+        marginBottom: 10,
+    },
+    iconWrapper: {
+        width: 80,
+        height: 80,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    iconBg: {
+        opacity: 0.8,
+        elevation: 10,
+        shadowColor: '#3B82F6',
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.3,
+        shadowRadius: 15,
+    },
+    iconFg: {
+        position: 'absolute',
+        top: '30%',
     },
     title: {
-        fontWeight: 'bold',
         color: '#111827',
-        marginTop: 16,
-    },
-    subtitle: {
-        color: '#4B5563',
-        textAlign: 'center',
-        marginTop: 8,
-        paddingHorizontal: 16,
-    },
-    card: {
-        width: '100%',
-        backgroundColor: '#FFFFFF',
-        borderRadius: 16,
-        paddingVertical: 16,
-        marginBottom: 32,
-        elevation: 4,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-    },
-    planName: {
-        color: '#6B7280',
-        fontWeight: '600',
+        fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif',
+        fontSize: 32,
         textAlign: 'center',
     },
-    price: {
-        color: '#111827',
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginVertical: 8,
+    featuresList: {
+        marginBottom: 16,
+        paddingHorizontal: 8,
     },
-    period: {
-        fontSize: 18,
-        color: '#6B7280',
-        fontWeight: 'normal',
-    },
-    divider: {
-        marginVertical: 16,
-    },
-    featureRow: {
+    featureItem: {
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 12,
     },
+    featureIcon: {
+        marginRight: 12,
+        backgroundColor: '#E0E7FF', // Soft circle background equivalent
+        borderRadius: 12,
+    },
     featureText: {
-        fontSize: 16,
         color: '#374151',
-        marginLeft: 12,
+        fontSize: 16,
+        fontWeight: '500',
     },
-    subscribeButton: {
-        backgroundColor: '#1D4ED8',
-        width: '100%',
-        paddingVertical: 8,
-        borderRadius: 30, // Pill shaped main button
-        marginBottom: 16,
+    pricingSection: {
+        marginTop: 'auto',
     },
-    subscribeButtonLabel: {
-        fontSize: 18,
+    pricingCardsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 24,
+    },
+    pricingCard: {
+        flex: 1,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: '#F3F4F6',
+        marginHorizontal: 4,
+        paddingVertical: 12,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+    },
+    pricingCardActive: {
+        borderWidth: 2,
+        borderColor: '#A855F7', // Brand accent
+        backgroundColor: '#FAFAFF',
+        transform: [{ scale: 1.05 }],
+        zIndex: 10,
+    },
+    pricingContent: {
+        alignItems: 'center',
+        paddingHorizontal: 4,
+    },
+    planName: {
+        color: '#111827',
+        fontWeight: 'bold',
+        fontSize: 14,
+        marginBottom: 2,
+    },
+    planDuration: {
+        color: '#6B7280',
+        fontSize: 10,
+        marginBottom: 8,
+    },
+    priceText: {
+        color: '#111827',
+        fontWeight: 'bold',
+        fontSize: 12,
+        marginBottom: 8,
+        textAlign: 'center',
+    },
+    planDesc: {
+        color: '#6B7280',
+        fontSize: 10,
+        textAlign: 'center',
+    },
+    badgeContainer: {
+        position: 'absolute',
+        top: -12,
+        alignSelf: 'center',
+        backgroundColor: '#C4B5FD',
+        borderRadius: 12,
+        paddingHorizontal: 8,
+        paddingVertical: 2,
+    },
+    badgeText: {
+        color: '#000000',
+        fontSize: 10,
         fontWeight: 'bold',
     },
-    cancelContainer: {
-        marginTop: 8,
+    saveBadge: {
+        color: '#581C87',
+        backgroundColor: '#E9D5FF',
+        borderRadius: 8,
+        paddingHorizontal: 6,
+        paddingVertical: 2,
+        fontSize: 9,
+        fontWeight: 'bold',
+        marginBottom: 4,
+        overflow: 'hidden', // iOS rounding fix
     },
-    cancelText: {
-        fontSize: 16,
+    subscribeButton: {
+        backgroundColor: '#60A5FA', // nice light blue gradient replacement
+        paddingVertical: 10,
+        borderRadius: 30,
+        marginBottom: 24,
+        elevation: 4,
+        shadowColor: '#60A5FA',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+    },
+    subscribeButtonText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#000000', // Dark text per mockup
+    },
+    footerLinks: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+    },
+    footerLinkText: {
         color: '#6B7280',
-        fontWeight: '600',
-    }
+        fontSize: 12,
+    },
 });
 
 export default PaywallScreen;

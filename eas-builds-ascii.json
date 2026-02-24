@@ -1,0 +1,51 @@
+{
+  "id": "f79cbc66-9223-4a34-bb80-56713a0f4924",
+  "status": "ERRORED",
+  "platform": "ANDROID",
+  "error": {
+    "errorCode": "EAS_BUILD_UNKNOWN_GRADLE_ERROR",
+    "message": "Gradle build failed with unknown error. See logs for the \"Run gradlew\" phase for more information."
+  },
+  "artifacts": {},
+  "fingerprint": {
+    "id": "019c89cc-c062-7bcd-949f-1713c410834f",
+    "hash": "bb997e98aea3f59f290b3186cee9e250ebdffbcb"
+  },
+  "initiatingActor": {
+    "id": "e33f8c07-ed43-408b-8b6d-c8870c7a8672",
+    "displayName": "anshuxinha"
+  },
+  "logFiles": [
+    "https://job-logs.eascdn.net/production/f79cbc66-9223-4a34-bb80-56713a0f4924/1771838423346-103ef9ed-48f6-4d94-9e97-48c70dded5ee.txt?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=www-production%40exponentjs.iam.gserviceaccount.com%2F20260223%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260223T093457Z&X-Goog-Expires=900&X-Goog-SignedHeaders=host&X-Goog-Signature=34326de665b0251c4b92e9912d708011b4c68c5733ac6495ab0d0d2f734c2410e7d9ced3ea75efe2e6cce26b12b8b9b4d9e3bff553548d6738d6f60acd261aaff2c92376bf8b9bfdff2eeab1e592bdd66d050f573c62ad47d5146d477ecd5266d285930e33f118c8fb9a1a13a68ed5255dccf45456fc64e01be45117fbbcdcfc5acacdafdb5ce1d136304f4b65d9d1cb6b7388ddc645ee5d5d128dc306a738e5ba5d948361a8e5ca543ef4fb5641dd396684c3f014dff38f134b655ec175f09e6db191658a6b0f5967d63f63ddb13d1df20b91c7f41b0e1f21c2f66e10c6ac164e704a478974b033107b4f469e3b5065358fe22b0dce07e31c871aa1b7db71cc",
+    "https://job-logs.eascdn.net/production/f79cbc66-9223-4a34-bb80-56713a0f4924/1771838429770-2d1b6a02-64f8-4635-8e41-8c42ed599d7d.txt?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=www-production%40exponentjs.iam.gserviceaccount.com%2F20260223%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260223T093457Z&X-Goog-Expires=900&X-Goog-SignedHeaders=host&X-Goog-Signature=1722b686271da463a84f9ea4e96aaa123f27e8ba63677565a937ef13476e9d7497a30d9863c7a1828ea890a00963b67fbe2f6306da6210a0c7ea3d6747d6121bb010ac313b69fc5297ca4a92f3228b6c37904279a76c3c75077acf9873a23ec1a09e12798fa73c062ad2a29752fd349911bc867214d778b3cb4a0cb8eff8ba3a09ca0e9ee9dca8d8491da3179abafac46e486c212cdfadb9e931ca07f32d55c125d1d670471842809a88cd1f35c7e13981129627d2af40d8f42b5f029e204d60d6ace667b95ad1237f079e16b2472bddb4745affd2c510cc5102f53a82be0bd197eb83734682cae2b8baeca02bfffb5382d4563e9989428daeefa9d7fb0753df",
+    "https://job-logs.eascdn.net/production/f79cbc66-9223-4a34-bb80-56713a0f4924/1771838429982-349c4474-7532-493a-8969-438797829148.txt?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=www-production%40exponentjs.iam.gserviceaccount.com%2F20260223%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260223T093457Z&X-Goog-Expires=900&X-Goog-SignedHeaders=host&X-Goog-Signature=3d4519825094be60c9da73b40ccd20f1a1f938c3cd3718f72c936cb35a9dd5832ff2804749a11929c93106bc5dc844ee15217484dd6b149ba2f57f1208bd9ff1cd7d874325170cb3b3c43deb3c48beb036fdc4b4ae27e89770fe612a875e5925974f626660cacefd8a9ba559c9eda823d54cb23ca5edc78fd376875d55e4c48e97f38a66cbe4ff39509f0a9eee4333d2bca0bd3a4ec0057d8346c6fb8ed4c4d89b580fda791d060c0c83ef29e079d318db8d0963e054fe2c7f52234c7f4420313d306810e6f311b8ecaaed32a017eb57025c9597620523ab9205f2b953c1e8dfff99de770bb9311e92759e74ae3157185a81e4004ffb2137aeba2ff8fc0e0b32",
+    "https://job-logs.eascdn.net/production/f79cbc66-9223-4a34-bb80-56713a0f4924/1771838430153-594dccd9-2d5d-42df-9f48-15e365c6317d.txt?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=www-production%40exponentjs.iam.gserviceaccount.com%2F20260223%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260223T093457Z&X-Goog-Expires=900&X-Goog-SignedHeaders=host&X-Goog-Signature=5d05340b7aecc96d23821dabd8ac0cfea7d759f5117106a30f0cb8ca047a3aff7e5ac9f75949542e685f5b4af6f63a5b660df3cba5d3783c426324573c244d5cb03b59f2f612059048e321ca068454daa68c6776d8f69a1d3e5a4bd8b8defaf627a4c5203f0749f66afed64a96e938fcbbbb51a5b04e55675a259e38326f952041b72ecdb2c26581a4281d5789224672215494109756c6318a012b66bb7a6a4a50882339a3c8a237eaae2b2342c1ace50f6dd7be7f7faa2c7fbaf70e4a3d9e7b2245e75675946330d036f46ac92bf48900839c92d27764aa6c19924649e555b3e64c17839a9c457655374696d507aad281e4de1e4960b3868190fa8e3b4e2f27"
+  ],
+  "project": {
+    "id": "0b2a61f3-1c01-4684-8f41-ca63b1c308a8",
+    "name": "community-medicine",
+    "slug": "community-medicine",
+    "ownerAccount": {
+      "id": "1cfcdcb2-77d8-407f-a297-827da7765ea8",
+      "name": "anshuxinha"
+    }
+  },
+  "distribution": "INTERNAL",
+  "buildProfile": "preview",
+  "sdkVersion": "54.0.0",
+  "appVersion": "1.0.0",
+  "appBuildVersion": "1",
+  "gitCommitHash": "8babd6f3d147f0e74ce3246ec633a3d35313eede",
+  "gitCommitMessage": "fix: suppress Pyre type linter errors in push_notifications.py",
+  "priority": "NORMAL_PLUS",
+  "createdAt": "2026-02-23T09:20:23.089Z",
+  "updatedAt": "2026-02-23T09:31:29.746Z",
+  "completedAt": "2026-02-23T09:31:22.139Z",
+  "expirationDate": "2026-03-09T09:20:23.126Z",
+  "isForIosSimulator": false,
+  "metrics": {
+    "buildWaitTime": 128,
+    "buildQueueTime": 47425,
+    "buildDuration": 611159
+  }
+}

@@ -1,11 +1,13 @@
 import React, { useContext } from 'react';
-import { ScrollView, View, StyleSheet, Linking } from 'react-native';
+import { ScrollView, View, StyleSheet, Linking, Platform } from 'react-native';
 import { Text, Card, ProgressBar, Button, Dialog, Portal, Paragraph } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import recentUpdates from '../data/updates.json';
 import { AppContext } from '../context/AppContext';
 
-const DashboardScreen = () => {
+import { MaterialIcons } from '@expo/vector-icons';
+
+const DashboardScreen = ({ navigation }) => {
     const { readingProgress, currentStreak, studyScore } = useContext(AppContext);
 
     const [visible, setVisible] = React.useState(false);
@@ -18,13 +20,25 @@ const DashboardScreen = () => {
 
     const hideDialog = () => setVisible(false);
 
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour < 12) return 'Good morning';
+        if (hour < 18) return 'Good afternoon';
+        return 'Good evening';
+    };
+
+    const getFormattedDate = () => {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date().toLocaleDateString(undefined, options);
+    };
+
     return (
         <SafeAreaView style={styles.safeArea}>
             <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
                 {/* Step 3: UI Layout - Progress Section */}
                 <View style={styles.headerSection}>
-                    <Text variant="headlineMedium" style={styles.welcomeText}>Welcome back, Dr. User!</Text>
-                    <Text variant="bodyLarge" style={styles.subText}>Here is your learning overview.</Text>
+                    <Text style={styles.welcomeText}>{getGreeting()},{'\n'}Dr. User</Text>
+                    <Text variant="bodyLarge" style={styles.subText}>{getFormattedDate()}</Text>
                 </View>
 
                 <Card style={styles.progressCard}>
@@ -32,7 +46,7 @@ const DashboardScreen = () => {
                     <Card.Content>
                         <ProgressBar
                             progress={readingProgress}
-                            color="#6200ee"
+                            color="#A855F7" // Soft purple
                             style={styles.progressBar}
                         />
                         <Text variant="bodyMedium" style={styles.progressText}>
@@ -54,6 +68,31 @@ const DashboardScreen = () => {
                             <Text variant="displaySmall">⭐</Text>
                             <Text variant="titleLarge" style={styles.statValue}>{studyScore}</Text>
                             <Text variant="labelMedium">Study Score</Text>
+                        </Card.Content>
+                    </Card>
+                </View>
+
+                {/* Step 3.5: UI Layout - Quick Access Modules */}
+                <Text variant="titleLarge" style={styles.sectionTitle}>
+                    Quick Access
+                </Text>
+                <View style={styles.quickAccessRow}>
+                    <Card style={styles.quickCard} onPress={() => navigation.navigate('FieldToolbox')}>
+                        <Card.Content style={styles.quickCardContent}>
+                            <MaterialIcons name="build" size={32} color="#8A2BE2" />
+                            <Text variant="labelMedium" style={styles.quickText}>Toolbox</Text>
+                        </Card.Content>
+                    </Card>
+                    <Card style={[styles.quickCard, { marginHorizontal: 8 }]} onPress={() => navigation.navigate('VirtualMuseum')}>
+                        <Card.Content style={styles.quickCardContent}>
+                            <MaterialIcons name="museum" size={32} color="#8A2BE2" />
+                            <Text variant="labelMedium" style={styles.quickText}>Museum</Text>
+                        </Card.Content>
+                    </Card>
+                    <Card style={styles.quickCard} onPress={() => navigation.navigate('BiostatsAssistant')}>
+                        <Card.Content style={styles.quickCardContent}>
+                            <MaterialIcons name="insert-chart" size={32} color="#8A2BE2" />
+                            <Text variant="labelMedium" style={styles.quickText}>Biostats</Text>
                         </Card.Content>
                     </Card>
                 </View>
@@ -114,90 +153,137 @@ const DashboardScreen = () => {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#f5f7fa',
+        backgroundColor: '#FBFCFE',
     },
     container: {
         flex: 1,
-        backgroundColor: '#f5f7fa',
     },
     contentContainer: {
-        padding: 16,
+        padding: 24,
         paddingBottom: 32,
     },
     headerSection: {
-        marginBottom: 20,
-        marginTop: 8,
+        marginBottom: 24,
+        marginTop: 16,
     },
     welcomeText: {
-        fontWeight: 'bold',
-        color: '#1c1b1f',
+        fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif',
+        fontSize: 36,
+        color: '#111827',
+        lineHeight: 40,
     },
     subText: {
-        color: '#49454f',
-        marginTop: 4,
+        color: '#6B7280',
+        marginTop: 8,
     },
     progressCard: {
         marginBottom: 24,
-        backgroundColor: '#ffffff',
-        elevation: 2,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 20,
+        elevation: 4,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.05,
+        shadowRadius: 10,
     },
     cardTitle: {
         fontWeight: 'bold',
+        fontSize: 16,
     },
     progressBar: {
-        height: 8,
-        borderRadius: 4,
+        height: 12,
+        borderRadius: 6,
         marginVertical: 12,
-        backgroundColor: '#e6e0e9',
+        backgroundColor: '#F3F4F6',
     },
     progressText: {
         textAlign: 'right',
-        color: '#49454f',
+        color: '#4B5563',
         fontWeight: '600',
     },
     statsRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 24,
+        marginBottom: 32,
     },
     statCard: {
         flex: 1,
-        backgroundColor: '#ffffff',
-        elevation: 2,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 20,
+        elevation: 4,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.05,
+        shadowRadius: 10,
     },
     statContent: {
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: 12,
+        paddingVertical: 16,
     },
     statValue: {
         fontWeight: 'bold',
-        color: '#1c1b1f',
+        fontSize: 24,
+        color: '#111827',
         marginVertical: 4,
     },
     sectionTitle: {
         fontWeight: 'bold',
+        fontSize: 20,
         marginBottom: 16,
-        color: '#1c1b1f',
+        color: '#111827',
+    },
+    quickAccessRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 32,
+    },
+    quickCard: {
+        flex: 1,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 16,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 8,
+    },
+    quickCardContent: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 4,
+    },
+    quickText: {
+        marginTop: 8,
+        fontWeight: 'bold',
+        color: '#4B5563',
     },
     updateCard: {
         marginBottom: 16,
-        backgroundColor: '#ffffff',
-        elevation: 1,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 16,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 8,
     },
     dateText: {
-        color: '#6750a4',
+        color: '#8A2BE2',
         marginBottom: 6,
         fontWeight: 'bold',
+        fontSize: 12,
     },
     updateTitle: {
         fontWeight: 'bold',
+        fontSize: 18,
         marginBottom: 8,
-        color: '#1c1b1f',
+        color: '#111827',
     },
     updateSummary: {
-        color: '#49454f',
-        lineHeight: 20,
+        color: '#6B7280',
+        lineHeight: 22,
     },
 });
 

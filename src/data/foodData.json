@@ -1,0 +1,79 @@
+[
+    {
+        "id": "1",
+        "name": "Rice (Raw)",
+        "calories": 345,
+        "protein": 6.8,
+        "fat": 0.5
+    },
+    {
+        "id": "2",
+        "name": "Wheat Flour (Atta)",
+        "calories": 341,
+        "protein": 12.1,
+        "fat": 1.7
+    },
+    {
+        "id": "3",
+        "name": "Dal (Arhar/Toor)",
+        "calories": 335,
+        "protein": 22.3,
+        "fat": 1.7
+    },
+    {
+        "id": "4",
+        "name": "Milk (Cow)",
+        "calories": 67,
+        "protein": 3.2,
+        "fat": 4.1
+    },
+    {
+        "id": "5",
+        "name": "Milk (Buffalo)",
+        "calories": 117,
+        "protein": 4.3,
+        "fat": 6.5
+    },
+    {
+        "id": "6",
+        "name": "Cooking Oil / Ghee",
+        "calories": 900,
+        "protein": 0,
+        "fat": 100
+    },
+    {
+        "id": "7",
+        "name": "Sugar",
+        "calories": 398,
+        "protein": 0.1,
+        "fat": 0
+    },
+    {
+        "id": "8",
+        "name": "Green Leafy Veg (Spinach)",
+        "calories": 26,
+        "protein": 2.0,
+        "fat": 0.7
+    },
+    {
+        "id": "9",
+        "name": "Roots/Tubers (Potato)",
+        "calories": 97,
+        "protein": 1.6,
+        "fat": 0.1
+    },
+    {
+        "id": "10",
+        "name": "Egg (Whole)",
+        "calories": 173,
+        "protein": 13.3,
+        "fat": 13.3
+    },
+    {
+        "id": "11",
+        "name": "Chicken (Lean)",
+        "calories": 109,
+        "protein": 25.9,
+        "fat": 0.6
+    }
+]

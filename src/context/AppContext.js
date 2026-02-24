@@ -2,18 +2,34 @@ import React, { createContext, useState, useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 import * as Device from 'expo-device';
-import * as Notifications from 'expo-notifications';
+// import * as Notifications from 'expo-notifications'; // Disabled for Expo Go SDK 53 Compatibility
+import Constants from 'expo-constants';
 import { db } from '../config/firebase';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import * as Notifications from 'expo-notifications';
+import Purchases from 'react-native-purchases';
 import mockData from '../data/mockData.json';
+import practicalData from '../data/practical.json';
 
-Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldPlaySound: true,
-        shouldSetBadge: false,
-    }),
-});
+const allData = [...mockData, ...practicalData];
+
+// Create a safe reference that bypasses execution when on Expo Go
+const SafeNotifications = null;
+
+// Only set up notifications if we are on a real device and NOT in Expo Go (to avoid SDK 53 errors)
+if (SafeNotifications && Device.isDevice) {
+    try {
+        SafeNotifications.setNotificationHandler({
+            handleNotification: async () => ({
+                shouldShowAlert: true,
+                shouldPlaySound: true,
+                shouldSetBadge: false,
+            }),
+        });
+    } catch (e) {
+        console.log("Expo Notifications could not be initialized:", e);
+    }
+}
 
 export const AppContext = createContext();
 
@@ -53,7 +69,10 @@ export const AppProvider = ({ children }) => {
 
                 const storedBookmarks = await AsyncStorage.getItem('bookmarks');
                 if (storedBookmarks) {
-                    setBookmarks(JSON.parse(storedBookmarks));
+                    const parsed = JSON.parse(storedBookmarks);
+                    const validTitles = new Set(allData.map(item => item.title));
+                    const validBookmarks = parsed.filter(b => validTitles.has(b.title));
+                    setBookmarks(validBookmarks);
                 }
 
                 const storedHighlights = await AsyncStorage.getItem('highlights');
@@ -103,7 +122,7 @@ export const AppProvider = ({ children }) => {
             }
 
             // Calculate total items once at startup
-            const total = countTotalContentItems(mockData);
+            const total = countTotalContentItems(allData);
             setTotalItems(total > 0 ? total : 1); // Avoid division by zero
         };
 
@@ -146,26 +165,39 @@ export const AppProvider = ({ children }) => {
 
     async function registerForPushNotificationsAsync() {
         let token;
+
+        // Push notifications are not supported in Expo Go as of SDK 53
+        if (!SafeNotifications) {
+            console.log('Skipping push notification registration in Expo Go.');
+            return null;
+        }
+
         if (Device.isDevice) {
-            const { status: existingStatus } = await Notifications.getPermissionsAsync();
-            let finalStatus = existingStatus;
-            if (existingStatus !== 'granted') {
-                const { status } = await Notifications.requestPermissionsAsync();
-                finalStatus = status;
-            }
-            if (finalStatus !== 'granted') {
-                console.log('Push notification permission denied.');
+            try {
+                const { status: existingStatus } = await SafeNotifications.getPermissionsAsync();
+                let finalStatus = existingStatus;
+                if (existingStatus !== 'granted') {
+                    const { status } = await SafeNotifications.requestPermissionsAsync();
+                    finalStatus = status;
+                }
+                if (finalStatus !== 'granted') {
+                    console.log('Push notification permission denied.');
+                    return;
+                }
+                token = (await SafeNotifications.getExpoPushTokenAsync()).data;
+            } catch (err) {
+                console.log('Expo notification error:', err);
                 return;
             }
-            token = (await Notifications.getExpoPushTokenAsync()).data;
         } else {
             console.log('Must use physical device for Push Notifications');
+            return;
         }
 
         if (Platform.OS === 'android') {
-            await Notifications.setNotificationChannelAsync('default', {
+            await SafeNotifications.setNotificationChannelAsync('default', {
                 name: 'default',
-                importance: Notifications.AndroidImportance.MAX,
+                importance: SafeNotifications.AndroidImportance.MAX,
                 vibrationPattern: [0, 250, 250, 250],
                 lightColor: '#FF231F7C',
             });
@@ -228,7 +260,18 @@ export const AppProvider = ({ children }) => {
         }));
     };
 
-    const completeQuiz = (score) => {
+    // Payment SDK Initialization
+    useEffect(() => {
+        Purchases.configure({ apiKey: process.env.EXPO_PUBLIC_RC_API_KEY || "test_vulmIhXWwQBkNrLyBuwhSPgPwut" });
+
+        Purchases.addCustomerInfoUpdateListener((info) => {
+            if (info.entitlements.active['Premium'] !== undefined) {
+                setIsPremium(true);
+            }
+        });
+    }, []);
+
+    const completeDailyGoal = (score) => {
         setStudyScore((prev) => prev + score);
     };
 
@@ -247,6 +290,9 @@ export const AppProvider = ({ children }) => {
 
     const login = (userData) => {
         setUser(userData);
+        if (userData.isPremium !== undefined) {
+            setIsPremium(userData.isPremium);
+        }
     };
 
     const logout = () => {

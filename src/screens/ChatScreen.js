@@ -1,17 +1,54 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { TextInput, Button, Card, Text, Avatar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import mockData from '../data/mockData.json';
+import practicalData from '../data/practical.json';
 
 // Step 3: Textbook Context Optimization
-// We stringify the entire mock data and limit it to a predefined max length 
-// to ensure it fits within token limits, though 2.5 flash handles massive context windows.
-const TEXTBOOK_CONTEXT_STRING = JSON.stringify(mockData);
+// Instead of sending the entire textbook, we will find the most relevant section to the user's query
+// to keep token usage minimal and costs low.
 
-const GEMINI_API_KEY = "AIzaSyAtcVnqlN2oYlfdDGms35rx_lV_TGYUE3c";
+const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || "AIzaSyAtcVnqlN2oYlfdDGms35rx_lV_TGYUE3c";
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+// Helper to find relevant context
+const findRelevantContext = (query) => {
+    const lowerQuery = query.toLowerCase();
+    const allData = [...mockData, ...practicalData];
+
+    // Simple keyword matching to find the best chapter
+    let bestMatch = null;
+    let highestScore = 0;
+
+    for (const item of allData) {
+        let score = 0;
+        const titleWords = item.title.toLowerCase().split(' ');
+        const contentWords = (item.content || '').toLowerCase().split(' ');
+
+        // Check if query words exist in title (high weight) or content (lower weight)
+        const queryWords = lowerQuery.split(/\s+/);
+        queryWords.forEach(word => {
+            if (word.length > 3) { // Ignore short words like "is", "the"
+                if (titleWords.some(t => t.includes(word))) score += 5;
+                if (contentWords.some(c => c.includes(word))) score += 1;
+            }
+        });
+
+        if (score > highestScore) {
+            highestScore = score;
+            bestMatch = item;
+        }
+    }
+
+    // If we have a good match, return its content, otherwise return a broad summary
+    if (bestMatch && highestScore > 0) {
+        return `Relevant Section: ${bestMatch.title}\n\n${bestMatch.content || JSON.stringify(bestMatch.subsections)}`;
+    }
+
+    return "The user's question does not perfectly match a specific chapter. Use your general knowledge of Community Medicine to answer.";
+};
 
 const ChatScreen = () => {
     // Step 2: State Management
@@ -43,12 +80,14 @@ const ChatScreen = () => {
         setInputText('');
         setIsLoading(true);
 
+        const relevantContext = findRelevantContext(userMessage.text);
+
         const promptTemplate = `
-You are a Community Medicine tutor. Answer the user's question accurately using ONLY the following textbook data. 
+You are a Community Medicine tutor. Answer the user's question accurately using ONLY the following textbook data if it is relevant. 
 If the answer is not in the data, state that you do not know. 
 
-Textbook Data: 
-${TEXTBOOK_CONTEXT_STRING}
+Relevant Textbook Data: 
+${relevantContext}
 
 User Question: 
 ${userMessage.text}`;
@@ -109,7 +148,7 @@ ${userMessage.text}`;
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 80}
             >
                 <View style={styles.header}>
-                    <Text variant="headlineMedium">AI Tutor</Text>
+                    <FontAwesome name="circle" size={40} color="#A855F7" style={styles.headerOrb} />
                 </View>
 
                 <ScrollView
@@ -117,33 +156,26 @@ ${userMessage.text}`;
                     style={styles.messageList}
                     contentContainerStyle={styles.messageListContent}
                 >
-                    {messages.map((msg) => (
-                        <View
-                            key={msg.id}
-                            style={[
-                                styles.messageWrapper,
-                                msg.sender === 'user' ? styles.messageWrapperUser : styles.messageWrapperAI,
-                            ]}
-                        >
-                            {msg.sender === 'ai' && (
-                                <Avatar.Icon size={32} icon={({ size, color }) => <MaterialIcons name="face" size={size} color={color} />} style={styles.avatar} />
-                            )}
-                            <Card
-                                style={[
-                                    styles.messageCard,
-                                    msg.sender === 'user' ? styles.messageCardUser : styles.messageCardAI,
-                                ]}
-                            >
-                                <Card.Content>
-                                    <Text
-                                        style={msg.sender === 'user' ? styles.messageTextUser : styles.messageTextAI}
-                                    >
-                                        {msg.text}
-                                    </Text>
-                                </Card.Content>
-                            </Card>
-                        </View>
-                    ))}
+                    {messages.map((msg) => {
+                        if (msg.sender === 'user') {
+                            return (
+                                <View key={msg.id} style={styles.messageWrapperUser}>
+                                    <View style={styles.userMessageBubbleLabel}>
+                                        <Text style={styles.messageTextUser}>{msg.text}</Text>
+                                        <View style={styles.userMessageUnderline} />
+                                    </View>
+                                </View>
+                            );
+                        } else {
+                            return (
+                                <View key={msg.id} style={styles.messageWrapperAI}>
+                                    <View style={styles.messageCardAI}>
+                                        <Text style={styles.messageTextAI}>{msg.text}</Text>
+                                    </View>
+                                </View>
+                            );
+                        }
+                    })}
                     {isLoading && (
                         <View style={styles.loadingContainer}>
                             <ActivityIndicator size="small" color="#6200ee" />
@@ -152,25 +184,36 @@ ${userMessage.text}`;
                     )}
                 </ScrollView>
 
-                <View style={styles.inputContainer}>
-                    <TextInput
-                        style={styles.textInput}
-                        mode="outlined"
-                        placeholder="Ask a question..."
-                        value={inputText}
-                        onChangeText={setInputText}
-                        multiline
-                        disabled={isLoading}
-                    />
-                    <Button
-                        mode="contained"
-                        onPress={sendMessage}
-                        disabled={isLoading || inputText.trim() === ''}
-                        style={styles.sendButton}
-                        icon={({ size, color }) => <MaterialIcons name="send" size={size} color={color} />}
-                    >
-                        Send
-                    </Button>
+                <View style={styles.bottomSection}>
+                    {/* Quick action pills */}
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.quickActions} contentContainerStyle={styles.quickActionsContent}>
+                        {['Explain this diagram', 'Summarize chapter', 'More'].map((action, index) => (
+                            <TouchableOpacity key={index} style={styles.actionPill} onPress={() => setInputText(action)}>
+                                <Text style={styles.actionPillText}>{action}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
+
+                    <View style={styles.inputContainer}>
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder="Ask anything..."
+                            placeholderTextColor="#9CA3AF"
+                            value={inputText}
+                            onChangeText={setInputText}
+                            multiline
+                            disabled={isLoading}
+                            activeUnderlineColor="transparent"
+                            underlineColor="transparent"
+                        />
+                        <TouchableOpacity
+                            onPress={sendMessage}
+                            disabled={isLoading || inputText.trim() === ''}
+                            style={styles.sendButton}
+                        >
+                            <MaterialIcons name="send" size={24} color="#8A2BE2" style={{ transform: [{ rotate: '-45deg' }] }} />
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </KeyboardAvoidingView>
         </SafeAreaView>
@@ -180,57 +223,67 @@ ${userMessage.text}`;
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#ffffff',
+        backgroundColor: '#FBFCFE',
     },
     container: {
         flex: 1,
-        backgroundColor: '#f4f6f8',
     },
     header: {
-        padding: 16,
-        backgroundColor: '#ffffff',
-        borderBottomWidth: 1,
-        borderBottomColor: '#e0e0e0',
+        alignItems: 'center',
+        paddingVertical: 16,
+    },
+    headerOrb: {
+        elevation: 10,
+        shadowColor: '#A855F7',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.5,
+        shadowRadius: 10,
     },
     messageList: {
         flex: 1,
     },
     messageListContent: {
-        padding: 16,
+        padding: 24,
         paddingBottom: 24,
     },
-    messageWrapper: {
-        flexDirection: 'row',
-        marginBottom: 16,
-        alignItems: 'flex-end',
-    },
     messageWrapperUser: {
-        justifyContent: 'flex-end',
+        alignItems: 'flex-end',
+        marginBottom: 24,
     },
-    messageWrapperAI: {
-        justifyContent: 'flex-start',
-    },
-    avatar: {
-        marginRight: 8,
-        backgroundColor: '#6200ee',
-    },
-    messageCard: {
+    userMessageBubbleLabel: {
         maxWidth: '80%',
-        borderRadius: 16,
-    },
-    messageCardUser: {
-        backgroundColor: '#6200ee',
-        borderBottomRightRadius: 4,
-    },
-    messageCardAI: {
-        backgroundColor: '#ffffff',
-        borderBottomLeftRadius: 4,
     },
     messageTextUser: {
-        color: '#ffffff',
+        color: '#111827',
+        fontSize: 18,
+        fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif',
+        marginBottom: 4,
+    },
+    userMessageUnderline: {
+        height: 2,
+        backgroundColor: '#A855F7', // Purple underline
+        width: '100%',
+    },
+    messageWrapperAI: {
+        alignItems: 'flex-start',
+        marginBottom: 24,
+    },
+    messageCardAI: {
+        maxWidth: '85%',
+        backgroundColor: '#FFFFFF',
+        borderRadius: 12,
+        padding: 16,
+        elevation: 4,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.05,
+        shadowRadius: 10,
     },
     messageTextAI: {
-        color: '#1c1b1f',
+        color: '#111827',
+        fontSize: 16,
+        fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif',
+        lineHeight: 24,
     },
     loadingContainer: {
         flexDirection: 'row',
@@ -239,26 +292,55 @@ const styles = StyleSheet.create({
     },
     loadingText: {
         marginLeft: 8,
-        color: '#666',
+        color: '#9CA3AF',
         fontStyle: 'italic',
+    },
+    bottomSection: {
+        backgroundColor: '#FBFCFE',
+        paddingBottom: 16,
+    },
+    quickActions: {
+        marginBottom: 16,
+    },
+    quickActionsContent: {
+        paddingHorizontal: 16,
+    },
+    actionPill: {
+        backgroundColor: '#E5E7EB',
+        borderRadius: 20,
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        marginRight: 8,
+    },
+    actionPillText: {
+        color: '#111827',
+        fontSize: 14,
+        fontWeight: '500',
     },
     inputContainer: {
         flexDirection: 'row',
-        padding: 12,
-        backgroundColor: '#ffffff',
-        alignItems: 'flex-end',
-        borderTopWidth: 1,
-        borderTopColor: '#e0e0e0',
+        alignItems: 'center',
+        marginHorizontal: 16,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 30,
+        paddingLeft: 16,
+        paddingRight: 8,
+        minHeight: 56,
+        elevation: 4,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 8,
     },
     textInput: {
         flex: 1,
-        maxHeight: 120,
-        backgroundColor: '#ffffff',
+        backgroundColor: 'transparent',
+        fontSize: 16,
     },
     sendButton: {
-        marginLeft: 8,
-        marginBottom: 4,
+        padding: 8,
         justifyContent: 'center',
+        alignItems: 'center',
     },
 });
 

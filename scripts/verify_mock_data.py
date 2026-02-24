@@ -9,6 +9,7 @@ GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyAtcVnqlN2oYlfdDGms35rx_
 GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
 
 MOCK_DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'src', 'data', 'mockData.json')
+PRACTICAL_DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'src', 'data', 'practical.json')
 
 def call_gemini_to_verify(text_content):
     """
@@ -56,12 +57,13 @@ def call_gemini_to_verify(text_content):
         
     return text_content # Fallback to original if API fails
 
-def verify_and_update_data():
+def process_file_verification(file_path):
     try:
-        with open(MOCK_DATA_PATH, 'r', encoding='utf-8') as f:
+        with open(file_path, 'r', encoding='utf-8') as f:
             data: List[Dict[str, Any]] = json.load(f)
             
-        print(f"Loaded {len(data)} chapters for verification.")
+        filename = os.path.basename(file_path)
+        print(f"\n--- Verifying {filename} ({len(data)} chapters) ---")
         
         # 1. Strip all existing 'recentlyUpdated' flags globally from previous weeks
         for item in data:
@@ -109,20 +111,24 @@ def verify_and_update_data():
             time.sleep(2)
             
         if int(updates_made) > 0:
-            print(f"\nVerification complete. {updates_made} sections were updated.")
-            with open(MOCK_DATA_PATH, 'w', encoding='utf-8') as f:
+            print(f"\nVerification complete for {filename}. {updates_made} sections were updated.")
+            with open(file_path, 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=4)
-            print("Successfully wrote updated data to mockData.json.")
+            print(f"Successfully wrote updated data to {filename}.")
         else:
-            print("\nVerification complete. No factual changes were needed. Data is up-to-date.")
+            print(f"\nVerification complete for {filename}. No factual changes were needed. Data is up-to-date.")
             
     except FileNotFoundError:
-        print(f"Error: Could not find mock data file at {MOCK_DATA_PATH}")
+        print(f"Error: Could not find mock data file at {file_path}")
     except json.JSONDecodeError:
-        print("Error: mockData.json is not valid JSON.")
+        print(f"Error: {file_path} is not valid JSON.")
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
 
+def verify_and_update_all():
+    process_file_verification(MOCK_DATA_PATH)
+    process_file_verification(PRACTICAL_DATA_PATH)
+
 if __name__ == "__main__":
-    print("Starting automated verification of mockData.json against current medical guidelines...")
-    verify_and_update_data()
+    print("Starting automated verification of data files against current medical guidelines...")
+    verify_and_update_all()
