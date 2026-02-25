@@ -317,7 +317,7 @@ export const AppProvider = ({ children }) => {
                 isBookmarked,
                 toggleBookmark,
                 saveHighlight,
-                completeQuiz,
+                completeQuiz: completeDailyGoal,
                 clearStorage,
                 user,
                 isPremium,
