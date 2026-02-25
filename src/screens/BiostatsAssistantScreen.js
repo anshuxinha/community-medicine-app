@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Text, TextInput, Button, Card, Title, Divider, SegmentedButtons } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 
-// ── Chi-Square & Solver logic ────────────────────────────────────────────────
 function calcChi2(a, b, c, d) {
     const n = a + b + c + d;
     const chi2 = n * Math.pow(Math.abs(a * d - b * c) - n / 2, 2) /
@@ -21,41 +20,31 @@ function calcChi2(a, b, c, d) {
 function calcEfficacy(arV, arU) { return { ve: (((arU - arV) / arU) * 100).toFixed(1) }; }
 function calcIMR(deaths, births) { return { imr: ((deaths / births) * 1000).toFixed(1) }; }
 
-// ── Sample Size formulas ─────────────────────────────────────────────────────
-// z-values for common confidence levels
 function zForCI(ci) {
     if (ci === 99) return 2.576;
     if (ci === 95) return 1.96;
     if (ci === 90) return 1.645;
     return 1.96;
 }
-
-// 1. Single proportion (cross-sectional / prevalence study)
 function ssSingleProp({ p, e, ci }) {
     const z = zForCI(ci);
-    const n = (z * z * p * (1 - p)) / (e * e);
-    return Math.ceil(n);
+    return Math.ceil((z * z * p * (1 - p)) / (e * e));
 }
-
-// 2. Comparing two proportions (case-control / cohort / RCT)
 function ssTwoProps({ p1, p2, ci, power }) {
     const z_alpha = zForCI(ci);
     const z_beta = power === 90 ? 1.282 : power === 80 ? 0.842 : power === 95 ? 1.645 : 0.842;
     const p_bar = (p1 + p2) / 2;
-    const n = Math.pow(z_alpha * Math.sqrt(2 * p_bar * (1 - p_bar)) + z_beta * Math.sqrt(p1 * (1 - p1) + p2 * (1 - p2)), 2)
-        / Math.pow(p1 - p2, 2);
-    return Math.ceil(n);
+    return Math.ceil(
+        Math.pow(z_alpha * Math.sqrt(2 * p_bar * (1 - p_bar)) + z_beta * Math.sqrt(p1 * (1 - p1) + p2 * (1 - p2)), 2)
+        / Math.pow(p1 - p2, 2)
+    );
 }
-
-// 3. Comparing two means (unpaired t-test)
 function ssTwoMeans({ sd, delta, ci, power }) {
     const z_alpha = zForCI(ci);
     const z_beta = power === 90 ? 1.282 : power === 80 ? 0.842 : power === 95 ? 1.645 : 0.842;
-    const n = (2 * Math.pow((z_alpha + z_beta) * sd, 2)) / Math.pow(delta, 2);
-    return Math.ceil(n);
+    return Math.ceil((2 * Math.pow((z_alpha + z_beta) * sd, 2)) / Math.pow(delta, 2));
 }
 
-// Preset MCQ problems (shown in Solver tab below solver tools)
 const PRESET_PROBLEMS = [
     {
         id: '1', title: 'Chi-Square Example', type: 'chi2',
@@ -74,23 +63,31 @@ const PRESET_PROBLEMS = [
     },
 ];
 
-// ── Main screen ──────────────────────────────────────────────────────────────
+// Y-offsets for each solver card so we can scroll to them accurately
+const SOLVER_OFFSETS = { chi2: 0, efficacy: 0, imr: 0 };
+
 const BiostatsAssistantScreen = () => {
     const [tab, setTab] = useState('samplesize');
+    const scrollRef = useRef(null);
 
-    // ── Sample Size state ──────────────────────────────────────────────────
-    const [ssType, setSsType] = useState('prop1');       // prop1 | prop2 | means
+    // Layout tracking refs for the 3 solver cards
+    const chi2Ref = useRef(null);
+    const efficacyRef = useRef(null);
+    const imrRef = useRef(null);
+
+    // Sample Size state
+    const [ssType, setSsType] = useState('prop1');
     const [ssCI, setSsCI] = useState(95);
     const [ssPower, setSsPower] = useState(80);
-    const [ssP, setSsP] = useState('0.50');              // single proportion
-    const [ssE, setSsE] = useState('0.05');              // margin of error
-    const [ssP1, setSsP1] = useState('');                // two proportions
+    const [ssP, setSsP] = useState('0.50');
+    const [ssE, setSsE] = useState('0.05');
+    const [ssP1, setSsP1] = useState('');
     const [ssP2, setSsP2] = useState('');
-    const [ssSd, setSsSd] = useState('');                // means
+    const [ssSd, setSsSd] = useState('');
     const [ssDelta, setSsDelta] = useState('');
     const [ssResult, setSsResult] = useState(null);
 
-    // ── Solver state ───────────────────────────────────────────────────────
+    // Solver state
     const [a, setA] = useState(''); const [b, setB] = useState('');
     const [c, setC] = useState(''); const [d, setD] = useState('');
     const [arV, setArV] = useState(''); const [arU, setArU] = useState('');
@@ -98,7 +95,6 @@ const BiostatsAssistantScreen = () => {
     const [result, setResult] = useState(null);
     const [resultType, setResultType] = useState('');
 
-    // Sample size calculate
     const calculateSS = () => {
         try {
             if (ssType === 'prop1') {
@@ -117,7 +113,6 @@ const BiostatsAssistantScreen = () => {
         } catch (e) { setSsResult({ error: 'Calculation error. Check your inputs.' }); }
     };
 
-    // Solver tools
     const runChi2 = () => {
         const vals = [a, b, c, d].map(Number);
         if (vals.some(isNaN)) { setResult({ error: 'Enter numbers in all four cells.' }); return; }
@@ -133,16 +128,44 @@ const BiostatsAssistantScreen = () => {
         if (isNaN(d2) || isNaN(b2)) { setResult({ error: 'Enter valid numbers.' }); return; }
         setResultType('imr'); setResult(calcIMR(d2, b2));
     };
+
+    // Load preset and scroll to the relevant solver section
     const loadPreset = (preset) => {
         setResult(null);
-        if (preset.type === 'chi2') { setA(String(preset.data.a)); setB(String(preset.data.b)); setC(String(preset.data.c)); setD(String(preset.data.d)); }
-        else if (preset.type === 'efficacy') { setArV(String(preset.data.arV)); setArU(String(preset.data.arU)); }
-        else if (preset.type === 'imr') { setDeaths(String(preset.data.deaths)); setBirths(String(preset.data.births)); }
+        if (preset.type === 'chi2') {
+            setA(String(preset.data.a)); setB(String(preset.data.b));
+            setC(String(preset.data.c)); setD(String(preset.data.d));
+            setTimeout(() => {
+                chi2Ref.current?.measureLayout(
+                    scrollRef.current,
+                    (x, y) => scrollRef.current?.scrollTo({ y: y - 16, animated: true }),
+                    () => scrollRef.current?.scrollTo({ y: 0, animated: true })
+                );
+            }, 100);
+        } else if (preset.type === 'efficacy') {
+            setArV(String(preset.data.arV)); setArU(String(preset.data.arU));
+            setTimeout(() => {
+                efficacyRef.current?.measureLayout(
+                    scrollRef.current,
+                    (x, y) => scrollRef.current?.scrollTo({ y: y - 16, animated: true }),
+                    () => scrollRef.current?.scrollTo({ y: 200, animated: true })
+                );
+            }, 100);
+        } else if (preset.type === 'imr') {
+            setDeaths(String(preset.data.deaths)); setBirths(String(preset.data.births));
+            setTimeout(() => {
+                imrRef.current?.measureLayout(
+                    scrollRef.current,
+                    (x, y) => scrollRef.current?.scrollTo({ y: y - 16, animated: true }),
+                    () => scrollRef.current?.scrollTo({ y: 400, animated: true })
+                );
+            }, 100);
+        }
     };
 
     return (
         <SafeAreaView style={styles.safeArea}>
-            <ScrollView contentContainerStyle={styles.container}>
+            <ScrollView ref={scrollRef} contentContainerStyle={styles.container}>
                 <Text style={styles.headerText}>📊 Biostats Assistant</Text>
 
                 <SegmentedButtons
@@ -159,7 +182,6 @@ const BiostatsAssistantScreen = () => {
                 {/* ── TAB 1: SAMPLE SIZE CALCULATOR ── */}
                 {tab === 'samplesize' && (
                     <>
-                        {/* Study type selector */}
                         <Card style={styles.card}>
                             <Card.Content>
                                 <Title style={styles.cardTitle}>Study Design</Title>
@@ -168,21 +190,17 @@ const BiostatsAssistantScreen = () => {
                                     { value: 'prop2', label: '⚖️ Comparing Two Proportions (RCT / Cohort / Case-Control)' },
                                     { value: 'means', label: '📈 Comparing Two Means (Unpaired)' },
                                 ].map(opt => (
-                                    <Button
-                                        key={opt.value}
-                                        mode={ssType === opt.value ? 'contained' : 'outlined'}
+                                    <Button key={opt.value} mode={ssType === opt.value ? 'contained' : 'outlined'}
                                         onPress={() => { setSsType(opt.value); setSsResult(null); }}
                                         style={styles.typeBtn}
                                         labelStyle={{ color: ssType === opt.value ? '#FFF' : '#374151', fontSize: 13 }}
-                                        contentStyle={{ justifyContent: 'flex-start' }}
-                                    >
+                                        contentStyle={{ justifyContent: 'flex-start' }}>
                                         {opt.label}
                                     </Button>
                                 ))}
                             </Card.Content>
                         </Card>
 
-                        {/* Confidence Level */}
                         <Card style={styles.card}>
                             <Card.Content>
                                 <Title style={styles.cardTitle}>Confidence Level</Title>
@@ -195,7 +213,6 @@ const BiostatsAssistantScreen = () => {
                                         </Button>
                                     ))}
                                 </View>
-
                                 {(ssType === 'prop2' || ssType === 'means') && (
                                     <>
                                         <Title style={[styles.cardTitle, { marginTop: 12 }]}>Power (1-β)</Title>
@@ -213,7 +230,6 @@ const BiostatsAssistantScreen = () => {
                             </Card.Content>
                         </Card>
 
-                        {/* Study-specific inputs */}
                         <Card style={styles.card}>
                             <Card.Content>
                                 {ssType === 'prop1' && (
@@ -246,23 +262,16 @@ const BiostatsAssistantScreen = () => {
                                             onChangeText={setSsDelta} keyboardType="numeric" mode="outlined" style={styles.input} textColor="#111827" />
                                     </>
                                 )}
-                                <Button mode="contained" onPress={calculateSS} style={styles.btn}>
-                                    Calculate Sample Size
-                                </Button>
-
+                                <Button mode="contained" onPress={calculateSS} style={styles.btn}>Calculate Sample Size</Button>
                                 {ssResult && !ssResult.error && (
                                     <View style={[styles.resultBox, { borderLeftColor: '#8A2BE2' }]}>
                                         <Text style={{ color: '#6B7280', marginBottom: 4 }}>{ssResult.label}</Text>
-                                        <Text variant="displaySmall" style={{ fontWeight: 'bold', color: '#8A2BE2' }}>
-                                            n = {ssResult.n}
-                                        </Text>
+                                        <Text variant="displaySmall" style={{ fontWeight: 'bold', color: '#8A2BE2' }}>n = {ssResult.n}</Text>
                                         <Divider style={{ marginVertical: 8 }} />
                                         <Text style={{ color: '#374151', fontSize: 13 }}>
                                             CI: {ssCI}% {(ssType !== 'prop1') ? `| Power: ${ssPower}%` : ''}
                                         </Text>
-                                        <Text style={{ color: '#6B7280', fontSize: 12, marginTop: 4 }}>
-                                            Add 10–20% for expected non-response / dropout
-                                        </Text>
+                                        <Text style={{ color: '#6B7280', fontSize: 12, marginTop: 4 }}>Add 10–20% for expected non-response / dropout</Text>
                                     </View>
                                 )}
                                 {ssResult?.error && <Text style={styles.errText}>{ssResult.error}</Text>}
@@ -274,70 +283,75 @@ const BiostatsAssistantScreen = () => {
                 {/* ── TAB 2: SOLVER (+ MCQ presets merged in) ── */}
                 {tab === 'solver' && (
                     <>
-                        {/* Chi-Square */}
-                        <Card style={styles.card}>
-                            <Card.Content>
-                                <Title style={styles.cardTitle}>Chi-Square Test (2×2)</Title>
-                                <Text style={styles.hint}>Yates' corrected formula</Text>
-                                <View style={styles.grid2x2}>
-                                    <View style={styles.gridRow}>
-                                        <TextInput label="a (D+, E+)" value={a} onChangeText={setA} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor="#111827" />
-                                        <TextInput label="b (D–, E+)" value={b} onChangeText={setB} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor="#111827" />
+                        {/* Chi-Square — ref for scroll targeting */}
+                        <View ref={chi2Ref} collapsable={false}>
+                            <Card style={styles.card}>
+                                <Card.Content>
+                                    <Title style={styles.cardTitle}>Chi-Square Test (2×2)</Title>
+                                    <Text style={styles.hint}>Yates' corrected formula</Text>
+                                    <View style={styles.grid2x2}>
+                                        <View style={styles.gridRow}>
+                                            <TextInput label="a (D+, E+)" value={a} onChangeText={setA} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor="#111827" />
+                                            <TextInput label="b (D–, E+)" value={b} onChangeText={setB} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor="#111827" />
+                                        </View>
+                                        <View style={styles.gridRow}>
+                                            <TextInput label="c (D+, E–)" value={c} onChangeText={setC} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor="#111827" />
+                                            <TextInput label="d (D–, E–)" value={d} onChangeText={setD} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor="#111827" />
+                                        </View>
                                     </View>
-                                    <View style={styles.gridRow}>
-                                        <TextInput label="c (D+, E–)" value={c} onChangeText={setC} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor="#111827" />
-                                        <TextInput label="d (D–, E–)" value={d} onChangeText={setD} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor="#111827" />
-                                    </View>
-                                </View>
-                                <Button mode="contained" onPress={runChi2} style={styles.btn}>Calculate χ²</Button>
-                                {result && resultType === 'chi2' && !result.error && (
-                                    <View style={[styles.resultBox, { borderLeftColor: result.significant ? '#15803D' : '#B91C1C' }]}>
-                                        <Text style={{ fontWeight: 'bold', color: result.significant ? '#15803D' : '#B91C1C' }}>{result.result}</Text>
-                                    </View>
-                                )}
-                            </Card.Content>
-                        </Card>
+                                    <Button mode="contained" onPress={runChi2} style={styles.btn}>Calculate χ²</Button>
+                                    {result && resultType === 'chi2' && !result.error && (
+                                        <View style={[styles.resultBox, { borderLeftColor: result.significant ? '#15803D' : '#B91C1C' }]}>
+                                            <Text style={{ fontWeight: 'bold', color: result.significant ? '#15803D' : '#B91C1C' }}>{result.result}</Text>
+                                        </View>
+                                    )}
+                                </Card.Content>
+                            </Card>
+                        </View>
 
                         {/* Vaccine Efficacy */}
-                        <Card style={styles.card}>
-                            <Card.Content>
-                                <Title style={styles.cardTitle}>Vaccine Efficacy</Title>
-                                <Text style={styles.hint}>VE = (ARu – ARv) / ARu × 100</Text>
-                                <TextInput label="Attack Rate in Vaccinated (%)" value={arV} onChangeText={setArV} keyboardType="numeric" mode="outlined" style={styles.input} textColor="#111827" />
-                                <TextInput label="Attack Rate in Unvaccinated (%)" value={arU} onChangeText={setArU} keyboardType="numeric" mode="outlined" style={styles.input} textColor="#111827" />
-                                <Button mode="contained" onPress={runEfficacy} style={styles.btn}>Calculate VE</Button>
-                                {result && resultType === 'efficacy' && !result.error && (
-                                    <View style={[styles.resultBox, { borderLeftColor: '#8A2BE2' }]}>
-                                        <Text variant="headlineMedium" style={{ fontWeight: 'bold', color: '#6B21A8' }}>VE = {result.ve}%</Text>
-                                    </View>
-                                )}
-                            </Card.Content>
-                        </Card>
+                        <View ref={efficacyRef} collapsable={false}>
+                            <Card style={styles.card}>
+                                <Card.Content>
+                                    <Title style={styles.cardTitle}>Vaccine Efficacy</Title>
+                                    <Text style={styles.hint}>VE = (ARu – ARv) / ARu × 100</Text>
+                                    <TextInput label="Attack Rate in Vaccinated (%)" value={arV} onChangeText={setArV} keyboardType="numeric" mode="outlined" style={styles.input} textColor="#111827" />
+                                    <TextInput label="Attack Rate in Unvaccinated (%)" value={arU} onChangeText={setArU} keyboardType="numeric" mode="outlined" style={styles.input} textColor="#111827" />
+                                    <Button mode="contained" onPress={runEfficacy} style={styles.btn}>Calculate VE</Button>
+                                    {result && resultType === 'efficacy' && !result.error && (
+                                        <View style={[styles.resultBox, { borderLeftColor: '#8A2BE2' }]}>
+                                            <Text variant="headlineMedium" style={{ fontWeight: 'bold', color: '#6B21A8' }}>VE = {result.ve}%</Text>
+                                        </View>
+                                    )}
+                                </Card.Content>
+                            </Card>
+                        </View>
 
                         {/* IMR */}
-                        <Card style={styles.card}>
-                            <Card.Content>
-                                <Title style={styles.cardTitle}>Infant Mortality Rate (IMR)</Title>
-                                <Text style={styles.hint}>IMR = (Infant Deaths / Live Births) × 1000</Text>
-                                <TextInput label="Infant Deaths" value={deaths} onChangeText={setDeaths} keyboardType="numeric" mode="outlined" style={styles.input} textColor="#111827" />
-                                <TextInput label="Live Births" value={births} onChangeText={setBirths} keyboardType="numeric" mode="outlined" style={styles.input} textColor="#111827" />
-                                <Button mode="contained" onPress={runIMR} style={styles.btn}>Calculate IMR</Button>
-                                {result && resultType === 'imr' && !result.error && (
-                                    <View style={[styles.resultBox, { borderLeftColor: '#8A2BE2' }]}>
-                                        <Text variant="headlineMedium" style={{ fontWeight: 'bold', color: '#6B21A8' }}>IMR = {result.imr} / 1000 live births</Text>
-                                    </View>
-                                )}
-                            </Card.Content>
-                        </Card>
+                        <View ref={imrRef} collapsable={false}>
+                            <Card style={styles.card}>
+                                <Card.Content>
+                                    <Title style={styles.cardTitle}>Infant Mortality Rate (IMR)</Title>
+                                    <Text style={styles.hint}>IMR = (Infant Deaths / Live Births) × 1000</Text>
+                                    <TextInput label="Infant Deaths" value={deaths} onChangeText={setDeaths} keyboardType="numeric" mode="outlined" style={styles.input} textColor="#111827" />
+                                    <TextInput label="Live Births" value={births} onChangeText={setBirths} keyboardType="numeric" mode="outlined" style={styles.input} textColor="#111827" />
+                                    <Button mode="contained" onPress={runIMR} style={styles.btn}>Calculate IMR</Button>
+                                    {result && resultType === 'imr' && !result.error && (
+                                        <View style={[styles.resultBox, { borderLeftColor: '#8A2BE2' }]}>
+                                            <Text variant="headlineMedium" style={{ fontWeight: 'bold', color: '#6B21A8' }}>IMR = {result.imr} / 1000 live births</Text>
+                                        </View>
+                                    )}
+                                </Card.Content>
+                            </Card>
+                        </View>
 
                         {result?.error && <Text style={styles.errText}>{result.error}</Text>}
 
-                        {/* MCQ Presets merged below solvers */}
                         <Divider style={{ marginVertical: 16 }} />
-                        <Text style={[styles.headerText, { fontSize: 18, marginBottom: 8 }]}>📝 MCQ Presets</Text>
-                        <Text style={{ color: '#6B7280', marginBottom: 12 }}>Tap to load into the solver above.</Text>
+                        <Text style={[styles.headerText, { fontSize: 18, marginBottom: 4 }]}>📝 MCQ Presets</Text>
+                        <Text style={{ color: '#6B7280', marginBottom: 12 }}>Tap "Load" to fill the solver above and jump to it.</Text>
                         {PRESET_PROBLEMS.map(p => (
-                            <Card key={p.id} style={styles.card} onPress={() => loadPreset(p)}>
+                            <Card key={p.id} style={styles.card}>
                                 <Card.Content>
                                     <Title style={[styles.cardTitle, { fontSize: 15 }]}>{p.title}</Title>
                                     <Text style={{ color: '#374151', lineHeight: 20 }}>{p.description}</Text>
@@ -374,7 +388,6 @@ const BiostatsAssistantScreen = () => {
                         ))}
                     </>
                 )}
-
             </ScrollView>
         </SafeAreaView>
     );

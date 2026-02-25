@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform } from 'react-native';
+import { Platform, View, ActivityIndicator } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -97,6 +97,16 @@ const PremiumGuard = ({ navigation, route }) => {
 
 const AppNavigator = () => {
     const { user } = React.useContext(AppContext);
+
+    // undefined = still resolving auth state (onAuthStateChanged not yet fired)
+    if (user === undefined) {
+        return (
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#0D1B2A' }}>
+                <ActivityIndicator size="large" color="#8A2BE2" />
+            </View>
+        );
+    }
+
     return (
         <NavigationContainer>
             <Stack.Navigator>

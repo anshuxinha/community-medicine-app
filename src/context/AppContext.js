@@ -4,8 +4,9 @@ import { Platform } from 'react-native';
 import * as Device from 'expo-device';
 // import * as Notifications from 'expo-notifications'; // Disabled for Expo Go SDK 53 Compatibility
 import Constants from 'expo-constants';
-import { db } from '../config/firebase';
+import { db, auth } from '../config/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 import * as Notifications from 'expo-notifications';
 import Purchases from 'react-native-purchases';
 import mockData from '../data/mockData.json';
@@ -54,11 +55,52 @@ export const AppProvider = ({ children }) => {
     const [lastReadDate, setLastReadDate] = useState(null);
     const [studyScore, setStudyScore] = useState(0);
 
-    // Auth & Premium State
-    const [user, setUser] = useState(null);
+    // Auth & Premium State — null = not yet resolved, false/obj = resolved
+    const [user, setUser] = useState(undefined); // undefined = loading
     const [isPremium, setIsPremium] = useState(false);
 
-    // Initialize state from AsyncStorage
+    // ── Auth state listener (Firebase + AsyncStorage fallback) ────────────────
+    useEffect(() => {
+        // 1. Listen to Firebase auth state changes (handles real accounts)
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+            if (firebaseUser) {
+                // Real Firebase user — fetch premium status from Firestore
+                try {
+                    const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+                    const premiumStatus = userDoc.exists() ? userDoc.data().isPremium : false;
+                    const userData = {
+                        uid: firebaseUser.uid,
+                        email: firebaseUser.email,
+                        username: firebaseUser.displayName || 'User',
+                        isPremium: premiumStatus,
+                    };
+                    setUser(userData);
+                    setIsPremium(premiumStatus);
+                    await AsyncStorage.setItem('user', JSON.stringify(userData));
+                } catch {
+                    setUser(null);
+                }
+            } else {
+                // No Firebase session — check AsyncStorage for bypass/admin users
+                try {
+                    const storedUser = await AsyncStorage.getItem('user');
+                    if (storedUser) {
+                        const parsed = JSON.parse(storedUser);
+                        setUser(parsed);
+                        setIsPremium(parsed.isPremium || false);
+                    } else {
+                        setUser(null);
+                    }
+                } catch {
+                    setUser(null);
+                }
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+    // Initialize other state from AsyncStorage
     useEffect(() => {
         const loadState = async () => {
             try {
@@ -95,16 +137,6 @@ export const AppProvider = ({ children }) => {
                     setStudyScore(parseInt(storedScore, 10));
                 }
 
-                const storedUser = await AsyncStorage.getItem('user');
-                if (storedUser) {
-                    setUser(JSON.parse(storedUser));
-                }
-
-                const storedPremium = await AsyncStorage.getItem('isPremium');
-                if (storedPremium) {
-                    setIsPremium(JSON.parse(storedPremium));
-                }
-
                 // Check streak validity on load
                 if (storedLastRead) {
                     const lastDate = new Date(storedLastRead);
@@ -128,6 +160,7 @@ export const AppProvider = ({ children }) => {
 
         loadState();
     }, []);
+
 
     // Save state to AsyncStorage whenever it changes
     useEffect(() => {
