@@ -91,17 +91,13 @@ const LoginScreen = () => {
 
     return (
         <View style={styles.root}>
-            {/* Dark gradient top half */}
+            {/* Dark top half with full logo (icon + STROMA text baked in) */}
             <View style={styles.topHalf}>
-                {/* Logo */}
-                <View style={styles.logoWrap}>
-                    <Image
-                        source={require('../../assets/icon.png')}
-                        style={styles.logo}
-                        resizeMode="contain"
-                    />
-                </View>
-                <Text style={styles.brandName}>STROMA</Text>
+                <Image
+                    source={require('../../assets/icon.png')}
+                    style={styles.logo}
+                    resizeMode="contain"
+                />
                 <Text style={styles.brandTagline}>Community Medicine · Simplified</Text>
             </View>
 
@@ -206,29 +202,15 @@ const styles = StyleSheet.create({
 
     // ── Top dark half ────────────────────────────────────────────
     topHalf: {
-        height: 260,
+        height: 280,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingTop: 20,
+        paddingTop: 16,
     },
-    logoWrap: {
-        width: 100,
-        height: 100,
-        borderRadius: 28,
-        backgroundColor: 'rgba(138, 43, 226, 0.15)',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 12,
-        borderWidth: 1,
-        borderColor: 'rgba(192, 132, 252, 0.3)',
-    },
-    logo: { width: 85, height: 85 },
-    brandName: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: '#FFFFFF',
-        letterSpacing: 6,
-        marginBottom: 4,
+    logo: {
+        width: 240,
+        height: 220,
+        marginBottom: 2,
     },
     brandTagline: {
         fontSize: 13,
