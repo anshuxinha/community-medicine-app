@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#0D1B2A"
     },
     "ios": {
       "supportsTablet": true,
@@ -46,7 +46,15 @@
         }
       ],
       "@react-native-community/datetimepicker",
-      "expo-font"
+      "expo-font",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#8A2BE2",
+          "defaultChannel": "default"
+        }
+      ]
     ],
     "extra": {
       "eas": {

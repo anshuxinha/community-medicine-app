@@ -1,14 +1,17 @@
-import React, { useContext } from 'react';
-import { ScrollView, View, StyleSheet, Linking, Platform } from 'react-native';
+import React, { useContext, useState, useEffect } from 'react';
+import { ScrollView, View, StyleSheet, Linking, Platform, TouchableOpacity } from 'react-native';
 import { Text, Card, ProgressBar, Button, Dialog, Portal, Paragraph } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import recentUpdates from '../data/updates.json';
 import { AppContext } from '../context/AppContext';
-
 import { MaterialIcons } from '@expo/vector-icons';
+import DrawerMenu from '../components/DrawerMenu';
+import { scheduleAllNotifications } from '../services/notificationService';
+import { auth } from '../config/firebase';
 
 const DashboardScreen = ({ navigation }) => {
     const { readingProgress, currentStreak, studyScore } = useContext(AppContext);
+    const [drawerOpen, setDrawerOpen] = useState(false);
 
     const [visible, setVisible] = React.useState(false);
     const [selectedUpdate, setSelectedUpdate] = React.useState(null);
@@ -19,6 +22,10 @@ const DashboardScreen = ({ navigation }) => {
     };
 
     const hideDialog = () => setVisible(false);
+
+    useEffect(() => {
+        scheduleAllNotifications();
+    }, []);
 
     const getGreeting = () => {
         const hour = new Date().getHours();
@@ -34,8 +41,26 @@ const DashboardScreen = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.safeArea}>
+            {/* Animated side drawer */}
+            <DrawerMenu
+                visible={drawerOpen}
+                onClose={() => setDrawerOpen(false)}
+                user={auth.currentUser}
+            />
+
             <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-                {/* Step 3: UI Layout - Progress Section */}
+                {/* ── Top header bar ── */}
+                <View style={styles.topBar}>
+                    <TouchableOpacity onPress={() => setDrawerOpen(true)} style={styles.iconBtn}>
+                        <MaterialIcons name="menu" size={26} color="#111827" />
+                    </TouchableOpacity>
+                    <Text style={styles.appName}>STROMA</Text>
+                    <TouchableOpacity onPress={() => navigation.navigate('Notifications')} style={styles.iconBtn}>
+                        <MaterialIcons name="notifications-none" size={26} color="#111827" />
+                    </TouchableOpacity>
+                </View>
+
+                {/* Greeting */}
                 <View style={styles.headerSection}>
                     <Text style={styles.welcomeText}>{getGreeting()},{'\n'}Dr. User</Text>
                     <Text variant="bodyLarge" style={styles.subText}>{getFormattedDate()}</Text>
@@ -161,6 +186,27 @@ const styles = StyleSheet.create({
     contentContainer: {
         padding: 24,
         paddingBottom: 32,
+    },
+    topBar: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 8,
+        paddingTop: 4,
+    },
+    appName: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#111827',
+        letterSpacing: 2,
+    },
+    iconBtn: {
+        width: 40,
+        height: 40,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 20,
+        backgroundColor: '#F3F4F6',
     },
     headerSection: {
         marginBottom: 24,

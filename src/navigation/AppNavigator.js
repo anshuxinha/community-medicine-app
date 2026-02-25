@@ -20,13 +20,13 @@ import QuizScreen from '../screens/QuizScreen';
 import LoginScreen from '../screens/LoginScreen';
 import PaywallScreen from '../screens/PaywallScreen';
 
-// New Modules
 import FieldToolboxScreen from '../screens/FieldToolboxScreen';
 import SESCalculatorScreen from '../screens/SESCalculatorScreen';
 import DietarySurveyScreen from '../screens/DietarySurveyScreen';
 import AnthropometryScreen from '../screens/AnthropometryScreen';
 import VirtualMuseumScreen from '../screens/VirtualMuseumScreen';
 import BiostatsAssistantScreen from '../screens/BiostatsAssistantScreen';
+import NotificationsScreen from '../screens/NotificationsScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -129,6 +129,9 @@ const AppNavigator = () => {
                         {/* ── Paywall / Guards ── */}
                         <Stack.Screen name="Paywall" component={PaywallScreen} options={{ headerShown: false, presentation: 'fullScreenModal' }} />
                         <Stack.Screen name="PremiumGuard" component={PremiumGuard} options={{ headerShown: false, presentation: 'transparentModal' }} />
+
+                        {/* ── Drawer-linked screens ── */}
+                        <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ title: 'Notifications' }} />
                     </>
                 )}
             </Stack.Navigator>
