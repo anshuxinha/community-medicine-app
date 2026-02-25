@@ -42,7 +42,7 @@ const DashboardScreen = ({ navigation }) => {
                 </View>
 
                 <Card style={styles.progressCard}>
-                    <Card.Title title="Learning Progress" titleStyle={styles.cardTitle} />
+                    <Card.Title title="Learning Progress" titleStyle={styles.cardTitle} subtitleStyle={{ color: '#111827' }} />
                     <Card.Content>
                         <ProgressBar
                             progress={readingProgress}
@@ -60,14 +60,14 @@ const DashboardScreen = ({ navigation }) => {
                         <Card.Content style={styles.statContent}>
                             <Text variant="displaySmall">🔥</Text>
                             <Text variant="titleLarge" style={styles.statValue}>{currentStreak}</Text>
-                            <Text variant="labelMedium">Day Streak</Text>
+                            <Text variant="labelMedium" style={styles.statLabel}>Day Streak</Text>
                         </Card.Content>
                     </Card>
                     <Card style={[styles.statCard, { marginLeft: 8 }]}>
                         <Card.Content style={styles.statContent}>
                             <Text variant="displaySmall">⭐</Text>
                             <Text variant="titleLarge" style={styles.statValue}>{studyScore}</Text>
-                            <Text variant="labelMedium">Study Score</Text>
+                            <Text variant="labelMedium" style={styles.statLabel}>Study Score</Text>
                         </Card.Content>
                     </Card>
                 </View>
@@ -215,6 +215,10 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.05,
         shadowRadius: 10,
+    },
+    statLabel: {
+        color: '#374151',
+        fontWeight: '600',
     },
     statContent: {
         alignItems: 'center',

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { Text, Card, Title, Paragraph } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -14,8 +14,8 @@ const FieldToolboxScreen = ({ navigation }) => {
                     <Card.Content style={styles.cardContent}>
                         <MaterialIcons name="calculate" size={40} color="#8A2BE2" />
                         <View style={styles.textContainer}>
-                            <Title style={styles.cardTitle}>SES Calculator</Title>
-                            <Paragraph>Compute Socio-Economic Status (Modified Kuppuswamy & BG Prasad)</Paragraph>
+                            <Text style={styles.cardTitle}>SES Calculator</Text>
+                            <Text style={styles.cardDesc}>Compute Socio-Economic Status (Modified Kuppuswamy & BG Prasad)</Text>
                         </View>
                     </Card.Content>
                 </Card>
@@ -24,8 +24,8 @@ const FieldToolboxScreen = ({ navigation }) => {
                     <Card.Content style={styles.cardContent}>
                         <MaterialIcons name="restaurant-menu" size={40} color="#8A2BE2" />
                         <View style={styles.textContainer}>
-                            <Title style={styles.cardTitle}>Dietary Survey</Title>
-                            <Paragraph>Calculate Calories, Protein, and Fat intake vs Reference</Paragraph>
+                            <Text style={styles.cardTitle}>Dietary Survey</Text>
+                            <Text style={styles.cardDesc}>Calculate Calories, Protein, and Fat intake vs Reference</Text>
                         </View>
                     </Card.Content>
                 </Card>
@@ -34,8 +34,8 @@ const FieldToolboxScreen = ({ navigation }) => {
                     <Card.Content style={styles.cardContent}>
                         <MaterialIcons name="accessibility-new" size={40} color="#8A2BE2" />
                         <View style={styles.textContainer}>
-                            <Title style={styles.cardTitle}>Anthropometry & EDD</Title>
-                            <Paragraph>Calculate BMI and Expected Date of Delivery</Paragraph>
+                            <Text style={styles.cardTitle}>Anthropometry & EDD</Text>
+                            <Text style={styles.cardDesc}>Calculate BMI and Expected Date of Delivery</Text>
                         </View>
                     </Card.Content>
                 </Card>
@@ -74,7 +74,14 @@ const styles = StyleSheet.create({
     cardTitle: {
         fontWeight: 'bold',
         fontSize: 18,
-    }
+        color: '#111827',
+        marginBottom: 4,
+    },
+    cardDesc: {
+        fontSize: 14,
+        color: '#374151',
+        lineHeight: 20,
+    },
 });
 
 export default FieldToolboxScreen;

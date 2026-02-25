@@ -144,8 +144,8 @@ ${userMessage.text}`;
         <SafeAreaView style={styles.safeArea}>
             <KeyboardAvoidingView
                 style={styles.container}
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 80}
+                behavior="padding"
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
             >
                 <View style={styles.header}>
                     <FontAwesome name="circle" size={40} color="#A855F7" style={styles.headerOrb} />
@@ -185,20 +185,12 @@ ${userMessage.text}`;
                 </ScrollView>
 
                 <View style={styles.bottomSection}>
-                    {/* Quick action pills */}
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.quickActions} contentContainerStyle={styles.quickActionsContent}>
-                        {['Explain this diagram', 'Summarize chapter', 'More'].map((action, index) => (
-                            <TouchableOpacity key={index} style={styles.actionPill} onPress={() => setInputText(action)}>
-                                <Text style={styles.actionPillText}>{action}</Text>
-                            </TouchableOpacity>
-                        ))}
-                    </ScrollView>
-
                     <View style={styles.inputContainer}>
                         <TextInput
                             style={styles.textInput}
                             placeholder="Ask anything..."
                             placeholderTextColor="#9CA3AF"
+                            textColor="#111827"
                             value={inputText}
                             onChangeText={setInputText}
                             multiline

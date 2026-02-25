@@ -14,7 +14,7 @@ const BookmarksScreen = ({ navigation }) => {
                 <Text variant="headlineMedium" style={styles.header}>Bookmarks</Text>
                 {bookmarks.length === 0 ? (
                     <View style={styles.emptyState}>
-                        <Text variant="bodyLarge">No bookmarks yet.</Text>
+                        <Text variant="bodyLarge" style={{ color: '#374151' }}>No bookmarks yet.</Text>
                         <Button mode="text" onPress={() => navigation.navigate('Library')}>
                             Browse Library
                         </Button>
@@ -58,6 +58,8 @@ const styles = StyleSheet.create({
     },
     header: {
         marginBottom: 16,
+        fontWeight: 'bold',
+        color: '#111827',
     },
     emptyState: {
         flex: 1,
