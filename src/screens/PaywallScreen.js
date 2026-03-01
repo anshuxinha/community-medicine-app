@@ -7,7 +7,7 @@ import Purchases from 'react-native-purchases';
 import { AppContext } from '../context/AppContext';
 
 const plans = [
-    { id: 'monthly', name: 'Monthly', duration: 'Monthly Plan', price: '₹399 / month', desc: 'Cancel anytime', badge: null, saveText: null },
+    { id: 'monthly', name: 'Monthly', duration: 'Monthly Plan', price: '₹1 / month', desc: 'Cancel anytime', badge: null, saveText: null },
     { id: 'yearly', name: 'Yearly', duration: 'Yearly Plan', price: '₹999 / year', desc: 'Billed annually', badge: 'Best Value', saveText: 'SAVE 20%' },
     { id: 'lifetime', name: 'Lifetime', duration: 'Lifetime', price: '₹25000 once', desc: 'One-time payment', badge: null, saveText: null },
 ];
