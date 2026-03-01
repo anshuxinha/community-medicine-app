@@ -23,7 +23,7 @@
       },
       "edgeToEdgeEnabled": true,
       "package": "com.communitymed.app",
-      "versionCode": 2,
+      "versionCode": 3,
       "permissions": [
         "com.android.vending.BILLING"
       ]
