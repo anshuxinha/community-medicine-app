@@ -16,9 +16,15 @@
     {
         "id": "c78f3bcb-634c-49aa-a647-aaffb36c7100",
         "date": "2026-02-21",
-<<<<<<< HEAD
         "title": "Union Health Minister Launches Indigenous Tetanus-Diphtheria Vaccine",
         "summary": "Union Health Minister Shri Jagat Prakash Nadda launched an indigenously manufactured Tetanus and Adult Diphtheria (Td) vaccine at Himachal Pradesh's Central Research Institute. This initiative significantly boosts India's self-reliance in vaccine production and strengthens public health infrastructure. The new Td vaccine will bolster the national immunization program, providing crucial protection against Tetanus and Diphtheria for adults, enhancing healthcare capabilities and vaccine accessibility nationwide."
+    },
+    {
+        "id": "e45f9450-815a-44ca-a554-cec458bc5a10",
+        "date": "2026-02-21",
+        "title": "NIPER-Boehringer MoU & AMRITVA Cohort 2 Boost India's Pharma Research",
+        "summary": "NIPER Raebareli and Boehringer Ingelheim India signed an MoU, boosting pharmaceutical education, research, and novel drug delivery. Boehringer offers opnMe\u00ae platform access. AMRITVA Cohort 2 also launched, granting five innovators: \u20b98 lakh for three faculty projects, \u20b96 lakh for two scholar projects. This CSR initiative strengthens India's pharma innovation, translating research into viable products, advancing cost-effective healthcare aligned with Viksit Bharat 2047.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2231194"
     },
     {
         "id": "25eccd2d-e4b5-4c44-b44d-2a1efe4cbeff",
@@ -49,10 +55,5 @@
         "date": "2026-02-05",
         "title": "Over four million girls still at risk of female genital mutilation: UN leaders call for sustained commitment and investment to end FGM",
         "summary": "Read the full article at: https://www.who.int/news/item/05-02-2026-over-four-million-girls-still-at-risk-of-female-genital-mutilation--un-leaders-call-for-sustained-commitment-and-investment-to-end-fgm"
-=======
-        "title": "NIPER-Boehringer MoU & AMRITVA Cohort 2 Boost India's Pharma Research",
-        "summary": "NIPER Raebareli and Boehringer Ingelheim India signed an MoU, boosting pharmaceutical education, research, and novel drug delivery. Boehringer offers opnMe\u00ae platform access. AMRITVA Cohort 2 also launched, granting five innovators: \u20b98 lakh for three faculty projects, \u20b96 lakh for two scholar projects. This CSR initiative strengthens India's pharma innovation, translating research into viable products, advancing cost-effective healthcare aligned with Viksit Bharat 2047.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2231194"
->>>>>>> b69ddbf (Disable New Architecture to fix C++ Native Compilation)
     }
 ]
