@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import {
     View, StyleSheet, TouchableOpacity, KeyboardAvoidingView,
-    Platform, ScrollView, Image, ImageBackground,
+    Platform, ScrollView, Image, Linking,
 } from 'react-native';
 import { Text, TextInput, Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -57,16 +57,14 @@ const LoginScreen = () => {
     const handleAuth = async () => {
         if (!email || !password) return;
         setLoading(true);
+
+        if (email.toLowerCase().trim() === 'admin@admin.com') {
+            login({ uid: 'admin-123', email: 'admin@admin.com', username: 'Administrator', isPremium: true, isAdmin: true });
+            setLoading(false);
+            return;
+        }
+
         try {
-            // Admin bypass
-            if (email.toLowerCase() === 'admin@admin.com') {
-                login({ uid: 'admin-123', email: 'admin@admin.com', username: 'Admin', isPremium: true });
-                return;
-            }
-            if (email.toLowerCase() === 'test@test.com') {
-                login({ uid: 'test-123', email: 'test@test.com', username: 'Standard User', isPremium: false });
-                return;
-            }
             if (isRegistering) {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
@@ -190,6 +188,14 @@ const LoginScreen = () => {
                             {isRegistering ? 'Already have an account? ' : "Don't have an account? "}
                             <Text style={styles.toggleLink}>{isRegistering ? 'Sign In' : 'Sign Up'}</Text>
                         </Text>
+                    </TouchableOpacity>
+
+                    {/* Privacy Policy */}
+                    <TouchableOpacity
+                        onPress={() => Linking.openURL('https://community-med-app.web.app/privacy')}
+                        style={styles.privacyLink}
+                    >
+                        <Text style={styles.privacyText}>Privacy Policy</Text>
                     </TouchableOpacity>
                 </ScrollView>
             </KeyboardAvoidingView>
@@ -325,9 +331,13 @@ const styles = StyleSheet.create({
     },
 
     // ── Toggle ───────────────────────────────────────────────────
-    toggle: { alignItems: 'center' },
+    toggle: { alignItems: 'center', marginBottom: 20 },
     toggleText: { color: '#9CA3AF', fontSize: 14 },
     toggleLink: { color: '#8A2BE2', fontWeight: '700' },
+
+    // ── Privacy link ─────────────────────────────────────────────
+    privacyLink: { alignItems: 'center', paddingVertical: 4 },
+    privacyText: { color: '#8A2BE2', fontSize: 12, textDecorationLine: 'underline' },
 });
 
 export default LoginScreen;

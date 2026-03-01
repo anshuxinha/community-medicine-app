@@ -172,9 +172,9 @@ const BiostatsAssistantScreen = () => {
                     value={tab}
                     onValueChange={setTab}
                     buttons={[
-                        { value: 'samplesize', label: 'Sample Size' },
-                        { value: 'solver', label: 'Solver' },
-                        { value: 'reference', label: 'Reference' },
+                        { value: 'samplesize', label: 'Sample Size', labelStyle: tab !== 'samplesize' ? { color: '#374151' } : {} },
+                        { value: 'solver', label: 'Solver', labelStyle: tab !== 'solver' ? { color: '#374151' } : {} },
+                        { value: 'reference', label: 'Reference', labelStyle: tab !== 'reference' ? { color: '#374151' } : {} },
                     ]}
                     style={{ marginBottom: 20 }}
                 />

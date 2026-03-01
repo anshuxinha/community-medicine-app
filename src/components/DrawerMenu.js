@@ -8,15 +8,14 @@ import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { signOut } from 'firebase/auth';
 import { auth } from '../config/firebase';
+import { AppContext } from '../context/AppContext';
 
 const { width } = Dimensions.get('window');
 const DRAWER_WIDTH = width * 0.75;
 
 const MENU_ITEMS = [
-    { icon: 'person-outline', label: 'Profile', screen: 'Profile', iconLib: 'material' },
-    { icon: 'bar-chart', label: 'Study Statistics', screen: 'Stats', iconLib: 'material' },
+    { icon: 'person-outline', label: 'Profile', action: 'profile', iconLib: 'material' },
     { icon: 'diamond', label: 'Go Premium', screen: 'Paywall', iconLib: 'material' },
-    { icon: 'settings', label: 'Settings', screen: 'Settings', iconLib: 'material' },
     { divider: true },
     { icon: 'star-outline', label: 'Rate the App', action: 'rate', iconLib: 'material' },
     { icon: 'feedback', label: 'Send Feedback', action: 'feedback', iconLib: 'material' },
@@ -29,6 +28,7 @@ const DrawerMenu = ({ visible, onClose, user }) => {
     const slideAnim = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
     const backdropAnim = useRef(new Animated.Value(0)).current;
     const navigation = useNavigation();
+    const { currentStreak, studyScore, readingProgress, logout } = React.useContext(AppContext);
 
     useEffect(() => {
         if (visible) {
@@ -47,26 +47,48 @@ const DrawerMenu = ({ visible, onClose, user }) => {
     const handleItem = async (item) => {
         onClose();
         if (item.screen) {
-            setTimeout(() => navigation.navigate(item.screen), 250);
+            setTimeout(() => navigation.navigate(item.screen), 300);
             return;
         }
-        switch (item.action) {
-            case 'rate':
-                Linking.openURL('market://details?id=com.stroma.communitymed');
-                break;
-            case 'feedback':
-                Linking.openURL('mailto:support@stroma.app?subject=Feedback');
-                break;
-            case 'privacy':
-                Linking.openURL('https://stroma.app/privacy');
-                break;
-            case 'logout':
-                Alert.alert('Log Out', 'Are you sure you want to log out?', [
-                    { text: 'Cancel', style: 'cancel' },
-                    { text: 'Log Out', style: 'destructive', onPress: () => signOut(auth) },
-                ]);
-                break;
-        }
+        // Delay all Alerts by 300ms so the drawer modal fully closes first
+        // (Modal unmounting on Android dismisses any Alert that opens during teardown)
+        setTimeout(() => {
+            switch (item.action) {
+                case 'profile':
+                    Alert.alert(
+                        '👤 My Profile',
+                        `Name: ${user?.displayName || 'STROMA User'}\nEmail: ${user?.email || 'N/A'}\n\nAccount Type: ${user ? 'Registered' : 'Guest'}`,
+                        [{ text: 'Close', style: 'cancel' }]
+                    );
+                    break;
+
+                case 'rate':
+                    Linking.openURL('market://details?id=com.communitymed.app');
+                    break;
+                case 'feedback':
+                    Linking.openURL('mailto:anshuxinha@gmail.com?subject=STROMA%20App%20Feedback');
+                    break;
+                case 'privacy':
+                    Linking.openURL('https://community-med-app.web.app/privacy');
+                    break;
+                case 'logout':
+                    Alert.alert('Log Out', 'Are you sure you want to log out?', [
+                        { text: 'Cancel', style: 'cancel' },
+                        {
+                            text: 'Log Out', style: 'destructive',
+                            onPress: async () => {
+                                await signOut(auth);
+                                logout();
+                                navigation.reset({
+                                    index: 0,
+                                    routes: [{ name: 'Login' }],
+                                });
+                            },
+                        },
+                    ]);
+                    break;
+            }
+        }, 300);
     };
 
     if (!visible && slideAnim._value === -DRAWER_WIDTH) return null;

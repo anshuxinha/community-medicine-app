@@ -79,8 +79,12 @@ const LibraryScreen = (props) => {
                             if (t.includes('communication')) return 'bullhorn-outline';
                             if (t.includes('planning')) return 'clipboard-list-outline';
                             if (t.includes('international')) return 'earth';
+                            if (t.includes('biostatistics')) return 'chart-bar';
+                            if (t.includes('program') || t.includes('programme')) return 'flag-outline';
+                            if (t.includes('ayushman')) return 'shield-cross';
+                            if (t.includes('specialized target')) return 'target';
+                            if (t.includes('targeted care')) return 'heart-pulse';
                             if (t.includes('administration') || t.includes('organization')) return 'hospital-building';
-                            if (t.includes('program')) return 'flag-outline';
                             if (t.includes('man and medicine')) return 'history';
                             return 'book-open-outline'; // Default fallback
                         };

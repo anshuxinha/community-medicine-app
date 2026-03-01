@@ -6,7 +6,7 @@ import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 import { db, auth } from '../config/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, getIdTokenResult } from 'firebase/auth';
 import * as Notifications from 'expo-notifications';
 import Purchases from 'react-native-purchases';
 import mockData from '../data/mockData.json';
@@ -14,11 +14,10 @@ import practicalData from '../data/practical.json';
 
 const allData = [...mockData, ...practicalData];
 
-// Create a safe reference that bypasses execution when on Expo Go
-const SafeNotifications = null;
+// Expo Notifications is fully supported in production builds.
+const SafeNotifications = Notifications;
 
-// Only set up notifications if we are on a real device and NOT in Expo Go (to avoid SDK 53 errors)
-if (SafeNotifications && Device.isDevice) {
+if (Device.isDevice) {
     try {
         SafeNotifications.setNotificationHandler({
             handleNotification: async () => ({
@@ -28,7 +27,7 @@ if (SafeNotifications && Device.isDevice) {
             }),
         });
     } catch (e) {
-        console.log("Expo Notifications could not be initialized:", e);
+        // ignore
     }
 }
 
@@ -54,6 +53,8 @@ export const AppProvider = ({ children }) => {
     const [currentStreak, setCurrentStreak] = useState(0);
     const [lastReadDate, setLastReadDate] = useState(null);
     const [studyScore, setStudyScore] = useState(0);
+    const [dailyReadHistory, setDailyReadHistory] = useState({});
+    const [quizScores, setQuizScores] = useState([]);
 
     // Auth & Premium State — null = not yet resolved, false/obj = resolved
     const [user, setUser] = useState(undefined); // undefined = loading
@@ -64,21 +65,44 @@ export const AppProvider = ({ children }) => {
         // 1. Listen to Firebase auth state changes (handles real accounts)
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
-                // Real Firebase user — fetch premium status from Firestore
+                // Read custom claims first (always available, no Firestore needed)
+                let claimsPremium = false;
+                let claimsAdmin = false;
+                try {
+                    const tokenResult = await getIdTokenResult(firebaseUser, true);
+                    claimsPremium = tokenResult.claims.isPremium === true;
+                    claimsAdmin = tokenResult.claims.isAdmin === true;
+                } catch { /* ignore */ }
+
+                // Then try Firestore for richer profile data (Firestore wins over claims)
                 try {
                     const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
-                    const premiumStatus = userDoc.exists() ? userDoc.data().isPremium : false;
+                    const data = userDoc.exists() ? userDoc.data() : {};
+                    const premiumStatus = data.isPremium !== undefined ? data.isPremium : claimsPremium;
+                    const isAdmin = data.isAdmin !== undefined ? data.isAdmin : claimsAdmin;
                     const userData = {
                         uid: firebaseUser.uid,
                         email: firebaseUser.email,
-                        username: firebaseUser.displayName || 'User',
+                        username: firebaseUser.displayName || data.username || 'User',
                         isPremium: premiumStatus,
+                        isAdmin,
                     };
                     setUser(userData);
                     setIsPremium(premiumStatus);
                     await AsyncStorage.setItem('user', JSON.stringify(userData));
-                } catch {
-                    setUser(null);
+                } catch (err) {
+                    // Firestore failed — use claims-based data so user stays logged in
+                    console.warn('Firestore fetch failed, using auth claims:', err?.message);
+                    const userData = {
+                        uid: firebaseUser.uid,
+                        email: firebaseUser.email,
+                        username: firebaseUser.displayName || 'User',
+                        isPremium: claimsPremium,
+                        isAdmin: claimsAdmin,
+                    };
+                    setUser(userData);
+                    setIsPremium(claimsPremium);
+                    await AsyncStorage.setItem('user', JSON.stringify(userData));
                 }
             } else {
                 // No Firebase session — check AsyncStorage for bypass/admin users
@@ -137,6 +161,16 @@ export const AppProvider = ({ children }) => {
                     setStudyScore(parseInt(storedScore, 10));
                 }
 
+                const storedDailyHistory = await AsyncStorage.getItem('dailyReadHistory');
+                if (storedDailyHistory) {
+                    setDailyReadHistory(JSON.parse(storedDailyHistory));
+                }
+
+                const storedQuizScores = await AsyncStorage.getItem('quizScores');
+                if (storedQuizScores) {
+                    setQuizScores(JSON.parse(storedQuizScores));
+                }
+
                 // Check streak validity on load
                 if (storedLastRead) {
                     const lastDate = new Date(storedLastRead);
@@ -172,6 +206,8 @@ export const AppProvider = ({ children }) => {
                 await AsyncStorage.setItem('currentStreak', currentStreak.toString());
                 if (lastReadDate) await AsyncStorage.setItem('lastReadDate', lastReadDate);
                 await AsyncStorage.setItem('studyScore', studyScore.toString());
+                await AsyncStorage.setItem('dailyReadHistory', JSON.stringify(dailyReadHistory));
+                await AsyncStorage.setItem('quizScores', JSON.stringify(quizScores));
                 if (user) await AsyncStorage.setItem('user', JSON.stringify(user));
                 else await AsyncStorage.removeItem('user');
                 await AsyncStorage.setItem('isPremium', JSON.stringify(isPremium));
@@ -181,7 +217,7 @@ export const AppProvider = ({ children }) => {
         };
 
         saveState();
-    }, [readItems, bookmarks, highlights, currentStreak, lastReadDate, studyScore, user, isPremium]);
+    }, [readItems, bookmarks, highlights, currentStreak, lastReadDate, studyScore, dailyReadHistory, quizScores, user, isPremium]);
 
     // Push token registration
     useEffect(() => {
@@ -266,10 +302,28 @@ export const AppProvider = ({ children }) => {
                     setStudyScore((prevScore) => prevScore + 10);
                 }
 
+                // Update daily read history for the bar chart
+                const dateKey = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+                setDailyReadHistory((prevHistory) => ({
+                    ...prevHistory,
+                    [dateKey]: (prevHistory[dateKey] || 0) + 1,
+                }));
+
                 return [...prev, itemTitle];
             }
             return prev;
         });
+    };
+
+    const recordQuizScore = (score, total) => {
+        const entry = {
+            date: new Date().toISOString().split('T')[0],
+            score,
+            total,
+            percent: Math.round((score / total) * 100),
+        };
+        setQuizScores((prev) => [...prev.slice(-29), entry]); // keep last 30
+        setStudyScore((prev) => prev + score * 5);
     };
 
     const isBookmarked = (itemTitle) => {
@@ -300,6 +354,8 @@ export const AppProvider = ({ children }) => {
         Purchases.addCustomerInfoUpdateListener((info) => {
             if (info.entitlements.active['Premium'] !== undefined) {
                 setIsPremium(true);
+            } else {
+                setIsPremium(false);
             }
         });
     }, []);
@@ -310,13 +366,15 @@ export const AppProvider = ({ children }) => {
 
     // Force clear for debug/testing
     const clearStorage = async () => {
-        await AsyncStorage.multiRemove(['readItems', 'bookmarks', 'highlights', 'currentStreak', 'lastReadDate', 'studyScore']);
+        await AsyncStorage.multiRemove(['readItems', 'bookmarks', 'highlights', 'currentStreak', 'lastReadDate', 'studyScore', 'dailyReadHistory', 'quizScores']);
         setReadItems([]);
         setBookmarks([]);
         setHighlights({});
         setCurrentStreak(0);
         setLastReadDate(null);
         setStudyScore(0);
+        setDailyReadHistory({});
+        setQuizScores([]);
         setUser(null);
         setIsPremium(false);
     };
@@ -342,15 +400,20 @@ export const AppProvider = ({ children }) => {
             value={{
                 readItems,
                 bookmarks,
+                totalItems,
                 readingProgress,
                 highlights,
                 currentStreak,
+                lastReadDate,
                 studyScore,
+                dailyReadHistory,
+                quizScores,
                 markAsRead,
                 isBookmarked,
                 toggleBookmark,
                 saveHighlight,
                 completeQuiz: completeDailyGoal,
+                recordQuizScore,
                 clearStorage,
                 user,
                 isPremium,

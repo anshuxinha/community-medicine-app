@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Platform } from 'react-native';
-import { TextInput, Button, Card, Text, RadioButton, Title, SegmentedButtons } from 'react-native-paper';
+import { TextInput, Button, Card, Text, SegmentedButtons } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Picker } from '@react-native-picker/picker'; // requires @react-native-picker/picker
 
@@ -25,7 +25,6 @@ const OCCUPATION_OPTIONS = [
 ];
 
 const SESCalculatorScreen = () => {
-    const [cpi, setCpi] = useState('400'); // Default CPI value
     const [scaleType, setScaleType] = useState('kuppuswamy'); // 'kuppuswamy' or 'bgprasad'
 
     // Kuppuswamy State
@@ -35,27 +34,27 @@ const SESCalculatorScreen = () => {
 
     // BG Prasad State
     const [perCapitaIncome, setPerCapitaIncome] = useState('');
+    const [cpi, setCpi] = useState('400'); // CPI only needed for BG Prasad
 
     // Result
     const [result, setResult] = useState(null);
 
     const calculateKuppuswamy = () => {
-        if (!familyIncome || isNaN(Number(familyIncome)) || !cpi || isNaN(Number(cpi))) {
-            setResult({ error: 'Please enter valid numbers for Income and CPI' });
+        if (!familyIncome || isNaN(Number(familyIncome))) {
+            setResult({ error: 'Please enter a valid number for Monthly Family Income' });
             return;
         }
 
-        const currentCPI = Number(cpi);
-        const conversionFactor = currentCPI / 100; // Base 2001 = 100
-        const baseIncome = Number(familyIncome) / conversionFactor;
+        const income = Number(familyIncome);
 
+        // Kuppuswamy income scoring uses fixed 2001-base thresholds (no CPI adjustment)
         let incomeScore = 1;
-        if (baseIncome >= 2000) incomeScore = 12;
-        else if (baseIncome >= 1000) incomeScore = 10;
-        else if (baseIncome >= 750) incomeScore = 6;
-        else if (baseIncome >= 500) incomeScore = 4;
-        else if (baseIncome >= 300) incomeScore = 3;
-        else if (baseIncome >= 100) incomeScore = 2;
+        if (income >= 2000) incomeScore = 12;
+        else if (income >= 1000) incomeScore = 10;
+        else if (income >= 750) incomeScore = 6;
+        else if (income >= 500) incomeScore = 4;
+        else if (income >= 300) incomeScore = 3;
+        else if (income >= 100) incomeScore = 2;
         else incomeScore = 1;
 
         const totalScore = education + occupation + incomeScore;
@@ -105,26 +104,17 @@ const SESCalculatorScreen = () => {
     return (
         <SafeAreaView style={styles.safeArea}>
             <ScrollView contentContainerStyle={styles.container}>
+
+                {/* Scale Selector */}
                 <Card style={styles.card}>
                     <Card.Content>
-                        <Title>Settings</Title>
-                        <TextInput
-                            label="Current CPI (Base 2001 = 100)"
-                            value={cpi}
-                            onChangeText={setCpi}
-                            keyboardType="numeric"
-                            mode="outlined"
-                            style={styles.input}
-                        />
-
                         <SegmentedButtons
                             value={scaleType}
-                            onValueChange={setScaleType}
+                            onValueChange={(val) => { setScaleType(val); setResult(null); }}
                             buttons={[
                                 { value: 'kuppuswamy', label: 'Kuppuswamy (Urban)' },
                                 { value: 'bgprasad', label: 'BG Prasad (Rural)' },
                             ]}
-                            style={styles.segmentedButton}
                         />
                     </Card.Content>
                 </Card>
@@ -132,16 +122,18 @@ const SESCalculatorScreen = () => {
                 {scaleType === 'kuppuswamy' ? (
                     <Card style={styles.card}>
                         <Card.Content>
-                            <Title>Modified Kuppuswamy Scale</Title>
+                            <Text style={styles.sectionTitle}>Modified Kuppuswamy Scale</Text>
 
                             <Text style={styles.label}>Education of Head of Family</Text>
                             <View style={styles.pickerContainer}>
                                 <Picker
                                     selectedValue={education}
                                     onValueChange={(itemValue) => setEducation(itemValue)}
+                                    style={{ color: '#111827' }}
+                                    dropdownIconColor="#111827"
                                 >
                                     {EDUCATION_OPTIONS.map((opt) => (
-                                        <Picker.Item key={opt.value} label={`${opt.label} (${opt.value})`} value={opt.value} />
+                                        <Picker.Item key={opt.value} label={`${opt.label} (${opt.value})`} value={opt.value} color="#111827" style={{ fontSize: 14 }} />
                                     ))}
                                 </Picker>
                             </View>
@@ -151,9 +143,11 @@ const SESCalculatorScreen = () => {
                                 <Picker
                                     selectedValue={occupation}
                                     onValueChange={(itemValue) => setOccupation(itemValue)}
+                                    style={{ color: '#111827' }}
+                                    dropdownIconColor="#111827"
                                 >
                                     {OCCUPATION_OPTIONS.map((opt) => (
-                                        <Picker.Item key={opt.value} label={`${opt.label} (${opt.value})`} value={opt.value} />
+                                        <Picker.Item key={opt.value} label={`${opt.label} (${opt.value})`} value={opt.value} color="#111827" style={{ fontSize: 14 }} />
                                     ))}
                                 </Picker>
                             </View>
@@ -171,7 +165,17 @@ const SESCalculatorScreen = () => {
                 ) : (
                     <Card style={styles.card}>
                         <Card.Content>
-                            <Title>BG Prasad Scale</Title>
+                            <Text style={styles.sectionTitle}>BG Prasad Scale</Text>
+
+                            <TextInput
+                                label="Current CPI (Base 2001 = 100)"
+                                value={cpi}
+                                onChangeText={setCpi}
+                                keyboardType="numeric"
+                                mode="outlined"
+                                style={styles.input}
+                            />
+
                             <TextInput
                                 label="Per Capita Monthly Income (₹)"
                                 value={perCapitaIncome}
@@ -196,9 +200,9 @@ const SESCalculatorScreen = () => {
                                 <Text style={{ color: 'red' }}>{result.error}</Text>
                             ) : (
                                 <>
-                                    <Title style={styles.resultTitle}>Result: {result.class}</Title>
+                                    <Text style={styles.resultTitle}>Result: {result.class}</Text>
                                     {result.score !== undefined && (
-                                        <Text variant="titleMedium">Total Score: {result.score}</Text>
+                                        <Text variant="titleMedium" style={{ color: '#111827' }}>Total Score: {result.score}</Text>
                                     )}
                                     <Text style={{ marginTop: 8, color: '#6B7280' }}>{result.details}</Text>
                                 </>
@@ -229,8 +233,11 @@ const styles = StyleSheet.create({
         marginBottom: 8,
         backgroundColor: '#FFFFFF',
     },
-    segmentedButton: {
-        marginTop: 16,
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#111827',
+        marginBottom: 8,
     },
     label: {
         marginTop: 16,
@@ -239,10 +246,10 @@ const styles = StyleSheet.create({
     },
     pickerContainer: {
         borderWidth: 1,
-        borderColor: '#E5E7EB',
+        borderColor: '#D1D5DB',
         borderRadius: 4,
         marginTop: 8,
-        backgroundColor: Platform.OS === 'ios' ? 'transparent' : '#F9FAFB',
+        backgroundColor: '#FFFFFF',
     },
     calcButton: {
         marginVertical: 16,
@@ -256,6 +263,8 @@ const styles = StyleSheet.create({
     resultTitle: {
         color: '#6B21A8',
         fontWeight: 'bold',
+        fontSize: 16,
+        marginBottom: 4,
     }
 });
 

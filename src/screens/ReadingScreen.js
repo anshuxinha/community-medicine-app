@@ -1,7 +1,5 @@
 import React, { useContext, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { FAB } from 'react-native-paper';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Speech from 'expo-speech';
 import ReadingView from '../components/ReadingView';
 import { AppContext } from '../context/AppContext';
@@ -9,7 +7,6 @@ import { AppContext } from '../context/AppContext';
 const ReadingScreen = ({ route, navigation }) => {
     const { id, title, content, quizzes } = route.params;
     const { markAsRead, isBookmarked, toggleBookmark } = useContext(AppContext);
-    const insets = useSafeAreaInsets();
     const [isSpeaking, setIsSpeaking] = React.useState(false);
 
     useEffect(() => {

@@ -1,272 +1,152 @@
-import React, { useRef, useState, useEffect, useContext } from 'react';
-import { View, StyleSheet, Modal, TouchableOpacity } from 'react-native';
-import { WebView } from 'react-native-webview';
-import { Text, Portal } from 'react-native-paper';
+import React from 'react';
+import {
+    View, Text, ScrollView, StyleSheet,
+    TouchableOpacity, Image, Dimensions
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { AppContext } from './../context/AppContext';
 import { MaterialIcons } from '@expo/vector-icons';
 
-const ReadingView = ({ content, topicId, isBookmarked, onToggleBookmark, isSpeaking, onToggleSpeak }) => {
-    const webViewRef = useRef(null);
-    const { highlights, saveHighlight } = useContext(AppContext);
-    const insets = useSafeAreaInsets();
+/**
+ * Parses a markdown-like string into an array of block objects.
+ * Supports: # H1, ## H2, * / - bullet items, blank lines (spacing), plain paragraphs.
+ */
+const parseMarkdown = (content) => {
+    const lines = content.split('\n');
+    const blocks = [];
+    let bulletGroup = [];
 
-    const [htmlContent, setHtmlContent] = useState('');
-
-    useEffect(() => {
-        // Load existing highlights if available, otherwise generate HTML
-        if (highlights[topicId]) {
-            let loadedHtml = highlights[topicId];
-            // Ensure the bookmark icon reflects the current state, even if changed since highlight was saved
-            loadedHtml = loadedHtml.replace(
-                /<span id="bookmark-icon" class="bookmark-icon material-icons">.*?<\/span>/,
-                `<span id="bookmark-icon" class="bookmark-icon material-icons">${isBookmarked ? 'bookmark' : 'bookmark_border'}</span>`
-            );
-            // Ensure the TTS icon reflects the current state
-            loadedHtml = loadedHtml.replace(
-                /<span id="tts-icon" class="tts-icon material-icons">.*?<\/span>/,
-                `<span id="tts-icon" class="tts-icon material-icons">${isSpeaking ? 'stop' : 'volume_up'}</span>`
-            );
-            setHtmlContent(loadedHtml);
-        } else {
-            // Convert markdown-like syntax to HTML for the WebView
-            let parsedHtml = content
-                .split('\n')
-                .map(line => {
-                    if (line.startsWith('# ')) return `<h1 class="h1">${line.replace('# ', '')}</h1>`;
-                    if (line.startsWith('## ')) return `<h2 class="h2">${line.replace('## ', '')}</h2>`;
-                    if (line.startsWith('* ') || line.startsWith('- ')) return `<li class="listItem">${line.replace(/^[\*\-] /, '')}</li>`;
-                    if (line.trim() === '') return `<div class="spacing"></div>`;
-                    return `<p class="body">${line}</p>`;
-                })
-                .join('');
-
-            // Wrap in ul if there are list items
-            parsedHtml = parsedHtml.replace(/(<li.*<\/li>)+/g, '<ul>$&</ul>');
-
-            const fullHtml = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-                <style>
-                    body {
-                        font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-                        padding: 16px;
-                        padding-bottom: 140px;
-                        color: #1c1b1f;
-                        line-height: 1.6;
-                        background-color: #ffffff;
-                    }
-                    .h1 { color: #6200ee; font-size: 24px; margin-top: 16px; margin-bottom: 8px; padding-right: 110px; }
-                    .h2 { color: #333333; font-size: 20px; margin-top: 14px; margin-bottom: 6px; }
-                    .body { font-size: 16px; margin: 8px 0; }
-                    .listItem { font-size: 16px; margin-left: 8px; margin-bottom: 4px; }
-                    .spacing { height: 16px; }
-                    mark { border-radius: 2px; padding: 0 2px; }
-                    ::selection { background: #b3d4fc; }
-
-                    .bookmark-btn {
-                        position: absolute;
-                        top: 16px;
-                        right: 16px;
-                        width: 44px;
-                        height: 44px;
-                        background-color: #ffffff;
-                        border-radius: 12px;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-                        cursor: pointer;
-                        z-index: 100;
-                    }
-                    .bookmark-icon {
-                        font-size: 24px;
-                        line-height: 24px;
-                        color: #6200ee;
-                    }
-
-                    .tts-btn {
-                        position: absolute;
-                        top: 16px;
-                        right: 76px;
-                        width: 44px;
-                        height: 44px;
-                        background-color: #ffffff;
-                        border-radius: 12px;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-                        cursor: pointer;
-                        z-index: 100;
-                    }
-                    .tts-icon {
-                        font-size: 24px;
-                        line-height: 24px;
-                        color: #6200ee;
-                    }
-                </style>
-                <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
-                <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-                <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
-            </head>
-            <body>
-                <div id="content-container">
-                    <div class="bookmark-btn" onclick="toggleBookmark()">
-                        <span id="bookmark-icon" class="bookmark-icon material-icons">${isBookmarked ? 'bookmark' : 'bookmark_border'}</span>
-                    </div>
-                    <div class="tts-btn" onclick="toggleTTS()">
-                        <span id="tts-icon" class="tts-icon material-icons">${isSpeaking ? 'stop' : 'volume_up'}</span>
-                    </div>
-                    
-                    <div id="color-picker" style="display: none; position: fixed; bottom: 80px; right: 16px; background: white; padding: 16px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; border: 1px solid #eee;">
-                        <div style="font-weight: bold; margin-bottom: 12px; font-family: sans-serif; text-align: center;">Choose Color</div>
-                        <div style="display: flex; gap: 12px; justify-content: center;">
-                            <div onclick="highlightSelection('#ffff00')" style="width: 36px; height: 36px; border-radius: 18px; background: #ffff00; cursor: pointer; border: 1px solid #ccc;"></div>
-                            <div onclick="highlightSelection('#00ff00')" style="width: 36px; height: 36px; border-radius: 18px; background: #00ff00; cursor: pointer; border: 1px solid #ccc;"></div>
-                            <div onclick="highlightSelection('#ffc0cb')" style="width: 36px; height: 36px; border-radius: 18px; background: #ffc0cb; cursor: pointer; border: 1px solid #ccc;"></div>
-                            <div onclick="highlightSelection('#00ffff')" style="width: 36px; height: 36px; border-radius: 18px; background: #00ffff; cursor: pointer; border: 1px solid #ccc;"></div>
-                        </div>
-                        <div onclick="document.getElementById('color-picker').style.display = 'none';" style="margin-top: 12px; text-align: center; color: #6200ee; cursor: pointer; font-weight: bold; font-family: sans-serif;">Cancel</div>
-                    </div>
-
-                    ${parsedHtml}
-                </div>
-                <script>
-                    function toggleBookmark() {
-                        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'TOGGLE_BOOKMARK' }));
-                    }
-                    function toggleTTS() {
-                        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'TOGGLE_TTS' }));
-                    }
-                    function highlightSelection(color) {
-                        const selection = window.getSelection();
-                        if (!selection.rangeCount || selection.isCollapsed) {
-                            // Close picker if nothing selected
-                            document.getElementById('color-picker').style.display = 'none';
-                            return "";
-                        }
-                        
-                        const range = selection.getRangeAt(0);
-                        const mark = document.createElement("mark");
-                        mark.style.backgroundColor = color;
-                        
-                        try {
-                            range.surroundContents(mark);
-                        } catch(e) {
-                            // If selection crosses block elements, surroundContents fails
-                            // A more robust implementation is needed for complex selections, 
-                            // but this handles simple text highlights gracefully
-                            console.log("Cross-block selection not supported yet");
-                        }
-                        
-                        selection.removeAllRanges();
-                        
-                        // Send updated HTML back to React Native
-                        const currentHtml = document.getElementById("content-container").innerHTML;
-                        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'HIGHLIGHT_SAVED', html: currentHtml }));
-                        
-                        // Close picker
-                        document.getElementById('color-picker').style.display = 'none';
-                    }
-                    
-                    document.addEventListener("message", function(event) {
-                        try {
-                            const data = JSON.parse(event.data);
-                            if (data.action === "highlight") highlightSelection(data.color);
-                            if (data.action === "updateBookmark") {
-                                document.getElementById("bookmark-icon").innerText = data.isBookmarked ? 'bookmark' : 'bookmark_border';
-                            }
-                            if (data.action === "updateTTS") {
-                                document.getElementById("tts-icon").innerText = data.isSpeaking ? 'stop' : 'volume_up';
-                            }
-                        } catch(e) {}
-                    });
-                     // For iOS WKWebView
-                    window.addEventListener("message", function(event) {
-                        try {
-                            const data = JSON.parse(event.data);
-                            if (data.action === "highlight") highlightSelection(data.color);
-                            if (data.action === "togglePicker") {
-                                const picker = document.getElementById('color-picker');
-                                picker.style.display = picker.style.display === 'none' ? 'block' : 'none';
-                            }
-                            if (data.action === "updateBookmark") {
-                                document.getElementById("bookmark-icon").innerText = data.isBookmarked ? 'bookmark' : 'bookmark_border';
-                            }
-                            if (data.action === "updateTTS") {
-                                document.getElementById("tts-icon").innerText = data.isSpeaking ? 'stop' : 'volume_up';
-                            }
-                        } catch(e) {}
-                    });
-                </script>
-            </body>
-            </html>
-            `;
-            setHtmlContent(fullHtml);
-        }
-    }, [content, topicId]);
-
-    // Send an update message to the WebView whenever the isBookmarked prop changes
-    useEffect(() => {
-        if (webViewRef.current && htmlContent) {
-            webViewRef.current.postMessage(JSON.stringify({ action: "updateBookmark", isBookmarked }));
-        }
-    }, [isBookmarked]);
-
-    // Send an update message to the WebView whenever the isSpeaking prop changes
-    useEffect(() => {
-        if (webViewRef.current && htmlContent) {
-            webViewRef.current.postMessage(JSON.stringify({ action: "updateTTS", isSpeaking }));
-        }
-    }, [isSpeaking]);
-
-    const handleMessage = (event) => {
-        try {
-            const data = JSON.parse(event.nativeEvent.data);
-            if (data.type === 'HIGHLIGHT_SAVED') {
-                // We recreate the full HTML structure with the new innerHTML
-                const newFullHtml = htmlContent.replace(/<div id="content-container">[\s\S]*?<\/div>/, `<div id="content-container">${data.html}</div>`);
-                setHtmlContent(newFullHtml);
-                saveHighlight(topicId, newFullHtml);
-            } else if (data.type === 'TOGGLE_BOOKMARK') {
-                if (onToggleBookmark) onToggleBookmark();
-            } else if (data.type === 'TOGGLE_TTS') {
-                if (onToggleSpeak) onToggleSpeak();
-            }
-        } catch (e) {
-            console.error("Error parsing webview message", e);
+    const flushBullets = () => {
+        if (bulletGroup.length > 0) {
+            blocks.push({ type: 'bullets', items: [...bulletGroup] });
+            bulletGroup = [];
         }
     };
 
-    const applyHighlight = (color) => {
-        // Obsolete function. Handled inside webview.
+    for (const line of lines) {
+        if (line.startsWith('# ')) {
+            flushBullets();
+            blocks.push({ type: 'h1', text: line.replace(/^# /, '') });
+        } else if (line.startsWith('## ')) {
+            flushBullets();
+            blocks.push({ type: 'h2', text: line.replace(/^## /, '') });
+        } else if (/^[\*\-] /.test(line)) {
+            bulletGroup.push(line.replace(/^[\*\-] /, ''));
+        } else if (line.match(/^!\[(.*?)\]\((.*?)\)$/)) {
+            flushBullets();
+            const match = line.match(/^!\[(.*?)\]\((.*?)\)$/);
+            blocks.push({ type: 'image', url: match[2], alt: match[1] });
+        } else if (line.trim() === '') {
+            flushBullets();
+            blocks.push({ type: 'spacing' });
+        } else {
+            flushBullets();
+            blocks.push({ type: 'body', text: line });
+        }
+    }
+    flushBullets();
+    return blocks;
+};
+
+const ReadingView = ({
+    content,
+    topicId,
+    isBookmarked,
+    onToggleBookmark,
+    isSpeaking,
+    onToggleSpeak,
+}) => {
+    const insets = useSafeAreaInsets();
+    const blocks = parseMarkdown(content || '');
+
+    const renderBlock = (block, index) => {
+        switch (block.type) {
+            case 'h1':
+                return (
+                    <Text key={index} style={styles.h1} selectable={false}>
+                        {block.text}
+                    </Text>
+                );
+            case 'h2':
+                return (
+                    <Text key={index} style={styles.h2} selectable={false}>
+                        {block.text}
+                    </Text>
+                );
+            case 'body':
+                return (
+                    <Text key={index} style={styles.body} selectable={false}>
+                        {block.text}
+                    </Text>
+                );
+            case 'bullets':
+                return (
+                    <View key={index} style={styles.bulletGroup}>
+                        {block.items.map((item, i) => (
+                            <View key={i} style={styles.bulletRow}>
+                                <Text style={styles.bulletDot} selectable={false}>•</Text>
+                                <Text style={styles.bulletText} selectable={false}>{item}</Text>
+                            </View>
+                        ))}
+                    </View>
+                );
+            case 'image':
+                return (
+                    <Image
+                        key={index}
+                        source={{ uri: block.url }}
+                        style={styles.contentImage}
+                        resizeMode="contain"
+                        accessible={true}
+                        accessibilityLabel={block.alt || 'Content image'}
+                    />
+                );
+            case 'spacing':
+                return <View key={index} style={styles.spacing} />;
+            default:
+                return null;
+        }
     };
 
     return (
         <View style={styles.container}>
-            <WebView
-                ref={webViewRef}
-                source={{ html: htmlContent }}
-                style={styles.webview}
-                onMessage={handleMessage}
-                javaScriptEnabled={true}
-                domStorageEnabled={true}
-            />
+            {/* Floating action buttons */}
+            <View style={styles.fabRow} pointerEvents="box-none">
+                <TouchableOpacity
+                    style={styles.fabBtn}
+                    onPress={onToggleSpeak}
+                    activeOpacity={0.85}
+                >
+                    <MaterialIcons
+                        name={isSpeaking ? 'stop' : 'volume-up'}
+                        size={22}
+                        color="#6200ee"
+                    />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.fabBtn}
+                    onPress={onToggleBookmark}
+                    activeOpacity={0.85}
+                >
+                    <MaterialIcons
+                        name={isBookmarked ? 'bookmark' : 'bookmark-border'}
+                        size={22}
+                        color="#6200ee"
+                    />
+                </TouchableOpacity>
+            </View>
 
-            <TouchableOpacity
-                style={[styles.highlightBtn, { bottom: Math.max(16, insets.bottom + 16) }]}
-                onPress={() => {
-                    if (webViewRef.current) {
-                        webViewRef.current.postMessage(JSON.stringify({ action: "togglePicker" }));
-                    }
-                }}
+            <ScrollView
+                style={styles.scroll}
+                contentContainerStyle={[
+                    styles.scrollContent,
+                    { paddingBottom: 100 + insets.bottom },
+                ]}
+                showsVerticalScrollIndicator={false}
             >
-                <MaterialIcons name="brush" size={24} color="#FFF" />
-            </TouchableOpacity>
+                {/* Spacer so content clears the FABs */}
+                <View style={{ height: 56 }} />
+                {blocks.map(renderBlock)}
+            </ScrollView>
         </View>
     );
 };
@@ -281,28 +161,84 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         elevation: 2,
     },
-    webview: {
-        flex: 1,
-        backgroundColor: 'transparent',
-    },
-    highlightBtn: {
+    fabRow: {
         position: 'absolute',
-        bottom: 16,
-        right: 16,
-        backgroundColor: '#6200ee',
-        width: 48,
-        height: 48,
-        borderRadius: 12,
-        justifyContent: 'center',
-        alignItems: 'center',
-        elevation: 6,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.27,
-        shadowRadius: 4.65,
+        top: 12,
+        right: 12,
+        flexDirection: 'row',
+        zIndex: 10,
+        gap: 8,
     },
-    btnText: {
-        fontSize: 24,
+    fabBtn: {
+        width: 44,
+        height: 44,
+        backgroundColor: '#ffffff',
+        borderRadius: 12,
+        alignItems: 'center',
+        justifyContent: 'center',
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.15,
+        shadowRadius: 4,
+    },
+    scroll: {
+        flex: 1,
+    },
+    scrollContent: {
+        paddingHorizontal: 16,
+    },
+    h1: {
+        color: '#6200ee',
+        fontSize: 22,
+        fontWeight: '700',
+        marginTop: 16,
+        marginBottom: 8,
+        paddingRight: 100, // clear the FABs
+    },
+    h2: {
+        color: '#333333',
+        fontSize: 19,
+        fontWeight: '700',
+        marginTop: 14,
+        marginBottom: 6,
+    },
+    body: {
+        color: '#1c1b1f',
+        fontSize: 15.5,
+        lineHeight: 24,
+        marginVertical: 4,
+    },
+    bulletGroup: {
+        marginVertical: 4,
+    },
+    bulletRow: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        marginBottom: 4,
+    },
+    bulletDot: {
+        color: '#6200ee',
+        fontSize: 16,
+        lineHeight: 24,
+        marginRight: 8,
+        marginLeft: 4,
+    },
+    bulletText: {
+        flex: 1,
+        color: '#1c1b1f',
+        fontSize: 15.5,
+        lineHeight: 24,
+    },
+    spacing: {
+        height: 14,
+    },
+    contentImage: {
+        width: '100%',
+        height: Dimensions.get('window').height * 0.3,
+        marginVertical: 12,
+        borderRadius: 8,
+        backgroundColor: '#f9fafb',
     }
 });
 

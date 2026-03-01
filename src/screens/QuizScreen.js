@@ -5,7 +5,7 @@ import { AppContext } from '../context/AppContext';
 
 const QuizScreen = ({ route, navigation }) => {
     const { title, quizzes } = route.params;
-    const { completeQuiz } = useContext(AppContext);
+    const { completeQuiz, recordQuizScore } = useContext(AppContext);
 
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
@@ -26,17 +26,20 @@ const QuizScreen = ({ route, navigation }) => {
     const currentQuiz = quizzes[currentQuestionIndex];
 
     const handleNext = () => {
-        if (selectedAnswer === currentQuiz.correctAnswer) {
-            setScore(score + 10);
-        }
+        const isCorrect = selectedAnswer === currentQuiz.correctAnswer;
+        const newScore = isCorrect ? score + 10 : score;
 
         if (currentQuestionIndex < quizzes.length - 1) {
+            if (isCorrect) setScore(newScore);
             setCurrentQuestionIndex(currentQuestionIndex + 1);
             setSelectedAnswer(null);
         } else {
             // Quiz finished
-            const finalScore = selectedAnswer === currentQuiz.correctAnswer ? score + 10 : score;
-            completeQuiz(finalScore);
+            completeQuiz(newScore);
+            // Track quiz score for statistics (correct count out of total)
+            const correctCount = Math.round(newScore / 10);
+            recordQuizScore(correctCount, quizzes.length);
+            setScore(newScore);
             setQuizFinished(true);
         }
     };

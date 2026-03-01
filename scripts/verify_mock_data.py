@@ -66,18 +66,20 @@ def process_file_verification(file_path):
         print(f"\n--- Verifying {filename} ({len(data)} chapters) ---")
         
         # 1. Strip all existing 'recentlyUpdated' flags globally from previous weeks
-        for item in data:
-            if 'recentlyUpdated' in item:
-                del item['recentlyUpdated']
-            if 'subsections' in item:
-                for sub in item['subsections']:
-                    if 'recentlyUpdated' in sub:
-                         del sub['recentlyUpdated']
+        def strip_recently_updated(items):
+            for item in items:
+                if 'recentlyUpdated' in item:
+                    del item['recentlyUpdated']
+                if 'subsections' in item:
+                    strip_recently_updated(item['subsections'])
+                    
+        strip_recently_updated(data)
                          
         updates_made: int = 0
         
-        for index, item in enumerate(data):
-            print(f"Verifying [{index + 1}/{len(data)}]: {item.get('title', 'Unknown')}")
+        def verify_item_recursively(item, index_str):
+            nonlocal updates_made
+            print(f"Verifying [{index_str}]: {item.get('title', 'Unknown')}")
             
             # Check if this chapter has direct content
             if 'content' in item:
@@ -90,23 +92,15 @@ def process_file_verification(file_path):
                         item['content'] = new_content
                         item['recentlyUpdated'] = True
                         updates_made = int(updates_made) + 1  # type: ignore
-                        print(f"  -> Updates found and applied to {item['title']}.")
+                        print(f"  -> Updates found and applied to {item.get('title', 'Unknown')}.")
                         
-            # Check if this chapter has subsections (like National Health Programmes)
+            # Check if this chapter has subsections
             if 'subsections' in item:
                 for sub_index, subsection in enumerate(item['subsections']):
-                    print(f"  Verifying subsection: {subsection.get('title', 'Unknown')}")
-                    if 'content' in subsection:
-                        original_sub_content = subsection['content']
-                        new_sub_content = call_gemini_to_verify(original_sub_content)
-                        
-                        if new_sub_content and new_sub_content != original_sub_content:
-                            if len(new_sub_content) > 100:
-                                subsection['content'] = new_sub_content
-                                subsection['recentlyUpdated'] = True
-                                updates_made = int(updates_made) + 1  # type: ignore
-                                print(f"    -> Updates found and applied to {subsection['title']}.")
-                                
+                    verify_item_recursively(subsection, f"{index_str}.{sub_index + 1}")
+
+        for index, item in enumerate(data):
+            verify_item_recursively(item, str(index + 1))
             # Sleep slightly to avoid hitting Gemini rate limits rapidly
             time.sleep(2)
             

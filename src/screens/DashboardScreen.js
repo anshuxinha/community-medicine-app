@@ -10,7 +10,7 @@ import { scheduleAllNotifications } from '../services/notificationService';
 import { auth } from '../config/firebase';
 
 const DashboardScreen = ({ navigation }) => {
-    const { readingProgress, currentStreak, studyScore } = useContext(AppContext);
+    const { readingProgress, currentStreak, studyScore, user } = useContext(AppContext);
     const [drawerOpen, setDrawerOpen] = useState(false);
 
     const [visible, setVisible] = React.useState(false);
@@ -62,7 +62,7 @@ const DashboardScreen = ({ navigation }) => {
 
                 {/* Greeting */}
                 <View style={styles.headerSection}>
-                    <Text style={styles.welcomeText}>{getGreeting()},{'\n'}Dr. User</Text>
+                    <Text style={styles.welcomeText}>{getGreeting()},{`\n`}{user?.username || auth.currentUser?.displayName || 'Dr. User'}</Text>
                     <Text variant="bodyLarge" style={styles.subText}>{getFormattedDate()}</Text>
                 </View>
 
@@ -235,6 +235,7 @@ const styles = StyleSheet.create({
     cardTitle: {
         fontWeight: 'bold',
         fontSize: 16,
+        color: '#111827',
     },
     progressBar: {
         height: 12,

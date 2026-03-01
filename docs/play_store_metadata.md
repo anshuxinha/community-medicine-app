@@ -4,16 +4,35 @@
 - **App Name:** Community Medicine App
 - **Short Description:** Master Community Medicine with our dynamic library, AI tutor, and practice quizzes.
 - **Full Description:**
-Welcome to the essential app for Community Medicine students and professionals! Designed to help you master epidemiological concepts, public health strategies, and specific disease modules with ease.
+Welcome to **STROMA**, the ultimate pocket companion for medical students, public health professionals, and Community Medicine enthusiasts. Designed to bridge the gap between textbook theory and clinical practice, STROMA provides a comprehensive suite of tools to help you excel in exams and field postings.
 
-**Key Features:**
-- **Comprehensive Library:** Access in-depth chapters covering a wide range of topics, from Zoonotic diseases to health planning.
-- **AI Tutor Chat:** Ask questions and get instant, intelligent answers derived from trusted medical knowledge. Explanations on diagrams, chapter summaries, and more!
-- **Interactive Quizzes:** Test your knowledge and track your progress with custom mock quizzes.
-- **Offline Access:** Study anytime, anywhere - even without an internet connection.
-- **Freemium Experience:** Start learning for free, then upgrade to Pro for an ad-free experience, unlimited AI assistance, and exclusive advanced modules.
+### 📚 Comprehensive Knowledge Library
+Dive into an extensively curated library covering core Community Medicine topics. From epidemiology and zoonotic diseases to health management and planning, our chapters are designed for quick revision and deep understanding.
+- **Dynamic Content:** Interactive chapters with clear, concise medical knowledge.
+- **Bookmark & Save:** Never lose track of important topics; save them for 1-tap access.
 
-Master your exams and clinical postings with the ultimate pocket companion for Community Medicine!
+### 🤖 AI Tutor & Chat Support
+Stuck on a complex concept or need a quick summary of a diagram? Our intelligent AI Tutor is here 24/7 to answer your questions, summarize length chapters, and explain intricate medical concepts using trusted sources.
+
+### 🧮 Advanced Medical Calculators & Tools
+Simplify field work and clinical data analysis with our built-in calculators:
+- **MUAC Module:** Comprehensive nutritional assessment for both children and adults with comparative reference data.
+- **SES Calculator:** Instantly calculate Socio-Economic Status using the latest BG Prasad and other standard tabs.
+- **Biostat Assistant:** Quick-reference tools for biostatistical analysis.
+- **Dietary Survey:** Streamlined module for conducting and recording dietary field surveys.
+
+### 📝 Interactive Quizzes & Mock Exams
+Test your knowledge and stay sharp with our quiz bank. Whether you are preparing for university exams or professional entrance tests, our mock quizzes provide immediate feedback to help you track your progress.
+
+### 📊 Personal Study Statistics
+Visualize your learning journey! Track your daily reading history, quiz performance, and study streaks through our elegant Statistics Dashboard.
+
+### 🌟 Why Choose STROMA?
+- **Premium Design:** A modern, clean, and intuitive interface with full Dark Mode support.
+- **Offline Access:** Study on the go without worrying about an internet connection.
+- **Made for Students:** Tailored specifically for the needs of Community Medicine/PSM curriculum.
+
+Download **STROMA** today and join thousands of students simplifying their medical education. Master Public Health—anytime, anywhere!
 
 ## 2. Graphics Assets Required for Play Console
 - **App Icon:** 512px by 512px (PNG or JPEG, up to 1 MB)

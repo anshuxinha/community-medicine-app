@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
-import { Text, TextInput, Button, Card, Title, DataTable, Divider, RadioButton } from 'react-native-paper';
+import { Text, TextInput, Button, Card, Divider } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Picker } from '@react-native-picker/picker';
 import foodData from '../data/foodData.json';
@@ -66,11 +66,16 @@ const DietarySurveyScreen = () => {
                 {/* Reference selector */}
                 <Card style={styles.card}>
                     <Card.Content>
-                        <Title>Reference Standard</Title>
+                        <Text style={styles.sectionTitle}>Reference Standard</Text>
                         <View style={styles.pickerContainer}>
-                            <Picker selectedValue={referenceKey} onValueChange={setReferenceKey}>
+                            <Picker
+                                selectedValue={referenceKey}
+                                onValueChange={setReferenceKey}
+                                style={{ color: '#111827' }}
+                                dropdownIconColor="#111827"
+                            >
                                 {Object.entries(REFERENCE_VALUES).map(([k, v]) => (
-                                    <Picker.Item key={k} label={v.label} value={k} />
+                                    <Picker.Item key={k} label={v.label} value={k} color="#111827" style={{ fontSize: 14 }} />
                                 ))}
                             </Picker>
                         </View>
@@ -80,17 +85,18 @@ const DietarySurveyScreen = () => {
                 {/* Food rows */}
                 <Card style={styles.card}>
                     <Card.Content>
-                        <Title>Food Items</Title>
+                        <Text style={styles.sectionTitle}>Food Items</Text>
                         {rows.map((row, index) => (
                             <View key={index} style={styles.rowContainer}>
                                 <View style={styles.pickerContainerSmall}>
                                     <Picker
                                         selectedValue={row.foodId}
                                         onValueChange={(v) => updateRow(index, 'foodId', v)}
-                                        style={{ height: 44 }}
+                                        style={{ height: 44, color: '#111827' }}
+                                        dropdownIconColor="#111827"
                                     >
                                         {foodData.map(f => (
-                                            <Picker.Item key={f.id} label={f.name} value={f.id} />
+                                            <Picker.Item key={f.id} label={f.name} value={f.id} style={{ fontSize: 13, color: '#111827', backgroundColor: '#FFFFFF' }} />
                                         ))}
                                     </Picker>
                                 </View>
@@ -122,7 +128,7 @@ const DietarySurveyScreen = () => {
                 {result && (
                     <Card style={styles.resultCard}>
                         <Card.Content>
-                            <Title>Results vs {result.refLabel}</Title>
+                            <Text style={styles.sectionTitle}>Results vs {result.refLabel}</Text>
                             <Divider style={{ marginVertical: 8 }} />
 
                             {[
@@ -132,8 +138,8 @@ const DietarySurveyScreen = () => {
                             ].map(row => (
                                 <View key={row.label} style={styles.resultRow}>
                                     <Text style={styles.resultLabel}>{row.label}</Text>
-                                    <Text>{row.got} {row.unit}</Text>
-                                    <Text style={{ color: '#6B7280' }}>Ref: {row.ref} {row.unit}</Text>
+                                    <Text style={{ color: '#111827', fontWeight: '600', fontSize: 15 }}>{row.got} {row.unit}</Text>
+                                    <Text style={{ color: '#4B5563' }}>Ref: {row.ref} {row.unit}</Text>
                                     <Text style={{ color: diffColor(row.diff), fontWeight: 'bold' }}>
                                         {diffLabel(row.diff)}
                                     </Text>
@@ -152,9 +158,10 @@ const styles = StyleSheet.create({
     safeArea: { flex: 1, backgroundColor: '#FBFCFE' },
     container: { padding: 16, paddingBottom: 48 },
     card: { marginBottom: 16, backgroundColor: '#FFF' },
-    pickerContainer: { borderWidth: 1, borderColor: '#E5E7EB', borderRadius: 4, marginTop: 8 },
+    sectionTitle: { fontSize: 18, fontWeight: 'bold', color: '#111827', marginBottom: 8 },
+    pickerContainer: { borderWidth: 1, borderColor: '#D1D5DB', borderRadius: 4, marginTop: 8, backgroundColor: '#FFFFFF' },
     pickerContainerSmall: {
-        flex: 2, borderWidth: 1, borderColor: '#E5E7EB', borderRadius: 4, marginRight: 8,
+        flex: 2, borderWidth: 1, borderColor: '#D1D5DB', borderRadius: 4, marginRight: 8, backgroundColor: '#FFFFFF',
     },
     rowContainer: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
     gramInput: { flex: 1, backgroundColor: '#FFF' },

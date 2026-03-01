@@ -28,6 +28,7 @@ import VirtualMuseumScreen from '../screens/VirtualMuseumScreen';
 import BiostatsAssistantScreen from '../screens/BiostatsAssistantScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
 
+
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -130,7 +131,7 @@ const AppNavigator = () => {
                         <Stack.Screen name="FieldToolbox" component={FieldToolboxScreen} options={{ title: '🧰 Field Toolbox' }} />
                         <Stack.Screen name="SESCalculator" component={SESCalculatorScreen} options={{ title: 'SES Calculator' }} />
                         <Stack.Screen name="DietarySurvey" component={DietarySurveyScreen} options={{ title: 'Dietary Survey' }} />
-                        <Stack.Screen name="Anthropometry" component={AnthropometryScreen} options={{ title: 'Anthropometry & EDD' }} />
+                        <Stack.Screen name="Anthropometry" component={AnthropometryScreen} options={{ title: 'Anthropometry' }} />
 
                         {/* ── Other Modules ── */}
                         <Stack.Screen name="VirtualMuseum" component={VirtualMuseumScreen} options={{ title: '🏛️ Virtual Museum' }} />

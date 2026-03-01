@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, StyleSheet, TouchableOpacity, Platform, Alert, Linking } from 'react-native';
 import { Text, Button, Card } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import Purchases from 'react-native-purchases';
+import { AppContext } from '../context/AppContext';
 
 const plans = [
     { id: 'monthly', name: 'Monthly', duration: 'Monthly Plan', price: '₹399 / month', desc: 'Cancel anytime', badge: null, saveText: null },
@@ -14,22 +15,43 @@ const plans = [
 const PaywallScreen = ({ navigation }) => {
     const [selectedPlan, setSelectedPlan] = useState('yearly');
     const [isPurchasing, setIsPurchasing] = useState(false);
+    const { upgradeToPremium } = useContext(AppContext);
 
     const handlePurchase = async () => {
         if (!selectedPlan) return;
         setIsPurchasing(true);
         try {
-            // Note: In a real environment, you map `selectedPlan` to your exact Store Product ID assigned in RevenueCat dashboard
-            // Example: const product = await Purchases.getOfferings();...
-            // await Purchases.purchasePackage(product);
+            const offerings = await Purchases.getOfferings();
+            const current = offerings.current;
+            if (!current) {
+                Alert.alert('Not Available', 'No subscription packages are available right now. Please try again later.');
+                return;
+            }
 
-            Alert.alert(
-                "Purchase Simulator",
-                `The RevenueCat SDK will intercept this action and trigger the native Google Play Billing sheet for the [${selectedPlan}] tier.\n\nPlease assign your actual Google Play package ID in the RevenueCat dashboard first.`
+            // Map selectedPlan to a RevenueCat package type
+            const packageTypeMap = {
+                monthly: '$rc_monthly',
+                yearly: '$rc_annual',
+                lifetime: '$rc_lifetime',
+            };
+            const targetPackageId = packageTypeMap[selectedPlan];
+            const pkg = current.availablePackages.find(
+                p => p.packageType === targetPackageId || p.identifier === targetPackageId
             );
+
+            if (!pkg) {
+                Alert.alert('Not Found', `The ${selectedPlan} plan is not configured in RevenueCat yet. Please set up the product in your RevenueCat dashboard.`);
+                return;
+            }
+
+            await Purchases.purchasePackage(pkg);
+            upgradeToPremium(); // Grant immediate access
+            Alert.alert('🎉 Welcome to Premium!', 'Your subscription is now active. Enjoy full access to STROMA.', [
+                { text: 'Start Learning', onPress: () => navigation.goBack() }
+            ]);
         } catch (error) {
             if (!error.userCancelled) {
-                Alert.alert("Error purchasing package", error.message);
+                Alert.alert('Purchase Failed', error.message);
             }
         } finally {
             setIsPurchasing(false);
@@ -115,7 +137,7 @@ const PaywallScreen = ({ navigation }) => {
                         <TouchableOpacity onPress={handleRestore}>
                             <Text style={styles.footerLinkText}>Restore Purchase</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => Linking.openURL('https://anshuxinha.github.io/community-medicine-app/privacy.html')}>
+                        <TouchableOpacity onPress={() => Linking.openURL('https://community-med-app.web.app/privacy')}>
                             <Text style={styles.footerLinkText}>Terms & Privacy</Text>
                         </TouchableOpacity>
                     </View>

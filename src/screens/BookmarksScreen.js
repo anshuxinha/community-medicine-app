@@ -26,8 +26,9 @@ const BookmarksScreen = ({ navigation }) => {
                         renderItem={({ item }) => (
                             <List.Item
                                 title={item.title}
-                                left={props => <List.Icon {...props} icon={({ color }) => <MaterialIcons name="bookmark" size={24} color={color} />} />}
-                                right={props => <List.Icon {...props} icon={({ color }) => <MaterialIcons name="chevron-right" size={24} color={color} />} />}
+                                titleStyle={{ color: '#111827', fontWeight: '600', fontSize: 16 }}
+                                left={props => <List.Icon {...props} icon={({ color }) => <MaterialIcons name="bookmark" size={24} color="#8A2BE2" />} />}
+                                right={props => <List.Icon {...props} icon={({ color }) => <MaterialIcons name="chevron-right" size={24} color="#6B7280" />} />}
                                 onPress={() => {
                                     navigation.navigate('Reading', {
                                         id: item.id,

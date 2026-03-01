@@ -2,7 +2,7 @@
   "expo": {
     "name": "Stroma",
     "slug": "community-medicine",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -23,7 +23,7 @@
       },
       "edgeToEdgeEnabled": true,
       "package": "com.communitymed.app",
-      "versionCode": 1,
+      "versionCode": 2,
       "permissions": [
         "com.android.vending.BILLING"
       ]
@@ -60,6 +60,12 @@
       "eas": {
         "projectId": "0b2a61f3-1c01-4684-8f41-ca63b1c308a8"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/0b2a61f3-1c01-4684-8f41-ca63b1c308a8"
     }
   }
 }
