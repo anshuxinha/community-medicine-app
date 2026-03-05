@@ -4,6 +4,7 @@ import { Text, TextInput, Button, Card, Divider } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Picker } from '@react-native-picker/picker';
 import foodData from '../data/foodData.json';
+import { theme } from '../styles/theme';
 
 // Reference Daily Intakes (ICMR 2020)
 const REFERENCE_VALUES = {
@@ -71,11 +72,11 @@ const DietarySurveyScreen = () => {
                             <Picker
                                 selectedValue={referenceKey}
                                 onValueChange={setReferenceKey}
-                                style={{ color: '#111827' }}
-                                dropdownIconColor="#111827"
+                                style={{ color: theme.colors.textTitle }}
+                                dropdownIconColor={theme.colors.textTitle}
                             >
                                 {Object.entries(REFERENCE_VALUES).map(([k, v]) => (
-                                    <Picker.Item key={k} label={v.label} value={k} color="#111827" style={{ fontSize: 14 }} />
+                                    <Picker.Item key={k} label={v.label} value={k} color={theme.colors.textTitle} style={{ fontSize: 14 }} />
                                 ))}
                             </Picker>
                         </View>
@@ -92,11 +93,11 @@ const DietarySurveyScreen = () => {
                                     <Picker
                                         selectedValue={row.foodId}
                                         onValueChange={(v) => updateRow(index, 'foodId', v)}
-                                        style={{ height: 44, color: '#111827' }}
-                                        dropdownIconColor="#111827"
+                                        style={{ height: 44, color: theme.colors.textTitle }}
+                                        dropdownIconColor={theme.colors.textTitle}
                                     >
                                         {foodData.map(f => (
-                                            <Picker.Item key={f.id} label={f.name} value={f.id} style={{ fontSize: 13, color: '#111827', backgroundColor: '#FFFFFF' }} />
+                                            <Picker.Item key={f.id} label={f.name} value={f.id} style={{ fontSize: 13, color: theme.colors.textTitle, backgroundColor: theme.colors.surfacePrimary }} />
                                         ))}
                                     </Picker>
                                 </View>
@@ -105,7 +106,7 @@ const DietarySurveyScreen = () => {
                                     value={row.grams}
                                     onChangeText={(v) => updateRow(index, 'grams', v)}
                                     keyboardType="numeric"
-                                    mode="outlined"
+                                    mode="outlined" textColor={theme.colors.textTitle}
                                     style={styles.gramInput}
                                     dense
                                 />
@@ -114,7 +115,7 @@ const DietarySurveyScreen = () => {
                                 </TouchableOpacity>
                             </View>
                         ))}
-                        <Button icon="plus" mode="outlined" onPress={addRow} style={{ marginTop: 8 }}>
+                        <Button icon="plus" mode="outlined" textColor={theme.colors.textTitle} onPress={addRow} style={{ marginTop: 8 }}>
                             Add Item
                         </Button>
                     </Card.Content>
@@ -138,8 +139,8 @@ const DietarySurveyScreen = () => {
                             ].map(row => (
                                 <View key={row.label} style={styles.resultRow}>
                                     <Text style={styles.resultLabel}>{row.label}</Text>
-                                    <Text style={{ color: '#111827', fontWeight: '600', fontSize: 15 }}>{row.got} {row.unit}</Text>
-                                    <Text style={{ color: '#4B5563' }}>Ref: {row.ref} {row.unit}</Text>
+                                    <Text style={{ color: theme.colors.textTitle, fontWeight: '600', fontSize: 15 }}>{row.got} {row.unit}</Text>
+                                    <Text style={{ color: theme.colors.textSecondary }}>Ref: {row.ref} {row.unit}</Text>
                                     <Text style={{ color: diffColor(row.diff), fontWeight: 'bold' }}>
                                         {diffLabel(row.diff)}
                                     </Text>
@@ -155,21 +156,21 @@ const DietarySurveyScreen = () => {
 };
 
 const styles = StyleSheet.create({
-    safeArea: { flex: 1, backgroundColor: '#FBFCFE' },
+    safeArea: { flex: 1, backgroundColor: theme.colors.backgroundMain },
     container: { padding: 16, paddingBottom: 48 },
-    card: { marginBottom: 16, backgroundColor: '#FFF' },
-    sectionTitle: { fontSize: 18, fontWeight: 'bold', color: '#111827', marginBottom: 8 },
-    pickerContainer: { borderWidth: 1, borderColor: '#D1D5DB', borderRadius: 4, marginTop: 8, backgroundColor: '#FFFFFF' },
+    card: { marginBottom: 16, backgroundColor: theme.colors.surfacePrimary },
+    sectionTitle: { fontSize: 18, fontWeight: 'bold', color: theme.colors.textTitle, marginBottom: 8 },
+    pickerContainer: { borderWidth: 1, borderColor: '#D1D5DB', borderRadius: 4, marginTop: 8, backgroundColor: theme.colors.surfacePrimary },
     pickerContainerSmall: {
-        flex: 2, borderWidth: 1, borderColor: '#D1D5DB', borderRadius: 4, marginRight: 8, backgroundColor: '#FFFFFF',
+        flex: 2, borderWidth: 1, borderColor: '#D1D5DB', borderRadius: 4, marginRight: 8, backgroundColor: theme.colors.surfacePrimary,
     },
     rowContainer: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
-    gramInput: { flex: 1, backgroundColor: '#FFF' },
+    gramInput: { flex: 1, backgroundColor: theme.colors.surfacePrimary },
     removeBtn: { marginLeft: 8, padding: 4, justifyContent: 'center', alignItems: 'center' },
-    calcButton: { marginVertical: 16, paddingVertical: 8, backgroundColor: '#8A2BE2' },
+    calcButton: { marginVertical: 16, paddingVertical: 8, backgroundColor: theme.colors.secondary },
     resultCard: { backgroundColor: '#F3E8FF', marginBottom: 32 },
-    resultRow: { marginVertical: 6, paddingBottom: 6, borderBottomWidth: 1, borderBottomColor: '#E9D5FF' },
-    resultLabel: { fontWeight: 'bold', fontSize: 16, color: '#111827', marginBottom: 2 },
+    resultRow: { marginVertical: 6, paddingBottom: 6, borderBottomWidth: 1, borderBottomColor: theme.colors.primaryLight },
+    resultLabel: { fontWeight: 'bold', fontSize: 16, color: theme.colors.textTitle, marginBottom: 2 },
 });
 
 export default DietarySurveyScreen;

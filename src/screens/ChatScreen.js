@@ -9,9 +9,10 @@ import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import mockData from '../data/mockData.json';
 import practicalData from '../data/practical.json';
+import { theme } from '../styles/theme';
 
 // ── API config ────────────────────────────────────────────────────────────────
-const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || 'AIzaSyAtcVnqlN2oYlfdDGms35rx_lV_TGYUE3c';
+const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || '';
 // Using gemini-2.5-flash to support Google Search Grounding at no extra cost under the free daily limit of 1500 queries
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
@@ -287,8 +288,8 @@ ${relevantContext}`;
                         <TextInput
                             style={styles.textInput}
                             placeholder="Ask anything…"
-                            placeholderTextColor="#9CA3AF"
-                            textColor="#111827"
+                            placeholderTextColor={theme.colors.textPlaceholder}
+                            textColor={theme.colors.textTitle}
                             value={inputText}
                             onChangeText={setInputText}
                             multiline
@@ -305,7 +306,7 @@ ${relevantContext}`;
                             <MaterialIcons
                                 name="send"
                                 size={24}
-                                color={inputText.trim() ? '#8A2BE2' : '#D1D5DB'}
+                                color={inputText.trim() ? theme.colors.secondary : '#D1D5DB'}
                                 style={{ transform: [{ rotate: '-45deg' }] }}
                             />
                         </TouchableOpacity>
@@ -317,7 +318,7 @@ ${relevantContext}`;
 };
 
 const styles = StyleSheet.create({
-    safeArea: { flex: 1, backgroundColor: '#FBFCFE' },
+    safeArea: { flex: 1, backgroundColor: theme.colors.backgroundMain },
     container: { flex: 1 },
     header: { alignItems: 'center', paddingVertical: 16 },
     headerOrb: {
@@ -334,7 +335,7 @@ const styles = StyleSheet.create({
     messageWrapperUser: { alignItems: 'flex-end', marginBottom: 24 },
     userBubble: { maxWidth: '80%' },
     messageTextUser: {
-        color: '#111827',
+        color: theme.colors.textTitle,
         fontSize: 18,
         fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif',
         marginBottom: 4,
@@ -345,7 +346,7 @@ const styles = StyleSheet.create({
     messageWrapperAI: { alignItems: 'flex-start', marginBottom: 24 },
     messageCardAI: {
         maxWidth: '88%',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.colors.surfacePrimary,
         borderRadius: 12,
         padding: 16,
         elevation: 4,
@@ -355,7 +356,7 @@ const styles = StyleSheet.create({
         shadowRadius: 10,
     },
     messageTextAI: {
-        color: '#111827',
+        color: theme.colors.textTitle,
         fontSize: 15,
         fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif',
         lineHeight: 23,
@@ -363,7 +364,7 @@ const styles = StyleSheet.create({
 
     // Loading
     loadingContainer: { flexDirection: 'row', alignItems: 'center', padding: 8 },
-    loadingText: { marginLeft: 8, color: '#9CA3AF', fontStyle: 'italic' },
+    loadingText: { marginLeft: 8, color: theme.colors.textPlaceholder, fontStyle: 'italic' },
 
     // Quick chips
     quickBar: { maxHeight: 44, marginBottom: 8 },
@@ -374,17 +375,17 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         paddingHorizontal: 14,
         borderWidth: 1,
-        borderColor: '#C4B5FD',
+        borderColor: theme.colors.primaryLight,
     },
-    chipText: { color: '#6D28D9', fontSize: 13, fontWeight: '500' },
+    chipText: { color: theme.colors.primary, fontSize: 13, fontWeight: '500' },
 
     // Input area
-    bottomSection: { backgroundColor: '#FBFCFE', paddingBottom: 16 },
+    bottomSection: { backgroundColor: theme.colors.backgroundMain, paddingBottom: 16 },
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         marginHorizontal: 16,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.colors.surfacePrimary,
         borderRadius: 30,
         paddingLeft: 16,
         paddingRight: 8,

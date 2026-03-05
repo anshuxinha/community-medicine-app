@@ -3,6 +3,7 @@ import { View, StyleSheet, ScrollView } from 'react-native';
 import { Text, Card } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
+import { theme } from '../styles/theme';
 
 const FieldToolboxScreen = ({ navigation }) => {
     return (
@@ -12,7 +13,7 @@ const FieldToolboxScreen = ({ navigation }) => {
 
                 <Card style={styles.card} onPress={() => navigation.navigate('SESCalculator')}>
                     <Card.Content style={styles.cardContent}>
-                        <MaterialIcons name="calculate" size={40} color="#8A2BE2" />
+                        <MaterialIcons name="calculate" size={40} color={theme.colors.secondary} />
                         <View style={styles.textContainer}>
                             <Text style={styles.cardTitle}>SES Calculator</Text>
                             <Text style={styles.cardDesc}>Compute Socio-Economic Status (Modified Kuppuswamy & BG Prasad)</Text>
@@ -22,7 +23,7 @@ const FieldToolboxScreen = ({ navigation }) => {
 
                 <Card style={styles.card} onPress={() => navigation.navigate('DietarySurvey')}>
                     <Card.Content style={styles.cardContent}>
-                        <MaterialIcons name="restaurant-menu" size={40} color="#8A2BE2" />
+                        <MaterialIcons name="restaurant-menu" size={40} color={theme.colors.secondary} />
                         <View style={styles.textContainer}>
                             <Text style={styles.cardTitle}>Dietary Survey</Text>
                             <Text style={styles.cardDesc}>Calculate Calories, Protein, and Fat intake vs Reference</Text>
@@ -32,7 +33,7 @@ const FieldToolboxScreen = ({ navigation }) => {
 
                 <Card style={styles.card} onPress={() => navigation.navigate('Anthropometry')}>
                     <Card.Content style={styles.cardContent}>
-                        <MaterialIcons name="accessibility-new" size={40} color="#8A2BE2" />
+                        <MaterialIcons name="accessibility-new" size={40} color={theme.colors.secondary} />
                         <View style={styles.textContainer}>
                             <Text style={styles.cardTitle}>Anthropometry & EDD</Text>
                             <Text style={styles.cardDesc}>Calculate BMI and Expected Date of Delivery</Text>
@@ -47,7 +48,7 @@ const FieldToolboxScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#FBFCFE',
+        backgroundColor: theme.colors.backgroundMain,
     },
     container: {
         padding: 16,
@@ -55,11 +56,11 @@ const styles = StyleSheet.create({
     title: {
         fontWeight: 'bold',
         marginBottom: 24,
-        color: '#111827',
+        color: theme.colors.textTitle,
     },
     card: {
         marginBottom: 16,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.colors.surfacePrimary,
         borderRadius: 16,
         elevation: 2,
     },
@@ -74,7 +75,7 @@ const styles = StyleSheet.create({
     cardTitle: {
         fontWeight: 'bold',
         fontSize: 18,
-        color: '#111827',
+        color: theme.colors.textTitle,
         marginBottom: 4,
     },
     cardDesc: {

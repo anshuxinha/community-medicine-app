@@ -3,17 +3,38 @@ import { ScrollView, View, StyleSheet, Linking, Platform, TouchableOpacity } fro
 import { Text, Card, ProgressBar, Button, Dialog, Portal, Paragraph } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import recentUpdates from '../data/updates.json';
+import publicHealthDays from '../data/publicHealthDays.json';
 import { AppContext } from '../context/AppContext';
 import { MaterialIcons } from '@expo/vector-icons';
 import DrawerMenu from '../components/DrawerMenu';
 import { scheduleAllNotifications } from '../services/notificationService';
 import { auth } from '../config/firebase';
+import { theme } from '../styles/theme';
 
 const DashboardScreen = ({ navigation }) => {
     const { readingProgress, currentStreak, studyScore, user } = useContext(AppContext);
     const [drawerOpen, setDrawerOpen] = useState(false);
 
     const [visible, setVisible] = React.useState(false);
+    const [healthDaysVisible, setHealthDaysVisible] = useState(false);
+
+    const getNextHealthDay = () => {
+        const today = new Date();
+        const currentMonth = today.getMonth() + 1;
+        const currentDay = today.getDate();
+
+        const sortedDays = [...publicHealthDays].sort((a, b) => {
+            if (a.month === b.month) return a.day - b.day;
+            return a.month - b.month;
+        });
+
+        const nextDay = sortedDays.find(
+            day => day.month > currentMonth || (day.month === currentMonth && day.day >= currentDay)
+        );
+
+        return nextDay || sortedDays[0];
+    };
+    const nextHealthDay = getNextHealthDay();
     const [selectedUpdate, setSelectedUpdate] = React.useState(null);
 
     const showDialog = (update) => {
@@ -52,11 +73,11 @@ const DashboardScreen = ({ navigation }) => {
                 {/* ── Top header bar ── */}
                 <View style={styles.topBar}>
                     <TouchableOpacity onPress={() => setDrawerOpen(true)} style={styles.iconBtn}>
-                        <MaterialIcons name="menu" size={26} color="#111827" />
+                        <MaterialIcons name="menu" size={26} color={theme.colors.textTitle} />
                     </TouchableOpacity>
                     <Text style={styles.appName}>STROMA</Text>
                     <TouchableOpacity onPress={() => navigation.navigate('Notifications')} style={styles.iconBtn}>
-                        <MaterialIcons name="notifications-none" size={26} color="#111827" />
+                        <MaterialIcons name="notifications-none" size={26} color={theme.colors.textTitle} />
                     </TouchableOpacity>
                 </View>
 
@@ -67,7 +88,7 @@ const DashboardScreen = ({ navigation }) => {
                 </View>
 
                 <Card style={styles.progressCard}>
-                    <Card.Title title="Learning Progress" titleStyle={styles.cardTitle} subtitleStyle={{ color: '#111827' }} />
+                    <Card.Title title="Learning Progress" titleStyle={styles.cardTitle} subtitleStyle={{ color: theme.colors.textTitle }} />
                     <Card.Content>
                         <ProgressBar
                             progress={readingProgress}
@@ -88,11 +109,11 @@ const DashboardScreen = ({ navigation }) => {
                             <Text variant="labelMedium" style={styles.statLabel}>Day Streak</Text>
                         </Card.Content>
                     </Card>
-                    <Card style={[styles.statCard, { marginLeft: 8 }]}>
-                        <Card.Content style={styles.statContent}>
-                            <Text variant="displaySmall">⭐</Text>
-                            <Text variant="titleLarge" style={styles.statValue}>{studyScore}</Text>
-                            <Text variant="labelMedium" style={styles.statLabel}>Study Score</Text>
+                    <Card style={[styles.statCard, { marginLeft: 8 }]} onPress={() => setHealthDaysVisible(true)}>
+                        <Card.Content style={[styles.statContent, { paddingHorizontal: 4 }]}>
+                            <Text variant="displaySmall" style={{ marginBottom: 4 }}>📅</Text>
+                            <Text variant="titleMedium" style={[styles.statValue, { fontSize: 15, textAlign: 'center', lineHeight: 18 }]} numberOfLines={2}>{nextHealthDay.name}</Text>
+                            <Text variant="labelSmall" style={[styles.statLabel, { marginTop: 4, color: theme.colors.secondary }]}>{nextHealthDay.dateLabel}</Text>
                         </Card.Content>
                     </Card>
                 </View>
@@ -104,19 +125,19 @@ const DashboardScreen = ({ navigation }) => {
                 <View style={styles.quickAccessRow}>
                     <Card style={styles.quickCard} onPress={() => navigation.navigate('FieldToolbox')}>
                         <Card.Content style={styles.quickCardContent}>
-                            <MaterialIcons name="build" size={32} color="#8A2BE2" />
+                            <MaterialIcons name="build" size={32} color={theme.colors.secondary} />
                             <Text variant="labelMedium" style={styles.quickText}>Toolbox</Text>
                         </Card.Content>
                     </Card>
                     <Card style={[styles.quickCard, { marginHorizontal: 8 }]} onPress={() => navigation.navigate('VirtualMuseum')}>
                         <Card.Content style={styles.quickCardContent}>
-                            <MaterialIcons name="museum" size={32} color="#8A2BE2" />
+                            <MaterialIcons name="museum" size={32} color={theme.colors.secondary} />
                             <Text variant="labelMedium" style={styles.quickText}>Museum</Text>
                         </Card.Content>
                     </Card>
                     <Card style={styles.quickCard} onPress={() => navigation.navigate('BiostatsAssistant')}>
                         <Card.Content style={styles.quickCardContent}>
-                            <MaterialIcons name="insert-chart" size={32} color="#8A2BE2" />
+                            <MaterialIcons name="insert-chart" size={32} color={theme.colors.secondary} />
                             <Text variant="labelMedium" style={styles.quickText}>Biostats</Text>
                         </Card.Content>
                     </Card>
@@ -149,7 +170,7 @@ const DashboardScreen = ({ navigation }) => {
                 <Dialog visible={visible} onDismiss={hideDialog}>
                     <Dialog.Title>{selectedUpdate?.title}</Dialog.Title>
                     <Dialog.Content>
-                        <Text variant="labelSmall" style={{ marginBottom: 16, color: '#6750a4', fontWeight: 'bold' }}>
+                        <Text variant="labelSmall" style={{ marginBottom: 16, color: theme.colors.primary, fontWeight: 'bold' }}>
                             {selectedUpdate?.date}
                         </Text>
                         <Paragraph style={{ lineHeight: 22 }}>{selectedUpdate?.summary}</Paragraph>
@@ -168,6 +189,28 @@ const DashboardScreen = ({ navigation }) => {
                         <Button onPress={hideDialog}>Close</Button>
                     </Dialog.Actions>
                 </Dialog>
+
+                <Dialog
+                    visible={healthDaysVisible}
+                    onDismiss={() => setHealthDaysVisible(false)}
+                    style={{ maxHeight: '82%', backgroundColor: theme.colors.surfacePrimary, borderRadius: 16 }}
+                >
+                    <Dialog.Title style={{ color: theme.colors.textTitle, fontWeight: 'bold' }}>Public Health Days</Dialog.Title>
+                    <Dialog.ScrollArea style={{ paddingHorizontal: 0, borderColor: 'transparent' }}>
+                        <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingVertical: 8 }}>
+                            {publicHealthDays.map((day, index) => (
+                                <View key={index} style={{ marginBottom: 16 }}>
+                                    <Text variant="titleMedium" style={{ fontWeight: 'bold', color: theme.colors.textTitle }}>{day.name}</Text>
+                                    <Text variant="labelSmall" style={{ color: theme.colors.secondary, marginBottom: 4, fontWeight: '600' }}>{day.dateLabel}</Text>
+                                    <Text variant="bodyMedium" style={{ color: theme.colors.textSecondary, lineHeight: 20 }}>{day.description}</Text>
+                                </View>
+                            ))}
+                        </ScrollView>
+                    </Dialog.ScrollArea>
+                    <Dialog.Actions>
+                        <Button onPress={() => setHealthDaysVisible(false)}>Close</Button>
+                    </Dialog.Actions>
+                </Dialog>
             </Portal>
 
         </SafeAreaView>
@@ -178,7 +221,7 @@ const DashboardScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#FBFCFE',
+        backgroundColor: theme.colors.backgroundMain,
     },
     container: {
         flex: 1,
@@ -197,7 +240,7 @@ const styles = StyleSheet.create({
     appName: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#111827',
+        color: theme.colors.textTitle,
         letterSpacing: 2,
     },
     iconBtn: {
@@ -206,7 +249,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 20,
-        backgroundColor: '#F3F4F6',
+        backgroundColor: theme.colors.surfaceSecondary,
     },
     headerSection: {
         marginBottom: 24,
@@ -215,16 +258,16 @@ const styles = StyleSheet.create({
     welcomeText: {
         fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif',
         fontSize: 36,
-        color: '#111827',
+        color: theme.colors.textTitle,
         lineHeight: 40,
     },
     subText: {
-        color: '#6B7280',
+        color: theme.colors.textTertiary,
         marginTop: 8,
     },
     progressCard: {
         marginBottom: 24,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.colors.surfacePrimary,
         borderRadius: 20,
         elevation: 4,
         shadowColor: '#000',
@@ -235,17 +278,17 @@ const styles = StyleSheet.create({
     cardTitle: {
         fontWeight: 'bold',
         fontSize: 16,
-        color: '#111827',
+        color: theme.colors.textTitle,
     },
     progressBar: {
         height: 12,
         borderRadius: 6,
         marginVertical: 12,
-        backgroundColor: '#F3F4F6',
+        backgroundColor: theme.colors.surfaceSecondary,
     },
     progressText: {
         textAlign: 'right',
-        color: '#4B5563',
+        color: theme.colors.textSecondary,
         fontWeight: '600',
     },
     statsRow: {
@@ -255,7 +298,7 @@ const styles = StyleSheet.create({
     },
     statCard: {
         flex: 1,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.colors.surfacePrimary,
         borderRadius: 20,
         elevation: 4,
         shadowColor: '#000',
@@ -275,14 +318,14 @@ const styles = StyleSheet.create({
     statValue: {
         fontWeight: 'bold',
         fontSize: 24,
-        color: '#111827',
+        color: theme.colors.textTitle,
         marginVertical: 4,
     },
     sectionTitle: {
         fontWeight: 'bold',
         fontSize: 20,
         marginBottom: 16,
-        color: '#111827',
+        color: theme.colors.textTitle,
     },
     quickAccessRow: {
         flexDirection: 'row',
@@ -291,7 +334,7 @@ const styles = StyleSheet.create({
     },
     quickCard: {
         flex: 1,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.colors.surfacePrimary,
         borderRadius: 16,
         elevation: 2,
         shadowColor: '#000',
@@ -308,11 +351,11 @@ const styles = StyleSheet.create({
     quickText: {
         marginTop: 8,
         fontWeight: 'bold',
-        color: '#4B5563',
+        color: theme.colors.textSecondary,
     },
     updateCard: {
         marginBottom: 16,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.colors.surfacePrimary,
         borderRadius: 16,
         elevation: 2,
         shadowColor: '#000',
@@ -321,7 +364,7 @@ const styles = StyleSheet.create({
         shadowRadius: 8,
     },
     dateText: {
-        color: '#8A2BE2',
+        color: theme.colors.secondary,
         marginBottom: 6,
         fontWeight: 'bold',
         fontSize: 12,
@@ -330,10 +373,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 18,
         marginBottom: 8,
-        color: '#111827',
+        color: theme.colors.textTitle,
     },
     updateSummary: {
-        color: '#6B7280',
+        color: theme.colors.textTertiary,
         lineHeight: 22,
     },
 });

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
 import { Text, List, Divider, Badge } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
+import { theme } from '../styles/theme';
 
 const SubTopicsScreen = ({ route, navigation }) => {
     const { title, items } = route.params;
@@ -14,8 +15,10 @@ const SubTopicsScreen = ({ route, navigation }) => {
                 renderItem={({ item }) => (
                     <List.Item
                         title={item.title}
+                        titleStyle={styles.itemTitle}
                         description={item.description}
-                        left={props => <List.Icon {...props} icon={({ color }) => <MaterialIcons name="description" size={24} color={color} />} />}
+                        descriptionStyle={styles.itemDescription}
+                        left={props => <List.Icon {...props} icon={({ color }) => <MaterialIcons name="description" size={24} color={theme.colors.secondary} />} />}
                         right={props => item.recentlyUpdated ? <Badge {...props} style={[styles.badge, props.style]}>NEW</Badge> : null}
                         onPress={() => {
                             if (item.subsections) {
@@ -43,12 +46,21 @@ const SubTopicsScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#ffffff',
+        backgroundColor: theme.colors.surfacePrimary,
+    },
+    itemTitle: {
+        color: theme.colors.textTitle,
+        fontWeight: '600',
+        fontSize: 15,
+    },
+    itemDescription: {
+        color: theme.colors.textSecondary,
+        fontSize: 13,
     },
     badge: {
         alignSelf: 'center',
         marginRight: 8,
-        backgroundColor: '#4CAF50', // Green badge for positive 'updated' reinforcement
+        backgroundColor: theme.colors.success,
         color: 'white',
         fontWeight: 'bold'
     }

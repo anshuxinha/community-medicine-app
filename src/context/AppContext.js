@@ -8,9 +8,13 @@ import { db, auth } from '../config/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { onAuthStateChanged, getIdTokenResult } from 'firebase/auth';
 import * as Notifications from 'expo-notifications';
-import Purchases from 'react-native-purchases';
+let Purchases;
+if (Constants.appOwnership !== 'expo') {
+    Purchases = require('react-native-purchases').default;
+}
 import mockData from '../data/mockData.json';
 import practicalData from '../data/practical.json';
+import { theme } from '../styles/theme';
 
 const allData = [...mockData, ...practicalData];
 
@@ -268,7 +272,7 @@ export const AppProvider = ({ children }) => {
                 name: 'default',
                 importance: SafeNotifications.AndroidImportance.MAX,
                 vibrationPattern: [0, 250, 250, 250],
-                lightColor: '#FF231F7C',
+                lightColor: theme.colors.primaryDark,
             });
         }
         return token;
@@ -349,15 +353,19 @@ export const AppProvider = ({ children }) => {
 
     // Payment SDK Initialization
     useEffect(() => {
-        Purchases.configure({ apiKey: process.env.EXPO_PUBLIC_RC_API_KEY || "test_vulmIhXWwQBkNrLyBuwhSPgPwut" });
+        if (Constants.appOwnership === 'expo') return;
 
-        Purchases.addCustomerInfoUpdateListener((info) => {
-            if (info.entitlements.active['Premium'] !== undefined) {
-                setIsPremium(true);
-            } else {
-                setIsPremium(false);
-            }
-        });
+        if (Purchases) {
+            Purchases.configure({ apiKey: process.env.EXPO_PUBLIC_RC_API_KEY || "test_vulmIhXWwQBkNrLyBuwhSPgPwut" });
+
+            Purchases.addCustomerInfoUpdateListener((info) => {
+                if (info.entitlements.active['Premium'] !== undefined) {
+                    setIsPremium(true);
+                } else {
+                    setIsPremium(false);
+                }
+            });
+        }
     }, []);
 
     const completeDailyGoal = (score) => {
@@ -386,7 +394,8 @@ export const AppProvider = ({ children }) => {
         }
     };
 
-    const logout = () => {
+    const logout = async () => {
+        await clearStorage();
         setUser(null);
         setIsPremium(false);
     };

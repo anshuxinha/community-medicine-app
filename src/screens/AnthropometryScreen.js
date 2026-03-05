@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Platform } from 'react-native';
 import { Text, TextInput, Button, Card, Divider, SegmentedButtons } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { theme } from '../styles/theme';
 
 /* ─── BMI cut-offs (Asian Indian) ──────────────────────────────────────── */
 const BMI_CATEGORIES_ASIAN = [
-    { max: 18.5, label: 'Underweight', color: '#3B82F6' },
+    { max: 18.5, label: 'Underweight', color: theme.colors.chartBlue },
     { max: 23.0, label: 'Normal', color: '#15803D' },
-    { max: 25.0, label: 'Overweight', color: '#D97706' },
+    { max: 25.0, label: 'Overweight', color: theme.colors.accent },
     { max: Infinity, label: 'Obese', color: '#B91C1C' },
 ];
 
@@ -15,11 +16,11 @@ const BMI_CATEGORIES_ASIAN = [
 const whrRisk = (whr, sex) => {
     if (sex === 'male') {
         if (whr < 0.90) return { label: 'Low Risk', color: '#15803D' };
-        if (whr < 1.00) return { label: 'Moderate Risk', color: '#D97706' };
+        if (whr < 1.00) return { label: 'Moderate Risk', color: theme.colors.accent };
         return { label: 'High Risk', color: '#B91C1C' };
     } else {
         if (whr < 0.80) return { label: 'Low Risk', color: '#15803D' };
-        if (whr < 0.85) return { label: 'Moderate Risk', color: '#D97706' };
+        if (whr < 0.85) return { label: 'Moderate Risk', color: theme.colors.accent };
         return { label: 'High Risk', color: '#B91C1C' };
     }
 };
@@ -27,15 +28,15 @@ const whrRisk = (whr, sex) => {
 /* ─── MUAC — child (6–59 months, WHO SMART criteria) ───────────────────── */
 const muacChildStatus = (muac) => {
     if (muac < 11.5) return { label: 'SAM — Severe Acute Malnutrition', color: '#B91C1C', band: 'RED' };
-    if (muac < 12.5) return { label: 'MAM — Moderate Acute Malnutrition', color: '#D97706', band: 'YELLOW' };
+    if (muac < 12.5) return { label: 'MAM — Moderate Acute Malnutrition', color: theme.colors.accent, band: 'YELLOW' };
     return { label: 'Normal / Well-Nourished', color: '#15803D', band: 'GREEN' };
 };
 
 /* ─── MUAC — adult ──────────────────────────────────────────────────────── */
 const muacAdultStatus = (muac) => {
     if (muac < 18.5) return { label: 'Severely Malnourished', color: '#B91C1C' };
-    if (muac < 22.0) return { label: 'Malnourished', color: '#D97706' };
-    if (muac < 23.0) return { label: 'At-Risk', color: '#D97706' };
+    if (muac < 22.0) return { label: 'Malnourished', color: theme.colors.accent };
+    if (muac < 23.0) return { label: 'At-Risk', color: theme.colors.accent };
     return { label: 'Normal', color: '#15803D' };
 };
 
@@ -101,9 +102,9 @@ const AnthropometryScreen = () => {
         }
         const ratio = w / h;
         let label, color;
-        if (ratio < 0.40) { label = 'Underweight Risk'; color = '#3B82F6'; }
+        if (ratio < 0.40) { label = 'Underweight Risk'; color = theme.colors.chartBlue; }
         else if (ratio < 0.50) { label = 'Healthy'; color = '#15803D'; }
-        else if (ratio < 0.60) { label = 'Overweight Risk'; color = '#D97706'; }
+        else if (ratio < 0.60) { label = 'Overweight Risk'; color = theme.colors.accent; }
         else { label = 'Obese — High Metabolic Risk'; color = '#B91C1C'; }
         setWhtRResult({ ratio: ratio.toFixed(3), label, color });
     };
@@ -139,7 +140,7 @@ const AnthropometryScreen = () => {
 
     /* ── Shared result box ─────────────────────────────────────────────── */
     const ResultBox = ({ color, children }) => (
-        <View style={[styles.resultBox, { borderLeftColor: color || '#8A2BE2' }]}>
+        <View style={[styles.resultBox, { borderLeftColor: color || theme.colors.secondary }]}>
             {children}
         </View>
     );
@@ -156,9 +157,9 @@ const AnthropometryScreen = () => {
                             Asian Indian cut-offs (WHO 2004)
                         </Text>
                         <TextInput label="Height (cm)" value={height} onChangeText={setHeight}
-                            keyboardType="numeric" mode="outlined" style={styles.input} />
+                            keyboardType="numeric" mode="outlined" textColor={theme.colors.textTitle} style={styles.input} />
                         <TextInput label="Weight (kg)" value={weight} onChangeText={setWeight}
-                            keyboardType="numeric" mode="outlined" style={styles.input} />
+                            keyboardType="numeric" mode="outlined" textColor={theme.colors.textTitle} style={styles.input} />
                         <Button mode="contained" onPress={calculateBMI} style={styles.calcButton}>
                             Calculate BMI
                         </Button>
@@ -198,10 +199,10 @@ const AnthropometryScreen = () => {
                         />
                         <TextInput label="Waist circumference (cm)" value={waistWHR}
                             onChangeText={setWaistWHR} keyboardType="numeric"
-                            mode="outlined" style={styles.input} />
+                            mode="outlined" textColor={theme.colors.textTitle} style={styles.input} />
                         <TextInput label="Hip circumference (cm)" value={hipWHR}
                             onChangeText={setHipWHR} keyboardType="numeric"
-                            mode="outlined" style={styles.input} />
+                            mode="outlined" textColor={theme.colors.textTitle} style={styles.input} />
                         <Button mode="contained" onPress={calculateWHR} style={styles.calcButton}>
                             Calculate WHR
                         </Button>
@@ -234,10 +235,10 @@ const AnthropometryScreen = () => {
                         </Text>
                         <TextInput label="Waist circumference (cm)" value={waistWHtR}
                             onChangeText={setWaistWHtR} keyboardType="numeric"
-                            mode="outlined" style={styles.input} />
+                            mode="outlined" textColor={theme.colors.textTitle} style={styles.input} />
                         <TextInput label="Height (cm)" value={heightWHtR}
                             onChangeText={setHeightWHtR} keyboardType="numeric"
-                            mode="outlined" style={styles.input} />
+                            mode="outlined" textColor={theme.colors.textTitle} style={styles.input} />
                         <Button mode="contained" onPress={calculateWHtR} style={styles.calcButton}>
                             Calculate WHtR
                         </Button>
@@ -280,7 +281,7 @@ const AnthropometryScreen = () => {
 
                         <TextInput label="MUAC (cm)" value={muacValue}
                             onChangeText={setMuacValue} keyboardType="numeric"
-                            mode="outlined" style={styles.input} />
+                            mode="outlined" textColor={theme.colors.textTitle} style={styles.input} />
                         <Button mode="contained" onPress={calculateMUAC} style={styles.calcButton}>
                             Interpret MUAC
                         </Button>
@@ -300,7 +301,7 @@ const AnthropometryScreen = () => {
                                 {muacResult.mode === 'child' && (
                                     <View style={styles.muacBandRow}>
                                         {[{ band: 'RED', color: '#B91C1C', label: 'SAM' },
-                                        { band: 'YELLOW', color: '#D97706', label: 'MAM' },
+                                        { band: 'YELLOW', color: theme.colors.accent, label: 'MAM' },
                                         { band: 'GREEN', color: '#15803D', label: 'Normal' }]
                                             .map(b => (
                                                 <View key={b.band} style={[
@@ -310,7 +311,7 @@ const AnthropometryScreen = () => {
                                                 ]}>
                                                     <Text style={[
                                                         styles.muacBandText,
-                                                        { color: muacResult.band === b.band ? '#FFF' : b.color },
+                                                        { color: muacResult.band === b.band ? theme.colors.surfacePrimary : b.color },
                                                     ]}>{b.label}</Text>
                                                 </View>
                                             ))
@@ -331,7 +332,7 @@ const AnthropometryScreen = () => {
                                             <Text style={styles.noteText}>{'<'}11.5 cm → SAM (Severe Acute Malnutrition) — refer for therapeutic feeding</Text>
                                         </View>
                                         <View style={styles.refRow}>
-                                            <View style={[styles.refDot, { backgroundColor: '#D97706' }]} />
+                                            <View style={[styles.refDot, { backgroundColor: theme.colors.accent }]} />
                                             <Text style={styles.noteText}>11.5–12.4 cm → MAM (Moderate Acute Malnutrition) — supplementary feeding</Text>
                                         </View>
                                         <View style={styles.refRow}>
@@ -379,18 +380,18 @@ const AnthropometryScreen = () => {
                         />
                         <TextInput label="Height (cm)" value={ibwHeight}
                             onChangeText={setIbwHeight} keyboardType="numeric"
-                            mode="outlined" style={styles.input} />
+                            mode="outlined" textColor={theme.colors.textTitle} style={styles.input} />
                         <TextInput label="Actual weight (kg) — optional, for ABW" value={weight}
                             onChangeText={setWeight} keyboardType="numeric"
-                            mode="outlined" style={styles.input} />
+                            mode="outlined" textColor={theme.colors.textTitle} style={styles.input} />
                         <Button mode="contained" onPress={calculateIBW} style={styles.calcButton}>
                             Calculate IBW
                         </Button>
                         {ibwResult && (ibwResult.error
                             ? <Text style={styles.errorText}>{ibwResult.error}</Text>
-                            : <ResultBox color="#8A2BE2">
-                                <Text variant="titleMedium" style={{ color: '#6B7280' }}>Ideal Body Weight</Text>
-                                <Text variant="displaySmall" style={{ fontWeight: 'bold', color: '#8A2BE2' }}>
+                            : <ResultBox color={theme.colors.secondary}>
+                                <Text variant="titleMedium" style={{ color: theme.colors.textTertiary }}>Ideal Body Weight</Text>
+                                <Text variant="displaySmall" style={{ fontWeight: 'bold', color: theme.colors.secondary }}>
                                     {ibwResult.ibw} kg
                                 </Text>
                                 {ibwResult.abwNote && (
@@ -418,23 +419,23 @@ const AnthropometryScreen = () => {
 };
 
 const styles = StyleSheet.create({
-    safeArea: { flex: 1, backgroundColor: '#FBFCFE' },
+    safeArea: { flex: 1, backgroundColor: theme.colors.backgroundMain },
     container: { padding: 16, paddingBottom: 48 },
-    card: { marginBottom: 16, backgroundColor: '#FFF' },
-    sectionTitle: { fontSize: 18, fontWeight: 'bold', color: '#111827', marginBottom: 4 },
-    subtitle: { color: '#6B7280', marginBottom: 8 },
-    input: { marginTop: 8, marginBottom: 4, backgroundColor: '#FFF' },
+    card: { marginBottom: 16, backgroundColor: theme.colors.surfacePrimary },
+    sectionTitle: { fontSize: 18, fontWeight: 'bold', color: theme.colors.textTitle, marginBottom: 4 },
+    subtitle: { color: theme.colors.textTertiary, marginBottom: 8 },
+    input: { marginTop: 8, marginBottom: 4, backgroundColor: theme.colors.surfacePrimary },
     segmented: { marginTop: 8, marginBottom: 4 },
-    calcButton: { marginTop: 12, paddingVertical: 6, backgroundColor: '#8A2BE2' },
+    calcButton: { marginTop: 12, paddingVertical: 6, backgroundColor: theme.colors.secondary },
     resultBox: {
         marginTop: 16,
         padding: 16,
-        backgroundColor: '#F5F3FF',
+        backgroundColor: theme.colors.primaryLight,
         borderRadius: 12,
         borderLeftWidth: 4,
     },
     errorText: { color: '#B91C1C', marginTop: 8 },
-    noteText: { color: '#6B7280', lineHeight: 18 },
+    noteText: { color: theme.colors.textTertiary, lineHeight: 18 },
     /* MUAC band chips */
     muacBandRow: {
         flexDirection: 'row',

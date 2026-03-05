@@ -27,6 +27,7 @@ import AnthropometryScreen from '../screens/AnthropometryScreen';
 import VirtualMuseumScreen from '../screens/VirtualMuseumScreen';
 import BiostatsAssistantScreen from '../screens/BiostatsAssistantScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
+import { theme } from '../styles/theme';
 
 
 const Tab = createBottomTabNavigator();
@@ -46,10 +47,10 @@ const TabNavigator = () => {
                     else if (route.name === 'Tutor') iconName = 'face';
                     return <MaterialIcons name={iconName} color={color} size={size} />;
                 },
-                tabBarActiveTintColor: '#8A2BE2',
-                tabBarInactiveTintColor: '#9CA3AF',
+                tabBarActiveTintColor: theme.colors.secondary,
+                tabBarInactiveTintColor: theme.colors.textPlaceholder,
                 tabBarStyle: {
-                    backgroundColor: '#FFFFFF',
+                    backgroundColor: theme.colors.surfacePrimary,
                     borderTopWidth: 0,
                     elevation: 10,
                     shadowColor: '#000',
@@ -102,8 +103,8 @@ const AppNavigator = () => {
     // undefined = still resolving auth state (onAuthStateChanged not yet fired)
     if (user === undefined) {
         return (
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#0D1B2A' }}>
-                <ActivityIndicator size="large" color="#8A2BE2" />
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.colors.textPrimary }}>
+                <ActivityIndicator size="large" color={theme.colors.secondary} />
             </View>
         );
     }
@@ -145,8 +146,8 @@ const AppNavigator = () => {
                         <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ title: 'Notifications' }} />
                     </>
                 )}
-            </Stack.Navigator>
-        </NavigationContainer>
+            </Stack.Navigator >
+        </NavigationContainer >
     );
 };
 

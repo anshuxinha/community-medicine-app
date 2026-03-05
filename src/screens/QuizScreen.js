@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { Text, Card, Button, RadioButton } from 'react-native-paper';
 import { AppContext } from '../context/AppContext';
+import { theme } from '../styles/theme';
 
 const QuizScreen = ({ route, navigation }) => {
     const { title, quizzes } = route.params;
@@ -106,31 +107,31 @@ const QuizScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f7fa',
+        backgroundColor: theme.colors.surfaceSecondary,
     },
     contentContainer: {
         padding: 16,
     },
     centerContainer: {
         flex: 1,
-        backgroundColor: '#f5f7fa',
+        backgroundColor: theme.colors.surfaceSecondary,
         justifyContent: 'center',
         alignItems: 'center',
         padding: 16,
     },
     progressText: {
-        color: '#6750a4',
+        color: theme.colors.primary,
         marginBottom: 16,
         fontWeight: 'bold',
     },
     questionCard: {
-        backgroundColor: '#ffffff',
+        backgroundColor: theme.colors.surfacePrimary,
         elevation: 2,
         marginBottom: 24,
     },
     questionText: {
         fontWeight: 'bold',
-        color: '#1c1b1f',
+        color: theme.colors.textTitle,
         marginBottom: 16,
         lineHeight: 28,
     },
@@ -143,13 +144,13 @@ const styles = StyleSheet.create({
         marginVertical: 4,
         paddingVertical: 8,
         paddingHorizontal: 12,
-        backgroundColor: '#f8f9fa',
+        backgroundColor: theme.colors.surfaceTertiary,
         borderRadius: 8,
     },
     optionText: {
         marginLeft: 8,
         fontSize: 16,
-        color: '#49454f',
+        color: theme.colors.textSecondary,
         flexShrink: 1,
     },
     nextButton: {
@@ -157,7 +158,7 @@ const styles = StyleSheet.create({
     },
     resultCard: {
         width: '100%',
-        backgroundColor: '#ffffff',
+        backgroundColor: theme.colors.surfacePrimary,
         elevation: 3,
         padding: 16,
     },
@@ -167,7 +168,7 @@ const styles = StyleSheet.create({
     titleText: {
         fontWeight: 'bold',
         marginVertical: 12,
-        color: '#1c1b1f',
+        color: theme.colors.textTitle,
     },
     centerActions: {
         justifyContent: 'center',

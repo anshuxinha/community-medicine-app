@@ -3,6 +3,7 @@ import { View, StyleSheet, ScrollView, Platform } from 'react-native';
 import { TextInput, Button, Card, Text, SegmentedButtons } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Picker } from '@react-native-picker/picker'; // requires @react-native-picker/picker
+import { theme } from '../styles/theme';
 
 const EDUCATION_OPTIONS = [
     { label: 'Profession or Honours', value: 7 },
@@ -129,11 +130,11 @@ const SESCalculatorScreen = () => {
                                 <Picker
                                     selectedValue={education}
                                     onValueChange={(itemValue) => setEducation(itemValue)}
-                                    style={{ color: '#111827' }}
-                                    dropdownIconColor="#111827"
+                                    style={{ color: theme.colors.textTitle }}
+                                    dropdownIconColor={theme.colors.textTitle}
                                 >
                                     {EDUCATION_OPTIONS.map((opt) => (
-                                        <Picker.Item key={opt.value} label={`${opt.label} (${opt.value})`} value={opt.value} color="#111827" style={{ fontSize: 14 }} />
+                                        <Picker.Item key={opt.value} label={`${opt.label} (${opt.value})`} value={opt.value} color={theme.colors.textTitle} style={{ fontSize: 14 }} />
                                     ))}
                                 </Picker>
                             </View>
@@ -143,11 +144,11 @@ const SESCalculatorScreen = () => {
                                 <Picker
                                     selectedValue={occupation}
                                     onValueChange={(itemValue) => setOccupation(itemValue)}
-                                    style={{ color: '#111827' }}
-                                    dropdownIconColor="#111827"
+                                    style={{ color: theme.colors.textTitle }}
+                                    dropdownIconColor={theme.colors.textTitle}
                                 >
                                     {OCCUPATION_OPTIONS.map((opt) => (
-                                        <Picker.Item key={opt.value} label={`${opt.label} (${opt.value})`} value={opt.value} color="#111827" style={{ fontSize: 14 }} />
+                                        <Picker.Item key={opt.value} label={`${opt.label} (${opt.value})`} value={opt.value} color={theme.colors.textTitle} style={{ fontSize: 14 }} />
                                     ))}
                                 </Picker>
                             </View>
@@ -159,6 +160,7 @@ const SESCalculatorScreen = () => {
                                 keyboardType="numeric"
                                 mode="outlined"
                                 style={styles.input}
+                                textColor={theme.colors.textTitle}
                             />
                         </Card.Content>
                     </Card>
@@ -174,6 +176,7 @@ const SESCalculatorScreen = () => {
                                 keyboardType="numeric"
                                 mode="outlined"
                                 style={styles.input}
+                                textColor={theme.colors.textTitle}
                             />
 
                             <TextInput
@@ -184,6 +187,7 @@ const SESCalculatorScreen = () => {
                                 mode="outlined"
                                 style={styles.input}
                                 placeholder="Total Family Income / Family Size"
+                                textColor={theme.colors.textTitle}
                             />
                         </Card.Content>
                     </Card>
@@ -202,9 +206,9 @@ const SESCalculatorScreen = () => {
                                 <>
                                     <Text style={styles.resultTitle}>Result: {result.class}</Text>
                                     {result.score !== undefined && (
-                                        <Text variant="titleMedium" style={{ color: '#111827' }}>Total Score: {result.score}</Text>
+                                        <Text variant="titleMedium" style={{ color: theme.colors.textTitle }}>Total Score: {result.score}</Text>
                                     )}
-                                    <Text style={{ marginTop: 8, color: '#6B7280' }}>{result.details}</Text>
+                                    <Text style={{ marginTop: 8, color: theme.colors.textTertiary }}>{result.details}</Text>
                                 </>
                             )}
                         </Card.Content>
@@ -219,29 +223,29 @@ const SESCalculatorScreen = () => {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#FBFCFE',
+        backgroundColor: theme.colors.backgroundMain,
     },
     container: {
         padding: 16,
     },
     card: {
         marginBottom: 16,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.colors.surfacePrimary,
     },
     input: {
         marginTop: 8,
         marginBottom: 8,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.colors.surfacePrimary,
     },
     sectionTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#111827',
+        color: theme.colors.textTitle,
         marginBottom: 8,
     },
     label: {
         marginTop: 16,
-        color: '#4B5563',
+        color: theme.colors.textSecondary,
         fontWeight: 'bold',
     },
     pickerContainer: {
@@ -249,19 +253,19 @@ const styles = StyleSheet.create({
         borderColor: '#D1D5DB',
         borderRadius: 4,
         marginTop: 8,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.colors.surfacePrimary,
     },
     calcButton: {
         marginVertical: 16,
         paddingVertical: 8,
-        backgroundColor: '#8A2BE2',
+        backgroundColor: theme.colors.secondary,
     },
     resultCard: {
         backgroundColor: '#F3E8FF',
         marginBottom: 32,
     },
     resultTitle: {
-        color: '#6B21A8',
+        color: theme.colors.primary,
         fontWeight: 'bold',
         fontSize: 16,
         marginBottom: 4,

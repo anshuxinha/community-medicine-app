@@ -3,8 +3,13 @@ import { View, StyleSheet, TouchableOpacity, Platform, Alert, Linking } from 're
 import { Text, Button, Card } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-import Purchases from 'react-native-purchases';
+import Constants from 'expo-constants';
+let Purchases;
+if (Constants.appOwnership !== 'expo') {
+    Purchases = require('react-native-purchases').default;
+}
 import { AppContext } from '../context/AppContext';
+import { theme } from '../styles/theme';
 
 const plans = [
     { id: 'monthly', name: 'Monthly', duration: 'Monthly Plan', price: '₹9 / month', desc: 'Cancel anytime', badge: null, saveText: null },
@@ -21,6 +26,11 @@ const PaywallScreen = ({ navigation }) => {
         if (!selectedPlan) return;
         setIsPurchasing(true);
         try {
+            if (!Purchases) {
+                Alert.alert('Not Supported', 'Purchases are not supported in Expo Go. Please use a development build.');
+                setIsPurchasing(false);
+                return;
+            }
             const offerings = await Purchases.getOfferings();
             const current = offerings.current;
             if (!current) {
@@ -60,6 +70,10 @@ const PaywallScreen = ({ navigation }) => {
 
     const handleRestore = async () => {
         try {
+            if (!Purchases) {
+                Alert.alert('Not Supported', 'Purchases are not supported in Expo Go. Please use a development build.');
+                return;
+            }
             const customerInfo = await Purchases.restorePurchases();
             if (customerInfo.entitlements.active['Premium'] !== undefined) {
                 Alert.alert("Success", "Your purchases were restored!");
@@ -76,14 +90,14 @@ const PaywallScreen = ({ navigation }) => {
             <View style={styles.container}>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => navigation.goBack()} style={styles.closeButton}>
-                        <MaterialIcons name="close" size={28} color="#9CA3AF" />
+                        <MaterialIcons name="close" size={28} color={theme.colors.textPlaceholder} />
                     </TouchableOpacity>
                 </View>
 
                 <View style={styles.heroSection}>
                     <View style={styles.iconWrapper}>
-                        <MaterialIcons name="menu-book" size={60} color="#3B82F6" style={styles.iconBg} />
-                        <MaterialIcons name="add" size={30} color="#FFFFFF" style={styles.iconFg} />
+                        <MaterialIcons name="menu-book" size={60} color={theme.colors.chartBlue} style={styles.iconBg} />
+                        <MaterialIcons name="add" size={30} color={theme.colors.surfacePrimary} style={styles.iconFg} />
                     </View>
                     <Text variant="displaySmall" style={styles.title}>Go Pro</Text>
                 </View>
@@ -157,7 +171,7 @@ const FeatureItem = ({ text }) => (
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#FBFCFE',
+        backgroundColor: theme.colors.backgroundMain,
     },
     container: {
         flexGrow: 1,
@@ -186,7 +200,7 @@ const styles = StyleSheet.create({
     iconBg: {
         opacity: 0.8,
         elevation: 10,
-        shadowColor: '#3B82F6',
+        shadowColor: theme.colors.chartBlue,
         shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.3,
         shadowRadius: 15,
@@ -196,7 +210,7 @@ const styles = StyleSheet.create({
         top: '30%',
     },
     title: {
-        color: '#111827',
+        color: theme.colors.textTitle,
         fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif',
         fontSize: 32,
         textAlign: 'center',
@@ -212,7 +226,7 @@ const styles = StyleSheet.create({
     },
     featureIcon: {
         marginRight: 12,
-        backgroundColor: '#E0E7FF', // Soft circle background equivalent
+        backgroundColor: theme.colors.primaryLight, // Soft circle background equivalent
         borderRadius: 12,
     },
     featureText: {
@@ -230,10 +244,10 @@ const styles = StyleSheet.create({
     },
     pricingCard: {
         flex: 1,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.colors.surfacePrimary,
         borderRadius: 12,
         borderWidth: 1,
-        borderColor: '#F3F4F6',
+        borderColor: theme.colors.surfaceSecondary,
         marginHorizontal: 4,
         paddingVertical: 12,
         elevation: 2,
@@ -245,7 +259,7 @@ const styles = StyleSheet.create({
     pricingCardActive: {
         borderWidth: 2,
         borderColor: '#A855F7', // Brand accent
-        backgroundColor: '#FAFAFF',
+        backgroundColor: theme.colors.surfaceTertiary,
         transform: [{ scale: 1.05 }],
         zIndex: 10,
     },
@@ -254,25 +268,25 @@ const styles = StyleSheet.create({
         paddingHorizontal: 4,
     },
     planName: {
-        color: '#111827',
+        color: theme.colors.textTitle,
         fontWeight: 'bold',
         fontSize: 14,
         marginBottom: 2,
     },
     planDuration: {
-        color: '#6B7280',
+        color: theme.colors.textTertiary,
         fontSize: 10,
         marginBottom: 8,
     },
     priceText: {
-        color: '#111827',
+        color: theme.colors.textTitle,
         fontWeight: 'bold',
         fontSize: 12,
         marginBottom: 8,
         textAlign: 'center',
     },
     planDesc: {
-        color: '#6B7280',
+        color: theme.colors.textTertiary,
         fontSize: 10,
         textAlign: 'center',
     },
@@ -280,7 +294,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: -12,
         alignSelf: 'center',
-        backgroundColor: '#C4B5FD',
+        backgroundColor: theme.colors.primaryLight,
         borderRadius: 12,
         paddingHorizontal: 8,
         paddingVertical: 2,
@@ -291,8 +305,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     saveBadge: {
-        color: '#581C87',
-        backgroundColor: '#E9D5FF',
+        color: theme.colors.primaryDark,
+        backgroundColor: theme.colors.primaryLight,
         borderRadius: 8,
         paddingHorizontal: 6,
         paddingVertical: 2,
@@ -302,12 +316,12 @@ const styles = StyleSheet.create({
         overflow: 'hidden', // iOS rounding fix
     },
     subscribeButton: {
-        backgroundColor: '#60A5FA', // nice light blue gradient replacement
+        backgroundColor: theme.colors.chartBlue, // nice light blue gradient replacement
         paddingVertical: 10,
         borderRadius: 30,
         marginBottom: 24,
         elevation: 4,
-        shadowColor: '#60A5FA',
+        shadowColor: theme.colors.chartBlue,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 8,
@@ -323,7 +337,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
     },
     footerLinkText: {
-        color: '#6B7280',
+        color: theme.colors.textTertiary,
         fontSize: 12,
     },
 });

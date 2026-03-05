@@ -4,6 +4,7 @@ import { Text, Card, Chip, Divider } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { MUSEUM_ITEMS, CATEGORIES } from '../data/museumData';
+import { theme } from '../styles/theme';
 
 // Individual card component to manage its own image loading state
 const MuseumCard = ({ item }) => {
@@ -22,7 +23,7 @@ const MuseumCard = ({ item }) => {
                 <MaterialIcons
                     name={expanded ? 'expand-less' : 'expand-more'}
                     size={26}
-                    color="#8A2BE2"
+                    color={theme.colors.secondary}
                 />
             </View>
 
@@ -36,7 +37,7 @@ const MuseumCard = ({ item }) => {
                         <View style={styles.imageWrapper}>
                             {imageLoading && (
                                 <View style={styles.imageLoadingOverlay}>
-                                    <ActivityIndicator size="large" color="#8A2BE2" />
+                                    <ActivityIndicator size="large" color={theme.colors.secondary} />
                                 </View>
                             )}
                             <Image
@@ -59,7 +60,7 @@ const MuseumCard = ({ item }) => {
                     <Text style={styles.description}>{item.description}</Text>
 
                     <View style={styles.keyFactBox}>
-                        <MaterialIcons name="lightbulb" size={16} color="#D97706" />
+                        <MaterialIcons name="lightbulb" size={16} color={theme.colors.accent} />
                         <Text style={styles.keyFactText}> {item.keyFact}</Text>
                     </View>
                 </Card.Content>
@@ -67,6 +68,7 @@ const MuseumCard = ({ item }) => {
         </Card>
     );
 };
+
 
 // ── Main screen ─────────────────────────────────────────────
 const VirtualMuseumScreen = () => {
@@ -108,32 +110,32 @@ const VirtualMuseumScreen = () => {
 };
 
 const styles = StyleSheet.create({
-    safeArea: { flex: 1, backgroundColor: '#FBFCFE' },
+    safeArea: { flex: 1, backgroundColor: theme.colors.backgroundMain },
     container: { padding: 16, paddingBottom: 48 },
-    headerText: { fontSize: 28, fontWeight: 'bold', color: '#111827', marginBottom: 4 },
-    subText: { color: '#6B7280', marginBottom: 16, lineHeight: 20 },
+    headerText: { fontSize: 28, fontWeight: 'bold', color: theme.colors.textTitle, marginBottom: 4 },
+    subText: { color: theme.colors.textTertiary, marginBottom: 16, lineHeight: 20 },
     chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
-    chip: { backgroundColor: '#F3F4F6' },
-    chipActive: { backgroundColor: '#EDE9FE' },
-    chipTextActive: { color: '#6B21A8', fontWeight: 'bold' },
-    card: { marginBottom: 10, backgroundColor: '#FFF', borderRadius: 12, elevation: 2 },
+    chip: { backgroundColor: theme.colors.surfaceSecondary },
+    chipActive: { backgroundColor: theme.colors.primaryLight },
+    chipTextActive: { color: theme.colors.primary, fontWeight: 'bold' },
+    card: { marginBottom: 10, backgroundColor: theme.colors.surfacePrimary, borderRadius: 12, elevation: 2 },
     cardHeader: {
         flexDirection: 'row', alignItems: 'center',
         justifyContent: 'space-between', padding: 14, paddingRight: 12,
     },
     cardHeaderLeft: { flex: 1 },
-    cardTitle: { fontSize: 15, fontWeight: 'bold', color: '#111827', marginBottom: 2 },
-    cardSubtitle: { color: '#8A2BE2', fontSize: 11, fontWeight: '600' },
+    cardTitle: { fontSize: 15, fontWeight: 'bold', color: theme.colors.textTitle, marginBottom: 2 },
+    cardSubtitle: { color: theme.colors.secondary, fontSize: 11, fontWeight: '600' },
     expandedContent: { paddingTop: 0, paddingBottom: 14 },
-    imageWrapper: { width: '100%', height: 200, marginBottom: 14, borderRadius: 10, overflow: 'hidden', backgroundColor: '#F9FAFB' },
-    imageLoadingOverlay: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F3F4F6' },
+    imageWrapper: { width: '100%', height: 200, marginBottom: 14, borderRadius: 10, overflow: 'hidden', backgroundColor: theme.colors.surfaceTertiary },
+    imageLoadingOverlay: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.colors.surfaceSecondary },
     itemImage: { width: '100%', height: '100%' },
-    imagePlaceholder: { width: '100%', height: 140, borderRadius: 10, marginBottom: 14, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center' },
+    imagePlaceholder: { width: '100%', height: 140, borderRadius: 10, marginBottom: 14, backgroundColor: theme.colors.surfaceSecondary, alignItems: 'center', justifyContent: 'center' },
     placeholderEmoji: { fontSize: 48, marginBottom: 6 },
-    placeholderText: { color: '#9CA3AF', fontSize: 13 },
+    placeholderText: { color: theme.colors.textPlaceholder, fontSize: 13 },
     description: { color: '#374151', lineHeight: 22, marginBottom: 12 },
-    keyFactBox: { flexDirection: 'row', alignItems: 'flex-start', backgroundColor: '#FFFBEB', padding: 10, borderRadius: 8 },
-    keyFactText: { color: '#92400E', fontSize: 13, flex: 1, lineHeight: 18 },
+    keyFactBox: { flexDirection: 'row', alignItems: 'flex-start', backgroundColor: theme.colors.warningBackground, padding: 10, borderRadius: 8 },
+    keyFactText: { color: theme.colors.warningText, fontSize: 13, flex: 1, lineHeight: 18 },
 });
 
 export default VirtualMuseumScreen;

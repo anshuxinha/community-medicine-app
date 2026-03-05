@@ -4,6 +4,7 @@ import { Text, Button, List, Divider } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AppContext } from '../context/AppContext';
+import { theme } from '../styles/theme';
 
 const BookmarksScreen = ({ navigation }) => {
     const { bookmarks } = useContext(AppContext);
@@ -26,9 +27,9 @@ const BookmarksScreen = ({ navigation }) => {
                         renderItem={({ item }) => (
                             <List.Item
                                 title={item.title}
-                                titleStyle={{ color: '#111827', fontWeight: '600', fontSize: 16 }}
-                                left={props => <List.Icon {...props} icon={({ color }) => <MaterialIcons name="bookmark" size={24} color="#8A2BE2" />} />}
-                                right={props => <List.Icon {...props} icon={({ color }) => <MaterialIcons name="chevron-right" size={24} color="#6B7280" />} />}
+                                titleStyle={{ color: theme.colors.textTitle, fontWeight: '600', fontSize: 16 }}
+                                left={props => <List.Icon {...props} icon={({ color }) => <MaterialIcons name="bookmark" size={24} color={theme.colors.secondary} />} />}
+                                right={props => <List.Icon {...props} icon={({ color }) => <MaterialIcons name="chevron-right" size={24} color={theme.colors.textTertiary} />} />}
                                 onPress={() => {
                                     navigation.navigate('Reading', {
                                         id: item.id,
@@ -50,17 +51,17 @@ const BookmarksScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#ffffff',
+        backgroundColor: theme.colors.surfacePrimary,
     },
     container: {
         flex: 1,
         padding: 16,
-        backgroundColor: '#ffffff',
+        backgroundColor: theme.colors.surfacePrimary,
     },
     header: {
         marginBottom: 16,
         fontWeight: 'bold',
-        color: '#111827',
+        color: theme.colors.textTitle,
     },
     emptyState: {
         flex: 1,

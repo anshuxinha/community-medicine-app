@@ -4,6 +4,7 @@ import { Searchbar, Text, Card } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import mockData from '../data/mockData.json';
 import practicalData from '../data/practical.json';
+import { theme } from '../styles/theme';
 
 const allData = [
     ...mockData.map(item => ({ ...item, uniqueId: 'theory_' + item.id })),
@@ -67,7 +68,7 @@ const SearchScreen = ({ navigation }) => {
                     value={searchQuery}
                     style={styles.searchBar}
                     inputStyle={styles.searchBarInput}
-                    iconColor="#9CA3AF"
+                    iconColor=theme.colors.textPlaceholder
                     elevation={0}
                 />
                 {searchResults.length > 0 ? (
@@ -92,15 +93,15 @@ const SearchScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#ffffff',
+        backgroundColor: theme.colors.surfacePrimary,
     },
     container: {
         flex: 1,
         padding: 16,
-        backgroundColor: '#ffffff',
+        backgroundColor: theme.colors.surfacePrimary,
     },
     searchBar: {
-        backgroundColor: '#F3F4F6', // Very light gray from library
+        backgroundColor: theme.colors.surfaceSecondary, // Very light gray from library
         borderRadius: 12, // More rounded corners
         elevation: 0,
         height: 48,
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
     },
     searchBarInput: {
         fontSize: 16,
-        color: '#111827',
+        color: theme.colors.textTitle,
         minHeight: 48,
         alignSelf: 'center',
     },
@@ -122,14 +123,14 @@ const styles = StyleSheet.create({
     },
     card: {
         marginBottom: 12,
-        backgroundColor: '#f8f9fa',
+        backgroundColor: theme.colors.surfaceTertiary,
     },
     cardTitle: {
         fontWeight: 'bold',
         marginBottom: 4,
     },
     snippet: {
-        color: '#666',
+        color: theme.colors.textTertiary,
     },
 });
 

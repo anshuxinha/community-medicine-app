@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
+import { theme } from '../styles/theme';
 
 /**
  * Parses a markdown-like string into an array of block objects.
@@ -49,6 +50,7 @@ const parseMarkdown = (content) => {
 
 const ReadingView = ({
     content,
+    title,
     topicId,
     isBookmarked,
     onToggleBookmark,
@@ -109,30 +111,33 @@ const ReadingView = ({
 
     return (
         <View style={styles.container}>
-            {/* Floating action buttons */}
-            <View style={styles.fabRow} pointerEvents="box-none">
-                <TouchableOpacity
-                    style={styles.fabBtn}
-                    onPress={onToggleSpeak}
-                    activeOpacity={0.85}
-                >
-                    <MaterialIcons
-                        name={isSpeaking ? 'stop' : 'volume-up'}
-                        size={22}
-                        color="#6200ee"
-                    />
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.fabBtn}
-                    onPress={onToggleBookmark}
-                    activeOpacity={0.85}
-                >
-                    <MaterialIcons
-                        name={isBookmarked ? 'bookmark' : 'bookmark-border'}
-                        size={22}
-                        color="#6200ee"
-                    />
-                </TouchableOpacity>
+            {/* Header row: title + action buttons */}
+            <View style={styles.headerRow}>
+                <Text style={styles.headerTitle} numberOfLines={2}>{title || ''}</Text>
+                <View style={styles.fabRow}>
+                    <TouchableOpacity
+                        style={styles.fabBtn}
+                        onPress={onToggleSpeak}
+                        activeOpacity={0.85}
+                    >
+                        <MaterialIcons
+                            name={isSpeaking ? 'stop' : 'volume-up'}
+                            size={22}
+                            color="#6200ee"
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.fabBtn}
+                        onPress={onToggleBookmark}
+                        activeOpacity={0.85}
+                    >
+                        <MaterialIcons
+                            name={isBookmarked ? 'bookmark' : 'bookmark-border'}
+                            size={22}
+                            color="#6200ee"
+                        />
+                    </TouchableOpacity>
+                </View>
             </View>
 
             <ScrollView
@@ -143,8 +148,6 @@ const ReadingView = ({
                 ]}
                 showsVerticalScrollIndicator={false}
             >
-                {/* Spacer so content clears the FABs */}
-                <View style={{ height: 56 }} />
                 {blocks.map(renderBlock)}
             </ScrollView>
         </View>
@@ -158,21 +161,35 @@ const styles = StyleSheet.create({
         marginVertical: 8,
         borderRadius: 12,
         overflow: 'hidden',
-        backgroundColor: '#fff',
+        backgroundColor: theme.colors.surfacePrimary,
         elevation: 2,
     },
-    fabRow: {
-        position: 'absolute',
-        top: 12,
-        right: 12,
+    headerRow: {
         flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: theme.colors.surfaceSecondary,
+        backgroundColor: theme.colors.surfacePrimary,
         zIndex: 10,
+    },
+    headerTitle: {
+        flex: 1,
+        fontSize: 15,
+        fontWeight: '700',
+        color: theme.colors.textTitle,
+        marginRight: 8,
+    },
+    fabRow: {
+        flexDirection: 'row',
         gap: 8,
     },
     fabBtn: {
         width: 44,
         height: 44,
-        backgroundColor: '#ffffff',
+        backgroundColor: theme.colors.surfacePrimary,
         borderRadius: 12,
         alignItems: 'center',
         justifyContent: 'center',
@@ -187,6 +204,7 @@ const styles = StyleSheet.create({
     },
     scrollContent: {
         paddingHorizontal: 16,
+        paddingTop: 8,
     },
     h1: {
         color: '#6200ee',
@@ -194,17 +212,16 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         marginTop: 16,
         marginBottom: 8,
-        paddingRight: 100, // clear the FABs
     },
     h2: {
-        color: '#333333',
+        color: theme.colors.textPrimary,
         fontSize: 19,
         fontWeight: '700',
         marginTop: 14,
         marginBottom: 6,
     },
     body: {
-        color: '#1c1b1f',
+        color: theme.colors.textTitle,
         fontSize: 15.5,
         lineHeight: 24,
         marginVertical: 4,
@@ -226,7 +243,7 @@ const styles = StyleSheet.create({
     },
     bulletText: {
         flex: 1,
-        color: '#1c1b1f',
+        color: theme.colors.textTitle,
         fontSize: 15.5,
         lineHeight: 24,
     },
@@ -238,7 +255,7 @@ const styles = StyleSheet.create({
         height: Dimensions.get('window').height * 0.3,
         marginVertical: 12,
         borderRadius: 8,
-        backgroundColor: '#f9fafb',
+        backgroundColor: theme.colors.surfaceTertiary,
     }
 });
 

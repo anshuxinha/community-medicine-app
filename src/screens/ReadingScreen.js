@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import * as Speech from 'expo-speech';
 import ReadingView from '../components/ReadingView';
 import { AppContext } from '../context/AppContext';
+import { theme } from '../styles/theme';
 
 const ReadingScreen = ({ route, navigation }) => {
     const { id, title, content, quizzes } = route.params;
@@ -43,6 +44,7 @@ const ReadingScreen = ({ route, navigation }) => {
         <View style={styles.container}>
             <ReadingView
                 content={content}
+                title={title}
                 topicId={id}
                 isBookmarked={bookmarked}
                 onToggleBookmark={() => toggleBookmark(route.params)}
@@ -56,7 +58,7 @@ const ReadingScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FBFCFE',
+        backgroundColor: theme.colors.backgroundMain,
     }
 });
 

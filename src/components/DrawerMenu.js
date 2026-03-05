@@ -9,6 +9,7 @@ import { useNavigation } from '@react-navigation/native';
 import { signOut } from 'firebase/auth';
 import { auth } from '../config/firebase';
 import { AppContext } from '../context/AppContext';
+import { theme } from '../styles/theme';
 
 const { width } = Dimensions.get('window');
 const DRAWER_WIDTH = width * 0.75;
@@ -141,7 +142,7 @@ const DrawerMenu = ({ visible, onClose, user }) => {
                                     <MaterialIcons
                                         name={item.icon}
                                         size={20}
-                                        color={item.danger ? '#EF4444' : '#8A2BE2'}
+                                        color={item.danger ? theme.colors.error : theme.colors.secondary}
                                     />
                                 </View>
                                 <Text style={[styles.menuLabel, item.danger && styles.menuLabelDanger]}>
@@ -169,7 +170,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 0, left: 0, bottom: 0,
         width: DRAWER_WIDTH,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.colors.surfacePrimary,
         elevation: 16,
         shadowColor: '#000',
         shadowOffset: { width: 4, height: 0 },
@@ -177,29 +178,29 @@ const styles = StyleSheet.create({
         shadowRadius: 12,
     },
     drawerHeader: {
-        backgroundColor: '#0D1B2A',
+        backgroundColor: theme.colors.textPrimary,
         paddingTop: 56,
         paddingBottom: 24,
         paddingHorizontal: 20,
     },
     avatar: {
-        backgroundColor: '#8A2BE2',
+        backgroundColor: theme.colors.secondary,
         marginBottom: 12,
     },
     avatarLabel: {
         fontSize: 22,
         fontWeight: 'bold',
-        color: '#FFF',
+        color: theme.colors.surfacePrimary,
     },
     userName: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#FFFFFF',
+        color: theme.colors.surfacePrimary,
         marginBottom: 2,
     },
     userEmail: {
         fontSize: 13,
-        color: '#9CA3AF',
+        color: theme.colors.textPlaceholder,
     },
     headerDivider: {
         backgroundColor: '#E5E7EB',
@@ -225,25 +226,25 @@ const styles = StyleSheet.create({
         marginRight: 14,
     },
     iconBoxDanger: {
-        backgroundColor: '#FEE2E2',
+        backgroundColor: theme.colors.errorLight,
     },
     menuLabel: {
         flex: 1,
         fontSize: 15,
-        color: '#111827',
+        color: theme.colors.textTitle,
         fontWeight: '500',
     },
     menuLabelDanger: {
-        color: '#EF4444',
+        color: theme.colors.error,
     },
     divider: {
         marginVertical: 6,
         marginHorizontal: 20,
-        backgroundColor: '#F3F4F6',
+        backgroundColor: theme.colors.surfaceSecondary,
     },
     version: {
         textAlign: 'center',
-        color: '#9CA3AF',
+        color: theme.colors.textPlaceholder,
         fontSize: 12,
         paddingVertical: 16,
     },

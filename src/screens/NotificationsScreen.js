@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
+import { theme } from '../styles/theme';
 
 const NotificationsScreen = () => {
     return (
@@ -22,9 +23,9 @@ const NotificationsScreen = () => {
 };
 
 const styles = StyleSheet.create({
-    safeArea: { flex: 1, backgroundColor: '#FBFCFE' },
+    safeArea: { flex: 1, backgroundColor: theme.colors.backgroundMain },
     container: { flex: 1, padding: 16 },
-    header: { fontSize: 26, fontWeight: 'bold', color: '#111827', marginBottom: 20 },
+    header: { fontSize: 26, fontWeight: 'bold', color: theme.colors.textTitle, marginBottom: 20 },
     emptyState: {
         flex: 1,
         alignItems: 'center',
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
     },
     emptyBody: {
         fontSize: 14,
-        color: '#9CA3AF',
+        color: theme.colors.textPlaceholder,
         textAlign: 'center',
         lineHeight: 22,
     },

@@ -13,11 +13,16 @@ import {
     updateProfile, signInWithCredential, GoogleAuthProvider,
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import Constants from 'expo-constants';
+import { theme } from '../styles/theme';
 
-GoogleSignin.configure({
-    webClientId: '856703659616-8e0k1obmgom04783jjf695hkianm4hme.apps.googleusercontent.com',
-});
+let GoogleSignin;
+if (Constants.appOwnership !== 'expo') {
+    GoogleSignin = require('@react-native-google-signin/google-signin').GoogleSignin;
+    GoogleSignin.configure({
+        webClientId: '856703659616-8e0k1obmgom04783jjf695hkianm4hme.apps.googleusercontent.com',
+    });
+}
 
 const LoginScreen = () => {
     const { login } = useContext(AppContext);
@@ -28,6 +33,10 @@ const LoginScreen = () => {
     const [showPassword, setShowPassword] = useState(false);
 
     const handleGoogleLogin = async () => {
+        if (Constants.appOwnership === 'expo') {
+            alert('Google Sign-In is not supported in Expo Go. Please use email/password or use a development build.');
+            return;
+        }
         try {
             setLoading(true);
             await GoogleSignin.hasPlayServices();
@@ -118,7 +127,7 @@ const LoginScreen = () => {
 
                     {/* Email field */}
                     <View style={styles.inputRow}>
-                        <MaterialIcons name="mail-outline" size={20} color="#8A2BE2" style={styles.inputIcon} />
+                        <MaterialIcons name="mail-outline" size={20} color={theme.colors.secondary} style={styles.inputIcon} />
                         <TextInput
                             placeholder="Email address"
                             value={email}
@@ -126,8 +135,8 @@ const LoginScreen = () => {
                             keyboardType="email-address"
                             autoCapitalize="none"
                             style={styles.input}
-                            textColor="#111827"
-                            placeholderTextColor="#9CA3AF"
+                            textColor={theme.colors.textTitle}
+                            placeholderTextColor={theme.colors.textPlaceholder}
                             activeUnderlineColor="transparent"
                             underlineColor="transparent"
                         />
@@ -135,20 +144,20 @@ const LoginScreen = () => {
 
                     {/* Password field */}
                     <View style={styles.inputRow}>
-                        <MaterialIcons name="lock-outline" size={20} color="#8A2BE2" style={styles.inputIcon} />
+                        <MaterialIcons name="lock-outline" size={20} color={theme.colors.secondary} style={styles.inputIcon} />
                         <TextInput
                             placeholder="Password"
                             value={password}
                             onChangeText={setPassword}
                             secureTextEntry={!showPassword}
                             style={styles.input}
-                            textColor="#111827"
-                            placeholderTextColor="#9CA3AF"
+                            textColor={theme.colors.textTitle}
+                            placeholderTextColor={theme.colors.textPlaceholder}
                             activeUnderlineColor="transparent"
                             underlineColor="transparent"
                         />
                         <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeBtn}>
-                            <MaterialIcons name={showPassword ? 'visibility-off' : 'visibility'} size={20} color="#9CA3AF" />
+                            <MaterialIcons name={showPassword ? 'visibility-off' : 'visibility'} size={20} color={theme.colors.textPlaceholder} />
                         </TouchableOpacity>
                     </View>
 
@@ -178,7 +187,7 @@ const LoginScreen = () => {
                         disabled={loading}
                         activeOpacity={0.85}
                     >
-                        <FontAwesome5 name="google" size={18} color="#EA4335" style={styles.googleIcon} />
+                        <FontAwesome5 name="google" size={18} color={theme.colors.error} style={styles.googleIcon} />
                         <Text style={styles.googleBtnText}>Continue with Google</Text>
                     </TouchableOpacity>
 
@@ -204,7 +213,7 @@ const LoginScreen = () => {
 };
 
 const styles = StyleSheet.create({
-    root: { flex: 1, backgroundColor: '#0D1B2A' },
+    root: { flex: 1, backgroundColor: theme.colors.textPrimary },
 
     // ── Top dark half ────────────────────────────────────────────
     topHalf: {
@@ -220,14 +229,14 @@ const styles = StyleSheet.create({
     },
     brandTagline: {
         fontSize: 13,
-        color: '#9CA3AF',
+        color: theme.colors.textPlaceholder,
         letterSpacing: 1,
     },
 
     // ── Bottom white sheet ───────────────────────────────────────
     sheet: {
         flex: 1,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.colors.surfacePrimary,
         borderTopLeftRadius: 32,
         borderTopRightRadius: 32,
         overflow: 'hidden',
@@ -240,12 +249,12 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 26,
         fontWeight: 'bold',
-        color: '#111827',
+        color: theme.colors.textTitle,
         marginBottom: 6,
     },
     subtitle: {
         fontSize: 14,
-        color: '#6B7280',
+        color: theme.colors.textTertiary,
         marginBottom: 28,
     },
 
@@ -253,7 +262,7 @@ const styles = StyleSheet.create({
     inputRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#F9FAFB',
+        backgroundColor: theme.colors.surfaceTertiary,
         borderRadius: 14,
         borderWidth: 1,
         borderColor: '#E5E7EB',
@@ -272,7 +281,7 @@ const styles = StyleSheet.create({
 
     // ── Primary button ───────────────────────────────────────────
     primaryBtn: {
-        backgroundColor: '#8A2BE2',
+        backgroundColor: theme.colors.secondary,
         borderRadius: 14,
         height: 52,
         alignItems: 'center',
@@ -280,14 +289,14 @@ const styles = StyleSheet.create({
         marginTop: 8,
         marginBottom: 24,
         elevation: 4,
-        shadowColor: '#8A2BE2',
+        shadowColor: theme.colors.secondary,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.35,
         shadowRadius: 8,
     },
     primaryBtnDisabled: { opacity: 0.6 },
     primaryBtnText: {
-        color: '#FFFFFF',
+        color: theme.colors.surfacePrimary,
         fontSize: 16,
         fontWeight: '700',
         letterSpacing: 0.5,
@@ -302,7 +311,7 @@ const styles = StyleSheet.create({
     dividerLine: { flex: 1, height: 1, backgroundColor: '#E5E7EB' },
     dividerText: {
         fontSize: 13,
-        color: '#9CA3AF',
+        color: theme.colors.textPlaceholder,
         marginHorizontal: 12,
     },
 
@@ -311,7 +320,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.colors.surfacePrimary,
         borderRadius: 14,
         height: 52,
         borderWidth: 1.5,
@@ -332,12 +341,12 @@ const styles = StyleSheet.create({
 
     // ── Toggle ───────────────────────────────────────────────────
     toggle: { alignItems: 'center', marginBottom: 20 },
-    toggleText: { color: '#9CA3AF', fontSize: 14 },
-    toggleLink: { color: '#8A2BE2', fontWeight: '700' },
+    toggleText: { color: theme.colors.textPlaceholder, fontSize: 14 },
+    toggleLink: { color: theme.colors.secondary, fontWeight: '700' },
 
     // ── Privacy link ─────────────────────────────────────────────
     privacyLink: { alignItems: 'center', paddingVertical: 4 },
-    privacyText: { color: '#8A2BE2', fontSize: 12, textDecorationLine: 'underline' },
+    privacyText: { color: theme.colors.secondary, fontSize: 12, textDecorationLine: 'underline' },
 });
 
 export default LoginScreen;

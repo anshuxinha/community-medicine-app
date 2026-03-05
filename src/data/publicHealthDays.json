@@ -1,0 +1,170 @@
+[
+    {
+        "name": "World Neglected Tropical Diseases Day",
+        "dateLabel": "January 30",
+        "month": 1,
+        "day": 30,
+        "description": "Raises awareness of the devastating impact of NTDs on the poorest populations around the world."
+    },
+    {
+        "name": "World Cancer Day",
+        "dateLabel": "February 4",
+        "month": 2,
+        "day": 4,
+        "description": "Empowers people across the world to show support, raise our collective voice, and take personal action."
+    },
+    {
+        "name": "World Hearing Day",
+        "dateLabel": "March 3",
+        "month": 3,
+        "day": 3,
+        "description": "Raises awareness on how to prevent deafness and hearing loss and promotes ear and hearing care across the world."
+    },
+    {
+        "name": "World Oral Health Day",
+        "dateLabel": "March 20",
+        "month": 3,
+        "day": 20,
+        "description": "Empowers people with the knowledge, tools and confidence to secure good oral health."
+    },
+    {
+        "name": "World Water Day",
+        "dateLabel": "March 22",
+        "month": 3,
+        "day": 22,
+        "description": "Highlights the importance of fresh water and advocates for the sustainable management of freshwater resources."
+    },
+    {
+        "name": "World Tuberculosis Day",
+        "dateLabel": "March 24",
+        "month": 3,
+        "day": 24,
+        "description": "Designed to build public awareness about the global epidemic of tuberculosis and efforts to eliminate the disease."
+    },
+    {
+        "name": "World Health Day",
+        "dateLabel": "April 7",
+        "month": 4,
+        "day": 7,
+        "description": "Celebrated annually and each year draws attention to a specific health topic of concern to people all over the world."
+    },
+    {
+        "name": "Earth Day",
+        "dateLabel": "April 22",
+        "month": 4,
+        "day": 22,
+        "description": "An annual event to demonstrate support for environmental protection."
+    },
+    {
+        "name": "World Immunization Week",
+        "dateLabel": "April 24-30",
+        "month": 4,
+        "day": 24,
+        "description": "Aims to highlight the collective action needed and to promote the use of vaccines to protect people of all ages against disease."
+    },
+    {
+        "name": "World Malaria Day",
+        "dateLabel": "April 25",
+        "month": 4,
+        "day": 25,
+        "description": "An occasion to highlight the need for continued investment and sustained political commitment for malaria prevention and control."
+    },
+    {
+        "name": "World Hand Hygiene Day",
+        "dateLabel": "May 5",
+        "month": 5,
+        "day": 5,
+        "description": "Maintains global promotion, visibility, and sustainability of hand hygiene in health care."
+    },
+    {
+        "name": "World No Tobacco Day",
+        "dateLabel": "May 31",
+        "month": 5,
+        "day": 31,
+        "description": "Intended to encourage a 24-hour period of abstinence from all forms of tobacco consumption around the globe."
+    },
+    {
+        "name": "World Blood Donor Day",
+        "dateLabel": "June 14",
+        "month": 6,
+        "day": 14,
+        "description": "Raises global awareness of the need for safe blood and blood products for transfusion."
+    },
+    {
+        "name": "International Day of Yoga",
+        "dateLabel": "June 21",
+        "month": 6,
+        "day": 21,
+        "description": "Aims to raise awareness worldwide of the many benefits of practicing yoga."
+    },
+    {
+        "name": "Doctors' Day",
+        "dateLabel": "July 1",
+        "month": 7,
+        "day": 1,
+        "description": "Honors physicians for the work they do for their patients, the communities they work in and for society as a whole."
+    },
+    {
+        "name": "World Hepatitis Day",
+        "dateLabel": "July 28",
+        "month": 7,
+        "day": 28,
+        "description": "An opportunity to step up national and international efforts on hepatitis, encourage actions and engagement by individuals, partners and the public."
+    },
+    {
+        "name": "World Breastfeeding Week",
+        "dateLabel": "August 1-7",
+        "month": 8,
+        "day": 1,
+        "description": "Aimed to highlight the huge benefits that breastfeeding can bring to both the health and welfare of babies, as well as a wider push for maternal health."
+    },
+    {
+        "name": "World Patient Safety Day",
+        "dateLabel": "September 17",
+        "month": 9,
+        "day": 17,
+        "description": "Calls for global solidarity and concerted action by all countries and international partners to improve patient safety."
+    },
+    {
+        "name": "World Mental Health Day",
+        "dateLabel": "October 10",
+        "month": 10,
+        "day": 10,
+        "description": "Raises awareness of mental health issues around the world and mobilizing efforts in support of mental health."
+    },
+    {
+        "name": "Global Handwashing Day",
+        "dateLabel": "October 15",
+        "month": 10,
+        "day": 15,
+        "description": "A global advocacy day dedicated to increasing awareness and understanding about the importance of handwashing with soap as an effective and affordable way to prevent diseases and save lives."
+    },
+    {
+        "name": "World Prematurity Day",
+        "dateLabel": "November 15",
+        "month": 11,
+        "day": 15,
+        "description": "Raises awareness of preterm birth and the concerns of preterm babies and their families worldwide."
+    },
+    {
+        "name": "World AMR Awareness Week",
+        "dateLabel": "November 18-24",
+        "month": 11,
+        "day": 18,
+        "description": "A global campaign to improve awareness and understanding of antimicrobial resistance (AMR) and encourage best practices among the public."
+    },
+    {
+        "name": "World COPD Day",
+        "dateLabel": "Nov 19",
+        "month": 11,
+        "day": 19,
+        "description": "Organized by the Global Initiative for Chronic Obstructive Lung Disease (GOLD) in collaboration with health care professionals and COPD patient groups throughout the world."
+    },
+    {
+        "name": "World AIDS Day",
+        "dateLabel": "December 1",
+        "month": 12,
+        "day": 1,
+        "description": "An opportunity for people worldwide to unite in the fight against HIV, to show support for people living with HIV, and to commemorate those who have died from an AIDS-related illness."
+    }
+]
