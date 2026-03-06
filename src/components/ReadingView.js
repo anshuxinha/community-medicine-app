@@ -11,10 +11,13 @@ import { theme } from '../styles/theme';
  * Parses a markdown-like string into an array of block objects.
  * Supports: # H1, ## H2, * / - bullet items, blank lines (spacing), plain paragraphs.
  */
+const stripBold = (text) => text.replace(/\*\*(.+?)\*\*/g, '$1');
+
 const parseMarkdown = (content) => {
     const lines = content.split('\n');
     const blocks = [];
     let bulletGroup = [];
+    let nestedGroup = [];
 
     const flushBullets = () => {
         if (bulletGroup.length > 0) {
@@ -23,28 +26,40 @@ const parseMarkdown = (content) => {
         }
     };
 
+    const flushNested = () => {
+        if (nestedGroup.length > 0) {
+            blocks.push({ type: 'nested_bullets', items: [...nestedGroup] });
+            nestedGroup = [];
+        }
+    };
+
     for (const line of lines) {
         if (line.startsWith('# ')) {
-            flushBullets();
-            blocks.push({ type: 'h1', text: line.replace(/^# /, '') });
+            flushBullets(); flushNested();
+            blocks.push({ type: 'h1', text: stripBold(line.replace(/^# /, '')) });
         } else if (line.startsWith('## ')) {
+            flushBullets(); flushNested();
+            blocks.push({ type: 'h2', text: stripBold(line.replace(/^## /, '')) });
+        } else if (/^  - /.test(line)) {
+            // Nested sub-bullet (2-space indent + hyphen)
             flushBullets();
-            blocks.push({ type: 'h2', text: line.replace(/^## /, '') });
-        } else if (/^[\*\-] /.test(line)) {
-            bulletGroup.push(line.replace(/^[\*\-] /, ''));
+            nestedGroup.push(stripBold(line.replace(/^  - /, '')));
+        } else if (/^[*\-] /.test(line)) {
+            flushNested();
+            bulletGroup.push(stripBold(line.replace(/^[*\-] /, '')));
         } else if (line.match(/^!\[(.*?)\]\((.*?)\)$/)) {
-            flushBullets();
+            flushBullets(); flushNested();
             const match = line.match(/^!\[(.*?)\]\((.*?)\)$/);
             blocks.push({ type: 'image', url: match[2], alt: match[1] });
         } else if (line.trim() === '') {
-            flushBullets();
+            flushBullets(); flushNested();
             blocks.push({ type: 'spacing' });
         } else {
-            flushBullets();
-            blocks.push({ type: 'body', text: line });
+            flushBullets(); flushNested();
+            blocks.push({ type: 'body', text: stripBold(line) });
         }
     }
-    flushBullets();
+    flushBullets(); flushNested();
     return blocks;
 };
 
@@ -87,6 +102,28 @@ const ReadingView = ({
                             <View key={i} style={styles.bulletRow}>
                                 <Text style={styles.bulletDot} selectable={false}>•</Text>
                                 <Text style={styles.bulletText} selectable={false}>{item}</Text>
+                            </View>
+                        ))}
+                    </View>
+                );
+            case 'nested_bullets':
+                return (
+                    <View key={index} style={styles.nestedBulletGroup}>
+                        {block.items.map((item, i) => (
+                            <View key={i} style={styles.nestedBulletRow}>
+                                <Text style={styles.nestedBulletDot} selectable={false}>–</Text>
+                                <Text style={styles.nestedBulletText} selectable={false}>{item}</Text>
+                            </View>
+                        ))}
+                    </View>
+                );
+            case 'nested_bullets':
+                return (
+                    <View key={index} style={styles.nestedBulletGroup}>
+                        {block.items.map((item, i) => (
+                            <View key={i} style={styles.nestedBulletRow}>
+                                <Text style={styles.nestedBulletDot} selectable={false}>–</Text>
+                                <Text style={styles.nestedBulletText} selectable={false}>{item}</Text>
                             </View>
                         ))}
                     </View>
@@ -246,6 +283,50 @@ const styles = StyleSheet.create({
         color: theme.colors.textTitle,
         fontSize: 15.5,
         lineHeight: 24,
+    },
+    nestedBulletGroup: {
+        marginVertical: 2,
+        marginLeft: 20,
+    },
+    nestedBulletRow: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        marginBottom: 4,
+    },
+    nestedBulletDot: {
+        color: '#6200ee',
+        fontSize: 14,
+        lineHeight: 22,
+        marginRight: 8,
+        marginLeft: 4,
+    },
+    nestedBulletText: {
+        flex: 1,
+        color: theme.colors.textTitle,
+        fontSize: 14.5,
+        lineHeight: 22,
+    },
+    nestedBulletGroup: {
+        marginVertical: 2,
+        marginLeft: 20,
+    },
+    nestedBulletRow: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        marginBottom: 4,
+    },
+    nestedBulletDot: {
+        color: '#6200ee',
+        fontSize: 14,
+        lineHeight: 22,
+        marginRight: 8,
+        marginLeft: 4,
+    },
+    nestedBulletText: {
+        flex: 1,
+        color: theme.colors.textTitle,
+        fontSize: 14.5,
+        lineHeight: 22,
     },
     spacing: {
         height: 14,

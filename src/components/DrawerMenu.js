@@ -58,7 +58,7 @@ const DrawerMenu = ({ visible, onClose, user }) => {
                 case 'profile':
                     Alert.alert(
                         '👤 My Profile',
-                        `Name: ${user?.displayName || 'STROMA User'}\nEmail: ${user?.email || 'N/A'}\n\nAccount Type: ${user ? 'Registered' : 'Guest'}`,
+                        `Name: ${displayName}\nEmail: ${user?.email || 'N/A'}\n\nAccount Type: ${user ? 'Registered' : 'Guest'}`,
                         [{ text: 'Close', style: 'cancel' }]
                     );
                     break;
@@ -94,9 +94,9 @@ const DrawerMenu = ({ visible, onClose, user }) => {
 
     if (!visible && slideAnim._value === -DRAWER_WIDTH) return null;
 
-    const initials = user?.displayName
-        ? user.displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-        : (user?.email?.[0] || 'S').toUpperCase();
+    const displayName = user?.username || user?.displayName || 'STROMA User';
+    const initials = displayName
+        .split(' ').filter(Boolean).map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'S';
 
     return (
         <Modal transparent visible={visible} onRequestClose={onClose} statusBarTranslucent>
@@ -118,7 +118,7 @@ const DrawerMenu = ({ visible, onClose, user }) => {
                         labelStyle={styles.avatarLabel}
                     />
                     <Text style={styles.userName}>
-                        {user?.displayName || 'STROMA User'}
+                        {displayName}
                     </Text>
                     <Text style={styles.userEmail} numberOfLines={1}>
                         {user?.email || ''}

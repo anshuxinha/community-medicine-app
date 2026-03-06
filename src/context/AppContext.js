@@ -6,7 +6,7 @@ import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 import { db, auth } from '../config/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { onAuthStateChanged, getIdTokenResult } from 'firebase/auth';
+import { onAuthStateChanged, getIdTokenResult, signOut } from 'firebase/auth';
 import * as Notifications from 'expo-notifications';
 let Purchases;
 if (Constants.appOwnership !== 'expo') {
@@ -395,7 +395,21 @@ export const AppProvider = ({ children }) => {
     };
 
     const logout = async () => {
-        await clearStorage();
+        // Sign out from Firebase first to stop onAuthStateChanged from restoring the session
+        try { await signOut(auth); } catch (_) { }
+        // Clear all persisted state
+        await AsyncStorage.multiRemove([
+            'user', 'isPremium', 'readItems', 'bookmarks', 'highlights',
+            'currentStreak', 'lastReadDate', 'studyScore', 'dailyReadHistory', 'quizScores'
+        ]);
+        setReadItems([]);
+        setBookmarks([]);
+        setHighlights({});
+        setCurrentStreak(0);
+        setLastReadDate(null);
+        setStudyScore(0);
+        setDailyReadHistory({});
+        setQuizScores([]);
         setUser(null);
         setIsPremium(false);
     };
