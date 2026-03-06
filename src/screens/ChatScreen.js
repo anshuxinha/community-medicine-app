@@ -13,8 +13,8 @@ import { theme } from '../styles/theme';
 
 // ── API config ────────────────────────────────────────────────────────────────
 const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || '';
-// Using gemini-2.0-flash (stable GA release) — free tier, supports Google Search Grounding
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+// Using gemini-2.5-flash (stable GA release) — free tier, supports Google Search Grounding
+const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
 // ── Context retrieval ─────────────────────────────────────────────────────────
 /**

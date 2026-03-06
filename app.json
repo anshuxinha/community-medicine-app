@@ -24,6 +24,7 @@
       "edgeToEdgeEnabled": true,
       "package": "com.communitymed.app",
       "versionCode": 3,
+      "googleServicesFile": "./android/app/google-services.json",
       "permissions": [
         "com.android.vending.BILLING"
       ]

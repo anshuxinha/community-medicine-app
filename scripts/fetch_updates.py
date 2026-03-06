@@ -6,7 +6,11 @@ from datetime import datetime
 from bs4 import BeautifulSoup  # type: ignore
 from typing import List, Dict, Any
 
-GEMINI_API_KEY = "AIzaSyAtcVnqlN2oYlfdDGms35rx_lV_TGYUE3c"
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+
+if not GEMINI_API_KEY:
+    raise ValueError("GEMINI_API_KEY environment variable is not set")
+
 GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
 
 def call_gemini(prompt):
@@ -40,8 +44,23 @@ def fetch_health_updates():
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
     }
     
+    output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'src', 'data')
+    output_path = os.path.join(output_dir, 'updates.json')
+    
     updates: List[Dict[str, Any]] = []
     
+    if os.path.exists(output_path):
+        try:
+            with open(output_path, 'r', encoding='utf-8') as f:
+                existing_updates = json.load(f)
+                
+            current_month = datetime.now().strftime('%Y-%m')
+            for u in existing_updates:
+                if u.get('date', '').startswith(current_month):
+                    updates.append(u)
+        except Exception as e:
+            print(f"Error loading existing updates: {e}")
+            
     try:
         response = requests.get(url, headers=headers, timeout=15)
         response.raise_for_status()
@@ -152,9 +171,7 @@ def fetch_health_updates():
         _generate_fallback_data(updates)
 
     # Output to File
-    output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'src', 'data')
     os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, 'updates.json')
     
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(updates, f, indent=4)
