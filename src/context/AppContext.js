@@ -9,8 +9,13 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { onAuthStateChanged, getIdTokenResult, signOut } from 'firebase/auth';
 import * as Notifications from 'expo-notifications';
 let Purchases;
+let GoogleSignin;
 if (Constants.appOwnership !== 'expo') {
     Purchases = require('react-native-purchases').default;
+    GoogleSignin = require('@react-native-google-signin/google-signin').GoogleSignin;
+    GoogleSignin.configure({
+        webClientId: '856703659616-8e0k1obmgom04783jjf695hkianm4hme.apps.googleusercontent.com',
+    });
 }
 import mockData from '../data/mockData.json';
 import practicalData from '../data/practical.json';
@@ -397,6 +402,10 @@ export const AppProvider = ({ children }) => {
     const logout = async () => {
         // Sign out from Firebase first to stop onAuthStateChanged from restoring the session
         try { await signOut(auth); } catch (_) { }
+        // Sign out from Native Google Sign-In to show the account chooser next time
+        if (Constants.appOwnership !== 'expo' && GoogleSignin) {
+            try { await GoogleSignin.signOut(); } catch (_) { }
+        }
         // Clear all persisted state
         await AsyncStorage.multiRemove([
             'user', 'isPremium', 'readItems', 'bookmarks', 'highlights',
