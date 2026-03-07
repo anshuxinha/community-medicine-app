@@ -69,6 +69,11 @@ export const AppProvider = ({ children }) => {
     const [user, setUser] = useState(undefined); // undefined = loading
     const [isPremium, setIsPremium] = useState(false);
 
+    // ── Timeout helper for Firestore queries (prevents freezing on offline) ───
+    const timeoutPromise = (ms) => new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Firebase Request Timed Out (Offline/Slow Network)')), ms)
+    );
+
     // ── Auth state listener (Firebase + AsyncStorage fallback) ────────────────
     useEffect(() => {
         // 1. Listen to Firebase auth state changes (handles real accounts)
@@ -85,7 +90,12 @@ export const AppProvider = ({ children }) => {
 
                 // Then try Firestore for richer profile data (Firestore wins over claims)
                 try {
-                    const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+                    // Fast 2-second timeout to prevent 10+ sec freezes when API is restricted
+                    const userDoc = await Promise.race([
+                        getDoc(doc(db, 'users', firebaseUser.uid)),
+                        timeoutPromise(2000)
+                    ]);
+
                     const data = userDoc.exists() ? userDoc.data() : {};
                     const premiumStatus = data.isPremium !== undefined ? data.isPremium : claimsPremium;
                     const isAdmin = data.isAdmin !== undefined ? data.isAdmin : claimsAdmin;
@@ -100,8 +110,8 @@ export const AppProvider = ({ children }) => {
                     setIsPremium(premiumStatus);
                     await AsyncStorage.setItem('user', JSON.stringify(userData));
                 } catch (err) {
-                    // Firestore failed — use claims-based data so user stays logged in
-                    console.warn('Firestore fetch failed, using auth claims:', err?.message);
+                    // Firestore failed (offline or timeout) — use claims-based data so user stays logged in & app loads instantly
+                    console.warn('Firestore fetch failed/timed out, using auth claims:', err?.message);
                     const userData = {
                         uid: firebaseUser.uid,
                         email: firebaseUser.email,

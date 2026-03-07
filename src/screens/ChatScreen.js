@@ -191,7 +191,9 @@ ${relevantContext}`;
             let aiText = "I'm sorry, I couldn't process your request.";
 
             if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
-                aiText = data.candidates[0].content.parts[0].text;
+                let rawText = data.candidates[0].content.parts[0].text;
+                // Remove Markdown bold (**) and italics (*) tags since we use standard Text nodes
+                aiText = rawText.replace(/\*\*/g, '').replace(/\*/g, '');
             } else if (data?.error) {
                 aiText = `API Error: ${data.error.message}`;
             }

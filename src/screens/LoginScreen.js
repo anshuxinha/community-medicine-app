@@ -24,6 +24,11 @@ if (Constants.appOwnership !== 'expo') {
     });
 }
 
+// ── Timeout helper for Firestore queries (prevents freezing on offline) ───
+const timeoutPromise = (ms) => new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('Firebase Request Timed Out')), ms)
+);
+
 const LoginScreen = () => {
     const { login } = useContext(AppContext);
     const [isRegistering, setIsRegistering] = useState(false);
@@ -46,14 +51,24 @@ const LoginScreen = () => {
             const googleCredential = GoogleAuthProvider.credential(idToken);
             const userCredential = await signInWithCredential(auth, googleCredential);
             const user = userCredential.user;
-            const userDoc = await getDoc(doc(db, 'users', user.uid));
+
             let premiumStatus = false;
-            if (userDoc.exists()) {
-                premiumStatus = userDoc.data().isPremium;
-            } else {
-                await setDoc(doc(db, 'users', user.uid), {
-                    email: user.email, isPremium: false, createdAt: new Date().toISOString(),
-                });
+            try {
+                const userDoc = await Promise.race([
+                    getDoc(doc(db, 'users', user.uid)),
+                    timeoutPromise(2000)
+                ]);
+
+                if (userDoc.exists()) {
+                    premiumStatus = userDoc.data().isPremium;
+                } else {
+                    await setDoc(doc(db, 'users', user.uid), {
+                        email: user.email, isPremium: false, createdAt: new Date().toISOString(),
+                    });
+                }
+            } catch (err) {
+                // Offline or timeout - gracefully fallback to non-premium
+                console.warn("Firestore unavailable during Google Login:", err.message);
             }
             login({ uid: user.uid, email: user.email, username: user.displayName || 'Google User', isPremium: premiumStatus });
         } catch (error) {
@@ -84,9 +99,19 @@ const LoginScreen = () => {
             } else {
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
-                const premiumStatus = userDoc.exists() ? userDoc.data().isPremium : false;
-                const displayName = user.displayName || userDoc.data()?.username || 'User';
+
+                let premiumStatus = false;
+                try {
+                    const userDoc = await Promise.race([
+                        getDoc(doc(db, 'users', user.uid)),
+                        timeoutPromise(2000)
+                    ]);
+                    premiumStatus = userDoc.exists() ? userDoc.data().isPremium : false;
+                } catch (err) {
+                    console.warn("Firestore unavailable during login:", err.message);
+                }
+
+                const displayName = user.displayName || 'User';
                 login({ uid: user.uid, email, username: displayName, isPremium: premiumStatus });
             }
         } catch (error) {
