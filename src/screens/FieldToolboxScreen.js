@@ -35,8 +35,8 @@ const FieldToolboxScreen = ({ navigation }) => {
                     <Card.Content style={styles.cardContent}>
                         <MaterialIcons name="accessibility-new" size={40} color={theme.colors.secondary} />
                         <View style={styles.textContainer}>
-                            <Text style={styles.cardTitle}>Anthropometry & EDD</Text>
-                            <Text style={styles.cardDesc}>Calculate BMI and Expected Date of Delivery</Text>
+                            <Text style={styles.cardTitle}>Anthropometry</Text>
+                            <Text style={styles.cardDesc}>Calculate BMI, MUAC, WHR, WHtR, and Ideal Body Weight</Text>
                         </View>
                     </Card.Content>
                 </Card>

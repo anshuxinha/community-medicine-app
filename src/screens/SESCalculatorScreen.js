@@ -193,7 +193,7 @@ const SESCalculatorScreen = () => {
                     </Card>
                 )}
 
-                <Button mode="contained" onPress={handleCalculate} style={styles.calcButton}>
+                <Button mode="contained" textColor="#FFFFFF" onPress={handleCalculate} style={styles.calcButton}>
                     Calculate SES
                 </Button>
 

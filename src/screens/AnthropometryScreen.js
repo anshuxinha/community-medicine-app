@@ -160,7 +160,7 @@ const AnthropometryScreen = () => {
                             keyboardType="numeric" mode="outlined" textColor={theme.colors.textTitle} style={styles.input} />
                         <TextInput label="Weight (kg)" value={weight} onChangeText={setWeight}
                             keyboardType="numeric" mode="outlined" textColor={theme.colors.textTitle} style={styles.input} />
-                        <Button mode="contained" onPress={calculateBMI} style={styles.calcButton}>
+                        <Button mode="contained" textColor="#FFFFFF" onPress={calculateBMI} style={styles.calcButton}>
                             Calculate BMI
                         </Button>
                         {bmiResult && (bmiResult.error
@@ -203,7 +203,7 @@ const AnthropometryScreen = () => {
                         <TextInput label="Hip circumference (cm)" value={hipWHR}
                             onChangeText={setHipWHR} keyboardType="numeric"
                             mode="outlined" textColor={theme.colors.textTitle} style={styles.input} />
-                        <Button mode="contained" onPress={calculateWHR} style={styles.calcButton}>
+                        <Button mode="contained" textColor="#FFFFFF" onPress={calculateWHR} style={styles.calcButton}>
                             Calculate WHR
                         </Button>
                         {whrResult && (whrResult.error
@@ -239,7 +239,7 @@ const AnthropometryScreen = () => {
                         <TextInput label="Height (cm)" value={heightWHtR}
                             onChangeText={setHeightWHtR} keyboardType="numeric"
                             mode="outlined" textColor={theme.colors.textTitle} style={styles.input} />
-                        <Button mode="contained" onPress={calculateWHtR} style={styles.calcButton}>
+                        <Button mode="contained" textColor="#FFFFFF" onPress={calculateWHtR} style={styles.calcButton}>
                             Calculate WHtR
                         </Button>
                         {whtRResult && (whtRResult.error
@@ -282,7 +282,7 @@ const AnthropometryScreen = () => {
                         <TextInput label="MUAC (cm)" value={muacValue}
                             onChangeText={setMuacValue} keyboardType="numeric"
                             mode="outlined" textColor={theme.colors.textTitle} style={styles.input} />
-                        <Button mode="contained" onPress={calculateMUAC} style={styles.calcButton}>
+                        <Button mode="contained" textColor="#FFFFFF" onPress={calculateMUAC} style={styles.calcButton}>
                             Interpret MUAC
                         </Button>
 
@@ -384,7 +384,7 @@ const AnthropometryScreen = () => {
                         <TextInput label="Actual weight (kg) — optional, for ABW" value={weight}
                             onChangeText={setWeight} keyboardType="numeric"
                             mode="outlined" textColor={theme.colors.textTitle} style={styles.input} />
-                        <Button mode="contained" onPress={calculateIBW} style={styles.calcButton}>
+                        <Button mode="contained" textColor="#FFFFFF" onPress={calculateIBW} style={styles.calcButton}>
                             Calculate IBW
                         </Button>
                         {ibwResult && (ibwResult.error

@@ -106,6 +106,23 @@ export const AppProvider = ({ children }) => {
                         isPremium: premiumStatus,
                         isAdmin,
                     };
+
+                    // Sync logic: Fetch remote bookmarks and readItems to merge with local
+                    if (data.readItems) {
+                        setReadItems(prev => Array.from(new Set([...prev, ...data.readItems])));
+                    }
+                    if (data.bookmarks) {
+                        setBookmarks(prev => {
+                            const newBookmarks = [...prev];
+                            data.bookmarks.forEach(remoteBookmark => {
+                                if (!newBookmarks.some(b => b.title === remoteBookmark.title)) {
+                                    newBookmarks.push(remoteBookmark);
+                                }
+                            });
+                            return newBookmarks;
+                        });
+                    }
+
                     setUser(userData);
                     setIsPremium(premiumStatus);
                     await AsyncStorage.setItem('user', JSON.stringify(userData));
@@ -230,6 +247,20 @@ export const AppProvider = ({ children }) => {
                 if (user) await AsyncStorage.setItem('user', JSON.stringify(user));
                 else await AsyncStorage.removeItem('user');
                 await AsyncStorage.setItem('isPremium', JSON.stringify(isPremium));
+
+                // Sync to Firebase if logged in
+                if (user && user.uid) {
+                    try {
+                        await updateDoc(doc(db, 'users', user.uid), {
+                            readItems,
+                            bookmarks,
+                            currentStreak,
+                            studyScore
+                        });
+                    } catch (e) {
+                        // silently handle if they are offline or doc doesn't exist
+                    }
+                }
             } catch (error) {
                 console.error("Failed to save state to AsyncStorage:", error);
             }

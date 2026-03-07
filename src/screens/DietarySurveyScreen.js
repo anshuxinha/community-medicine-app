@@ -121,7 +121,7 @@ const DietarySurveyScreen = () => {
                     </Card.Content>
                 </Card>
 
-                <Button mode="contained" onPress={calculate} style={styles.calcButton}>
+                <Button mode="contained" textColor="#FFFFFF" onPress={calculate} style={styles.calcButton}>
                     Calculate Intake
                 </Button>
 

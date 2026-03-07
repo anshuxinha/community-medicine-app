@@ -158,7 +158,7 @@ const DashboardScreen = ({ navigation }) => {
                             </Text>
                         </Card.Content>
                         <Card.Actions>
-                            <Button onPress={() => showDialog(update)} mode="text" compact>
+                            <Button textColor={theme.colors.secondary} onPress={() => showDialog(update)} mode="text" compact>
                                 Read More
                             </Button>
                         </Card.Actions>
@@ -200,7 +200,7 @@ const DashboardScreen = ({ navigation }) => {
                         <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingVertical: 8 }}>
                             {publicHealthDays.map((day, index) => (
                                 <View key={index} style={{ marginBottom: 16 }}>
-                                    <Text variant="titleMedium" style={{ fontWeight: 'bold', color: theme.colors.textTitle, marginTop: 0, marginBottom: 2, lineHeight: 22 }}>{day.name}</Text>
+                                    <Text variant="titleMedium" style={{ fontWeight: 'bold', color: theme.colors.textTitle, marginTop: 0, marginBottom: 2 }}>{day.name}</Text>
                                     <Text variant="labelSmall" style={{ color: theme.colors.secondary, marginBottom: 6, fontWeight: '600' }}>{day.dateLabel}</Text>
                                     <Text variant="bodyMedium" style={{ color: theme.colors.textSecondary, lineHeight: 20 }}>{day.description}</Text>
                                 </View>

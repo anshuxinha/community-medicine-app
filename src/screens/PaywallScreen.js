@@ -32,8 +32,8 @@ const PaywallScreen = ({ navigation }) => {
                 return;
             }
             const offerings = await Purchases.getOfferings();
-            const current = offerings.current;
-            if (!current) {
+            const current = offerings.current || Object.values(offerings.all)[0]; // Fallback to first offering if "Current" isn't explicitly set in RC dashboard
+            if (!current || !current.availablePackages) {
                 Alert.alert('Not Available', 'No subscription packages are available right now. Please try again later.');
                 return;
             }
