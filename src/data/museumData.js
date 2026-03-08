@@ -13,7 +13,7 @@ export const MUSEUM_ITEMS = [
     title: 'Cold chain system',
     emoji: '🧊',
     image: `${BASE}/fig_12_1.png`,
-    description: 'Shows the cold chain pathway from manufacturer to session site to maintain vaccine potency during storage and transport.',
+    description: 'Cold Chain System (Channel and Equipment).',
     keyFact: 'Cold chain integrity is maintained by correct storage, transport, and monitoring temperatures for vaccines.',
   },
   {
@@ -22,7 +22,7 @@ export const MUSEUM_ITEMS = [
     title: 'Overview of cold chain equipment',
     emoji: '🧊',
     image: `${BASE}/fig_12_2.png`,
-    description: 'Depicts major cold-chain equipment such as WIC/WIF, ILR, deep freezer, cold box, and vaccine carrier.',
+    description: 'Cold Chain Equipment (Technical Specifications).',
     keyFact: 'Cold chain integrity is maintained by correct storage, transport, and monitoring temperatures for vaccines.',
   },
   {
@@ -31,7 +31,7 @@ export const MUSEUM_ITEMS = [
     title: 'Vaccine storage in ice lined refrigerators',
     emoji: '🧊',
     image: `${BASE}/fig_12_3.png`,
-    description: 'Shows correct vaccine placement in an ice-lined refrigerator (ILR) at +2 to +8 C with attention to freeze sensitivity.',
+    description: 'Vaccine storage in ice lined refrigerators.',
     keyFact: 'Cold chain integrity is maintained by correct storage, transport, and monitoring temperatures for vaccines.',
   },
   {
@@ -40,7 +40,7 @@ export const MUSEUM_ITEMS = [
     title: 'Shake test to check potency of the vaccine',
     emoji: '🧊',
     image: `${BASE}/fig_12_4.png`,
-    description: 'The shake test helps identify freeze-damaged adsorbed vaccines by comparing sedimentation in test and control vials.',
+    description: 'It is done to check whether freeze sensitive vaccines (Pentavalent; TT; Hep B; PCV 10) have been subjected to freezing temperatures.\nHep B: Most freeze sensitive\nTT: Least freeze sensitive/thermolabile\nDPT: Due to presence of aluminium hydroxide, freezes and then precipitates and becomes non-potent.',
     keyFact: 'Cold chain integrity is maintained by correct storage, transport, and monitoring temperatures for vaccines.',
   },
   {
@@ -49,7 +49,7 @@ export const MUSEUM_ITEMS = [
     title: 'Ensure safety of the vaccine',
     emoji: '🧊',
     image: `${BASE}/fig_12_5.png`,
-    description: 'Open vial policy allows reuse of eligible multidose vials for up to 28 days if expiry, VVM, asepsis, and cold chain are satisfactory.',
+    description: 'Open vial policy\nExpiry date has not passed\nVaccines are stored under appropriate cold chain conditions\nVVM has not been submerged in water\nAseptic technique has been used to withdraw all doses\nVVM if attached, has not reached the discard point',
     keyFact: 'Cold chain integrity is maintained by correct storage, transport, and monitoring temperatures for vaccines.',
   },
   {
@@ -58,7 +58,7 @@ export const MUSEUM_ITEMS = [
     title: 'Sites of immunisation under National Immunisation Programme',
     emoji: '💉',
     image: `${BASE}/fig_13_1.png`,
-    description: 'Illustrates recommended anatomical sites for routine immunization in infants and children under the national program.',
+    description: 'Sites of immunisation under National Immunisation Programme.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -67,7 +67,7 @@ export const MUSEUM_ITEMS = [
     title: 'Schedule of vaccination under National Immunization Programme (infant)',
     emoji: '💉',
     image: `${BASE}/fig_13_2.png`,
-    description: 'Shows the infant National Immunization Schedule with vaccine, age, dose, route, and site of administration.',
+    description: 'Schedule of vaccination under National Immunization Programme (infant).',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -76,7 +76,7 @@ export const MUSEUM_ITEMS = [
     title: 'Ice pack with positioning of vials during immunisation session',
     emoji: '💉',
     image: `${BASE}/fig_13_3.png`,
-    description: 'Demonstrates correct positioning of vials among conditioned ice packs during an immunization session.',
+    description: 'Ice pack with positioning of vials during immunisation session.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -85,7 +85,7 @@ export const MUSEUM_ITEMS = [
     title: 'Vaccine carrier with ice packs (precautions need to be taken while using vaccine carrier)',
     emoji: '💉',
     image: `${BASE}/fig_13_4.png`,
-    description: 'Shows proper packing and use of a vaccine carrier to preserve temperature during outreach and session work.',
+    description: 'Vaccine carrier with ice packs (precautions need to be taken while using vaccine carrier).',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -94,7 +94,7 @@ export const MUSEUM_ITEMS = [
     title: 'Vaccine vial monitor',
     emoji: '💉',
     image: `${BASE}/fig_13_5.png`,
-    description: 'VVM interpretation: use while inner square is lighter than outer circle; discard when equal to or darker than the outer circle.',
+    description: 'Stages of vaccine vial monitor: Stage 1= Inner square is white (vaccine okay); Stage 2= Inner square is lighter than outer\ncircle (vaccine okay but use first); Stage 3= Inner square is of same colour as outer circle (Do not use); Stage 4= Inner\nsquare is darker than outer circle (Do not use)',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -103,7 +103,7 @@ export const MUSEUM_ITEMS = [
     title: 'Injection techniques',
     emoji: '💉',
     image: `${BASE}/fig_13_6.png`,
-    description: 'Demonstrates safe intradermal, subcutaneous, and intramuscular injection techniques with proper angle and site selection.',
+    description: 'Injection techniques.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -112,7 +112,7 @@ export const MUSEUM_ITEMS = [
     title: 'BCG vaccines',
     emoji: '💉',
     image: `${BASE}/fig_13_8.png`,
-    description: 'BCG vaccine (live attenuated Mycobacterium bovis) is given intradermally at birth in the left upper arm to prevent severe childhood TB.',
+    description: 'Composition, strain of vaccine: Bacillus Calmette-Guérin, Danish 1331\n(strain)\nAdverse effects: Suppurative lymphadenitis, local site reactions,\nosteomyelitis, disseminated BCG .\nContraindications: Pregnancy, generalised eczema, infective dermatosis,\nimmunocompromised states\nNormal BCG reaction: Wheal (5 mm, immediate)>> Papule (4-8 mm, 2-3\nweeks)>> Ulcer (5 weeks) >> Scar (4-8 mm, 6-12 weeks)\nType: Live attenuated vaccine\nDiluent: Normal saline\nRoute and site: Intradermal, left arm\nDosage and schedule: At birth 0.05 ml up to 1 month: 1 year (0.1 ml)',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -121,7 +121,7 @@ export const MUSEUM_ITEMS = [
     title: 'Pentavalent vaccine',
     emoji: '💉',
     image: `${BASE}/fig_13_7.png`,
-    description: 'Pentavalent vaccine protects against diphtheria, pertussis, tetanus, hepatitis B, and Hib; it is given intramuscularly at 6, 10, and 14 weeks.',
+    description: 'Composition, strain of vaccine: Diphtheria, pertussis, tetanus, hepatitis B,\nhaemophilus influenzae B\nAdverse effects: Local reaction, fever (pertussis component), persistent\ninconsolable screaming, etc.\nContraindications: Serious illness (hospital admission), neurological\ndisorders, convulsion, severe reaction to previous dose (shock, persistent\ncrying, etc).\nType: Killed vaccine\nRoute and site: Intramuscular, anterolateral aspect of thigh\nDosage and schedule: 0.5 ml, 6, 10, 14 weeks',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -130,7 +130,7 @@ export const MUSEUM_ITEMS = [
     title: 'DPT vaccine',
     emoji: '💉',
     image: `${BASE}/fig_13_9.png`,
-    description: 'DPT vaccine provides protection against diphtheria, pertussis, and tetanus and is used in primary series/boosters as per schedule.',
+    description: 'Composition, strain of vaccine: Diphtheria and tetanus (toxoid), pertussis\n(killed acellular bacilli)\nAdverse effects: Local reaction, fever (pertussis component), persistent\ninconsolable screaming, hypotonic- hyporesponsive episode (HHE), etc\nContraindications: Serious illness (hospital admission), neurological\ndisorders, convulsion, severe reaction to previous dose (shock, persistent\ncrying, etc).\nType: Killed vaccine\nRoute and site: Intramuscular, anterolateral aspect of thigh\nDosage and schedule: 0.5 ml, 16-24 months, 5 years (booster)',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -139,7 +139,7 @@ export const MUSEUM_ITEMS = [
     title: 'Hepatitis B vaccine',
     emoji: '💉',
     image: `${BASE}/fig_13_10.png`,
-    description: 'Hepatitis B vaccine is given intramuscularly, including a birth dose within 24 hours, to prevent perinatal and early childhood infection.',
+    description: 'Composition, strain of vaccine: Killed recombinant type (hepatitis B virus)\nAdverse effects: Local reaction\nContraindications: History of allergic reaction.\nType: Killed vaccine\nRoute and site: Intramuscular, anterolateral aspect of thigh\nDosage and schedule: 0.5 ml, at birth',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -148,7 +148,7 @@ export const MUSEUM_ITEMS = [
     title: 'OPV',
     emoji: '💉',
     image: `${BASE}/fig_13_11.png`,
-    description: 'OPV is a live attenuated oral polio vaccine used in routine immunization and supplementary pulse polio rounds.',
+    description: 'Type: Live attenuated vaccine\nComposition, strain of vaccine: OPV 1,3 (bivalent)\nAdverse effects: Mild diarrhea, vaccine associated paralytic polio (rare)\nContraindications: Immunocompromised state\nRoute: Oral\nDosage and schedule: 2 drops: At birth, 6, 10, 14 weeks',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -157,7 +157,7 @@ export const MUSEUM_ITEMS = [
     title: 'IPV',
     emoji: '💉',
     image: `${BASE}/fig_13_12.png`,
-    description: 'IPV is an inactivated polio vaccine given by injection (fractional intradermal or full intramuscular dose per schedule).',
+    description: 'Type: Killed vaccine\nComposition, strain of vaccine: Inactivated Polio virus (type I, II, III)\nAdverse effects: Local reaction\nContraindications: Not suitable during epidemics\nRoute and site: Intramuscular, anterolateral aspect of thigh\nDosage and schedule: 0.5 ml, 6, 14 weeks (fractional IPV)',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -166,7 +166,7 @@ export const MUSEUM_ITEMS = [
     title: 'Hib vaccine',
     emoji: '💉',
     image: `${BASE}/fig_13_13.png`,
-    description: 'Hib vaccine prevents invasive Haemophilus influenzae type b disease such as meningitis and pneumonia, usually via pentavalent formulation.',
+    description: 'Type: Killed vaccine\nAdverse effects: Local reaction. Fever.\nContraindications: History of allergic reaction. Children less than weeks age,\nsevere illness.\nRoute and site: Intramuscular, anterolateral aspect of thigh\nDosage and schedule: 0.5 ml, 6, 10, 14 weeks (pentavalent vaccine)',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -175,7 +175,7 @@ export const MUSEUM_ITEMS = [
     title: 'Measles vaccine',
     emoji: '💉',
     image: `${BASE}/fig_13_14.png`,
-    description: 'Measles vaccine is a live attenuated vaccine (with diluent) given as part of routine child immunization.',
+    description: 'Type: Live attenuated\nComposition, strain of vaccine: Measles: Edmonston-Zagreb strain.\nAdverse effects: Local reaction, toxic shock syndrome (TSS)\nContraindications: High fever, serious illness, pregnant women, history\nof allergic reaction, immunocompromised.\nDiluents: Distilled water\nRoute and site: Subcutaneous, right upper arm\nDosage and schedule: 0.5 ml, 9 months (1st dose), 16-24 months\n(2nd dose)',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -184,7 +184,7 @@ export const MUSEUM_ITEMS = [
     title: 'Vaccine for MMR',
     emoji: '💉',
     image: `${BASE}/fig_13_15.png`,
-    description: 'MMR vaccine is a live attenuated combination vaccine protecting against measles, mumps, and rubella.',
+    description: 'Type: Live attenuated\nComposition, strain of vaccine: Measles (EZ strain), mumps (Jeryl-lynn)\nand rubella (RA 27/3)\nAdverse effects: TSS, arthralgia, thrombocytopenia, convulsion,\nencephalopathy.\nContraindications: Pregnancy\nDiluent: Distilled water\nRoute and site: Subcutaneous, right upper arm\nDosage and schedule: 0.5 ml , 16-24 months (booster)',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -193,7 +193,7 @@ export const MUSEUM_ITEMS = [
     title: 'Vaccine for Japanese encephalitis',
     emoji: '💉',
     image: `${BASE}/fig_13_16.png`,
-    description: 'Japanese encephalitis vaccine is used in endemic areas according to national schedule and campaign strategy.',
+    description: 'Type: Live attenuated vaccine\nComposition, strain of vaccine: SA 14 -14- 2 strain\nDiluent: Distilled water\nAdverse effects: Fever, local reaction\nContraindications: Local reaction, myalgia, fever, irritability, etc.\nRoute and site: Subcutaneous, upper arm\nDosage and schedule: 0.5 ml , 9 months, 16-24 months [booster](endemic\nareas)',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -202,7 +202,7 @@ export const MUSEUM_ITEMS = [
     title: 'Rotavac',
     emoji: '💉',
     image: `${BASE}/fig_13_17.png`,
-    description: 'Rotavac (rotavirus vaccine) is an oral live attenuated vaccine that reduces severe rotaviral diarrhea in infants.',
+    description: 'Type: Live attenuated vaccine\nComposition, strain of vaccine: Rotavac ( ORV 116E) monovalent\nAdverse effects: Diarrhea, vomiting, irritability, intussusception (rare)',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -211,7 +211,7 @@ export const MUSEUM_ITEMS = [
     title: 'Vaccine for chickenpox',
     emoji: '💉',
     image: `${BASE}/fig_13_18.png`,
-    description: 'Varicella vaccine is a live attenuated vaccine used to prevent chickenpox and its complications.',
+    description: 'Type: Live attenuated\nComposition, strain of vaccine: Oka strain\nAdverse effects: Local reaction, fever, local vesicular rash.\nContraindications: Immunocompromised state, pregnant women,\nallergy to neomycin.\nRoute and site: Subcutaneous, upper arm\nDosage and schedule: 0.5 ml, 2 dose schedule (4 weeks apart)',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -220,7 +220,7 @@ export const MUSEUM_ITEMS = [
     title: 'Influenza vaccine',
     emoji: '💉',
     image: `${BASE}/fig_13_19.png`,
-    description: 'Influenza vaccine is updated periodically and used for prevention of seasonal influenza in eligible groups.',
+    description: 'Type: Killed vaccine and live (nasal spray)\nComposition, strain of vaccine: Type (A1, A2, B) trivalent\nAdverse effects: Local reaction, fever, headache, Guillain-Barré\nsyndrome (rare)\nContraindications: History of allergic reaction and chicken eggs,\nchildren less than 6 months.\nRoute and site: Intramuscular/subcutaneous, anterolateral aspect\nof thigh/upper arm\nDosage and schedule: 0.5 ml, 1 dose (>9 years), 2 dose (<9 years,\nwithout pre-exposure)',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -229,7 +229,7 @@ export const MUSEUM_ITEMS = [
     title: 'Pneumococcal vaccine',
     emoji: '💉',
     image: `${BASE}/fig_13_20.png`,
-    description: 'Pneumococcal vaccine (PCV) protects against invasive pneumococcal disease including pneumonia, meningitis, and sepsis.',
+    description: 'Type: Killed conjugate vaccine\nComposition, strain of vaccine: Polyvalent (7, 10, 13, 23 valent), PCV 13\nused in India.\nAdverse effects: Local site reaction\nContraindications: History of allergic reaction.\nRoute and site: Intramuscular/subcutaneous, anterolateral aspect of thigh/\nupper arm\nDosage and schedule: 0.5 ml, 6, 14 weeks, 9 months (booster)',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -238,7 +238,7 @@ export const MUSEUM_ITEMS = [
     title: 'Vaccine for rabies',
     emoji: '💉',
     image: `${BASE}/fig_13_21.png`,
-    description: 'Rabies cell-culture vaccines are used for pre- and post-exposure prophylaxis along with wound care and rabies immunoglobulin when indicated.',
+    description: 'Type: Killed vaccine\nComposition, strain of vaccine: Purified chick embryo cell vaccine\nRoute and site: Intradermal and intramuscular, deltoid/anterolateral\naspect of thigh\nDosage and schedule-2-site injection: 0.5 ml intramuscular, 0.1 ml\nintradermal\nPre-exposure: Day 0, 7, 21/28\nPost-exposure: 0, 3, 7, 14, 28 , 90 (B) for IM schedule, 0, 3, 7, 28 for ID\nschedule.\nAdverse effects: Local site reaction, fever, headache and GI symptoms\nContraindications: No contraindications for post-exposure prophylaxis\nas lethal disease',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -247,7 +247,7 @@ export const MUSEUM_ITEMS = [
     title: 'HPV vaccine',
     emoji: '💉',
     image: `${BASE}/fig_13_22.png`,
-    description: 'HPV vaccine prevents infection with oncogenic human papillomavirus types and reduces cervical cancer risk.',
+    description: 'Type: Killed vaccine\nComposition, strain of vaccine: HPV (16, 18) Bivalent HPV (6, 11, 16,\n18) Quadrivalent, Nonavalent HPV (6, 11, 16, 18, 31, 33, 45, 52, and 58)\nRoute: 0.5 ml I/M in deltoid\nIndication: Girls 11 or 12 years\nDosage and schedule: 0, 1, 6 months\nAdverse effects: Local reaction\nContraindications: History of previous hypersensitivity, pregnant women',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -256,7 +256,7 @@ export const MUSEUM_ITEMS = [
     title: 'Typhoid vaccine',
     emoji: '💉',
     image: `${BASE}/fig_13_23.png`,
-    description: 'Typhoid vaccines (especially typhoid conjugate vaccine) are used for prevention of enteric fever.',
+    description: 'Nature of vaccine: Killed vaccine, oral vaccine\nComposition, strain of vaccine: Vi polysaccharide, Ty21a strain (typhoral)\nRoute and site: Intramuscular and oral, anterolateral aspect of thigh\nDosage and schedule: Given at 2 years (0 doses), repeat booster 3 years for\nkilled vaccine, day 1, 3, 5 oral capsules (for children >5 years)\nAdverse effects: Local site reactions ( IM ), diarrhea (oral)\nContraindications: Congenital or acquired immunodeficiency, acute febrile\nillness and acute intestinal infection',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -265,7 +265,7 @@ export const MUSEUM_ITEMS = [
     title: 'Meningococcal vaccine',
     emoji: '💉',
     image: `${BASE}/fig_13_24.png`,
-    description: 'Meningococcal vaccines protect against Neisseria meningitidis serogroups and are used in high-risk settings.',
+    description: 'Type: Killed vaccine (unconjugated/conjugated)\nComposition, strain of vaccine: Serogroup A, C, W / 135, X and Y.\nRoute: Subcutaneous (unconjugated), intramuscular (conjugated)\nDosage and schedule: Single dose (> 2 years) [unconjugated/conjugated], 2 dose\nadministration 2 months apart and 1 year booster (2-11 months)[conjugated]\nAdverse effects: Local reaction, fever\nContraindications : History of previous hypersensitivity, pregnant and\nbreastfeeding women, moderately and severely ill children',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -274,7 +274,7 @@ export const MUSEUM_ITEMS = [
     title: 'AstraZeneca',
     emoji: '💉',
     image: `${BASE}/fig_13_25.png`,
-    description: 'Covishield (AstraZeneca platform) is a recombinant adenoviral vector COVID-19 vaccine given intramuscularly.',
+    description: 'Type: Viral vector-based (They do not contain antigens, but use the body\'s cells to produce them, by using\na modified virus (the vector) to deliver genetic code for antigen-COVID-19\nspike proteins. This has the advantage of triggering a strong cellular immune\nresponse by T cells as well the production of antibodies by B cells).\nComposition: Inactivated adenovirus with segments of coronavirus, aluminium\nhydroxide gel, L-histidine, L-histidine hydrochloride monohydrate, magnesium\nchloride hexahydrate, polysorbate 80, ethanol, sucrose, sodium chloride, and\ndisodium edetate dihydrate (EDTA).\nRoute: Intramuscular in the deltoid muscle\nDosage and schedule: 0.5 ml, 2 doses (12-16 weeks apart)\nStorage temperature: 2-8°C',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -283,7 +283,7 @@ export const MUSEUM_ITEMS = [
     title: 'Covaxin',
     emoji: '💉',
     image: `${BASE}/fig_13_26.png`,
-    description: 'Covaxin is an inactivated whole-virion SARS-CoV-2 vaccine administered intramuscularly.',
+    description: 'Type: Whole-virion Inactivated Coronavirus Vaccine\nComposition: Inactivated coronavirus, aluminum hydroxide gel,\nTLR 7/8 agonist, 2-phenoxyethanol and phosphate buffered saline\n[NKA1].\nRoute: Intramuscular in the deltoid muscle\nDosage and schedule: 0.5 ml, 2 doses (4-6 weeks apart)\nStorage temperature: 2-8°C\nAdverse effects: Pain or swelling at the injection site, mild headache, mild fever, irritability\nContraindications: Anaphylactic or allergic reaction to a previous dose of COVID-19 vaccine. Persons\nhaving active symptoms of SARS-CoV-2 infection (to be deferred for 4-8 weeks after recovery)',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -292,7 +292,7 @@ export const MUSEUM_ITEMS = [
     title: 'Pfizer BioNTech vaccine',
     emoji: '💉',
     image: `${BASE}/fig_13_27.png`,
-    description: 'Pfizer-BioNTech is an mRNA COVID-19 vaccine that delivers spike-protein instructions to induce immunity.',
+    description: 'Type: mRNA vaccine (COVID-19 mRNA vaccines give instructions for\nour cells to make a harmless piece of what is called the "spike protein)"\nComposition: Nucleoside-modified mRNA encoding the viral spike\n(S) glycoprotein of SARS-CoV-2\nRoute: Intramuscular in the deltoid muscle\nDosage and schedule: 0.3 ml, 2 doses, 21 days apart\nStorage temperature: Ultra-cold freezer between -90 ºC and -60 ºC\n(-130ºF and -76ºF).\nAdverse effects: Pain, redness, swelling, fever\nContraindications: Anaphylactic or allergic reaction to a previous dose\nof COVID-19 vaccine',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -301,7 +301,7 @@ export const MUSEUM_ITEMS = [
     title: 'Sputnik V',
     emoji: '💉',
     image: `${BASE}/fig_13_28.png`,
-    description: 'Sputnik V is a heterologous adenoviral vector COVID-19 vaccine using two different vectors for prime and booster doses.',
+    description: 'Type: Viral vector-based (adenoviral-based uses a weakened virus\nto deliver small parts of a pathogen and stimulate an immune\nresponse)\nComposition: Lyophilized formulation of Gam-COVID-Vac spike\nprotein gene: Adenovirus 26 (Ad26) and Adenovirus 5 (Ad5).',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -310,7 +310,7 @@ export const MUSEUM_ITEMS = [
     title: 'Sputnik light',
     emoji: '💉',
     image: `${BASE}/fig_13_29.png`,
-    description: 'Sputnik Light is a single-dose adenoviral vector COVID-19 vaccine based on the first Sputnik component.',
+    description: 'Composition: It contains recombinant human adenovirus serotype\nnumber 26 (rAd26)) of the Sputnik V coronavirus vaccine and is a\nsingle dose vaccine.\nRoute: Intramuscular\nDosage and schedule: 0.5 ml, two doses (21 days apart)\nStorage temperature: 2-8°C\nAdverse effects: Redness, swelling at the injection site\nContraindications: Pregnancy',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -319,7 +319,7 @@ export const MUSEUM_ITEMS = [
     title: 'Biomedical waste segregation chart',
     emoji: '♻️',
     image: `${BASE}/fig_14_1.png`,
-    description: 'Biomedical waste segregation chart showing color-coded containers and disposal pathways under BMW management rules.',
+    description: 'Biomedical waste segregation chart.',
     keyFact: 'Biomedical waste segregation follows color-coded categories under BMW Management Rules, 2016.',
   },
   {
@@ -328,7 +328,7 @@ export const MUSEUM_ITEMS = [
     title: 'Schedule III, label for biomedical waste containers/bags',
     emoji: '♻️',
     image: `${BASE}/fig_14_2.png`,
-    description: 'Schedule III label format for biomedical waste bags/containers with required biohazard and cytotoxic markings.',
+    description: 'Schedule III, label for biomedical waste containers/bags.',
     keyFact: 'Biomedical waste segregation follows color-coded categories under BMW Management Rules, 2016.',
   },
   {
@@ -337,7 +337,7 @@ export const MUSEUM_ITEMS = [
     title: 'Male condoms',
     emoji: '🛡️',
     image: `${BASE}/fig_15_1.png`,
-    description: 'Male condom: a barrier contraceptive that also helps prevent sexually transmitted infections.',
+    description: 'Advantages\nProtection from STIs, easily available, inexpensive, safe to use\nDisadvantages\nReduced sensation, may slip off due to incorrect use, latex\nallergy\nFailure rate: Variable 2-14, >14 HWY (in a few cases)',
     keyFact: 'Classify each method as temporary or permanent and mention indications, advantages, and limitations.',
   },
   {
@@ -346,7 +346,7 @@ export const MUSEUM_ITEMS = [
     title: 'Female condoms',
     emoji: '🛡️',
     image: `${BASE}/fig_15_2.png`,
-    description: 'Female condom: an internal barrier method that provides contraception and STI protection when used correctly.',
+    description: 'Advantages\nVery few side effects\nProtection from STIs\nDisadvantages\nCostly\nHigh failure rate\nFailure rate: 5-21 HWY',
     keyFact: 'Classify each method as temporary or permanent and mention indications, advantages, and limitations.',
   },
   {
@@ -355,7 +355,7 @@ export const MUSEUM_ITEMS = [
     title: 'Diaphragm barrier method of birth control',
     emoji: '🛡️',
     image: `${BASE}/fig_15_3.png`,
-    description: 'Diaphragm is a barrier method placed over the cervix, usually used with spermicide before intercourse.',
+    description: 'Advantages\nSafe\nVery few side effects\nCan be inserted up to 6 hrs in advance\nDisadvantages\nNot widely available\nDifficult to insert\nFailure rate\n6-12 HWY (with spermicide)',
     keyFact: 'Classify each method as temporary or permanent and mention indications, advantages, and limitations.',
   },
   {
@@ -364,7 +364,7 @@ export const MUSEUM_ITEMS = [
     title: 'Vaginal sponge method of birth control',
     emoji: '🛡️',
     image: `${BASE}/fig_15_4.png`,
-    description: 'Vaginal sponge is a spermicidal barrier device placed in the vagina before intercourse.',
+    description: 'Advantages\nImmediate and continuous protection for 24 hours\nEasy to insert\nDisadvantages\nLess effective\nRemoval tricky\nFailure rate\n9-20 (nulliparous)\n20-40 HWY (parous women)',
     keyFact: 'Classify each method as temporary or permanent and mention indications, advantages, and limitations.',
   },
   {
@@ -373,7 +373,7 @@ export const MUSEUM_ITEMS = [
     title: 'Spermicidal gel',
     emoji: '🛡️',
     image: `${BASE}/fig_15_5.png`,
-    description: 'Spermicidal gel/foam/pessary immobilizes sperm and is often used with barrier methods.',
+    description: 'Advantages\nEasy to use\nDisadvantages\nCause burning and irritation\nHigh failure rate\nTo be used repeatedly with each intercourse (pre and post)\nCannot be used in isolation to be coupled with barrier methods.\nFailure rate\n6-28 HWY',
     keyFact: 'Classify each method as temporary or permanent and mention indications, advantages, and limitations.',
   },
   {
@@ -382,7 +382,7 @@ export const MUSEUM_ITEMS = [
     title: 'OCP: Mala-n',
     emoji: '🛡️',
     image: `${BASE}/fig_15_6.png`,
-    description: 'Mala-N is a combined oral contraceptive pill (ethinyl estradiol plus levonorgestrel) taken cyclically for contraception.',
+    description: 'Advantages\nHigh rate of efficacy\nRegulates menstrual cycle\nConvenient\nDisadvantages/Side Effects\nDoes not protect against STI\nIncreased risk of CVDs, hypertension, liver disorder,\ncervical cancer and DVT, etc.',
     keyFact: 'Classify each method as temporary or permanent and mention indications, advantages, and limitations.',
   },
   {
@@ -391,7 +391,7 @@ export const MUSEUM_ITEMS = [
     title: 'Birth control tablet',
     emoji: '🛡️',
     image: `${BASE}/fig_15_7.png`,
-    description: 'Chhaya (centchroman/ormeloxifene) is a non-hormonal weekly oral contraceptive used in national family planning services.',
+    description: 'Composition: Centchroman (selective estrogen receptor modulator)\nAdvantages\nFew side effects\nConvenient to take\nReversible\nDisadvantages/Side Effects\nProlongation of menstrual cycle\nFailure rate: 1.8-2.8 HWY\nDosage\nFor the first 3 months, 1 tablet (30 mg) twice a week on fixed days\nAfter 3 months, 1 tablet (30 mg) once a week\nContraindications\nLiver disease\nChronic illness\nLactating mother',
     keyFact: 'Classify each method as temporary or permanent and mention indications, advantages, and limitations.',
   },
   {
@@ -400,7 +400,7 @@ export const MUSEUM_ITEMS = [
     title: 'Ezy pill',
     emoji: '🛡️',
     image: `${BASE}/fig_15_8.png`,
-    description: 'Ezy pill is levonorgestrel emergency contraception, taken as early as possible after unprotected intercourse.',
+    description: 'Composition: Levonorgestrel (1.5 mg)\nAdvantages\nSingle tablet\nVery effective\nUsed as emergency contraception (post-exposure)\nDisadvantages/Side Effects\nDoes not protect from STI\nMost effective within 72 hours of exposure\nIrregular menstrual bleeding, breast tenderness\nFailure Rate\n<1 HWY\nDosage\n1.5 mg single dosage\nContraindications\nPregnancy\nLiver disease, cardiovascular diseases and bleeding disorders.',
     keyFact: 'Classify each method as temporary or permanent and mention indications, advantages, and limitations.',
   },
   {
@@ -409,7 +409,7 @@ export const MUSEUM_ITEMS = [
     title: 'Injection: Antara',
     emoji: '🛡️',
     image: `${BASE}/fig_15_9.png`,
-    description: 'Antara is injectable DMPA contraception providing approximately 3 months of protection per dose.',
+    description: 'Composition: Depot medroxyprogesterone acetate (MPA), Norethisterone acetate (NET-EN)\nAdvantages\nSingle injection effective for months (long lasting)\nSafe, effective and high acceptability\nDoes not affect lactation\nDisadvantages/Side effects\nDoes not protect from STI\nProlonged infertility after use\nIrregular menstrual bleeding\nWeight gain',
     keyFact: 'Classify each method as temporary or permanent and mention indications, advantages, and limitations.',
   },
   {
@@ -418,7 +418,7 @@ export const MUSEUM_ITEMS = [
     title: 'Progesterone implant in upper arm',
     emoji: '🛡️',
     image: `${BASE}/fig_15_10.png`,
-    description: 'Progesterone implant is a long-acting reversible contraceptive inserted subdermally in the upper arm.',
+    description: 'Composition: Progesterone implant ( norplant)\nAdvantages\nEffective\nLong lasting (5 years or more)\nReversible\nDisadvantages/Side Effects\nDoes not protect from STI\nIrregularity of menstrual bleeding\nSurgical insertion and removal\nFailure Rate\n<1 HWY\nDosage\nNorplant: 6 silicon capsules (35 mg levonorgestrel each)\nContraindications\nBreast cancer and suspected malignancy\nAll genital cancer\nUndiagnosed uterine bleeding',
     keyFact: 'Classify each method as temporary or permanent and mention indications, advantages, and limitations.',
   },
   {
@@ -427,7 +427,7 @@ export const MUSEUM_ITEMS = [
     title: 'Intrauterine device',
     emoji: '🛡️',
     image: `${BASE}/fig_15_11.png`,
-    description: 'Intrauterine devices include copper-bearing and hormonal options for long-acting reversible contraception.',
+    description: 'Types of IUCD and Composition\n1st generation (Lippes loop): Polyethylene\n2nd generation (Copper T, Nova-T): Metallic copper\n3rd generation (hormonal, Mirena/Progestasert): Progesterone',
     keyFact: 'Classify each method as temporary or permanent and mention indications, advantages, and limitations.',
   },
   {
@@ -436,7 +436,7 @@ export const MUSEUM_ITEMS = [
     title: 'IFA tablets',
     emoji: '💊',
     image: `${BASE}/fig_16_1.png`,
-    description: 'IFA tablets supply iron and folic acid for prevention and treatment of anemia in adolescents, pregnant women, and other target groups.',
+    description: 'Composition\nFerrous Sulphate: 60 mg elemental iron (POSHAN abhiyan), 500 mg\nfolic acid\nDosage\nANC: 1 tablet daily for 180 days (4th month onwards)\nPNC: 1 tablet daily for 180 days\nFor adolescents: 1 tablet weekly (blue colored tablets)\nFor children: 6 m-5 yrs (biweekly, 1 ml IFA syrup: 20 mg iron and\n100 mg FA)\n5-9 yrs (weekly, 1 tablet, 45 mg iron and 400 mg FA) (pink-colored tablets)',
     keyFact: 'State key indication, public health use, and relevant national-program context for each medicine.',
   },
   {
@@ -445,7 +445,7 @@ export const MUSEUM_ITEMS = [
     title: 'ORS',
     emoji: '💊',
     image: `${BASE}/fig_16_2.png`,
-    description: 'ORS packet for low-osmolar oral rehydration solution used to prevent and treat dehydration in diarrhea.',
+    description: 'Composition\nSodium chloride (2.5 g), trisodium citrate dihydrate (2.9 g), potassium chloride (1.5 g) and dextrose (13.5 g)\nAction\nGlucose given orally enhances intestinal absorption of salt and water, correcting the electrolyte and water deficit.',
     keyFact: 'State key indication, public health use, and relevant national-program context for each medicine.',
   },
   {
@@ -454,7 +454,7 @@ export const MUSEUM_ITEMS = [
     title: 'Zinc tablets',
     emoji: '💊',
     image: `${BASE}/fig_16_3.png`,
-    description: 'Zinc supplementation (10 mg below 6 months, 20 mg from 6 months to 5 years for 14 days) reduces duration and severity of diarrhea.',
+    description: 'Dosage\n2-6 months (10 mg), 6 months-5 yrs (20 mg) for 14 days.\nAdvantages\nBoosts immunity, reduces duration, severity and hospital stay in diarrhea',
     keyFact: 'State key indication, public health use, and relevant national-program context for each medicine.',
   },
   {
@@ -463,7 +463,7 @@ export const MUSEUM_ITEMS = [
     title: 'DOTS medicines',
     emoji: '💊',
     image: `${BASE}/fig_16_4.png`,
-    description: 'DOTS medicines represent supervised anti-tubercular treatment under the National TB Elimination Programme.',
+    description: 'Composition\nAnti-tubercular drugs (first line and second line drugs)\nDosage (Adults)\nIsoniazid (600 mg), rifampicin (<60 kg: 450 mg, >60 kg: 600 mg),\npyrizinamide (1500 mg), ethambutol (1200 mg)\nAdverse Effects\nHepatotoxicity, gastritis, peripheral neuropathy, retrobulbar neuritis, etc.',
     keyFact: 'State key indication, public health use, and relevant national-program context for each medicine.',
   },
   {
@@ -472,7 +472,7 @@ export const MUSEUM_ITEMS = [
     title: 'Medicines for leprosy',
     emoji: '💊',
     image: `${BASE}/fig_16_5.png`,
-    description: 'Multidrug therapy blister packs for leprosy typically include rifampicin, dapsone, and clofazimine.',
+    description: 'Composition\nRifampicin, dapsone and clofazimine\nDosage\nPaucibacillary [Supervised: Rifampicin 600 mg (monthly),\ndapsone 100 mg; Unsupervised: Dapsone 100 mg (daily)]\nMultibacillary [Supervised: Rifampicin 600 mg (monthly),\ndapsone 100, clofazimine 300 mg (monthly); Unsupervised:\nDapsone 100 (daily), Clofazimine 50 mg (daily)',
     keyFact: 'State key indication, public health use, and relevant national-program context for each medicine.',
   },
   {
@@ -481,7 +481,7 @@ export const MUSEUM_ITEMS = [
     title: 'Chloroquine tablets',
     emoji: '💊',
     image: `${BASE}/fig_16_7.png`,
-    description: 'Chloroquine tablets are antimalarials used only where chloroquine-sensitive malaria is present.',
+    description: 'Chloroquine (25 mg/kg divided over 3 days)\nPrimaquine (Vivax: 0.25 mg/kg for 14 days, falciparum: 0.75 mg/kg on 2nd day)\nArtemesin-based combination [ACT SP: Artesunate (4 mg/kg for 3 days) + sulphadoxine (25 mg/kg for 3 days) + pyrimethamine (1.25 mg/kg for 3 days) + primaquine: 0.75 mg/kg on 2nd day]\nIn northeastern states: ACT AL: Artemether (80 mg for 3 days) + lumefantrine (480 mg for 3 days) + primaquine: 0.75 mg/kg on 2nd day.\nNational Program: National Vector Borne Disease Control Program (NVBDCP)',
     keyFact: 'State key indication, public health use, and relevant national-program context for each medicine.',
   },
   {
@@ -490,7 +490,7 @@ export const MUSEUM_ITEMS = [
     title: 'Albendazole',
     emoji: '💊',
     image: `${BASE}/fig_16_8.png`,
-    description: 'Albendazole is a broad-spectrum antihelminthic used for periodic deworming and treatment of helminth infections.',
+    description: 'Indications\nDeworming (ascariasis and filariasis)\nDosage\n<2 yrs (200 mg) syrup formulation, >2 yrs (400 mg) tablets',
     keyFact: 'State key indication, public health use, and relevant national-program context for each medicine.',
   },
   {
@@ -499,7 +499,7 @@ export const MUSEUM_ITEMS = [
     title: 'Rapid detection test of malaria',
     emoji: '💊',
     image: `${BASE}/fig_16_6.png`,
-    description: 'Rapid diagnostic test (RDT) for malaria detects parasite antigens and supports point-of-care diagnosis.',
+    description: 'Malaria Types Detected\nPlasmodium vivax, Plasmodium falciparum\nComposition\nImmunochromatographic test for malaria antigen detection: Vivax (lactate dehydrogenase), Falciparum (histidine rich protein 2)\nConfirmatory Test\nGiemsa-stained thick and thin blood smears, PCR test',
     keyFact: 'State key indication, public health use, and relevant national-program context for each medicine.',
   },
   {
@@ -508,7 +508,7 @@ export const MUSEUM_ITEMS = [
     title: 'Vitamin A solution',
     emoji: '💊',
     image: `${BASE}/fig_16_9.png`,
-    description: 'Vitamin A solution is used in prophylaxis programs and treatment protocols for vitamin A deficiency.',
+    description: 'Formulation\nLiquid syrup and gelatin capsules.\nRoute\nOral route\nDosage and Schedule\n9 months, repeat dose 6 monthly till 5 years\nage [9 doses], 1 lac IU (< 1 year), 2 lac IU\n(>1 year)\nFirst Clinical Sign of Vitamin A Deficiency\nXerophthalmia (dry eye)\nFirst Clinical Symptom of Vitamin A Deficiency\nNight blindness',
     keyFact: 'State key indication, public health use, and relevant national-program context for each medicine.',
   },
   {
@@ -517,7 +517,7 @@ export const MUSEUM_ITEMS = [
     title: 'SIT/RTI colour-coated kits',
     emoji: '💊',
     image: `${BASE}/fig_16_10.png`,
-    description: 'Syndromic STI/RTI color-coded kits support standardized diagnosis and treatment in peripheral health settings.',
+    description: 'Table 16.1 Syndromic case management protocol\nKit no., syndrome, colour and drug contents are used for standard syndromic STI/RTI management.',
     keyFact: 'State key indication, public health use, and relevant national-program context for each medicine.',
   },
   {
@@ -526,7 +526,7 @@ export const MUSEUM_ITEMS = [
     title: 'Rice',
     emoji: '🥗',
     image: `${BASE}/fig_17_1.png`,
-    description: 'Rice is a staple cereal, primarily providing carbohydrates and dietary energy.',
+    description: 'Nutritive value: Calorie: 345 kcal/100 g\nProtein: 7.7 g% (husked), 6.8 g% (milled)\nLimiting amino acids: Lysine and threonine',
     keyFact: 'Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.',
   },
   {
@@ -535,7 +535,7 @@ export const MUSEUM_ITEMS = [
     title: 'Wheat',
     emoji: '🥗',
     image: `${BASE}/fig_17_2.png`,
-    description: 'Wheat is a major cereal grain providing carbohydrates, protein, and B-group vitamins.',
+    description: 'Nutritive value: Calorie: 346 kcal/100 g; Protein: 11.8 g% (whole\nwheat)\nLimiting amino acids: Lysine and threonine',
     keyFact: 'Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.',
   },
   {
@@ -544,7 +544,7 @@ export const MUSEUM_ITEMS = [
     title: 'Maize',
     emoji: '🥗',
     image: `${BASE}/fig_17_3.png`,
-    description: 'Maize is an energy-dense cereal commonly used as staple food and livestock feed.',
+    description: 'Nutritive value: Calorie: 342 kcal/100 g; Protein: 11.1 g%\nLimiting amino acids: Lysine and tryptophan',
     keyFact: 'Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.',
   },
   {
@@ -553,7 +553,7 @@ export const MUSEUM_ITEMS = [
     title: 'Bajra',
     emoji: '🥗',
     image: `${BASE}/fig_17_4.png`,
-    description: 'Bajra (pearl millet) is a nutritious millet rich in energy, fiber, and micronutrients.',
+    description: 'Nutritive value: Calorie: 361 kcal/100 g; Protein: 11.6 g%\nLimiting amino acids: Lysine and threonine\nRich source of: Calcium, iron and B group vitamins',
     keyFact: 'Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.',
   },
   {
@@ -562,7 +562,7 @@ export const MUSEUM_ITEMS = [
     title: 'Ragi',
     emoji: '🥗',
     image: `${BASE}/fig_17_5.png`,
-    description: 'Ragi (finger millet) is rich in calcium and useful in complementary feeding and nutrition programs.',
+    description: 'Nutritive value: Calorie: 328 kcal/100 g; Protein:\n7.3 g%\nRich source of: Calcium',
     keyFact: 'Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.',
   },
   {
@@ -571,7 +571,7 @@ export const MUSEUM_ITEMS = [
     title: 'Pulses',
     emoji: '🥗',
     image: `${BASE}/fig_17_6.png`,
-    description: 'Pulses are important plant protein sources and complement cereals for balanced diets.',
+    description: 'Nutritive value: Calorie: 320-360 kcal; Protein: 20-25 g%\nLimiting amino acids: Methionine and cysteine\nPercentage of protein content in soya bean: 40 g%',
     keyFact: 'Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.',
   },
   {
@@ -580,7 +580,7 @@ export const MUSEUM_ITEMS = [
     title: 'Various nuts',
     emoji: '🥗',
     image: `${BASE}/fig_17_7.png`,
-    description: 'Nuts provide healthy fats, protein, micronutrients, and high caloric density.',
+    description: 'Protein content of Peanut (groundnut): 27 g%\nPistachio is rich source of: Iron',
     keyFact: 'Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.',
   },
   {
@@ -589,7 +589,7 @@ export const MUSEUM_ITEMS = [
     title: 'Milk',
     emoji: '🥗',
     image: `${BASE}/fig_17_8.png`,
-    description: 'Milk is a high-quality source of protein, calcium, and several vitamins.',
+    description: 'Nutritive value\nBuffalo milk: Energy 117 kcal/100 ml; Protein 4.3 g%\nCow milk: Energy 67 kcal/100 ml; Protein 3.2 g%\nHuman milk: Energy: 65 kcal/100 ml; Protein: 1.1 g%\nRich source: Calcium, vitamins\nPoor source: Iron, vitamin C.',
     keyFact: 'Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.',
   },
   {
@@ -598,7 +598,7 @@ export const MUSEUM_ITEMS = [
     title: 'Eggs',
     emoji: '🥗',
     image: `${BASE}/fig_17_9.png`,
-    description: 'Eggs are nutrient-dense foods providing high-biological-value protein and essential micronutrients.',
+    description: 'Nutritive value: Energy 70 kcal/60 g; Protein 6 g%\nNet protein utilization (NPU) formula: Nitrogen retained by\nbody/nitrogen intake * 100 (digestibility coefficient * biological\nvalue/100)\nNet protein utilization (NPU) of an egg is: 1 (Reference\nprotein)',
     keyFact: 'Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.',
   },
   {
@@ -607,7 +607,7 @@ export const MUSEUM_ITEMS = [
     title: 'Lathyrus sativus',
     emoji: '🥗',
     image: `${BASE}/fig_17_10.png`,
-    description: 'Lathyrus sativus (kesari dal) is associated with neurolathyrism when consumed in excess over long periods.',
+    description: 'Disease caused: Lathyrism\nDisease types: Neurolathyrism and osteolathyrism\nToxin: Beta-oxalyl-amino-alanine (BOAA)',
     keyFact: 'Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.',
   },
   {
@@ -616,7 +616,7 @@ export const MUSEUM_ITEMS = [
     title: 'Argemone plant',
     emoji: '🥗',
     image: `${BASE}/fig_17_11.png`,
-    description: 'Argemone plant seeds/oil adulteration is linked to epidemic dropsy.',
+    description: 'Disease caused: Epidemic dropsy\nToxin: Sanguinarine\nTests used for detection of argemone oil: Nitric acid test, paper chromatography',
     keyFact: 'Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.',
   },
   {
@@ -625,7 +625,7 @@ export const MUSEUM_ITEMS = [
     title: 'Chloroscope',
     emoji: '🧪',
     image: `${BASE}/fig_18_1.png`,
-    description: 'Chloroscope is used to compare residual chlorine in water after chlorination.',
+    description: 'Standard range: It measures the available chlorine\ncontent in the range from 0 .1 to 2.0 ppm (parts per\nmillion).\nMechanism of action: It utilizes the reagent ortho -\ntolidine which changes the colour of the water to\ngreenish-yellow (if chlorine is present). The shade of\nthe tint indicates the content ( quantitative estimate)\nof chlorine present in water, by comparing it with\nthe attached colour s cale.',
     keyFact: 'Explain principle of operation, field use, and interpretation of findings in practical exams.',
   },
   {
@@ -634,7 +634,7 @@ export const MUSEUM_ITEMS = [
     title: 'Horrocks apparatus',
     emoji: '🧪',
     image: `${BASE}/fig_18_3.png`,
-    description: 'Horrocks apparatus is used to estimate chlorine demand and determine bleaching powder dose for water disinfection.',
+    description: 'Usage: To find out the dose of bleaching powder required for the disinfection of water.\nComponents: (1) 6 white cups (200 ml capacity each), (2) One black cup with a circular mark on the inside, (3) 2 metal spoons (each holds 2 g of bleaching powder when filled level with brim), (4) 7 glass stirring rods, (5) One special pipette, (6) Two droppers, (7) Starch-iodine indicator solution, and (8) Instruction folder.',
     keyFact: 'Explain principle of operation, field use, and interpretation of findings in practical exams.',
   },
   {
@@ -643,7 +643,7 @@ export const MUSEUM_ITEMS = [
     title: 'Berkefeld filter',
     emoji: '🧪',
     image: `${BASE}/fig_18_4.png`,
-    description: 'Berkefeld filter is a porous ceramic candle filter used for household water purification.',
+    description: 'Berkefeld filter consists of two concentric metal cylinders with porous diatomaceous earth (Kieselguhr) filter columns.\nMechanism of action: Gravity filtration method.',
     keyFact: 'Explain principle of operation, field use, and interpretation of findings in practical exams.',
   },
   {
@@ -652,7 +652,7 @@ export const MUSEUM_ITEMS = [
     title: 'Harpenden skin calipers',
     emoji: '🧪',
     image: `${BASE}/fig_18_2.png`,
-    description: 'Harpenden skin calipers measure skinfold thickness for body fat and nutritional assessment.',
+    description: 'Usage: Anthropometric measurement of skinfold thickness. It is a rapid and noninvasive method for assessing body fat.\nProcedure: The measurement may be taken at four sites-mid-triceps, biceps, subscapular and suprailiac regions. In extreme obesity, measurements may be impossible.',
     keyFact: 'Explain principle of operation, field use, and interpretation of findings in practical exams.',
   },
   {
@@ -661,7 +661,7 @@ export const MUSEUM_ITEMS = [
     title: 'Shakir\'s tape',
     emoji: '🧪',
     image: `${BASE}/fig_18_5.png`,
-    description: 'Shakir\'s tape (MUAC tape) is used for rapid screening of acute malnutrition in children.',
+    description: 'Usage: Anthropometric measurement of mid-upper arm circumference (MUAC).\nThe MUAC is used for the assessment of nutritional status.\nThe MUAC is recommended for use with children between six and fifty-nine months (up to 5 years) of age and is relatively independent of height and body shape.\nProcedure: MUAC is measured as the circumference of the left upper arm, measured at the mid-point between the tip of the shoulder and the tip of the elbow.',
     keyFact: 'Explain principle of operation, field use, and interpretation of findings in practical exams.',
   },
   {
@@ -670,7 +670,7 @@ export const MUSEUM_ITEMS = [
     title: 'Iodine testing kit',
     emoji: '🧪',
     image: `${BASE}/fig_18_6.png`,
-    description: 'Iodine testing kit detects adequacy of iodized salt at household/community level.',
+    description: 'Components: Iodine test kit consists of 2-3 ampoules\nof 10 ml each containing test solution, 1 red ampoule\ncontaining recheck solution, a detailed instruction sheet\nin the local language, a colour chart with circular colour\nspots, and one small container.\nProcedure\n1. A few spoons of salt for testing is spread flat. The test\nsolution ampoule is opened and the test solution is\ndropped on the salt surface till the surface is flooded.\n2. The reaction liberates the iodine in the salt, and\ndepending on the content of iodine, the solution\nchanges the colour of the salt.\n3. The intensity of the colour varies with the amount of\niodine and by matching it with the colour chart the\nrange of iodine can be ascertained.\n4. In the absence of the colour formation, a few drops of\nthe recheck solution is to be spread on the salt surface\nbefore using the test solution.',
     keyFact: 'Explain principle of operation, field use, and interpretation of findings in practical exams.',
   },
   {
@@ -679,7 +679,7 @@ export const MUSEUM_ITEMS = [
     title: 'Hydrometer',
     emoji: '🧪',
     image: `${BASE}/fig_18_7.png`,
-    description: 'Hydrometer measures the specific gravity of liquids.',
+    description: 'Procedure: Liquid to be tested poured into a tall\ncontainer and hydrometer gently lowered until it floats\nfreely then specific gravity measured.',
     keyFact: 'Explain principle of operation, field use, and interpretation of findings in practical exams.',
   },
   {
@@ -688,7 +688,7 @@ export const MUSEUM_ITEMS = [
     title: 'Lactometer',
     emoji: '🧪',
     image: `${BASE}/fig_18_8.png`,
-    description: 'Lactometer measures specific gravity of milk and helps detect dilution/adulteration.',
+    description: 'Standard range: Normal milk has a density of 1.026-1.032\ng/ml (or 26-32 on the lactometer reading). If water has\nbeen added, the lactometer reading will be below 26. If\nany solid such as flour has been added, the reading will\nbe above 32.',
     keyFact: 'Explain principle of operation, field use, and interpretation of findings in practical exams.',
   },
   {
@@ -697,7 +697,7 @@ export const MUSEUM_ITEMS = [
     title: 'Wet and dry bulb thermometer',
     emoji: '🧪',
     image: `${BASE}/fig_18_9.png`,
-    description: 'Wet and dry bulb thermometer pair is used to estimate relative humidity.',
+    description: '1. Dry bulb thermometer: This is an ordinary thermometer which measures the air\ntemperature.\n2. Wet bulb thermometer: The wet bulb thermometer is precisely the same as the\ndry-bulb thermometer excepting the bulb is kept wet by a muslin cloth fed by\nwater from a bottle through a wick.',
     keyFact: 'Explain principle of operation, field use, and interpretation of findings in practical exams.',
   },
   {
@@ -706,7 +706,7 @@ export const MUSEUM_ITEMS = [
     title: 'Globe thermometer',
     emoji: '🧪',
     image: `${BASE}/fig_18_10.png`,
-    description: 'Globe thermometer measures radiant heat load in environmental health assessment.',
+    description: 'Components\n1. A globe thermometer consists of a black, hollow, air-filled metal globe with an outer\ndiameter of 50-150 mm. The globe wall is thin and consists of a material, such as a\ncopper alloy, with very high thermal conductivity.\n2. The globe is clamped to a stem which contains a temperature sensor that is positioned at the centre of the\nglobe.',
     keyFact: 'Explain principle of operation, field use, and interpretation of findings in practical exams.',
   },
   {
@@ -715,7 +715,7 @@ export const MUSEUM_ITEMS = [
     title: 'Kata thermometer',
     emoji: '🧪',
     image: `${BASE}/fig_18_11.png`,
-    description: 'Kata thermometer measures cooling power of air and helps assess ventilation conditions.',
+    description: 'Mechanism of action: The kata thermometer is a heated-alcohol thermometer; the\ntime it takes to cool is measured and used to determine air current. It is useful for\nmeasuring low speeds in studies of air circulation.',
     keyFact: 'Explain principle of operation, field use, and interpretation of findings in practical exams.',
   },
   {
@@ -724,7 +724,7 @@ export const MUSEUM_ITEMS = [
     title: 'Wet and dry bulb hygrometer',
     emoji: '🧪',
     image: `${BASE}/fig_18_12.png`,
-    description: 'Wet and dry bulb hygrometer is used to determine relative humidity from psychrometric readings.',
+    description: 'Usage: This is the most widely used instrument for measuring humidity.\nComponents: The instrument consists of two similar thermometers-a dry-bulb thermometer and a wet-bulb thermometer, mounted side by side on a stand.\nMechanism of action: The dry bulb measures the air temperature (DBT). The wet-bulb is kept moist; WBT is usually lower than DBT. Relative humidity is obtained from psychrometric charts.',
     keyFact: 'Explain principle of operation, field use, and interpretation of findings in practical exams.',
   },
   {
@@ -733,7 +733,7 @@ export const MUSEUM_ITEMS = [
     title: 'Breeding place of insects',
     emoji: '🦟',
     image: `${BASE}/fig_19_1.png`,
-    description: 'Depicts common breeding places of disease vectors and insects of public health importance.',
+    description: 'Anopheles: Clean, slow moving water (small streams, fresh water marshes, irrigated lands, etc)\nAedes: Artificial collection water (overhead tanks, coolers, flower pots, etc)\nCulex: Dirty and polluted water (open drains, cess pools)\nMansonia: Ponds and lakes with certain aquatic plants\nHousefly: Human and animal excreta, garbage, rubbish dumps with organic waste',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -742,7 +742,7 @@ export const MUSEUM_ITEMS = [
     title: 'Anopheles mosquito (adult female)',
     emoji: '🦟',
     image: `${BASE}/fig_19_2.png`,
-    description: 'Anopheles mosquito (adult female), the malaria vector, can be identified by its resting posture and palpi features.',
+    description: 'Characteristic features: 3 body parts (head, thorax and abdomen), pair of spotted wings, 3 pairs of legs,\ninclined at an angle during rest.\nVector species: Culicifacies, Fluvialis, Minimus, Stephensi, Sundaicus, Phillipensis and Darius.\nVector of diseases: Malaria.',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -751,7 +751,7 @@ export const MUSEUM_ITEMS = [
     title: 'Aedes mosquito',
     emoji: '🦟',
     image: `${BASE}/fig_19_3.png`,
-    description: 'Aedes mosquito is recognized by black-and-white markings and container breeding; it transmits dengue, chikungunya, and Zika.',
+    description: 'Characteristic features: 3 body parts (head, thorax and abdomen), white stripes on a black body, pair of unspotted wings, hunchback when at rest\nVector species: Aegypti, albopictus and vittatus.\nVector of diseases: Dengue, chikungunya and yellow fever.',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -760,7 +760,7 @@ export const MUSEUM_ITEMS = [
     title: 'Culex',
     emoji: '🦟',
     image: `${BASE}/fig_19_4.png`,
-    description: 'Culex mosquito is a vector for diseases such as filariasis and Japanese encephalitis (region dependent).',
+    description: 'Characteristic features: 3 body parts (head, thorax and abdomen), pair of unspotted wings, 3 pairs of legs, hunchback when at rest.\nVector species: Vishnui, pseudovishnui and fatigans.\nVector of diseases: Japanese encephalitis, filariasis, viral arthritis and west Nile fever.',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -769,7 +769,7 @@ export const MUSEUM_ITEMS = [
     title: 'Housefly',
     emoji: '🦟',
     image: `${BASE}/fig_19_5.png`,
-    description: 'Housefly is a mechanical vector that contaminates food and spreads enteric pathogens.',
+    description: 'Characteristic features: 3 body parts (head, thorax and\nabdomen)\nHead bears a pair of antennae and a pair of large\ncompound eyes\nThorax bears 3 pairs of legs and a pair of wings\nAbdomen: Segmented\nVector of diseases: Typhoid, paratyphoid, diarrhoea,\ndysentery, cholera, polio, etc\nControl measures:\n1. Environmental: Sanitation and garbage disposal\n2. Insecticidal: Residual spray (DDT, lindane and\nmalathion), baits (malathion), cords and ribbons,\nspace sprays (DDT, pyrethrum, etc.), larvicides (diazinon)',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -778,7 +778,7 @@ export const MUSEUM_ITEMS = [
     title: 'Sandfly',
     emoji: '🦟',
     image: `${BASE}/fig_19_6.png`,
-    description: 'Sandfly is the vector of leishmaniasis (kala-azar) and related infections.',
+    description: 'Characteristic features: 3 body parts (head, thorax and\nabdomen), smaller in size than mosquito, wings upright,\nhairy antennae\nVector species: Phlebotomus argentipes , P . papatasii , P.\nsergentii, Sergentomyia punjabensis .\nDiseases transmitted: Kala azar ( P . argentipes), sand fly\nfever, oriental sore\nControl measures: Insecticide (DDT or lindane), sanitation\n(removal of shrubs, filling up cracks and crevices, location\naway from cattle sheds and poultry house).',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -787,7 +787,7 @@ export const MUSEUM_ITEMS = [
     title: 'Rat flea',
     emoji: '🦟',
     image: `${BASE}/fig_19_7.png`,
-    description: 'Rat flea is an important vector for plague and murine typhus.',
+    description: 'Characteristic features: 3 body parts (head, thorax and abdomen), bilaterally compressed, thorax has 3 pairs of legs, body covered with bristles.\nVector species: Xenopsylla cheopis, X. astia, X. braziliensis\nVector of diseases: Bubonic plague, endemic typhus, chiggerosis and Hymenolepis diminuta (BENCH).\nControl measures: Insecticidal (DDT, diazinon, malathion, etc.), flea repellent (DEET) and rodent control.',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -796,7 +796,7 @@ export const MUSEUM_ITEMS = [
     title: 'Louse',
     emoji: '🦟',
     image: `${BASE}/fig_19_8.png`,
-    description: 'Louse infestation causes pediculosis; body louse can transmit epidemic typhus, trench fever, and relapsing fever.',
+    description: 'Characteristic features: Wingless ectoparasites,\ndorsoventrally flattened body, 3 pair of legs attached\nto thorax, abdomen segmented.\nVector species: Pediculus capitis (head louse),\npediculus corporis (body louse), crab louse ( Pthirus\npubis).\nVector of diseases: Pediculosis, epidemic typhus,\nrelapsing fever and trench fever ( PERT ).\nControl measures: Insecticidal (malathion lotion) and personal hygiene.',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -805,7 +805,7 @@ export const MUSEUM_ITEMS = [
     title: 'Ticks',
     emoji: '🦟',
     image: `${BASE}/fig_19_9.png`,
-    description: 'Ticks are ectoparasites that transmit multiple bacterial, viral, and protozoal infections.',
+    description: 'Vector species: Ixodidae (hard), argasidae (soft).',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -814,7 +814,7 @@ export const MUSEUM_ITEMS = [
     title: 'Itch mite',
     emoji: '🦟',
     image: `${BASE}/fig_19_10.png`,
-    description: 'Itch mite (Sarcoptes scabiei) causes scabies through skin burrowing.',
+    description: 'Characteristic features: Globular arthropod (rounded above, flattened below),\nno demarcation into cephalothorax and abdomen, two pair of legs each in front and behind.\nVector species: Sarcoptes/acarus scabiei\nVector of diseases: Scabies\nControl measures: Personal hygiene',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -823,7 +823,7 @@ export const MUSEUM_ITEMS = [
     title: 'DDT',
     emoji: '🦟',
     image: `${BASE}/fig_19_11.png`,
-    description: 'DDT is an organochlorine insecticide historically used for residual spraying in vector control.',
+    description: 'Physical characteristics: White amorphous powder\nMechanism of action: Contact poison\nResidual action: Up to 18 months\nRepellent action: Nil\nDose: 100-200 mg per sq ft',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -832,7 +832,7 @@ export const MUSEUM_ITEMS = [
     title: 'BHC',
     emoji: '🦟',
     image: `${BASE}/fig_19_12.png`,
-    description: 'BHC (benzene hexachloride/lindane) is an organochlorine insecticide used in vector control with safety restrictions.',
+    description: 'Physical characteristics: White or chocolate colored powder with musty smell\nMechanism of action: Contact poison\nResidual action: Up to 3 months\nRepellent action: Yes\nDose: 25-50 mg per sq ft',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -841,7 +841,7 @@ export const MUSEUM_ITEMS = [
     title: 'Malathion',
     emoji: '🦟',
     image: `${BASE}/fig_19_13.png`,
-    description: 'Malathion is an organophosphate insecticide used in public health and vector control operations.',
+    description: 'Physical characteristics: Yellow or clear brown liquid with unpleasant smell\nMechanism of action: Contact poison\nResidual action: Up to 3 months\nRepellent action: Yes\nDose: 100-200 mg per sq ft',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -850,7 +850,7 @@ export const MUSEUM_ITEMS = [
     title: 'Paris green',
     emoji: '🦟',
     image: `${BASE}/fig_19_14.png`,
-    description: 'Paris green (copper acetoarsenite) is a larvicide used in selected vector control settings.',
+    description: 'insoluble in water\nMechanism of action: Stomach poison\nResidual action: Nil\nRepellent action: Nil\nDose: 250-500 g/acre or 1 kg per hectare water surface area',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -859,7 +859,7 @@ export const MUSEUM_ITEMS = [
     title: 'Abate',
     emoji: '🦟',
     image: `${BASE}/fig_19_15.png`,
-    description: 'Abate (temephos) is an organophosphate larvicide used against mosquito larvae in water collections.',
+    description: 'Mechanism of action: Mosquito larvicide\nResidual action: 25 ml of abate 50% is mixed in 10 litre water and\npoured in 500 m 2\nRepellent action: Yes\nDose: Less than 1 ppm\nSpecial features: Safely used in drinking water sources.',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -868,7 +868,7 @@ export const MUSEUM_ITEMS = [
     title: 'MLO',
     emoji: '🦟',
     image: `${BASE}/fig_19_16.png`,
-    description: 'MLO (mineral larvicidal oil) forms a surface film that suffocates mosquito larvae and pupae.',
+    description: 'Mechanism of action: Contact poison, suffocate the aquatic stage (larva) of mosquito\nSpecial features: Injurious to vegetation and fish when improperly used.',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -877,7 +877,7 @@ export const MUSEUM_ITEMS = [
     title: 'Mosquito net',
     emoji: '🦟',
     image: `${BASE}/fig_19_17.png`,
-    description: 'Mosquito net is a physical barrier that reduces man-vector contact; insecticide-treated nets provide additional protection.',
+    description: 'Mosquito Nets\nThe size of the openings in the net should not exceed 0.0475 inch in any diameter.\nThe number of holes in one square inch is usually 150.',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -886,7 +886,7 @@ export const MUSEUM_ITEMS = [
     title: 'Topical cream',
     emoji: '🦟',
     image: `${BASE}/fig_19_18.png`,
-    description: 'Topical repellent cream contains compounds such as DEET/picaridin to reduce mosquito bites.',
+    description: 'Content: DEET (Diethyltoluamide)\nSide effect: Irritation to skin\nDose: 10 mg/cm2',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -895,7 +895,7 @@ export const MUSEUM_ITEMS = [
     title: 'Liquidizer',
     emoji: '🦟',
     image: `${BASE}/fig_19_19.png`,
-    description: 'Liquidizer (liquid vaporizer) releases volatile insecticidal repellents indoors.',
+    description: 'Content: Prallethrin (pyrethroid)\nResidual action: No\nRepellent action: Yes\nDose: 1.6% w/w liquid',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -904,7 +904,7 @@ export const MUSEUM_ITEMS = [
     title: 'Liquid spray',
     emoji: '🦟',
     image: `${BASE}/fig_19_20.png`,
-    description: 'Liquid spray is an aerosol household insecticide used for rapid knockdown of mosquitoes and other insects.',
+    description: 'Content: o-isopropoxyphenyl methylcarbamate\nResidual action: Yes\nRepellent action: Yes\nDose: 1% oil spray, 13.9% spray concentrate',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -913,7 +913,7 @@ export const MUSEUM_ITEMS = [
     title: 'Mamta card',
     emoji: '📋',
     image: `${BASE}/fig_20_1.png`,
-    description: 'Mamta card is a mother-and-child tracking card used for ANC, immunization, growth, and service follow-up.',
+    description: 'Parts of MAMTA card\nFamily identification and registration (Janani Suraksha Yojana, Janani Shishu Suraksha Karykram, MCTS)\nAntenatal Care (ANC)\nIntranatal Care\nPostnatal Care (PNC)\nNewborn Care\nUnder-five children (infant and young child feeding practice, immunization, etc)\nNational Programme\nRMNCH+A',
     keyFact: 'These spotters support MCH records, growth monitoring, and safe-water/public-health field work.',
   },
   {
@@ -922,7 +922,7 @@ export const MUSEUM_ITEMS = [
     title: 'Growth chart format',
     emoji: '📋',
     image: `${BASE}/fig_20_2.png`,
-    description: 'Growth chart format is used to plot weight/age over time and detect growth faltering early.',
+    description: 'Flattening or falling of child\'s weight curve\nIt represents growth failure [earliest sign of protein energy malnutrition (PEM)].',
     keyFact: 'These spotters support MCH records, growth monitoring, and safe-water/public-health field work.',
   },
   {
@@ -931,7 +931,7 @@ export const MUSEUM_ITEMS = [
     title: 'Water',
     emoji: '📋',
     image: `${BASE}/fig_20_3.png`,
-    description: 'Water spotter highlights safe drinking water, treatment/disinfection, storage hygiene, and surveillance concepts.',
+    description: 'Chlorine Demand of Water\nChlorine demand is the difference between the amount of chlorine added to water or wastewater and the amount of residual chlorine remaining after a given contact time.\nAssessment of Chlorine Demand: Horrock\'s apparatus\nAssessment of Chlorine Level in Water: Ortho-toluidine test (OT test)\nBreak Point Chlorination: The point at which chlorine demand of water is met. Minimum recommended concentration of free chlorine is 0.5 mg/L for 1 hour.',
     keyFact: 'These spotters support MCH records, growth monitoring, and safe-water/public-health field work.',
   },
 ];
