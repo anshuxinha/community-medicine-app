@@ -44,6 +44,8 @@ const DashboardScreen = ({ navigation }) => {
 
     const hideDialog = () => setVisible(false);
 
+    const normalizeHealthDayDescription = (text) => (text || '').replace(/\s+/g, ' ').trim();
+
     useEffect(() => {
         scheduleAllNotifications();
     }, []);
@@ -203,7 +205,7 @@ const DashboardScreen = ({ navigation }) => {
                                     <View style={styles.healthDayRow}>
                                         <View style={styles.healthDayTextColumn}>
                                             <Text style={styles.healthDayName}>{day.name}</Text>
-                                            <Text style={styles.healthDayDescription}>{(day.description || '').trim()}</Text>
+                                            <Text style={styles.healthDayDescription}>{normalizeHealthDayDescription(day.description)}</Text>
                                         </View>
                                         <Text style={styles.healthDayDate}>{day.dateLabel}</Text>
                                     </View>
@@ -403,7 +405,7 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         color: theme.colors.textTitle,
         lineHeight: 22,
-        marginBottom: 2,
+        marginBottom: 0,
         includeFontPadding: false,
     },
     healthDayDate: {
@@ -415,7 +417,7 @@ const styles = StyleSheet.create({
         includeFontPadding: false,
     },
     healthDayDescription: {
-        marginTop: 0,
+        marginTop: 6,
         color: theme.colors.textSecondary,
         fontSize: 14,
         lineHeight: 20,
@@ -424,4 +426,3 @@ const styles = StyleSheet.create({
 });
 
 export default DashboardScreen;
-

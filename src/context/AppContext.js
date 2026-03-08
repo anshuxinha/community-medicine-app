@@ -23,6 +23,36 @@ import { theme } from '../styles/theme';
 
 const allData = [...mockData, ...practicalData];
 
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+const getAccountStateKey = (uid) => `accountState:${uid}`;
+
+const normalizeBookmarks = (items) => {
+    if (!Array.isArray(items)) return [];
+    const validTitles = new Set(allData.map(item => item.title));
+    return items.filter(item => item && typeof item.title === 'string' && validTitles.has(item.title));
+};
+
+const sanitizeCloudState = (data = {}) => ({
+    readItems: Array.isArray(data.readItems) ? data.readItems : [],
+    bookmarks: normalizeBookmarks(data.bookmarks),
+    currentStreak: typeof data.currentStreak === 'number' ? data.currentStreak : 0,
+    lastReadDate: typeof data.lastReadDate === 'string' ? data.lastReadDate : null,
+    studyScore: typeof data.studyScore === 'number' ? data.studyScore : 0,
+    dailyReadHistory: data.dailyReadHistory && typeof data.dailyReadHistory === 'object' ? data.dailyReadHistory : {},
+    quizScores: Array.isArray(data.quizScores) ? data.quizScores : [],
+});
+
+const dayDiffFromToday = (dateString) => {
+    if (!dateString) return null;
+    const parsed = new Date(dateString);
+    if (Number.isNaN(parsed.getTime())) return null;
+
+    const today = new Date();
+    const startToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const startParsed = new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+    return Math.round((startToday - startParsed) / MS_PER_DAY);
+};
+
 // Expo Notifications is fully supported in production builds.
 const SafeNotifications = Notifications;
 
@@ -110,49 +140,22 @@ export const AppProvider = ({ children }) => {
                         isAdmin,
                     };
                     // Sync logic: hydrate local state from cloud so progress/streak stay account-linked.
-                    if (Array.isArray(data.readItems)) {
-                        setReadItems(prev => Array.from(new Set([...prev, ...data.readItems])));
-                    }
-                    if (Array.isArray(data.bookmarks)) {
-                        setBookmarks(prev => {
-                            const newBookmarks = [...prev];
-                            data.bookmarks.forEach(remoteBookmark => {
-                                if (!newBookmarks.some(b => b.title === remoteBookmark.title)) {
-                                    newBookmarks.push(remoteBookmark);
-                                }
-                            });
-                            return newBookmarks;
-                        });
-                    }
-                    if (typeof data.currentStreak === 'number') {
-                        setCurrentStreak((prev) => Math.max(prev, data.currentStreak));
-                    }
-                    if (typeof data.lastReadDate === 'string') {
-                        setLastReadDate((prev) => {
-                            if (!prev) return data.lastReadDate;
-                            return new Date(data.lastReadDate) > new Date(prev) ? data.lastReadDate : prev;
-                        });
-                    }
-                    if (typeof data.studyScore === 'number') {
-                        setStudyScore((prev) => Math.max(prev, data.studyScore));
-                    }
-                    if (data.dailyReadHistory && typeof data.dailyReadHistory === 'object') {
-                        setDailyReadHistory((prev) => {
-                            const merged = { ...prev };
-                            Object.entries(data.dailyReadHistory).forEach(([day, count]) => {
-                                const remoteCount = Number(count) || 0;
-                                merged[day] = Math.max(Number(merged[day]) || 0, remoteCount);
-                            });
-                            return merged;
-                        });
-                    }
+                    const cloudState = sanitizeCloudState(data);
+                    setReadItems(cloudState.readItems);
+                    setBookmarks(cloudState.bookmarks);
+                    setCurrentStreak(cloudState.currentStreak);
+                    setLastReadDate(cloudState.lastReadDate);
+                    setStudyScore(cloudState.studyScore);
+                    setDailyReadHistory(cloudState.dailyReadHistory);
+                    setQuizScores(cloudState.quizScores);
 
                     setUser(userData);
                     setIsPremium(premiumStatus);
                     cloudHydratedRef.current = true;
                     await AsyncStorage.setItem('user', JSON.stringify(userData));
+                    await AsyncStorage.setItem(getAccountStateKey(firebaseUser.uid), JSON.stringify(cloudState));
                 } catch (err) {
-                    // Firestore failed (offline or timeout) — use claims-based data so user stays logged in & app loads instantly
+                    // Firestore failed (offline or timeout) - use claims-based data so user stays logged in & app loads instantly
                     console.warn('Firestore fetch failed/timed out, using auth claims:', err?.message);
                     const userData = {
                         uid: firebaseUser.uid,
@@ -161,8 +164,26 @@ export const AppProvider = ({ children }) => {
                         isPremium: claimsPremium,
                         isAdmin: claimsAdmin,
                     };
+
+                    try {
+                        const cachedAccountState = await AsyncStorage.getItem(getAccountStateKey(firebaseUser.uid));
+                        if (cachedAccountState) {
+                            const parsed = sanitizeCloudState(JSON.parse(cachedAccountState));
+                            setReadItems(parsed.readItems);
+                            setBookmarks(parsed.bookmarks);
+                            setCurrentStreak(parsed.currentStreak);
+                            setLastReadDate(parsed.lastReadDate);
+                            setStudyScore(parsed.studyScore);
+                            setDailyReadHistory(parsed.dailyReadHistory);
+                            setQuizScores(parsed.quizScores);
+                        }
+                    } catch (_) {
+                        // ignore account cache parse failures
+                    }
+
                     setUser(userData);
                     setIsPremium(claimsPremium);
+                    cloudHydratedRef.current = true;
                     await AsyncStorage.setItem('user', JSON.stringify(userData));
                 }
             } else {
@@ -242,12 +263,8 @@ export const AppProvider = ({ children }) => {
 
                 // Check streak validity on load
                 if (storedLastRead) {
-                    const lastDate = new Date(storedLastRead);
-                    const today = new Date();
-                    const diffTime = Math.abs(today - lastDate);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-                    if (diffDays > 1 && today.toDateString() !== lastDate.toDateString()) {
+                    const diffDays = dayDiffFromToday(storedLastRead);
+                    if (diffDays !== null && diffDays > 1) {
                         // Streak broken
                         setCurrentStreak(0);
                     }
@@ -274,9 +291,24 @@ export const AppProvider = ({ children }) => {
                 await AsyncStorage.setItem('highlights', JSON.stringify(highlights));
                 await AsyncStorage.setItem('currentStreak', currentStreak.toString());
                 if (lastReadDate) await AsyncStorage.setItem('lastReadDate', lastReadDate);
+                else await AsyncStorage.removeItem('lastReadDate');
                 await AsyncStorage.setItem('studyScore', studyScore.toString());
                 await AsyncStorage.setItem('dailyReadHistory', JSON.stringify(dailyReadHistory));
                 await AsyncStorage.setItem('quizScores', JSON.stringify(quizScores));
+
+                if (user && user.uid) {
+                    const accountStateSnapshot = {
+                        readItems,
+                        bookmarks,
+                        currentStreak,
+                        lastReadDate: lastReadDate || null,
+                        dailyReadHistory,
+                        studyScore,
+                        quizScores,
+                    };
+                    await AsyncStorage.setItem(getAccountStateKey(user.uid), JSON.stringify(accountStateSnapshot));
+                }
+
                 if (user) await AsyncStorage.setItem('user', JSON.stringify(user));
                 else await AsyncStorage.removeItem('user');
                 await AsyncStorage.setItem('isPremium', JSON.stringify(isPremium));
@@ -291,6 +323,7 @@ export const AppProvider = ({ children }) => {
                             lastReadDate: lastReadDate || null,
                             dailyReadHistory,
                             studyScore,
+                            quizScores,
                             syncedAt: serverTimestamp(),
                         }, { merge: true });
                     } catch (e) {
@@ -373,14 +406,11 @@ export const AppProvider = ({ children }) => {
                     if (!lastReadDate) {
                         setCurrentStreak(1);
                     } else {
-                        const lastDate = new Date(lastReadDate);
-                        const today = new Date();
-                        const diffTime = Math.abs(today - lastDate);
-                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        const diffDays = dayDiffFromToday(lastReadDate);
 
-                        if (diffDays === 1 || (diffDays === 0 && todayStr !== lastDate.toDateString())) {
+                        if (diffDays === 1) {
                             setCurrentStreak((prev) => prev + 1);
-                        } else if (diffDays > 1) {
+                        } else if (diffDays === null || diffDays > 1) {
                             setCurrentStreak(1);
                         }
                     }
@@ -537,4 +567,3 @@ export const AppProvider = ({ children }) => {
         </AppContext.Provider>
     );
 };
-

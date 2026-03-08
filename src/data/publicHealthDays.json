@@ -1,170 +1,170 @@
 [
-    {
-        "name": "World Neglected Tropical Diseases Day",
-        "dateLabel": "January 30",
-        "month": 1,
-        "day": 30,
-        "description": "Raises awareness of the devastating impact of NTDs on the poorest populations around the world."
-    },
-    {
-        "name": "World Cancer Day",
-        "dateLabel": "February 4",
-        "month": 2,
-        "day": 4,
-        "description": "Empowers people across the world to show support, raise our collective voice, and take personal action."
-    },
-    {
-        "name": "World Hearing Day",
-        "dateLabel": "March 3",
-        "month": 3,
-        "day": 3,
-        "description": "Raises awareness on how to prevent deafness and hearing loss and promotes ear and hearing care across the world."
-    },
-    {
-        "name": "World Oral Health Day",
-        "dateLabel": "March 20",
-        "month": 3,
-        "day": 20,
-        "description": "Empowers people with the knowledge, tools and confidence to secure good oral health."
-    },
-    {
-        "name": "World Water Day",
-        "dateLabel": "March 22",
-        "month": 3,
-        "day": 22,
-        "description": "Highlights the importance of fresh water and advocates for the sustainable management of freshwater resources."
-    },
-    {
-        "name": "World Tuberculosis Day",
-        "dateLabel": "March 24",
-        "month": 3,
-        "day": 24,
-        "description": "Designed to build public awareness about the global epidemic of tuberculosis and efforts to eliminate the disease."
-    },
-    {
-        "name": "World Health Day",
-        "dateLabel": "April 7",
-        "month": 4,
-        "day": 7,
-        "description": "Celebrated annually and each year draws attention to a specific health topic of concern to people all over the world."
-    },
-    {
-        "name": "Earth Day",
-        "dateLabel": "April 22",
-        "month": 4,
-        "day": 22,
-        "description": "An annual event to demonstrate support for environmental protection."
-    },
-    {
-        "name": "World Immunization Week",
-        "dateLabel": "April 24-30",
-        "month": 4,
-        "day": 24,
-        "description": "Aims to highlight the collective action needed and to promote the use of vaccines to protect people of all ages against disease."
-    },
-    {
-        "name": "World Malaria Day",
-        "dateLabel": "April 25",
-        "month": 4,
-        "day": 25,
-        "description": "An occasion to highlight the need for continued investment and sustained political commitment for malaria prevention and control."
-    },
-    {
-        "name": "World Hand Hygiene Day",
-        "dateLabel": "May 5",
-        "month": 5,
-        "day": 5,
-        "description": "Maintains global promotion, visibility, and sustainability of hand hygiene in health care."
-    },
-    {
-        "name": "World No Tobacco Day",
-        "dateLabel": "May 31",
-        "month": 5,
-        "day": 31,
-        "description": "Intended to encourage a 24-hour period of abstinence from all forms of tobacco consumption around the globe."
-    },
-    {
-        "name": "World Blood Donor Day",
-        "dateLabel": "June 14",
-        "month": 6,
-        "day": 14,
-        "description": "Raises global awareness of the need for safe blood and blood products for transfusion."
-    },
-    {
-        "name": "International Day of Yoga",
-        "dateLabel": "June 21",
-        "month": 6,
-        "day": 21,
-        "description": "Aims to raise awareness worldwide of the many benefits of practicing yoga."
-    },
-    {
-        "name": "Doctors' Day",
-        "dateLabel": "July 1",
-        "month": 7,
-        "day": 1,
-        "description": "Honors physicians for the work they do for their patients, the communities they work in and for society as a whole."
-    },
-    {
-        "name": "World Hepatitis Day",
-        "dateLabel": "July 28",
-        "month": 7,
-        "day": 28,
-        "description": "An opportunity to step up national and international efforts on hepatitis, encourage actions and engagement by individuals, partners and the public."
-    },
-    {
-        "name": "World Breastfeeding Week",
-        "dateLabel": "August 1-7",
-        "month": 8,
-        "day": 1,
-        "description": "Aimed to highlight the huge benefits that breastfeeding can bring to both the health and welfare of babies, as well as a wider push for maternal health."
-    },
-    {
-        "name": "World Patient Safety Day",
-        "dateLabel": "September 17",
-        "month": 9,
-        "day": 17,
-        "description": "Calls for global solidarity and concerted action by all countries and international partners to improve patient safety."
-    },
-    {
-        "name": "World Mental Health Day",
-        "dateLabel": "October 10",
-        "month": 10,
-        "day": 10,
-        "description": "Raises awareness of mental health issues around the world and mobilizing efforts in support of mental health."
-    },
-    {
-        "name": "Global Handwashing Day",
-        "dateLabel": "October 15",
-        "month": 10,
-        "day": 15,
-        "description": "A global advocacy day dedicated to increasing awareness and understanding about the importance of handwashing with soap as an effective and affordable way to prevent diseases and save lives."
-    },
-    {
-        "name": "World Prematurity Day",
-        "dateLabel": "November 15",
-        "month": 11,
-        "day": 15,
-        "description": "Raises awareness of preterm birth and the concerns of preterm babies and their families worldwide."
-    },
-    {
-        "name": "World AMR Awareness Week",
-        "dateLabel": "November 18-24",
-        "month": 11,
-        "day": 18,
-        "description": "A global campaign to improve awareness and understanding of antimicrobial resistance (AMR) and encourage best practices among the public."
-    },
-    {
-        "name": "World COPD Day",
-        "dateLabel": "Nov 19",
-        "month": 11,
-        "day": 19,
-        "description": "Organized by the Global Initiative for Chronic Obstructive Lung Disease (GOLD) in collaboration with health care professionals and COPD patient groups throughout the world."
-    },
-    {
-        "name": "World AIDS Day",
-        "dateLabel": "December 1",
-        "month": 12,
-        "day": 1,
-        "description": "An opportunity for people worldwide to unite in the fight against HIV, to show support for people living with HIV, and to commemorate those who have died from an AIDS-related illness."
-    }
+  {
+    "name": "World Neglected Tropical Diseases Day",
+    "dateLabel": "January 30",
+    "month": 1,
+    "day": 30,
+    "description": "Raises awareness of neglected tropical diseases and mobilizes action to prevent, treat, and eliminate them, especially in underserved communities. Theme (2026): Unite. Act. Eliminate."
+  },
+  {
+    "name": "World Cancer Day",
+    "dateLabel": "February 4",
+    "month": 2,
+    "day": 4,
+    "description": "Promotes prevention, early detection, treatment access, and people-centred cancer care. Theme (2026): United by Unique."
+  },
+  {
+    "name": "World Hearing Day",
+    "dateLabel": "March 3",
+    "month": 3,
+    "day": 3,
+    "description": "Promotes prevention, early detection, and treatment of ear and hearing problems to reduce disability and improve quality of life. Theme (2026): From communities to classrooms: hearing care for all children."
+  },
+  {
+    "name": "World Oral Health Day",
+    "dateLabel": "March 20",
+    "month": 3,
+    "day": 20,
+    "description": "Highlights oral health as part of overall health and encourages lifelong oral hygiene and preventive care. Theme (2026): A Happy Mouth Is... A Happy Life."
+  },
+  {
+    "name": "World Water Day",
+    "dateLabel": "March 22",
+    "month": 3,
+    "day": 22,
+    "description": "Focuses on safe freshwater access, water security, sanitation, and action toward SDG 6. Theme (2026): Water and Gender."
+  },
+  {
+    "name": "World Tuberculosis Day",
+    "dateLabel": "March 24",
+    "month": 3,
+    "day": 24,
+    "description": "Raises awareness that tuberculosis is preventable and curable and calls for better diagnosis, treatment, and equity in care. Theme (2026): Yes! We can end TB! Led by countries. Powered by people."
+  },
+  {
+    "name": "World Health Day",
+    "dateLabel": "April 7",
+    "month": 4,
+    "day": 7,
+    "description": "Marks the anniversary of WHO and draws global attention to priority public health issues. Theme (2026): Together for science."
+  },
+  {
+    "name": "Earth Day",
+    "dateLabel": "April 22",
+    "month": 4,
+    "day": 22,
+    "description": "Encourages environmental protection and climate action to safeguard ecosystems and human health. Theme (2026): Our Power, Our Planet."
+  },
+  {
+    "name": "World Immunization Week",
+    "dateLabel": "April 24-30",
+    "month": 4,
+    "day": 24,
+    "description": "Promotes vaccination across all ages to prevent disease, disability, and deaths. Theme (2026): For every generation, vaccines work."
+  },
+  {
+    "name": "World Malaria Day",
+    "dateLabel": "April 25",
+    "month": 4,
+    "day": 25,
+    "description": "Highlights prevention, diagnosis, and treatment to reduce malaria illness and deaths, especially in endemic regions. Theme (2026): Not announced yet (as of March 2026)."
+  },
+  {
+    "name": "World Hand Hygiene Day",
+    "dateLabel": "May 5",
+    "month": 5,
+    "day": 5,
+    "description": "Promotes proper hand hygiene in health care to prevent healthcare-associated infections and antimicrobial resistance. Theme (2026): Action saves lives."
+  },
+  {
+    "name": "World No Tobacco Day",
+    "dateLabel": "May 31",
+    "month": 5,
+    "day": 31,
+    "description": "Raises awareness of harms from tobacco and nicotine products and supports evidence-based tobacco control and cessation. Theme (2026): Unmasking the appeal - countering nicotine and tobacco addiction."
+  },
+  {
+    "name": "World Blood Donor Day",
+    "dateLabel": "June 14",
+    "month": 6,
+    "day": 14,
+    "description": "Thanks voluntary unpaid blood donors and raises awareness of the need for safe blood and blood products. Theme (2026): Not announced yet (as of March 2026)."
+  },
+  {
+    "name": "International Day of Yoga",
+    "dateLabel": "June 21",
+    "month": 6,
+    "day": 21,
+    "description": "Promotes yoga for physical and mental well-being and healthier lifestyles. Theme (2026): Not announced yet (as of March 2026)."
+  },
+  {
+    "name": "Doctors' Day",
+    "dateLabel": "July 1",
+    "month": 7,
+    "day": 1,
+    "description": "In India, observed on 1 July to honor doctors' service to patients and society and commemorate Dr. Bidhan Chandra Roy. Theme (2026): Not announced yet (as of March 2026)."
+  },
+  {
+    "name": "World Hepatitis Day",
+    "dateLabel": "July 28",
+    "month": 7,
+    "day": 28,
+    "description": "Raises awareness of viral hepatitis prevention, testing, and treatment to reduce cirrhosis and liver cancer. Theme (2026): Not announced yet (as of March 2026)."
+  },
+  {
+    "name": "World Breastfeeding Week",
+    "dateLabel": "August 1-7",
+    "month": 8,
+    "day": 1,
+    "description": "Promotes breastfeeding as a cornerstone of infant and maternal health and advocates stronger support systems for mothers. Theme (2026): Breastfeeding for a Sustainable Start in Life: Strengthen What Works."
+  },
+  {
+    "name": "World Patient Safety Day",
+    "dateLabel": "September 17",
+    "month": 9,
+    "day": 17,
+    "description": "Calls for reducing preventable harm in health care and strengthening safe systems and practices. Theme (2026): Not announced yet (as of March 2026)."
+  },
+  {
+    "name": "World Mental Health Day",
+    "dateLabel": "October 10",
+    "month": 10,
+    "day": 10,
+    "description": "Raises awareness of mental health conditions and supports access to rights-based mental health care. Theme (2026): Not announced yet (as of March 2026)."
+  },
+  {
+    "name": "Global Handwashing Day",
+    "dateLabel": "October 15",
+    "month": 10,
+    "day": 15,
+    "description": "Advocates handwashing with soap at critical times to prevent infections and improve health outcomes. Theme (current multi-year): Be a Handwashing Hero."
+  },
+  {
+    "name": "World Prematurity Day",
+    "dateLabel": "November 15",
+    "month": 11,
+    "day": 15,
+    "description": "Raises awareness of preterm birth and the need for quality care and family support for babies born too soon. Theme (2026): Not announced yet (as of March 2026)."
+  },
+  {
+    "name": "World AMR Awareness Week",
+    "dateLabel": "November 18-24",
+    "month": 11,
+    "day": 18,
+    "description": "Promotes action against antimicrobial resistance across human, animal, and environmental health (One Health). Theme (2026): Not announced yet (as of March 2026)."
+  },
+  {
+    "name": "World COPD Day",
+    "dateLabel": "Nov 19",
+    "month": 11,
+    "day": 19,
+    "description": "Raises awareness of chronic obstructive pulmonary disease and the importance of early diagnosis, prevention, and treatment. Theme (2026): Not announced yet (as of March 2026)."
+  },
+  {
+    "name": "World AIDS Day",
+    "dateLabel": "December 1",
+    "month": 12,
+    "day": 1,
+    "description": "Unites people worldwide to support those living with HIV, remember those lost, and accelerate progress toward ending AIDS. Theme (2026): Not announced yet (as of March 2026)."
+  }
 ]
