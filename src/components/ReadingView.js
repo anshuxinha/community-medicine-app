@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     View, Text, ScrollView, StyleSheet,
     TouchableOpacity, Image, Dimensions
@@ -74,6 +74,17 @@ const ReadingView = ({
 }) => {
     const insets = useSafeAreaInsets();
     const blocks = parseMarkdown(content || '');
+    const [scrollProgress, setScrollProgress] = useState(0);
+
+    const handleScroll = (event) => {
+        const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+        const totalContentHeight = contentSize.height - layoutMeasurement.height;
+
+        if (totalContentHeight > 0) {
+            const progress = Math.min(Math.max(contentOffset.y / totalContentHeight, 0), 1);
+            setScrollProgress(progress);
+        }
+    };
 
     const renderBlock = (block, index) => {
         switch (block.type) {
@@ -176,6 +187,9 @@ const ReadingView = ({
                     </TouchableOpacity>
                 </View>
             </View>
+            <View style={styles.progressBarBackground}>
+                <View style={[styles.progressBarFill, { width: `${scrollProgress * 100}%` }]} />
+            </View>
 
             <ScrollView
                 style={styles.scroll}
@@ -184,6 +198,8 @@ const ReadingView = ({
                     { paddingBottom: 100 + insets.bottom },
                 ]}
                 showsVerticalScrollIndicator={false}
+                onScroll={handleScroll}
+                scrollEventThrottle={16}
             >
                 {blocks.map(renderBlock)}
             </ScrollView>
@@ -218,6 +234,15 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         color: theme.colors.textTitle,
         marginRight: 8,
+    },
+    progressBarBackground: {
+        height: 3,
+        backgroundColor: theme.colors.surfaceSecondary,
+        width: '100%',
+    },
+    progressBarFill: {
+        height: '100%',
+        backgroundColor: theme.colors.primary,
     },
     fabRow: {
         flexDirection: 'row',
