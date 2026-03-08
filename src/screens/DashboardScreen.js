@@ -201,10 +201,10 @@ const DashboardScreen = ({ navigation }) => {
                             {publicHealthDays.map((day, index) => (
                                 <View key={index} style={styles.healthDayItem}>
                                     <View style={styles.healthDayHeaderRow}>
-                                        <Text variant="titleMedium" style={styles.healthDayName}>{day.name}</Text>
-                                        <Text variant="labelSmall" style={styles.healthDayDate}>{day.dateLabel}</Text>
+                                        <Text style={styles.healthDayName} numberOfLines={2}>{day.name}</Text>
+                                        <Text style={styles.healthDayDate}>{day.dateLabel}</Text>
                                     </View>
-                                    <Text variant="bodyMedium" style={styles.healthDayDescription}>{day.description}</Text>
+                                    <Text style={styles.healthDayDescription}>{day.description}</Text>
                                 </View>
                             ))}
                         </ScrollView>
@@ -386,30 +386,39 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
     },
     healthDayItem: {
-        marginBottom: 12,
+        marginBottom: 10,
     },
     healthDayHeaderRow: {
         flexDirection: 'row',
         alignItems: 'flex-start',
         justifyContent: 'space-between',
         gap: 8,
-        marginBottom: 2,
+        marginBottom: 0,
     },
     healthDayName: {
         flex: 1,
+        fontSize: 16,
         fontWeight: '700',
         color: theme.colors.textTitle,
-        lineHeight: 20,
+        lineHeight: 22,
+        includeFontPadding: false,
     },
     healthDayDate: {
         color: theme.colors.secondary,
+        fontSize: 13,
         fontWeight: '700',
-        lineHeight: 18,
+        lineHeight: 20,
+        includeFontPadding: false,
     },
     healthDayDescription: {
+        marginTop: 0,
         color: theme.colors.textSecondary,
+        fontSize: 14,
         lineHeight: 20,
+        includeFontPadding: false,
     },
 });
 
 export default DashboardScreen;
+
+

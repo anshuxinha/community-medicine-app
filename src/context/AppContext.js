@@ -68,6 +68,8 @@ export const AppProvider = ({ children }) => {
     // Auth & Premium State — null = not yet resolved, false/obj = resolved
     const [user, setUser] = useState(undefined); // undefined = loading
     const [isPremium, setIsPremium] = useState(false);
+    const isLoggingOutRef = useRef(false);
+    const cloudHydratedRef = useRef(false);
 
     // ── Timeout helper for Firestore queries (prevents freezing on offline) ───
     const timeoutPromise = (ms) => new Promise((_, reject) =>
@@ -79,6 +81,7 @@ export const AppProvider = ({ children }) => {
         // 1. Listen to Firebase auth state changes (handles real accounts)
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
+                cloudHydratedRef.current = false;
                 // Read custom claims first (always available, no Firestore needed)
                 let claimsPremium = false;
                 let claimsAdmin = false;
@@ -90,10 +93,10 @@ export const AppProvider = ({ children }) => {
 
                 // Then try Firestore for richer profile data (Firestore wins over claims)
                 try {
-                    // Fast 2-second timeout to prevent 10+ sec freezes when API is restricted
+                    // 8-second timeout balances responsiveness with reliable cloud state restore
                     const userDoc = await Promise.race([
                         getDoc(doc(db, 'users', firebaseUser.uid)),
-                        timeoutPromise(2000)
+                        timeoutPromise(8000)
                     ]);
 
                     const data = userDoc.exists() ? userDoc.data() : {};
@@ -146,6 +149,7 @@ export const AppProvider = ({ children }) => {
 
                     setUser(userData);
                     setIsPremium(premiumStatus);
+                    cloudHydratedRef.current = true;
                     await AsyncStorage.setItem('user', JSON.stringify(userData));
                 } catch (err) {
                     // Firestore failed (offline or timeout) — use claims-based data so user stays logged in & app loads instantly
@@ -162,6 +166,7 @@ export const AppProvider = ({ children }) => {
                     await AsyncStorage.setItem('user', JSON.stringify(userData));
                 }
             } else {
+                cloudHydratedRef.current = false;
                 // No Firebase session — check AsyncStorage for bypass/admin users
                 try {
                     const storedUser = await AsyncStorage.getItem('user');
@@ -180,6 +185,13 @@ export const AppProvider = ({ children }) => {
 
         return () => unsubscribe();
     }, []);
+
+    // Release logout sync lock once user is fully cleared by auth state.
+    useEffect(() => {
+        if (user === null) {
+            isLoggingOutRef.current = false;
+        }
+    }, [user]);
 
     // Initialize other state from AsyncStorage
     useEffect(() => {
@@ -270,7 +282,7 @@ export const AppProvider = ({ children }) => {
                 await AsyncStorage.setItem('isPremium', JSON.stringify(isPremium));
 
                 // Sync to Firebase if logged in (cloud source for progress + streak)
-                if (user && user.uid) {
+                if (user && user.uid && !isLoggingOutRef.current && cloudHydratedRef.current) {
                     try {
                         await setDoc(doc(db, 'users', user.uid), {
                             readItems,
@@ -466,6 +478,7 @@ export const AppProvider = ({ children }) => {
     };
 
     const logout = async () => {
+        isLoggingOutRef.current = true;
         // Sign out from Firebase first to stop onAuthStateChanged from restoring the session
         try { await signOut(auth); } catch (_) { }
         // Sign out from Native Google Sign-In to show the account chooser next time
@@ -524,3 +537,4 @@ export const AppProvider = ({ children }) => {
         </AppContext.Provider>
     );
 };
+
