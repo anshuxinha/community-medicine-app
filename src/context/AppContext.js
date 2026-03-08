@@ -5,7 +5,7 @@ import * as Device from 'expo-device';
 // import * as Notifications from 'expo-notifications'; // Disabled for Expo Go SDK 53 Compatibility
 import Constants from 'expo-constants';
 import { db, auth } from '../config/firebase';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { onAuthStateChanged, getIdTokenResult, signOut } from 'firebase/auth';
 import * as Notifications from 'expo-notifications';
 let Purchases;
@@ -106,12 +106,11 @@ export const AppProvider = ({ children }) => {
                         isPremium: premiumStatus,
                         isAdmin,
                     };
-
-                    // Sync logic: Fetch remote bookmarks and readItems to merge with local
-                    if (data.readItems) {
+                    // Sync logic: hydrate local state from cloud so progress/streak stay account-linked.
+                    if (Array.isArray(data.readItems)) {
                         setReadItems(prev => Array.from(new Set([...prev, ...data.readItems])));
                     }
-                    if (data.bookmarks) {
+                    if (Array.isArray(data.bookmarks)) {
                         setBookmarks(prev => {
                             const newBookmarks = [...prev];
                             data.bookmarks.forEach(remoteBookmark => {
@@ -120,6 +119,28 @@ export const AppProvider = ({ children }) => {
                                 }
                             });
                             return newBookmarks;
+                        });
+                    }
+                    if (typeof data.currentStreak === 'number') {
+                        setCurrentStreak((prev) => Math.max(prev, data.currentStreak));
+                    }
+                    if (typeof data.lastReadDate === 'string') {
+                        setLastReadDate((prev) => {
+                            if (!prev) return data.lastReadDate;
+                            return new Date(data.lastReadDate) > new Date(prev) ? data.lastReadDate : prev;
+                        });
+                    }
+                    if (typeof data.studyScore === 'number') {
+                        setStudyScore((prev) => Math.max(prev, data.studyScore));
+                    }
+                    if (data.dailyReadHistory && typeof data.dailyReadHistory === 'object') {
+                        setDailyReadHistory((prev) => {
+                            const merged = { ...prev };
+                            Object.entries(data.dailyReadHistory).forEach(([day, count]) => {
+                                const remoteCount = Number(count) || 0;
+                                merged[day] = Math.max(Number(merged[day]) || 0, remoteCount);
+                            });
+                            return merged;
                         });
                     }
 
@@ -248,17 +269,20 @@ export const AppProvider = ({ children }) => {
                 else await AsyncStorage.removeItem('user');
                 await AsyncStorage.setItem('isPremium', JSON.stringify(isPremium));
 
-                // Sync to Firebase if logged in
+                // Sync to Firebase if logged in (cloud source for progress + streak)
                 if (user && user.uid) {
                     try {
-                        await updateDoc(doc(db, 'users', user.uid), {
+                        await setDoc(doc(db, 'users', user.uid), {
                             readItems,
                             bookmarks,
                             currentStreak,
-                            studyScore
-                        });
+                            lastReadDate: lastReadDate || null,
+                            dailyReadHistory,
+                            studyScore,
+                            syncedAt: serverTimestamp(),
+                        }, { merge: true });
                     } catch (e) {
-                        // silently handle if they are offline or doc doesn't exist
+                        // silently handle if they are offline
                     }
                 }
             } catch (error) {
@@ -274,9 +298,10 @@ export const AppProvider = ({ children }) => {
         if (user && user.uid) {
             registerForPushNotificationsAsync().then(token => {
                 if (token) {
-                    updateDoc(doc(db, 'users', user.uid), {
-                        pushToken: token
-                    }).catch(err => console.log('Error saving push token', err));
+                    setDoc(doc(db, 'users', user.uid), {
+                        pushToken: token,
+                        pushTokenUpdatedAt: serverTimestamp(),
+                    }, { merge: true }).catch(err => console.log('Error saving push token', err));
                 }
             });
         }
@@ -342,7 +367,7 @@ export const AppProvider = ({ children }) => {
                         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
                         if (diffDays === 1 || (diffDays === 0 && todayStr !== lastDate.toDateString())) {
-                            setCurrentStreak(currentStreak + 1);
+                            setCurrentStreak((prev) => prev + 1);
                         } else if (diffDays > 1) {
                             setCurrentStreak(1);
                         }

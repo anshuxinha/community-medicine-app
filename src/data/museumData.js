@@ -13,7 +13,7 @@ export const MUSEUM_ITEMS = [
     title: 'Cold chain system',
     emoji: '🧊',
     image: `${BASE}/fig_12_1.png`,
-    description: 'Cold chain system (Fig. 12.1) from the Cold Chain Equipment spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'This spotter outlines the vaccine cold chain pathway and equipment linkages needed to maintain potency from storage to session site.',
     keyFact: 'Cold chain integrity is maintained by correct storage, transport, and monitoring temperatures for vaccines.',
   },
   {
@@ -22,7 +22,7 @@ export const MUSEUM_ITEMS = [
     title: 'Overview of cold chain equipment',
     emoji: '🧊',
     image: `${BASE}/fig_12_2.png`,
-    description: 'Overview of cold chain equipment (Fig. 12.2) from the Cold Chain Equipment spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Cold chain equipment includes deep freezers, ILRs, cold boxes and vaccine carriers used to maintain recommended temperatures during vaccine storage and transport.',
     keyFact: 'Cold chain integrity is maintained by correct storage, transport, and monitoring temperatures for vaccines.',
   },
   {
@@ -31,7 +31,7 @@ export const MUSEUM_ITEMS = [
     title: 'Vaccine storage in ice lined refrigerators',
     emoji: '🧊',
     image: `${BASE}/fig_12_3.png`,
-    description: 'Vaccine storage in ice lined refrigerators (Fig. 12.3) from the Cold Chain Equipment spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'The ILR stores vaccines at +2 C to +8 C, with baskets arranged by vaccine type and freeze sensitivity for safe short-term storage.',
     keyFact: 'Cold chain integrity is maintained by correct storage, transport, and monitoring temperatures for vaccines.',
   },
   {
@@ -40,7 +40,7 @@ export const MUSEUM_ITEMS = [
     title: 'Shake test to check potency of the vaccine',
     emoji: '🧊',
     image: `${BASE}/fig_12_4.png`,
-    description: 'Shake test to check potency of the vaccine (Fig. 12.4) from the Cold Chain Equipment spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'of vaccines . Hep B: Most freeze sensitive. TT: Least freeze sensitive/thermolabile. DPT: Due to presence of aluminium hydroxide, freezes and then precipitates and becomes non-potent.',
     keyFact: 'Cold chain integrity is maintained by correct storage, transport, and monitoring temperatures for vaccines.',
   },
   {
@@ -49,7 +49,7 @@ export const MUSEUM_ITEMS = [
     title: 'Ensure safety of the vaccine',
     emoji: '🧊',
     image: `${BASE}/fig_12_5.png`,
-    description: 'Ensure safety of the vaccine (Fig. 12.5) from the Cold Chain Equipment spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'can be reused for up to a maximum of 4 weeks/28 days if the following conditions are met . Expiry date has not passed. Vaccines are stored under appropriate cold chain conditions. VVM has not been submerged in water.',
     keyFact: 'Cold chain integrity is maintained by correct storage, transport, and monitoring temperatures for vaccines.',
   },
   {
@@ -58,7 +58,7 @@ export const MUSEUM_ITEMS = [
     title: 'Sites of immunisation under National Immunisation Programme',
     emoji: '💉',
     image: `${BASE}/fig_13_1.png`,
-    description: 'Sites of immunisation under National Immunisation Programme (Fig. 13.1) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'This chart shows recommended administration sites under the national immunisation schedule for infant and child vaccines.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -67,7 +67,7 @@ export const MUSEUM_ITEMS = [
     title: 'Schedule of vaccination under National Immunization Programme (infant)',
     emoji: '💉',
     image: `${BASE}/fig_13_2.png`,
-    description: 'Schedule of vaccination under National Immunization Programme (infant) (Fig. 13.2) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'This schedule summarizes age-wise infant immunization under the national program, including vaccine dose, route, and timing.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -76,7 +76,7 @@ export const MUSEUM_ITEMS = [
     title: 'Ice pack with positioning of vials during immunisation session',
     emoji: '💉',
     image: `${BASE}/fig_13_3.png`,
-    description: 'Ice pack with positioning of vials during immunisation session (Fig. 13.3) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Vials are positioned between conditioned ice packs to maintain temperature stability and reduce vaccine heat exposure during sessions.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -85,7 +85,7 @@ export const MUSEUM_ITEMS = [
     title: 'Vaccine carrier with ice packs (precautions need to be taken while using vaccine carrier)',
     emoji: '💉',
     image: `${BASE}/fig_13_4.png`,
-    description: 'Vaccine carrier with ice packs (precautions need to be taken while using vaccine carrier) (Fig. 13.4) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Vaccine carriers are packed with conditioned ice packs and correctly arranged vials to maintain the cold chain during outreach sessions.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -94,7 +94,7 @@ export const MUSEUM_ITEMS = [
     title: 'Vaccine vial monitor',
     emoji: '💉',
     image: `${BASE}/fig_13_5.png`,
-    description: 'Vaccine vial monitor (Fig. 13.5) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Vaccine vial monitor stages indicate heat exposure: stages 1 and 2 are usable, while stages 3 and 4 are discard points.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -103,7 +103,7 @@ export const MUSEUM_ITEMS = [
     title: 'Injection techniques',
     emoji: '💉',
     image: `${BASE}/fig_13_6.png`,
-    description: 'Injection techniques (Fig. 13.6) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'square is darker than outer circle (Do not use).',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -112,7 +112,7 @@ export const MUSEUM_ITEMS = [
     title: 'BCG vaccines',
     emoji: '💉',
     image: `${BASE}/fig_13_7.png`,
-    description: 'BCG vaccines (Fig. 13.7) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'a. BCG and its Diluents. Composition, strain of vaccine: Bacillus Calmette-Guérin, Danish 1331. Adverse effects: Suppurative lymphadenitis, local site reactions,. Contraindications: Pregnancy, generalised eczema, infective dermatosis,.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -121,7 +121,7 @@ export const MUSEUM_ITEMS = [
     title: 'Pentavalent vaccine',
     emoji: '💉',
     image: `${BASE}/fig_13_8.png`,
-    description: 'Pentavalent vaccine (Fig. 13.8) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'b. Pentavalent Vaccine. Dosage and schedule: At birth 0.05 ml up to 1 month: 1 year (0.1 ml). Composition, strain of vaccine: Diphtheria, pertussis, tetanus, hepatitis B,. Adverse effects: Local reaction, fever (pertussis component), persistent.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -130,7 +130,7 @@ export const MUSEUM_ITEMS = [
     title: 'DPT vaccine',
     emoji: '💉',
     image: `${BASE}/fig_13_9.png`,
-    description: 'DPT vaccine (Fig. 13.9) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'c. DPT/DTaP/dTP. Dosage and schedule: 0.5 ml, 6, 10, 14 weeks. Composition, strain of vaccine: Diphtheria and tetanus (toxoid), pertussis. Adverse effects: Local reaction, fever (pertussis component), persistent.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -139,7 +139,7 @@ export const MUSEUM_ITEMS = [
     title: 'Hepatitis B vaccine',
     emoji: '💉',
     image: `${BASE}/fig_13_10.png`,
-    description: 'Hepatitis B vaccine (Fig. 13.10) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'd. Hepatitis B. Composition, strain of vaccine: Killed recombinant type (hepatitis B virus). Adverse effects: Local reaction. Contraindications: History of allergic reaction.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -148,7 +148,7 @@ export const MUSEUM_ITEMS = [
     title: 'OPV',
     emoji: '💉',
     image: `${BASE}/fig_13_11.png`,
-    description: 'OPV (Fig. 13.11) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'e. Oral Polio Vaccine (OPV). Dosage and schedule: 0.5 ml, at birth. Type: Live attenuated vaccine. Composition, strain of vaccine: OPV 1,3 (bivalent).',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -157,7 +157,7 @@ export const MUSEUM_ITEMS = [
     title: 'IPV',
     emoji: '💉',
     image: `${BASE}/fig_13_12.png`,
-    description: 'IPV (Fig. 13.12) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'f. Injectable Polio Vaccine (IPV). Dosage and schedule: 2 drops: At birth, 6, 10, 14 weeks. Type: Killed vaccine. Composition, strain of vaccine: Inactivated Polio virus (type I, II, III).',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -166,7 +166,7 @@ export const MUSEUM_ITEMS = [
     title: 'Hib vaccine',
     emoji: '💉',
     image: `${BASE}/fig_13_13.png`,
-    description: 'Hib vaccine (Fig. 13.13) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'g. Haemophilus Influenzae-b (Hib). Dosage and schedule: 0.5 ml, 6, 14 weeks (fractional IPV). Type: Killed vaccine. Adverse effects: Local reaction. Fever.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -175,7 +175,7 @@ export const MUSEUM_ITEMS = [
     title: 'Measles vaccine',
     emoji: '💉',
     image: `${BASE}/fig_13_14.png`,
-    description: 'Measles vaccine (Fig. 13.14) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'h. Measles and Diluents. Type: Live attenuated. Composition, strain of vaccine: Measles: Edmonston-Zagreb strain. Adverse effects: Local reaction, toxic shock syndrome (TSS).',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -184,7 +184,7 @@ export const MUSEUM_ITEMS = [
     title: 'Vaccine for MMR',
     emoji: '💉',
     image: `${BASE}/fig_13_15.png`,
-    description: 'Vaccine for MMR (Fig. 13.15) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'i. MMR and its Diluents. Type: Live attenuated. Composition, strain of vaccine: Measles (EZ strain), mumps (Jeryl-lynn). Adverse effects: TSS, arthralgia, thrombocytopenia, convulsion,.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -193,7 +193,7 @@ export const MUSEUM_ITEMS = [
     title: 'Vaccine for Japanese encephalitis',
     emoji: '💉',
     image: `${BASE}/fig_13_16.png`,
-    description: 'Vaccine for Japanese encephalitis (Fig. 13.16) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'j. Japanese Encephalitis. Dosage and schedule: 0.5 ml , 16-24 months (booster). Type: Live attenuated vaccine. Composition, strain of vaccine: SA 14 -14- 2 strain.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -202,7 +202,7 @@ export const MUSEUM_ITEMS = [
     title: 'Rotavac',
     emoji: '💉',
     image: `${BASE}/fig_13_17.png`,
-    description: 'Rotavac (Fig. 13.17) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'k. Rotavirus Vaccine. Type: Live attenuated vaccine. Composition, strain of vaccine: Rotavac ( ORV 116E) monovalent. Adverse effects: Diarrhea, vomiting, irritability, intussusception (rare).',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -211,7 +211,7 @@ export const MUSEUM_ITEMS = [
     title: 'Vaccine for chickenpox',
     emoji: '💉',
     image: `${BASE}/fig_13_18.png`,
-    description: 'Vaccine for chickenpox (Fig. 13.18) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'l. Varicella (Chickenpox) Vaccine. Dosage and schedule: 5 drops, 6, 10, 14 weeks. Type: Live attenuated. Composition, strain of vaccine: Oka strain.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -220,7 +220,7 @@ export const MUSEUM_ITEMS = [
     title: 'Influenza vaccine',
     emoji: '💉',
     image: `${BASE}/fig_13_19.png`,
-    description: 'Influenza vaccine (Fig. 13.19) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'm. Influenza Vaccine. Dosage and schedule: 0.5 ml, 2 dose schedule (4 weeks apart). Type: Killed vaccine and live (nasal spray). Composition, strain of vaccine: Type (A1, A2, B) trivalent.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -229,7 +229,7 @@ export const MUSEUM_ITEMS = [
     title: 'Pneumococcal vaccine',
     emoji: '💉',
     image: `${BASE}/fig_13_20.png`,
-    description: 'Pneumococcal vaccine (Fig. 13.20) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'n. Pneumococcal Vaccine. Type: Killed conjugate vaccine. Composition, strain of vaccine: Polyvalent (7, 10, 13, 23 valent), PCV 13. Adverse effects: Local site reaction.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -238,7 +238,7 @@ export const MUSEUM_ITEMS = [
     title: 'Vaccine for rabies',
     emoji: '💉',
     image: `${BASE}/fig_13_21.png`,
-    description: 'Vaccine for rabies (Fig. 13.21) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'o. Rabies Vaccine. Dosage and schedule: 0.5 ml, 6, 14 weeks, 9 months (booster). Type: Killed vaccine. Composition, strain of vaccine: Purified chick embryo cell vaccine.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -247,7 +247,7 @@ export const MUSEUM_ITEMS = [
     title: 'HPV vaccine',
     emoji: '💉',
     image: `${BASE}/fig_13_22.png`,
-    description: 'HPV vaccine (Fig. 13.22) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'p. Human Papillomavirus (HPV) Vaccine. Type: Killed vaccine. Composition, strain of vaccine: HPV (16, 18) Bivalent HPV (6, 11, 16,. Route: 0.5 ml I/M in deltoid.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -256,7 +256,7 @@ export const MUSEUM_ITEMS = [
     title: 'Typhoid vaccine',
     emoji: '💉',
     image: `${BASE}/fig_13_23.png`,
-    description: 'Typhoid vaccine (Fig. 13.23) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'q. Typhoid Vaccine. Nature of vaccine: Killed vaccine, oral vaccine. Composition, strain of vaccine: Vi polysaccharide, Ty21a strain (typhoral). Route and site: Intramuscular and oral, anterolateral aspect of thigh.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -265,7 +265,7 @@ export const MUSEUM_ITEMS = [
     title: 'Meningococcal vaccine',
     emoji: '💉',
     image: `${BASE}/fig_13_24.png`,
-    description: 'Meningococcal vaccine (Fig. 13.24) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'r. Meningococcal Vaccine. Type: Killed vaccine (unconjugated/conjugated). Composition, strain of vaccine: Serogroup A, C, W/135, X and Y. Route: Subcutaneous (unconjugated), intramuscular (conjugated).',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -274,7 +274,7 @@ export const MUSEUM_ITEMS = [
     title: 'AstraZeneca',
     emoji: '💉',
     image: `${BASE}/fig_13_25.png`,
-    description: 'AstraZeneca (Fig. 13.25) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: '(i) Covishield (AstraZeneca\'s vaccine manufactured by Serum Institute of India). Type: Viral vector-based (They do not contain antigens, but use the body\'s cells to produce them, by using. Composition: Inactivated adenovirus with segments of coronavirus, aluminium. Route: Intramuscular in the deltoid muscle.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -283,7 +283,7 @@ export const MUSEUM_ITEMS = [
     title: 'Covaxin',
     emoji: '💉',
     image: `${BASE}/fig_13_26.png`,
-    description: 'Covaxin (Fig. 13.26) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: '(ii) Covaxin (manufactured by Bharat Biotech Limited). Type: Whole-virion Inactivated Coronavirus Vaccine. Composition: Inactivated coronavirus, aluminum hydroxide gel,. Route: Intramuscular in the deltoid muscle.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -292,7 +292,7 @@ export const MUSEUM_ITEMS = [
     title: 'Pfizer BioNTech vaccine',
     emoji: '💉',
     image: `${BASE}/fig_13_27.png`,
-    description: 'Pfizer BioNTech vaccine (Fig. 13.27) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: '(iii) Pfizer BioNTech vaccine. Type: mRNA vaccine (COVID-19 mRNA vaccines give instructions for. Composition: Nucleoside-modified mRNA encoding the viral spike. Route: Intramuscular in the deltoid muscle.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -301,7 +301,7 @@ export const MUSEUM_ITEMS = [
     title: 'Sputnik V',
     emoji: '💉',
     image: `${BASE}/fig_13_28.png`,
-    description: 'Sputnik V (Fig. 13.28) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: '(iv) Sputnik-V (Gam-COVID-Vac). Type: Viral vector-based (adenoviral-based uses a weakened virus. Composition: Lyophilized formulation of Gam-COVID-Vac spike.',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -310,7 +310,7 @@ export const MUSEUM_ITEMS = [
     title: 'Sputnik light',
     emoji: '💉',
     image: `${BASE}/fig_13_29.png`,
-    description: 'Sputnik light (Fig. 13.29) from the Vaccines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Composition: It contains recombinant human adenovirus serotype. Route: Intramuscular. Dosage and schedule: 0.5 ml, two doses (21 days apart).',
     keyFact: 'For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.',
   },
   {
@@ -319,7 +319,7 @@ export const MUSEUM_ITEMS = [
     title: 'Biomedical waste segregation chart',
     emoji: '♻️',
     image: `${BASE}/fig_14_1.png`,
-    description: 'Biomedical waste segregation chart (Fig. 14.1) from the Biomedical Waste Management spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'waste that exhibits the characteristics described above .',
     keyFact: 'Biomedical waste segregation follows color-coded categories under BMW Management Rules, 2016.',
   },
   {
@@ -328,7 +328,7 @@ export const MUSEUM_ITEMS = [
     title: 'Schedule III, label for biomedical waste containers/bags',
     emoji: '♻️',
     image: `${BASE}/fig_14_2.png`,
-    description: 'Schedule III, label for biomedical waste containers/bags (Fig. 14.2) from the Biomedical Waste Management spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'This label format specifies required biohazard/cytotoxic markings for biomedical waste containers and bags under BMW rules.',
     keyFact: 'Biomedical waste segregation follows color-coded categories under BMW Management Rules, 2016.',
   },
   {
@@ -337,7 +337,7 @@ export const MUSEUM_ITEMS = [
     title: 'Male condoms',
     emoji: '🛡️',
     image: `${BASE}/fig_15_1.png`,
-    description: 'Male condoms (Fig. 15.1) from the Contraceptives spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Protection from STIs, easily available, inexpensive, safe to use. Reduced sensation, may slip off due to incorrect use, latex. Failure rate: Variable 2-14, >14 HWY (in a few cases).',
     keyFact: 'Classify each method as temporary or permanent and mention indications, advantages, and limitations.',
   },
   {
@@ -346,7 +346,7 @@ export const MUSEUM_ITEMS = [
     title: 'Female condoms',
     emoji: '🛡️',
     image: `${BASE}/fig_15_2.png`,
-    description: 'Female condoms (Fig. 15.2) from the Contraceptives spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Failure rate: Variable 2-14, >14 HWY (in a few cases). Very few side effects. Protection from STIs.',
     keyFact: 'Classify each method as temporary or permanent and mention indications, advantages, and limitations.',
   },
   {
@@ -355,7 +355,7 @@ export const MUSEUM_ITEMS = [
     title: 'Diaphragm barrier method of birth control',
     emoji: '🛡️',
     image: `${BASE}/fig_15_3.png`,
-    description: 'Diaphragm barrier method of birth control (Fig. 15.3) from the Contraceptives spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Diaphragm. Very few side effects. Can be inserted up to 6 hrs in advance. Not widely available.',
     keyFact: 'Classify each method as temporary or permanent and mention indications, advantages, and limitations.',
   },
   {
@@ -364,7 +364,7 @@ export const MUSEUM_ITEMS = [
     title: 'Vaginal sponge method of birth control',
     emoji: '🛡️',
     image: `${BASE}/fig_15_4.png`,
-    description: 'Vaginal sponge method of birth control (Fig. 15.4) from the Contraceptives spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Sponge. 6-12 HWY (with spermicide).',
     keyFact: 'Classify each method as temporary or permanent and mention indications, advantages, and limitations.',
   },
   {
@@ -373,7 +373,7 @@ export const MUSEUM_ITEMS = [
     title: 'Spermicidal gel',
     emoji: '🛡️',
     image: `${BASE}/fig_15_5.png`,
-    description: 'Spermicidal gel (Fig. 15.5) from the Contraceptives spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Spermicidal Foams/Jellies/Pessaries. 20-40 HWY (parous women). Easy to use. Cause burning and irritation.',
     keyFact: 'Classify each method as temporary or permanent and mention indications, advantages, and limitations.',
   },
   {
@@ -382,7 +382,7 @@ export const MUSEUM_ITEMS = [
     title: 'OCP: Mala-n',
     emoji: '🛡️',
     image: `${BASE}/fig_15_6.png`,
-    description: 'OCP: Mala-n (Fig. 15.6) from the Contraceptives spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: '(0.03 mg). Composition: Levonorgestrel (0.15 mg), ethinyloestradiol. High rate of efficacy. Regulates menstrual cycle.',
     keyFact: 'Classify each method as temporary or permanent and mention indications, advantages, and limitations.',
   },
   {
@@ -391,7 +391,7 @@ export const MUSEUM_ITEMS = [
     title: 'Birth control tablet',
     emoji: '🛡️',
     image: `${BASE}/fig_15_7.png`,
-    description: 'Birth control tablet (Fig. 15.7) from the Contraceptives spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Brand name of the tablet (introduced by MOHFW): Chayya. Brand name of the tablet (introduced by MOHFW): Chayya. Composition: Centchroman (selective estrogen receptor modulator). Few side effects.',
     keyFact: 'Classify each method as temporary or permanent and mention indications, advantages, and limitations.',
   },
   {
@@ -400,7 +400,7 @@ export const MUSEUM_ITEMS = [
     title: 'Ezy pill',
     emoji: '🛡️',
     image: `${BASE}/fig_15_8.png`,
-    description: 'Ezy pill (Fig. 15.8) from the Contraceptives spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Brand name of the tablet (introduced by MOHFW): Ezy pill. Brand name of the tablet (introduced by MOHFW): Ezy pill. Composition: Levonorgestrel (1.5 mg). Single tablet.',
     keyFact: 'Classify each method as temporary or permanent and mention indications, advantages, and limitations.',
   },
   {
@@ -409,7 +409,7 @@ export const MUSEUM_ITEMS = [
     title: 'Injection: Antara',
     emoji: '🛡️',
     image: `${BASE}/fig_15_9.png`,
-    description: 'Injection: Antara (Fig. 15.9) from the Contraceptives spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Brand name of the injectable (introduced by MOHFW): Antara. Brand name of the injectable (introduced by MOHFW): Antara. Composition: Depot medroxyprogesterone acetate (MPA), Norethisterone acetate (NET-EN). Single injection effective for months (long lasting).',
     keyFact: 'Classify each method as temporary or permanent and mention indications, advantages, and limitations.',
   },
   {
@@ -418,7 +418,7 @@ export const MUSEUM_ITEMS = [
     title: 'Progesterone implant in upper arm',
     emoji: '🛡️',
     image: `${BASE}/fig_15_10.png`,
-    description: 'Progesterone implant in upper arm (Fig. 15.10) from the Contraceptives spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Implants. Undiagnosed uterine bleeding. Composition: Progesterone implant (norplant). Effective.',
     keyFact: 'Classify each method as temporary or permanent and mention indications, advantages, and limitations.',
   },
   {
@@ -427,7 +427,7 @@ export const MUSEUM_ITEMS = [
     title: 'Intrauterine device',
     emoji: '🛡️',
     image: `${BASE}/fig_15_11.png`,
-    description: 'Intrauterine device (Fig. 15.11) from the Contraceptives spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: '2nd generation (Copper T, Nova-T): Metallic copper. 1st generation (Lippes loop): Polyethylene. 2nd generation (Copper T, Nova-T): Metallic copper. 3rd generation (hormonal, Mirena/Progestasert): Progesterone.',
     keyFact: 'Classify each method as temporary or permanent and mention indications, advantages, and limitations.',
   },
   {
@@ -436,7 +436,7 @@ export const MUSEUM_ITEMS = [
     title: 'IFA tablets',
     emoji: '💊',
     image: `${BASE}/fig_16_1.png`,
-    description: 'IFA tablets (Fig. 16.1) from the Medicines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Ferrous Sulphate: 60 mg elemental iron (POSHAN abhiyan), 500 mg. ANC: 1 tablet daily for 180 days (4th month onwards). PNC: 1 tablet daily for 180 days.',
     keyFact: 'State key indication, public health use, and relevant national-program context for each medicine.',
   },
   {
@@ -445,7 +445,7 @@ export const MUSEUM_ITEMS = [
     title: 'ORS',
     emoji: '💊',
     image: `${BASE}/fig_16_2.png`,
-    description: 'ORS (Fig. 16.2) from the Medicines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: '(2.9 g), potassium chloride (1.5 g) and dextrose (13.5 g). Sodium chloride (2.5 g), sodium bicarbonate (2.5 g), trisodium citrate. Glucose given orally enhances intestinal absorption of salt and water,.',
     keyFact: 'State key indication, public health use, and relevant national-program context for each medicine.',
   },
   {
@@ -454,7 +454,7 @@ export const MUSEUM_ITEMS = [
     title: 'Zinc tablets',
     emoji: '💊',
     image: `${BASE}/fig_16_3.png`,
-    description: 'Zinc tablets (Fig. 16.3) from the Medicines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'A pinch of salt, 4 teaspoon sugar, 1 litre water. 2-6 months (10 mg), 6 months-5 yrs (20 mg) for 14 days. Boosts immunity, reduces duration, severity and hospital stay in diarrhea.',
     keyFact: 'State key indication, public health use, and relevant national-program context for each medicine.',
   },
   {
@@ -463,7 +463,7 @@ export const MUSEUM_ITEMS = [
     title: 'DOTS medicines',
     emoji: '💊',
     image: `${BASE}/fig_16_4.png`,
-    description: 'DOTS medicines (Fig. 16.4) from the Medicines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Boosts immunity, reduces duration, severity and hospital stay in diarrhea. Anti-tubercular drugs (first line and second line drugs). Isoniazid (600 mg), rifampicin (<60 kg: 450 mg, >60 kg: 600 mg),.',
     keyFact: 'State key indication, public health use, and relevant national-program context for each medicine.',
   },
   {
@@ -472,7 +472,7 @@ export const MUSEUM_ITEMS = [
     title: 'Medicines for leprosy',
     emoji: '💊',
     image: `${BASE}/fig_16_5.png`,
-    description: 'Medicines for leprosy (Fig. 16.5) from the Medicines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'MDT for Leprosy. Hepatotoxicity, gastritis, peripheral neuropathy, retrobulbar neuritis, etc. Rifampicin, dapsone and clofazimine. Paucibacillary [Supervised: Rifampicin 600 mg (monthly),.',
     keyFact: 'State key indication, public health use, and relevant national-program context for each medicine.',
   },
   {
@@ -481,7 +481,7 @@ export const MUSEUM_ITEMS = [
     title: 'Chloroquine tablets',
     emoji: '💊',
     image: `${BASE}/fig_16_6.png`,
-    description: 'Chloroquine tablets (Fig. 16.6) from the Medicines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Chloroquine (25 mg/kg divided over 3 days). Chloroquine (25 mg/kg divided over 3 days). Primaquine (Vivax: 0.25 mg/kg for 14 days, falciparum: 0.75 mg/kg. Artemesin-based combination [ACT SP: Artesunate (4 mg/kg for.',
     keyFact: 'State key indication, public health use, and relevant national-program context for each medicine.',
   },
   {
@@ -490,7 +490,7 @@ export const MUSEUM_ITEMS = [
     title: 'Albendazole',
     emoji: '💊',
     image: `${BASE}/fig_16_7.png`,
-    description: 'Albendazole (Fig. 16.7) from the Medicines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Albendazole. Deworming (ascariasis and filariasis). <2 yrs (200 mg) syrup formulation, >2 yrs (400 mg) tablets.',
     keyFact: 'State key indication, public health use, and relevant national-program context for each medicine.',
   },
   {
@@ -499,7 +499,7 @@ export const MUSEUM_ITEMS = [
     title: 'Rapid detection test of malaria',
     emoji: '💊',
     image: `${BASE}/fig_16_8.png`,
-    description: 'Rapid detection test of malaria (Fig. 16.8) from the Medicines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Rapid Detection Kit (Malaria). <2 yrs (200 mg) syrup formulation, >2 yrs (400 mg) tablets.',
     keyFact: 'State key indication, public health use, and relevant national-program context for each medicine.',
   },
   {
@@ -508,7 +508,7 @@ export const MUSEUM_ITEMS = [
     title: 'Vitamin A solution',
     emoji: '💊',
     image: `${BASE}/fig_16_9.png`,
-    description: 'Vitamin A solution (Fig. 16.9) from the Medicines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Giemsa-stained thick and thin blood smears, PCR test. Liquid syrup and gelatin capsules. Oral route.',
     keyFact: 'State key indication, public health use, and relevant national-program context for each medicine.',
   },
   {
@@ -517,7 +517,7 @@ export const MUSEUM_ITEMS = [
     title: 'SIT/RTI colour-coated kits',
     emoji: '💊',
     image: `${BASE}/fig_16_10.png`,
-    description: 'SIT/RTI colour-coated kits (Fig. 16.10) from the Medicines spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Kits Used in Syndromic Management of STI/RTIS. Night blindness.',
     keyFact: 'State key indication, public health use, and relevant national-program context for each medicine.',
   },
   {
@@ -526,7 +526,7 @@ export const MUSEUM_ITEMS = [
     title: 'Rice',
     emoji: '🥗',
     image: `${BASE}/fig_17_1.png`,
-    description: 'Rice (Fig. 17.1) from the Nutrition spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Nutritive value: Calorie: 345 kcal/100 g. Protein: 7.7 g% (husked), 6.8 g% (milled). Limiting amino acids: Lysine and threonine.',
     keyFact: 'Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.',
   },
   {
@@ -535,7 +535,7 @@ export const MUSEUM_ITEMS = [
     title: 'Wheat',
     emoji: '🥗',
     image: `${BASE}/fig_17_2.png`,
-    description: 'Wheat (Fig. 17.2) from the Nutrition spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Limiting amino acids: Lysine and threonine. Nutritive value: Calorie: 346 kcal/100 g; Protein: 11.8 g% (whole. Nutritive value: Calorie: 342 kcal/100 g; Protein: 11.1 g%.',
     keyFact: 'Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.',
   },
   {
@@ -544,7 +544,7 @@ export const MUSEUM_ITEMS = [
     title: 'Maize',
     emoji: '🥗',
     image: `${BASE}/fig_17_3.png`,
-    description: 'Maize (Fig. 17.3) from the Nutrition spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Limiting amino acids: Lysine and threonine. Nutritive value: Calorie: 342 kcal/100 g; Protein: 11.1 g%. Limiting amino acids: Lysine and tryptophan.',
     keyFact: 'Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.',
   },
   {
@@ -553,7 +553,7 @@ export const MUSEUM_ITEMS = [
     title: 'Bajra',
     emoji: '🥗',
     image: `${BASE}/fig_17_4.png`,
-    description: 'Bajra (Fig. 17.4) from the Nutrition spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Bajra (pearl millet). Nutritive value: Calorie: 361 kcal/100 g; Protein:. Limiting amino acids: Lysine and threonine. Rich source of: Calcium, iron and B group vitamins.',
     keyFact: 'Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.',
   },
   {
@@ -562,7 +562,7 @@ export const MUSEUM_ITEMS = [
     title: 'Ragi',
     emoji: '🥗',
     image: `${BASE}/fig_17_5.png`,
-    description: 'Ragi (Fig. 17.5) from the Nutrition spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Ragi (millet). Rich source of: Calcium, iron and B group vitamins. Nutritive value: Calorie: 328 kcal/100 g; Protein:. Rich source of: Calcium.',
     keyFact: 'Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.',
   },
   {
@@ -571,7 +571,7 @@ export const MUSEUM_ITEMS = [
     title: 'Pulses',
     emoji: '🥗',
     image: `${BASE}/fig_17_6.png`,
-    description: 'Pulses (Fig. 17.6) from the Nutrition spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'B. Pulses. Rich source of: Calcium.',
     keyFact: 'Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.',
   },
   {
@@ -580,7 +580,7 @@ export const MUSEUM_ITEMS = [
     title: 'Various nuts',
     emoji: '🥗',
     image: `${BASE}/fig_17_7.png`,
-    description: 'Various nuts (Fig. 17.7) from the Nutrition spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'C. Nuts. Percentage of protein content in soya bean: 40 g%. Protein content of Peanut (groundnut): 27 g%. Pistachio is rich source of: Iron.',
     keyFact: 'Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.',
   },
   {
@@ -589,7 +589,7 @@ export const MUSEUM_ITEMS = [
     title: 'Milk',
     emoji: '🥗',
     image: `${BASE}/fig_17_8.png`,
-    description: 'Milk (Fig. 17.8) from the Nutrition spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Nutritive value. Buffalo milk: Energy 117 kcal/100 ml; Protein 4.3 g%. Cow milk: Energy 67 kcal/100 ml; Protein 3.2 g%.',
     keyFact: 'Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.',
   },
   {
@@ -598,7 +598,7 @@ export const MUSEUM_ITEMS = [
     title: 'Eggs',
     emoji: '🥗',
     image: `${BASE}/fig_17_9.png`,
-    description: 'Eggs (Fig. 17.9) from the Nutrition spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Egg. Poor source: Iron, vitamin C. Nutritive value: Energy 70 kcal/60 g; Protein 6 g%. Net protein utilization (NPU) formula: Nitrogen retained by.',
     keyFact: 'Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.',
   },
   {
@@ -607,7 +607,7 @@ export const MUSEUM_ITEMS = [
     title: 'Lathyrus sativus',
     emoji: '🥗',
     image: `${BASE}/fig_17_10.png`,
-    description: 'Lathyrus sativus (Fig. 17.10) from the Nutrition spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Lathyrus sativus is associated with lathyrism, caused by the neurotoxin beta-oxalyl-amino-alanine (BOAA).',
     keyFact: 'Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.',
   },
   {
@@ -616,7 +616,7 @@ export const MUSEUM_ITEMS = [
     title: 'Argemone plant',
     emoji: '🥗',
     image: `${BASE}/fig_17_11.png`,
-    description: 'Argemone plant (Fig. 17.11) from the Nutrition spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Argemone mexicana. Toxin: Beta-oxalyl-amino-alanine (BOAA). Disease caused: Epidemic dropsy. Toxin: Sanguinarine.',
     keyFact: 'Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.',
   },
   {
@@ -625,7 +625,7 @@ export const MUSEUM_ITEMS = [
     title: 'Chloroscope',
     emoji: '🧪',
     image: `${BASE}/fig_18_1.png`,
-    description: 'Chloroscope (Fig. 18.1) from the Instruments spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'water . Standard range: It measures the available chlorine. Mechanism of action: It utilizes the reagent ortho-. Usage: To find out the dose of bleaching powder required for the disinfection of water .',
     keyFact: 'Explain principle of operation, field use, and interpretation of findings in practical exams.',
   },
   {
@@ -634,7 +634,7 @@ export const MUSEUM_ITEMS = [
     title: 'Horrock\'s apparatus',
     emoji: '🧪',
     image: `${BASE}/fig_18_2.png`,
-    description: 'Horrock\'s apparatus (Fig. 18.2) from the Instruments spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Usage: To find out the dose of bleaching powder required for the disinfection of water . Usage: To find out the dose of bleaching powder required for the disinfection of water . Components: (1) 6 white cups (200 ml capacity each), (2) One black cup with a circular mark on.',
     keyFact: 'Explain principle of operation, field use, and interpretation of findings in practical exams.',
   },
   {
@@ -643,7 +643,7 @@ export const MUSEUM_ITEMS = [
     title: 'Berkefeld filter',
     emoji: '🧪',
     image: `${BASE}/fig_18_3.png`,
-    description: 'Berkefeld filter (Fig. 18.3) from the Instruments spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'earth (Kieselguhr) filter columns . Mechanism of action: Gravity filtration method. Usage: Anthropometric measurement of skinfold. Procedure: The measurement may be taken at all four.',
     keyFact: 'Explain principle of operation, field use, and interpretation of findings in practical exams.',
   },
   {
@@ -652,7 +652,7 @@ export const MUSEUM_ITEMS = [
     title: 'Harpenden skin calipers',
     emoji: '🧪',
     image: `${BASE}/fig_18_4.png`,
-    description: 'Harpenden skin calipers (Fig. 18.4) from the Instruments spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'assessing body fat . Procedure: The measurement may be taken at all four. Usage: Anthropometric measurement of mid-upper arm circumference (MUAC). The MUAC is used.',
     keyFact: 'Explain principle of operation, field use, and interpretation of findings in practical exams.',
   },
   {
@@ -661,7 +661,7 @@ export const MUSEUM_ITEMS = [
     title: 'Shakir\'s tape',
     emoji: '🧪',
     image: `${BASE}/fig_18_5.png`,
-    description: 'Shakir\'s tape (Fig. 18.5) from the Instruments spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'and fifty-nine months (up to 5 years.) of age and is also relatively independent of height and body shape.',
     keyFact: 'Explain principle of operation, field use, and interpretation of findings in practical exams.',
   },
   {
@@ -670,7 +670,7 @@ export const MUSEUM_ITEMS = [
     title: 'Iodine testing kit',
     emoji: '🧪',
     image: `${BASE}/fig_18_6.png`,
-    description: 'Iodine testing kit (Fig. 18.6) from the Instruments spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'in salt at field level . Components: Iodine test kit consists of 2-3 ampoules. Procedure. Usage: Measurement of specific gravity (or relative.',
     keyFact: 'Explain principle of operation, field use, and interpretation of findings in practical exams.',
   },
   {
@@ -679,7 +679,7 @@ export const MUSEUM_ITEMS = [
     title: 'Hydrometer',
     emoji: '🧪',
     image: `${BASE}/fig_18_7.png`,
-    description: 'Hydrometer (Fig. 18.7) from the Instruments spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'float upright . Procedure: Liquid to be tested poured into a tall.',
     keyFact: 'Explain principle of operation, field use, and interpretation of findings in practical exams.',
   },
   {
@@ -688,7 +688,7 @@ export const MUSEUM_ITEMS = [
     title: 'Lactometer',
     emoji: '🧪',
     image: `${BASE}/fig_18_8.png`,
-    description: 'Lactometer (Fig. 18.8) from the Instruments spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'then there is some adulteration . Standard range: Normal milk has a density of 1.026-1.032. Usage: Measurement of air temperature. Components.',
     keyFact: 'Explain principle of operation, field use, and interpretation of findings in practical exams.',
   },
   {
@@ -697,7 +697,7 @@ export const MUSEUM_ITEMS = [
     title: 'Wet and dry bulb thermometer',
     emoji: '🧪',
     image: `${BASE}/fig_18_9.png`,
-    description: 'Wet and dry bulb thermometer (Fig. 18.9) from the Instruments spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Components. Usage: Measurement of air temperature. Components. Usage: The globe thermometer is used for the direct measurement of the mean.',
     keyFact: 'Explain principle of operation, field use, and interpretation of findings in practical exams.',
   },
   {
@@ -706,7 +706,7 @@ export const MUSEUM_ITEMS = [
     title: 'Globe thermometer',
     emoji: '🧪',
     image: `${BASE}/fig_18_10.png`,
-    description: 'Globe thermometer (Fig. 18.10) from the Instruments spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'radiant temperature of the surroundings . Usage: The globe thermometer is used for the direct measurement of the mean. Components.',
     keyFact: 'Explain principle of operation, field use, and interpretation of findings in practical exams.',
   },
   {
@@ -715,7 +715,7 @@ export const MUSEUM_ITEMS = [
     title: 'Kata thermometer',
     emoji: '🧪',
     image: `${BASE}/fig_18_11.png`,
-    description: 'Kata thermometer (Fig. 18.11) from the Instruments spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'long and 1.8 cm in diameter . Components: Kata thermometer is an alcohol thermometer with a glass bulb 4 cm. Mechanism of action: The kata thermometer is a heated-alcohol thermometer; the. Usage: This is the most widely used instrument for measuring humidity.',
     keyFact: 'Explain principle of operation, field use, and interpretation of findings in practical exams.',
   },
   {
@@ -724,7 +724,7 @@ export const MUSEUM_ITEMS = [
     title: 'Wet and dry bulb hygrometer',
     emoji: '🧪',
     image: `${BASE}/fig_18_12.png`,
-    description: 'Wet and dry bulb hygrometer (Fig. 18.12) from the Instruments spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'stand . Mechanism of action: The dry bulb measures the air temperature (DBT). The bulb.',
     keyFact: 'Explain principle of operation, field use, and interpretation of findings in practical exams.',
   },
   {
@@ -733,7 +733,7 @@ export const MUSEUM_ITEMS = [
     title: 'Breeding place of insects',
     emoji: '🦟',
     image: `${BASE}/fig_19_1.png`,
-    description: 'Breeding place of insects (Fig. 19.1) from the Entomology spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Breeding Places of Insects. Anopheles: Clean, slow moving water (small streams, fresh water marshes, irrigated lands, etc). Aedes: Artificial collection water (overhead tanks, coolers, flower pots, etc). Culex: Dirty and polluted water (open drains, cess pools).',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -742,7 +742,7 @@ export const MUSEUM_ITEMS = [
     title: 'Anopheles mosquito (adult female)',
     emoji: '🦟',
     image: `${BASE}/fig_19_2.png`,
-    description: 'Anopheles mosquito (adult female) (Fig. 19.2) from the Entomology spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Anopheles. Housefly: Human and animal excreta, garbage, rubbish dumps with organic waste. Characteristic features: 3 body parts (head, thorax and abdomen), pair of spotted wings, 3 pairs of legs,. Vector species: Culicifacies, Fluvialis, Minimus, Stephensi, Sundaicus, Phillipensis and Darius.',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -751,7 +751,7 @@ export const MUSEUM_ITEMS = [
     title: 'Aedes mosquito',
     emoji: '🦟',
     image: `${BASE}/fig_19_3.png`,
-    description: 'Aedes mosquito (Fig. 19.3) from the Entomology spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Aedes. Characteristic features: 3 body parts (head, thorax and abdomen), white stripes on a black body, pair of. Vector species: Aegypti, albopictus and vittatus. Vector of diseases: Dengue, chikungunya and yellow fever.',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -760,7 +760,7 @@ export const MUSEUM_ITEMS = [
     title: 'Culex',
     emoji: '🦟',
     image: `${BASE}/fig_19_4.png`,
-    description: 'Culex (Fig. 19.4) from the Entomology spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Vector of diseases: Dengue, chikungunya and yellow fever. Characteristic features: 3 body parts (head, thorax and abdomen), pair of unspotted wings, 3 pairs of. Vector species: Vishnui, pseudovishnui and fatigans.',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -769,7 +769,7 @@ export const MUSEUM_ITEMS = [
     title: 'Housefly',
     emoji: '🦟',
     image: `${BASE}/fig_19_5.png`,
-    description: 'Housefly (Fig. 19.5) from the Entomology spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Repellants: Diethyltoluamide (DEET). Characteristic features: 3 body parts (head, thorax and. Head bears a pair of antennae and a pair of large.',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -778,7 +778,7 @@ export const MUSEUM_ITEMS = [
     title: 'Sandfly',
     emoji: '🦟',
     image: `${BASE}/fig_19_6.png`,
-    description: 'Sandfly (Fig. 19.6) from the Entomology spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Characteristic features: 3 body parts (head, thorax and. Vector species: Phlebotomus argentipes, P. papatasii, P. Diseases transmitted: Kala azar (P. argentipes), sand fly.',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -787,7 +787,7 @@ export const MUSEUM_ITEMS = [
     title: 'Rat flea',
     emoji: '🦟',
     image: `${BASE}/fig_19_7.png`,
-    description: 'Rat flea (Fig. 19.7) from the Entomology spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Characteristic features: 3 body parts (head, thorax and abdomen), bilaterally compressed, thorax has. Vector species: Xenopsylla cheopis, X. astia, X. braziliensis. Vector of diseases: Bubonic plague, endemic typhus, chiggerosis and Hymenolepis diminuta. (BENCH).',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -796,7 +796,7 @@ export const MUSEUM_ITEMS = [
     title: 'Louse',
     emoji: '🦟',
     image: `${BASE}/fig_19_8.png`,
-    description: 'Louse (Fig. 19.8) from the Entomology spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Characteristic features: Wingless ectoparasites,. Vector species: Pediculus capitis (head louse),. Vector of diseases: Pediculosis, epidemic typhus,.',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -805,7 +805,7 @@ export const MUSEUM_ITEMS = [
     title: 'Ticks',
     emoji: '🦟',
     image: `${BASE}/fig_19_9.png`,
-    description: 'Ticks (Fig. 19.9) from the Entomology spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Control measures: Insecticidal (malathion lotion) and personal hygiene. Vector species: Ixodidae (hard), argasidae (soft).',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -814,7 +814,7 @@ export const MUSEUM_ITEMS = [
     title: 'Itch mite',
     emoji: '🦟',
     image: `${BASE}/fig_19_10.png`,
-    description: 'Itch mite (Fig. 19.10) from the Entomology spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Characteristic features: Globular arthropod (rounded above, flattened below),. Vector species: Sarcoptes/acarus scabiei. Vector of diseases: Scabies.',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -823,7 +823,7 @@ export const MUSEUM_ITEMS = [
     title: 'DDT',
     emoji: '🦟',
     image: `${BASE}/fig_19_11.png`,
-    description: 'DDT (Fig. 19.11) from the Entomology spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Dichlorodiphenyltrichloroethane (DDT). Physical characteristics: White amorphous powder. Mechanism of action: Contact poison. Residual action: Up to 18 months.',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -832,7 +832,7 @@ export const MUSEUM_ITEMS = [
     title: 'BHC',
     emoji: '🦟',
     image: `${BASE}/fig_19_12.png`,
-    description: 'BHC (Fig. 19.12) from the Entomology spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Physical characteristics: White or chocolate colored powder with musty smell. Physical characteristics: White or chocolate colored powder with musty smell. Mechanism of action: Contact poison. Residual action: Up to 3 months.',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -841,7 +841,7 @@ export const MUSEUM_ITEMS = [
     title: 'Malathion',
     emoji: '🦟',
     image: `${BASE}/fig_19_13.png`,
-    description: 'Malathion (Fig. 19.13) from the Entomology spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Physical characteristics: Yellow or clear brown liquid with unpleasant smell. Physical characteristics: Yellow or clear brown liquid with unpleasant smell. Mechanism of action: Contact poison. Residual action: Up to 3 months.',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -850,7 +850,7 @@ export const MUSEUM_ITEMS = [
     title: 'Paris green',
     emoji: '🦟',
     image: `${BASE}/fig_19_14.png`,
-    description: 'Paris green (Fig. 19.14) from the Entomology spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Physical characteristics: Emerald green, microcrystalline powder ,. Physical characteristics: Emerald green, microcrystalline powder ,. Mechanism of action: Stomach poison. Residual action: Nil.',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -859,7 +859,7 @@ export const MUSEUM_ITEMS = [
     title: 'Abate',
     emoji: '🦟',
     image: `${BASE}/fig_19_15.png`,
-    description: 'Abate (Fig. 19.15) from the Entomology spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Physical characteristics: Brown viscous liquid and tablets. Physical characteristics: Brown viscous liquid and tablets. Mechanism of action: Mosquito larvicide. Residual action: 25 ml of abate 50% is mixed in 10 litre water and.',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -868,7 +868,7 @@ export const MUSEUM_ITEMS = [
     title: 'MLO',
     emoji: '🦟',
     image: `${BASE}/fig_19_16.png`,
-    description: 'MLO (Fig. 19.16) from the Entomology spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Physical characteristics: Oil preparation . Physical characteristics: Oil preparation . Mechanism of action: Contact poison, suffocate the aquatic stage (larva) of mosquito. Special features: Injurious to vegetation and fish when improperly used.',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -877,7 +877,7 @@ export const MUSEUM_ITEMS = [
     title: 'Mosquito net',
     emoji: '🦟',
     image: `${BASE}/fig_19_17.png`,
-    description: 'Mosquito net (Fig. 19.17) from the Entomology spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'one square inch is usually 150 . Topical creams. Physical characteristics: Available as cream. Content: DEET (Diethyltoluamide).',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -886,7 +886,7 @@ export const MUSEUM_ITEMS = [
     title: 'Topical cream',
     emoji: '🦟',
     image: `${BASE}/fig_19_18.png`,
-    description: 'Topical cream (Fig. 19.18) from the Entomology spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Physical characteristics: Available as cream. Topical creams. Physical characteristics: Available as cream. Content: DEET (Diethyltoluamide).',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -895,7 +895,7 @@ export const MUSEUM_ITEMS = [
     title: 'Liquidizer',
     emoji: '🦟',
     image: `${BASE}/fig_19_19.png`,
-    description: 'Liquidizer (Fig. 19.19) from the Entomology spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Physical characteristics: Available as liquid. Liquidizers. Physical characteristics: Available as liquid. Content: Prallethrin (pyrethroid).',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -904,7 +904,7 @@ export const MUSEUM_ITEMS = [
     title: 'Liquid spray',
     emoji: '🦟',
     image: `${BASE}/fig_19_20.png`,
-    description: 'Liquid spray (Fig. 19.20) from the Entomology spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Physical characteristics: Available as spray. Liquid spray. Physical characteristics: Available as spray. Content: o-isopropoxyphenyl methylcarbamate.',
     keyFact: 'Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.',
   },
   {
@@ -913,7 +913,7 @@ export const MUSEUM_ITEMS = [
     title: 'Mamta card',
     emoji: '📋',
     image: `${BASE}/fig_20_1.png`,
-    description: 'Mamta card (Fig. 20.1) from the Miscellaneous spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Family identification and registration (Janani Suraksha Yojana, Janani Shishu Suraksha Karykram, MCTS). Antenatal Care (ANC). Intranatal Care.',
     keyFact: 'These spotters support MCH records, growth monitoring, and safe-water/public-health field work.',
   },
   {
@@ -922,7 +922,7 @@ export const MUSEUM_ITEMS = [
     title: 'Growth chart format',
     emoji: '📋',
     image: `${BASE}/fig_20_2.png`,
-    description: 'Growth chart format (Fig. 20.2) from the Miscellaneous spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Detection of Malnutrition using Growth Chart. Flattening or falling of child\'s weight curve. It represents growth failure [earliest sign of protein energy malnutrition (PEM)].',
     keyFact: 'These spotters support MCH records, growth monitoring, and safe-water/public-health field work.',
   },
   {
@@ -931,9 +931,11 @@ export const MUSEUM_ITEMS = [
     title: 'Water',
     emoji: '📋',
     image: `${BASE}/fig_20_3.png`,
-    description: 'Water (Fig. 20.3) from the Miscellaneous spotter set in Competency Based Practicals in Community Medicine (2nd edition).',
+    description: 'Water quality spotter includes chlorine demand assessment by Horrocks apparatus, residual chlorine testing by OT test, and breakpoint chlorination principles.',
     keyFact: 'These spotters support MCH records, growth monitoring, and safe-water/public-health field work.',
   },
 ];
 
 export const CATEGORIES = ["All","Cold Chain Equipment","Vaccines","Biomedical Waste Management","Contraceptives","Medicines","Nutrition","Instruments","Entomology","Miscellaneous"];
+
+

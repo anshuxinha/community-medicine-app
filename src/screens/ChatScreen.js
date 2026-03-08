@@ -289,7 +289,7 @@ ${relevantContext}`;
                     <View style={styles.inputContainer}>
                         <TextInput
                             style={styles.textInput}
-                            placeholder="Ask anything…"
+                            placeholder="Ask anything... (30 messages/day limit)"
                             placeholderTextColor={theme.colors.textPlaceholder}
                             textColor={theme.colors.textTitle}
                             value={inputText}
@@ -403,3 +403,4 @@ const styles = StyleSheet.create({
 });
 
 export default ChatScreen;
+

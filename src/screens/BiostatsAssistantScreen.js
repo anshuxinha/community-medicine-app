@@ -263,7 +263,7 @@ const BiostatsAssistantScreen = () => {
                                             onChangeText={setSsDelta} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
                                     </>
                                 )}
-                                <Button mode="contained" onPress={calculateSS} style={styles.btn}>Calculate Sample Size</Button>
+                                <Button mode="contained" textColor={theme.colors.buttonText} onPress={calculateSS} style={styles.btn}>Calculate Sample Size</Button>
                                 {ssResult && !ssResult.error && (
                                     <View style={[styles.resultBox, { borderLeftColor: theme.colors.secondary }]}>
                                         <Text style={{ color: theme.colors.textTertiary, marginBottom: 4 }}>{ssResult.label}</Text>
@@ -300,7 +300,7 @@ const BiostatsAssistantScreen = () => {
                                             <TextInput label="d (D–, E–)" value={d} onChangeText={setD} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor={theme.colors.textTitle} />
                                         </View>
                                     </View>
-                                    <Button mode="contained" onPress={runChi2} style={styles.btn}>Calculate χ²</Button>
+                                    <Button mode="contained" textColor={theme.colors.buttonText} onPress={runChi2} style={styles.btn}>Calculate χ²</Button>
                                     {result && resultType === 'chi2' && !result.error && (
                                         <View style={[styles.resultBox, { borderLeftColor: result.significant ? '#15803D' : '#B91C1C' }]}>
                                             <Text style={{ fontWeight: 'bold', color: result.significant ? '#15803D' : '#B91C1C' }}>{result.result}</Text>
@@ -318,7 +318,7 @@ const BiostatsAssistantScreen = () => {
                                     <Text style={styles.hint}>VE = (ARu – ARv) / ARu × 100</Text>
                                     <TextInput label="Attack Rate in Vaccinated (%)" value={arV} onChangeText={setArV} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
                                     <TextInput label="Attack Rate in Unvaccinated (%)" value={arU} onChangeText={setArU} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
-                                    <Button mode="contained" onPress={runEfficacy} style={styles.btn}>Calculate VE</Button>
+                                    <Button mode="contained" textColor={theme.colors.buttonText} onPress={runEfficacy} style={styles.btn}>Calculate VE</Button>
                                     {result && resultType === 'efficacy' && !result.error && (
                                         <View style={[styles.resultBox, { borderLeftColor: theme.colors.secondary }]}>
                                             <Text variant="headlineMedium" style={{ fontWeight: 'bold', color: theme.colors.primary }}>VE = {result.ve}%</Text>
@@ -336,7 +336,7 @@ const BiostatsAssistantScreen = () => {
                                     <Text style={styles.hint}>IMR = (Infant Deaths / Live Births) × 1000</Text>
                                     <TextInput label="Infant Deaths" value={deaths} onChangeText={setDeaths} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
                                     <TextInput label="Live Births" value={births} onChangeText={setBirths} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
-                                    <Button mode="contained" onPress={runIMR} style={styles.btn}>Calculate IMR</Button>
+                                    <Button mode="contained" textColor={theme.colors.buttonText} onPress={runIMR} style={styles.btn}>Calculate IMR</Button>
                                     {result && resultType === 'imr' && !result.error && (
                                         <View style={[styles.resultBox, { borderLeftColor: theme.colors.secondary }]}>
                                             <Text variant="headlineMedium" style={{ fontWeight: 'bold', color: theme.colors.primary }}>IMR = {result.imr} / 1000 live births</Text>

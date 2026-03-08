@@ -193,7 +193,7 @@ const SESCalculatorScreen = () => {
                     </Card>
                 )}
 
-                <Button mode="contained" textColor="#FFFFFF" onPress={handleCalculate} style={styles.calcButton}>
+                <Button mode="contained" textColor={theme.colors.buttonText} onPress={handleCalculate} style={styles.calcButton}>
                     Calculate SES
                 </Button>
 
@@ -273,3 +273,4 @@ const styles = StyleSheet.create({
 });
 
 export default SESCalculatorScreen;
+

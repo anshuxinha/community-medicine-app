@@ -197,12 +197,14 @@ const DashboardScreen = ({ navigation }) => {
                 >
                     <Dialog.Title style={{ color: theme.colors.textTitle, fontWeight: 'bold' }}>Public Health Days</Dialog.Title>
                     <Dialog.ScrollArea style={{ paddingHorizontal: 0, borderColor: 'transparent' }}>
-                        <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingVertical: 8 }}>
+                        <ScrollView contentContainerStyle={styles.healthDaysListContent}>
                             {publicHealthDays.map((day, index) => (
-                                <View key={index} style={{ marginBottom: 16 }}>
-                                    <Text variant="titleMedium" style={{ fontWeight: 'bold', color: theme.colors.textTitle, marginTop: 0, marginBottom: 2 }}>{day.name}</Text>
-                                    <Text variant="labelSmall" style={{ color: theme.colors.secondary, marginBottom: 6, fontWeight: '600' }}>{day.dateLabel}</Text>
-                                    <Text variant="bodyMedium" style={{ color: theme.colors.textSecondary, lineHeight: 20 }}>{day.description}</Text>
+                                <View key={index} style={styles.healthDayItem}>
+                                    <View style={styles.healthDayHeaderRow}>
+                                        <Text variant="titleMedium" style={styles.healthDayName}>{day.name}</Text>
+                                        <Text variant="labelSmall" style={styles.healthDayDate}>{day.dateLabel}</Text>
+                                    </View>
+                                    <Text variant="bodyMedium" style={styles.healthDayDescription}>{day.description}</Text>
                                 </View>
                             ))}
                         </ScrollView>
@@ -378,6 +380,35 @@ const styles = StyleSheet.create({
     updateSummary: {
         color: theme.colors.textTertiary,
         lineHeight: 22,
+    },
+    healthDaysListContent: {
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+    },
+    healthDayItem: {
+        marginBottom: 12,
+    },
+    healthDayHeaderRow: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+        gap: 8,
+        marginBottom: 2,
+    },
+    healthDayName: {
+        flex: 1,
+        fontWeight: '700',
+        color: theme.colors.textTitle,
+        lineHeight: 20,
+    },
+    healthDayDate: {
+        color: theme.colors.secondary,
+        fontWeight: '700',
+        lineHeight: 18,
+    },
+    healthDayDescription: {
+        color: theme.colors.textSecondary,
+        lineHeight: 20,
     },
 });
 

@@ -5,6 +5,7 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import AppNavigator from './src/navigation/AppNavigator';
 import { AppProvider } from './src/context/AppContext';
 import Purchases from 'react-native-purchases';
+import { paperTheme } from './src/styles/theme';
 
 const RC_API_KEY = process.env.EXPO_PUBLIC_RC_API_KEY || 'test_vulmIhXWwQBkNrLyBuwhSPgPwut';
 
@@ -19,7 +20,7 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <AppProvider>
-        <PaperProvider>
+        <PaperProvider theme={paperTheme}>
           <AppNavigator />
         </PaperProvider>
       </AppProvider>

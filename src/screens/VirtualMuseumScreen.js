@@ -92,6 +92,7 @@ const VirtualMuseumScreen = () => {
                         <Chip
                             key={cat}
                             selected={activeCategory === cat}
+                            selectedColor={theme.colors.primary}
                             onPress={() => setActiveCategory(cat)}
                             style={[styles.chip, activeCategory === cat && styles.chipActive]}
                             textStyle={activeCategory === cat ? styles.chipTextActive : { color: '#374151' }}
