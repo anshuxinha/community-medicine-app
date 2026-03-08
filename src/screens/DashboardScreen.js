@@ -200,11 +200,13 @@ const DashboardScreen = ({ navigation }) => {
                         <ScrollView contentContainerStyle={styles.healthDaysListContent}>
                             {publicHealthDays.map((day, index) => (
                                 <View key={index} style={styles.healthDayItem}>
-                                    <View style={styles.healthDayHeaderRow}>
-                                        <Text style={styles.healthDayName} numberOfLines={2}>{day.name}</Text>
+                                    <View style={styles.healthDayRow}>
+                                        <View style={styles.healthDayTextColumn}>
+                                            <Text style={styles.healthDayName}>{day.name}</Text>
+                                            <Text style={styles.healthDayDescription}>{(day.description || '').trim()}</Text>
+                                        </View>
                                         <Text style={styles.healthDayDate}>{day.dateLabel}</Text>
                                     </View>
-                                    <Text style={styles.healthDayDescription}>{day.description}</Text>
                                 </View>
                             ))}
                         </ScrollView>
@@ -388,26 +390,28 @@ const styles = StyleSheet.create({
     healthDayItem: {
         marginBottom: 10,
     },
-    healthDayHeaderRow: {
+    healthDayRow: {
         flexDirection: 'row',
         alignItems: 'flex-start',
-        justifyContent: 'space-between',
-        gap: 8,
-        marginBottom: 0,
+    },
+    healthDayTextColumn: {
+        flex: 1,
+        marginRight: 12,
     },
     healthDayName: {
-        flex: 1,
         fontSize: 16,
         fontWeight: '700',
         color: theme.colors.textTitle,
         lineHeight: 22,
+        marginBottom: 2,
         includeFontPadding: false,
     },
     healthDayDate: {
+        marginTop: 1,
         color: theme.colors.secondary,
         fontSize: 13,
         fontWeight: '700',
-        lineHeight: 20,
+        lineHeight: 18,
         includeFontPadding: false,
     },
     healthDayDescription: {
@@ -420,5 +424,4 @@ const styles = StyleSheet.create({
 });
 
 export default DashboardScreen;
-
 
