@@ -26,14 +26,29 @@ const allData = [...mockData, ...practicalData];
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const getAccountStateKey = (uid) => `accountState:${uid}`;
 
+const getAllValidTitles = (items) => {
+    let validTitles = new Set();
+    const recurse = (nodeList) => {
+        if (!Array.isArray(nodeList)) return;
+        nodeList.forEach(node => {
+            if (node.title) validTitles.add(node.title);
+            if (node.subsections) recurse(node.subsections);
+        });
+    };
+    recurse(items);
+    return validTitles;
+};
+
+// Compute this once for performance
+const VALID_MASTER_TITLES = getAllValidTitles(allData);
+
 const normalizeBookmarks = (items) => {
     if (!Array.isArray(items)) return [];
-    const validTitles = new Set(allData.map(item => item.title));
-    return items.filter(item => item && typeof item.title === 'string' && validTitles.has(item.title));
+    return items.filter(item => item && typeof item.title === 'string' && VALID_MASTER_TITLES.has(item.title));
 };
 
 const sanitizeCloudState = (data = {}) => ({
-    readItems: Array.isArray(data.readItems) ? data.readItems : [],
+    readItems: Array.isArray(data.readItems) ? data.readItems.filter(t => VALID_MASTER_TITLES.has(t)) : [],
     bookmarks: normalizeBookmarks(data.bookmarks),
     currentStreak: typeof data.currentStreak === 'number' ? data.currentStreak : 0,
     lastReadDate: typeof data.lastReadDate === 'string' ? data.lastReadDate : null,
@@ -226,8 +241,7 @@ export const AppProvider = ({ children }) => {
                 const storedBookmarks = await AsyncStorage.getItem('bookmarks');
                 if (storedBookmarks) {
                     const parsed = JSON.parse(storedBookmarks);
-                    const validTitles = new Set(allData.map(item => item.title));
-                    const validBookmarks = parsed.filter(b => validTitles.has(b.title));
+                    const validBookmarks = parsed.filter(b => VALID_MASTER_TITLES.has(b.title));
                     setBookmarks(validBookmarks);
                 }
 
