@@ -2,7 +2,7 @@ name: Auto Update Health Guidelines
 
 on:
   schedule:
-    - cron: '0 0 * * 1' # Runs every Monday at midnight UTC
+    - cron: '30 4 * * *' # Runs everyday at 10:00 AM IST (04:30 UTC)
   workflow_dispatch: # Allows manual triggering from GitHub Actions UI
 
 jobs:
@@ -26,6 +26,8 @@ jobs:
           pip install requests beautifulsoup4
 
       - name: Run Fetch Script
+        env:
+          GOOGLE_GEMINI_KEY: ${{ secrets.GOOGLE_GEMINI_KEY }}
         run: python scripts/fetch_updates.py
 
       - name: Commit and Push Changes

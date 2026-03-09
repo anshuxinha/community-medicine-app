@@ -28,7 +28,7 @@ jobs:
       - name: Run Verification Script
         run: python scripts/verify_mock_data.py
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GOOGLE_GEMINI_KEY: ${{ secrets.GOOGLE_GEMINI_KEY }}
 
       - name: Commit and Push Changes
         run: |

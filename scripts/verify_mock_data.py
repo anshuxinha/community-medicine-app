@@ -5,12 +5,12 @@ import time
 from typing import List, Dict, Any
 
 # Prefer environment variable (GitHub Secrets)
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+GOOGLE_GEMINI_KEY = os.environ.get("GOOGLE_GEMINI_KEY")
 
-if not GEMINI_API_KEY:
-    raise ValueError("GEMINI_API_KEY environment variable is not set")
+if not GOOGLE_GEMINI_KEY:
+    raise ValueError("GOOGLE_GEMINI_KEY environment variable is not set")
 
-GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
+GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GOOGLE_GEMINI_KEY}"
 
 MOCK_DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'src', 'data', 'mockData.json')
 PRACTICAL_DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'src', 'data', 'practical.json')
