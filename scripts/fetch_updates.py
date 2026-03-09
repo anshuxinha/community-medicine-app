@@ -71,9 +71,21 @@ def fetch_health_updates():
                 existing_updates = json.load(f)
                 
             current_month = datetime.now().strftime('%Y-%m')
-            for u in existing_updates:
-                if u.get('date', '').startswith(current_month):
-                    updates.append(u)
+            
+            # Month Rollover Logic:
+            # If ANY of the existing updates in the file belong to a PREVIOUS month,
+            # we discard the entire existing file contents to start fresh for the new month.
+            has_previous_month_data = any(
+                not u.get('date', '').startswith(current_month) for u in existing_updates
+            )
+            
+            if not has_previous_month_data:
+                # Keep existing updates if they are all from the current month
+                updates = existing_updates
+            else:
+                print(f"Detected rollover to new month ({current_month}). Clearing previous month's articles.")
+                # 'updates' remains an empty list []
+                
         except Exception as e:
             print(f"Error loading existing updates: {e}")
             
@@ -103,12 +115,26 @@ def fetch_health_updates():
             return
             
         filter_prompt = f"""
-        You are an expert in Community Medicine and Public Health. 
+        You are an expert in Community Medicine, Public Health, and Epidemiology in India.
         I have a list of press releases from the Government of India published this month.
-        Review the list of titles and select up to 3 that are the MOST relevant to Community Medicine, public health, vaccines, disease control, or healthcare infrastructure.
-        DO NOT select duplicates or highly similar topics.
+        
+        YOUR TASK:
+        Review the list of titles and select up to 3 that are HIGHLY RELEVANT to Community Medicine.
+        
+        STRICT INCLUSION CRITERIA:
+        - National Health Programs (e.g., NHM, Ayushman Bharat, RNTCP/NTEP)
+        - Vaccines, Immunization, and infectious disease outbreaks
+        - Maternal and Child Health (MCH), Family Planning
+        - Public Health infrastructure, epidemiology, or vital statistics
+        
+        STRICT EXCLUSION CRITERIA (IGNORE THESE COMPLETELY):
+        - Telecom, TRAI, IT, 5G, or generic technology (unless strictly health-tech eSanjeevani)
+        - Defense, Military, or routine political visits
+        - General economics, finance, or unrelated agriculture
+        
         Return ONLY a JSON array of objects containing the "id" of the selected items. 
         Example: [{{"id": 4}}, {{"id": 12}}]
+        If NO articles meet the criteria, return an empty array: []
         
         List:
         {json.dumps(feed_items, indent=2)}
