@@ -234,11 +234,15 @@ export const AppProvider = ({ children }) => {
         const loadState = async () => {
             try {
                 const storedReadItems = await AsyncStorage.getItem('readItems');
+                // Prevent race condition: if Firebase already hydrated the state, do NOT overwrite it with stale generic local storage.
+                if (cloudHydratedRef.current) return;
+
                 if (storedReadItems) {
                     setReadItems(JSON.parse(storedReadItems));
                 }
 
                 const storedBookmarks = await AsyncStorage.getItem('bookmarks');
+                if (cloudHydratedRef.current) return;
                 if (storedBookmarks) {
                     const parsed = JSON.parse(storedBookmarks);
                     const validBookmarks = parsed.filter(b => VALID_MASTER_TITLES.has(b.title));
@@ -246,31 +250,37 @@ export const AppProvider = ({ children }) => {
                 }
 
                 const storedHighlights = await AsyncStorage.getItem('highlights');
+                if (cloudHydratedRef.current) return;
                 if (storedHighlights) {
                     setHighlights(JSON.parse(storedHighlights));
                 }
 
                 const storedStreak = await AsyncStorage.getItem('currentStreak');
+                if (cloudHydratedRef.current) return;
                 if (storedStreak) {
                     setCurrentStreak(parseInt(storedStreak, 10));
                 }
 
                 const storedLastRead = await AsyncStorage.getItem('lastReadDate');
+                if (cloudHydratedRef.current) return;
                 if (storedLastRead) {
                     setLastReadDate(storedLastRead);
                 }
 
                 const storedScore = await AsyncStorage.getItem('studyScore');
+                if (cloudHydratedRef.current) return;
                 if (storedScore) {
                     setStudyScore(parseInt(storedScore, 10));
                 }
 
                 const storedDailyHistory = await AsyncStorage.getItem('dailyReadHistory');
+                if (cloudHydratedRef.current) return;
                 if (storedDailyHistory) {
                     setDailyReadHistory(JSON.parse(storedDailyHistory));
                 }
 
                 const storedQuizScores = await AsyncStorage.getItem('quizScores');
+                if (cloudHydratedRef.current) return;
                 if (storedQuizScores) {
                     setQuizScores(JSON.parse(storedQuizScores));
                 }
@@ -529,11 +539,15 @@ export const AppProvider = ({ children }) => {
         if (Constants.appOwnership !== 'expo' && GoogleSignin) {
             try { await GoogleSignin.signOut(); } catch (_) { }
         }
-        // Clear all persisted state
+        // Clear all persisted state before resetting React state to avoid any writes bridging over
         await AsyncStorage.multiRemove([
             'user', 'isPremium', 'readItems', 'bookmarks', 'highlights',
             'currentStreak', 'lastReadDate', 'studyScore', 'dailyReadHistory', 'quizScores'
         ]);
+
+        // Explicitly nullify user first, so that saveState checks fail immediately
+        setUser(null);
+        setIsPremium(false);
         setReadItems([]);
         setBookmarks([]);
         setHighlights({});
@@ -542,8 +556,6 @@ export const AppProvider = ({ children }) => {
         setStudyScore(0);
         setDailyReadHistory({});
         setQuizScores([]);
-        setUser(null);
-        setIsPremium(false);
     };
 
     const upgradeToPremium = () => {
