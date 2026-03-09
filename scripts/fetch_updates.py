@@ -13,6 +13,8 @@ if not GOOGLE_GEMINI_KEY:
 
 GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GOOGLE_GEMINI_KEY}"
 
+import re
+
 def call_gemini(prompt):
     try:
         response = requests.post(
@@ -23,17 +25,31 @@ def call_gemini(prompt):
             },
             timeout=30
         )
-        response.raise_for_status()
+        if response.status_code != 200:
+            print(f"Gemini API Error {response.status_code}: {response.text}")
+            response.raise_for_status()
+            
         data = response.json()
         
         if data and "candidates" in data and len(data["candidates"]) > 0:
             text_response = data["candidates"][0]["content"]["parts"][0]["text"].strip()
-            # Clean up potential markdown formatting
-            text_response = text_response.replace('```json', '').replace('```', '').strip()
-            return json.loads(text_response)
             
+            # Use regex to extract the first JSON block (array or object)
+            # This handles cases where Gemini writes conversational text before/after the JSON
+            json_match = re.search(r'(\{.*?\}|\[.*?\])', text_response, re.DOTALL)
+            
+            if json_match:
+                extracted_json_str = json_match.group(1)
+                try:
+                    return json.loads(extracted_json_str)
+                except json.JSONDecodeError as e:
+                    print(f"Failed to parse extracted JSON. Error: {e}")
+                    print(f"Extracted string was: {extracted_json_str}")
+            else:
+                print(f"Could not find valid JSON in Gemini response: {text_response}")
+                
     except Exception as e:
-        print(f"Gemini API Error: {e}")
+        print(f"Gemini API Exception: {e}")
         
     return None
 
