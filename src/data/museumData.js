@@ -936,4 +936,4 @@ export const MUSEUM_ITEMS = [
   },
 ];
 
-export const CATEGORIES = ["All","Cold Chain Equipment","Vaccines","Biomedical Waste Management","Contraceptives","Medicines","Nutrition","Instruments","Entomology","Miscellaneous"];
+export const CATEGORIES = ["All", "Cold Chain Equipment", "Vaccines", "Biomedical Waste Management", "Contraceptives", "Medicines", "Nutrition", "Instruments", "Entomology", "Miscellaneous"];
