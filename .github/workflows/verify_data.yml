@@ -73,6 +73,7 @@ jobs:
         if: ${{ steps.commit_changes.outputs.has_changes == 'true' && steps.expo_token_check.outputs.has_token == 'true' }}
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          EXPO_PUBLIC_RC_API_KEY: ${{ secrets.EXPO_PUBLIC_RC_API_KEY }}
         run: npx eas-cli update --channel production --message "Weekly verified updates for IDs 7 and 8" --non-interactive
           
       - name: Broadcast Push Notifications
