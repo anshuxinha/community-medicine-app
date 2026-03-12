@@ -63,29 +63,14 @@ def fetch_health_updates():
     output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'src', 'data')
     output_path = os.path.join(output_dir, 'updates.json')
     
+    existing_updates: List[Dict[str, Any]] = []
     updates: List[Dict[str, Any]] = []
     
     if os.path.exists(output_path):
         try:
             with open(output_path, 'r', encoding='utf-8') as f:
                 existing_updates = json.load(f)
-                
-            current_month = datetime.now().strftime('%Y-%m')
-            
-            # Month Rollover Logic:
-            # If ANY of the existing updates in the file belong to a PREVIOUS month,
-            # we discard the entire existing file contents to start fresh for the new month.
-            has_previous_month_data = any(
-                not u.get('date', '').startswith(current_month) for u in existing_updates
-            )
-            
-            if not has_previous_month_data:
-                # Keep existing updates if they are all from the current month
-                updates = existing_updates
-            else:
-                print(f"Detected rollover to new month ({current_month}). Clearing previous month's articles.")
-                # 'updates' remains an empty list []
-                
+            updates = list(existing_updates)
         except Exception as e:
             print(f"Error loading existing updates: {e}")
             
@@ -111,7 +96,6 @@ def fetch_health_updates():
         
         if not feed_items:
             print("No links found on PIB page.")
-            _generate_fallback_data(updates)
             return
             
         filter_prompt = f"""
@@ -143,13 +127,15 @@ def fetch_health_updates():
         print("Filtering relevant Community Medicine articles with Gemini...")
         selected_ids_response = call_gemini(filter_prompt)
         
-        if not selected_ids_response:
+        if selected_ids_response is None:
             print("Failed to filter articles.")
-            _generate_fallback_data(updates)
             return
             
         selected_ids = [item['id'] for item in selected_ids_response if 'id' in item]
         selected_items = [item for item in feed_items if item['id'] in selected_ids]
+        if not selected_items:
+            print("No relevant public-health updates selected this run. Leaving updates feed unchanged.")
+            return
         
         today_date = datetime.now().strftime('%Y-%m-%d')
         
@@ -204,13 +190,14 @@ def fetch_health_updates():
                 
     except requests.exceptions.RequestException as e:
         print(f"Error fetching PIB feed: {e}")
+        return
     except Exception as e:
          print(f"An unexpected error occurred: {e}")
+         return
 
-    # Fallback Data
-    if not updates:
-        print("Warning: Could not parse articles. Using fallback data.")
-        _generate_fallback_data(updates)
+    if updates == existing_updates:
+        print("No new updates detected. updates.json unchanged.")
+        return
 
     # Output to File
     os.makedirs(output_dir, exist_ok=True)
@@ -219,18 +206,6 @@ def fetch_health_updates():
         json.dump(updates, f, indent=4)
         
     print(f"Successfully saved {len(updates)} updates to {output_path}")
-
-def _generate_fallback_data(updates_list):
-    """Provides fallback data if scraping fails."""
-    today_date = datetime.now().strftime('%Y-%m-%d')
-    updates_list.extend([
-        {
-            "id": str(uuid.uuid4()),
-            "date": today_date,
-            "title": "Ministry of Health Outlines New Telemedicine Guidelines",
-            "summary": "To improve rural healthcare access, the Ministry of Health and Family Welfare (MoHFW) has released updated guidelines for telemedicine practitioners. The new mandate expands the list of prescribable medications and introduces mandatory cyber-security training for registered doctors using diagnostic platforms. These measures aim to bridge the urban-rural divide while ensuring patient data protection and standardized tele-consultation practices nationwide."
-        }
-    ])
 
 if __name__ == "__main__":
     fetch_health_updates()
