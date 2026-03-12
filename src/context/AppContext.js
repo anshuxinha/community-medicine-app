@@ -493,7 +493,17 @@ export const AppProvider = ({ children }) => {
         if (Constants.appOwnership === 'expo') return;
 
         if (Purchases) {
-            Purchases.configure({ apiKey: process.env.EXPO_PUBLIC_RC_API_KEY || "test_vulmIhXWwQBkNrLyBuwhSPgPwut" });
+            const rcApiKey = process.env.EXPO_PUBLIC_RC_API_KEY;
+            const isTestKey = typeof rcApiKey === 'string' && rcApiKey.startsWith('test_');
+            const isProdRuntime = !__DEV__;
+
+            // Never initialize production builds with test keys.
+            if (!rcApiKey || (isProdRuntime && isTestKey)) {
+                console.warn('RevenueCat initialization skipped: missing or non-production API key.');
+                return;
+            }
+
+            Purchases.configure({ apiKey: rcApiKey });
 
             Purchases.addCustomerInfoUpdateListener((info) => {
                 if (info.entitlements.active['Premium'] !== undefined) {
