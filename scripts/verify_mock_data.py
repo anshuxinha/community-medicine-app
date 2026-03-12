@@ -1,6 +1,8 @@
 import json
 import os
 import time
+import uuid
+from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 import requests  # type: ignore
@@ -22,6 +24,12 @@ REQUEST_TIMEOUT_SECONDS = int(os.environ.get("GEMINI_TIMEOUT_SECONDS", "60"))
 
 MOCK_DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "src", "data", "mockData.json")
 PRACTICAL_DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "src", "data", "practical.json")
+UPDATES_FEED_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "src", "data", "updates.json")
+VERIFY_TARGET_ROOT_IDS = {
+    item.strip()
+    for item in os.environ.get("VERIFY_TARGET_ROOT_IDS", "7,8").split(",")
+    if item.strip()
+}
 
 GEMINI_FATAL_ERROR: Optional[str] = None
 
@@ -163,7 +171,21 @@ def process_file_verification(file_path: str) -> None:
             data: List[Dict[str, Any]] = json.load(file)
 
         filename = os.path.basename(file_path)
+        if filename != "mockData.json":
+            print(f"\n--- Skipping {filename}: only mockData IDs {sorted(VERIFY_TARGET_ROOT_IDS)} are verified in this workflow ---")
+            return
+
         print(f"\n--- Verifying {filename} ({len(data)} chapters) ---")
+
+        target_root_items = [item for item in data if str(item.get("id")) in VERIFY_TARGET_ROOT_IDS]
+        if not target_root_items:
+            print(f"No matching target IDs found in {filename}.")
+            return
+
+        print(
+            "Target scope: "
+            + ", ".join(f"{item.get('id')}: {item.get('title', 'Unknown')}" for item in target_root_items)
+        )
 
         def strip_recently_updated(items: List[Dict[str, Any]]) -> None:
             for item in items:
@@ -172,9 +194,10 @@ def process_file_verification(file_path: str) -> None:
                 if "subsections" in item:
                     strip_recently_updated(item["subsections"])
 
-        strip_recently_updated(data)
+        strip_recently_updated(target_root_items)
 
         updates_made = 0
+        updated_titles: List[str] = []
 
         def verify_item_recursively(item: Dict[str, Any], index_str: str) -> None:
             nonlocal updates_made
@@ -187,6 +210,7 @@ def process_file_verification(file_path: str) -> None:
                     item["content"] = new_content
                     item["recentlyUpdated"] = True
                     updates_made += 1
+                    updated_titles.append(item.get("title", "Unknown"))
                     print(f"  -> Updates found and applied to {item.get('title', 'Unknown')}.")
 
                 # Small delay per call to reduce API rate limiting.
@@ -196,14 +220,15 @@ def process_file_verification(file_path: str) -> None:
                 for sub_index, subsection in enumerate(item["subsections"]):
                     verify_item_recursively(subsection, f"{index_str}.{sub_index + 1}")
 
-        for index, item in enumerate(data):
-            verify_item_recursively(item, str(index + 1))
+        for item in target_root_items:
+            verify_item_recursively(item, str(item.get("id", "Unknown")))
 
         if updates_made > 0:
             print(f"\nVerification complete for {filename}. {updates_made} sections were updated.")
             with open(file_path, "w", encoding="utf-8") as file:
                 json.dump(data, file, indent=4, ensure_ascii=False)
             print(f"Successfully wrote updated data to {filename}.")
+            append_dashboard_update_entry(sorted(set(updated_titles)))
         else:
             print(f"\nVerification complete for {filename}. No factual changes were needed.")
 
@@ -218,6 +243,47 @@ def process_file_verification(file_path: str) -> None:
 def verify_and_update_all() -> None:
     process_file_verification(MOCK_DATA_PATH)
     process_file_verification(PRACTICAL_DATA_PATH)
+
+
+def append_dashboard_update_entry(updated_titles: List[str]) -> None:
+    try:
+        if not updated_titles:
+            return
+
+        title_count = len(updated_titles)
+        preview = ", ".join(updated_titles[:6])
+        extra = title_count - min(title_count, 6)
+        if extra > 0:
+            preview = f"{preview}, +{extra} more"
+
+        update_item = {
+            "id": str(uuid.uuid4()),
+            "date": datetime.utcnow().strftime("%Y-%m-%d"),
+            "title": "Weekly Academic Update: Health Programmes and Family Planning",
+            "summary": (
+                f"{title_count} section(s) were revised under Chapter 7 (Health Programmes in India) "
+                f"and Chapter 8 (Demography and Family Planning). Key revised topics: {preview}. "
+                "This update is intended for MD Community Medicine learners for rapid revision of policy- and programme-linked content."
+            ),
+            "source": "Automated weekly verification pipeline using current public-health guidance available at verification time.",
+            "category": "Academic Content Update",
+            "updatedItems": updated_titles,
+        }
+
+        existing_updates: List[Dict[str, Any]] = []
+        if os.path.exists(UPDATES_FEED_PATH):
+            with open(UPDATES_FEED_PATH, "r", encoding="utf-8") as file:
+                existing_updates = json.load(file)
+
+        existing_updates = [u for u in existing_updates if u.get("title") != update_item["title"]]
+        existing_updates.insert(0, update_item)
+
+        with open(UPDATES_FEED_PATH, "w", encoding="utf-8") as file:
+            json.dump(existing_updates, file, indent=4, ensure_ascii=False)
+
+        print(f"Dashboard updates feed refreshed at {UPDATES_FEED_PATH}.")
+    except Exception as exc:
+        print(f"Failed to append dashboard update entry: {exc}")
 
 
 if __name__ == "__main__":

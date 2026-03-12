@@ -29,14 +29,39 @@ jobs:
         run: python scripts/verify_mock_data.py
         env:
           GOOGLE_GEMINI_KEY: ${{ secrets.GOOGLE_GEMINI_KEY }}
+          VERIFY_TARGET_ROOT_IDS: "7,8"
 
       - name: Commit and Push Changes
+        id: commit_changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add src/data/mockData.json src/data/practical.json
+          git add src/data/mockData.json src/data/updates.json
           # Commit only if there are changes
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore(data): Automated weekly medical verification by Gemini AI" && git push)
+          if git diff --staged --quiet; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            echo "No changes to commit"
+          else
+            git commit -m "chore(data): Weekly verification for IDs 7 and 8"
+            git push
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Node
+        if: ${{ steps.commit_changes.outputs.has_changes == 'true' && secrets.EXPO_TOKEN != '' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install JS Dependencies
+        if: ${{ steps.commit_changes.outputs.has_changes == 'true' && secrets.EXPO_TOKEN != '' }}
+        run: npm ci
+
+      - name: Publish OTA Update
+        if: ${{ steps.commit_changes.outputs.has_changes == 'true' && secrets.EXPO_TOKEN != '' }}
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: npx eas-cli update --channel production --message "Weekly verified updates for IDs 7 and 8" --non-interactive
           
       - name: Broadcast Push Notifications
         run: python scripts/push_notifications.py

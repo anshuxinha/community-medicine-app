@@ -154,10 +154,16 @@ const DashboardScreen = ({ navigation }) => {
                     <Card key={update.id} style={styles.updateCard}>
                         <Card.Content>
                             <Text variant="labelSmall" style={styles.dateText}>{update.date}</Text>
+                            {update.category ? (
+                                <Text variant="labelSmall" style={styles.updateCategory}>{update.category}</Text>
+                            ) : null}
                             <Text variant="titleMedium" style={styles.updateTitle}>{update.title}</Text>
                             <Text variant="bodyMedium" style={styles.updateSummary}>
                                 {update.summary.length > 100 ? `${update.summary.substring(0, 100)}...` : update.summary}
                             </Text>
+                            {update.source ? (
+                                <Text variant="labelSmall" style={styles.updateSource}>Source: {update.source}</Text>
+                            ) : null}
                         </Card.Content>
                         <Card.Actions>
                             <Button textColor={theme.colors.secondary} onPress={() => showDialog(update)} mode="text" compact>
@@ -175,6 +181,16 @@ const DashboardScreen = ({ navigation }) => {
                         <Text variant="labelSmall" style={{ marginBottom: 16, color: theme.colors.primary, fontWeight: 'bold' }}>
                             {selectedUpdate?.date}
                         </Text>
+                        {selectedUpdate?.source ? (
+                            <Text variant="labelSmall" style={{ marginBottom: 8, color: theme.colors.textSecondary }}>
+                                Source: {selectedUpdate.source}
+                            </Text>
+                        ) : null}
+                        {Array.isArray(selectedUpdate?.updatedItems) && selectedUpdate.updatedItems.length > 0 ? (
+                            <Text variant="bodySmall" style={{ marginBottom: 8, color: theme.colors.textSecondary }}>
+                                Updated topics: {selectedUpdate.updatedItems.join(', ')}
+                            </Text>
+                        ) : null}
                         <Paragraph style={{ lineHeight: 22 }}>{selectedUpdate?.summary}</Paragraph>
                         {selectedUpdate?.link && (
                             <Button
@@ -384,6 +400,16 @@ const styles = StyleSheet.create({
     updateSummary: {
         color: theme.colors.textTertiary,
         lineHeight: 22,
+    },
+    updateCategory: {
+        color: theme.colors.secondary,
+        fontWeight: '700',
+        marginBottom: 4,
+        textTransform: 'uppercase',
+    },
+    updateSource: {
+        marginTop: 8,
+        color: theme.colors.textSecondary,
     },
     healthDaysListContent: {
         paddingHorizontal: 16,

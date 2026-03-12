@@ -6,6 +6,13 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import theoryTopics from '../data/mockData.json';
 import practicalTopics from '../data/practical.json';
 
+const SECTION_ID_ICON_MAP = {
+    'theory:27': 'clipboard-text-search-outline',
+    'practical:29': 'clipboard-text-search-outline',
+    'practical:30': 'map-marker-path',
+    'practical:31': 'calendar-heart',
+};
+
 const LibraryScreen = (props) => {
     const { navigation } = props;
     const [searchQuery, setSearchQuery] = useState('');
@@ -59,7 +66,10 @@ const LibraryScreen = (props) => {
                     keyExtractor={(item) => item.id}
                     renderItem={({ item, index }) => {
                         // Map specific icons to specific topics for better relevance
-                        const getIconForTopic = (title) => {
+                        const getIconForTopic = (section, id, title) => {
+                            const idMapped = SECTION_ID_ICON_MAP[`${section}:${id}`];
+                            if (idMapped) return idMapped;
+
                             const t = title.toLowerCase();
                             if (t.includes('concept of health')) return 'leaf';
                             if (t.includes('epidemiology')) return 'chart-line-variant';
@@ -117,7 +127,7 @@ const LibraryScreen = (props) => {
                             return 'book-open-outline'; // Default fallback
                         };
 
-                        const iconName = getIconForTopic(item.title);
+                        const iconName = getIconForTopic(activeSection, item.id, item.title);
                         return (
                             <List.Item
                                 title={item.title}

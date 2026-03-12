@@ -161,7 +161,7 @@ const ReadingView = ({
         <View style={styles.container}>
             {/* Header row: title + action buttons */}
             <View style={styles.headerRow}>
-                <Text style={styles.headerTitle} numberOfLines={2}>{title || ''}</Text>
+                <Text style={styles.headerTitle}>{title || ''}</Text>
                 <View style={styles.fabRow}>
                     <TouchableOpacity
                         style={styles.fabBtn}
@@ -219,10 +219,10 @@ const styles = StyleSheet.create({
     },
     headerRow: {
         flexDirection: 'row',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         justifyContent: 'space-between',
         paddingHorizontal: 16,
-        paddingVertical: 10,
+        paddingVertical: 12,
         borderBottomWidth: 1,
         borderBottomColor: theme.colors.surfaceSecondary,
         backgroundColor: theme.colors.surfacePrimary,
@@ -232,8 +232,9 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 15,
         fontWeight: '700',
+        lineHeight: 21,
         color: theme.colors.textTitle,
-        marginRight: 8,
+        marginRight: 12,
     },
     progressBarBackground: {
         height: 3,

@@ -1,8 +1,41 @@
 import React from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
 import { Text, List, Divider, Badge } from 'react-native-paper';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { theme } from '../styles/theme';
+
+const TOPIC_ID_ICON_MAP = {
+    '27-1': 'chart-line-variant',
+    '27-2': 'file-document-edit-outline',
+    '27-3': 'hospital-building',
+    '27-4': 'clipboard-check-outline',
+    '27-5': 'calendar-check-outline',
+    '27-6': 'monitor-dashboard',
+    '27-7': 'hospital-box-outline',
+    '27-8': 'radar',
+    '27-9': 'alert-outline',
+    '27-10': 'biohazard',
+    '27-11': 'scale-balance',
+    '27-12': 'earth',
+};
+
+const getIconForSubtopic = (item) => {
+    const mapped = TOPIC_ID_ICON_MAP[item?.id];
+    if (mapped) return mapped;
+
+    const t = (item?.title || '').toLowerCase();
+    if (t.includes('tuberculosis') || t.includes('ntep')) return 'lungs';
+    if (t.includes('mental')) return 'brain';
+    if (t.includes('blindness') || t.includes('eye')) return 'eye-outline';
+    if (t.includes('immunization') || t.includes('vaccin')) return 'needle';
+    if (t.includes('family planning') || t.includes('contraceptive')) return 'home-heart';
+    if (t.includes('demography') || t.includes('fertility')) return 'account-group-outline';
+    if (t.includes('biostatistics') || t.includes('chi-square') || t.includes('sampling')) return 'chart-bell-curve-cumulative';
+    if (t.includes('epidemiology') || t.includes('surveillance')) return 'chart-timeline-variant';
+    if (t.includes('disaster')) return 'alert-outline';
+    if (t.includes('waste')) return 'delete-outline';
+    return 'file-document-outline';
+};
 
 const SubTopicsScreen = ({ route, navigation }) => {
     const { title, items } = route.params;
@@ -18,7 +51,18 @@ const SubTopicsScreen = ({ route, navigation }) => {
                         titleStyle={styles.itemTitle}
                         description={item.description}
                         descriptionStyle={styles.itemDescription}
-                        left={props => <List.Icon {...props} icon={({ color }) => <MaterialIcons name="description" size={24} color={theme.colors.secondary} />} />}
+                        left={props => (
+                            <List.Icon
+                                {...props}
+                                icon={({ color }) => (
+                                    <MaterialCommunityIcons
+                                        name={getIconForSubtopic(item)}
+                                        size={24}
+                                        color={theme.colors.secondary}
+                                    />
+                                )}
+                            />
+                        )}
                         right={props => item.recentlyUpdated ? <Badge {...props} style={[styles.badge, props.style]}>NEW</Badge> : null}
                         onPress={() => {
                             if (item.subsections) {
