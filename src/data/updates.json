@@ -1,5 +1,28 @@
 [
     {
+        "id": "6c4306bb-b9eb-49ba-a049-fb8d2247346f",
+        "date": "2026-03-12",
+        "title": "Weekly Academic Update: Health Programmes and Family Planning",
+        "summary": "13 section(s) were revised under Chapter 7 (Health Programmes in India) and Chapter 8 (Demography and Family Planning). Key revised topics: Contraceptive Methods Part 1: Spacing Methods and Intra-Uterine Devices, Contraceptive Methods Part 2: Hormonal and Non-Hormonal Methods, Demographic Indicators, Surveys, and Registration Systems, Demography Basics and Demographic Trends, Evaluation, Unmet Need, Delivery System, and New Initiatives, Family Planning, National Population Policy, and Fertility Indicators, +7 more. This update is intended for MD Community Medicine learners for rapid revision of policy- and programme-linked content.",
+        "source": "Automated weekly verification pipeline using current public-health guidance available at verification time.",
+        "category": "Academic Content Update",
+        "updatedItems": [
+            "Contraceptive Methods Part 1: Spacing Methods and Intra-Uterine Devices",
+            "Contraceptive Methods Part 2: Hormonal and Non-Hormonal Methods",
+            "Demographic Indicators, Surveys, and Registration Systems",
+            "Demography Basics and Demographic Trends",
+            "Evaluation, Unmet Need, Delivery System, and New Initiatives",
+            "Family Planning, National Population Policy, and Fertility Indicators",
+            "National Center for Vector Borne Diseases Control (NCVBDC)",
+            "National Leprosy Eradication Programme (NLEP)",
+            "National Programme for Prevention and Control of Non-Communicable Diseases (NP-NCD)",
+            "National Rabies Control Programme (NRCP)",
+            "Post-Conceptional, Miscellaneous, and Terminal Methods",
+            "Specialized Target Programmes (NIDDCP, NPPCF, PMNDP)",
+            "Universal Immunization Programme (UIP) and Mission Indradhanush"
+        ]
+    },
+    {
         "id": "43e92a41-795a-4b95-a317-bdae7f6166da",
         "date": "2026-03-09",
         "title": "TRAI Assesses Network Quality at Key Puducherry Medical Facilities",
