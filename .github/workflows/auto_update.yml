@@ -47,18 +47,30 @@ jobs:
             echo "has_changes=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Check Expo Token
+        id: expo_token_check
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "has_token=false" >> "$GITHUB_OUTPUT"
+            echo "EXPO_TOKEN not set; OTA publish will be skipped."
+          else
+            echo "has_token=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Set up Node
-        if: ${{ steps.commit_changes.outputs.has_changes == 'true' && secrets.EXPO_TOKEN != '' }}
+        if: ${{ steps.commit_changes.outputs.has_changes == 'true' && steps.expo_token_check.outputs.has_token == 'true' }}
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
       - name: Install JS Dependencies
-        if: ${{ steps.commit_changes.outputs.has_changes == 'true' && secrets.EXPO_TOKEN != '' }}
+        if: ${{ steps.commit_changes.outputs.has_changes == 'true' && steps.expo_token_check.outputs.has_token == 'true' }}
         run: npm ci
 
       - name: Publish OTA Update
-        if: ${{ steps.commit_changes.outputs.has_changes == 'true' && secrets.EXPO_TOKEN != '' }}
+        if: ${{ steps.commit_changes.outputs.has_changes == 'true' && steps.expo_token_check.outputs.has_token == 'true' }}
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: npx eas-cli update --channel production --message "Weekly dashboard guideline updates" --non-interactive
