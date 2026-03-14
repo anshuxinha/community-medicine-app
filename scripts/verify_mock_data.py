@@ -91,6 +91,21 @@ VOLATILE_KEYWORDS = (
     "waste management",
 )
 
+UPDATE_SENSITIVE_TOKEN_RE = re.compile(
+    r"""
+    (?:₹\s*\d[\d,]*(?:\.\d+)?)
+    |(?:\b(?:rs\.?|inr)\s*\d[\d,]*(?:\.\d+)?)
+    |(?:\b(?:<=|>=|<|>)?\s*\d+(?:\.\d+)?(?:\s*-\s*\d+(?:\.\d+)?)?\s*
+        (?:%|percent|mg|g|kg|mcg|ml|l|days?|weeks?|months?|years?|hrs?|hours?|minutes?|
+        lakhs?|crores?|million|billion|beds?)\b)
+    |(?:\b\d+(?:\.\d+)?/\d+(?:,\d{3})*(?:\.\d+)?\b)
+    |(?:\b\d+(?:\.\d+)?[A-Za-z]{1,6}\b)
+    |(?:\b[A-Za-z]+\d+[A-Za-z]*\b)
+    |(?:\b(?:<=|>=|<|>)?\s*\d[\d,]*(?:\.\d+)?\b)
+    """,
+    re.IGNORECASE | re.VERBOSE,
+)
+
 
 def _build_gemini_url(model: str, api_version: str) -> str:
     return (
@@ -147,6 +162,39 @@ def _extract_json_payload(text: str) -> Optional[Any]:
 
 def _normalize_whitespace(value: str) -> str:
     return re.sub(r"\s+", " ", value).strip()
+
+
+def _line_shape_without_sensitive_tokens(value: str) -> str:
+    collapsed = UPDATE_SENSITIVE_TOKEN_RE.sub("<VALUE>", value)
+    return _normalize_whitespace(collapsed).lower()
+
+
+def _minimal_sensitive_token_update(original_line: str, replacement_line: str) -> Optional[str]:
+    original_matches = list(UPDATE_SENSITIVE_TOKEN_RE.finditer(original_line))
+    replacement_matches = list(UPDATE_SENSITIVE_TOKEN_RE.finditer(replacement_line))
+    if not original_matches or len(original_matches) != len(replacement_matches):
+        return None
+
+    if _line_shape_without_sensitive_tokens(original_line) != _line_shape_without_sensitive_tokens(replacement_line):
+        return None
+
+    pieces: List[str] = []
+    cursor = 0
+    changed = False
+
+    for original_match, replacement_match in zip(original_matches, replacement_matches):
+        pieces.append(original_line[cursor:original_match.start()])
+        replacement_token = replacement_match.group(0)
+        pieces.append(replacement_token)
+        if original_match.group(0) != replacement_token:
+            changed = True
+        cursor = original_match.end()
+
+    pieces.append(original_line[cursor:])
+    if not changed:
+        return None
+
+    return "".join(pieces)
 
 
 def _is_heading_like(line: str) -> bool:
@@ -326,7 +374,8 @@ RULES:
      "source": "one authoritative source name or URL"
    }}
 4. Preserve exam-oriented wording and formatting style.
-5. If unsure, do not guess. Omit that line.
+5. If the correction is only a money amount, year, percentage, count, dose, or similar factual token, keep the rest of the line unchanged.
+6. If unsure, do not guess. Omit that line.
 
 Claim lines:
 {json.dumps(claim_lines, ensure_ascii=False, indent=2)}
@@ -381,8 +430,12 @@ def _apply_corrections(text_content: str, corrections: List[Dict[str, str]]) -> 
         if matched_line is None:
             continue
 
-        leading_whitespace = matched_line[: len(matched_line) - len(matched_line.lstrip())]
-        replacement_line = f"{leading_whitespace}{replacement}"
+        minimal_replacement = _minimal_sensitive_token_update(matched_line, replacement)
+        if minimal_replacement is not None:
+            replacement_line = minimal_replacement
+        else:
+            leading_whitespace = matched_line[: len(matched_line) - len(matched_line.lstrip())]
+            replacement_line = f"{leading_whitespace}{replacement}"
         updated_content = updated_content.replace(matched_line, replacement_line, 1)
         used_originals.add(original)
         applied.append(correction)
