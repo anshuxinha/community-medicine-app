@@ -15,7 +15,7 @@ MODEL_CANDIDATES = [
     model.strip()
     for model in os.environ.get(
         "GEMINI_MODELS",
-        "gemini-2.5-flash,gemini-2.0-flash,gemini-1.5-flash",
+        "gemini-3-flash-preview,gemini-2.0-flash,gemini-1.5-flash",
     ).split(",")
     if model.strip()
 ]
