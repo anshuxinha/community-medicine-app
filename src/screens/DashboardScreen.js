@@ -62,6 +62,8 @@ const DashboardScreen = ({ navigation }) => {
         return new Date().toLocaleDateString(undefined, options);
     };
 
+    const visibleUpdates = recentUpdates.filter((update) => update.category !== 'Academic Content Update');
+
     return (
         <SafeAreaView style={styles.safeArea}>
             {/* Animated side drawer */}
@@ -150,7 +152,7 @@ const DashboardScreen = ({ navigation }) => {
                     Latest Guidelines and Updates
                 </Text>
 
-                {recentUpdates.map((update) => (
+                {visibleUpdates.map((update) => (
                     <Card key={update.id} style={styles.updateCard}>
                         <Card.Content>
                             <Text variant="labelSmall" style={styles.dateText}>{update.date}</Text>

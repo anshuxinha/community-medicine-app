@@ -1,71 +1,155 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Image, ActivityIndicator } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { View, StyleSheet, ScrollView, Image, ActivityIndicator, Modal, Pressable, useWindowDimensions } from 'react-native';
 import { Text, Card, Chip, Divider } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { MUSEUM_ITEMS, CATEGORIES } from '../data/museumData';
 import { theme } from '../styles/theme';
 
+const MIN_ZOOM = 1;
+const MAX_ZOOM = 3;
+const ZOOM_STEP = 0.5;
+
 // Individual card component to manage its own image loading state
 const MuseumCard = ({ item }) => {
     const [expanded, setExpanded] = useState(false);
     const [imageLoading, setImageLoading] = useState(true);
     const [imageError, setImageError] = useState(false);
+    const [viewerVisible, setViewerVisible] = useState(false);
+    const [zoomScale, setZoomScale] = useState(MIN_ZOOM);
+    const { width, height } = useWindowDimensions();
+
+    useEffect(() => {
+        if (!viewerVisible) {
+            setZoomScale(MIN_ZOOM);
+        }
+    }, [viewerVisible]);
+
+    const viewportWidth = Math.max(width - 32, 240);
+    const viewportHeight = Math.max(height - 220, 260);
+    const zoomedImageSize = useMemo(() => ({
+        width: viewportWidth * zoomScale,
+        height: viewportHeight * zoomScale,
+    }), [viewportHeight, viewportWidth, zoomScale]);
 
     return (
-        <Card style={styles.card} onPress={() => setExpanded(!expanded)}>
-            {/* Header */}
-            <View style={styles.cardHeader}>
-                <View style={styles.cardHeaderLeft}>
-                    <Text style={styles.cardTitle}>{item.emoji}  {item.title}</Text>
-                    <Text style={styles.cardSubtitle}>{item.category}</Text>
-                </View>
-                <MaterialIcons
-                    name={expanded ? 'expand-less' : 'expand-more'}
-                    size={26}
-                    color={theme.colors.secondary}
-                />
-            </View>
-
-            {/* Expanded content */}
-            {expanded && (
-                <Card.Content style={styles.expandedContent}>
-                    <Divider style={{ marginBottom: 12 }} />
-
-                    {/* Image area */}
-                    {item.image && !imageError ? (
-                        <View style={styles.imageWrapper}>
-                            {imageLoading && (
-                                <View style={styles.imageLoadingOverlay}>
-                                    <ActivityIndicator size="large" color={theme.colors.secondary} />
-                                </View>
-                            )}
-                            <Image
-                                source={{ uri: item.image }}
-                                style={[styles.itemImage, imageLoading && { opacity: 0 }]}
-                                resizeMode="contain"
-                                onLoad={() => setImageLoading(false)}
-                                onError={() => { setImageError(true); setImageLoading(false); }}
-                            />
-                        </View>
-                    ) : (
-                        <View style={styles.imagePlaceholder}>
-                            <Text style={styles.placeholderEmoji}>{item.emoji}</Text>
-                            <Text style={styles.placeholderText}>
-                                {item.image && imageError ? 'Could not load image' : 'Image coming soon'}
-                            </Text>
-                        </View>
-                    )}
-
-                    <Text style={styles.description}>{item.description}</Text>
-
-                    <View style={styles.keyFactBox}>
-                        <MaterialIcons name="lightbulb" size={16} color={theme.colors.accent} />
-                        <Text style={styles.keyFactText}> {item.keyFact}</Text>
+        <>
+            <Card style={styles.card} onPress={() => setExpanded(!expanded)}>
+                {/* Header */}
+                <View style={styles.cardHeader}>
+                    <View style={styles.cardHeaderLeft}>
+                        <Text style={styles.cardTitle}>{item.emoji}  {item.title}</Text>
+                        <Text style={styles.cardSubtitle}>{item.category}</Text>
                     </View>
-                </Card.Content>
-            )}
-        </Card>
+                    <MaterialIcons
+                        name={expanded ? 'expand-less' : 'expand-more'}
+                        size={26}
+                        color={theme.colors.secondary}
+                    />
+                </View>
+
+                {/* Expanded content */}
+                {expanded && (
+                    <Card.Content style={styles.expandedContent}>
+                        <Divider style={styles.contentDivider} />
+
+                        {/* Image area */}
+                        {item.image && !imageError ? (
+                            <Pressable style={styles.imageWrapper} onPress={() => setViewerVisible(true)}>
+                                {imageLoading && (
+                                    <View style={styles.imageLoadingOverlay}>
+                                        <ActivityIndicator size="large" color={theme.colors.secondary} />
+                                    </View>
+                                )}
+                                <Image
+                                    source={{ uri: item.image }}
+                                    style={[styles.itemImage, imageLoading && { opacity: 0 }]}
+                                    resizeMode="contain"
+                                    onLoad={() => setImageLoading(false)}
+                                    onError={() => { setImageError(true); setImageLoading(false); }}
+                                />
+                                <View style={styles.fullscreenIconButton}>
+                                    <MaterialIcons name="fullscreen" size={20} color="#FFFFFF" />
+                                </View>
+                            </Pressable>
+                        ) : (
+                            <View style={styles.imagePlaceholder}>
+                                <Text style={styles.placeholderEmoji}>{item.emoji}</Text>
+                                <Text style={styles.placeholderText}>
+                                    {item.image && imageError ? 'Could not load image' : 'Image coming soon'}
+                                </Text>
+                            </View>
+                        )}
+
+                        <Text style={styles.imageHint}>Tap the image to open and zoom.</Text>
+                        <Text style={styles.description}>{item.description}</Text>
+                    </Card.Content>
+                )}
+            </Card>
+
+            <Modal
+                visible={viewerVisible}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setViewerVisible(false)}
+            >
+                <View style={styles.viewerBackdrop}>
+                    <SafeAreaView style={styles.viewerSafeArea}>
+                        <View style={styles.viewerHeader}>
+                            <Text style={styles.viewerTitle} numberOfLines={2}>{item.title}</Text>
+                            <Pressable
+                                accessibilityRole="button"
+                                onPress={() => setViewerVisible(false)}
+                                style={styles.viewerCloseButton}
+                            >
+                                <MaterialIcons name="close" size={24} color="#FFFFFF" />
+                            </Pressable>
+                        </View>
+
+                        <View style={styles.viewerBody}>
+                            <ScrollView
+                                horizontal
+                                bounces={false}
+                                contentContainerStyle={styles.viewerOuterScrollContent}
+                                maximumZoomScale={MAX_ZOOM}
+                                minimumZoomScale={MIN_ZOOM}
+                            >
+                                <ScrollView
+                                    bounces={false}
+                                    contentContainerStyle={styles.viewerInnerScrollContent}
+                                >
+                                    <Image
+                                        source={{ uri: item.image }}
+                                        style={zoomedImageSize}
+                                        resizeMode="contain"
+                                    />
+                                </ScrollView>
+                            </ScrollView>
+                        </View>
+
+                        <View style={styles.viewerControls}>
+                            <Pressable
+                                accessibilityRole="button"
+                                disabled={zoomScale <= MIN_ZOOM}
+                                onPress={() => setZoomScale((current) => Math.max(MIN_ZOOM, current - ZOOM_STEP))}
+                                style={[styles.viewerControlButton, zoomScale <= MIN_ZOOM && styles.viewerControlButtonDisabled]}
+                            >
+                                <MaterialIcons name="remove" size={22} color="#FFFFFF" />
+                            </Pressable>
+                            <Text style={styles.viewerZoomLabel}>{Math.round(zoomScale * 100)}%</Text>
+                            <Pressable
+                                accessibilityRole="button"
+                                disabled={zoomScale >= MAX_ZOOM}
+                                onPress={() => setZoomScale((current) => Math.min(MAX_ZOOM, current + ZOOM_STEP))}
+                                style={[styles.viewerControlButton, zoomScale >= MAX_ZOOM && styles.viewerControlButtonDisabled]}
+                            >
+                                <MaterialIcons name="add" size={22} color="#FFFFFF" />
+                            </Pressable>
+                        </View>
+                    </SafeAreaView>
+                </View>
+            </Modal>
+        </>
     );
 };
 
@@ -83,7 +167,7 @@ const VirtualMuseumScreen = () => {
             <ScrollView contentContainerStyle={styles.container}>
                 <Text style={styles.headerText}>🏛️ Virtual Museum</Text>
                 <Text style={styles.subText}>
-                    Tap any spotter to see its image and key public-health facts.
+                    Tap any spotter to view its image and description.
                 </Text>
 
                 {/* Category filter chips */}
@@ -128,15 +212,97 @@ const styles = StyleSheet.create({
     cardTitle: { fontSize: 15, fontWeight: 'bold', color: theme.colors.textTitle, marginBottom: 2 },
     cardSubtitle: { color: theme.colors.secondary, fontSize: 11, fontWeight: '600' },
     expandedContent: { paddingTop: 0, paddingBottom: 14 },
+    contentDivider: { marginBottom: 12 },
     imageWrapper: { width: '100%', height: 200, marginBottom: 14, borderRadius: 10, overflow: 'hidden', backgroundColor: theme.colors.surfaceTertiary },
     imageLoadingOverlay: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.colors.surfaceSecondary },
     itemImage: { width: '100%', height: '100%' },
+    fullscreenIconButton: {
+        position: 'absolute',
+        right: 10,
+        bottom: 10,
+        width: 34,
+        height: 34,
+        borderRadius: 17,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(17, 24, 39, 0.72)',
+    },
     imagePlaceholder: { width: '100%', height: 140, borderRadius: 10, marginBottom: 14, backgroundColor: theme.colors.surfaceSecondary, alignItems: 'center', justifyContent: 'center' },
     placeholderEmoji: { fontSize: 48, marginBottom: 6 },
     placeholderText: { color: theme.colors.textPlaceholder, fontSize: 13 },
-    description: { color: '#374151', lineHeight: 22, marginBottom: 12 },
-    keyFactBox: { flexDirection: 'row', alignItems: 'flex-start', backgroundColor: theme.colors.warningBackground, padding: 10, borderRadius: 8 },
-    keyFactText: { color: theme.colors.warningText, fontSize: 13, flex: 1, lineHeight: 18 },
+    imageHint: { color: theme.colors.textTertiary, fontSize: 12, marginBottom: 10, marginTop: -2 },
+    description: { color: '#374151', lineHeight: 22 },
+    viewerBackdrop: {
+        flex: 1,
+        backgroundColor: 'rgba(3, 7, 18, 0.96)',
+    },
+    viewerSafeArea: {
+        flex: 1,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+    },
+    viewerHeader: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+        marginBottom: 16,
+    },
+    viewerTitle: {
+        flex: 1,
+        color: '#FFFFFF',
+        fontSize: 18,
+        fontWeight: '700',
+        lineHeight: 24,
+        marginRight: 12,
+    },
+    viewerCloseButton: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(255, 255, 255, 0.12)',
+    },
+    viewerBody: {
+        flex: 1,
+        borderRadius: 18,
+        overflow: 'hidden',
+        backgroundColor: '#111827',
+    },
+    viewerOuterScrollContent: {
+        flexGrow: 1,
+        justifyContent: 'center',
+    },
+    viewerInnerScrollContent: {
+        flexGrow: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    viewerControls: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 16,
+    },
+    viewerControlButton: {
+        width: 42,
+        height: 42,
+        borderRadius: 21,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(255, 255, 255, 0.14)',
+    },
+    viewerControlButtonDisabled: {
+        opacity: 0.4,
+    },
+    viewerZoomLabel: {
+        minWidth: 70,
+        textAlign: 'center',
+        color: '#FFFFFF',
+        fontWeight: '700',
+        fontSize: 14,
+        marginHorizontal: 16,
+    },
 });
 
 export default VirtualMuseumScreen;

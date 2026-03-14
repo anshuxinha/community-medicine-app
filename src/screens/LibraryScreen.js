@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, FlatList } from 'react-native';
 import { Text, List, Divider, Searchbar, SegmentedButtons } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import theoryTopics from '../data/mockData.json';
 import practicalTopics from '../data/practical.json';
@@ -17,6 +17,7 @@ const LibraryScreen = (props) => {
     const { navigation } = props;
     const [searchQuery, setSearchQuery] = useState('');
     const [activeSection, setActiveSection] = useState('theory');
+    const insets = useSafeAreaInsets();
 
     const currentTopics = activeSection === 'theory' ? theoryTopics : practicalTopics;
     const filteredTopics = currentTopics.filter(topic =>
@@ -64,7 +65,8 @@ const LibraryScreen = (props) => {
                 <FlatList
                     data={filteredTopics}
                     keyExtractor={(item) => item.id}
-                    renderItem={({ item, index }) => {
+                    style={styles.list}
+                    renderItem={({ item }) => {
                         // Map specific icons to specific topics for better relevance
                         const getIconForTopic = (section, id, title) => {
                             const idMapped = SECTION_ID_ICON_MAP[`${section}:${id}`];
@@ -162,6 +164,7 @@ const LibraryScreen = (props) => {
                         );
                     }}
                     ItemSeparatorComponent={() => <Divider style={styles.divider} />}
+                    contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + 88 }]}
                 />
             </View>
         </SafeAreaView>
@@ -205,6 +208,12 @@ const styles = StyleSheet.create({
     segmentedButtonsContainer: {
         paddingHorizontal: 16,
         marginBottom: 12,
+    },
+    list: {
+        flex: 1,
+    },
+    listContent: {
+        paddingBottom: 24,
     },
     listItem: {
         paddingVertical: 8,

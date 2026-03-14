@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
+import { StyleSheet, FlatList } from 'react-native';
 import { Text, List, Divider, Badge } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { theme } from '../styles/theme';
 
 const TOPIC_ID_ICON_MAP = {
@@ -38,13 +39,15 @@ const getIconForSubtopic = (item) => {
 };
 
 const SubTopicsScreen = ({ route, navigation }) => {
-    const { title, items } = route.params;
+    const { items } = route.params;
+    const insets = useSafeAreaInsets();
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container} edges={['bottom']}>
             <FlatList
                 data={items}
                 keyExtractor={(item) => item.id}
+                contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + 28 }]}
                 renderItem={({ item }) => (
                     <List.Item
                         title={item.title}
@@ -83,7 +86,7 @@ const SubTopicsScreen = ({ route, navigation }) => {
                 )}
                 ItemSeparatorComponent={Divider}
             />
-        </View>
+        </SafeAreaView>
     );
 };
 
@@ -91,6 +94,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: theme.colors.surfacePrimary,
+    },
+    listContent: {
+        paddingBottom: 16,
     },
     itemTitle: {
         color: theme.colors.textTitle,
