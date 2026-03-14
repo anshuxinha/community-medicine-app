@@ -13,8 +13,8 @@ import { theme } from '../styles/theme';
 
 // ── API config ────────────────────────────────────────────────────────────────
 const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || '';
-// Using gemini-3-flash-preview — supports Google Search Grounding
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${GEMINI_API_KEY}`;
+// Using gemini-2.5-flash to keep Google Search grounding on the free tier.
+const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
 // ── Context retrieval ─────────────────────────────────────────────────────────
 /**
