@@ -3,6 +3,7 @@ import os
 import re
 import time
 from datetime import datetime
+from difflib import SequenceMatcher
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 import requests  # type: ignore
@@ -32,6 +33,7 @@ VERIFY_MAX_CLAIMS_PER_ITEM = int(os.environ.get("VERIFY_MAX_CLAIMS_PER_ITEM", "1
 VERIFY_MAX_CLAIMS_PER_BATCH = int(os.environ.get("VERIFY_MAX_CLAIMS_PER_BATCH", "6"))
 VERIFY_MAX_BATCHES_PER_ITEM = int(os.environ.get("VERIFY_MAX_BATCHES_PER_ITEM", "3"))
 VERIFY_ENABLE_GROUNDING = os.environ.get("VERIFY_ENABLE_GROUNDING", "1") != "0"
+MIN_SAFE_LINE_REPLACEMENT_SIMILARITY = float(os.environ.get("VERIFY_MIN_SAFE_REPLACEMENT_SIMILARITY", "0.72"))
 
 TODAY_LABEL = datetime.utcnow().date().isoformat()
 GEMINI_FATAL_ERROR: Optional[str] = None
@@ -197,6 +199,24 @@ def _minimal_sensitive_token_update(original_line: str, replacement_line: str) -
     return "".join(pieces)
 
 
+def _is_safe_line_replacement(original_line: str, replacement_line: str) -> bool:
+    original_normalized = _normalize_whitespace(original_line)
+    replacement_normalized = _normalize_whitespace(replacement_line)
+    if not original_normalized or not replacement_normalized:
+        return False
+
+    if original_normalized == replacement_normalized:
+        return False
+
+    similarity = SequenceMatcher(None, original_normalized, replacement_normalized).ratio()
+    if similarity >= MIN_SAFE_LINE_REPLACEMENT_SIMILARITY:
+        return True
+
+    original_shape = _line_shape_without_sensitive_tokens(original_normalized)
+    replacement_shape = _line_shape_without_sensitive_tokens(replacement_normalized)
+    return bool(original_shape and replacement_shape and original_shape in replacement_shape)
+
+
 def _is_heading_like(line: str) -> bool:
     normalized = _normalize_whitespace(line)
     if not normalized:
@@ -360,22 +380,24 @@ You are an expert Indian Community Medicine and Public Health editor.
 Today is {TODAY_LABEL}.
 
 TASK:
-Verify the factual accuracy of the claim lines below for a medical learning app chapter titled "{item_title}".
+Verify the factual accuracy and factual completeness of the claim lines below for a medical learning app chapter titled "{item_title}".
 Use grounded web search if available and prioritize official Indian government, programme portals, Gazette notifications, MoHFW, NTEP/Nikshay, NHM, ICMR, WHO, and UN sources.
 
 RULES:
 1. Return ONLY a JSON array.
-2. Omit any line that is still accurate.
-3. For each outdated or inaccurate line, return:
+2. Omit any line that is still accurate and already complete enough.
+3. For each outdated, inaccurate, or materially incomplete line, return:
    {{
      "original": "exact original line from input",
      "replacement": "corrected line in the same concise style",
      "reason": "very short reason",
      "source": "one authoritative source name or URL"
    }}
-4. Preserve exam-oriented wording and formatting style.
-5. If the correction is only a money amount, year, percentage, count, dose, or similar factual token, keep the rest of the line unchanged.
-6. If unsure, do not guess. Omit that line.
+4. Only enrich a line if an important grounded factual value is missing, such as amount, target year, threshold, dose, duration, coverage figure, age cutoff, or validity period.
+5. Do not create new standalone bullets or new sections. Anchor every addition to an existing input line by returning a replacement for that exact line.
+6. Preserve exam-oriented wording and formatting style.
+7. If the correction is only a money amount, year, percentage, count, dose, or similar factual token, keep the rest of the line unchanged.
+8. If unsure, do not guess. Omit that line.
 
 Claim lines:
 {json.dumps(claim_lines, ensure_ascii=False, indent=2)}
@@ -434,6 +456,8 @@ def _apply_corrections(text_content: str, corrections: List[Dict[str, str]]) -> 
         if minimal_replacement is not None:
             replacement_line = minimal_replacement
         else:
+            if not _is_safe_line_replacement(matched_line, replacement):
+                continue
             leading_whitespace = matched_line[: len(matched_line) - len(matched_line.lstrip())]
             replacement_line = f"{leading_whitespace}{replacement}"
         updated_content = updated_content.replace(matched_line, replacement_line, 1)
