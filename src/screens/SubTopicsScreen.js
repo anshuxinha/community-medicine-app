@@ -1,9 +1,16 @@
-import React from 'react';
-import { StyleSheet, FlatList } from 'react-native';
+import React, { useContext } from 'react';
+import { View, StyleSheet, FlatList } from 'react-native';
 import { Text, List, Divider, Badge } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { theme } from '../styles/theme';
+import { AppContext } from '../context/AppContext';
+import {
+    getContentKey,
+    getContentSignature,
+    getItemStatus,
+    getUpdatedSegmentsForItem,
+} from '../utils/contentRegistry';
 
 const TOPIC_ID_ICON_MAP = {
     '27-1': 'chart-line-variant',
@@ -24,22 +31,51 @@ const getIconForSubtopic = (item) => {
     const mapped = TOPIC_ID_ICON_MAP[item?.id];
     if (mapped) return mapped;
 
-    const t = (item?.title || '').toLowerCase();
-    if (t.includes('tuberculosis') || t.includes('ntep')) return 'lungs';
-    if (t.includes('mental')) return 'brain';
-    if (t.includes('blindness') || t.includes('eye')) return 'eye-outline';
-    if (t.includes('immunization') || t.includes('vaccin')) return 'needle';
-    if (t.includes('family planning') || t.includes('contraceptive')) return 'home-heart';
-    if (t.includes('demography') || t.includes('fertility')) return 'account-group-outline';
-    if (t.includes('biostatistics') || t.includes('chi-square') || t.includes('sampling')) return 'chart-bell-curve-cumulative';
-    if (t.includes('epidemiology') || t.includes('surveillance')) return 'chart-timeline-variant';
-    if (t.includes('disaster')) return 'alert-outline';
-    if (t.includes('waste')) return 'delete-outline';
+    const loweredTitle = (item?.title || '').toLowerCase();
+    if (loweredTitle.includes('tuberculosis') || loweredTitle.includes('ntep')) return 'lungs';
+    if (loweredTitle.includes('mental')) return 'brain';
+    if (loweredTitle.includes('blindness') || loweredTitle.includes('eye')) return 'eye-outline';
+    if (loweredTitle.includes('immunization') || loweredTitle.includes('vaccin')) return 'needle';
+    if (loweredTitle.includes('family planning') || loweredTitle.includes('contraceptive')) return 'home-heart';
+    if (loweredTitle.includes('demography') || loweredTitle.includes('fertility')) return 'account-group-outline';
+    if (loweredTitle.includes('biostatistics') || loweredTitle.includes('chi-square') || loweredTitle.includes('sampling')) return 'chart-bell-curve-cumulative';
+    if (loweredTitle.includes('epidemiology') || loweredTitle.includes('surveillance')) return 'chart-timeline-variant';
+    if (loweredTitle.includes('disaster')) return 'alert-outline';
+    if (loweredTitle.includes('waste')) return 'delete-outline';
     return 'file-document-outline';
 };
 
+const StatusMark = ({ status }) => {
+    if (status === 'updated') {
+        return <Badge style={styles.newBadge}>NEW</Badge>;
+    }
+
+    if (status === 'read') {
+        return (
+            <View style={styles.readTickWrap}>
+                <MaterialCommunityIcons name="check" size={14} color={theme.colors.primaryDark} />
+            </View>
+        );
+    }
+
+    return null;
+};
+
+const buildReadingParams = (item, section, status) => ({
+    id: item.id,
+    title: item.title,
+    content: item.content || '# No Content\n\nThis topic has no content yet.',
+    quizzes: item.quizzes,
+    section,
+    contentKey: getContentKey(section, item.id),
+    contentSignature: getContentSignature(item),
+    updatedSegments: getUpdatedSegmentsForItem(item),
+    showUpdateHighlights: status === 'updated',
+});
+
 const SubTopicsScreen = ({ route, navigation }) => {
-    const { items } = route.params;
+    const { items, section = 'theory' } = route.params;
+    const { readItemVersions } = useContext(AppContext);
     const insets = useSafeAreaInsets();
 
     return (
@@ -48,42 +84,58 @@ const SubTopicsScreen = ({ route, navigation }) => {
                 data={items}
                 keyExtractor={(item) => item.id}
                 contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + 28 }]}
-                renderItem={({ item }) => (
-                    <List.Item
-                        title={item.title}
-                        titleStyle={styles.itemTitle}
-                        description={item.description}
-                        descriptionStyle={styles.itemDescription}
-                        left={props => (
-                            <List.Icon
-                                {...props}
-                                icon={({ color }) => (
-                                    <MaterialCommunityIcons
-                                        name={getIconForSubtopic(item)}
-                                        size={24}
-                                        color={theme.colors.secondary}
-                                    />
-                                )}
-                            />
-                        )}
-                        right={props => item.recentlyUpdated ? <Badge {...props} style={[styles.badge, props.style]}>NEW</Badge> : null}
-                        onPress={() => {
-                            if (item.subsections) {
-                                navigation.push('PremiumGuard', { destination: 'SubTopics', subTopicsParams: { title: item.title, items: item.subsections } });
-                            } else {
-                                navigation.navigate('PremiumGuard', {
-                                    destination: 'Reading',
-                                    readingParams: {
-                                        id: item.id,
-                                        title: item.title,
-                                        content: item.content || "# No Content\n\nThis topic has no content yet.",
-                                        quizzes: item.quizzes
-                                    }
-                                });
-                            }
-                        }}
-                    />
-                )}
+                renderItem={({ item }) => {
+                    const itemStatus = getItemStatus(item, section, readItemVersions);
+                    return (
+                        <List.Item
+                            title={() => (
+                                <View style={styles.titleRow}>
+                                    <Text style={styles.itemTitle}>{item.title}</Text>
+                                    <StatusMark status={itemStatus} />
+                                </View>
+                            )}
+                            description={item.description}
+                            descriptionStyle={styles.itemDescription}
+                            left={(leftProps) => (
+                                <List.Icon
+                                    {...leftProps}
+                                    icon={() => (
+                                        <MaterialCommunityIcons
+                                            name={getIconForSubtopic(item)}
+                                            size={24}
+                                            color={theme.colors.secondary}
+                                        />
+                                    )}
+                                />
+                            )}
+                            right={() => (
+                                <MaterialCommunityIcons
+                                    name="chevron-right"
+                                    size={22}
+                                    color={theme.colors.textTertiary}
+                                    style={styles.chevron}
+                                />
+                            )}
+                            onPress={() => {
+                                if (item.subsections) {
+                                    navigation.push('PremiumGuard', {
+                                        destination: 'SubTopics',
+                                        subTopicsParams: {
+                                            title: item.title,
+                                            items: item.subsections,
+                                            section,
+                                        },
+                                    });
+                                } else {
+                                    navigation.navigate('PremiumGuard', {
+                                        destination: 'Reading',
+                                        readingParams: buildReadingParams(item, section, itemStatus),
+                                    });
+                                }
+                            }}
+                        />
+                    );
+                }}
                 ItemSeparatorComponent={Divider}
             />
         </SafeAreaView>
@@ -98,22 +150,43 @@ const styles = StyleSheet.create({
     listContent: {
         paddingBottom: 16,
     },
+    titleRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        paddingRight: 8,
+    },
     itemTitle: {
         color: theme.colors.textTitle,
         fontWeight: '600',
         fontSize: 15,
+        flexShrink: 1,
     },
     itemDescription: {
         color: theme.colors.textSecondary,
         fontSize: 13,
     },
-    badge: {
+    readTickWrap: {
+        width: 22,
+        height: 22,
+        borderRadius: 11,
+        marginLeft: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: theme.colors.primaryLight,
+        borderWidth: 1,
+        borderColor: '#DDD6FE',
+    },
+    newBadge: {
+        marginLeft: 8,
+        backgroundColor: theme.colors.warning,
+        color: '#FFFFFF',
+        fontWeight: '700',
+    },
+    chevron: {
         alignSelf: 'center',
         marginRight: 8,
-        backgroundColor: theme.colors.success,
-        color: 'white',
-        fontWeight: 'bold'
-    }
+    },
 });
 
 export default SubTopicsScreen;

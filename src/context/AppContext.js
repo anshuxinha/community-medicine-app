@@ -2,12 +2,21 @@ import React, { createContext, useState, useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 import * as Device from 'expo-device';
-// import * as Notifications from 'expo-notifications'; // Disabled for Expo Go SDK 53 Compatibility
 import Constants from 'expo-constants';
 import { db, auth } from '../config/firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { onAuthStateChanged, getIdTokenResult, signOut } from 'firebase/auth';
 import * as Notifications from 'expo-notifications';
+import { theme } from '../styles/theme';
+import {
+    VALID_MASTER_TITLES,
+    VALID_CONTENT_KEYS,
+    TOTAL_LEAF_CONTENT_ITEMS,
+    getEffectiveReadCount,
+    getContentKey,
+    migrateLegacyReadItems,
+} from '../utils/contentRegistry';
+
 let Purchases;
 let GoogleSignin;
 if (Constants.appOwnership !== 'expo') {
@@ -17,38 +26,48 @@ if (Constants.appOwnership !== 'expo') {
         webClientId: '856703659616-8e0k1obmgom04783jjf695hkianm4hme.apps.googleusercontent.com',
     });
 }
-import mockData from '../data/mockData.json';
-import practicalData from '../data/practical.json';
-import { theme } from '../styles/theme';
-
-const allData = [...mockData, ...practicalData];
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const getAccountStateKey = (uid) => `accountState:${uid}`;
 
-const getAllValidTitles = (items) => {
-    let validTitles = new Set();
-    const recurse = (nodeList) => {
-        if (!Array.isArray(nodeList)) return;
-        nodeList.forEach(node => {
-            if (node.title) validTitles.add(node.title);
-            if (node.subsections) recurse(node.subsections);
-        });
-    };
-    recurse(items);
-    return validTitles;
+const sanitizeReadItemVersions = (value) => {
+    if (!value || typeof value !== 'object') return {};
+
+    return Object.entries(value).reduce((accumulator, [key, version]) => {
+        if (VALID_CONTENT_KEYS.has(key) && typeof version === 'string') {
+            accumulator[key] = version;
+        }
+        return accumulator;
+    }, {});
 };
 
-// Compute this once for performance
-const VALID_MASTER_TITLES = getAllValidTitles(allData);
+const resolveBookmarkContentKey = (item) => {
+    if (!item || typeof item !== 'object') return null;
+    if (typeof item.contentKey === 'string' && VALID_CONTENT_KEYS.has(item.contentKey)) {
+        return item.contentKey;
+    }
+    if (typeof item.section === 'string' && item.id !== undefined) {
+        const derivedKey = getContentKey(item.section, item.id);
+        if (VALID_CONTENT_KEYS.has(derivedKey)) {
+            return derivedKey;
+        }
+    }
+    return null;
+};
 
 const normalizeBookmarks = (items) => {
     if (!Array.isArray(items)) return [];
-    return items.filter(item => item && typeof item.title === 'string' && VALID_MASTER_TITLES.has(item.title));
+    return items
+        .filter((item) => item && typeof item.title === 'string' && VALID_MASTER_TITLES.has(item.title))
+        .map((item) => ({
+            ...item,
+            contentKey: resolveBookmarkContentKey(item) || item.contentKey || null,
+        }));
 };
 
 const sanitizeCloudState = (data = {}) => ({
-    readItems: Array.isArray(data.readItems) ? data.readItems.filter(t => VALID_MASTER_TITLES.has(t)) : [],
+    readItems: Array.isArray(data.readItems) ? data.readItems.filter((title) => VALID_MASTER_TITLES.has(title)) : [],
+    readItemVersions: sanitizeReadItemVersions(data.readItemVersions),
     bookmarks: normalizeBookmarks(data.bookmarks),
     currentStreak: typeof data.currentStreak === 'number' ? data.currentStreak : 0,
     lastReadDate: typeof data.lastReadDate === 'string' ? data.lastReadDate : null,
@@ -68,7 +87,6 @@ const dayDiffFromToday = (dateString) => {
     return Math.round((startToday - startParsed) / MS_PER_DAY);
 };
 
-// Expo Notifications is fully supported in production builds.
 const SafeNotifications = Notifications;
 
 if (Device.isDevice) {
@@ -87,22 +105,10 @@ if (Device.isDevice) {
 
 export const AppContext = createContext();
 
-const countTotalContentItems = (items) => {
-    let count = 0;
-    items.forEach(item => {
-        if (item.subsections) {
-            count += countTotalContentItems(item.subsections);
-        } else {
-            count++;
-        }
-    });
-    return count;
-};
-
 export const AppProvider = ({ children }) => {
     const [readItems, setReadItems] = useState([]);
+    const [readItemVersions, setReadItemVersions] = useState({});
     const [bookmarks, setBookmarks] = useState([]);
-    const [totalItems, setTotalItems] = useState(0);
     const [highlights, setHighlights] = useState({});
     const [currentStreak, setCurrentStreak] = useState(0);
     const [lastReadDate, setLastReadDate] = useState(null);
@@ -110,38 +116,54 @@ export const AppProvider = ({ children }) => {
     const [dailyReadHistory, setDailyReadHistory] = useState({});
     const [quizScores, setQuizScores] = useState([]);
 
-    // Auth & Premium State — null = not yet resolved, false/obj = resolved
-    const [user, setUser] = useState(undefined); // undefined = loading
+    const [user, setUser] = useState(undefined);
     const [isPremium, setIsPremium] = useState(false);
     const isLoggingOutRef = useRef(false);
     const cloudHydratedRef = useRef(false);
 
-    // ── Timeout helper for Firestore queries (prevents freezing on offline) ───
+    const totalItems = TOTAL_LEAF_CONTENT_ITEMS > 0 ? TOTAL_LEAF_CONTENT_ITEMS : 1;
+
     const timeoutPromise = (ms) => new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Firebase Request Timed Out (Offline/Slow Network)')), ms)
     );
 
-    // ── Auth state listener (Firebase + AsyncStorage fallback) ────────────────
+    const hydrateStoredState = (rawState = {}) => {
+        const parsedState = sanitizeCloudState(rawState);
+        const migratedReadItemVersions = migrateLegacyReadItems(parsedState.readItems, parsedState.readItemVersions);
+
+        setReadItems(parsedState.readItems);
+        setReadItemVersions(migratedReadItemVersions);
+        setBookmarks(parsedState.bookmarks);
+        setCurrentStreak(parsedState.currentStreak);
+        setLastReadDate(parsedState.lastReadDate);
+        setStudyScore(parsedState.studyScore);
+        setDailyReadHistory(parsedState.dailyReadHistory);
+        setQuizScores(parsedState.quizScores);
+
+        return {
+            ...parsedState,
+            readItemVersions: migratedReadItemVersions,
+        };
+    };
+
     useEffect(() => {
-        // 1. Listen to Firebase auth state changes (handles real accounts)
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
                 cloudHydratedRef.current = false;
-                // Read custom claims first (always available, no Firestore needed)
                 let claimsPremium = false;
                 let claimsAdmin = false;
                 try {
                     const tokenResult = await getIdTokenResult(firebaseUser, true);
                     claimsPremium = tokenResult.claims.isPremium === true;
                     claimsAdmin = tokenResult.claims.isAdmin === true;
-                } catch { /* ignore */ }
+                } catch {
+                    // ignore
+                }
 
-                // Then try Firestore for richer profile data (Firestore wins over claims)
                 try {
-                    // 8-second timeout balances responsiveness with reliable cloud state restore
                     const userDoc = await Promise.race([
                         getDoc(doc(db, 'users', firebaseUser.uid)),
-                        timeoutPromise(8000)
+                        timeoutPromise(8000),
                     ]);
 
                     const data = userDoc.exists() ? userDoc.data() : {};
@@ -154,23 +176,14 @@ export const AppProvider = ({ children }) => {
                         isPremium: premiumStatus,
                         isAdmin,
                     };
-                    // Sync logic: hydrate local state from cloud so progress/streak stay account-linked.
-                    const cloudState = sanitizeCloudState(data);
-                    setReadItems(cloudState.readItems);
-                    setBookmarks(cloudState.bookmarks);
-                    setCurrentStreak(cloudState.currentStreak);
-                    setLastReadDate(cloudState.lastReadDate);
-                    setStudyScore(cloudState.studyScore);
-                    setDailyReadHistory(cloudState.dailyReadHistory);
-                    setQuizScores(cloudState.quizScores);
 
+                    const cloudState = hydrateStoredState(data);
                     setUser(userData);
                     setIsPremium(premiumStatus);
                     cloudHydratedRef.current = true;
                     await AsyncStorage.setItem('user', JSON.stringify(userData));
                     await AsyncStorage.setItem(getAccountStateKey(firebaseUser.uid), JSON.stringify(cloudState));
                 } catch (err) {
-                    // Firestore failed (offline or timeout) - use claims-based data so user stays logged in & app loads instantly
                     console.warn('Firestore fetch failed/timed out, using auth claims:', err?.message);
                     const userData = {
                         uid: firebaseUser.uid,
@@ -183,14 +196,7 @@ export const AppProvider = ({ children }) => {
                     try {
                         const cachedAccountState = await AsyncStorage.getItem(getAccountStateKey(firebaseUser.uid));
                         if (cachedAccountState) {
-                            const parsed = sanitizeCloudState(JSON.parse(cachedAccountState));
-                            setReadItems(parsed.readItems);
-                            setBookmarks(parsed.bookmarks);
-                            setCurrentStreak(parsed.currentStreak);
-                            setLastReadDate(parsed.lastReadDate);
-                            setStudyScore(parsed.studyScore);
-                            setDailyReadHistory(parsed.dailyReadHistory);
-                            setQuizScores(parsed.quizScores);
+                            hydrateStoredState(JSON.parse(cachedAccountState));
                         }
                     } catch (_) {
                         // ignore account cache parse failures
@@ -203,7 +209,6 @@ export const AppProvider = ({ children }) => {
                 }
             } else {
                 cloudHydratedRef.current = false;
-                // No Firebase session — check AsyncStorage for bypass/admin users
                 try {
                     const storedUser = await AsyncStorage.getItem('user');
                     if (storedUser) {
@@ -222,31 +227,34 @@ export const AppProvider = ({ children }) => {
         return () => unsubscribe();
     }, []);
 
-    // Release logout sync lock once user is fully cleared by auth state.
     useEffect(() => {
         if (user === null) {
             isLoggingOutRef.current = false;
         }
     }, [user]);
 
-    // Initialize other state from AsyncStorage
     useEffect(() => {
         const loadState = async () => {
             try {
                 const storedReadItems = await AsyncStorage.getItem('readItems');
-                // Prevent race condition: if Firebase already hydrated the state, do NOT overwrite it with stale generic local storage.
                 if (cloudHydratedRef.current) return;
 
-                if (storedReadItems) {
-                    setReadItems(JSON.parse(storedReadItems));
-                }
+                const parsedReadItems = storedReadItems ? JSON.parse(storedReadItems) : [];
+                const safeReadItems = Array.isArray(parsedReadItems)
+                    ? parsedReadItems.filter((title) => VALID_MASTER_TITLES.has(title))
+                    : [];
+
+                const storedReadItemVersions = await AsyncStorage.getItem('readItemVersions');
+                if (cloudHydratedRef.current) return;
+                const parsedReadItemVersions = storedReadItemVersions ? JSON.parse(storedReadItemVersions) : {};
+
+                setReadItems(safeReadItems);
+                setReadItemVersions(migrateLegacyReadItems(safeReadItems, sanitizeReadItemVersions(parsedReadItemVersions)));
 
                 const storedBookmarks = await AsyncStorage.getItem('bookmarks');
                 if (cloudHydratedRef.current) return;
                 if (storedBookmarks) {
-                    const parsed = JSON.parse(storedBookmarks);
-                    const validBookmarks = parsed.filter(b => VALID_MASTER_TITLES.has(b.title));
-                    setBookmarks(validBookmarks);
+                    setBookmarks(normalizeBookmarks(JSON.parse(storedBookmarks)));
                 }
 
                 const storedHighlights = await AsyncStorage.getItem('highlights');
@@ -285,32 +293,25 @@ export const AppProvider = ({ children }) => {
                     setQuizScores(JSON.parse(storedQuizScores));
                 }
 
-                // Check streak validity on load
                 if (storedLastRead) {
                     const diffDays = dayDiffFromToday(storedLastRead);
                     if (diffDays !== null && diffDays > 1) {
-                        // Streak broken
                         setCurrentStreak(0);
                     }
                 }
             } catch (error) {
-                console.error("Failed to load state from AsyncStorage:", error);
+                console.error('Failed to load state from AsyncStorage:', error);
             }
-
-            // Calculate total items once at startup
-            const total = countTotalContentItems(allData);
-            setTotalItems(total > 0 ? total : 1); // Avoid division by zero
         };
 
         loadState();
     }, []);
 
-
-    // Save state to AsyncStorage whenever it changes
     useEffect(() => {
         const saveState = async () => {
             try {
                 await AsyncStorage.setItem('readItems', JSON.stringify(readItems));
+                await AsyncStorage.setItem('readItemVersions', JSON.stringify(readItemVersions));
                 await AsyncStorage.setItem('bookmarks', JSON.stringify(bookmarks));
                 await AsyncStorage.setItem('highlights', JSON.stringify(highlights));
                 await AsyncStorage.setItem('currentStreak', currentStreak.toString());
@@ -323,6 +324,7 @@ export const AppProvider = ({ children }) => {
                 if (user && user.uid) {
                     const accountStateSnapshot = {
                         readItems,
+                        readItemVersions,
                         bookmarks,
                         currentStreak,
                         lastReadDate: lastReadDate || null,
@@ -337,11 +339,11 @@ export const AppProvider = ({ children }) => {
                 else await AsyncStorage.removeItem('user');
                 await AsyncStorage.setItem('isPremium', JSON.stringify(isPremium));
 
-                // Sync to Firebase if logged in (cloud source for progress + streak)
                 if (user && user.uid && !isLoggingOutRef.current && cloudHydratedRef.current) {
                     try {
                         await setDoc(doc(db, 'users', user.uid), {
                             readItems,
+                            readItemVersions,
                             bookmarks,
                             currentStreak,
                             lastReadDate: lastReadDate || null,
@@ -355,22 +357,21 @@ export const AppProvider = ({ children }) => {
                     }
                 }
             } catch (error) {
-                console.error("Failed to save state to AsyncStorage:", error);
+                console.error('Failed to save state to AsyncStorage:', error);
             }
         };
 
         saveState();
-    }, [readItems, bookmarks, highlights, currentStreak, lastReadDate, studyScore, dailyReadHistory, quizScores, user, isPremium]);
+    }, [readItems, readItemVersions, bookmarks, highlights, currentStreak, lastReadDate, studyScore, dailyReadHistory, quizScores, user, isPremium]);
 
-    // Push token registration
     useEffect(() => {
         if (user && user.uid) {
-            registerForPushNotificationsAsync().then(token => {
+            registerForPushNotificationsAsync().then((token) => {
                 if (token) {
                     setDoc(doc(db, 'users', user.uid), {
                         pushToken: token,
                         pushTokenUpdatedAt: serverTimestamp(),
-                    }, { merge: true }).catch(err => console.log('Error saving push token', err));
+                    }, { merge: true }).catch((err) => console.log('Error saving push token', err));
                 }
             });
         }
@@ -379,7 +380,6 @@ export const AppProvider = ({ children }) => {
     async function registerForPushNotificationsAsync() {
         let token;
 
-        // Push notifications are not supported in Expo Go as of SDK 53
         if (!SafeNotifications) {
             console.log('Skipping push notification registration in Expo Go.');
             return null;
@@ -395,16 +395,16 @@ export const AppProvider = ({ children }) => {
                 }
                 if (finalStatus !== 'granted') {
                     console.log('Push notification permission denied.');
-                    return;
+                    return null;
                 }
                 token = (await SafeNotifications.getExpoPushTokenAsync()).data;
             } catch (err) {
                 console.log('Expo notification error:', err);
-                return;
+                return null;
             }
         } else {
             console.log('Must use physical device for Push Notifications');
-            return;
+            return null;
         }
 
         if (Platform.OS === 'android') {
@@ -418,41 +418,50 @@ export const AppProvider = ({ children }) => {
         return token;
     }
 
-    // Derived properties and actions
-    const readingProgress = totalItems === 0 ? 0 : Math.min(readItems.length / totalItems, 1);
+    const effectiveReadCount = getEffectiveReadCount(readItemVersions);
+    const readingProgress = totalItems === 0 ? 0 : Math.min(effectiveReadCount / totalItems, 1);
 
-    const markAsRead = (itemTitle) => {
-        setReadItems((prev) => {
-            if (!prev.includes(itemTitle)) {
-                // Update streak logic
-                const todayStr = new Date().toDateString();
-                if (lastReadDate !== todayStr) {
-                    if (!lastReadDate) {
-                        setCurrentStreak(1);
-                    } else {
-                        const diffDays = dayDiffFromToday(lastReadDate);
+    const markAsRead = ({ itemTitle, contentKey, contentSignature }) => {
+        if (!itemTitle || !contentKey || !contentSignature) {
+            return;
+        }
 
-                        if (diffDays === 1) {
-                            setCurrentStreak((prev) => prev + 1);
-                        } else if (diffDays === null || diffDays > 1) {
-                            setCurrentStreak(1);
-                        }
-                    }
-                    setLastReadDate(todayStr);
-                    // Reward points for reading
-                    setStudyScore((prevScore) => prevScore + 10);
-                }
-
-                // Update daily read history for the bar chart
-                const dateKey = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-                setDailyReadHistory((prevHistory) => ({
-                    ...prevHistory,
-                    [dateKey]: (prevHistory[dateKey] || 0) + 1,
-                }));
-
-                return [...prev, itemTitle];
+        setReadItemVersions((previousVersions) => {
+            if (previousVersions[contentKey] === contentSignature) {
+                return previousVersions;
             }
-            return prev;
+
+            const todayStr = new Date().toDateString();
+            if (lastReadDate !== todayStr) {
+                if (!lastReadDate) {
+                    setCurrentStreak(1);
+                } else {
+                    const diffDays = dayDiffFromToday(lastReadDate);
+
+                    if (diffDays === 1) {
+                        setCurrentStreak((previousStreak) => previousStreak + 1);
+                    } else if (diffDays === null || diffDays > 1) {
+                        setCurrentStreak(1);
+                    }
+                }
+                setLastReadDate(todayStr);
+                setStudyScore((previousScore) => previousScore + 10);
+            }
+
+            const dateKey = new Date().toISOString().split('T')[0];
+            setDailyReadHistory((previousHistory) => ({
+                ...previousHistory,
+                [dateKey]: (previousHistory[dateKey] || 0) + 1,
+            }));
+
+            setReadItems((previousTitles) => (
+                previousTitles.includes(itemTitle) ? previousTitles : [...previousTitles, itemTitle]
+            ));
+
+            return {
+                ...previousVersions,
+                [contentKey]: contentSignature,
+            };
         });
     };
 
@@ -463,32 +472,57 @@ export const AppProvider = ({ children }) => {
             total,
             percent: Math.round((score / total) * 100),
         };
-        setQuizScores((prev) => [...prev.slice(-29), entry]); // keep last 30
+        setQuizScores((prev) => [...prev.slice(-29), entry]);
         setStudyScore((prev) => prev + score * 5);
     };
 
-    const isBookmarked = (itemTitle) => {
-        return bookmarks.some((bookmark) => bookmark.title === itemTitle);
+    const getBookmarkIdentity = (itemOrTitle) => {
+        if (!itemOrTitle) return null;
+        if (typeof itemOrTitle === 'string') return itemOrTitle;
+        return resolveBookmarkContentKey(itemOrTitle)
+            || itemOrTitle.contentKey
+            || itemOrTitle.title
+            || null;
+    };
+
+    const isBookmarked = (itemOrTitle) => {
+        const targetIdentity = getBookmarkIdentity(itemOrTitle);
+        if (!targetIdentity) return false;
+        return bookmarks.some((bookmark) => getBookmarkIdentity(bookmark) === targetIdentity);
     };
 
     const toggleBookmark = (item) => {
-        setBookmarks((prev) => {
-            if (isBookmarked(item.title)) {
-                return prev.filter((bookmark) => bookmark.title !== item.title);
-            } else {
-                return [...prev, item]; // Store the whole item so we can navigate to it
+        const targetIdentity = getBookmarkIdentity(item);
+        if (!targetIdentity) return;
+
+        setBookmarks((previousBookmarks) => {
+            const alreadyBookmarked = previousBookmarks.some(
+                (bookmark) => getBookmarkIdentity(bookmark) === targetIdentity
+            );
+
+            if (alreadyBookmarked) {
+                return previousBookmarks.filter(
+                    (bookmark) => getBookmarkIdentity(bookmark) !== targetIdentity
+                );
             }
+
+            return [
+                ...previousBookmarks,
+                {
+                    ...item,
+                    contentKey: resolveBookmarkContentKey(item) || item.contentKey || null,
+                },
+            ];
         });
     };
 
     const saveHighlight = (id, htmlContent) => {
         setHighlights((prev) => ({
             ...prev,
-            [id]: htmlContent
+            [id]: htmlContent,
         }));
     };
 
-    // Payment SDK Initialization
     useEffect(() => {
         if (Constants.appOwnership === 'expo') return;
 
@@ -497,7 +531,6 @@ export const AppProvider = ({ children }) => {
             const isTestKey = typeof rcApiKey === 'string' && rcApiKey.startsWith('test_');
             const isProdRuntime = !__DEV__;
 
-            // Never initialize production builds with test keys.
             if (!rcApiKey || (isProdRuntime && isTestKey)) {
                 console.warn('RevenueCat initialization skipped: missing or non-production API key.');
                 return;
@@ -506,7 +539,7 @@ export const AppProvider = ({ children }) => {
             Purchases.configure({ apiKey: rcApiKey });
 
             Purchases.addCustomerInfoUpdateListener((info) => {
-                if (info.entitlements.active['Premium'] !== undefined) {
+                if (info.entitlements.active.Premium !== undefined) {
                     setIsPremium(true);
                 } else {
                     setIsPremium(false);
@@ -519,10 +552,13 @@ export const AppProvider = ({ children }) => {
         setStudyScore((prev) => prev + score);
     };
 
-    // Force clear for debug/testing
     const clearStorage = async () => {
-        await AsyncStorage.multiRemove(['readItems', 'bookmarks', 'highlights', 'currentStreak', 'lastReadDate', 'studyScore', 'dailyReadHistory', 'quizScores']);
+        await AsyncStorage.multiRemove([
+            'readItems', 'readItemVersions', 'bookmarks', 'highlights', 'currentStreak',
+            'lastReadDate', 'studyScore', 'dailyReadHistory', 'quizScores',
+        ]);
         setReadItems([]);
+        setReadItemVersions({});
         setBookmarks([]);
         setHighlights({});
         setCurrentStreak(0);
@@ -543,22 +579,19 @@ export const AppProvider = ({ children }) => {
 
     const logout = async () => {
         isLoggingOutRef.current = true;
-        // Sign out from Firebase first to stop onAuthStateChanged from restoring the session
         try { await signOut(auth); } catch (_) { }
-        // Sign out from Native Google Sign-In to show the account chooser next time
         if (Constants.appOwnership !== 'expo' && GoogleSignin) {
             try { await GoogleSignin.signOut(); } catch (_) { }
         }
-        // Clear all persisted state before resetting React state to avoid any writes bridging over
         await AsyncStorage.multiRemove([
-            'user', 'isPremium', 'readItems', 'bookmarks', 'highlights',
-            'currentStreak', 'lastReadDate', 'studyScore', 'dailyReadHistory', 'quizScores'
+            'user', 'isPremium', 'readItems', 'readItemVersions', 'bookmarks', 'highlights',
+            'currentStreak', 'lastReadDate', 'studyScore', 'dailyReadHistory', 'quizScores',
         ]);
 
-        // Explicitly nullify user first, so that saveState checks fail immediately
         setUser(null);
         setIsPremium(false);
         setReadItems([]);
+        setReadItemVersions({});
         setBookmarks([]);
         setHighlights({});
         setCurrentStreak(0);
@@ -576,6 +609,7 @@ export const AppProvider = ({ children }) => {
         <AppContext.Provider
             value={{
                 readItems,
+                readItemVersions,
                 bookmarks,
                 totalItems,
                 readingProgress,
@@ -596,7 +630,7 @@ export const AppProvider = ({ children }) => {
                 isPremium,
                 login,
                 logout,
-                upgradeToPremium
+                upgradeToPremium,
             }}
         >
             {children}

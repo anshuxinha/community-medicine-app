@@ -5,9 +5,36 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AppContext } from '../context/AppContext';
 import { theme } from '../styles/theme';
+import {
+    getContentKey,
+    getContentSignature,
+    getCurrentContentEntry,
+    getUpdatedSegmentsForItem,
+    getItemStatus,
+} from '../utils/contentRegistry';
 
 const BookmarksScreen = ({ navigation }) => {
-    const { bookmarks } = useContext(AppContext);
+    const { bookmarks, readItemVersions } = useContext(AppContext);
+
+    const openBookmark = (bookmark) => {
+        const currentEntry = getCurrentContentEntry(bookmark);
+        const currentItem = currentEntry?.item || bookmark;
+        const effectiveSection = currentEntry?.section || bookmark.section || null;
+        const itemStatus = effectiveSection ? getItemStatus(currentItem, effectiveSection, readItemVersions) : 'none';
+
+        navigation.navigate('Reading', {
+            ...bookmark,
+            id: currentItem.id,
+            title: currentItem.title,
+            content: currentItem.content,
+            quizzes: currentItem.quizzes,
+            section: effectiveSection,
+            contentKey: bookmark.contentKey || (effectiveSection ? getContentKey(effectiveSection, currentItem.id) : null),
+            contentSignature: getContentSignature(currentItem),
+            updatedSegments: getUpdatedSegmentsForItem(currentItem),
+            showUpdateHighlights: itemStatus === 'updated',
+        });
+    };
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -15,7 +42,7 @@ const BookmarksScreen = ({ navigation }) => {
                 <Text variant="headlineMedium" style={styles.header}>Bookmarks</Text>
                 {bookmarks.length === 0 ? (
                     <View style={styles.emptyState}>
-                        <Text variant="bodyLarge" style={{ color: '#374151' }}>No bookmarks yet.</Text>
+                        <Text variant="bodyLarge" style={styles.emptyText}>No bookmarks yet.</Text>
                         <Button mode="text" onPress={() => navigation.navigate('Library')}>
                             Browse Library
                         </Button>
@@ -23,21 +50,24 @@ const BookmarksScreen = ({ navigation }) => {
                 ) : (
                     <FlatList
                         data={bookmarks}
-                        keyExtractor={(item) => item.title}
+                        keyExtractor={(item, index) => item.contentKey || `${item.title}-${index}`}
                         renderItem={({ item }) => (
                             <List.Item
                                 title={item.title}
-                                titleStyle={{ color: theme.colors.textTitle, fontWeight: '600', fontSize: 16 }}
-                                left={props => <List.Icon {...props} icon={({ color }) => <MaterialIcons name="bookmark" size={24} color={theme.colors.secondary} />} />}
-                                right={props => <List.Icon {...props} icon={({ color }) => <MaterialIcons name="chevron-right" size={24} color={theme.colors.textTertiary} />} />}
-                                onPress={() => {
-                                    navigation.navigate('Reading', {
-                                        id: item.id,
-                                        title: item.title,
-                                        content: item.content,
-                                        quizzes: item.quizzes
-                                    });
-                                }}
+                                titleStyle={styles.itemTitle}
+                                left={(leftProps) => (
+                                    <List.Icon
+                                        {...leftProps}
+                                        icon={() => <MaterialIcons name="bookmark" size={24} color={theme.colors.secondary} />}
+                                    />
+                                )}
+                                right={(rightProps) => (
+                                    <List.Icon
+                                        {...rightProps}
+                                        icon={() => <MaterialIcons name="chevron-right" size={24} color={theme.colors.textTertiary} />}
+                                    />
+                                )}
+                                onPress={() => openBookmark(item)}
                             />
                         )}
                         ItemSeparatorComponent={Divider}
@@ -63,10 +93,18 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: theme.colors.textTitle,
     },
+    itemTitle: {
+        color: theme.colors.textTitle,
+        fontWeight: '600',
+        fontSize: 16,
+    },
     emptyState: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    emptyText: {
+        color: '#374151',
     },
 });
 

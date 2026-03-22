@@ -462,7 +462,11 @@ def _apply_corrections(text_content: str, corrections: List[Dict[str, str]]) -> 
             replacement_line = f"{leading_whitespace}{replacement}"
         updated_content = updated_content.replace(matched_line, replacement_line, 1)
         used_originals.add(original)
-        applied.append(correction)
+        applied.append({
+            **correction,
+            "matched_line": matched_line.strip(),
+            "replacement_line": replacement_line.strip(),
+        })
 
     return updated_content, applied
 
@@ -471,6 +475,8 @@ def _strip_recently_updated(items: List[Dict[str, Any]]) -> None:
     for item in items:
         if "recentlyUpdated" in item:
             del item["recentlyUpdated"]
+        if "updatedSegments" in item:
+            del item["updatedSegments"]
         if "subsections" in item:
             _strip_recently_updated(item["subsections"])
 
@@ -518,6 +524,11 @@ def process_file_verification(file_path: str) -> None:
                     if new_content != original_content:
                         item["content"] = new_content
                         item["recentlyUpdated"] = True
+                        item["updatedSegments"] = list(dict.fromkeys(
+                            correction.get("replacement_line", "").strip()
+                            for correction in applied_corrections
+                            if correction.get("replacement_line", "").strip()
+                        ))
                         updates_made += 1
                         print(f"  -> Applied {len(applied_corrections)} claim-level corrections.")
                         for correction in applied_corrections[:3]:

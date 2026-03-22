@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
-import { Text, List, Divider, Searchbar, SegmentedButtons } from 'react-native-paper';
+import { Text, List, Divider, Searchbar, SegmentedButtons, Badge } from 'react-native-paper';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import theoryTopics from '../data/mockData.json';
 import practicalTopics from '../data/practical.json';
+import { AppContext } from '../context/AppContext';
+import {
+    getContentKey,
+    getContentSignature,
+    getItemStatus,
+    getUpdatedSegmentsForItem,
+} from '../utils/contentRegistry';
+import { theme } from '../styles/theme';
 
 const SECTION_ID_ICON_MAP = {
     'theory:27': 'clipboard-text-search-outline',
@@ -13,17 +21,111 @@ const SECTION_ID_ICON_MAP = {
     'practical:31': 'calendar-heart',
 };
 
+const StatusMark = ({ status }) => {
+    if (status === 'updated') {
+        return <Badge style={styles.newBadge}>NEW</Badge>;
+    }
+
+    if (status === 'read') {
+        return (
+            <View style={styles.readTickWrap}>
+                <MaterialCommunityIcons
+                    name="check"
+                    size={14}
+                    color={theme.colors.primaryDark}
+                />
+            </View>
+        );
+    }
+
+    return null;
+};
+
+const buildReadingParams = (item, section, status) => ({
+    id: item.id,
+    title: item.title,
+    content: item.content || '# No Content\n\nThis topic has no content yet.',
+    quizzes: item.quizzes,
+    section,
+    contentKey: getContentKey(section, item.id),
+    contentSignature: getContentSignature(item),
+    updatedSegments: getUpdatedSegmentsForItem(item),
+    showUpdateHighlights: status === 'updated',
+});
+
 const LibraryScreen = (props) => {
     const { navigation } = props;
+    const { readItemVersions } = useContext(AppContext);
     const [searchQuery, setSearchQuery] = useState('');
     const [activeSection, setActiveSection] = useState('theory');
     const insets = useSafeAreaInsets();
 
     const currentTopics = activeSection === 'theory' ? theoryTopics : practicalTopics;
-    const filteredTopics = currentTopics.filter(topic =>
-        topic.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (topic.content && topic.content.toLowerCase().includes(searchQuery.toLowerCase()))
+    const filteredTopics = currentTopics.filter((topic) =>
+        topic.title.toLowerCase().includes(searchQuery.toLowerCase())
+        || (topic.content && topic.content.toLowerCase().includes(searchQuery.toLowerCase()))
     );
+
+    const getIconForTopic = (section, id, title) => {
+        const idMapped = SECTION_ID_ICON_MAP[`${section}:${id}`];
+        if (idMapped) return idMapped;
+
+        const loweredTitle = title.toLowerCase();
+        if (loweredTitle.includes('concept of health')) return 'leaf';
+        if (loweredTitle.includes('epidemiology')) return 'chart-line-variant';
+        if (loweredTitle.includes('screening')) return 'magnify-scan';
+        if (loweredTitle.includes('respiratory')) return 'lungs';
+        if (loweredTitle.includes('intestinal')) return 'stomach';
+        if (loweredTitle.includes('arthropod') || loweredTitle.includes('entomology') || loweredTitle.includes('insecticide')) return 'bug-outline';
+        if (loweredTitle.includes('zoonoses')) return 'paw';
+        if (loweredTitle.includes('demography')) return 'account-group-outline';
+        if (loweredTitle.includes('environment')) return 'tree-outline';
+        if (loweredTitle.includes('nutrition')) return 'food-apple-outline';
+        if (loweredTitle.includes('social')) return 'handshake-outline';
+        if (loweredTitle.includes('occupational')) return 'briefcase-outline';
+        if (loweredTitle.includes('genetics')) return 'dna';
+        if (loweredTitle.includes('mental')) return 'brain';
+        if (loweredTitle.includes('health information') || loweredTitle.includes('statistics')) return 'chart-bar';
+        if (loweredTitle.includes('communication') || loweredTitle.includes('pedagogy')) return 'bullhorn-outline';
+        if (loweredTitle.includes('planning')) return 'clipboard-list-outline';
+        if (loweredTitle.includes('international') || loweredTitle.includes('sustainable development')) return 'earth';
+        if (loweredTitle.includes('biostatistics')) return 'chart-bar';
+        if (loweredTitle.includes('health program') || loweredTitle.includes('programmes') || loweredTitle.includes('programme') || loweredTitle.includes('mission')) return 'flag-outline';
+        if (loweredTitle.includes('ayushman') || loweredTitle.includes('health care delivery') || loweredTitle.includes('delivery system')) return 'shield-cross';
+        if (loweredTitle.includes('specialized target')) return 'target';
+        if (loweredTitle.includes('targeted care') || loweredTitle.includes('present health status')) return 'heart-pulse';
+        if (loweredTitle.includes('administration') || loweredTitle.includes('organization') || loweredTitle.includes('community')) return 'hospital-building';
+        if (loweredTitle.includes('man and medicine') || loweredTitle.includes('history')) return 'history';
+        if (loweredTitle.includes('obstetrics') || loweredTitle.includes('paediatrics') || loweredTitle.includes('geriatrics') || loweredTitle.includes('maternity') || loweredTitle.includes('child health')) return 'human-male-female-child';
+        if (loweredTitle.includes('tribal')) return 'tent';
+        if (loweredTitle.includes('waste management') || loweredTitle.includes('sanitation')) return 'trash-can-outline';
+        if (loweredTitle.includes('disaster')) return 'alert-octagon-outline';
+        if (loweredTitle.includes('essential medicines') || loweredTitle.includes('counterfeit')) return 'pill';
+        if (loweredTitle.includes('management')) return 'briefcase-check-outline';
+        if (loweredTitle.includes('family') || loweredTitle.includes('rmncah')) return 'home-heart';
+        if (loweredTitle.includes('economics')) return 'currency-inr';
+        if (loweredTitle.includes('non-communicable') || loweredTitle.includes('non communicable') || loweredTitle.includes('ncd')) return 'heart-broken';
+        if (loweredTitle.includes('communicable')) return 'virus-outline';
+        if (loweredTitle.includes('immunization') || loweredTitle.includes('vaccin')) return 'needle';
+        if (loweredTitle.includes('disinfection')) return 'spray-bottle';
+        if (loweredTitle.includes('water')) return 'water-outline';
+        if (loweredTitle.includes('bacteriology') || loweredTitle.includes('staining') || loweredTitle.includes('microscopy')) return 'microscope';
+        if (loweredTitle.includes('ayush')) return 'leaf';
+        if (loweredTitle.includes('adolescent')) return 'human-child';
+        if (loweredTitle.includes('idsp') || loweredTitle.includes('surveillance') || loweredTitle.includes('ncvbdc')) return 'radar';
+        if (loweredTitle.includes('imnci') || loweredTitle.includes('neonatal')) return 'baby-bottle-outline';
+        if (loweredTitle.includes('rehabilitation')) return 'wheelchair-accessibility';
+        if (loweredTitle.includes('swine flu') || loweredTitle.includes('influenza')) return 'pig';
+        if (loweredTitle.includes('aids') || loweredTitle.includes('std') || loweredTitle.includes('nacp')) return 'ribbon';
+        if (loweredTitle.includes('leprosy') || loweredTitle.includes('nlep')) return 'human-handsup';
+        if (loweredTitle.includes('tuberculosis') || loweredTitle.includes('ntep')) return 'lungs';
+        if (loweredTitle.includes('blindness') || loweredTitle.includes('npcbvi')) return 'eye-off-outline';
+        if (loweredTitle.includes('mental health') || loweredTitle.includes('nmhp')) return 'brain';
+        if (loweredTitle.includes('exercises') || loweredTitle.includes('problems')) return 'clipboard-text-outline';
+        if (loweredTitle.includes('field visits')) return 'map-marker-radius-outline';
+        if (loweredTitle.includes('appendix') || loweredTitle.includes('legislation') || loweredTitle.includes('days')) return 'scale-balance';
+        return 'book-open-outline';
+    };
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -67,91 +169,49 @@ const LibraryScreen = (props) => {
                     keyExtractor={(item) => item.id}
                     style={styles.list}
                     renderItem={({ item }) => {
-                        // Map specific icons to specific topics for better relevance
-                        const getIconForTopic = (section, id, title) => {
-                            const idMapped = SECTION_ID_ICON_MAP[`${section}:${id}`];
-                            if (idMapped) return idMapped;
-
-                            const t = title.toLowerCase();
-                            if (t.includes('concept of health')) return 'leaf';
-                            if (t.includes('epidemiology')) return 'chart-line-variant';
-                            if (t.includes('screening')) return 'magnify-scan';
-                            if (t.includes('respiratory')) return 'lungs';
-                            if (t.includes('intestinal')) return 'stomach';
-                            if (t.includes('arthropod') || t.includes('entomology') || t.includes('insecticide')) return 'bug-outline';
-                            if (t.includes('zoonoses')) return 'paw';
-                            if (t.includes('demography')) return 'account-group-outline';
-                            if (t.includes('environment')) return 'tree-outline';
-                            if (t.includes('nutrition')) return 'food-apple-outline';
-                            if (t.includes('social')) return 'handshake-outline';
-                            if (t.includes('occupational')) return 'briefcase-outline';
-                            if (t.includes('genetics')) return 'dna';
-                            if (t.includes('mental')) return 'brain';
-                            if (t.includes('health information') || t.includes('statistics')) return 'chart-bar';
-                            if (t.includes('communication') || t.includes('pedagogy')) return 'bullhorn-outline';
-                            if (t.includes('planning')) return 'clipboard-list-outline';
-                            if (t.includes('international') || t.includes('sustainable development')) return 'earth';
-                            if (t.includes('biostatistics')) return 'chart-bar';
-                            if (t.includes('health program') || t.includes('programmes') || t.includes('programme') || t.includes('mission')) return 'flag-outline';
-                            if (t.includes('ayushman') || t.includes('health care delivery') || t.includes('delivery system')) return 'shield-cross';
-                            if (t.includes('specialized target')) return 'target';
-                            if (t.includes('targeted care') || t.includes('present health status')) return 'heart-pulse';
-                            if (t.includes('administration') || t.includes('organization') || t.includes('community')) return 'hospital-building';
-                            if (t.includes('man and medicine') || t.includes('history')) return 'history';
-                            if (t.includes('obstetrics') || t.includes('paediatrics') || t.includes('geriatrics') || t.includes('maternity') || t.includes('child health')) return 'human-male-female-child';
-                            if (t.includes('tribal')) return 'tent';
-                            if (t.includes('waste management') || t.includes('sanitation')) return 'trash-can-outline';
-                            if (t.includes('disaster')) return 'alert-octagon-outline';
-                            if (t.includes('essential medicines') || t.includes('counterfeit')) return 'pill';
-                            if (t.includes('management')) return 'briefcase-check-outline';
-                            if (t.includes('family') || t.includes('rmncah')) return 'home-heart';
-                            if (t.includes('economics')) return 'currency-inr';
-                            if (t.includes('non-communicable') || t.includes('non communicable') || t.includes('ncd')) return 'heart-broken';
-                            if (t.includes('communicable')) return 'virus-outline';
-                            if (t.includes('immunization') || t.includes('vaccin')) return 'needle';
-                            if (t.includes('disinfection')) return 'spray-bottle';
-                            if (t.includes('water')) return 'water-outline';
-                            if (t.includes('bacteriology') || t.includes('staining') || t.includes('microscopy')) return 'microscope';
-                            if (t.includes('ayush')) return 'leaf';
-                            if (t.includes('adolescent')) return 'human-child';
-                            if (t.includes('idsp') || t.includes('surveillance') || t.includes('ncvbdc')) return 'radar';
-                            if (t.includes('imnci') || t.includes('neonatal')) return 'baby-bottle-outline';
-                            if (t.includes('rehabilitation')) return 'wheelchair-accessibility';
-                            if (t.includes('swine flu') || t.includes('influenza')) return 'pig';
-                            if (t.includes('aids') || t.includes('std') || t.includes('nacp')) return 'ribbon';
-                            if (t.includes('leprosy') || t.includes('nlep')) return 'human-handsup';
-                            if (t.includes('tuberculosis') || t.includes('ntep')) return 'lungs';
-                            if (t.includes('blindness') || t.includes('npcbvi')) return 'eye-off-outline';
-                            if (t.includes('mental health') || t.includes('nmhp')) return 'brain';
-                            if (t.includes('exercises') || t.includes('problems')) return 'clipboard-text-outline';
-                            if (t.includes('field visits')) return 'map-marker-radius-outline';
-                            if (t.includes('appendix') || t.includes('legislation') || t.includes('days')) return 'scale-balance';
-                            return 'book-open-outline'; // Default fallback
-                        };
-
+                        const itemStatus = getItemStatus(item, activeSection, readItemVersions);
                         const iconName = getIconForTopic(activeSection, item.id, item.title);
                         return (
                             <List.Item
-                                title={item.title}
-                                titleStyle={styles.listItemTitle}
-                                left={props => <List.Icon {...props} icon={({ color }) => <MaterialCommunityIcons name={iconName} size={24} color="#6B7280" />} />}
-                                right={props => <MaterialCommunityIcons name="chevron-right" size={24} color="#D1D5DB" style={{ alignSelf: 'center', marginRight: 8 }} />}
+                                title={() => (
+                                    <View style={styles.titleRow}>
+                                        <Text style={styles.listItemTitle}>{item.title}</Text>
+                                        <StatusMark status={itemStatus} />
+                                    </View>
+                                )}
+                                left={(leftProps) => (
+                                    <List.Icon
+                                        {...leftProps}
+                                        icon={() => (
+                                            <MaterialCommunityIcons name={iconName} size={24} color="#6B7280" />
+                                        )}
+                                    />
+                                )}
+                                right={() => (
+                                    <MaterialCommunityIcons
+                                        name="chevron-right"
+                                        size={24}
+                                        color="#D1D5DB"
+                                        style={styles.chevron}
+                                    />
+                                )}
                                 onPress={() => {
                                     const isFree = item.id === '1' || item.title === 'Man and Medicine';
 
                                     if (item.subsections) {
+                                        const subTopicsParams = {
+                                            title: item.title,
+                                            items: item.subsections,
+                                            section: activeSection,
+                                        };
+
                                         if (isFree) {
-                                            navigation.navigate('SubTopics', { title: item.title, items: item.subsections });
+                                            navigation.navigate('SubTopics', subTopicsParams);
                                         } else {
-                                            navigation.navigate('PremiumGuard', { destination: 'SubTopics', subTopicsParams: { title: item.title, items: item.subsections } });
+                                            navigation.navigate('PremiumGuard', { destination: 'SubTopics', subTopicsParams });
                                         }
                                     } else {
-                                        const readingParams = {
-                                            id: item.id,
-                                            title: item.title,
-                                            content: item.content || "# No Content\n\nThis topic has no content yet.",
-                                            quizzes: item.quizzes
-                                        };
+                                        const readingParams = buildReadingParams(item, activeSection, itemStatus);
                                         if (isFree) {
                                             navigation.navigate('Reading', readingParams);
                                         } else {
@@ -218,16 +278,45 @@ const styles = StyleSheet.create({
     listItem: {
         paddingVertical: 8,
     },
+    titleRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        paddingRight: 8,
+    },
     listItemTitle: {
+        flexShrink: 1,
         fontSize: 16,
         color: '#111827',
         alignSelf: 'flex-start',
+        fontWeight: '500',
+    },
+    readTickWrap: {
+        width: 22,
+        height: 22,
+        borderRadius: 11,
+        marginLeft: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: theme.colors.primaryLight,
+        borderWidth: 1,
+        borderColor: '#DDD6FE',
+    },
+    newBadge: {
+        marginLeft: 8,
+        backgroundColor: theme.colors.warning,
+        color: '#FFFFFF',
+        fontWeight: '700',
+    },
+    chevron: {
+        alignSelf: 'center',
+        marginRight: 8,
     },
     divider: {
         backgroundColor: '#E5E7EB',
         height: 1,
-        marginLeft: 64, // To align with the text, leaving icon area blank
-    }
+        marginLeft: 64,
+    },
 });
 
 export default LibraryScreen;
