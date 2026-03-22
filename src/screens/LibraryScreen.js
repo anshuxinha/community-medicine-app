@@ -29,16 +29,18 @@ const StatusMark = ({ status }) => {
     if (status === 'read') {
         return (
             <View style={styles.readTickWrap}>
-                <MaterialCommunityIcons
-                    name="check"
-                    size={14}
-                    color={theme.colors.primaryDark}
-                />
+                <MaterialCommunityIcons name="check" size={14} color={theme.colors.primaryDark} />
             </View>
         );
     }
 
-    return null;
+    return (
+        <MaterialCommunityIcons
+            name="chevron-right"
+            size={24}
+            color="#D1D5DB"
+        />
+    );
 };
 
 const buildReadingParams = (item, section, status) => ({
@@ -173,12 +175,9 @@ const LibraryScreen = (props) => {
                         const iconName = getIconForTopic(activeSection, item.id, item.title);
                         return (
                             <List.Item
-                                title={() => (
-                                    <View style={styles.titleRow}>
-                                        <Text style={styles.listItemTitle}>{item.title}</Text>
-                                        <StatusMark status={itemStatus} />
-                                    </View>
-                                )}
+                                title={item.title}
+                                titleNumberOfLines={3}
+                                titleStyle={styles.listItemTitle}
                                 left={(leftProps) => (
                                     <List.Icon
                                         {...leftProps}
@@ -188,12 +187,9 @@ const LibraryScreen = (props) => {
                                     />
                                 )}
                                 right={() => (
-                                    <MaterialCommunityIcons
-                                        name="chevron-right"
-                                        size={24}
-                                        color="#D1D5DB"
-                                        style={styles.chevron}
-                                    />
+                                    <View style={styles.rightSlot}>
+                                        <StatusMark status={itemStatus} />
+                                    </View>
                                 )}
                                 onPress={() => {
                                     const isFree = item.id === '1' || item.title === 'Man and Medicine';
@@ -278,24 +274,24 @@ const styles = StyleSheet.create({
     listItem: {
         paddingVertical: 8,
     },
-    titleRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        paddingRight: 8,
-    },
     listItemTitle: {
-        flexShrink: 1,
         fontSize: 16,
+        lineHeight: 24,
         color: '#111827',
-        alignSelf: 'flex-start',
         fontWeight: '500',
+        paddingRight: 12,
+    },
+    rightSlot: {
+        minWidth: 56,
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+        alignSelf: 'center',
+        marginRight: 8,
     },
     readTickWrap: {
         width: 22,
         height: 22,
         borderRadius: 11,
-        marginLeft: 8,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: theme.colors.primaryLight,
@@ -303,14 +299,9 @@ const styles = StyleSheet.create({
         borderColor: '#DDD6FE',
     },
     newBadge: {
-        marginLeft: 8,
         backgroundColor: theme.colors.warning,
         color: '#FFFFFF',
         fontWeight: '700',
-    },
-    chevron: {
-        alignSelf: 'center',
-        marginRight: 8,
     },
     divider: {
         backgroundColor: '#E5E7EB',

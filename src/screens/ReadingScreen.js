@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useRef } from 'react';
+import React, { useContext, useMemo, useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
 import * as Speech from 'expo-speech';
 import ReadingView from '../components/ReadingView';
@@ -52,16 +52,6 @@ const ReadingScreen = ({ route }) => {
         return getItemStatus(currentItem, effectiveSection, readItemVersions) === 'updated';
     });
 
-    useEffect(() => {
-        if (effectiveTitle && effectiveContentKey && effectiveContentSignature) {
-            markAsRead({
-                itemTitle: effectiveTitle,
-                contentKey: effectiveContentKey,
-                contentSignature: effectiveContentSignature,
-            });
-        }
-    }, [effectiveTitle, effectiveContentKey, effectiveContentSignature, markAsRead]);
-
     const stopSpeech = () => {
         speechSessionRef.current += 1;
         speechQueueRef.current = [];
@@ -99,7 +89,7 @@ const ReadingScreen = ({ route }) => {
         });
     };
 
-    useEffect(() => () => {
+    React.useEffect(() => () => {
         stopSpeech();
     }, []);
 
@@ -114,6 +104,16 @@ const ReadingScreen = ({ route }) => {
     };
 
     const bookmarked = isBookmarked(bookmarkPayload);
+
+    const handleReachEnd = () => {
+        if (effectiveTitle && effectiveContentKey && effectiveContentSignature) {
+            markAsRead({
+                itemTitle: effectiveTitle,
+                contentKey: effectiveContentKey,
+                contentSignature: effectiveContentSignature,
+            });
+        }
+    };
 
     const handleSpeak = () => {
         if (isSpeaking) {
@@ -147,6 +147,7 @@ const ReadingScreen = ({ route }) => {
                 onToggleSpeak={handleSpeak}
                 highlightedSegments={effectiveUpdatedSegments}
                 showUpdateHighlights={sessionHighlightUpdates}
+                onReachEnd={handleReachEnd}
             />
         </View>
     );

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
     View,
     Text,
@@ -71,6 +71,9 @@ const parseMarkdown = (content) => {
     return blocks;
 };
 
+const REACH_END_THRESHOLD = 0.98;
+const SHORT_CONTENT_TOLERANCE = 24;
+
 const ReadingView = ({
     content,
     title,
@@ -80,27 +83,68 @@ const ReadingView = ({
     onToggleSpeak,
     highlightedSegments = [],
     showUpdateHighlights = false,
+    onReachEnd,
 }) => {
     const insets = useSafeAreaInsets();
     const blocks = useMemo(() => parseMarkdown(content || ''), [content]);
     const [scrollProgress, setScrollProgress] = useState(0);
+    const hasReachedEndRef = useRef(false);
+    const viewportHeightRef = useRef(0);
+    const contentHeightRef = useRef(0);
 
     const highlightSet = useMemo(() => new Set(
         (highlightedSegments || []).map((segment) => normalizeUpdatedSnippet(segment)).filter(Boolean)
     ), [highlightedSegments]);
 
+    useEffect(() => {
+        hasReachedEndRef.current = false;
+        setScrollProgress(0);
+        viewportHeightRef.current = 0;
+        contentHeightRef.current = 0;
+    }, [content, title]);
+
     const shouldHighlightText = (text) => (
         showUpdateHighlights && highlightSet.has(normalizeUpdatedSnippet(text || ''))
     );
 
+    const maybeMarkAsReachedEnd = (progress, viewportHeight, contentHeight) => {
+        if (hasReachedEndRef.current) {
+            return;
+        }
+
+        const contentFitsScreen = contentHeight > 0 && viewportHeight > 0
+            && contentHeight <= viewportHeight + SHORT_CONTENT_TOLERANCE;
+        const scrolledToBottom = progress >= REACH_END_THRESHOLD;
+
+        if (contentFitsScreen || scrolledToBottom) {
+            hasReachedEndRef.current = true;
+            onReachEnd?.();
+        }
+    };
+
     const handleScroll = (event) => {
         const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-        const totalContentHeight = contentSize.height - layoutMeasurement.height;
+        const viewportHeight = layoutMeasurement.height;
+        const contentHeight = contentSize.height;
+        const totalContentHeight = contentHeight - viewportHeight;
+        const progress = totalContentHeight > 0
+            ? Math.min(Math.max(contentOffset.y / totalContentHeight, 0), 1)
+            : 1;
 
-        if (totalContentHeight > 0) {
-            const progress = Math.min(Math.max(contentOffset.y / totalContentHeight, 0), 1);
-            setScrollProgress(progress);
-        }
+        viewportHeightRef.current = viewportHeight;
+        contentHeightRef.current = contentHeight;
+        setScrollProgress(progress);
+        maybeMarkAsReachedEnd(progress, viewportHeight, contentHeight);
+    };
+
+    const handleLayout = (event) => {
+        viewportHeightRef.current = event.nativeEvent.layout.height;
+        maybeMarkAsReachedEnd(scrollProgress, viewportHeightRef.current, contentHeightRef.current);
+    };
+
+    const handleContentSizeChange = (_, height) => {
+        contentHeightRef.current = height;
+        maybeMarkAsReachedEnd(scrollProgress, viewportHeightRef.current, contentHeightRef.current);
     };
 
     const renderBlock = (block, index) => {
@@ -221,6 +265,8 @@ const ReadingView = ({
                     { paddingBottom: 100 + insets.bottom },
                 ]}
                 showsVerticalScrollIndicator={false}
+                onLayout={handleLayout}
+                onContentSizeChange={handleContentSizeChange}
                 onScroll={handleScroll}
                 scrollEventThrottle={16}
             >

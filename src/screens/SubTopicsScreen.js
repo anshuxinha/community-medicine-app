@@ -58,7 +58,13 @@ const StatusMark = ({ status }) => {
         );
     }
 
-    return null;
+    return (
+        <MaterialCommunityIcons
+            name="chevron-right"
+            size={22}
+            color={theme.colors.textTertiary}
+        />
+    );
 };
 
 const buildReadingParams = (item, section, status) => ({
@@ -88,12 +94,9 @@ const SubTopicsScreen = ({ route, navigation }) => {
                     const itemStatus = getItemStatus(item, section, readItemVersions);
                     return (
                         <List.Item
-                            title={() => (
-                                <View style={styles.titleRow}>
-                                    <Text style={styles.itemTitle}>{item.title}</Text>
-                                    <StatusMark status={itemStatus} />
-                                </View>
-                            )}
+                            title={item.title}
+                            titleNumberOfLines={3}
+                            titleStyle={styles.itemTitle}
                             description={item.description}
                             descriptionStyle={styles.itemDescription}
                             left={(leftProps) => (
@@ -109,12 +112,9 @@ const SubTopicsScreen = ({ route, navigation }) => {
                                 />
                             )}
                             right={() => (
-                                <MaterialCommunityIcons
-                                    name="chevron-right"
-                                    size={22}
-                                    color={theme.colors.textTertiary}
-                                    style={styles.chevron}
-                                />
+                                <View style={styles.rightSlot}>
+                                    <StatusMark status={itemStatus} />
+                                </View>
                             )}
                             onPress={() => {
                                 if (item.subsections) {
@@ -150,27 +150,28 @@ const styles = StyleSheet.create({
     listContent: {
         paddingBottom: 16,
     },
-    titleRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        paddingRight: 8,
-    },
     itemTitle: {
         color: theme.colors.textTitle,
         fontWeight: '600',
         fontSize: 15,
-        flexShrink: 1,
+        lineHeight: 22,
+        paddingRight: 12,
     },
     itemDescription: {
         color: theme.colors.textSecondary,
         fontSize: 13,
     },
+    rightSlot: {
+        minWidth: 56,
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+        alignSelf: 'center',
+        marginRight: 8,
+    },
     readTickWrap: {
         width: 22,
         height: 22,
         borderRadius: 11,
-        marginLeft: 8,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: theme.colors.primaryLight,
@@ -178,14 +179,9 @@ const styles = StyleSheet.create({
         borderColor: '#DDD6FE',
     },
     newBadge: {
-        marginLeft: 8,
         backgroundColor: theme.colors.warning,
         color: '#FFFFFF',
         fontWeight: '700',
-    },
-    chevron: {
-        alignSelf: 'center',
-        marginRight: 8,
     },
 });
 
