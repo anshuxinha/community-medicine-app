@@ -186,7 +186,7 @@ const ReadingView = ({
                             const highlighted = shouldHighlightText(item);
                             return (
                                 <View key={itemIndex} style={[styles.bulletRow, highlighted ? styles.highlightBulletRow : null]}>
-                                    <Text style={styles.bulletDot} selectable={false}>•</Text>
+                                    <Text style={styles.bulletDot} selectable={false}>{'\u2022'}</Text>
                                     <Text style={styles.bulletText} selectable={false}>{item}</Text>
                                 </View>
                             );
