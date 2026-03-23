@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
-import { Text, List, Divider, Badge } from 'react-native-paper';
+import React, { useContext, useState } from 'react';
+import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { Text, List, Divider, Badge, Menu } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { theme } from '../styles/theme';
@@ -9,6 +9,7 @@ import {
     getContentKey,
     getContentSignature,
     getItemStatus,
+    getLeafContentRefsForItem,
     getUpdatedSegmentsForItem,
 } from '../utils/contentRegistry';
 
@@ -58,13 +59,7 @@ const StatusMark = ({ status }) => {
         );
     }
 
-    return (
-        <MaterialCommunityIcons
-            name="chevron-right"
-            size={22}
-            color={theme.colors.textTertiary}
-        />
-    );
+    return <MaterialCommunityIcons name="chevron-right" size={22} color={theme.colors.textTertiary} />;
 };
 
 const buildReadingParams = (item, section, status) => ({
@@ -81,8 +76,37 @@ const buildReadingParams = (item, section, status) => ({
 
 const SubTopicsScreen = ({ route, navigation }) => {
     const { items, section = 'theory' } = route.params;
-    const { readItemVersions } = useContext(AppContext);
+    const { readItemVersions, markAsUnread } = useContext(AppContext);
+    const [openMenuKey, setOpenMenuKey] = useState(null);
     const insets = useSafeAreaInsets();
+
+    const getMenuKey = (item) => `${section}:${item.id}`;
+
+    const closeMenu = () => setOpenMenuKey(null);
+
+    const openItem = (item, itemStatus) => {
+        if (item.subsections) {
+            navigation.push('PremiumGuard', {
+                destination: 'SubTopics',
+                subTopicsParams: {
+                    title: item.title,
+                    items: item.subsections,
+                    section,
+                },
+            });
+            return;
+        }
+
+        navigation.navigate('PremiumGuard', {
+            destination: 'Reading',
+            readingParams: buildReadingParams(item, section, itemStatus),
+        });
+    };
+
+    const handleMarkUnread = (item) => {
+        markAsUnread(getLeafContentRefsForItem(item, section));
+        closeMenu();
+    };
 
     return (
         <SafeAreaView style={styles.container} edges={['bottom']}>
@@ -92,6 +116,7 @@ const SubTopicsScreen = ({ route, navigation }) => {
                 contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + 28 }]}
                 renderItem={({ item }) => {
                     const itemStatus = getItemStatus(item, section, readItemVersions);
+                    const menuKey = getMenuKey(item);
                     return (
                         <List.Item
                             title={item.title}
@@ -112,27 +137,35 @@ const SubTopicsScreen = ({ route, navigation }) => {
                                 />
                             )}
                             right={() => (
-                                <View style={styles.rightSlot}>
-                                    <StatusMark status={itemStatus} />
-                                </View>
+                                <Menu
+                                    visible={openMenuKey === menuKey}
+                                    onDismiss={closeMenu}
+                                    anchor={(
+                                        <TouchableOpacity
+                                            style={styles.rightSlot}
+                                            activeOpacity={0.7}
+                                            onPress={() => setOpenMenuKey(menuKey)}
+                                        >
+                                            <StatusMark status={itemStatus} />
+                                        </TouchableOpacity>
+                                    )}
+                                >
+                                    <Menu.Item
+                                        title={itemStatus === 'updated' ? 'Open updated topic' : 'Open topic'}
+                                        onPress={() => {
+                                            closeMenu();
+                                            openItem(item, itemStatus);
+                                        }}
+                                    />
+                                    {itemStatus === 'read' ? (
+                                        <Menu.Item
+                                            title="Mark as unread"
+                                            onPress={() => handleMarkUnread(item)}
+                                        />
+                                    ) : null}
+                                </Menu>
                             )}
-                            onPress={() => {
-                                if (item.subsections) {
-                                    navigation.push('PremiumGuard', {
-                                        destination: 'SubTopics',
-                                        subTopicsParams: {
-                                            title: item.title,
-                                            items: item.subsections,
-                                            section,
-                                        },
-                                    });
-                                } else {
-                                    navigation.navigate('PremiumGuard', {
-                                        destination: 'Reading',
-                                        readingParams: buildReadingParams(item, section, itemStatus),
-                                    });
-                                }
-                            }}
+                            onPress={() => openItem(item, itemStatus)}
                         />
                     );
                 }}
@@ -167,6 +200,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignSelf: 'center',
         marginRight: 8,
+        paddingVertical: 6,
     },
     readTickWrap: {
         width: 22,

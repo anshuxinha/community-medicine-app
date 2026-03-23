@@ -1,6 +1,5 @@
 // ============================================================
 // Virtual Museum Data
-// Source: 78_Competency Based Practicals in Community Medicine (2nd ed.)
 // Spotters extracted from figures in chapters 12-20.
 // ============================================================
 

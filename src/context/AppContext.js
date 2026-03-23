@@ -14,6 +14,7 @@ import {
     TOTAL_LEAF_CONTENT_ITEMS,
     getEffectiveReadCount,
     getContentKey,
+    getReadTitles,
     migrateLegacyReadItems,
 } from '../utils/contentRegistry';
 
@@ -465,6 +466,32 @@ export const AppProvider = ({ children }) => {
         });
     };
 
+    const markAsUnread = (contentRefs = []) => {
+        const refsToClear = contentRefs.filter((ref) => ref?.contentKey);
+        if (refsToClear.length === 0) {
+            return;
+        }
+
+        setReadItemVersions((previousVersions) => {
+            let changed = false;
+            const nextVersions = { ...previousVersions };
+
+            refsToClear.forEach(({ contentKey }) => {
+                if (nextVersions[contentKey]) {
+                    delete nextVersions[contentKey];
+                    changed = true;
+                }
+            });
+
+            if (!changed) {
+                return previousVersions;
+            }
+
+            setReadItems(getReadTitles(nextVersions));
+            return nextVersions;
+        });
+    };
+
     const recordQuizScore = (score, total) => {
         const entry = {
             date: new Date().toISOString().split('T')[0],
@@ -620,6 +647,7 @@ export const AppProvider = ({ children }) => {
                 dailyReadHistory,
                 quizScores,
                 markAsRead,
+                markAsUnread,
                 isBookmarked,
                 toggleBookmark,
                 saveHighlight,

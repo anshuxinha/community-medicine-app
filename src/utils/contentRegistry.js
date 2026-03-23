@@ -119,6 +119,25 @@ export const getEffectiveReadCount = (readItemVersions = {}) => (
     ), 0)
 );
 
+export const getReadTitles = (readItemVersions = {}) => (
+    [...CONTENT_ENTRIES_BY_TITLE.entries()]
+        .filter(([, entries]) => entries.some((entry) => readItemVersions?.[entry.key] === entry.signature))
+        .map(([title]) => title)
+);
+
+export const getLeafContentRefsForItem = (item, section) => {
+    if (!item) return [];
+
+    if (Array.isArray(item.subsections) && item.subsections.length > 0) {
+        return item.subsections.flatMap((child) => getLeafContentRefsForItem(child, section));
+    }
+
+    return [{
+        contentKey: getContentKey(section, item.id),
+        itemTitle: item.title || '',
+    }];
+};
+
 export const getUpdatedSegmentsForItem = (item = {}) => (
     Array.isArray(item.updatedSegments)
         ? item.updatedSegments.map(normalizeUpdatedSnippet).filter(Boolean)

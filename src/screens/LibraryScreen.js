@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
-import { Text, List, Divider, Searchbar, SegmentedButtons, Badge } from 'react-native-paper';
+import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { Text, List, Divider, Searchbar, SegmentedButtons, Badge, Menu } from 'react-native-paper';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import theoryTopics from '../data/mockData.json';
@@ -10,6 +10,7 @@ import {
     getContentKey,
     getContentSignature,
     getItemStatus,
+    getLeafContentRefsForItem,
     getUpdatedSegmentsForItem,
 } from '../utils/contentRegistry';
 import { theme } from '../styles/theme';
@@ -34,13 +35,7 @@ const StatusMark = ({ status }) => {
         );
     }
 
-    return (
-        <MaterialCommunityIcons
-            name="chevron-right"
-            size={24}
-            color="#D1D5DB"
-        />
-    );
+    return <MaterialCommunityIcons name="chevron-right" size={24} color="#D1D5DB" />;
 };
 
 const buildReadingParams = (item, section, status) => ({
@@ -57,9 +52,10 @@ const buildReadingParams = (item, section, status) => ({
 
 const LibraryScreen = (props) => {
     const { navigation } = props;
-    const { readItemVersions } = useContext(AppContext);
+    const { readItemVersions, markAsUnread } = useContext(AppContext);
     const [searchQuery, setSearchQuery] = useState('');
     const [activeSection, setActiveSection] = useState('theory');
+    const [openMenuKey, setOpenMenuKey] = useState(null);
     const insets = useSafeAreaInsets();
 
     const currentTopics = activeSection === 'theory' ? theoryTopics : practicalTopics;
@@ -67,6 +63,41 @@ const LibraryScreen = (props) => {
         topic.title.toLowerCase().includes(searchQuery.toLowerCase())
         || (topic.content && topic.content.toLowerCase().includes(searchQuery.toLowerCase()))
     );
+
+    const getMenuKey = (item) => `${activeSection}:${item.id}`;
+
+    const closeMenu = () => setOpenMenuKey(null);
+
+    const openItem = (item, itemStatus) => {
+        const isFree = item.id === '1' || item.title === 'Man and Medicine';
+
+        if (item.subsections) {
+            const subTopicsParams = {
+                title: item.title,
+                items: item.subsections,
+                section: activeSection,
+            };
+
+            if (isFree) {
+                navigation.navigate('SubTopics', subTopicsParams);
+            } else {
+                navigation.navigate('PremiumGuard', { destination: 'SubTopics', subTopicsParams });
+            }
+            return;
+        }
+
+        const readingParams = buildReadingParams(item, activeSection, itemStatus);
+        if (isFree) {
+            navigation.navigate('Reading', readingParams);
+        } else {
+            navigation.navigate('PremiumGuard', { destination: 'Reading', readingParams });
+        }
+    };
+
+    const handleMarkUnread = (item) => {
+        markAsUnread(getLeafContentRefsForItem(item, activeSection));
+        closeMenu();
+    };
 
     const getIconForTopic = (section, id, title) => {
         const idMapped = SECTION_ID_ICON_MAP[`${section}:${id}`];
@@ -173,6 +204,7 @@ const LibraryScreen = (props) => {
                     renderItem={({ item }) => {
                         const itemStatus = getItemStatus(item, activeSection, readItemVersions);
                         const iconName = getIconForTopic(activeSection, item.id, item.title);
+                        const menuKey = getMenuKey(item);
                         return (
                             <List.Item
                                 title={item.title}
@@ -187,34 +219,35 @@ const LibraryScreen = (props) => {
                                     />
                                 )}
                                 right={() => (
-                                    <View style={styles.rightSlot}>
-                                        <StatusMark status={itemStatus} />
-                                    </View>
+                                    <Menu
+                                        visible={openMenuKey === menuKey}
+                                        onDismiss={closeMenu}
+                                        anchor={(
+                                            <TouchableOpacity
+                                                style={styles.rightSlot}
+                                                activeOpacity={0.7}
+                                                onPress={() => setOpenMenuKey(menuKey)}
+                                            >
+                                                <StatusMark status={itemStatus} />
+                                            </TouchableOpacity>
+                                        )}
+                                    >
+                                        <Menu.Item
+                                            title={itemStatus === 'updated' ? 'Open updated topic' : 'Open topic'}
+                                            onPress={() => {
+                                                closeMenu();
+                                                openItem(item, itemStatus);
+                                            }}
+                                        />
+                                        {itemStatus === 'read' ? (
+                                            <Menu.Item
+                                                title="Mark as unread"
+                                                onPress={() => handleMarkUnread(item)}
+                                            />
+                                        ) : null}
+                                    </Menu>
                                 )}
-                                onPress={() => {
-                                    const isFree = item.id === '1' || item.title === 'Man and Medicine';
-
-                                    if (item.subsections) {
-                                        const subTopicsParams = {
-                                            title: item.title,
-                                            items: item.subsections,
-                                            section: activeSection,
-                                        };
-
-                                        if (isFree) {
-                                            navigation.navigate('SubTopics', subTopicsParams);
-                                        } else {
-                                            navigation.navigate('PremiumGuard', { destination: 'SubTopics', subTopicsParams });
-                                        }
-                                    } else {
-                                        const readingParams = buildReadingParams(item, activeSection, itemStatus);
-                                        if (isFree) {
-                                            navigation.navigate('Reading', readingParams);
-                                        } else {
-                                            navigation.navigate('PremiumGuard', { destination: 'Reading', readingParams });
-                                        }
-                                    }
-                                }}
+                                onPress={() => openItem(item, itemStatus)}
                                 style={styles.listItem}
                             />
                         );
@@ -287,6 +320,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignSelf: 'center',
         marginRight: 8,
+        paddingVertical: 6,
     },
     readTickWrap: {
         width: 22,
