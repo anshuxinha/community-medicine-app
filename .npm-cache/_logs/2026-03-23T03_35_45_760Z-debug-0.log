@@ -1,0 +1,22 @@
+0 verbose cli C:\Program Files\nodejs\node.exe C:\Users\Anshuman Sinha\AppData\Roaming\npm\node_modules\npm\bin\npm-cli.js
+1 info using npm@11.6.2
+2 info using node@v22.17.0
+3 silly config load:file:C:\Users\Anshuman Sinha\AppData\Roaming\npm\node_modules\npm\npmrc
+4 silly config load:file:D:\The App\.npmrc
+5 silly config load:file:C:\Users\Anshuman Sinha\.npmrc
+6 silly config load:file:C:\Users\Anshuman Sinha\AppData\Roaming\npm\etc\npmrc
+7 verbose title npm exec eas-cli update --channel production --message Add unread menu actions and museum data refresh
+8 verbose argv "exec" "--cache" ".npm-cache" "--" "eas-cli" "update" "--channel" "production" "--message" "Add unread menu actions and museum data refresh"
+9 verbose logfile logs-max:10 dir:D:\The App\.npm-cache\_logs\2026-03-23T03_35_45_760Z-
+10 verbose logfile D:\The App\.npm-cache\_logs\2026-03-23T03_35_45_760Z-debug-0.log
+11 silly logfile start cleaning logs, removing 1 files
+12 silly logfile done cleaning log files
+13 silly packumentCache heap:2197815296 maxSize:549453824 maxEntrySize:274726912
+14 http fetch GET 200 https://registry.npmjs.org/eas-cli 1614ms (cache revalidated)
+15 silly packumentCache heap:2197815296 maxSize:549453824 maxEntrySize:274726912
+16 verbose cwd D:\The App
+17 verbose os Windows_NT 10.0.26200
+18 verbose node v22.17.0
+19 verbose npm  v11.6.2
+20 verbose exit 0
+21 info ok
