@@ -12,6 +12,7 @@ import {
     getItemStatus,
     getUpdatedSegmentsForItem,
 } from '../utils/contentRegistry';
+import { getTopicIllustrations } from '../services/topicIllustrations';
 
 const ReadingScreen = ({ route }) => {
     const {
@@ -42,6 +43,7 @@ const ReadingScreen = ({ route }) => {
     const effectiveContentKey = contentKey || (effectiveSection ? getContentKey(effectiveSection, effectiveId) : null);
     const effectiveContentSignature = contentSignature || getContentSignature(currentItem || route.params);
     const effectiveUpdatedSegments = currentItem ? getUpdatedSegmentsForItem(currentItem) : (updatedSegments || []);
+    const [topicIllustrations, setTopicIllustrations] = React.useState([]);
     const [sessionHighlightUpdates] = React.useState(() => {
         if (showUpdateHighlights === true) {
             return true;
@@ -92,6 +94,35 @@ const ReadingScreen = ({ route }) => {
     React.useEffect(() => () => {
         stopSpeech();
     }, []);
+
+    React.useEffect(() => {
+        let isMounted = true;
+
+        const loadIllustrations = async () => {
+            if (!effectiveSection || effectiveId === undefined || effectiveId === null) {
+                if (isMounted) {
+                    setTopicIllustrations([]);
+                }
+                return;
+            }
+
+            const illustrations = await getTopicIllustrations({
+                section: effectiveSection,
+                topicId: effectiveId,
+                contentKey: effectiveContentKey,
+            });
+
+            if (isMounted) {
+                setTopicIllustrations(illustrations);
+            }
+        };
+
+        loadIllustrations();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [effectiveSection, effectiveId, effectiveContentKey]);
 
     const bookmarkPayload = {
         ...route.params,
@@ -147,6 +178,7 @@ const ReadingScreen = ({ route }) => {
                 onToggleSpeak={handleSpeak}
                 highlightedSegments={effectiveUpdatedSegments}
                 showUpdateHighlights={sessionHighlightUpdates}
+                illustrations={topicIllustrations}
                 onReachEnd={handleReachEnd}
             />
         </View>

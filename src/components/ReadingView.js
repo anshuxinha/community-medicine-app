@@ -14,6 +14,10 @@ import { theme } from '../styles/theme';
 import { normalizeUpdatedSnippet } from '../utils/contentRegistry';
 
 const stripBold = (text) => text.replace(/\*\*(.+?)\*\*/g, '$1');
+const normalizeAnchorText = (text = '') => stripBold(String(text))
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
 
 const parseMarkdown = (content) => {
     const lines = content.split('\n');
@@ -71,6 +75,74 @@ const parseMarkdown = (content) => {
     return blocks;
 };
 
+const getBlockAnchorText = (block) => {
+    if (!block) return '';
+    if (block.type === 'h1' || block.type === 'h2' || block.type === 'body') {
+        return normalizeAnchorText(block.text);
+    }
+    return '';
+};
+
+const buildIllustrationBlock = (illustration) => ({
+    type: 'illustration',
+    ...illustration,
+});
+
+const mergeBlocksWithIllustrations = (blocks, illustrations = []) => {
+    if (!Array.isArray(illustrations) || illustrations.length === 0) {
+        return blocks;
+    }
+
+    const topBlocks = [];
+    const bottomBlocks = [];
+    const beforeMap = new Map();
+    const afterMap = new Map();
+
+    illustrations.forEach((illustration) => {
+        const normalizedPlacement = illustration.placement || 'after';
+        const normalizedAnchor = normalizeAnchorText(illustration.anchorText || '');
+        const illustrationBlock = buildIllustrationBlock(illustration);
+
+        if (normalizedPlacement === 'top') {
+            topBlocks.push(illustrationBlock);
+            return;
+        }
+
+        if (normalizedPlacement === 'bottom' || !normalizedAnchor) {
+            bottomBlocks.push(illustrationBlock);
+            return;
+        }
+
+        const targetMap = normalizedPlacement === 'before' ? beforeMap : afterMap;
+        const bucket = targetMap.get(normalizedAnchor) || [];
+        bucket.push(illustrationBlock);
+        targetMap.set(normalizedAnchor, bucket);
+    });
+
+    const mergedBlocks = [...topBlocks];
+    const unmatchedBottomBlocks = [...bottomBlocks];
+
+    blocks.forEach((block) => {
+        const anchor = getBlockAnchorText(block);
+        if (anchor && beforeMap.has(anchor)) {
+            mergedBlocks.push(...beforeMap.get(anchor));
+            beforeMap.delete(anchor);
+        }
+
+        mergedBlocks.push(block);
+
+        if (anchor && afterMap.has(anchor)) {
+            mergedBlocks.push(...afterMap.get(anchor));
+            afterMap.delete(anchor);
+        }
+    });
+
+    beforeMap.forEach((value) => unmatchedBottomBlocks.push(...value));
+    afterMap.forEach((value) => unmatchedBottomBlocks.push(...value));
+
+    return [...mergedBlocks, ...unmatchedBottomBlocks];
+};
+
 const REACH_END_THRESHOLD = 0.98;
 const SHORT_CONTENT_TOLERANCE = 24;
 
@@ -83,10 +155,15 @@ const ReadingView = ({
     onToggleSpeak,
     highlightedSegments = [],
     showUpdateHighlights = false,
+    illustrations = [],
     onReachEnd,
 }) => {
     const insets = useSafeAreaInsets();
     const blocks = useMemo(() => parseMarkdown(content || ''), [content]);
+    const mergedBlocks = useMemo(
+        () => mergeBlocksWithIllustrations(blocks, illustrations),
+        [blocks, illustrations]
+    );
     const [scrollProgress, setScrollProgress] = useState(0);
     const hasReachedEndRef = useRef(false);
     const viewportHeightRef = useRef(0);
@@ -218,6 +295,32 @@ const ReadingView = ({
                         accessibilityLabel={block.alt || 'Content image'}
                     />
                 );
+            case 'illustration':
+                return (
+                    <View key={index} style={styles.illustrationCard}>
+                        <Image
+                            source={block.source || { uri: block.url }}
+                            style={[styles.illustrationImage, { aspectRatio: block.aspectRatio || 1.7778 }]}
+                            resizeMode="contain"
+                            accessible
+                            accessibilityLabel={block.alt || 'Topic illustration'}
+                        />
+                        {(block.caption || block.purpose) ? (
+                            <View style={styles.illustrationTextBlock}>
+                                {block.caption ? (
+                                    <Text style={styles.illustrationCaption} selectable={false}>
+                                        {block.caption}
+                                    </Text>
+                                ) : null}
+                                {block.purpose ? (
+                                    <Text style={styles.illustrationPurpose} selectable={false}>
+                                        {block.purpose}
+                                    </Text>
+                                ) : null}
+                            </View>
+                        ) : null}
+                    </View>
+                );
             case 'spacing':
                 return <View key={index} style={styles.spacing} />;
             default:
@@ -278,7 +381,7 @@ const ReadingView = ({
                         </Text>
                     </View>
                 ) : null}
-                {blocks.map(renderBlock)}
+                {mergedBlocks.map(renderBlock)}
             </ScrollView>
         </View>
     );
@@ -455,6 +558,40 @@ const styles = StyleSheet.create({
         marginVertical: 12,
         borderRadius: 8,
         backgroundColor: theme.colors.surfaceTertiary,
+    },
+    illustrationCard: {
+        marginVertical: 14,
+        borderRadius: 16,
+        overflow: 'hidden',
+        backgroundColor: theme.colors.surfacePrimary,
+        borderWidth: 1,
+        borderColor: theme.colors.surfaceSecondary,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOpacity: 0.08,
+        shadowRadius: 6,
+        shadowOffset: { width: 0, height: 2 },
+    },
+    illustrationImage: {
+        width: '100%',
+        minHeight: Dimensions.get('window').height * 0.22,
+        backgroundColor: theme.colors.surfaceTertiary,
+    },
+    illustrationTextBlock: {
+        paddingHorizontal: 14,
+        paddingVertical: 12,
+        gap: 4,
+    },
+    illustrationCaption: {
+        color: theme.colors.textTitle,
+        fontSize: 14.5,
+        lineHeight: 21,
+        fontWeight: '700',
+    },
+    illustrationPurpose: {
+        color: theme.colors.textPrimary,
+        fontSize: 13.5,
+        lineHeight: 20,
     },
 });
 
