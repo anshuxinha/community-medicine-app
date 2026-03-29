@@ -165,6 +165,11 @@ const getTouchDistance = (touches = []) => {
     return Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
 };
 
+const getPanBounds = (baseWidth, baseHeight, viewportWidth, viewportHeight, scale) => ({
+    maxX: Math.max(0, ((baseWidth * scale) - viewportWidth) / 2),
+    maxY: Math.max(0, ((baseHeight * scale) - viewportHeight) / 2),
+});
+
 const resolveAspectRatio = (source, fallback = 1) => {
     const resolved = source ? Image.resolveAssetSource(source) : null;
     if (resolved?.width && resolved?.height) {
@@ -226,7 +231,11 @@ const ReadingView = ({
     const viewportHeightRef = useRef(0);
     const contentHeightRef = useRef(0);
     const zoomScale = useRef(new Animated.Value(1)).current;
+    const translateX = useRef(new Animated.Value(0)).current;
+    const translateY = useRef(new Animated.Value(0)).current;
     const currentZoomRef = useRef(1);
+    const currentTranslateRef = useRef({ x: 0, y: 0 });
+    const panStartRef = useRef({ x: 0, y: 0 });
     const pinchStartDistanceRef = useRef(null);
     const pinchStartZoomRef = useRef(1);
 
@@ -243,11 +252,25 @@ const ReadingView = ({
 
     const resetFullscreenZoom = () => {
         currentZoomRef.current = 1;
+        currentTranslateRef.current = { x: 0, y: 0 };
+        panStartRef.current = { x: 0, y: 0 };
         setZoomLevel(1);
         pinchStartDistanceRef.current = null;
         pinchStartZoomRef.current = 1;
         Animated.spring(zoomScale, {
             toValue: 1,
+            useNativeDriver: false,
+            friction: 7,
+            tension: 60,
+        }).start();
+        Animated.spring(translateX, {
+            toValue: 0,
+            useNativeDriver: false,
+            friction: 7,
+            tension: 60,
+        }).start();
+        Animated.spring(translateY, {
+            toValue: 0,
             useNativeDriver: false,
             friction: 7,
             tension: 60,
@@ -258,48 +281,6 @@ const ReadingView = ({
         resetFullscreenZoom();
     }, [fullscreenImage]);
 
-    const pinchResponder = useMemo(() => PanResponder.create({
-        onStartShouldSetPanResponderCapture: (event) => event.nativeEvent.touches.length >= 2,
-        onMoveShouldSetPanResponderCapture: (event) => event.nativeEvent.touches.length >= 2,
-        onPanResponderGrant: (event) => {
-            const distance = getTouchDistance(event.nativeEvent.touches);
-            if (distance) {
-                pinchStartDistanceRef.current = distance;
-                pinchStartZoomRef.current = currentZoomRef.current;
-            }
-        },
-        onPanResponderMove: (event) => {
-            const distance = getTouchDistance(event.nativeEvent.touches);
-            if (!distance) {
-                return;
-            }
-
-            if (!pinchStartDistanceRef.current) {
-                pinchStartDistanceRef.current = distance;
-                pinchStartZoomRef.current = currentZoomRef.current;
-                return;
-            }
-
-            const nextZoom = clamp(
-                pinchStartZoomRef.current * (distance / pinchStartDistanceRef.current),
-                1,
-                FULLSCREEN_MAX_ZOOM
-            );
-            currentZoomRef.current = nextZoom;
-            setZoomLevel(nextZoom);
-            zoomScale.setValue(nextZoom);
-        },
-        onPanResponderRelease: () => {
-            pinchStartDistanceRef.current = null;
-            pinchStartZoomRef.current = currentZoomRef.current;
-        },
-        onPanResponderTerminationRequest: () => true,
-        onPanResponderTerminate: () => {
-            pinchStartDistanceRef.current = null;
-            pinchStartZoomRef.current = currentZoomRef.current;
-        },
-    }), [zoomScale]);
-
     const fullscreenBaseSize = useMemo(() => {
         const aspectRatio = resolveAspectRatio(fullscreenImage?.source, fullscreenImage?.aspectRatio || 1);
         return getContainSize(
@@ -308,6 +289,104 @@ const ReadingView = ({
             fullscreenViewport.height
         );
     }, [fullscreenImage, fullscreenViewport.height, fullscreenViewport.width]);
+
+    const pinchResponder = useMemo(() => PanResponder.create({
+        onStartShouldSetPanResponder: (event) => (
+            event.nativeEvent.touches.length >= 2 || currentZoomRef.current > 1.01
+        ),
+        onMoveShouldSetPanResponder: (event) => (
+            event.nativeEvent.touches.length >= 2 || currentZoomRef.current > 1.01
+        ),
+        onPanResponderGrant: (event) => {
+            const distance = getTouchDistance(event.nativeEvent.touches);
+            if (distance) {
+                pinchStartDistanceRef.current = distance;
+                pinchStartZoomRef.current = currentZoomRef.current;
+                panStartRef.current = { ...currentTranslateRef.current };
+                return;
+            }
+
+            pinchStartDistanceRef.current = null;
+            panStartRef.current = { ...currentTranslateRef.current };
+        },
+        onPanResponderMove: (event, gestureState) => {
+            const distance = getTouchDistance(event.nativeEvent.touches);
+
+            if (distance) {
+                if (!pinchStartDistanceRef.current) {
+                    pinchStartDistanceRef.current = distance;
+                    pinchStartZoomRef.current = currentZoomRef.current;
+                    return;
+                }
+
+                const nextZoom = clamp(
+                    pinchStartZoomRef.current * (distance / pinchStartDistanceRef.current),
+                    1,
+                    FULLSCREEN_MAX_ZOOM
+                );
+                const bounds = getPanBounds(
+                    fullscreenBaseSize.width,
+                    fullscreenBaseSize.height,
+                    fullscreenViewport.width,
+                    fullscreenViewport.height,
+                    nextZoom
+                );
+                const nextX = clamp(currentTranslateRef.current.x, -bounds.maxX, bounds.maxX);
+                const nextY = clamp(currentTranslateRef.current.y, -bounds.maxY, bounds.maxY);
+
+                currentZoomRef.current = nextZoom;
+                currentTranslateRef.current = { x: nextX, y: nextY };
+                setZoomLevel(nextZoom);
+                zoomScale.setValue(nextZoom);
+                translateX.setValue(nextX);
+                translateY.setValue(nextY);
+                return;
+            }
+
+            if (currentZoomRef.current <= 1.01) {
+                return;
+            }
+
+            const bounds = getPanBounds(
+                fullscreenBaseSize.width,
+                fullscreenBaseSize.height,
+                fullscreenViewport.width,
+                fullscreenViewport.height,
+                currentZoomRef.current
+            );
+            const nextX = clamp(panStartRef.current.x + gestureState.dx, -bounds.maxX, bounds.maxX);
+            const nextY = clamp(panStartRef.current.y + gestureState.dy, -bounds.maxY, bounds.maxY);
+
+            currentTranslateRef.current = { x: nextX, y: nextY };
+            translateX.setValue(nextX);
+            translateY.setValue(nextY);
+        },
+        onPanResponderRelease: () => {
+            pinchStartDistanceRef.current = null;
+            pinchStartZoomRef.current = currentZoomRef.current;
+
+            if (currentZoomRef.current <= 1.01) {
+                resetFullscreenZoom();
+            }
+        },
+        onPanResponderTerminationRequest: () => true,
+        onPanResponderTerminate: () => {
+            pinchStartDistanceRef.current = null;
+            pinchStartZoomRef.current = currentZoomRef.current;
+
+            if (currentZoomRef.current <= 1.01) {
+                resetFullscreenZoom();
+            }
+        },
+    }), [
+        fullscreenBaseSize.height,
+        fullscreenBaseSize.width,
+        fullscreenViewport.height,
+        fullscreenViewport.width,
+        translateX,
+        translateY,
+        zoomScale,
+    ]);
 
     const shouldHighlightText = (text) => (
         showUpdateHighlights && highlightSet.has(normalizeUpdatedSnippet(text || ''))
@@ -483,9 +562,6 @@ const ReadingView = ({
         }
     };
 
-    const zoomedWidth = fullscreenBaseSize.width * zoomLevel;
-    const zoomedHeight = fullscreenBaseSize.height * zoomLevel;
-
     return (
         <View style={styles.container}>
             <View style={styles.headerRow}>
@@ -567,62 +643,40 @@ const ReadingView = ({
 
                     <View
                         style={styles.fullscreenViewport}
+                        {...pinchResponder.panHandlers}
                         onLayout={(event) => {
                             const { width, height } = event.nativeEvent.layout;
                             setFullscreenViewport({ width, height });
                         }}
                     >
-                        <ScrollView
-                            horizontal
-                            bounces={false}
-                            maximumZoomScale={1}
-                            contentContainerStyle={[
-                                styles.fullscreenScrollContent,
+                        <Animated.View
+                            style={[
+                                styles.fullscreenImageStage,
                                 {
-                                    minWidth: Math.max(fullscreenViewport.width, zoomedWidth),
-                                    minHeight: Math.max(fullscreenViewport.height, zoomedHeight),
+                                    width: fullscreenBaseSize.width,
+                                    height: fullscreenBaseSize.height,
+                                    transform: [
+                                        { scale: zoomScale },
+                                        { translateX },
+                                        { translateY },
+                                    ],
                                 },
                             ]}
-                            showsHorizontalScrollIndicator={zoomLevel > 1.01}
                         >
-                            <ScrollView
-                                bounces={false}
-                                maximumZoomScale={1}
-                                contentContainerStyle={styles.fullscreenScrollContent}
-                                showsVerticalScrollIndicator={zoomLevel > 1.01}
-                            >
-                                <Animated.View
-                                    {...pinchResponder.panHandlers}
-                                    style={[
-                                        styles.fullscreenImageStage,
-                                        {
-                                            width: zoomScale.interpolate({
-                                                inputRange: [1, FULLSCREEN_MAX_ZOOM],
-                                                outputRange: [fullscreenBaseSize.width, fullscreenBaseSize.width * FULLSCREEN_MAX_ZOOM],
-                                            }),
-                                            height: zoomScale.interpolate({
-                                                inputRange: [1, FULLSCREEN_MAX_ZOOM],
-                                                outputRange: [fullscreenBaseSize.height, fullscreenBaseSize.height * FULLSCREEN_MAX_ZOOM],
-                                            }),
-                                        },
-                                    ]}
-                                >
-                                    {fullscreenImage ? (
-                                        <Image
-                                            source={fullscreenImage.source}
-                                            style={styles.fullscreenImage}
-                                            resizeMode="contain"
-                                            accessible
-                                            accessibilityLabel={fullscreenImage.alt}
-                                        />
-                                    ) : null}
-                                </Animated.View>
-                            </ScrollView>
-                        </ScrollView>
+                            {fullscreenImage ? (
+                                <Image
+                                    source={fullscreenImage.source}
+                                    style={styles.fullscreenImage}
+                                    resizeMode="contain"
+                                    accessible
+                                    accessibilityLabel={fullscreenImage.alt}
+                                />
+                            ) : null}
+                        </Animated.View>
                     </View>
 
                     <Text style={styles.fullscreenHint}>
-                        Pinch to zoom. Drag to inspect details. Use reset to return to fit.
+                        Pinch to zoom. Drag to pan when zoomed. Use reset to return to fit.
                     </Text>
                 </View>
             </Modal>
@@ -874,10 +928,6 @@ const styles = StyleSheet.create({
     fullscreenViewport: {
         width: '100%',
         height: SCREEN.height * 0.78,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    fullscreenScrollContent: {
         alignItems: 'center',
         justifyContent: 'center',
     },
