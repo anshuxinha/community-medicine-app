@@ -9,8 +9,6 @@ import {
     Dimensions,
     Modal,
     Pressable,
-    Animated,
-    PanResponder,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -150,25 +148,11 @@ const mergeBlocksWithIllustrations = (blocks, illustrations = []) => {
 const REACH_END_THRESHOLD = 0.98;
 const SHORT_CONTENT_TOLERANCE = 24;
 const SCREEN = Dimensions.get('window');
-const FULLSCREEN_MAX_ZOOM = 4;
+const MIN_ZOOM = 1;
+const MAX_ZOOM = 3;
+const ZOOM_STEP = 0.5;
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
-
-const getTouchDistance = (touches = []) => {
-    if (!touches || touches.length < 2) {
-        return null;
-    }
-
-    const [firstTouch, secondTouch] = touches;
-    const deltaX = secondTouch.pageX - firstTouch.pageX;
-    const deltaY = secondTouch.pageY - firstTouch.pageY;
-    return Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
-};
-
-const getPanBounds = (baseWidth, baseHeight, viewportWidth, viewportHeight, scale) => ({
-    maxX: Math.max(0, ((baseWidth * scale) - viewportWidth) / 2),
-    maxY: Math.max(0, ((baseHeight * scale) - viewportHeight) / 2),
-});
 
 const resolveAspectRatio = (source, fallback = 1) => {
     const resolved = source ? Image.resolveAssetSource(source) : null;
@@ -202,6 +186,23 @@ const getContainSize = (aspectRatio, maxWidth, maxHeight) => {
     };
 };
 
+const getRotationKey = (source, fallback = '') => {
+    if (typeof source === 'number') {
+        return `asset:${source}`;
+    }
+
+    if (source?.uri) {
+        return `uri:${source.uri}`;
+    }
+
+    return fallback;
+};
+
+const getRotatedAspectRatio = (aspectRatio, rotation = 0) => {
+    const normalizedTurns = Math.abs(Math.round(rotation / 90)) % 2;
+    return normalizedTurns === 1 ? 1 / aspectRatio : aspectRatio;
+};
+
 const ReadingView = ({
     content,
     title,
@@ -221,8 +222,10 @@ const ReadingView = ({
         [blocks, illustrations]
     );
     const [scrollProgress, setScrollProgress] = useState(0);
+    const [imageRotationMap, setImageRotationMap] = useState({});
     const [fullscreenImage, setFullscreenImage] = useState(null);
-    const [zoomLevel, setZoomLevel] = useState(1);
+    const [viewerZoomScale, setViewerZoomScale] = useState(MIN_ZOOM);
+    const [fullscreenRotation, setFullscreenRotation] = useState(0);
     const [fullscreenViewport, setFullscreenViewport] = useState({
         width: SCREEN.width - 32,
         height: SCREEN.height * 0.78,
@@ -230,14 +233,6 @@ const ReadingView = ({
     const hasReachedEndRef = useRef(false);
     const viewportHeightRef = useRef(0);
     const contentHeightRef = useRef(0);
-    const zoomScale = useRef(new Animated.Value(1)).current;
-    const translateX = useRef(new Animated.Value(0)).current;
-    const translateY = useRef(new Animated.Value(0)).current;
-    const currentZoomRef = useRef(1);
-    const currentTranslateRef = useRef({ x: 0, y: 0 });
-    const panStartRef = useRef({ x: 0, y: 0 });
-    const pinchStartDistanceRef = useRef(null);
-    const pinchStartZoomRef = useRef(1);
 
     const highlightSet = useMemo(() => new Set(
         (highlightedSegments || []).map((segment) => normalizeUpdatedSnippet(segment)).filter(Boolean)
@@ -250,143 +245,53 @@ const ReadingView = ({
         contentHeightRef.current = 0;
     }, [content, title]);
 
-    const resetFullscreenZoom = () => {
-        currentZoomRef.current = 1;
-        currentTranslateRef.current = { x: 0, y: 0 };
-        panStartRef.current = { x: 0, y: 0 };
-        setZoomLevel(1);
-        pinchStartDistanceRef.current = null;
-        pinchStartZoomRef.current = 1;
-        Animated.spring(zoomScale, {
-            toValue: 1,
-            useNativeDriver: false,
-            friction: 7,
-            tension: 60,
-        }).start();
-        Animated.spring(translateX, {
-            toValue: 0,
-            useNativeDriver: false,
-            friction: 7,
-            tension: 60,
-        }).start();
-        Animated.spring(translateY, {
-            toValue: 0,
-            useNativeDriver: false,
-            friction: 7,
-            tension: 60,
-        }).start();
+    const rotateImage = (rotationKey, delta) => {
+        if (!rotationKey) {
+            return;
+        }
+
+        setImageRotationMap((current) => {
+            const nextRotation = (((current[rotationKey] || 0) + delta) % 360 + 360) % 360;
+            return {
+                ...current,
+                [rotationKey]: nextRotation,
+            };
+        });
+    };
+
+    const openFullscreenImage = ({ source, alt, aspectRatio, rotationKey }) => {
+        const currentRotation = imageRotationMap[rotationKey] || 0;
+        setViewerZoomScale(MIN_ZOOM);
+        setFullscreenRotation(currentRotation);
+        setFullscreenImage({
+            source,
+            alt,
+            aspectRatio,
+            rotationKey,
+        });
     };
 
     useEffect(() => {
-        resetFullscreenZoom();
+        if (!fullscreenImage) {
+            setViewerZoomScale(MIN_ZOOM);
+            setFullscreenRotation(0);
+        }
     }, [fullscreenImage]);
 
     const fullscreenBaseSize = useMemo(() => {
-        const aspectRatio = resolveAspectRatio(fullscreenImage?.source, fullscreenImage?.aspectRatio || 1);
+        const originalAspectRatio = resolveAspectRatio(fullscreenImage?.source, fullscreenImage?.aspectRatio || 1);
+        const rotatedAspectRatio = getRotatedAspectRatio(originalAspectRatio, fullscreenRotation);
         return getContainSize(
-            aspectRatio,
+            rotatedAspectRatio,
             fullscreenViewport.width,
             fullscreenViewport.height
         );
-    }, [fullscreenImage, fullscreenViewport.height, fullscreenViewport.width]);
+    }, [fullscreenImage, fullscreenRotation, fullscreenViewport.height, fullscreenViewport.width]);
 
-    const pinchResponder = useMemo(() => PanResponder.create({
-        onStartShouldSetPanResponder: (event) => (
-            event.nativeEvent.touches.length >= 2 || currentZoomRef.current > 1.01
-        ),
-        onMoveShouldSetPanResponder: (event) => (
-            event.nativeEvent.touches.length >= 2 || currentZoomRef.current > 1.01
-        ),
-        onPanResponderGrant: (event) => {
-            const distance = getTouchDistance(event.nativeEvent.touches);
-            if (distance) {
-                pinchStartDistanceRef.current = distance;
-                pinchStartZoomRef.current = currentZoomRef.current;
-                panStartRef.current = { ...currentTranslateRef.current };
-                return;
-            }
-
-            pinchStartDistanceRef.current = null;
-            panStartRef.current = { ...currentTranslateRef.current };
-        },
-        onPanResponderMove: (event, gestureState) => {
-            const distance = getTouchDistance(event.nativeEvent.touches);
-
-            if (distance) {
-                if (!pinchStartDistanceRef.current) {
-                    pinchStartDistanceRef.current = distance;
-                    pinchStartZoomRef.current = currentZoomRef.current;
-                    return;
-                }
-
-                const nextZoom = clamp(
-                    pinchStartZoomRef.current * (distance / pinchStartDistanceRef.current),
-                    1,
-                    FULLSCREEN_MAX_ZOOM
-                );
-                const bounds = getPanBounds(
-                    fullscreenBaseSize.width,
-                    fullscreenBaseSize.height,
-                    fullscreenViewport.width,
-                    fullscreenViewport.height,
-                    nextZoom
-                );
-                const nextX = clamp(currentTranslateRef.current.x, -bounds.maxX, bounds.maxX);
-                const nextY = clamp(currentTranslateRef.current.y, -bounds.maxY, bounds.maxY);
-
-                currentZoomRef.current = nextZoom;
-                currentTranslateRef.current = { x: nextX, y: nextY };
-                setZoomLevel(nextZoom);
-                zoomScale.setValue(nextZoom);
-                translateX.setValue(nextX);
-                translateY.setValue(nextY);
-                return;
-            }
-
-            if (currentZoomRef.current <= 1.01) {
-                return;
-            }
-
-            const bounds = getPanBounds(
-                fullscreenBaseSize.width,
-                fullscreenBaseSize.height,
-                fullscreenViewport.width,
-                fullscreenViewport.height,
-                currentZoomRef.current
-            );
-            const nextX = clamp(panStartRef.current.x + gestureState.dx, -bounds.maxX, bounds.maxX);
-            const nextY = clamp(panStartRef.current.y + gestureState.dy, -bounds.maxY, bounds.maxY);
-
-            currentTranslateRef.current = { x: nextX, y: nextY };
-            translateX.setValue(nextX);
-            translateY.setValue(nextY);
-        },
-        onPanResponderRelease: () => {
-            pinchStartDistanceRef.current = null;
-            pinchStartZoomRef.current = currentZoomRef.current;
-
-            if (currentZoomRef.current <= 1.01) {
-                resetFullscreenZoom();
-            }
-        },
-        onPanResponderTerminationRequest: () => true,
-        onPanResponderTerminate: () => {
-            pinchStartDistanceRef.current = null;
-            pinchStartZoomRef.current = currentZoomRef.current;
-
-            if (currentZoomRef.current <= 1.01) {
-                resetFullscreenZoom();
-            }
-        },
-    }), [
-        fullscreenBaseSize.height,
-        fullscreenBaseSize.width,
-        fullscreenViewport.height,
-        fullscreenViewport.width,
-        translateX,
-        translateY,
-        zoomScale,
-    ]);
+    const fullscreenZoomedSize = useMemo(() => ({
+        width: fullscreenBaseSize.width * viewerZoomScale,
+        height: fullscreenBaseSize.height * viewerZoomScale,
+    }), [fullscreenBaseSize.height, fullscreenBaseSize.width, viewerZoomScale]);
 
     const shouldHighlightText = (text) => (
         showUpdateHighlights && highlightSet.has(normalizeUpdatedSnippet(text || ''))
@@ -493,51 +398,80 @@ const ReadingView = ({
                     </View>
                 );
             case 'image':
-                return (
-                    <TouchableOpacity
-                        key={index}
-                        activeOpacity={0.9}
-                        onPress={() => setFullscreenImage({
-                            source: { uri: block.url },
-                            alt: block.alt || 'Content image',
-                        })}
-                    >
-                        <View style={styles.contentImageFrame}>
-                            <Image
-                                source={{ uri: block.url }}
-                                style={styles.contentImage}
-                                resizeMode="contain"
-                                accessible
-                                accessibilityLabel={block.alt || 'Content image'}
-                            />
+                {
+                    const source = { uri: block.url };
+                    const aspectRatio = resolveAspectRatio(source, 1);
+                    const rotationKey = getRotationKey(source, `content:${index}`);
+                    const rotation = imageRotationMap[rotationKey] || 0;
+                    const displayAspectRatio = getRotatedAspectRatio(aspectRatio, rotation);
+
+                    return (
+                        <View key={index} style={styles.inlineImageShell}>
+                            <TouchableOpacity
+                                activeOpacity={0.9}
+                                onPress={() => openFullscreenImage({
+                                    source,
+                                    alt: block.alt || 'Content image',
+                                    aspectRatio,
+                                    rotationKey,
+                                })}
+                            >
+                                <View style={[styles.contentImageFrame, { aspectRatio: displayAspectRatio }]}>
+                                    <Image
+                                        source={source}
+                                        style={[styles.contentImage, { transform: [{ rotate: `${rotation}deg` }] }]}
+                                        resizeMode="contain"
+                                        accessible
+                                        accessibilityLabel={block.alt || 'Content image'}
+                                    />
+                                </View>
+                            </TouchableOpacity>
+                            <Pressable
+                                style={styles.inlineImageControl}
+                                onPress={() => rotateImage(rotationKey, 90)}
+                            >
+                                <MaterialIcons name="rotate-right" size={18} color="#FFFFFF" />
+                            </Pressable>
                         </View>
-                    </TouchableOpacity>
-                );
+                    );
+                }
             case 'illustration':
                 {
                     const source = block.source || { uri: block.url };
                     const aspectRatio = resolveAspectRatio(source, block.aspectRatio || 1);
+                    const rotationKey = getRotationKey(source, block.id || `${index}:${block.alt || 'illustration'}`);
+                    const rotation = imageRotationMap[rotationKey] || 0;
+                    const displayAspectRatio = getRotatedAspectRatio(aspectRatio, rotation);
 
                     return (
                         <View key={index} style={styles.illustrationCard}>
-                            <TouchableOpacity
-                                activeOpacity={0.95}
-                                onPress={() => setFullscreenImage({
-                                    source,
-                                    alt: block.alt || 'Topic illustration',
-                                    aspectRatio,
-                                })}
-                            >
-                                <View style={[styles.illustrationImageFrame, { aspectRatio }]}>
-                                    <Image
-                                        source={source}
-                                        style={styles.illustrationImage}
-                                        resizeMode="contain"
-                                        accessible
-                                        accessibilityLabel={block.alt || 'Topic illustration'}
-                                    />
-                                </View>
-                            </TouchableOpacity>
+                            <View style={styles.inlineImageShell}>
+                                <TouchableOpacity
+                                    activeOpacity={0.95}
+                                    onPress={() => openFullscreenImage({
+                                        source,
+                                        alt: block.alt || 'Topic illustration',
+                                        aspectRatio,
+                                        rotationKey,
+                                    })}
+                                >
+                                    <View style={[styles.illustrationImageFrame, { aspectRatio: displayAspectRatio }]}>
+                                        <Image
+                                            source={source}
+                                            style={[styles.illustrationImage, { transform: [{ rotate: `${rotation}deg` }] }]}
+                                            resizeMode="contain"
+                                            accessible
+                                            accessibilityLabel={block.alt || 'Topic illustration'}
+                                        />
+                                    </View>
+                                </TouchableOpacity>
+                                <Pressable
+                                    style={styles.inlineImageControl}
+                                    onPress={() => rotateImage(rotationKey, 90)}
+                                >
+                                    <MaterialIcons name="rotate-right" size={18} color="#FFFFFF" />
+                                </Pressable>
+                            </View>
                             {(block.caption || block.purpose) ? (
                                 <View style={styles.illustrationTextBlock}>
                                     {block.caption ? (
@@ -632,51 +566,85 @@ const ReadingView = ({
                         <MaterialIcons name="close" size={28} color="#FFFFFF" />
                     </Pressable>
 
-                    {zoomLevel > 1.01 ? (
-                        <Pressable
-                            style={styles.fullscreenReset}
-                            onPress={resetFullscreenZoom}
-                        >
-                            <Text style={styles.fullscreenResetText}>Reset zoom</Text>
-                        </Pressable>
-                    ) : null}
-
                     <View
                         style={styles.fullscreenViewport}
-                        {...pinchResponder.panHandlers}
                         onLayout={(event) => {
                             const { width, height } = event.nativeEvent.layout;
                             setFullscreenViewport({ width, height });
                         }}
                     >
-                        <Animated.View
-                            style={[
-                                styles.fullscreenImageStage,
-                                {
-                                    width: fullscreenBaseSize.width,
-                                    height: fullscreenBaseSize.height,
-                                    transform: [
-                                        { scale: zoomScale },
-                                        { translateX },
-                                        { translateY },
-                                    ],
-                                },
-                            ]}
+                        <ScrollView
+                            horizontal
+                            bounces={false}
+                            contentContainerStyle={styles.viewerOuterScrollContent}
                         >
-                            {fullscreenImage ? (
-                                <Image
-                                    source={fullscreenImage.source}
-                                    style={styles.fullscreenImage}
-                                    resizeMode="contain"
-                                    accessible
-                                    accessibilityLabel={fullscreenImage.alt}
-                                />
-                            ) : null}
-                        </Animated.View>
+                            <ScrollView
+                                bounces={false}
+                                contentContainerStyle={styles.viewerInnerScrollContent}
+                            >
+                                {fullscreenImage ? (
+                                    <Image
+                                        source={fullscreenImage.source}
+                                        style={[
+                                            styles.fullscreenImage,
+                                            fullscreenZoomedSize,
+                                            { transform: [{ rotate: `${fullscreenRotation}deg` }] },
+                                        ]}
+                                        resizeMode="contain"
+                                        accessible
+                                        accessibilityLabel={fullscreenImage.alt}
+                                    />
+                                ) : null}
+                            </ScrollView>
+                        </ScrollView>
+                    </View>
+
+                    <View style={styles.viewerControls}>
+                        <Pressable
+                            accessibilityRole="button"
+                            disabled={viewerZoomScale <= MIN_ZOOM}
+                            onPress={() => setViewerZoomScale((current) => Math.max(MIN_ZOOM, current - ZOOM_STEP))}
+                            style={[styles.viewerControlButton, viewerZoomScale <= MIN_ZOOM && styles.viewerControlButtonDisabled]}
+                        >
+                            <MaterialIcons name="remove" size={22} color="#FFFFFF" />
+                        </Pressable>
+                        <Text style={styles.viewerZoomLabel}>{Math.round(viewerZoomScale * 100)}%</Text>
+                        <Pressable
+                            accessibilityRole="button"
+                            disabled={viewerZoomScale >= MAX_ZOOM}
+                            onPress={() => setViewerZoomScale((current) => Math.min(MAX_ZOOM, current + ZOOM_STEP))}
+                            style={[styles.viewerControlButton, viewerZoomScale >= MAX_ZOOM && styles.viewerControlButtonDisabled]}
+                        >
+                            <MaterialIcons name="add" size={22} color="#FFFFFF" />
+                        </Pressable>
+                        <Pressable
+                            accessibilityRole="button"
+                            onPress={() => {
+                                if (fullscreenImage?.rotationKey) {
+                                    rotateImage(fullscreenImage.rotationKey, -90);
+                                }
+                                setFullscreenRotation((current) => (((current - 90) % 360) + 360) % 360);
+                            }}
+                            style={styles.viewerControlButton}
+                        >
+                            <MaterialIcons name="rotate-left" size={22} color="#FFFFFF" />
+                        </Pressable>
+                        <Pressable
+                            accessibilityRole="button"
+                            onPress={() => {
+                                if (fullscreenImage?.rotationKey) {
+                                    rotateImage(fullscreenImage.rotationKey, 90);
+                                }
+                                setFullscreenRotation((current) => (current + 90) % 360);
+                            }}
+                            style={styles.viewerControlButton}
+                        >
+                            <MaterialIcons name="rotate-right" size={22} color="#FFFFFF" />
+                        </Pressable>
                     </View>
 
                     <Text style={styles.fullscreenHint}>
-                        Pinch to zoom. Drag to pan when zoomed. Use reset to return to fit.
+                        Use + / - to zoom. Rotate buttons work in both reading and fullscreen views.
                     </Text>
                 </View>
             </Modal>
@@ -849,10 +817,12 @@ const styles = StyleSheet.create({
     spacing: {
         height: 14,
     },
+    inlineImageShell: {
+        position: 'relative',
+        marginVertical: 12,
+    },
     contentImageFrame: {
         width: '100%',
-        height: SCREEN.height * 0.32,
-        marginVertical: 12,
         borderRadius: 12,
         overflow: 'hidden',
         alignItems: 'center',
@@ -862,6 +832,17 @@ const styles = StyleSheet.create({
     contentImage: {
         width: '100%',
         height: '100%',
+    },
+    inlineImageControl: {
+        position: 'absolute',
+        right: 10,
+        bottom: 10,
+        width: 34,
+        height: 34,
+        borderRadius: 17,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(17, 24, 39, 0.72)',
     },
     illustrationCard: {
         marginVertical: 14,
@@ -931,27 +912,42 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    fullscreenImageStage: {
+    viewerOuterScrollContent: {
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    viewerInnerScrollContent: {
         alignItems: 'center',
         justifyContent: 'center',
     },
     fullscreenImage: {
-        width: '100%',
-        height: '100%',
+        width: SCREEN.width - 32,
+        height: SCREEN.height * 0.6,
     },
-    fullscreenReset: {
-        position: 'absolute',
-        top: 18,
-        left: 18,
-        zIndex: 10,
-        paddingHorizontal: 14,
-        paddingVertical: 10,
-        borderRadius: 20,
-        backgroundColor: 'rgba(255,255,255,0.14)',
+    viewerControls: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexWrap: 'wrap',
+        gap: 10,
+        marginTop: 16,
     },
-    fullscreenResetText: {
+    viewerControlButton: {
+        width: 42,
+        height: 42,
+        borderRadius: 21,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(255,255,255,0.16)',
+    },
+    viewerControlButtonDisabled: {
+        opacity: 0.45,
+    },
+    viewerZoomLabel: {
+        minWidth: 58,
+        textAlign: 'center',
         color: '#FFFFFF',
-        fontSize: 13,
+        fontSize: 14,
         fontWeight: '700',
     },
     fullscreenHint: {
