@@ -9,6 +9,8 @@ import {
     Dimensions,
     Modal,
     Pressable,
+    Animated,
+    PanResponder,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -147,6 +149,53 @@ const mergeBlocksWithIllustrations = (blocks, illustrations = []) => {
 
 const REACH_END_THRESHOLD = 0.98;
 const SHORT_CONTENT_TOLERANCE = 24;
+const SCREEN = Dimensions.get('window');
+const FULLSCREEN_MAX_ZOOM = 4;
+
+const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+const getTouchDistance = (touches = []) => {
+    if (!touches || touches.length < 2) {
+        return null;
+    }
+
+    const [firstTouch, secondTouch] = touches;
+    const deltaX = secondTouch.pageX - firstTouch.pageX;
+    const deltaY = secondTouch.pageY - firstTouch.pageY;
+    return Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
+};
+
+const resolveAspectRatio = (source, fallback = 1) => {
+    const resolved = source ? Image.resolveAssetSource(source) : null;
+    if (resolved?.width && resolved?.height) {
+        return clamp(resolved.width / resolved.height, 0.6, 2.4);
+    }
+
+    if (typeof fallback === 'number' && fallback > 0) {
+        return clamp(fallback, 0.6, 2.4);
+    }
+
+    return 1;
+};
+
+const getContainSize = (aspectRatio, maxWidth, maxHeight) => {
+    if (!aspectRatio || maxWidth <= 0 || maxHeight <= 0) {
+        return { width: maxWidth, height: maxHeight };
+    }
+
+    const viewportRatio = maxWidth / maxHeight;
+    if (aspectRatio >= viewportRatio) {
+        return {
+            width: maxWidth,
+            height: maxWidth / aspectRatio,
+        };
+    }
+
+    return {
+        width: maxHeight * aspectRatio,
+        height: maxHeight,
+    };
+};
 
 const ReadingView = ({
     content,
@@ -168,9 +217,18 @@ const ReadingView = ({
     );
     const [scrollProgress, setScrollProgress] = useState(0);
     const [fullscreenImage, setFullscreenImage] = useState(null);
+    const [zoomLevel, setZoomLevel] = useState(1);
+    const [fullscreenViewport, setFullscreenViewport] = useState({
+        width: SCREEN.width - 32,
+        height: SCREEN.height * 0.78,
+    });
     const hasReachedEndRef = useRef(false);
     const viewportHeightRef = useRef(0);
     const contentHeightRef = useRef(0);
+    const zoomScale = useRef(new Animated.Value(1)).current;
+    const currentZoomRef = useRef(1);
+    const pinchStartDistanceRef = useRef(null);
+    const pinchStartZoomRef = useRef(1);
 
     const highlightSet = useMemo(() => new Set(
         (highlightedSegments || []).map((segment) => normalizeUpdatedSnippet(segment)).filter(Boolean)
@@ -182,6 +240,74 @@ const ReadingView = ({
         viewportHeightRef.current = 0;
         contentHeightRef.current = 0;
     }, [content, title]);
+
+    const resetFullscreenZoom = () => {
+        currentZoomRef.current = 1;
+        setZoomLevel(1);
+        pinchStartDistanceRef.current = null;
+        pinchStartZoomRef.current = 1;
+        Animated.spring(zoomScale, {
+            toValue: 1,
+            useNativeDriver: false,
+            friction: 7,
+            tension: 60,
+        }).start();
+    };
+
+    useEffect(() => {
+        resetFullscreenZoom();
+    }, [fullscreenImage]);
+
+    const pinchResponder = useMemo(() => PanResponder.create({
+        onStartShouldSetPanResponderCapture: (event) => event.nativeEvent.touches.length >= 2,
+        onMoveShouldSetPanResponderCapture: (event) => event.nativeEvent.touches.length >= 2,
+        onPanResponderGrant: (event) => {
+            const distance = getTouchDistance(event.nativeEvent.touches);
+            if (distance) {
+                pinchStartDistanceRef.current = distance;
+                pinchStartZoomRef.current = currentZoomRef.current;
+            }
+        },
+        onPanResponderMove: (event) => {
+            const distance = getTouchDistance(event.nativeEvent.touches);
+            if (!distance) {
+                return;
+            }
+
+            if (!pinchStartDistanceRef.current) {
+                pinchStartDistanceRef.current = distance;
+                pinchStartZoomRef.current = currentZoomRef.current;
+                return;
+            }
+
+            const nextZoom = clamp(
+                pinchStartZoomRef.current * (distance / pinchStartDistanceRef.current),
+                1,
+                FULLSCREEN_MAX_ZOOM
+            );
+            currentZoomRef.current = nextZoom;
+            setZoomLevel(nextZoom);
+            zoomScale.setValue(nextZoom);
+        },
+        onPanResponderRelease: () => {
+            pinchStartDistanceRef.current = null;
+            pinchStartZoomRef.current = currentZoomRef.current;
+        },
+        onPanResponderTerminationRequest: () => true,
+        onPanResponderTerminate: () => {
+            pinchStartDistanceRef.current = null;
+            pinchStartZoomRef.current = currentZoomRef.current;
+        },
+    }), [zoomScale]);
+
+    const fullscreenBaseSize = useMemo(() => {
+        const aspectRatio = resolveAspectRatio(fullscreenImage?.source, fullscreenImage?.aspectRatio || 1);
+        return getContainSize(
+            aspectRatio,
+            fullscreenViewport.width,
+            fullscreenViewport.height
+        );
+    }, [fullscreenImage, fullscreenViewport.height, fullscreenViewport.width]);
 
     const shouldHighlightText = (text) => (
         showUpdateHighlights && highlightSet.has(normalizeUpdatedSnippet(text || ''))
@@ -297,55 +423,68 @@ const ReadingView = ({
                             alt: block.alt || 'Content image',
                         })}
                     >
-                        <Image
-                            source={{ uri: block.url }}
-                            style={styles.contentImage}
-                            resizeMode="contain"
-                            accessible
-                            accessibilityLabel={block.alt || 'Content image'}
-                        />
+                        <View style={styles.contentImageFrame}>
+                            <Image
+                                source={{ uri: block.url }}
+                                style={styles.contentImage}
+                                resizeMode="contain"
+                                accessible
+                                accessibilityLabel={block.alt || 'Content image'}
+                            />
+                        </View>
                     </TouchableOpacity>
                 );
             case 'illustration':
-                return (
-                    <View key={index} style={styles.illustrationCard}>
-                        <TouchableOpacity
-                            activeOpacity={0.95}
-                            onPress={() => setFullscreenImage({
-                                source: block.source || { uri: block.url },
-                                alt: block.alt || 'Topic illustration',
-                            })}
-                        >
-                            <Image
-                                source={block.source || { uri: block.url }}
-                                style={[styles.illustrationImage, { aspectRatio: block.aspectRatio || 1 }]}
-                                resizeMode="contain"
-                                accessible
-                                accessibilityLabel={block.alt || 'Topic illustration'}
-                            />
-                        </TouchableOpacity>
-                        {(block.caption || block.purpose) ? (
-                            <View style={styles.illustrationTextBlock}>
-                                {block.caption ? (
-                                    <Text style={styles.illustrationCaption} selectable={false}>
-                                        {block.caption}
-                                    </Text>
-                                ) : null}
-                                {block.purpose ? (
-                                    <Text style={styles.illustrationPurpose} selectable={false}>
-                                        {block.purpose}
-                                    </Text>
-                                ) : null}
-                            </View>
-                        ) : null}
-                    </View>
-                );
+                {
+                    const source = block.source || { uri: block.url };
+                    const aspectRatio = resolveAspectRatio(source, block.aspectRatio || 1);
+
+                    return (
+                        <View key={index} style={styles.illustrationCard}>
+                            <TouchableOpacity
+                                activeOpacity={0.95}
+                                onPress={() => setFullscreenImage({
+                                    source,
+                                    alt: block.alt || 'Topic illustration',
+                                    aspectRatio,
+                                })}
+                            >
+                                <View style={[styles.illustrationImageFrame, { aspectRatio }]}>
+                                    <Image
+                                        source={source}
+                                        style={styles.illustrationImage}
+                                        resizeMode="contain"
+                                        accessible
+                                        accessibilityLabel={block.alt || 'Topic illustration'}
+                                    />
+                                </View>
+                            </TouchableOpacity>
+                            {(block.caption || block.purpose) ? (
+                                <View style={styles.illustrationTextBlock}>
+                                    {block.caption ? (
+                                        <Text style={styles.illustrationCaption} selectable={false}>
+                                            {block.caption}
+                                        </Text>
+                                    ) : null}
+                                    {block.purpose ? (
+                                        <Text style={styles.illustrationPurpose} selectable={false}>
+                                            {block.purpose}
+                                        </Text>
+                                    ) : null}
+                                </View>
+                            ) : null}
+                        </View>
+                    );
+                }
             case 'spacing':
                 return <View key={index} style={styles.spacing} />;
             default:
                 return null;
         }
     };
+
+    const zoomedWidth = fullscreenBaseSize.width * zoomLevel;
+    const zoomedHeight = fullscreenBaseSize.height * zoomLevel;
 
     return (
         <View style={styles.container}>
@@ -417,20 +556,74 @@ const ReadingView = ({
                         <MaterialIcons name="close" size={28} color="#FFFFFF" />
                     </Pressable>
 
-                    <View style={styles.fullscreenContent}>
-                        {fullscreenImage ? (
-                            <Image
-                                source={fullscreenImage.source}
-                                style={styles.fullscreenImage}
-                                resizeMode="contain"
-                                accessible
-                                accessibilityLabel={fullscreenImage.alt}
-                            />
-                        ) : null}
-                        <Text style={styles.fullscreenHint}>
-                            Tap the close button to return to reading.
-                        </Text>
+                    {zoomLevel > 1.01 ? (
+                        <Pressable
+                            style={styles.fullscreenReset}
+                            onPress={resetFullscreenZoom}
+                        >
+                            <Text style={styles.fullscreenResetText}>Reset zoom</Text>
+                        </Pressable>
+                    ) : null}
+
+                    <View
+                        style={styles.fullscreenViewport}
+                        onLayout={(event) => {
+                            const { width, height } = event.nativeEvent.layout;
+                            setFullscreenViewport({ width, height });
+                        }}
+                    >
+                        <ScrollView
+                            horizontal
+                            bounces={false}
+                            maximumZoomScale={1}
+                            contentContainerStyle={[
+                                styles.fullscreenScrollContent,
+                                {
+                                    minWidth: Math.max(fullscreenViewport.width, zoomedWidth),
+                                    minHeight: Math.max(fullscreenViewport.height, zoomedHeight),
+                                },
+                            ]}
+                            showsHorizontalScrollIndicator={zoomLevel > 1.01}
+                        >
+                            <ScrollView
+                                bounces={false}
+                                maximumZoomScale={1}
+                                contentContainerStyle={styles.fullscreenScrollContent}
+                                showsVerticalScrollIndicator={zoomLevel > 1.01}
+                            >
+                                <Animated.View
+                                    {...pinchResponder.panHandlers}
+                                    style={[
+                                        styles.fullscreenImageStage,
+                                        {
+                                            width: zoomScale.interpolate({
+                                                inputRange: [1, FULLSCREEN_MAX_ZOOM],
+                                                outputRange: [fullscreenBaseSize.width, fullscreenBaseSize.width * FULLSCREEN_MAX_ZOOM],
+                                            }),
+                                            height: zoomScale.interpolate({
+                                                inputRange: [1, FULLSCREEN_MAX_ZOOM],
+                                                outputRange: [fullscreenBaseSize.height, fullscreenBaseSize.height * FULLSCREEN_MAX_ZOOM],
+                                            }),
+                                        },
+                                    ]}
+                                >
+                                    {fullscreenImage ? (
+                                        <Image
+                                            source={fullscreenImage.source}
+                                            style={styles.fullscreenImage}
+                                            resizeMode="contain"
+                                            accessible
+                                            accessibilityLabel={fullscreenImage.alt}
+                                        />
+                                    ) : null}
+                                </Animated.View>
+                            </ScrollView>
+                        </ScrollView>
                     </View>
+
+                    <Text style={styles.fullscreenHint}>
+                        Pinch to zoom. Drag to inspect details. Use reset to return to fit.
+                    </Text>
                 </View>
             </Modal>
         </View>
@@ -602,17 +795,23 @@ const styles = StyleSheet.create({
     spacing: {
         height: 14,
     },
+    contentImageFrame: {
+        width: '100%',
+        height: SCREEN.height * 0.32,
+        marginVertical: 12,
+        borderRadius: 12,
+        overflow: 'hidden',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: theme.colors.surfaceTertiary,
+    },
     contentImage: {
         width: '100%',
-        height: Dimensions.get('window').height * 0.32,
-        marginVertical: 12,
-        borderRadius: 8,
-        backgroundColor: theme.colors.surfaceTertiary,
+        height: '100%',
     },
     illustrationCard: {
         marginVertical: 14,
         borderRadius: 16,
-        overflow: 'hidden',
         backgroundColor: theme.colors.surfacePrimary,
         borderWidth: 1,
         borderColor: theme.colors.surfaceSecondary,
@@ -622,10 +821,15 @@ const styles = StyleSheet.create({
         shadowRadius: 6,
         shadowOffset: { width: 0, height: 2 },
     },
+    illustrationImageFrame: {
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: theme.colors.surfaceTertiary,
+    },
     illustrationImage: {
         width: '100%',
-        minHeight: Dimensions.get('window').height * 0.34,
-        backgroundColor: theme.colors.surfaceTertiary,
+        height: '100%',
     },
     illustrationTextBlock: {
         paddingHorizontal: 14,
@@ -667,15 +871,45 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
     },
+    fullscreenViewport: {
+        width: '100%',
+        height: SCREEN.height * 0.78,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    fullscreenScrollContent: {
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    fullscreenImageStage: {
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     fullscreenImage: {
         width: '100%',
-        height: Dimensions.get('window').height * 0.78,
+        height: '100%',
+    },
+    fullscreenReset: {
+        position: 'absolute',
+        top: 18,
+        left: 18,
+        zIndex: 10,
+        paddingHorizontal: 14,
+        paddingVertical: 10,
+        borderRadius: 20,
+        backgroundColor: 'rgba(255,255,255,0.14)',
+    },
+    fullscreenResetText: {
+        color: '#FFFFFF',
+        fontSize: 13,
+        fontWeight: '700',
     },
     fullscreenHint: {
         marginTop: 12,
         color: '#F3F4F6',
         fontSize: 13,
         lineHeight: 18,
+        textAlign: 'center',
     },
 });
 
