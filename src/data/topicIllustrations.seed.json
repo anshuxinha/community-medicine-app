@@ -13,7 +13,7 @@
         "purpose": "Shows the shift from supernatural beliefs to scientific medicine, primary health care, and SDGs in one glance.",
         "anchorText": "MEDICINE IN ANTIQUITY",
         "placement": "before",
-        "aspectRatio": 1.7778
+        "aspectRatio": 1
       }
     ]
   },
@@ -31,7 +31,7 @@
         "purpose": "Helps readers see that health is multidimensional and shaped by several determinants, not just disease absence.",
         "anchorText": "CORE CONCEPTS",
         "placement": "after",
-        "aspectRatio": 1.7778
+        "aspectRatio": 1
       }
     ]
   },
@@ -49,7 +49,7 @@
         "purpose": "Reduces confusion between study designs by placing them in one comparison view.",
         "anchorText": "ANALYTICAL EPIDEMIOLOGY",
         "placement": "after",
-        "aspectRatio": 1.7778
+        "aspectRatio": 1
       }
     ]
   },
@@ -67,7 +67,7 @@
         "purpose": "Turns a long set of transmission definitions into a memorable control-oriented model.",
         "anchorText": "DISEASE TRANSMISSION CONCEPTS",
         "placement": "after",
-        "aspectRatio": 1.7778
+        "aspectRatio": 1
       }
     ]
   },
@@ -85,7 +85,7 @@
         "purpose": "Makes the cold-chain hierarchy and equipment easier to retain than reading the levels as plain text.",
         "anchorText": "THE COLD CHAIN",
         "placement": "after",
-        "aspectRatio": 1.7778
+        "aspectRatio": 1
       }
     ]
   },
@@ -103,7 +103,7 @@
         "purpose": "Clarifies the order of purification steps and how filtration and chlorination fit together.",
         "anchorText": "PURIFICATION OF WATER ON LARGE SCALE",
         "placement": "after",
-        "aspectRatio": 1.7778
+        "aspectRatio": 1
       }
     ]
   },
@@ -121,7 +121,7 @@
         "purpose": "Supports high-stakes recall for segregation color coding and disposal pathways.",
         "anchorText": "BIOMEDICAL WASTE CATEGORIES AND SEGREGATION (2016 GUIDELINES)",
         "placement": "after",
-        "aspectRatio": 1.7778
+        "aspectRatio": 1
       }
     ]
   },
@@ -139,7 +139,7 @@
         "purpose": "Reinforces the cyclic nature of disaster management and the handoff between phases.",
         "anchorText": "THE DISASTER CYCLE",
         "placement": "after",
-        "aspectRatio": 1.7778
+        "aspectRatio": 1
       }
     ]
   },

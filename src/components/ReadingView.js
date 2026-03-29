@@ -7,6 +7,8 @@ import {
     TouchableOpacity,
     Image,
     Dimensions,
+    Modal,
+    Pressable,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -165,6 +167,7 @@ const ReadingView = ({
         [blocks, illustrations]
     );
     const [scrollProgress, setScrollProgress] = useState(0);
+    const [fullscreenImage, setFullscreenImage] = useState(null);
     const hasReachedEndRef = useRef(false);
     const viewportHeightRef = useRef(0);
     const contentHeightRef = useRef(0);
@@ -286,25 +289,41 @@ const ReadingView = ({
                 );
             case 'image':
                 return (
-                    <Image
+                    <TouchableOpacity
                         key={index}
-                        source={{ uri: block.url }}
-                        style={styles.contentImage}
-                        resizeMode="contain"
-                        accessible
-                        accessibilityLabel={block.alt || 'Content image'}
-                    />
+                        activeOpacity={0.9}
+                        onPress={() => setFullscreenImage({
+                            source: { uri: block.url },
+                            alt: block.alt || 'Content image',
+                        })}
+                    >
+                        <Image
+                            source={{ uri: block.url }}
+                            style={styles.contentImage}
+                            resizeMode="contain"
+                            accessible
+                            accessibilityLabel={block.alt || 'Content image'}
+                        />
+                    </TouchableOpacity>
                 );
             case 'illustration':
                 return (
                     <View key={index} style={styles.illustrationCard}>
-                        <Image
-                            source={block.source || { uri: block.url }}
-                            style={[styles.illustrationImage, { aspectRatio: block.aspectRatio || 1.7778 }]}
-                            resizeMode="contain"
-                            accessible
-                            accessibilityLabel={block.alt || 'Topic illustration'}
-                        />
+                        <TouchableOpacity
+                            activeOpacity={0.95}
+                            onPress={() => setFullscreenImage({
+                                source: block.source || { uri: block.url },
+                                alt: block.alt || 'Topic illustration',
+                            })}
+                        >
+                            <Image
+                                source={block.source || { uri: block.url }}
+                                style={[styles.illustrationImage, { aspectRatio: block.aspectRatio || 1 }]}
+                                resizeMode="contain"
+                                accessible
+                                accessibilityLabel={block.alt || 'Topic illustration'}
+                            />
+                        </TouchableOpacity>
                         {(block.caption || block.purpose) ? (
                             <View style={styles.illustrationTextBlock}>
                                 {block.caption ? (
@@ -383,6 +402,37 @@ const ReadingView = ({
                 ) : null}
                 {mergedBlocks.map(renderBlock)}
             </ScrollView>
+
+            <Modal
+                visible={Boolean(fullscreenImage)}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setFullscreenImage(null)}
+            >
+                <View style={styles.fullscreenBackdrop}>
+                    <Pressable
+                        style={styles.fullscreenClose}
+                        onPress={() => setFullscreenImage(null)}
+                    >
+                        <MaterialIcons name="close" size={28} color="#FFFFFF" />
+                    </Pressable>
+
+                    <View style={styles.fullscreenContent}>
+                        {fullscreenImage ? (
+                            <Image
+                                source={fullscreenImage.source}
+                                style={styles.fullscreenImage}
+                                resizeMode="contain"
+                                accessible
+                                accessibilityLabel={fullscreenImage.alt}
+                            />
+                        ) : null}
+                        <Text style={styles.fullscreenHint}>
+                            Tap the close button to return to reading.
+                        </Text>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 };
@@ -554,7 +604,7 @@ const styles = StyleSheet.create({
     },
     contentImage: {
         width: '100%',
-        height: Dimensions.get('window').height * 0.3,
+        height: Dimensions.get('window').height * 0.32,
         marginVertical: 12,
         borderRadius: 8,
         backgroundColor: theme.colors.surfaceTertiary,
@@ -574,7 +624,7 @@ const styles = StyleSheet.create({
     },
     illustrationImage: {
         width: '100%',
-        minHeight: Dimensions.get('window').height * 0.22,
+        minHeight: Dimensions.get('window').height * 0.34,
         backgroundColor: theme.colors.surfaceTertiary,
     },
     illustrationTextBlock: {
@@ -592,6 +642,40 @@ const styles = StyleSheet.create({
         color: theme.colors.textPrimary,
         fontSize: 13.5,
         lineHeight: 20,
+    },
+    fullscreenBackdrop: {
+        flex: 1,
+        backgroundColor: 'rgba(13, 20, 28, 0.95)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 16,
+        paddingVertical: 24,
+    },
+    fullscreenClose: {
+        position: 'absolute',
+        top: 18,
+        right: 18,
+        zIndex: 10,
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        backgroundColor: 'rgba(255,255,255,0.16)',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    fullscreenContent: {
+        width: '100%',
+        alignItems: 'center',
+    },
+    fullscreenImage: {
+        width: '100%',
+        height: Dimensions.get('window').height * 0.78,
+    },
+    fullscreenHint: {
+        marginTop: 12,
+        color: '#F3F4F6',
+        fontSize: 13,
+        lineHeight: 18,
     },
 });
 

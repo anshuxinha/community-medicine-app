@@ -16,7 +16,7 @@ const normalizeIllustration = (image = {}) => ({
     placement: image.placement === 'before'
         ? 'before'
         : (image.placement === 'bottom' ? 'bottom' : (image.placement === 'top' ? 'top' : 'after')),
-    aspectRatio: typeof image.aspectRatio === 'number' && image.aspectRatio > 0 ? image.aspectRatio : 1.7778,
+    aspectRatio: typeof image.aspectRatio === 'number' && image.aspectRatio > 0 ? image.aspectRatio : 1,
 });
 
 const mergeIllustrations = (defaults = [], remote = []) => {
