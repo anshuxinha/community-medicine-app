@@ -1,71 +1,45 @@
 [
   {
-    "contentKey": "theory:1",
-    "section": "theory",
-    "topicId": "1",
-    "topicTitle": "Man and Medicine: Towards Health for All",
-    "images": [
-      {
-        "id": "medicine-evolution-timeline",
-        "fileName": "medicine_evolution_timeline.png",
-        "alt": "Timeline summarizing the evolution from ancient medicine to modern public health",
-        "caption": "The chapter's long chronology compressed into a single studyable timeline.",
-        "purpose": "Shows the shift from supernatural beliefs to scientific medicine, primary health care, and SDGs in one glance.",
-        "anchorText": "MEDICINE IN ANTIQUITY",
-        "placement": "before",
-        "aspectRatio": 1
-      }
-    ]
-  },
-  {
     "contentKey": "theory:2",
     "section": "theory",
     "topicId": "2",
     "topicTitle": "Concept of Health and Disease",
     "images": [
       {
-        "id": "health-concept-framework",
-        "fileName": "health_concept_framework.png",
-        "alt": "Framework showing health concepts, dimensions, and determinants around the core concept of health",
-        "caption": "A map of how concepts, dimensions, and determinants fit together.",
-        "purpose": "Helps readers see that health is multidimensional and shaped by several determinants, not just disease absence.",
-        "anchorText": "CORE CONCEPTS",
+        "id": "iceberg-phenomenon",
+        "fileName": "iceberg_phenomenon_of_disease.png",
+        "alt": "The Iceberg Phenomenon of Disease showing apparent clinical cases above the waterline and hidden subclinical disease below",
+        "caption": "",
+        "purpose": "Visual metaphor clarifying the difference between apparent clinical cases and the hidden mass of subclinical disease.",
+        "anchorText": "Iceberg Phenomenon of Disease",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "levels-of-prevention",
+        "fileName": "levels_of_prevention_steps.png",
+        "alt": "Levels of Prevention and Modes of Intervention mapped against the stages of disease progression",
+        "caption": "",
+        "purpose": "Visually maps the chronological stages of a disease against the appropriate public health interventions.",
+        "anchorText": "Levels of Prevention & Modes of Intervention",
         "placement": "after",
         "aspectRatio": 1
       }
     ]
   },
   {
-    "contentKey": "theory:3-3",
+    "contentKey": "theory:3-2",
     "section": "theory",
-    "topicId": "3-3",
-    "topicTitle": "Analytical Epidemiology: Case Control, Cohort, Cross-Sectional, and Ecological Studies",
+    "topicId": "3-2",
+    "topicTitle": "Epidemiological Methods, Descriptive Epidemiology, and Disease Fluctuations",
     "images": [
       {
-        "id": "study-design-comparison",
-        "fileName": "study_design_comparison.png",
-        "alt": "Comparison chart for case control, cohort, cross sectional, and ecological study designs",
-        "caption": "A quick way to separate direction, use-case, and measure of each analytical study design.",
-        "purpose": "Reduces confusion between study designs by placing them in one comparison view.",
-        "anchorText": "ANALYTICAL EPIDEMIOLOGY",
-        "placement": "after",
-        "aspectRatio": 1
-      }
-    ]
-  },
-  {
-    "contentKey": "theory:3-5",
-    "section": "theory",
-    "topicId": "3-5",
-    "topicTitle": "Infectious Disease Epidemiology, Transmission Dynamics, and Disease Control",
-    "images": [
-      {
-        "id": "chain-of-infection",
-        "fileName": "chain_of_infection.png",
-        "alt": "Circular chain of infection showing agent, reservoir, portal of exit, transmission, portal of entry, and susceptible host",
-        "caption": "The classic chain of infection with the points where prevention can break transmission.",
-        "purpose": "Turns a long set of transmission definitions into a memorable control-oriented model.",
-        "anchorText": "DISEASE TRANSMISSION CONCEPTS",
+        "id": "evidence-based-pyramid",
+        "fileName": "evidence_based_medicine_pyramid.png",
+        "alt": "Hierarchy of Epidemiological Evidence showing study designs from weakest to strongest",
+        "caption": "",
+        "purpose": "Helps students visualize the gold standard of clinical relevance and memorize the exact order of study designs.",
+        "anchorText": "EVIDENCE BASED PYRAMID",
         "placement": "after",
         "aspectRatio": 1
       }
@@ -78,12 +52,202 @@
     "topicTitle": "Immunization, Cold Chain, National Immunization Schedule, and AEFI",
     "images": [
       {
-        "id": "cold-chain-ladder",
-        "fileName": "cold_chain_ladder.png",
-        "alt": "Cold chain ladder from national store to vaccination session site with temperature band and equipment examples",
-        "caption": "A route map for how vaccines move safely from stores to the vaccination session.",
-        "purpose": "Makes the cold-chain hierarchy and equipment easier to retain than reading the levels as plain text.",
-        "anchorText": "THE COLD CHAIN",
+        "id": "vvm-stages",
+        "fileName": "vvm_stages.png",
+        "alt": "Vaccine Vial Monitor stages showing color changes from usable to discard point",
+        "caption": "",
+        "purpose": "Practical guide on how healthcare workers read heat-sensitive vaccine labels.",
+        "anchorText": "Vaccine Vial Monitor (VVM)",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:4",
+    "section": "theory",
+    "topicId": "4",
+    "topicTitle": "Screening for Disease",
+    "images": [
+      {
+        "id": "shifting-cutoffs",
+        "fileName": "shifting_cutoffs_sensitivity_specificity.png",
+        "alt": "Shifting Cut-offs showing the trade-off between Sensitivity and Specificity",
+        "caption": "",
+        "purpose": "Visually explains the mathematical trade-off between Sensitivity and Specificity.",
+        "anchorText": "Interpretation of Distribution Curve (Shifting Cut-offs)",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:6",
+    "section": "theory",
+    "topicId": "6",
+    "topicTitle": "Non Communicable Diseases",
+    "images": [
+      {
+        "id": "rule-of-halves-hypertension",
+        "fileName": "rule_of_halves_hypertension.png",
+        "alt": "The Rule of Halves for Hypertension showing the steep drop-off in diagnosis treatment and control",
+        "caption": "",
+        "purpose": "Visually depicts the steep drop-off in the diagnosis, treatment, and control of hypertension in the general population.",
+        "anchorText": "3. HYPERTENSION (HTN)",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:7-4",
+    "section": "theory",
+    "topicId": "7-4",
+    "topicTitle": "National Tuberculosis Elimination Programme (NTEP / formerly RNTCP)",
+    "images": [
+      {
+        "id": "ntep-diagnostic-algorithm",
+        "fileName": "ntep_diagnostic_algorithm_tb.png",
+        "alt": "NTEP Diagnostic Algorithm for Pulmonary TB showing step-by-step decision-making process",
+        "caption": "",
+        "purpose": "Simplifies the complex step-by-step decision-making process for TB diagnosis.",
+        "anchorText": "DIAGNOSTIC ALGORITHM FOR PULMONARY TB IN NTEP",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:8-1",
+    "section": "theory",
+    "topicId": "8-1",
+    "topicTitle": "Demography Basics and Demographic Trends",
+    "images": [
+      {
+        "id": "demographic-cycle",
+        "fileName": "demographic_cycle_5_stages.png",
+        "alt": "The Demographic Cycle showing 5 stages of birth rate and death rate changes over economic development",
+        "caption": "",
+        "purpose": "Line graph showing the crucial relationship and resulting gap between birth rates and death rates over the 5 stages.",
+        "anchorText": "DEMOGRAPHIC CYCLE (5 STAGES)",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "population-pyramids",
+        "fileName": "population_pyramids_three_patterns.png",
+        "alt": "Population Pyramids comparison showing expansive stationary and constrictive age-sex structures",
+        "caption": "",
+        "purpose": "Visually compares the age-sex structures of different populations so students can interpret population growth trends.",
+        "anchorText": "POPULATION PYRAMID",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:9-6",
+    "section": "theory",
+    "topicId": "9-6",
+    "topicTitle": "Under-5 Clinic, Congenital Disorders, and Battered Baby Syndrome",
+    "images": [
+      {
+        "id": "under5-clinic-logo",
+        "fileName": "under5_clinic_logo.png",
+        "alt": "The Under-5 Clinic Logo showing the structural components and which triangle represents which service",
+        "caption": "",
+        "purpose": "Visually embeds the exact structural components of the Under-5 clinic logo.",
+        "anchorText": "LOGO OF THE UNDER-5 CLINIC",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:9-7",
+    "section": "theory",
+    "topicId": "9-7",
+    "topicTitle": "Behavioral Problems, Juvenile Delinquency, Child Rights, and APGAR Score",
+    "images": [
+      {
+        "id": "apgar-score-visual",
+        "fileName": "apgar_score_assessment.png",
+        "alt": "APGAR Score Visual Mnemonic Table showing 0 1 and 2 point criteria for each parameter",
+        "caption": "",
+        "purpose": "Quick-reference visual mnemonic for the APGAR scoring system.",
+        "anchorText": "PARAMETERS OF APGAR SCORE",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:10",
+    "section": "theory",
+    "topicId": "10",
+    "topicTitle": "Health Care of the Community",
+    "images": [
+      {
+        "id": "healthcare-infrastructure-pyramid",
+        "fileName": "rural_health_infrastructure_india.png",
+        "alt": "Healthcare Infrastructure Pyramid showing 3-tier rural healthcare system and population norms",
+        "caption": "",
+        "purpose": "Visually maps the 3-tier rural healthcare system and its specific population coverage norms.",
+        "anchorText": "RURAL HEALTH INFRASTRUCTURE NORMS",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:11-12",
+    "section": "theory",
+    "topicId": "11-12",
+    "topicTitle": "Malnutrition, Nutritional Rehabilitation Centres, Hidden Hunger and GHI",
+    "images": [
+      {
+        "id": "kwashiorkor-vs-marasmus",
+        "fileName": "kwashiorkor_vs_marasmus.png",
+        "alt": "Severe Acute Malnutrition comparison showing Kwashiorkor versus Marasmus clinical features",
+        "caption": "",
+        "purpose": "Classic high-yield visual comparison to distinguish the clinical signs of protein deficiency versus energy deficiency.",
+        "anchorText": "CLINICAL FEATURES: KWASHIORKOR VS MARASMUS",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:12-2",
+    "section": "theory",
+    "topicId": "12-2",
+    "topicTitle": "Psychology, Behavior, and Learning",
+    "images": [
+      {
+        "id": "maslow-hierarchy",
+        "fileName": "maslow_hierarchy_needs.png",
+        "alt": "Maslow's Hierarchy of Needs pyramid showing deficiency and growth needs",
+        "caption": "",
+        "purpose": "Visual structured mnemonic for the psychological drivers of human behavior categorized by deficiency vs growth needs.",
+        "anchorText": "MOTIVATION AND MASLOW'S HIERARCHY OF NEEDS",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:14",
+    "section": "theory",
+    "topicId": "14",
+    "topicTitle": "Sustainable Development Goals",
+    "images": [
+      {
+        "id": "sdg3-health-targets",
+        "fileName": "sdg3_health_targets.png",
+        "alt": "Key SDG 3 Health Targets showing the most critical 2030 targets",
+        "caption": "",
+        "purpose": "Synthesizes dense text and statistics into a quick-reference hub of the most critical 2030 targets.",
+        "anchorText": "TARGETS AND INDICATORS FOR SDG 3",
         "placement": "after",
         "aspectRatio": 1
       }
@@ -96,12 +260,30 @@
     "topicTitle": "Environment and Health: Water Purification & Quality",
     "images": [
       {
-        "id": "water-purification-flow",
-        "fileName": "water_purification_flow.png",
-        "alt": "Flowchart showing large scale water purification with storage filtration chlorination and safe distribution",
-        "caption": "Large-scale purification as a sequence rather than a scattered list of steps.",
-        "purpose": "Clarifies the order of purification steps and how filtration and chlorination fit together.",
-        "anchorText": "PURIFICATION OF WATER ON LARGE SCALE",
+        "id": "slow-sand-filter",
+        "fileName": "slow_sand_filter.png",
+        "alt": "Anatomy of a Slow Sand Filter showing layers and the Schmutzdecke vital layer",
+        "caption": "",
+        "purpose": "Visualizes the layers of a sand filter highlighting the location of the Schmutzdecke.",
+        "anchorText": "SLOW SAND FILTER / BIOLOGICAL FILTER",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:15-6",
+    "section": "theory",
+    "topicId": "15-6",
+    "topicTitle": "Entomology: Mosquitoes & Control",
+    "images": [
+      {
+        "id": "mosquito-resting-postures",
+        "fileName": "mosquito_resting_postures_larvae.png",
+        "alt": "Mosquito Resting Postures and Larval Positions for identifying different mosquito vectors",
+        "caption": "",
+        "purpose": "Essential entomology visual for identifying mosquito vectors based on their physical posture.",
+        "anchorText": "MOSQUITO VECTORS: COMPARATIVE CHARACTERISTICS",
         "placement": "after",
         "aspectRatio": 1
       }
@@ -114,11 +296,11 @@
     "topicTitle": "Hospital Waste Management",
     "images": [
       {
-        "id": "biomedical-waste-segregation",
-        "fileName": "biomedical_waste_segregation.png",
-        "alt": "Four color segregation guide for yellow red white and blue biomedical waste categories",
-        "caption": "The BMW color-code chart learners usually need to recall fast in exams and practice.",
-        "purpose": "Supports high-stakes recall for segregation color coding and disposal pathways.",
+        "id": "biomedical-waste-color-coding",
+        "fileName": "biomedical_waste_color_coding.png",
+        "alt": "Biomedical Waste Color Coding showing the 4-bin segregation system",
+        "caption": "",
+        "purpose": "Instant visual reference for the 4-bin segregation system for biomedical waste.",
         "anchorText": "BIOMEDICAL WASTE CATEGORIES AND SEGREGATION (2016 GUIDELINES)",
         "placement": "after",
         "aspectRatio": 1
@@ -132,68 +314,32 @@
     "topicTitle": "Disaster Management",
     "images": [
       {
-        "id": "disaster-management-cycle",
-        "fileName": "disaster_management_cycle.png",
-        "alt": "Disaster management cycle showing mitigation preparedness response and recovery",
-        "caption": "The disaster cycle shown as a loop so the phases do not get memorized as disconnected bullets.",
-        "purpose": "Reinforces the cyclic nature of disaster management and the handoff between phases.",
-        "anchorText": "THE DISASTER CYCLE",
+        "id": "disaster-triage-color-tags",
+        "fileName": "disaster_triage_color_tags.png",
+        "alt": "Disaster Triage Color Tags showing the four triage categories used in mass casualty incidents",
+        "caption": "",
+        "purpose": "Visually anchors the four triage categories used in mass casualty incidents.",
+        "anchorText": "COLOR CODING SYSTEM FOR TRIAGE",
         "placement": "after",
         "aspectRatio": 1
       }
     ]
   },
   {
-    "contentKey": "theory:26-1",
+    "contentKey": "theory:18-2",
     "section": "theory",
-    "topicId": "26-1",
-    "topicTitle": "Introduction to Biostatistics, Types of Data, Variables, and Scales of Measurement",
+    "topicId": "18-2",
+    "topicTitle": "Chemical, Biological, Mechanical, Psychosocial Hazards, and Pneumoconioses",
     "images": [
       {
-        "id": "biostats-types-of-data",
-        "url": "https://storage.googleapis.com/community-med-app.firebasestorage.app/biostats/types_of_data.png",
-        "alt": "Flowchart for qualitative and quantitative types of data",
-        "caption": "A classification view for data types and scales of measurement.",
-        "purpose": "Improves distinction between qualitative and quantitative data branches.",
-        "anchorText": "TYPES OF DATA",
+        "id": "silicosis-vs-asbestosis",
+        "fileName": "silicosis_vs_asbestosis.png",
+        "alt": "Pneumoconiosis comparison showing Silicosis versus Asbestosis with affected lung zones and X-ray appearances",
+        "caption": "",
+        "purpose": "Visually contrasts the two most frequently tested occupational lung diseases.",
+        "anchorText": "PNEUMOCONIOSIS OVERVIEW",
         "placement": "after",
-        "aspectRatio": 1.7778
-      }
-    ]
-  },
-  {
-    "contentKey": "theory:26-2",
-    "section": "theory",
-    "topicId": "26-2",
-    "topicTitle": "Presentation of Statistical Data",
-    "images": [
-      {
-        "id": "biostats-presentation-of-data",
-        "url": "https://storage.googleapis.com/community-med-app.firebasestorage.app/biostats/presentation_of_data.png",
-        "alt": "Comparison of common statistical charts and data presentation methods",
-        "caption": "A visual chooser for which chart fits which kind of data.",
-        "purpose": "Helps learners select the right diagram faster during revision.",
-        "anchorText": "CHARTS AND DIAGRAMS FOR QUALITATIVE DATA",
-        "placement": "before",
-        "aspectRatio": 1.7778
-      }
-    ]
-  },
-  {
-    "contentKey": "theory:26-3",
-    "section": "theory",
-    "topicId": "26-3",
-    "topicTitle": "Measures of Central Tendency and Measures of Dispersion",
-    "images": [
-      {
-        "id": "biostats-central-tendency",
-        "url": "https://storage.googleapis.com/community-med-app.firebasestorage.app/biostats/measures_of_central_tendency.png",
-        "alt": "Comparison image for mean median and mode",
-        "caption": "A compact way to remember when mean, median, and mode are most useful.",
-        "purpose": "Supports rapid comparison of central tendency measures.",
-        "anchorText": "Application of Central Tendency by Scale of Measurement",
-        "placement": "after",
-        "aspectRatio": 1.7778
+        "aspectRatio": 1
       }
     ]
   },
@@ -204,50 +350,42 @@
     "topicTitle": "Z-Score, Normal Distribution Curve, and Skewness",
     "images": [
       {
-        "id": "biostats-normal-distribution",
-        "url": "https://storage.googleapis.com/community-med-app.firebasestorage.app/biostats/normal_distribution.png",
-        "alt": "Normal distribution curve with one two and three standard deviations marked",
-        "caption": "The bell curve with the usual 68-95-99.7 rule marked visually.",
-        "purpose": "Makes SD bands and skewness cues faster to recognize.",
+        "id": "normal-distribution-curve",
+        "fileName": "normal_distribution_6895997_rule.png",
+        "alt": "The Normal Distribution Gaussian Curve with the 68-95-99.7 Rule showing standard deviations and population percentages",
+        "caption": "",
+        "purpose": "Demystifies the mathematical properties of the Gaussian curve by visually mapping the standard deviations.",
         "anchorText": "NORMAL DISTRIBUTION CURVE (GAUSSIAN DISTRIBUTION)",
         "placement": "after",
-        "aspectRatio": 1.7778
+        "aspectRatio": 1
+      },
+      {
+        "id": "skewness-central-tendency",
+        "fileName": "skewness_central_tendency.png",
+        "alt": "Skewness of Central Tendency showing the relationship between Mean Median and Mode in positively and negatively skewed data",
+        "caption": "",
+        "purpose": "Helps students memorize the relationship between Mean, Median, and Mode in skewed data.",
+        "anchorText": "SKEWNESS OF CENTRAL TENDENCY",
+        "placement": "after",
+        "aspectRatio": 1
       }
     ]
   },
   {
-    "contentKey": "theory:26-5",
+    "contentKey": "theory:27-3",
     "section": "theory",
-    "topicId": "26-5",
-    "topicTitle": "Hypothesis Testing, P-Value, Errors, Power of a Test, and Confidence Intervals",
+    "topicId": "27-3",
+    "topicTitle": "Public Health Management Sciences, Organization of Health Services, Health Management Functions and Resources in Health",
     "images": [
       {
-        "id": "biostats-hypothesis-errors",
-        "url": "https://storage.googleapis.com/community-med-app.firebasestorage.app/biostats/hypothesis_testing_errors.jpg",
-        "alt": "Hypothesis testing diagram explaining null hypothesis, p value, alpha, beta, and power",
-        "caption": "A visual summary of Type I error, Type II error, and power.",
-        "purpose": "Reduces the common confusion between alpha, beta, and p-value language.",
-        "anchorText": "STATISTICAL ERRORS",
+        "id": "abc-ved-inventory-control",
+        "fileName": "abc_ved_inventory_control.png",
+        "alt": "ABC and VED Matrix for Inventory Control combining cost-based and criticality-based techniques",
+        "caption": "",
+        "purpose": "Visually combines ABC and VED inventory control techniques into a single 3x3 matrix.",
+        "anchorText": "LOGISTICS AND INVENTORY CONTROL",
         "placement": "after",
-        "aspectRatio": 1.7778
-      }
-    ]
-  },
-  {
-    "contentKey": "theory:26-7",
-    "section": "theory",
-    "topicId": "26-7",
-    "topicTitle": "Probability, Correlation, and Regression",
-    "images": [
-      {
-        "id": "biostats-correlation-regression",
-        "url": "https://storage.googleapis.com/community-med-app.firebasestorage.app/biostats/correlation_and_regression.png",
-        "alt": "Scatter plots showing positive negative and no correlation with a regression line example",
-        "caption": "A pattern-recognition aid for correlation direction and regression intuition.",
-        "purpose": "Turns abstract correlation descriptions into recognizable scatter patterns.",
-        "anchorText": "CORRELATION",
-        "placement": "after",
-        "aspectRatio": 1.7778
+        "aspectRatio": 1
       }
     ]
   }

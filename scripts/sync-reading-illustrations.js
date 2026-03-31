@@ -5,7 +5,7 @@ const path = require('path');
 const SERVICE_ACCOUNT_PATH = path.join(__dirname, '..', 'serviceAccountKey.json');
 const STORAGE_BUCKET = 'community-med-app.firebasestorage.app';
 const SEED_PATH = path.join(__dirname, '..', 'src', 'data', 'topicIllustrations.seed.json');
-const LOCAL_IMAGE_DIR = path.join(__dirname, '..', 'assets', 'reading-illustrations');
+const LOCAL_IMAGE_DIR = path.join(__dirname, '..', 'reading-illustrations');
 
 const ensureFirebaseApp = () => {
     if (admin.apps.length > 0) {
