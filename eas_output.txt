@@ -1,0 +1,140 @@
+﻿[expo-cli] --non-interactive is not supported, use $CI=1 instead
+[expo-cli] env: load .env
+[expo-cli] env: export EXPO_PUBLIC_GEMINI_API_KEY EXPO_PUBLIC_RC_API_KEY
+[expo-cli] Starting Metro Bundler
+[expo-cli] iOS .\index.js ÔûôÔûæÔûæÔûæÔûæÔûæÔûæÔûæÔûæÔûæÔûæÔûæÔûæÔûæÔûæÔûæ 12.0% (186/537)
+[expo-cli] Android .\index.js ÔûôÔûôÔûôÔûôÔûæÔûæÔûæÔûæÔûæÔûæÔûæÔûæÔûæÔûæÔûæÔûæ 31.2% (330/591)
+[expo-cli] iOS .\index.js ÔûôÔûôÔûôÔûôÔûôÔûôÔûôÔûôÔûôÔûôÔûôÔûôÔûôÔûôÔûôÔûæ 94.2% (1180/1216)
+[expo-cli] Android .\index.js ÔûôÔûôÔûôÔûôÔûôÔûôÔûôÔûôÔûôÔûôÔûôÔûôÔûôÔûôÔûôÔûæ 99.9% (1344/1344)
+[expo-cli] Failed to generate Hermes bytecode for: D:\The App\index.js
+[expo-cli] C:\Users\ANSHUM~1\AppData\Local\Temp\expo-bundler-0.634168922373167-1774936933429\index.js:201364:14: error: ']' expected at end of array literal '[...'
+[expo-cli]              {
+[expo-cli]              ^
+[expo-cli] C:\Users\ANSHUM~1\AppData\Local\Temp\expo-bundler-0.634168922373167-1774936933429\index.js:201358:24: note: location of '['
+[expo-cli]         "subsections": [
+[expo-cli]                        ^
+[expo-cli] iOS Bundling failed 7794ms index.js (1216 modules)
+[expo-cli] Error: D:\The App\node_modules\react-native/sdks/hermesc/win64-bin/hermesc.exe -emit-binary -out C:\Users\ANSHUM~1\AppData\Local\Temp\expo-bundler-0.634168922373167-1774936933429\index.hbc C:\Users\ANSHUM~1\AppData\Local\Temp\expo-bundler-0.634168922373167-1774936933429\index.js -O -output-source-map exited with non-zero code: 2
+node.exe : - 
+Exporting...- 
+Exporting...\ 
+Exporting...| 
+Exporting.../ 
+Exporting...- 
+Exporting...\ 
+Exporting...- 
+Exporting...\ 
+Exporting...| 
+Exporting.../ 
+Exporting...- 
+Exporting...\ 
+Exporting...| 
+Exporting.../ 
+Exporting...- 
+Exporting...\ 
+Exporting...- 
+Exporting...\ 
+Exporting...| 
+Exporting...- 
+Exporting...\ 
+Exporting...| 
+Exporting.../ 
+Exporting...- 
+Exporting...\ 
+Exporting...| 
+Exporting.../ 
+Exporting...- 
+Exporting...\ 
+Exporting...| 
+Exporting.../ 
+Exporting...- 
+Exporting...\ 
+Exporting...| 
+Exporting.../ 
+Exporting...- 
+Exporting...\ 
+Exporting...| 
+Exporting.../ 
+Exporting...- 
+Exporting...\ 
+Exporting...| 
+Exporting.../ 
+Exporting...- 
+Exporting...- 
+Exporting...\ 
+Exporting...| 
+Exporting.../ 
+Exporting...- 
+Exporting...\ 
+Exporting...| 
+Exporting.../ 
+Exporting...- 
+Exporting...\ 
+Exporting...| 
+Exporting.../ 
+Exporting...- 
+Exporting...\ 
+Exporting...| 
+Exporting.../ 
+Exporting...- 
+Exporting...\ 
+Exporting...| 
+Exporting.../ 
+Exporting...- 
+Exporting...\ 
+Exporting...| 
+Exporting.../ 
+Exporting...- 
+Exporting...\ 
+Exporting...| 
+Exporting.../ 
+Exporting...- 
+Exporting...\ 
+Exporting...| 
+Exporting.../ 
+Exporting...- 
+Exporting...\ 
+Exporting...| 
+Exporting...- 
+Exporting...- 
+Exporting...\ 
+Exporting...| 
+Exporting.../ 
+Exporting...- 
+Exporting...\ 
+Exporting...| 
+Exporting.../ 
+Exporting...- 
+Exporting...\ 
+Exporting...| 
+Exporting.../ 
+Exporting...- 
+Exporting...- 
+Exporting...- 
+Exporting...- 
+Exporting...- 
+Exporting...- 
+Exporting...- 
+Exporting...- 
+Exporting...- 
+Exporting...Ô£û Export 
+failed
+At C:\Program 
+Files\nodejs\npx.ps1:29 
+char:3
++   & $NODE_EXE 
+$NPX_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (-  
+   Exporting...-...û Ex   
+ port failed:String) [    
+], RemoteException
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+D:\The App\node_modules\expo\bin\cli export --output-dir dist --experimental-bundle --non-interactive --dump-sourcemap --dump-assetmap --platform=all exited with non-zero code: 1
+    Error: update command 
+failed.
