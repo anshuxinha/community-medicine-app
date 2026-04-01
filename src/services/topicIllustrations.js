@@ -47,14 +47,18 @@ const buildIllustrationDocId = (section, topicId) => `${section}__${String(topic
 
 export const getTopicIllustrations = async ({ section, topicId, contentKey }) => {
     if (!section || topicId === undefined || topicId === null) {
+        console.log('getTopicIllustrations: missing section or topicId', { section, topicId });
         return [];
     }
 
     const resolvedContentKey = contentKey || `${section}:${String(topicId)}`;
+    console.log('getTopicIllustrations: resolvedContentKey', resolvedContentKey);
     const defaultIllustrations = DEFAULT_TOPIC_ILLUSTRATION_MAP.get(resolvedContentKey) || [];
+    console.log('getTopicIllustrations: defaultIllustrations count', defaultIllustrations.length);
     const docId = buildIllustrationDocId(section, topicId);
 
     if (remoteIllustrationCache.has(docId)) {
+        console.log('getTopicIllustrations: using cached remote illustrations for', docId);
         return mergeIllustrations(defaultIllustrations, remoteIllustrationCache.get(docId));
     }
 
@@ -64,9 +68,11 @@ export const getTopicIllustrations = async ({ section, topicId, contentKey }) =>
             ? snapshot.data().images
             : [];
 
+        console.log('getTopicIllustrations: fetched remoteImages count', remoteImages.length, 'for docId', docId);
         remoteIllustrationCache.set(docId, remoteImages);
         return mergeIllustrations(defaultIllustrations, remoteImages);
     } catch (error) {
+        console.log('getTopicIllustrations: error fetching remote illustrations', error);
         return mergeIllustrations(defaultIllustrations, []);
     }
 };

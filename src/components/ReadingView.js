@@ -91,7 +91,9 @@ const buildIllustrationBlock = (illustration) => ({
 });
 
 const mergeBlocksWithIllustrations = (blocks, illustrations = []) => {
+    console.log('mergeBlocksWithIllustrations: illustrations count', illustrations.length);
     if (!Array.isArray(illustrations) || illustrations.length === 0) {
+        console.log('mergeBlocksWithIllustrations: no illustrations, returning blocks');
         return blocks;
     }
 
@@ -104,14 +106,17 @@ const mergeBlocksWithIllustrations = (blocks, illustrations = []) => {
         const normalizedPlacement = illustration.placement || 'after';
         const normalizedAnchor = normalizeAnchorText(illustration.anchorText || '');
         const illustrationBlock = buildIllustrationBlock(illustration);
+        console.log('mergeBlocksWithIllustrations: processing illustration', { normalizedPlacement, normalizedAnchor, illustrationId: illustration.id });
 
         if (normalizedPlacement === 'top') {
             topBlocks.push(illustrationBlock);
+            console.log('mergeBlocksWithIllustrations: added to topBlocks');
             return;
         }
 
         if (normalizedPlacement === 'bottom' || !normalizedAnchor) {
             bottomBlocks.push(illustrationBlock);
+            console.log('mergeBlocksWithIllustrations: added to bottomBlocks (no anchor or bottom placement)');
             return;
         }
 
@@ -119,6 +124,7 @@ const mergeBlocksWithIllustrations = (blocks, illustrations = []) => {
         const bucket = targetMap.get(normalizedAnchor) || [];
         bucket.push(illustrationBlock);
         targetMap.set(normalizedAnchor, bucket);
+        console.log('mergeBlocksWithIllustrations: added to map', { targetMap: normalizedPlacement === 'before' ? 'before' : 'after', key: normalizedAnchor, bucketSize: bucket.length });
     });
 
     const mergedBlocks = [...topBlocks];
@@ -126,9 +132,11 @@ const mergeBlocksWithIllustrations = (blocks, illustrations = []) => {
 
     blocks.forEach((block) => {
         const anchor = getBlockAnchorText(block);
+        console.log('mergeBlocksWithIllustrations: checking block anchor', { anchor, blockType: block.type });
         if (anchor && beforeMap.has(anchor)) {
             mergedBlocks.push(...beforeMap.get(anchor));
             beforeMap.delete(anchor);
+            console.log('mergeBlocksWithIllustrations: inserted beforeMap blocks for anchor', anchor);
         }
 
         mergedBlocks.push(block);
@@ -136,12 +144,20 @@ const mergeBlocksWithIllustrations = (blocks, illustrations = []) => {
         if (anchor && afterMap.has(anchor)) {
             mergedBlocks.push(...afterMap.get(anchor));
             afterMap.delete(anchor);
+            console.log('mergeBlocksWithIllustrations: inserted afterMap blocks for anchor', anchor);
         }
     });
 
-    beforeMap.forEach((value) => unmatchedBottomBlocks.push(...value));
-    afterMap.forEach((value) => unmatchedBottomBlocks.push(...value));
+    beforeMap.forEach((value) => {
+        unmatchedBottomBlocks.push(...value);
+        console.log('mergeBlocksWithIllustrations: flushing unmatched beforeMap blocks', value.length);
+    });
+    afterMap.forEach((value) => {
+        unmatchedBottomBlocks.push(...value);
+        console.log('mergeBlocksWithIllustrations: flushing unmatched afterMap blocks', value.length);
+    });
 
+    console.log('mergeBlocksWithIllustrations: mergedBlocks count', mergedBlocks.length, 'unmatchedBottomBlocks count', unmatchedBottomBlocks.length);
     return [...mergedBlocks, ...unmatchedBottomBlocks];
 };
 
@@ -215,6 +231,7 @@ const ReadingView = ({
     illustrations = [],
     onReachEnd,
 }) => {
+    console.log('ReadingView: illustrations prop', illustrations);
     const insets = useSafeAreaInsets();
     const blocks = useMemo(() => parseMarkdown(content || ''), [content]);
     const mergedBlocks = useMemo(

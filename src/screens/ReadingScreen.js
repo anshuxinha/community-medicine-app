@@ -112,6 +112,7 @@ const ReadingScreen = ({ route }) => {
                 contentKey: effectiveContentKey,
             });
 
+            console.log('ReadingScreen: illustrations fetched for', { section: effectiveSection, topicId: effectiveId, contentKey: effectiveContentKey }, illustrations);
             if (isMounted) {
                 setTopicIllustrations(illustrations);
             }
