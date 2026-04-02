@@ -10,29 +10,35 @@ import { Text, Card, Divider, Chip, Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { theme } from "../styles/theme";
-import updatesData from "../data/updates.json";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { isSubscribedToWebinarNotifications } from "../services/notificationService";
+import {
+  isSubscribedToWebinarNotifications,
+  addWebinarSubscriptionListener,
+  subscribeToWebinarNotifications,
+  unsubscribeFromWebinarNotifications,
+  requestPermissions,
+} from "../services/notificationService";
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
-
-const WEBINAR_NOTIFICATION_KEY = "webinar_notification_subscribed";
 
 const NotificationsScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [isWebinarSubscribed, setIsWebinarSubscribed] = useState(false);
-  const [updates, setUpdates] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     loadData();
+
+    // Listen for subscription changes from other screens
+    const unsubscribe = addWebinarSubscriptionListener((subscribed) => {
+      setIsWebinarSubscribed(subscribed);
+    });
+
+    return unsubscribe;
   }, []);
 
   const loadData = async () => {
     try {
-      // Load updates
-      setUpdates(updatesData);
-
       // Check webinar subscription status
       const subscribed = await isSubscribedToWebinarNotifications();
       setIsWebinarSubscribed(subscribed);
@@ -53,17 +59,15 @@ const NotificationsScreen = () => {
     setIsLoading(true);
     try {
       if (isWebinarSubscribed) {
-        // Unsubscribe
-        await AsyncStorage.removeItem(WEBINAR_NOTIFICATION_KEY);
-        setIsWebinarSubscribed(false);
-
-        Alert.alert(
-          "Unsubscribed",
-          "You've been unsubscribed from webinar notifications. You won't receive updates about new webinars.",
-          [{ text: "OK" }],
-        );
-
-        console.log("User unsubscribed from webinar notifications");
+        // Unsubscribe using service function
+        const success = await unsubscribeFromWebinarNotifications();
+        if (success) {
+          Alert.alert(
+            "Unsubscribed",
+            "You've been unsubscribed from webinar notifications. You won't receive updates about new webinars.",
+            [{ text: "OK" }],
+          );
+        }
       } else {
         // Subscribe
         if (!Device.isDevice) {
@@ -75,8 +79,8 @@ const NotificationsScreen = () => {
           return;
         }
 
-        const { status } = await Notifications.requestPermissionsAsync();
-        if (status !== "granted") {
+        const granted = await requestPermissions();
+        if (!granted) {
           Alert.alert(
             "Permission Required",
             "Please enable notifications in your device settings to get webinar updates.",
@@ -86,16 +90,15 @@ const NotificationsScreen = () => {
           return;
         }
 
-        await AsyncStorage.setItem(WEBINAR_NOTIFICATION_KEY, "true");
-        setIsWebinarSubscribed(true);
-
-        Alert.alert(
-          "Subscribed!",
-          "You'll receive push notifications when new webinars are added. Stay tuned!",
-          [{ text: "OK" }],
-        );
-
-        console.log("User subscribed to webinar notifications");
+        // Subscribe using service function
+        const success = await subscribeToWebinarNotifications();
+        if (success) {
+          Alert.alert(
+            "Subscribed!",
+            "You'll receive push notifications when new webinars are added. Stay tuned!",
+            [{ text: "OK" }],
+          );
+        }
       }
     } catch (error) {
       console.error("Error toggling webinar subscription:", error);
@@ -173,44 +176,6 @@ const NotificationsScreen = () => {
             </Text>
           </Card.Content>
         </Card>
-
-        {/* Recent Updates Section */}
-        <Text style={styles.sectionTitle}>Recent Updates</Text>
-
-        {updates.length > 0 ? (
-          updates.slice(0, 10).map((update, index) => (
-            <Card key={update.id} style={styles.updateCard}>
-              <Card.Content>
-                <View style={styles.updateHeader}>
-                  <Chip mode="outlined" style={styles.dateChip}>
-                    {formatDate(update.date)}
-                  </Chip>
-                  {index === 0 && (
-                    <Chip mode="outlined" style={styles.newChip} icon="new-box">
-                      New
-                    </Chip>
-                  )}
-                </View>
-                <Text style={styles.updateTitle}>{update.title}</Text>
-                <Text style={styles.updateSummary}>{update.summary}</Text>
-              </Card.Content>
-            </Card>
-          ))
-        ) : (
-          <Card style={styles.emptyCard}>
-            <Card.Content style={styles.emptyContent}>
-              <MaterialIcons
-                name="notifications-none"
-                size={72}
-                color="#D1D5DB"
-              />
-              <Text style={styles.emptyTitle}>No updates available</Text>
-              <Text style={styles.emptyBody}>
-                Check back later for new updates and announcements.
-              </Text>
-            </Card.Content>
-          </Card>
-        )}
 
         {/* System Notifications Info */}
         <Card style={styles.infoCard}>

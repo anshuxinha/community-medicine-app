@@ -15,9 +15,10 @@ import * as Device from "expo-device";
 import {
   isSubscribedToWebinarNotifications,
   requestPermissions,
+  addWebinarSubscriptionListener,
+  subscribeToWebinarNotifications,
+  unsubscribeFromWebinarNotifications,
 } from "../services/notificationService";
-
-const WEBINAR_NOTIFICATION_KEY = "webinar_notification_subscribed";
 
 const WebinarsScreen = ({ navigation }) => {
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -25,6 +26,13 @@ const WebinarsScreen = ({ navigation }) => {
 
   useEffect(() => {
     checkSubscriptionStatus();
+
+    // Listen for subscription changes from other screens
+    const unsubscribe = addWebinarSubscriptionListener((subscribed) => {
+      setIsSubscribed(subscribed);
+    });
+
+    return unsubscribe;
   }, []);
 
   const checkSubscriptionStatus = async () => {
@@ -40,17 +48,15 @@ const WebinarsScreen = ({ navigation }) => {
     setIsLoading(true);
     try {
       if (isSubscribed) {
-        // Unsubscribe
-        await AsyncStorage.removeItem(WEBINAR_NOTIFICATION_KEY);
-        setIsSubscribed(false);
-
-        Alert.alert(
-          "Unsubscribed",
-          "You've been unsubscribed from webinar notifications. You won't receive updates about new webinars.",
-          [{ text: "OK" }],
-        );
-
-        console.log("User unsubscribed from webinar notifications");
+        // Unsubscribe using service function
+        const success = await unsubscribeFromWebinarNotifications();
+        if (success) {
+          Alert.alert(
+            "Unsubscribed",
+            "You've been unsubscribed from webinar notifications. You won't receive updates about new webinars.",
+            [{ text: "OK" }],
+          );
+        }
       } else {
         // Subscribe
         if (!Device.isDevice) {
@@ -73,19 +79,15 @@ const WebinarsScreen = ({ navigation }) => {
           return;
         }
 
-        // Store subscription preference
-        await AsyncStorage.setItem(WEBINAR_NOTIFICATION_KEY, "true");
-        setIsSubscribed(true);
-
-        // Show success message
-        Alert.alert(
-          "Success!",
-          "You'll receive a push notification when new webinars are added. Stay tuned!",
-          [{ text: "OK" }],
-        );
-
-        // Log subscription for analytics (optional)
-        console.log("User subscribed to webinar notifications");
+        // Subscribe using service function
+        const success = await subscribeToWebinarNotifications();
+        if (success) {
+          Alert.alert(
+            "Success!",
+            "You'll receive a push notification when new webinars are added. Stay tuned!",
+            [{ text: "OK" }],
+          );
+        }
       }
     } catch (error) {
       console.error("Error toggling webinar notifications:", error);

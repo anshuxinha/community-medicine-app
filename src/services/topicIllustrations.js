@@ -6,35 +6,27 @@ const COLLECTION_NAME = "topicIllustrations";
 const remoteIllustrationCache = new Map();
 
 const normalizeIllustration = (image = {}) => {
-  // Ensure source is never undefined - use a placeholder if needed
-  let source = image.source;
-  if (!source && image.fileName) {
-    // Try to get source from default imports
-    const {
-      DEFAULT_TOPIC_ILLUSTRATION_MAP,
-    } = require("../data/defaultTopicIllustrations");
-    const contentKey = image.contentKey || "";
-    const defaultImages = DEFAULT_TOPIC_ILLUSTRATION_MAP.get(contentKey) || [];
-    const matchingImage = defaultImages.find(
-      (img) => img.fileName === image.fileName,
-    );
-    if (matchingImage && matchingImage.source) {
-      source = matchingImage.source;
-    }
-  }
+  // Prioritize Firebase Storage URL over local source
+  // If we have a URL, we don't need a local source
+  const url = image.url || null;
+
+  // Only keep source if no URL is available (for fallback/offline support)
+  // But for Firebase hosting, we expect URL to always be present
+  const source = url ? null : image.source;
 
   console.log("normalizeIllustration:", {
     id: image.id,
     fileName: image.fileName,
-    source: source ? "defined" : "undefined",
-    url: image.url,
+    hasUrl: !!url,
+    hasSource: !!source,
   });
+
   return {
     id: image.id || null,
     alt: image.alt || "Topic illustration",
     caption: image.caption || "",
     purpose: image.purpose || "",
-    url: image.url || null,
+    url: url,
     source: source,
     anchorText: image.anchorText || "",
     placement:
@@ -67,10 +59,10 @@ const mergeIllustrations = (defaults = [], remote = []) => {
     console.log(
       "default image key",
       key,
-      "source",
-      normalized.source,
-      "url",
-      normalized.url,
+      "hasUrl",
+      !!normalized.url,
+      "hasSource",
+      !!normalized.source,
     );
     merged.set(key, normalized);
   });
@@ -79,20 +71,25 @@ const mergeIllustrations = (defaults = [], remote = []) => {
     const normalized = normalizeIllustration(image);
     const key = normalized.id || `${normalized.anchorText}:${normalized.alt}`;
     const existing = merged.get(key) || {};
+
+    // Remote images (from Firebase) should have URLs
+    // Prefer remote URL over local source
     merged.set(key, {
       ...existing,
       ...normalized,
-      source: normalized.source || existing.source,
+      // Keep source only if no URL is available
+      source: normalized.url ? null : normalized.source || existing.source,
       url: normalized.url || existing.url || null,
     });
   });
 
+  // Filter: keep images that have either a URL (Firebase) or source (local fallback)
   const filtered = [...merged.values()].filter(
-    (image) => image.source || image.url,
+    (image) => image.url || image.source,
   );
   console.log("mergeIllustrations: after filtering", filtered.length, "images");
   filtered.forEach((img) =>
-    console.log(" -", img.id, "source", img.source, "url", img.url),
+    console.log(" -", img.id, "hasUrl", !!img.url, "hasSource", !!img.source),
   );
   return filtered;
 };

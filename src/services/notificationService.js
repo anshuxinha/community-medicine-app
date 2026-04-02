@@ -3,10 +3,12 @@
  * Manages all local push notifications for STROMA.
  *
  * Notification schedule:
- *  - Daily study reminder: 8:00 PM every day
  *  - Weekly digest: Every Sunday at 10:00 AM
- *  - Study tip: Every 3 days at 9:00 AM (rotating tips)
  *  - Streak milestones: Fired immediately on 3, 7, 14, 30 day streaks
+ *  - Webinar notifications: When new webinars are added (user subscription based)
+ *
+ * Note: Daily study reminder and rotating study tips have been removed
+ * to reduce notification frequency.
  */
 
 import * as Notifications from "expo-notifications";
@@ -63,23 +65,7 @@ export async function scheduleAllNotifications() {
   // Cancel existing scheduled notifications before rescheduling
   await Notifications.cancelAllScheduledNotificationsAsync();
 
-  // ── 1. Daily Study Reminder @ 8:00 PM ──────────────────
-  await Notifications.scheduleNotificationAsync({
-    identifier: "daily-reminder",
-    content: {
-      title: "📚 Time to Study!",
-      body: "Don't break your streak — open STROMA and read a chapter today.",
-      sound: true,
-      data: { screen: "Library" },
-    },
-    trigger: {
-      hour: 20,
-      minute: 0,
-      repeats: true,
-    },
-  });
-
-  // ── 2. Weekly Progress Digest @ Sunday 10:00 AM ────────
+  // ── 1. Weekly Progress Digest @ Sunday 10:00 AM ────────
   await Notifications.scheduleNotificationAsync({
     identifier: "weekly-digest",
     content: {
@@ -96,22 +82,8 @@ export async function scheduleAllNotifications() {
     },
   });
 
-  // ── 3. Rotating Study Tip every 3 days @ 9:00 AM ──────
-  const tip = STUDY_TIPS[tipIndex % STUDY_TIPS.length];
-  tipIndex++;
-  await Notifications.scheduleNotificationAsync({
-    identifier: "study-tip",
-    content: {
-      title: "💡 STROMA Study Tip",
-      body: tip,
-      sound: false,
-      data: { screen: "Dashboard" },
-    },
-    trigger: {
-      seconds: 60 * 60 * 24 * 3, // 3 days
-      repeats: true,
-    },
-  });
+  // Note: Daily Study Reminder and Rotating Study Tips have been removed
+  // as per user request to reduce notification frequency
 }
 
 /**
@@ -206,6 +178,24 @@ export async function sendWebinarNotification(
   }
 }
 
+// Event emitter for webinar subscription changes
+const webinarSubscriptionListeners = new Set();
+
+function emitWebinarSubscriptionChange(isSubscribed) {
+  webinarSubscriptionListeners.forEach((listener) => {
+    try {
+      listener(isSubscribed);
+    } catch (error) {
+      console.error("Error in webinar subscription listener:", error);
+    }
+  });
+}
+
+export function addWebinarSubscriptionListener(listener) {
+  webinarSubscriptionListeners.add(listener);
+  return () => webinarSubscriptionListeners.delete(listener);
+}
+
 /**
  * Check if user is subscribed to webinar notifications
  */
@@ -232,6 +222,7 @@ export async function unsubscribeFromWebinarNotifications() {
       await import("@react-native-async-storage/async-storage");
     await AsyncStorage.default.removeItem("webinar_notification_subscribed");
     console.log("User unsubscribed from webinar notifications");
+    emitWebinarSubscriptionChange(false);
     return true;
   } catch (error) {
     console.error("Error unsubscribing from webinar notifications:", error);
@@ -251,6 +242,7 @@ export async function subscribeToWebinarNotifications() {
       "true",
     );
     console.log("User subscribed to webinar notifications");
+    emitWebinarSubscriptionChange(true);
     return true;
   } catch (error) {
     console.error("Error subscribing to webinar notifications:", error);
