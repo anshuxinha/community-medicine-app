@@ -10,16 +10,17 @@ export const DEFAULT_TOPIC_ILLUSTRATION_MAP = illustrationSeed.reduce(
   (accumulator, entry) => {
     const images = Array.isArray(entry.images)
       ? entry.images.map((image) => {
-          // For Firebase hosting, we don't need local sources
-          // Images will be loaded from Firebase Storage URLs
-          const source = null; // No local source - images will come from Firebase URLs
+          // For Firebase hosting, we prefer URLs from Firebase Storage
+          // Use placeholder source as fallback to ensure images pass filter
+          // This will be overridden by Firebase URLs when available
+          const source = PLACEHOLDER_SOURCE;
 
           console.log(
-            `Default illustration mapping (Firebase): ${entry.contentKey} -> ${image.fileName} - using Firebase URL`,
+            `Default illustration mapping (Firebase): ${entry.contentKey} -> ${image.fileName} - using placeholder with Firebase URL fallback`,
           );
           return {
             ...image,
-            source, // null - images will be loaded from Firebase URLs
+            source, // Placeholder source to pass filter, will be overridden by Firebase URLs
           };
         })
       : [];
