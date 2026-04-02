@@ -1,5 +1,23 @@
 [
   {
+    "contentKey": "theory:1",
+    "section": "theory",
+    "topicId": "1",
+    "topicTitle": "Man and Medicine: Towards Health for All",
+    "images": [
+      {
+        "id": "medicine-evolution-timeline",
+        "fileName": "id1.png",
+        "alt": "Chronological visual roadmap of medical history showing evolution from primitive beliefs to modern SDG-driven health revolution",
+        "caption": "",
+        "purpose": "To provide a clear, chronological visual roadmap of medical history. Memorizing historical milestones is much easier when students can visually sequence the eras—from primitive beliefs and ancient systems to the modern SDG-driven health revolution.",
+        "anchorText": "MEDICINE IN ANTIQUITY",
+        "placement": "before",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
     "contentKey": "theory:2",
     "section": "theory",
     "topicId": "2",

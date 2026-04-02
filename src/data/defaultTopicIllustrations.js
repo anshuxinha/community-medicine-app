@@ -23,32 +23,33 @@ import silicosisVsAsbestosis from "../../reading-illustrations/silicosis_vs_asbe
 import normalDistribution6895997Rule from "../../reading-illustrations/normal_distribution_6895997_rule.png";
 import skewnessCentralTendency from "../../reading-illustrations/skewness_central_tendency.png";
 import abcVedInventoryControl from "../../reading-illustrations/abc_ved_inventory_control.png";
+import id1 from "../../reading-illustrations/id1.png";
 
 const localImageSourceMap = {
-  "iceberg_phenomenon_of_disease.png": icebergPhenomenonOfDisease,
-  "levels_of_prevention_steps.png": levelsOfPreventionSteps,
+  "abc_ved_inventory_control.png": abcVedInventoryControl,
+  "biomedical_waste_color_coding.png": biomedicalWasteColorCoding,
+  "demographic_cycle_5_stages.png": demographicCycle5Stages,
+  "disaster_triage_color_tags.png": disasterTriageColorTags,
   "evidence_based_medicine_pyramid.png": evidenceBasedMedicinePyramid,
-  "vvm_stages.png": vvmStages,
+  "iceberg_phenomenon_of_disease.png": icebergPhenomenonOfDisease,
+  "id1.png": id1,
+  "kwashiorkor_vs_marasmus.png": kwashiorkorVsMarasmus,
+  "levels_of_prevention_steps.png": levelsOfPreventionSteps,
+  "maslow_hierarchy_needs.png": maslowHierarchyNeeds,
+  "mosquito_resting_postures_larvae.png": mosquitoRestingPosturesLarvae,
+  "normal_distribution_6895997_rule.png": normalDistribution6895997Rule,
+  "ntep_diagnostic_algorithm_tb.png": ntepDiagnosticAlgorithmTb,
+  "population_pyramids_three_patterns.png": populationPyramidsThreePatterns,
+  "rule_of_halves_hypertension.png": ruleOfHalvesHypertension,
+  "rural_health_infrastructure_india.png": ruralHealthInfrastructureIndia,
+  "sdg3_health_targets.png": sdg3HealthTargets,
   "shifting_cutoffs_sensitivity_specificity.png":
     shiftingCutoffsSensitivitySpecificity,
-  "rule_of_halves_hypertension.png": ruleOfHalvesHypertension,
-  "ntep_diagnostic_algorithm_tb.png": ntepDiagnosticAlgorithmTb,
-  "demographic_cycle_5_stages.png": demographicCycle5Stages,
-  "population_pyramids_three_patterns.png": populationPyramidsThreePatterns,
-  "under5_clinic_logo.png": under5ClinicLogo,
-  "apgar_score_assessment.png": apgarScoreAssessment,
-  "rural_health_infrastructure_india.png": ruralHealthInfrastructureIndia,
-  "kwashiorkor_vs_marasmus.png": kwashiorkorVsMarasmus,
-  "maslow_hierarchy_needs.png": maslowHierarchyNeeds,
-  "sdg3_health_targets.png": sdg3HealthTargets,
-  "slow_sand_filter.png": slowSandFilter,
-  "mosquito_resting_postures_larvae.png": mosquitoRestingPosturesLarvae,
-  "biomedical_waste_color_coding.png": biomedicalWasteColorCoding,
-  "disaster_triage_color_tags.png": disasterTriageColorTags,
   "silicosis_vs_asbestosis.png": silicosisVsAsbestosis,
-  "normal_distribution_6895997_rule.png": normalDistribution6895997Rule,
   "skewness_central_tendency.png": skewnessCentralTendency,
-  "abc_ved_inventory_control.png": abcVedInventoryControl,
+  "slow_sand_filter.png": slowSandFilter,
+  "under5_clinic_logo.png": under5ClinicLogo,
+  "vvm_stages.png": vvmStages,
 };
 
 // Placeholder image source for fallback
