@@ -1,10 +1,99 @@
-import React from "react";
-import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+  Alert,
+} from "react-native";
 import { Text, Card, Button } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { theme } from "../styles/theme";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Notifications from "expo-notifications";
+import * as Device from "expo-device";
+import {
+  isSubscribedToWebinarNotifications,
+  requestPermissions,
+} from "../services/notificationService";
+
+const WEBINAR_NOTIFICATION_KEY = "webinar_notification_subscribed";
 
 const WebinarsScreen = ({ navigation }) => {
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    checkSubscriptionStatus();
+  }, []);
+
+  const checkSubscriptionStatus = async () => {
+    try {
+      const subscribed = await isSubscribedToWebinarNotifications();
+      setIsSubscribed(subscribed);
+    } catch (error) {
+      console.error("Error checking subscription status:", error);
+    }
+  };
+
+  const handleNotifyPress = async () => {
+    if (isSubscribed) {
+      Alert.alert(
+        "Already Subscribed",
+        "You're already subscribed to webinar notifications. You'll be notified when new webinars are available.",
+        [{ text: "OK" }],
+      );
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // Request notification permissions
+      if (!Device.isDevice) {
+        Alert.alert(
+          "Simulator",
+          "Push notifications don't work on simulators. Please test on a real device.",
+        );
+        setIsLoading(false);
+        return;
+      }
+
+      const granted = await requestPermissions();
+      if (!granted) {
+        Alert.alert(
+          "Permission Required",
+          "Please enable notifications in your device settings to get webinar updates.",
+          [{ text: "OK" }],
+        );
+        setIsLoading(false);
+        return;
+      }
+
+      // Store subscription preference
+      await AsyncStorage.setItem(WEBINAR_NOTIFICATION_KEY, "true");
+      setIsSubscribed(true);
+
+      // Show success message
+      Alert.alert(
+        "Success!",
+        "You'll receive a push notification when new webinars are added. Stay tuned!",
+        [{ text: "OK" }],
+      );
+
+      // Log subscription for analytics (optional)
+      console.log("User subscribed to webinar notifications");
+    } catch (error) {
+      console.error("Error subscribing to webinar notifications:", error);
+      Alert.alert(
+        "Error",
+        "Failed to subscribe to notifications. Please try again.",
+        [{ text: "OK" }],
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -92,14 +181,22 @@ const WebinarsScreen = ({ navigation }) => {
 
         <Button
           mode="contained"
-          icon="bell"
+          icon={isSubscribed ? "bell-check" : "bell"}
           style={styles.notifyButton}
-          onPress={() => {
-            /* TODO: implement notification subscription */
-          }}
+          onPress={handleNotifyPress}
+          loading={isLoading}
+          disabled={isLoading}
         >
-          Notify me when ready
+          {isSubscribed
+            ? "Subscribed to Notifications"
+            : "Notify me when ready"}
         </Button>
+
+        {isSubscribed && (
+          <Text style={styles.subscriptionNote}>
+            ✓ You'll receive a push notification when new webinars are added
+          </Text>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -176,6 +273,13 @@ const styles = StyleSheet.create({
     marginTop: 30,
     backgroundColor: theme.colors.secondary,
     paddingVertical: 8,
+  },
+  subscriptionNote: {
+    marginTop: 12,
+    textAlign: "center",
+    color: theme.colors.success,
+    fontSize: 14,
+    fontStyle: "italic",
   },
 });
 
