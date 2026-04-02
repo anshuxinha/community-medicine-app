@@ -224,6 +224,41 @@ export async function isSubscribedToWebinarNotifications() {
 }
 
 /**
+ * Unsubscribe from webinar notifications
+ */
+export async function unsubscribeFromWebinarNotifications() {
+  try {
+    const AsyncStorage =
+      await import("@react-native-async-storage/async-storage");
+    await AsyncStorage.default.removeItem("webinar_notification_subscribed");
+    console.log("User unsubscribed from webinar notifications");
+    return true;
+  } catch (error) {
+    console.error("Error unsubscribing from webinar notifications:", error);
+    return false;
+  }
+}
+
+/**
+ * Subscribe to webinar notifications
+ */
+export async function subscribeToWebinarNotifications() {
+  try {
+    const AsyncStorage =
+      await import("@react-native-async-storage/async-storage");
+    await AsyncStorage.default.setItem(
+      "webinar_notification_subscribed",
+      "true",
+    );
+    console.log("User subscribed to webinar notifications");
+    return true;
+  } catch (error) {
+    console.error("Error subscribing to webinar notifications:", error);
+    return false;
+  }
+}
+
+/**
  * Tap handler — navigate to the correct screen when notification is tapped.
  * Call this in your root component with the navigation ref.
  * @param {object} navigationRef

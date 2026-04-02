@@ -37,58 +37,61 @@ const WebinarsScreen = ({ navigation }) => {
   };
 
   const handleNotifyPress = async () => {
-    if (isSubscribed) {
-      Alert.alert(
-        "Already Subscribed",
-        "You're already subscribed to webinar notifications. You'll be notified when new webinars are available.",
-        [{ text: "OK" }],
-      );
-      return;
-    }
-
     setIsLoading(true);
     try {
-      // Request notification permissions
-      if (!Device.isDevice) {
-        Alert.alert(
-          "Simulator",
-          "Push notifications don't work on simulators. Please test on a real device.",
-        );
-        setIsLoading(false);
-        return;
-      }
+      if (isSubscribed) {
+        // Unsubscribe
+        await AsyncStorage.removeItem(WEBINAR_NOTIFICATION_KEY);
+        setIsSubscribed(false);
 
-      const granted = await requestPermissions();
-      if (!granted) {
         Alert.alert(
-          "Permission Required",
-          "Please enable notifications in your device settings to get webinar updates.",
+          "Unsubscribed",
+          "You've been unsubscribed from webinar notifications. You won't receive updates about new webinars.",
           [{ text: "OK" }],
         );
-        setIsLoading(false);
-        return;
+
+        console.log("User unsubscribed from webinar notifications");
+      } else {
+        // Subscribe
+        if (!Device.isDevice) {
+          Alert.alert(
+            "Simulator",
+            "Push notifications don't work on simulators. Please test on a real device.",
+          );
+          setIsLoading(false);
+          return;
+        }
+
+        const granted = await requestPermissions();
+        if (!granted) {
+          Alert.alert(
+            "Permission Required",
+            "Please enable notifications in your device settings to get webinar updates.",
+            [{ text: "OK" }],
+          );
+          setIsLoading(false);
+          return;
+        }
+
+        // Store subscription preference
+        await AsyncStorage.setItem(WEBINAR_NOTIFICATION_KEY, "true");
+        setIsSubscribed(true);
+
+        // Show success message
+        Alert.alert(
+          "Success!",
+          "You'll receive a push notification when new webinars are added. Stay tuned!",
+          [{ text: "OK" }],
+        );
+
+        // Log subscription for analytics (optional)
+        console.log("User subscribed to webinar notifications");
       }
-
-      // Store subscription preference
-      await AsyncStorage.setItem(WEBINAR_NOTIFICATION_KEY, "true");
-      setIsSubscribed(true);
-
-      // Show success message
-      Alert.alert(
-        "Success!",
-        "You'll receive a push notification when new webinars are added. Stay tuned!",
-        [{ text: "OK" }],
-      );
-
-      // Log subscription for analytics (optional)
-      console.log("User subscribed to webinar notifications");
     } catch (error) {
-      console.error("Error subscribing to webinar notifications:", error);
-      Alert.alert(
-        "Error",
-        "Failed to subscribe to notifications. Please try again.",
-        [{ text: "OK" }],
-      );
+      console.error("Error toggling webinar notifications:", error);
+      Alert.alert("Error", "Failed to update subscription. Please try again.", [
+        { text: "OK" },
+      ]);
     } finally {
       setIsLoading(false);
     }

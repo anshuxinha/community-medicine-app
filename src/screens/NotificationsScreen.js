@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, ScrollView, RefreshControl } from "react-native";
-import { Text, Card, Divider, Chip } from "react-native-paper";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  RefreshControl,
+  Alert,
+} from "react-native";
+import { Text, Card, Divider, Chip, Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { theme } from "../styles/theme";
 import updatesData from "../data/updates.json";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { isSubscribedToWebinarNotifications } from "../services/notificationService";
+import * as Notifications from "expo-notifications";
+import * as Device from "expo-device";
 
 const WEBINAR_NOTIFICATION_KEY = "webinar_notification_subscribed";
 
@@ -14,6 +22,7 @@ const NotificationsScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [isWebinarSubscribed, setIsWebinarSubscribed] = useState(false);
   const [updates, setUpdates] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -36,6 +45,66 @@ const NotificationsScreen = () => {
     setRefreshing(true);
     await loadData();
     setRefreshing(false);
+  };
+
+  const toggleWebinarSubscription = async () => {
+    if (isLoading) return;
+
+    setIsLoading(true);
+    try {
+      if (isWebinarSubscribed) {
+        // Unsubscribe
+        await AsyncStorage.removeItem(WEBINAR_NOTIFICATION_KEY);
+        setIsWebinarSubscribed(false);
+
+        Alert.alert(
+          "Unsubscribed",
+          "You've been unsubscribed from webinar notifications. You won't receive updates about new webinars.",
+          [{ text: "OK" }],
+        );
+
+        console.log("User unsubscribed from webinar notifications");
+      } else {
+        // Subscribe
+        if (!Device.isDevice) {
+          Alert.alert(
+            "Simulator",
+            "Push notifications don't work on simulators. Please test on a real device.",
+          );
+          setIsLoading(false);
+          return;
+        }
+
+        const { status } = await Notifications.requestPermissionsAsync();
+        if (status !== "granted") {
+          Alert.alert(
+            "Permission Required",
+            "Please enable notifications in your device settings to get webinar updates.",
+            [{ text: "OK" }],
+          );
+          setIsLoading(false);
+          return;
+        }
+
+        await AsyncStorage.setItem(WEBINAR_NOTIFICATION_KEY, "true");
+        setIsWebinarSubscribed(true);
+
+        Alert.alert(
+          "Subscribed!",
+          "You'll receive push notifications when new webinars are added. Stay tuned!",
+          [{ text: "OK" }],
+        );
+
+        console.log("User subscribed to webinar notifications");
+      }
+    } catch (error) {
+      console.error("Error toggling webinar subscription:", error);
+      Alert.alert("Error", "Failed to update subscription. Please try again.", [
+        { text: "OK" },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const formatDate = (dateString) => {
@@ -89,8 +158,11 @@ const NotificationsScreen = () => {
                   isWebinarSubscribed ? styles.chipActive : styles.chipInactive,
                 ]}
                 textStyle={styles.chipText}
+                onPress={toggleWebinarSubscription}
+                disabled={isLoading}
+                showSelectedOverlay={false}
               >
-                {isWebinarSubscribed ? "Subscribed" : "Not Subscribed"}
+                {isWebinarSubscribed ? "Subscribed" : "Subscribe"}
               </Chip>
             </View>
 
