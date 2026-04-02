@@ -8,7 +8,14 @@ const remoteIllustrationCache = new Map();
 const normalizeIllustration = (image = {}) => {
   // Prioritize Firebase Storage URL over local source
   // If we have a URL, we don't need a local source
-  const url = image.url || null;
+  let url = image.url || null;
+
+  // If no URL but we have a fileName, construct Firebase Storage URL
+  if (!url && image.fileName) {
+    // Base URL for Firebase Storage bucket
+    const storageBucket = "community-med-app.firebasestorage.app";
+    url = `https://storage.googleapis.com/${storageBucket}/reading-illustrations/${image.fileName}`;
+  }
 
   // Only keep source if no URL is available (for fallback/offline support)
   // But for Firebase hosting, we expect URL to always be present
@@ -19,6 +26,7 @@ const normalizeIllustration = (image = {}) => {
     fileName: image.fileName,
     hasUrl: !!url,
     hasSource: !!source,
+    constructedUrl: !image.url && image.fileName ? "yes" : "no",
   });
 
   return {
