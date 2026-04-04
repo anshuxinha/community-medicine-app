@@ -6,6 +6,7 @@ import {
   Platform,
   Alert,
   Linking,
+  Image,
 } from "react-native";
 import { Text, Button, Card } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -149,21 +150,14 @@ const PaywallScreen = ({ navigation }) => {
 
         <View style={styles.heroSection}>
           <View style={styles.iconWrapper}>
-            <MaterialIcons
-              name="menu-book"
-              size={60}
-              color={theme.colors.chartBlue}
-              style={styles.iconBg}
-            />
-            <MaterialIcons
-              name="add"
-              size={30}
-              color={theme.colors.surfacePrimary}
-              style={styles.iconFg}
+            <Image
+              source={require("../../assets/icon.png")}
+              style={styles.logoImage}
+              resizeMode="contain"
             />
           </View>
           <Text variant="displaySmall" style={styles.title}>
-            Go Pro
+            Unlock Pro
           </Text>
         </View>
 
@@ -275,6 +269,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 10,
+  },
+  logoImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 16,
+    shadowColor: theme.colors.secondary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
   iconBg: {
     opacity: 0.8,
@@ -395,12 +399,12 @@ const styles = StyleSheet.create({
     overflow: "hidden", // iOS rounding fix
   },
   subscribeButton: {
-    backgroundColor: theme.colors.chartBlue, // nice light blue gradient replacement
+    backgroundColor: theme.colors.secondary, // Match app theme color
     paddingVertical: 10,
     borderRadius: 30,
     marginBottom: 24,
     elevation: 4,
-    shadowColor: theme.colors.chartBlue,
+    shadowColor: theme.colors.secondary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
