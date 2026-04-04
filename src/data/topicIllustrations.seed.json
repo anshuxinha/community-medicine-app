@@ -121,15 +121,15 @@
     "contentKey": "theory:7-4",
     "section": "theory",
     "topicId": "7-4",
-    "topicTitle": "National Tuberculosis Elimination Programme (NTEP / formerly RNTCP)",
+    "topicTitle": "National Leprosy Eradication Programme (NLEP)",
     "images": [
       {
-        "id": "ntep-diagnostic-algorithm",
-        "fileName": "ntep_diagnostic_algorithm_tb.png",
-        "alt": "NTEP Diagnostic Algorithm for Pulmonary TB showing step-by-step decision-making process",
+        "id": "nlep-leprosy",
+        "fileName": "nlep_leprosy.png",
+        "alt": "National Leprosy Eradication Programme key milestones and indicators",
         "caption": "",
-        "purpose": "Simplifies the complex step-by-step decision-making process for TB diagnosis.",
-        "anchorText": "DIAGNOSTIC ALGORITHM FOR PULMONARY TB IN NTEP",
+        "purpose": "Visual summary of NLEP milestones, MDT regimens, and key epidemiological indicators.",
+        "anchorText": "KEY MILESTONES",
         "placement": "after",
         "aspectRatio": 1
       }
@@ -402,6 +402,314 @@
         "caption": "",
         "purpose": "Visually combines ABC and VED inventory control techniques into a single 3x3 matrix.",
         "anchorText": "LOGISTICS AND INVENTORY CONTROL",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:7-1",
+    "section": "theory",
+    "topicId": "7-1",
+    "topicTitle": "National Health Mission (NHM) & PM-SSM",
+    "images": [
+      {
+        "id": "nhm-pm-ssm-overview",
+        "fileName": "nhm_pm_ssm_overview.png",
+        "alt": "National Health Mission and PM-SSM comparison showing focus and scope differences",
+        "caption": "",
+        "purpose": "Visual comparison of NHM vs PM-SSM showing the evolution from primary/secondary healthcare to including tertiary care development.",
+        "anchorText": "EVOLUTION: NHM vs. PM-SSM",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:7-2",
+    "section": "theory",
+    "topicId": "7-2",
+    "topicTitle": "RMNCAH+N (Reproductive, Maternal, Newborn, Child, Adolescent Health and Nutrition)",
+    "images": [
+      {
+        "id": "rmncahn-interventions",
+        "fileName": "rmncahn_interventions.png",
+        "alt": "RMNCAH+N interventions across reproductive, maternal, newborn, child, adolescent health and nutrition",
+        "caption": "",
+        "purpose": "Comprehensive visual of all key interventions across the RMNCAH+N framework.",
+        "anchorText": "Key Interventions across the RMNCAH+N Framework",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "jsy-cash-assistance",
+        "fileName": "jsy_cash_assistance.png",
+        "alt": "Janani Suraksha Yojana cash assistance structure for rural and urban areas",
+        "caption": "",
+        "purpose": "Clear breakdown of JSY cash assistance amounts for LPS and HPS states in rural and urban areas.",
+        "anchorText": "Cash Assistance Structure for Institutional Delivery",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "laqshya-certification",
+        "fileName": "laqshya_certification.png",
+        "alt": "LAQSHYA labor room quality improvement certification badges",
+        "caption": "",
+        "purpose": "Shows the Platinum, Gold, and Silver certification badges for LAQSHYA quality improvement.",
+        "anchorText": "LAQSHYA - LABOR ROOM QUALITY IMPROVEMENT GUIDELINE",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "suman-color-cards",
+        "fileName": "suman_color_cards.png",
+        "alt": "SUMAN scheme color-coded cards for pregnancy risk assessment",
+        "caption": "",
+        "purpose": "Visual reference for the color-coded pregnancy risk cards used in SUMAN scheme.",
+        "anchorText": "Color-coded Cards",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "stree-sampoorna-lactation",
+        "fileName": "stree_sampoorna_lactation.png",
+        "alt": "Stree Sampoorna lactation management centers structure",
+        "caption": "",
+        "purpose": "Shows the hierarchy of CLMCs, LMCs, and LSUs in the lactation management system.",
+        "anchorText": "CLMC's: Comprehensive Lactation Management Centres",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "fru-criteria",
+        "fileName": "fru_criteria.png",
+        "alt": "First Referral Units criteria and critical determinants",
+        "caption": "",
+        "purpose": "Lists the essential criteria for FRU designation including blood storage, C-section, and newborn care.",
+        "anchorText": "FIRST REFERRAL UNITS (FRU)",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "child-health-initiatives",
+        "fileName": "child_health_initiatives.png",
+        "alt": "Child and adolescent health initiatives including NSSK and RSBK",
+        "caption": "",
+        "purpose": "Overview of key child health programs and their components.",
+        "anchorText": "Navjat Shishu Suraksha Karyakram",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "ujjwala-scheme",
+        "fileName": "ujjwala_scheme.png",
+        "alt": "Ujjwala Scheme for protection from trafficking",
+        "caption": "",
+        "purpose": "Brief overview of the Ujjwala Scheme objectives and target beneficiaries.",
+        "anchorText": "UJJAWALA SCHEME",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:7-5",
+    "section": "theory",
+    "topicId": "7-5",
+    "topicTitle": "National Tuberculosis Elimination Programme (NTEP)",
+    "images": [
+      {
+        "id": "ntep-tb-algorithm",
+        "fileName": "ntep_tb_algorithm.png",
+        "alt": "NTEP diagnostic and treatment algorithm for tuberculosis",
+        "caption": "",
+        "purpose": "Step-by-step visual guide to TB diagnosis and treatment under NTEP guidelines.",
+        "anchorText": "STRATEGIES AND INTERVENTIONS (DTPB)",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:7-6",
+    "section": "theory",
+    "topicId": "7-6",
+    "topicTitle": "National AIDS Control Programme (NACP)",
+    "images": [
+      {
+        "id": "nacb-aids",
+        "fileName": "nacb_aids.png",
+        "alt": "NACP Phase-V goals and HIV surveillance framework",
+        "caption": "",
+        "purpose": "Overview of NACP-V objectives and sentinel surveillance structure.",
+        "anchorText": "NACP PHASE-V (2021-2026) GOALS & STRATEGY",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "nacb-treatment",
+        "fileName": "nacb_treatment.png",
+        "alt": "NACP treatment regimens and PEP guidelines",
+        "caption": "",
+        "purpose": "Visual guide to ART regimens, PMTCT protocols, and post-exposure prophylaxis.",
+        "anchorText": "Treat All Strategy (WHO)",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:7-7",
+    "section": "theory",
+    "topicId": "7-7",
+    "topicTitle": "National Programme for Control of Blindness and Visual Impairment (NPCB&VI)",
+    "images": [
+      {
+        "id": "npcb-blindness",
+        "fileName": "npcb_blindness.png",
+        "alt": "NPCB&VI programme structure and goals",
+        "caption": "",
+        "purpose": "Overview of NPCB&VI goals, definitions, and programme structure.",
+        "anchorText": "GOALS AND OBJECTIVES",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "npcb-categories",
+        "fileName": "npcb_categories.png",
+        "alt": "Visual impairment category definitions based on visual acuity",
+        "caption": "",
+        "purpose": "Clear table of visual impairment categories from early to severe blindness.",
+        "anchorText": "CATEGORY DEFINITIONS",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:7-8",
+    "section": "theory",
+    "topicId": "7-8",
+    "topicTitle": "National Iodine Deficiency Disorders Control Programme (NIDDCP)",
+    "images": [
+      {
+        "id": "niddcp-iodine",
+        "fileName": "niddcp_iodine.png",
+        "alt": "NIDDCP iodine deficiency disorders control strategies",
+        "caption": "",
+        "purpose": "Visual summary of iodine deficiency control programme components and achievements.",
+        "anchorText": "GOALS AND OBJECTIVES",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:7-9",
+    "section": "theory",
+    "topicId": "7-9",
+    "topicTitle": "Universal Immunization Programme (UIP)",
+    "images": [
+      {
+        "id": "uip-immunization",
+        "fileName": "uip_immunization.png",
+        "alt": "Universal Immunization Programme schedule and milestones",
+        "caption": "",
+        "purpose": "Complete visual guide to UIP vaccine schedule and polio eradication milestones.",
+        "anchorText": "INTRODUCTION AND HISTORY",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:7-10",
+    "section": "theory",
+    "topicId": "7-10",
+    "topicTitle": "National Programme for Prevention & Control of Non-Communicable Diseases (NP-NCD)",
+    "images": [
+      {
+        "id": "np-ncd",
+        "fileName": "np_ncd.png",
+        "alt": "NP-NCD programme scope and WHO global action plan targets",
+        "caption": "",
+        "purpose": "Overview of NP-NCD scope and the 9 voluntary global NCD targets for 2025.",
+        "anchorText": "WHO GLOBAL ACTION PLAN FOR CONTROL OF NCDS",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "np-ncd-mpower",
+        "fileName": "np_ncd_mpower.png",
+        "alt": "MPOWER tobacco control measures",
+        "caption": "",
+        "purpose": "Visual breakdown of the 6 MPOWER measures for tobacco control.",
+        "anchorText": "MPOWER measures",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:7-11",
+    "section": "theory",
+    "topicId": "7-11",
+    "topicTitle": "National Mental Health Programme (NMHP)",
+    "images": [
+      {
+        "id": "nmhp-mental-health",
+        "fileName": "nmhp_mental_health.png",
+        "alt": "NMHP objectives and DMHP Bellary model",
+        "caption": "",
+        "purpose": "Overview of NMHP aims and the District Mental Health Programme structure.",
+        "anchorText": "AIMS AND OBJECTIVES",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "iq-classification",
+        "fileName": "iq_classification.png",
+        "alt": "Wechsler IQ scale classification of mental retardation",
+        "caption": "",
+        "purpose": "Table showing IQ ranges and corresponding severity levels of mental retardation.",
+        "anchorText": "INTELLIGENCE QUOTIENT (WECHSLER'S ADULT IQ SCALE)",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:7-12",
+    "section": "theory",
+    "topicId": "7-12",
+    "topicTitle": "Integrated Disease Surveillance Programme (IDSP)",
+    "images": [
+      {
+        "id": "idsp-surveillance",
+        "fileName": "idsp_surveillance.png",
+        "alt": "IDSP surveillance types and reporting formats",
+        "caption": "",
+        "purpose": "Visual guide to IDSP organizational structure and surveillance reporting formats.",
+        "anchorText": "TYPES OF INTEGRATIONS IN IDSP",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:7-13",
+    "section": "theory",
+    "topicId": "7-13",
+    "topicTitle": "Ayushman Bharat Programme (AB-PMJAY & Health and Wellness Centres)",
+    "images": [
+      {
+        "id": "ayushman-bharat",
+        "fileName": "ayushman_bharat.png",
+        "alt": "Ayushman Bharat programme components and benefits",
+        "caption": "",
+        "purpose": "Overview of Ayushman Bharat's two pillars and key benefits including AB-PMJAY coverage.",
+        "anchorText": "COMPONENTS OF AYUSHMAN BHARAT",
         "placement": "after",
         "aspectRatio": 1
       }
