@@ -7,6 +7,49 @@ const STORAGE_BUCKET = 'community-med-app.firebasestorage.app';
 const SEED_PATH = path.join(__dirname, '..', 'src', 'data', 'topicIllustrations.seed.json');
 const LOCAL_IMAGE_DIR = path.join(__dirname, '..', 'reading-illustrations');
 
+const parseArgs = () => {
+    const options = {
+        contentKeys: null,
+        topicIds: null,
+    };
+
+    process.argv.slice(2).forEach((arg) => {
+        if (arg.startsWith('--content-keys=')) {
+            options.contentKeys = new Set(
+                arg
+                    .slice('--content-keys='.length)
+                    .split(',')
+                    .map((value) => value.trim())
+                    .filter(Boolean)
+            );
+        }
+
+        if (arg.startsWith('--topic-ids=')) {
+            options.topicIds = new Set(
+                arg
+                    .slice('--topic-ids='.length)
+                    .split(',')
+                    .map((value) => value.trim())
+                    .filter(Boolean)
+            );
+        }
+    });
+
+    return options;
+};
+
+const shouldSyncEntry = (entry, options) => {
+    if (options.contentKeys && options.contentKeys.has(entry.contentKey)) {
+        return true;
+    }
+
+    if (options.topicIds && options.topicIds.has(String(entry.topicId))) {
+        return true;
+    }
+
+    return !options.contentKeys && !options.topicIds;
+};
+
 const ensureFirebaseApp = () => {
     if (admin.apps.length > 0) {
         return admin.app();
@@ -61,10 +104,18 @@ const uploadIfNeeded = async (bucket, image) => {
 async function main() {
     ensureFirebaseApp();
     const seed = loadSeed();
+    const options = parseArgs();
     const db = admin.firestore();
     const bucket = admin.storage().bucket();
+    const entriesToSync = seed.filter((entry) => shouldSyncEntry(entry, options));
 
-    for (const entry of seed) {
+    if (entriesToSync.length === 0) {
+        throw new Error('No topic illustration entries matched the requested filter.');
+    }
+
+    console.log(`Syncing ${entriesToSync.length} topic illustration entr${entriesToSync.length === 1 ? 'y' : 'ies'}.`);
+
+    for (const entry of entriesToSync) {
         const docId = `${entry.section}__${entry.topicId}`;
         const syncedImages = [];
 

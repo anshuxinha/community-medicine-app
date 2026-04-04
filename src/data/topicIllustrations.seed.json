@@ -118,6 +118,184 @@
     ]
   },
   {
+    "contentKey": "theory:7-2",
+    "section": "theory",
+    "topicId": "7-2",
+    "topicTitle": "RMNCAH+N (Reproductive, Maternal, Newborn, Child, Adolescent Health and Nutrition)",
+    "images": [
+      {
+        "id": "laqshya-logo",
+        "fileName": "stage_7-2_laqshya.png",
+        "alt": "LaQshya labour room quality improvement programme logo",
+        "caption": "",
+        "purpose": "Visual cue for the LaQshya quality certification initiative under maternal health services.",
+        "anchorText": "LAQSHYA - LABOR ROOM QUALITY IMPROVEMENT GUIDELINE",
+        "placement": "after",
+        "aspectRatio": 1.07
+      },
+      {
+        "id": "pmmvy-logo",
+        "fileName": "stage_7-2_pmmvy.png",
+        "alt": "Pradhan Mantri Matru Vandana Yojana logo",
+        "caption": "",
+        "purpose": "Helps learners quickly associate the PMMVY cash benefit scheme with its official logo.",
+        "anchorText": "PRADHAN MANTRI MATRU VANDANA YOJANA (PMMVY)",
+        "placement": "after",
+        "aspectRatio": 0.99
+      },
+      {
+        "id": "pmsma-logo",
+        "fileName": "stage_7-2_pmsma.png",
+        "alt": "Pradhan Mantri Surakshit Matritva Abhiyan logo",
+        "caption": "",
+        "purpose": "Adds a recognizable visual marker for PMSMA near the antenatal care initiative section.",
+        "anchorText": "PRADHAN MANTRI SURAKSHIT MATRITVA ABHIYAN (PMSMA)",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "suman-logo",
+        "fileName": "stage_7-2_suman.png",
+        "alt": "Surakshit Matritva Aashwasan SUMAN scheme logo",
+        "caption": "",
+        "purpose": "Reinforces recall of the SUMAN maternal and newborn care entitlement scheme.",
+        "anchorText": "SURAKSHIT MATRITVA AASHWASAN (SUMAN) SCHEME",
+        "placement": "after",
+        "aspectRatio": 0.78
+      },
+      {
+        "id": "maa-logo",
+        "fileName": "stage_7-2_maa.png",
+        "alt": "Mothers' Absolute Affection programme logo",
+        "caption": "",
+        "purpose": "Places the MAA breastfeeding promotion icon directly beside its programme description.",
+        "anchorText": "MAA (MOTHERS ABSOLUTE AFFECTION) PROGRAMME",
+        "placement": "after",
+        "aspectRatio": 0.78
+      },
+      {
+        "id": "inap-logo",
+        "fileName": "stage_7-2_inap.png",
+        "alt": "Indian Newborn Action Plan logo",
+        "caption": "",
+        "purpose": "Provides a quick visual hook for the newborn survival action plan section.",
+        "anchorText": "INDIAN NEWBORN ACTION PLAN (INAP)",
+        "placement": "after",
+        "aspectRatio": 1.5
+      },
+      {
+        "id": "rksk-logo",
+        "fileName": "stage_7-2_rksk.png",
+        "alt": "Rashtriya Kishor Swasthya Karyakram logo",
+        "caption": "",
+        "purpose": "Visually anchors the adolescent health programme under the RMNCAH+N umbrella.",
+        "anchorText": "RASHTRIYA KISHOR SWASTHYA KARYAKRAM (RKSK)",
+        "placement": "after",
+        "aspectRatio": 1.22
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:7-3",
+    "section": "theory",
+    "topicId": "7-3",
+    "topicTitle": "National Vector Borne Disease Control Programme (NVBDCP)",
+    "images": [
+      {
+        "id": "nvbdcp-logo",
+        "fileName": "stage_7-3_nvbdcp.png",
+        "alt": "National Vector Borne Disease Control Programme logo",
+        "caption": "",
+        "purpose": "Shows the official NVBDCP identity near the programme introduction for easier recall.",
+        "anchorText": "National Vector Borne Disease Control Programme (NVBDCP)",
+        "placement": "after",
+        "aspectRatio": 1.19
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:7-4",
+    "section": "theory",
+    "topicId": "7-4",
+    "topicTitle": "National Leprosy Eradication Programme (NLEP)",
+    "images": [
+      {
+        "id": "nlep-logo",
+        "fileName": "stage_7-4_nlep.png",
+        "alt": "National Leprosy Eradication Programme graphic",
+        "caption": "",
+        "purpose": "Adds the NLEP programme visual near the opening section on leprosy control in India.",
+        "anchorText": "National Leprosy Eradication Programme (NLEP)",
+        "placement": "after",
+        "aspectRatio": 0.78
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:7-5",
+    "section": "theory",
+    "topicId": "7-5",
+    "topicTitle": "National Tuberculosis Elimination Programme (NTEP)",
+    "images": [
+      {
+        "id": "rntcp-dots-logo",
+        "fileName": "stage_7-5_rntcp_dots.png",
+        "alt": "RNTCP DOTS logo",
+        "caption": "",
+        "purpose": "Highlights the older RNTCP era and DOTS strategy at the point where the programme evolution is introduced.",
+        "anchorText": "Revised National Tuberculosis Control Programme (RNTCP)",
+        "placement": "before",
+        "aspectRatio": 1.39
+      },
+      {
+        "id": "ntep-logo",
+        "fileName": "stage_7-5_ntep.png",
+        "alt": "National Tuberculosis Elimination Programme logo",
+        "caption": "",
+        "purpose": "Places the current NTEP emblem beside the modern renamed TB control programme section.",
+        "anchorText": "National Tuberculosis Elimination Programme (NTEP)",
+        "placement": "after",
+        "aspectRatio": 1.02
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:7-6",
+    "section": "theory",
+    "topicId": "7-6",
+    "topicTitle": "National AIDS Control Programme (NACP)",
+    "images": [
+      {
+        "id": "naco-logo",
+        "fileName": "stage_7-6_naco.png",
+        "alt": "National AIDS Control Organization logo",
+        "caption": "",
+        "purpose": "Adds the NACO identifier near the programme introduction for immediate visual recognition.",
+        "anchorText": "National AIDS Control Organization (NACO)",
+        "placement": "after",
+        "aspectRatio": 1.75
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:7-7",
+    "section": "theory",
+    "topicId": "7-7",
+    "topicTitle": "National Programme for Control of Blindness and Visual Impairment (NPCB&VI)",
+    "images": [
+      {
+        "id": "npcbvi-logo",
+        "fileName": "stage_7-7_npcbvi.png",
+        "alt": "National Programme for Control of Blindness and Visual Impairment logo",
+        "caption": "",
+        "purpose": "Provides an official visual marker for the NPCB&VI section.",
+        "anchorText": "National Programme for Control of Blindness and Visual Impairment (NPCB&VI)",
+        "placement": "after",
+        "aspectRatio": 1.32
+      }
+    ]
+  },
+  {
     "contentKey": "theory:8-1",
     "section": "theory",
     "topicId": "8-1",
@@ -178,6 +356,78 @@
         "anchorText": "PARAMETERS OF APGAR SCORE",
         "placement": "after",
         "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:7-10",
+    "section": "theory",
+    "topicId": "7-10",
+    "topicTitle": "National Programme for Prevention & Control of Non-Communicable Diseases (NP-NCD)",
+    "images": [
+      {
+        "id": "npncd-logo",
+        "fileName": "stage_7-10_npncd.png",
+        "alt": "National Programme for Prevention and Control of Non-Communicable Diseases logo",
+        "caption": "",
+        "purpose": "Places the NP-NCD visual identity next to the updated programme rename and overview.",
+        "anchorText": "GOALS AND OBJECTIVES OF NP-NCD",
+        "placement": "before",
+        "aspectRatio": 1.29
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:7-11",
+    "section": "theory",
+    "topicId": "7-11",
+    "topicTitle": "National Mental Health Programme (NMHP)",
+    "images": [
+      {
+        "id": "nmhp-logo",
+        "fileName": "stage_7-11_nmhp.png",
+        "alt": "National Mental Health Programme logo",
+        "caption": "",
+        "purpose": "Introduces the NMHP section with its programme branding for better recognition.",
+        "anchorText": "National Mental Health Programme (NMHP)",
+        "placement": "after",
+        "aspectRatio": 2.75
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:7-12",
+    "section": "theory",
+    "topicId": "7-12",
+    "topicTitle": "Integrated Disease Surveillance Programme (IDSP)",
+    "images": [
+      {
+        "id": "idsp-logo",
+        "fileName": "stage_7-12_idsp.png",
+        "alt": "Integrated Disease Surveillance Programme logo",
+        "caption": "",
+        "purpose": "Adds the IDSP logo beside the surveillance system introduction and IHIP transition notes.",
+        "anchorText": "Integrated Disease Surveillance Project (IDSP)",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:7-13",
+    "section": "theory",
+    "topicId": "7-13",
+    "topicTitle": "Ayushman Bharat Programme (AB-PMJAY & Health and Wellness Centres)",
+    "images": [
+      {
+        "id": "pmjay-logo",
+        "fileName": "stage_7-13_pmjay.png",
+        "alt": "Ayushman Bharat Pradhan Mantri Jan Arogya Yojana logo",
+        "caption": "",
+        "purpose": "Places the PM-JAY branding right where the Ayushman Bharat programme components are introduced.",
+        "anchorText": "Ayushman Bharat - Pradhan Mantri Jan Arogya Yojana (AB-PMJAY)",
+        "placement": "after",
+        "aspectRatio": 0.95
       }
     ]
   },
