@@ -73,6 +73,9 @@ const TabNavigator = () => {
 const PremiumGuard = ({ navigation, route }) => {
   const { user, isPremium } = React.useContext(AppContext);
   React.useEffect(() => {
+    // user === undefined means auth is still resolving — don't redirect yet
+    if (user === undefined) return;
+
     if (!user) {
       navigation.replace("Login");
     } else if (!isPremium) {
@@ -84,7 +87,7 @@ const PremiumGuard = ({ navigation, route }) => {
       else if (dest === "SubTopics")
         navigation.replace("SubTopics", route.params?.subTopicsParams);
     }
-  }, []);
+  }, [user, isPremium, navigation, route.params]);
   return null;
 };
 

@@ -19,40 +19,90 @@ if (Constants.appOwnership !== "expo") {
 import { AppContext } from "../context/AppContext";
 import { theme } from "../styles/theme";
 
-const plans = [
+// Default plan metadata (prices are fetched from RevenueCat)
+const PLAN_METADATA = [
   {
     id: "monthly",
     name: "Monthly",
     duration: "Monthly Plan",
-    price: "₹9 / month",
     desc: "Cancel anytime",
     badge: null,
     saveText: null,
+    packageType: "$rc_monthly",
   },
   {
     id: "yearly",
     name: "Yearly",
     duration: "Yearly Plan",
-    price: "₹999 / year",
     desc: "Billed annually",
     badge: "Best Value",
     saveText: "SAVE 20%",
+    packageType: "$rc_annual",
   },
   {
     id: "lifetime",
     name: "Lifetime",
     duration: "Lifetime",
-    price: "₹25000 once",
     desc: "One-time payment",
     badge: null,
     saveText: null,
+    packageType: "$rc_lifetime",
   },
 ];
 
 const PaywallScreen = ({ navigation }) => {
   const [selectedPlan, setSelectedPlan] = useState("yearly");
   const [isPurchasing, setIsPurchasing] = useState(false);
-  const { upgradeToPremium } = useContext(AppContext);
+  const [offerings, setOfferings] = useState(null);
+  const [packages, setPackages] = useState({});
+  const [loadError, setLoadError] = useState(null);
+  const { upgradeToPremium, isPremium } = useContext(AppContext);
+
+  // Fetch offerings from RevenueCat on mount
+  useEffect(() => {
+    if (Constants.appOwnership === "expo" || !Purchases) {
+      setLoadError("Purchases are not supported in Expo Go.");
+      return;
+    }
+
+    Purchases.getOfferings()
+      .then((result) => {
+        const current = result.current || Object.values(result.all)[0];
+        if (!current || !current.availablePackages) {
+          setLoadError(
+            "No subscription packages available. Please try again later.",
+          );
+          return;
+        }
+
+        setOfferings(current);
+
+        // Map available packages by their type for easy lookup
+        const pkgMap = {};
+        current.availablePackages.forEach((pkg) => {
+          pkgMap[pkg.packageType] = pkg;
+          // Also map by identifier as fallback
+          if (pkg.identifier) {
+            pkgMap[pkg.identifier] = pkg;
+          }
+        });
+        setPackages(pkgMap);
+        setLoadError(null);
+      })
+      .catch((err) => {
+        console.warn("Failed to fetch offerings:", err.message);
+        setLoadError(
+          "Failed to load subscription plans. Check your connection.",
+        );
+      });
+  }, []);
+
+  // Redirect if already premium
+  useEffect(() => {
+    if (isPremium) {
+      navigation.goBack();
+    }
+  }, [isPremium]);
 
   const handlePurchase = async () => {
     if (!selectedPlan) return;
@@ -66,38 +116,22 @@ const PaywallScreen = ({ navigation }) => {
         setIsPurchasing(false);
         return;
       }
-      const offerings = await Purchases.getOfferings();
-      const current = offerings.current || Object.values(offerings.all)[0]; // Fallback to first offering if "Current" isn't explicitly set in RC dashboard
-      if (!current || !current.availablePackages) {
-        Alert.alert(
-          "Not Available",
-          "No subscription packages are available right now. Please try again later.",
-        );
-        return;
-      }
 
-      // Map selectedPlan to a RevenueCat package type
-      const packageTypeMap = {
-        monthly: "$rc_monthly",
-        yearly: "$rc_annual",
-        lifetime: "$rc_lifetime",
-      };
-      const targetPackageId = packageTypeMap[selectedPlan];
-      const pkg = current.availablePackages.find(
-        (p) =>
-          p.packageType === targetPackageId || p.identifier === targetPackageId,
-      );
+      // Find the package for the selected plan
+      const metadata = PLAN_METADATA.find((p) => p.id === selectedPlan);
+      const pkg = packages[metadata?.packageType] || packages[selectedPlan];
 
       if (!pkg) {
         Alert.alert(
           "Not Found",
           `The ${selectedPlan} plan is not configured in RevenueCat yet. Please set up the product in your RevenueCat dashboard.`,
         );
+        setIsPurchasing(false);
         return;
       }
 
       await Purchases.purchasePackage(pkg);
-      upgradeToPremium(); // Grant immediate access
+      upgradeToPremium();
       Alert.alert(
         "🎉 Welcome to Premium!",
         "Your subscription is now active. Enjoy full access to STROMA.",
@@ -170,60 +204,85 @@ const PaywallScreen = ({ navigation }) => {
           <FeatureItem text="Priority Support" />
         </View>
 
-        <View style={styles.pricingSection}>
-          <View style={styles.pricingCardsContainer}>
-            {plans.map((plan) => (
-              <TouchableOpacity
-                key={plan.id}
-                style={[
-                  styles.pricingCard,
-                  selectedPlan === plan.id && styles.pricingCardActive,
-                ]}
-                onPress={() => setSelectedPlan(plan.id)}
-                activeOpacity={0.8}
-              >
-                {plan.badge && (
-                  <View style={styles.badgeContainer}>
-                    <Text style={styles.badgeText}>{plan.badge}</Text>
-                  </View>
-                )}
-                <Card.Content style={styles.pricingContent}>
-                  {plan.saveText && (
-                    <Text style={styles.saveBadge}>{plan.saveText}</Text>
-                  )}
-                  <Text style={styles.planName}>{plan.name}</Text>
-                  <Text style={styles.planDuration}>{plan.duration}</Text>
-                  <Text style={styles.priceText}>{plan.price}</Text>
-                  <Text style={styles.planDesc}>{plan.desc}</Text>
-                </Card.Content>
-              </TouchableOpacity>
-            ))}
+        {loadError ? (
+          <View style={styles.errorContainer}>
+            <MaterialIcons
+              name="error-outline"
+              size={48}
+              color={theme.colors.error}
+            />
+            <Text style={styles.errorText}>{loadError}</Text>
           </View>
+        ) : (
+          <View style={styles.pricingSection}>
+            <View style={styles.pricingCardsContainer}>
+              {PLAN_METADATA.map((plan) => {
+                // Get price from RevenueCat package if available
+                const pkg = packages[plan.packageType] || packages[plan.id];
+                const rcPrice = pkg?.product?.priceString;
+                // Use RevenueCat price if available, otherwise use plan-specific fallback
+                const displayPrice =
+                  rcPrice ||
+                  (plan.id === "monthly"
+                    ? "₹9/mo"
+                    : plan.id === "yearly"
+                      ? "₹999/yr"
+                      : "₹25,000");
 
-          <Button
-            mode="contained"
-            style={styles.subscribeButton}
-            labelStyle={styles.subscribeButtonText}
-            loading={isPurchasing}
-            disabled={isPurchasing}
-            onPress={handlePurchase}
-          >
-            Subscribe Now
-          </Button>
+                return (
+                  <TouchableOpacity
+                    key={plan.id}
+                    style={[
+                      styles.pricingCard,
+                      selectedPlan === plan.id && styles.pricingCardActive,
+                    ]}
+                    onPress={() => setSelectedPlan(plan.id)}
+                    activeOpacity={0.8}
+                  >
+                    {plan.badge && (
+                      <View style={styles.badgeContainer}>
+                        <Text style={styles.badgeText}>{plan.badge}</Text>
+                      </View>
+                    )}
+                    <Card.Content style={styles.pricingContent}>
+                      {plan.saveText && (
+                        <Text style={styles.saveBadge}>{plan.saveText}</Text>
+                      )}
+                      <Text style={styles.planName}>{plan.name}</Text>
+                      <Text style={styles.planDuration}>{plan.duration}</Text>
+                      <Text style={styles.priceText}>{displayPrice}</Text>
+                      <Text style={styles.planDesc}>{plan.desc}</Text>
+                    </Card.Content>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
 
-          <View style={styles.footerLinks}>
-            <TouchableOpacity onPress={handleRestore}>
-              <Text style={styles.footerLinkText}>Restore Purchase</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() =>
-                Linking.openURL("https://community-med-app.web.app/privacy")
-              }
+            <Button
+              mode="contained"
+              style={styles.subscribeButton}
+              labelStyle={styles.subscribeButtonText}
+              loading={isPurchasing}
+              disabled={isPurchasing}
+              onPress={handlePurchase}
             >
-              <Text style={styles.footerLinkText}>Terms & Privacy</Text>
-            </TouchableOpacity>
+              Subscribe Now
+            </Button>
+
+            <View style={styles.footerLinks}>
+              <TouchableOpacity onPress={handleRestore}>
+                <Text style={styles.footerLinkText}>Restore Purchase</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() =>
+                  Linking.openURL("https://community-med-app.web.app/privacy")
+                }
+              >
+                <Text style={styles.footerLinkText}>Terms & Privacy</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        )}
       </View>
     </SafeAreaView>
   );
@@ -250,6 +309,19 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingHorizontal: 20,
     paddingBottom: 40,
+  },
+  errorContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 60,
+  },
+  errorText: {
+    marginTop: 16,
+    color: theme.colors.error,
+    fontSize: 16,
+    textAlign: "center",
+    paddingHorizontal: 20,
   },
   header: {
     alignItems: "flex-end",
@@ -412,7 +484,7 @@ const styles = StyleSheet.create({
   subscribeButtonText: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#000000", // Dark text per mockup
+    color: theme.colors.buttonText, // Use theme for proper contrast
   },
   footerLinks: {
     flexDirection: "row",

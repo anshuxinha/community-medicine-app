@@ -189,8 +189,7 @@ const NotificationsScreen = () => {
               <Text style={styles.infoTitle}>About Notifications</Text>
             </View>
             <Text style={styles.infoText}>
-              • Study reminders are sent daily at 8:00 PM
-              {"\n"}• Weekly progress digest every Sunday at 10:00 AM
+              • Weekly progress digest every Sunday at 10:00 AM
               {"\n"}• Webinar notifications when new sessions are added
               {"\n"}• Streak milestones for consistent study habits
             </Text>

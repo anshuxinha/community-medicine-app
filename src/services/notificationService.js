@@ -32,13 +32,25 @@ const STUDY_TIPS = [
 let tipIndex = 0;
 
 // Configure notification handling behaviour
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-  }),
-});
+// Note: AppContext.js also sets a notification handler as a fallback.
+// This is the primary handler for in-app notifications.
+let notificationHandlerSet = false;
+
+export function ensureNotificationHandler() {
+  if (notificationHandlerSet) return;
+  notificationHandlerSet = true;
+  try {
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+      }),
+    });
+  } catch (e) {
+    // ignore — handler may already be set
+  }
+}
 
 /**
  * Request notification permissions.
@@ -59,6 +71,7 @@ export async function requestPermissions() {
  * Call once on app startup (safe to call multiple times — cancels old ones first).
  */
 export async function scheduleAllNotifications() {
+  ensureNotificationHandler();
   const granted = await requestPermissions();
   if (!granted) return;
 
