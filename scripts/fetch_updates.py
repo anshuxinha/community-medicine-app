@@ -6,36 +6,45 @@ from datetime import datetime
 from bs4 import BeautifulSoup  # type: ignore
 from typing import List, Dict, Any
 
-GOOGLE_GEMINI_KEY = os.environ.get("GOOGLE_GEMINI_KEY")
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
 
-if not GOOGLE_GEMINI_KEY:
-    raise ValueError("GOOGLE_GEMINI_KEY environment variable is not set")
+if not OPENROUTER_API_KEY:
+    raise ValueError("OPENROUTER_API_KEY environment variable is not set")
 
-GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={GOOGLE_GEMINI_KEY}"
+OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+OPENROUTER_MODEL = "qwen/qwen3.6-plus:free"
 
 import re
 
-def call_gemini(prompt):
+def call_openrouter(prompt):
     try:
         response = requests.post(
-            GEMINI_API_URL,
-            headers={"Content-Type": "application/json"},
-            json={
-                "contents": [{"parts": [{"text": prompt}]}]
+            OPENROUTER_API_URL,
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                "HTTP-Referer": "https://github.com",  # Optional, for OpenRouter rankings
+                "X-Title": "Public Health Updates Fetcher"
             },
-            timeout=30
+            json={
+                "model": OPENROUTER_MODEL,
+                "messages": [
+                    {"role": "user", "content": prompt}
+                ]
+            },
+            timeout=60
         )
         if response.status_code != 200:
-            print(f"Gemini API Error {response.status_code}: {response.text}")
+            print(f"OpenRouter API Error {response.status_code}: {response.text}")
             response.raise_for_status()
             
         data = response.json()
         
-        if data and "candidates" in data and len(data["candidates"]) > 0:
-            text_response = data["candidates"][0]["content"]["parts"][0]["text"].strip()
+        if data and "choices" in data and len(data["choices"]) > 0:
+            text_response = data["choices"][0]["message"]["content"].strip()
             
             # Use regex to extract the first JSON block (array or object)
-            # This handles cases where Gemini writes conversational text before/after the JSON
+            # This handles cases where the model writes conversational text before/after the JSON
             json_match = re.search(r'(\{.*?\}|\[.*?\])', text_response, re.DOTALL)
             
             if json_match:
@@ -46,10 +55,10 @@ def call_gemini(prompt):
                     print(f"Failed to parse extracted JSON. Error: {e}")
                     print(f"Extracted string was: {extracted_json_str}")
             else:
-                print(f"Could not find valid JSON in Gemini response: {text_response}")
+                print(f"Could not find valid JSON in OpenRouter response: {text_response}")
                 
     except Exception as e:
-        print(f"Gemini API Exception: {e}")
+        print(f"OpenRouter API Exception: {e}")
         
     return None
 
@@ -124,8 +133,8 @@ def fetch_health_updates():
         {json.dumps(feed_items, indent=2)}
         """
         
-        print("Filtering relevant Community Medicine articles with Gemini...")
-        selected_ids_response = call_gemini(filter_prompt)
+        print("Filtering relevant Community Medicine articles with OpenRouter (Qwen3.6 Plus)...")
+        selected_ids_response = call_openrouter(filter_prompt)
         
         if selected_ids_response is None:
             print("Failed to filter articles.")
@@ -162,7 +171,7 @@ def fetch_health_updates():
                 """
                 
                 print("Generating summary...")
-                summary_data = call_gemini(summary_prompt)
+                summary_data = call_openrouter(summary_prompt)
                 
                 if summary_data and "title" in summary_data and "summary" in summary_data:
                     title = summary_data["title"]

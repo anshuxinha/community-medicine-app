@@ -8,20 +8,13 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 import requests  # type: ignore
 
-GOOGLE_GEMINI_KEY = os.environ.get("GOOGLE_GEMINI_KEY")
-if not GOOGLE_GEMINI_KEY:
-    raise ValueError("GOOGLE_GEMINI_KEY environment variable is not set")
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
+if not OPENROUTER_API_KEY:
+    raise ValueError("OPENROUTER_API_KEY environment variable is not set")
 
-MODEL_CANDIDATES = [
-    model.strip()
-    for model in os.environ.get(
-        "GEMINI_MODELS",
-        "gemini-2.5-flash,gemini-2.5-flash-lite,gemini-2.0-flash,gemini-1.5-flash",
-    ).split(",")
-    if model.strip()
-]
-API_VERSIONS = ["v1beta", "v1"]
-REQUEST_TIMEOUT_SECONDS = int(os.environ.get("GEMINI_TIMEOUT_SECONDS", "60"))
+OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+OPENROUTER_MODEL = "qwen/qwen3.6-plus:free"
+REQUEST_TIMEOUT_SECONDS = int(os.environ.get("OPENROUTER_TIMEOUT_SECONDS", "90"))
 
 MOCK_DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "src", "data", "mockData.json")
 VERIFY_TARGET_ROOT_IDS = {
@@ -32,18 +25,10 @@ VERIFY_TARGET_ROOT_IDS = {
 VERIFY_MAX_CLAIMS_PER_ITEM = int(os.environ.get("VERIFY_MAX_CLAIMS_PER_ITEM", "18"))
 VERIFY_MAX_CLAIMS_PER_BATCH = int(os.environ.get("VERIFY_MAX_CLAIMS_PER_BATCH", "6"))
 VERIFY_MAX_BATCHES_PER_ITEM = int(os.environ.get("VERIFY_MAX_BATCHES_PER_ITEM", "3"))
-VERIFY_ENABLE_GROUNDING = os.environ.get("VERIFY_ENABLE_GROUNDING", "1") != "0"
 MIN_SAFE_LINE_REPLACEMENT_SIMILARITY = float(os.environ.get("VERIFY_MIN_SAFE_REPLACEMENT_SIMILARITY", "0.72"))
 
 TODAY_LABEL = datetime.utcnow().date().isoformat()
-GEMINI_FATAL_ERROR: Optional[str] = None
-
-GROUNDING_TOOL_VARIANTS = [
-    {"googleSearch": {}},
-    {"google_search": {}},
-    {"googleSearchRetrieval": {}},
-    {"google_search_retrieval": {}},
-]
+OPENROUTER_FATAL_ERROR: Optional[str] = None
 
 VOLATILE_KEYWORDS = (
     "who",
@@ -109,33 +94,105 @@ UPDATE_SENSITIVE_TOKEN_RE = re.compile(
 )
 
 
-def _build_gemini_url(model: str, api_version: str) -> str:
-    return (
-        f"https://generativelanguage.googleapis.com/{api_version}/models/"
-        f"{model}:generateContent?key={GOOGLE_GEMINI_KEY}"
-    )
+def _call_openrouter(prompt: str) -> Optional[Any]:
+    """Call OpenRouter API (Qwen3.6 Plus) and parse JSON response."""
+    global OPENROUTER_FATAL_ERROR
+
+    if OPENROUTER_FATAL_ERROR:
+        return None
+
+    try:
+        response = requests.post(
+            OPENROUTER_API_URL,
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                "HTTP-Referer": "https://github.com",
+                "X-Title": "Mock Data Verifier"
+            },
+            json={
+                "model": OPENROUTER_MODEL,
+                "messages": [
+                    {"role": "user", "content": prompt}
+                ],
+                "temperature": 0.1,
+            },
+            timeout=REQUEST_TIMEOUT_SECONDS,
+        )
+    except requests.RequestException as exc:
+        print(f"OpenRouter request exception: {exc}")
+        return None
+
+    if response.status_code == 200:
+        data = response.json()
+        text_response = _extract_candidate_text(data)
+        if text_response:
+            payload = _extract_json_payload(text_response)
+            if payload is not None:
+                return payload
+        print(f"OpenRouter: could not parse JSON payload from response")
+        return None
+
+    message = _error_message_from_response(response)
+    print(f"OpenRouter API Error {response.status_code}: {message}")
+
+    if response.status_code in (429, 500, 503):
+        time.sleep(5)
+        try:
+            retry = requests.post(
+                OPENROUTER_API_URL,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                    "HTTP-Referer": "https://github.com",
+                    "X-Title": "Mock Data Verifier"
+                },
+                json={
+                    "model": OPENROUTER_MODEL,
+                    "messages": [
+                        {"role": "user", "content": prompt}
+                    ],
+                    "temperature": 0.1,
+                },
+                timeout=REQUEST_TIMEOUT_SECONDS,
+            )
+        except requests.RequestException as exc:
+            print(f"OpenRouter retry failed: {exc}")
+            return None
+
+        if retry.status_code == 200:
+            data = retry.json()
+            text_response = _extract_candidate_text(data)
+            if text_response:
+                payload = _extract_json_payload(text_response)
+                if payload is not None:
+                    return payload
+
+    combined_error = f"{response.status_code} {message}".lower()
+    if "api key" in combined_error or "unauthorized" in combined_error or "forbidden" in combined_error:
+        OPENROUTER_FATAL_ERROR = "OpenRouter authentication/configuration error."
+        print("OpenRouter is marked unavailable for the rest of this run.")
+
+    return None
 
 
 def _extract_candidate_text(payload: Dict[str, Any]) -> Optional[str]:
-    candidates = payload.get("candidates", [])
-    if not candidates:
+    """Extract text from OpenRouter chat completion response."""
+    choices = payload.get("choices", [])
+    if not choices:
         return None
-    content = candidates[0].get("content", {})
-    parts = content.get("parts", [])
-    if not parts:
-        return None
-    text = parts[0].get("text")
-    return text if isinstance(text, str) else None
+    message = choices[0].get("message", {})
+    content = message.get("content")
+    return content if isinstance(content, str) else None
 
 
 def _error_message_from_response(response: requests.Response) -> str:
     try:
         payload = response.json()
-        return (
-            payload.get("error", {}).get("message")
-            or payload.get("error", {}).get("status")
-            or response.text
-        )
+        error_obj = payload.get("error", {})
+        if isinstance(error_obj, dict):
+            return error_obj.get("message") or error_obj.get("status") or response.text
+        return response.text
     except Exception:
         return response.text
 
@@ -276,102 +333,71 @@ def _batched(items: List[str], batch_size: int) -> Iterable[List[str]]:
         yield items[index:index + batch_size]
 
 
-def _call_gemini_json(prompt: str, grounded: bool) -> Optional[Any]:
-    global GEMINI_FATAL_ERROR
+def _fetch_pib_notifications_for_programs(program_keywords: List[str]) -> str:
+    """Fetch recent PIB notifications relevant to the given program keywords."""
+    url = "https://www.pib.gov.in/allRel.aspx?reg=3&lang=1"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    }
 
-    if GEMINI_FATAL_ERROR:
-        return None
+    try:
+        response = requests.get(url, headers=headers, timeout=15)
+        response.raise_for_status()
 
-    errors: List[str] = []
-    tool_variants: List[Optional[Dict[str, Any]]] = [None]
-    if grounded and VERIFY_ENABLE_GROUNDING:
-        tool_variants = GROUNDING_TOOL_VARIANTS + [None]
+        from bs4 import BeautifulSoup
+        soup = BeautifulSoup(response.text, 'html.parser')
 
-    for api_version in API_VERSIONS:
-        for model in MODEL_CANDIDATES:
-            for tool in tool_variants:
-                url = _build_gemini_url(model, api_version)
-                request_body: Dict[str, Any] = {
-                    "contents": [{"parts": [{"text": prompt}]}],
-                    "generationConfig": {
-                        "temperature": 0.1,
-                    },
-                }
-                if tool is not None:
-                    request_body["tools"] = [tool]
+        feed_items = []
+        for a in soup.find_all('a'):
+            href = a.get('href', '')
+            text = a.text.strip()
+            if text and 'PRID=' in href:
+                prid = href.split('PRID=')[-1].split('&')[0]
+                link = f"https://pib.gov.in/PressReleasePage.aspx?PRID={prid}"
+                if not any(i['link'] == link for i in feed_items):
+                    feed_items.append({"title": text, "link": link})
 
-                try:
-                    response = requests.post(
-                        url,
-                        headers={"Content-Type": "application/json"},
-                        json=request_body,
-                        timeout=REQUEST_TIMEOUT_SECONDS,
-                    )
-                except requests.RequestException as exc:
-                    errors.append(f"{api_version}/{model}: request exception: {exc}")
-                    continue
+        feed_items = feed_items[:30]
 
-                if response.status_code == 200:
-                    data = response.json()
-                    text_response = _extract_candidate_text(data)
-                    if not text_response:
-                        errors.append(f"{api_version}/{model}: empty candidate response")
-                        continue
+        if not feed_items:
+            return "No recent PIB notifications found."
 
-                    payload = _extract_json_payload(text_response)
-                    if payload is not None:
-                        return payload
+        filter_prompt = f"""
+You are an expert in Indian Public Health policy.
+Review these PIB press release titles and select up to 5 that relate to these program areas:
+{', '.join(program_keywords)}
 
-                    errors.append(f"{api_version}/{model}: could not parse JSON payload")
-                    continue
+Return ONLY a JSON array of objects with "title" and "link" for relevant items.
+If none are relevant, return [].
 
-                message = _error_message_from_response(response)
-                errors.append(f"{api_version}/{model}: {response.status_code} {message}")
+Titles:
+{json.dumps(feed_items, indent=2)}
+"""
+        selected = _call_openrouter(filter_prompt)
+        if not selected or not isinstance(selected, list):
+            return "No relevant PIB notifications found for the target programs."
 
-                if response.status_code in (429, 500, 503):
-                    time.sleep(3)
-                    try:
-                        retry = requests.post(
-                            url,
-                            headers={"Content-Type": "application/json"},
-                            json=request_body,
-                            timeout=REQUEST_TIMEOUT_SECONDS,
-                        )
-                    except requests.RequestException as exc:
-                        errors.append(f"{api_version}/{model} retry: request exception: {exc}")
-                        continue
+        selected = selected[:5]
+        notifications_text = []
+        for item in selected:
+            try:
+                pr_response = requests.get(item['link'], headers=headers, timeout=15)
+                pr_response.raise_for_status()
+                from bs4 import BeautifulSoup
+                pr_soup = BeautifulSoup(pr_response.text, 'html.parser')
+                raw_text = " ".join(pr_soup.get_text(separator=' ', strip=True).split())
+                notifications_text.append(f"TITLE: {item['title']}\nLINK: {item['link']}\nCONTENT: {raw_text[:4000]}")
+            except Exception as e:
+                print(f"  Error fetching {item['link']}: {e}")
 
-                    if retry.status_code == 200:
-                        data = retry.json()
-                        text_response = _extract_candidate_text(data)
-                        if text_response:
-                            payload = _extract_json_payload(text_response)
-                            if payload is not None:
-                                return payload
-                    errors.append(
-                        f"{api_version}/{model} retry: {retry.status_code} {_error_message_from_response(retry)}"
-                    )
+        return "\n\n---\n\n".join(notifications_text) if notifications_text else "No relevant PIB notifications found."
 
-    if errors:
-        print("Gemini API Error: all model/version attempts failed")
-        for entry in errors[:4]:
-            print(f"  - {entry}")
-        if len(errors) > 4:
-            print(f"  - ... and {len(errors) - 4} more failures")
-
-        combined = " ".join(errors).lower()
-        if (
-            "api key not valid" in combined
-            or "permission_denied" in combined
-            or "service_disabled" in combined
-        ):
-            GEMINI_FATAL_ERROR = "Gemini authentication/service configuration error."
-            print("Gemini is marked unavailable for the rest of this run due to configuration error.")
-
-    return None
+    except Exception as e:
+        print(f"Error fetching PIB feed: {e}")
+        return "Could not fetch PIB notifications."
 
 
-def _verify_claim_batch(item_title: str, claim_lines: List[str]) -> List[Dict[str, str]]:
+def _verify_claim_batch(item_title: str, item_id: str, claim_lines: List[str], pib_context: str) -> List[Dict[str, str]]:
     if not claim_lines:
         return []
 
@@ -380,34 +406,38 @@ You are an expert Indian Community Medicine and Public Health editor.
 Today is {TODAY_LABEL}.
 
 TASK:
-Verify the factual accuracy and factual completeness of the claim lines below for a medical learning app chapter titled "{item_title}".
-Use grounded web search if available and prioritize official Indian government, programme portals, Gazette notifications, MoHFW, NTEP/Nikshay, NHM, ICMR, WHO, and UN sources.
+Verify the factual accuracy of claim lines for a medical learning app chapter titled "{item_title}" (ID: {item_id}).
+Compare each line against the recent PIB notifications provided below.
+
+RECENT PIB NOTIFICATIONS:
+{pib_context}
 
 RULES:
-1. Return ONLY a JSON array.
-2. Omit any line that is still accurate and already complete enough.
+1. Return ONLY a JSON array of objects.
+2. Omit any line that is still accurate and complete enough.
 3. For each outdated, inaccurate, or materially incomplete line, return:
    {{
      "original": "exact original line from input",
      "replacement": "corrected line in the same concise style",
-     "reason": "very short reason",
-     "source": "one authoritative source name or URL"
+     "reason": "very short reason mentioning what changed (deadline, amount, eligibility, name, etc.)",
+     "source": "PIB title or URL"
    }}
-4. Only enrich a line if an important grounded factual value is missing, such as amount, target year, threshold, dose, duration, coverage figure, age cutoff, or validity period.
-5. Do not create new standalone bullets or new sections. Anchor every addition to an existing input line by returning a replacement for that exact line.
-6. Preserve exam-oriented wording and formatting style.
+4. Only update specific factual tokens: amounts, target years, thresholds, doses, durations, coverage figures, age cutoffs, validity periods, program names, eligibility criteria, benefit amounts, or strategy changes.
+5. Do NOT create new standalone bullets or new sections. Anchor every change to an existing input line.
+6. Preserve the exam-oriented wording and formatting style. Do not rewrite entire paragraphs.
 7. If the correction is only a money amount, year, percentage, count, dose, or similar factual token, keep the rest of the line unchanged.
 8. If unsure, do not guess. Omit that line.
+9. Focus on: deadlines, eligibility criteria, name changes, strategies, objectives, achievements, benefit amounts, coverage targets, and any other relevant data changes.
 
-Claim lines:
+Claim lines to verify:
 {json.dumps(claim_lines, ensure_ascii=False, indent=2)}
 """
 
-    payload = _call_gemini_json(prompt, grounded=True)
+    payload = _call_openrouter(prompt)
     if payload is None:
         return []
     if isinstance(payload, dict):
-        payload = payload.get("changes") or payload.get("updates") or []
+        payload = payload.get("changes") or payload.get("updates") or payload.get("corrections") or []
     if not isinstance(payload, list):
         return []
 
@@ -421,14 +451,12 @@ Claim lines:
         source = str(item.get("source", "")).strip()
         if not original or not replacement:
             continue
-        corrections.append(
-            {
-                "original": original,
-                "replacement": replacement,
-                "reason": reason,
-                "source": source,
-            }
-        )
+        corrections.append({
+            "original": original,
+            "replacement": replacement,
+            "reason": reason,
+            "source": source,
+        })
     return corrections
 
 
@@ -481,6 +509,24 @@ def _strip_recently_updated(items: List[Dict[str, Any]]) -> None:
             _strip_recently_updated(item["subsections"])
 
 
+def _get_program_keywords_for_item(item: Dict[str, Any]) -> List[str]:
+    """Extract program-relevant keywords from a mockData item."""
+    title = item.get("title", "").lower()
+    content = item.get("content", "").lower()
+
+    keywords = set()
+    for kw in VOLATILE_KEYWORDS:
+        if kw in title or kw in content:
+            keywords.add(kw)
+
+    title_words = title.split()
+    for word in title_words:
+        if len(word) > 3:
+            keywords.add(word)
+
+    return list(keywords)[:15]
+
+
 def process_file_verification(file_path: str) -> None:
     try:
         with open(file_path, "r", encoding="utf-8") as file:
@@ -504,6 +550,7 @@ def process_file_verification(file_path: str) -> None:
         _strip_recently_updated(target_root_items)
 
         updates_made = 0
+
         def verify_item_recursively(item: Dict[str, Any], index_str: str) -> None:
             nonlocal updates_made
             print(f"Verifying [{index_str}]: {item.get('title', 'Unknown')}")
@@ -512,13 +559,22 @@ def process_file_verification(file_path: str) -> None:
                 original_content = item["content"]
                 candidate_lines = _extract_claim_lines(original_content)
                 if candidate_lines:
+                    program_keywords = _get_program_keywords_for_item(item)
+                    print(f"  Fetching relevant PIB notifications for: {', '.join(program_keywords[:5])}...")
+                    pib_context = _fetch_pib_notifications_for_programs(program_keywords)
+
                     all_corrections: List[Dict[str, str]] = []
                     for batch_index, batch in enumerate(_batched(candidate_lines, VERIFY_MAX_CLAIMS_PER_BATCH)):
                         if batch_index >= VERIFY_MAX_BATCHES_PER_ITEM:
                             break
-                        batch_corrections = _verify_claim_batch(item.get("title", "Unknown"), batch)
+                        batch_corrections = _verify_claim_batch(
+                            item.get("title", "Unknown"),
+                            str(item.get("id", "")),
+                            batch,
+                            pib_context
+                        )
                         all_corrections.extend(batch_corrections)
-                        time.sleep(1)
+                        time.sleep(2)
 
                     new_content, applied_corrections = _apply_corrections(original_content, all_corrections)
                     if new_content != original_content:
@@ -532,9 +588,11 @@ def process_file_verification(file_path: str) -> None:
                         updates_made += 1
                         print(f"  -> Applied {len(applied_corrections)} claim-level corrections.")
                         for correction in applied_corrections[:3]:
-                            source_text = correction.get("source") or "authoritative source"
+                            source_text = correction.get("source") or "PIB notification"
                             reason_text = correction.get("reason") or "claim updated"
                             print(f"     - {reason_text} [{source_text}]")
+                    else:
+                        print("  -> No changes needed based on current PIB notifications.")
                 else:
                     print("  -> No high-volatility claims detected; skipped to save cost.")
 
@@ -567,4 +625,5 @@ def verify_and_update_all() -> None:
 
 if __name__ == "__main__":
     print("Starting claim-focused verification of mockData.json against current public-health guidance...")
+    print(f"Using OpenRouter API with model: {OPENROUTER_MODEL}")
     verify_and_update_all()

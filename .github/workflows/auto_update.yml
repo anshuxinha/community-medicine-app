@@ -2,7 +2,7 @@ name: Auto Update Health Guidelines
 
 on:
   schedule:
-    - cron: '30 4 * * 0' # Runs every Sunday at 10:00 AM IST (04:30 UTC)
+    - cron: "30 4 * * 0" # Runs every Sunday at 10:00 AM IST (04:30 UTC)
   workflow_dispatch: # Allows manual triggering from GitHub Actions UI
 
 jobs:
@@ -18,7 +18,7 @@ jobs:
       - name: Set up Python 3.x
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10' 
+          python-version: "3.10"
 
       - name: Install dependencies
         run: |
@@ -27,7 +27,7 @@ jobs:
 
       - name: Run Fetch Script
         env:
-          GOOGLE_GEMINI_KEY: ${{ secrets.GOOGLE_GEMINI_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: python scripts/fetch_updates.py
 
       - name: Commit and Push Changes
@@ -36,7 +36,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add src/data/updates.json
-          
+
           # Check if there are any changes to commit
           if git diff --staged --quiet; then
             echo "has_changes=false" >> "$GITHUB_OUTPUT"
@@ -63,7 +63,7 @@ jobs:
         if: ${{ steps.commit_changes.outputs.has_changes == 'true' && steps.expo_token_check.outputs.has_token == 'true' }}
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install JS Dependencies
         if: ${{ steps.commit_changes.outputs.has_changes == 'true' && steps.expo_token_check.outputs.has_token == 'true' }}
