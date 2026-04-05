@@ -553,6 +553,12 @@ def process_file_verification(file_path: str) -> None:
 
         def verify_item_recursively(item: Dict[str, Any], index_str: str) -> None:
             nonlocal updates_made
+
+            # Skip subsection 7-0 (Administrative Hierarchy) - it's structural, not policy-driven
+            if str(item.get("id")) == "7-0":
+                print(f"Skipping [{index_str}]: {item.get('title', 'Unknown')} (excluded)")
+                return
+
             print(f"Verifying [{index_str}]: {item.get('title', 'Unknown')}")
 
             if "content" in item:
