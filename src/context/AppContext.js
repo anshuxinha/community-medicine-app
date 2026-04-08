@@ -33,6 +33,8 @@ if (Constants.appOwnership !== "expo") {
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const getAccountStateKey = (uid) => `accountState:${uid}`;
+const hasRevenueCatPremiumEntitlement = (customerInfo) =>
+  customerInfo?.entitlements?.active?.Premium != null;
 
 const sanitizeReadItemVersions = (value) => {
   if (!value || typeof value !== "object") return {};
@@ -632,6 +634,24 @@ export const AppProvider = ({ children }) => {
     }));
   };
 
+  const persistPremiumAccess = async (metadata = {}) => {
+    if (!user?.uid) return;
+
+    try {
+      await setDoc(
+        doc(db, "users", user.uid),
+        {
+          isPremium: true,
+          premiumUpdatedAt: serverTimestamp(),
+          ...metadata,
+        },
+        { merge: true },
+      );
+    } catch (err) {
+      console.warn("Failed to sync premium to Firestore:", err.message);
+    }
+  };
+
   // RevenueCat: configure and sync customer info on mount
   useEffect(() => {
     if (Constants.appOwnership === "expo") return;
@@ -653,20 +673,22 @@ export const AppProvider = ({ children }) => {
 
     // Listen for subscription status changes from RevenueCat
     Purchases.addCustomerInfoUpdateListener((info) => {
-      const hasPremium =
-        info.entitlements.active["Premium"] !== undefined &&
-        info.entitlements.active["Premium"] !== null;
+      const hasPremium = hasRevenueCatPremiumEntitlement(info);
       setRevenueCatPremium(hasPremium);
+      if (hasPremium) {
+        persistPremiumAccess({ premiumSource: "revenuecat_listener" });
+      }
       console.log("RevenueCat listener — isPremium:", hasPremium);
     });
 
     // Check if user is already premium on mount
     Purchases.getCustomerInfo()
       .then((info) => {
-        const hasPremium =
-          info.entitlements.active["Premium"] !== undefined &&
-          info.entitlements.active["Premium"] !== null;
+        const hasPremium = hasRevenueCatPremiumEntitlement(info);
         setRevenueCatPremium(hasPremium);
+        if (hasPremium) {
+          persistPremiumAccess({ premiumSource: "revenuecat_initial_check" });
+        }
         console.log("RevenueCat initial check — isPremium:", hasPremium);
       })
       .catch((err) => {
@@ -682,10 +704,11 @@ export const AppProvider = ({ children }) => {
 
     Purchases.logIn(user.uid)
       .then(({ customerInfo }) => {
-        const hasPremium =
-          customerInfo.entitlements.active["Premium"] !== undefined &&
-          customerInfo.entitlements.active["Premium"] !== null;
+        const hasPremium = hasRevenueCatPremiumEntitlement(customerInfo);
         setRevenueCatPremium(hasPremium);
+        if (hasPremium) {
+          persistPremiumAccess({ premiumSource: "revenuecat_login" });
+        }
         console.log("RevenueCat logIn — isPremium:", hasPremium);
       })
       .catch((err) => {
@@ -731,10 +754,11 @@ export const AppProvider = ({ children }) => {
     if (Constants.appOwnership !== "expo" && Purchases && userData.uid) {
       Purchases.logIn(userData.uid)
         .then(({ customerInfo }) => {
-          const hasPremium =
-            customerInfo.entitlements.active["Premium"] !== undefined &&
-            customerInfo.entitlements.active["Premium"] !== null;
+          const hasPremium = hasRevenueCatPremiumEntitlement(customerInfo);
           setRevenueCatPremium(hasPremium);
+          if (hasPremium) {
+            persistPremiumAccess({ premiumSource: "revenuecat_login" });
+          }
         })
         .catch((err) => {
           console.warn("RevenueCat logIn during login failed:", err.message);
@@ -784,21 +808,9 @@ export const AppProvider = ({ children }) => {
     setDailyReadHistory({});
   };
 
-  const upgradeToPremium = async () => {
+  const upgradeToPremium = async (metadata = {}) => {
     setAccountPremium(true);
-
-    // Persist premium status to Firestore
-    if (user?.uid) {
-      try {
-        await setDoc(
-          doc(db, "users", user.uid),
-          { isPremium: true, premiumUpdatedAt: serverTimestamp() },
-          { merge: true },
-        );
-      } catch (err) {
-        console.warn("Failed to sync premium to Firestore:", err.message);
-      }
-    }
+    await persistPremiumAccess(metadata);
   };
 
   return (

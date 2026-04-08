@@ -130,8 +130,17 @@ const PaywallScreen = ({ navigation }) => {
         return;
       }
 
-      await Purchases.purchasePackage(pkg);
-      upgradeToPremium();
+      const { customerInfo } = await Purchases.purchasePackage(pkg);
+      const hasPremium = customerInfo?.entitlements?.active?.Premium != null;
+      if (!hasPremium) {
+        throw new Error(
+          "Purchase completed, but premium entitlement was not activated yet. Please tap Restore Purchases.",
+        );
+      }
+      await upgradeToPremium({
+        premiumSource: "purchase",
+        premiumPlan: selectedPlan,
+      });
       Alert.alert(
         "🎉 Welcome to Premium!",
         "Your subscription is now active. Enjoy full access to STROMA.",
@@ -156,7 +165,8 @@ const PaywallScreen = ({ navigation }) => {
         return;
       }
       const customerInfo = await Purchases.restorePurchases();
-      if (customerInfo.entitlements.active["Premium"] !== undefined) {
+      if (customerInfo?.entitlements?.active?.Premium != null) {
+        await upgradeToPremium({ premiumSource: "restore" });
         Alert.alert("Success", "Your purchases were restored!");
       } else {
         Alert.alert("Notice", "No active premium subscriptions found.");
