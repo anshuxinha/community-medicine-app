@@ -6,8 +6,7 @@ from datetime import datetime
 from bs4 import BeautifulSoup  # type: ignore
 from typing import List, Dict, Any
 
-OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "sk-vGiLJcYWJB7M2WUQyTFFfEogZHzewJBwdQ1w13MiMha04ViO")
-
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
 if not OPENROUTER_API_KEY:
     raise ValueError("OPENROUTER_API_KEY environment variable is not set")
 
