@@ -6,13 +6,13 @@ from datetime import datetime
 from bs4 import BeautifulSoup  # type: ignore
 from typing import List, Dict, Any
 
-OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "sk-vGiLJcYWJB7M2WUQyTFFfEogZHzewJBwdQ1w13MiMha04ViO")
 
 if not OPENROUTER_API_KEY:
     raise ValueError("OPENROUTER_API_KEY environment variable is not set")
 
-OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-OPENROUTER_MODEL = "qwen/qwen3.6-plus:free"
+OPENROUTER_API_URL = "https://agentrouter.org/v1/chat/completions"
+OPENROUTER_MODEL = "deepseek-v3.2"
 
 import re
 

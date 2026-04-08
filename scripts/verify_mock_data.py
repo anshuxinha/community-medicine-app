@@ -8,12 +8,12 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 import requests  # type: ignore
 
-OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "sk-vGiLJcYWJB7M2WUQyTFFfEogZHzewJBwdQ1w13MiMha04ViO")
 if not OPENROUTER_API_KEY:
     raise ValueError("OPENROUTER_API_KEY environment variable is not set")
 
-OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-OPENROUTER_MODEL = "qwen/qwen3.6-plus:free"
+OPENROUTER_API_URL = "https://agentrouter.org/v1/chat/completions"
+OPENROUTER_MODEL = "deepseek-v3.2"
 REQUEST_TIMEOUT_SECONDS = int(os.environ.get("OPENROUTER_TIMEOUT_SECONDS", "90"))
 
 MOCK_DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "src", "data", "mockData.json")
