@@ -131,6 +131,8 @@ export const AppProvider = ({ children }) => {
 
   const [user, setUser] = useState(undefined);
   const [isPremium, setIsPremium] = useState(false);
+  const [accountPremium, setAccountPremium] = useState(false);
+  const [revenueCatPremium, setRevenueCatPremium] = useState(false);
   const isLoggingOutRef = useRef(false);
   const cloudHydratedRef = useRef(false);
 
@@ -170,6 +172,10 @@ export const AppProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    setIsPremium(accountPremium || revenueCatPremium);
+  }, [accountPremium, revenueCatPremium]);
+
+  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         cloudHydratedRef.current = false;
@@ -190,10 +196,8 @@ export const AppProvider = ({ children }) => {
           ]);
 
           const data = userDoc.exists() ? userDoc.data() : {};
-          const premiumStatus =
-            data.isPremium !== undefined ? data.isPremium : claimsPremium;
-          const isAdmin =
-            data.isAdmin !== undefined ? data.isAdmin : claimsAdmin;
+          const premiumStatus = data.isPremium === true || claimsPremium;
+          const isAdmin = data.isAdmin === true || claimsAdmin;
           const userData = {
             uid: firebaseUser.uid,
             email: firebaseUser.email,
@@ -204,7 +208,7 @@ export const AppProvider = ({ children }) => {
 
           const cloudState = hydrateStoredState(data);
           setUser(userData);
-          setIsPremium(premiumStatus);
+          setAccountPremium(Boolean(premiumStatus));
           cloudHydratedRef.current = true;
           await AsyncStorage.setItem("user", JSON.stringify(userData));
           await AsyncStorage.setItem(
@@ -236,7 +240,7 @@ export const AppProvider = ({ children }) => {
           }
 
           setUser(userData);
-          setIsPremium(claimsPremium);
+          setAccountPremium(Boolean(claimsPremium));
           cloudHydratedRef.current = true;
           await AsyncStorage.setItem("user", JSON.stringify(userData));
         }
@@ -247,12 +251,14 @@ export const AppProvider = ({ children }) => {
           if (storedUser) {
             const parsed = JSON.parse(storedUser);
             setUser(parsed);
-            setIsPremium(parsed.isPremium || false);
+            setAccountPremium(Boolean(parsed.isPremium));
           } else {
             setUser(null);
+            setAccountPremium(false);
           }
         } catch {
           setUser(null);
+          setAccountPremium(false);
         }
       }
     });
@@ -650,7 +656,7 @@ export const AppProvider = ({ children }) => {
       const hasPremium =
         info.entitlements.active["Premium"] !== undefined &&
         info.entitlements.active["Premium"] !== null;
-      setIsPremium(hasPremium);
+      setRevenueCatPremium(hasPremium);
       console.log("RevenueCat listener — isPremium:", hasPremium);
     });
 
@@ -660,7 +666,7 @@ export const AppProvider = ({ children }) => {
         const hasPremium =
           info.entitlements.active["Premium"] !== undefined &&
           info.entitlements.active["Premium"] !== null;
-        setIsPremium(hasPremium);
+        setRevenueCatPremium(hasPremium);
         console.log("RevenueCat initial check — isPremium:", hasPremium);
       })
       .catch((err) => {
@@ -679,7 +685,7 @@ export const AppProvider = ({ children }) => {
         const hasPremium =
           customerInfo.entitlements.active["Premium"] !== undefined &&
           customerInfo.entitlements.active["Premium"] !== null;
-        setIsPremium(hasPremium);
+        setRevenueCatPremium(hasPremium);
         console.log("RevenueCat logIn — isPremium:", hasPremium);
       })
       .catch((err) => {
@@ -711,13 +717,14 @@ export const AppProvider = ({ children }) => {
     setStudyScore(0);
     setDailyReadHistory({});
     setUser(null);
-    setIsPremium(false);
+    setAccountPremium(false);
+    setRevenueCatPremium(false);
   };
 
   const login = (userData) => {
     setUser(userData);
     if (userData.isPremium !== undefined) {
-      setIsPremium(userData.isPremium);
+      setAccountPremium(Boolean(userData.isPremium));
     }
 
     // Identify user with RevenueCat on login
@@ -727,7 +734,7 @@ export const AppProvider = ({ children }) => {
           const hasPremium =
             customerInfo.entitlements.active["Premium"] !== undefined &&
             customerInfo.entitlements.active["Premium"] !== null;
-          setIsPremium(hasPremium);
+          setRevenueCatPremium(hasPremium);
         })
         .catch((err) => {
           console.warn("RevenueCat logIn during login failed:", err.message);
@@ -765,7 +772,8 @@ export const AppProvider = ({ children }) => {
     ]);
 
     setUser(null);
-    setIsPremium(false);
+    setAccountPremium(false);
+    setRevenueCatPremium(false);
     setReadItems([]);
     setReadItemVersions({});
     setBookmarks([]);
@@ -777,7 +785,7 @@ export const AppProvider = ({ children }) => {
   };
 
   const upgradeToPremium = async () => {
-    setIsPremium(true);
+    setAccountPremium(true);
 
     // Persist premium status to Firestore
     if (user?.uid) {

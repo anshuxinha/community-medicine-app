@@ -20,6 +20,7 @@ import {
   updateProfile,
   signInWithCredential,
   GoogleAuthProvider,
+  getIdTokenResult,
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import Constants from "expo-constants";
@@ -67,8 +68,10 @@ const LoginScreen = () => {
       const googleCredential = GoogleAuthProvider.credential(idToken);
       const userCredential = await signInWithCredential(auth, googleCredential);
       const user = userCredential.user;
+      const tokenResult = await getIdTokenResult(user, true);
+      const claimsPremium = tokenResult.claims.isPremium === true;
 
-      let premiumStatus = false;
+      let premiumStatus = claimsPremium;
       try {
         const userDoc = await Promise.race([
           getDoc(doc(db, "users", user.uid)),
@@ -76,11 +79,11 @@ const LoginScreen = () => {
         ]);
 
         if (userDoc.exists()) {
-          premiumStatus = userDoc.data().isPremium;
+          premiumStatus = userDoc.data().isPremium === true || claimsPremium;
         } else {
           await setDoc(doc(db, "users", user.uid), {
             email: user.email,
-            isPremium: false,
+            isPremium: claimsPremium,
             createdAt: new Date().toISOString(),
           });
         }
@@ -142,14 +145,18 @@ const LoginScreen = () => {
           password,
         );
         const user = userCredential.user;
+        const tokenResult = await getIdTokenResult(user, true);
+        const claimsPremium = tokenResult.claims.isPremium === true;
 
-        let premiumStatus = false;
+        let premiumStatus = claimsPremium;
         try {
           const userDoc = await Promise.race([
             getDoc(doc(db, "users", user.uid)),
             timeoutPromise(2000),
           ]);
-          premiumStatus = userDoc.exists() ? userDoc.data().isPremium : false;
+          premiumStatus = userDoc.exists()
+            ? userDoc.data().isPremium === true || claimsPremium
+            : claimsPremium;
         } catch (err) {
           console.warn("Firestore unavailable during login:", err.message);
         }
