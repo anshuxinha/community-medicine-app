@@ -11,7 +11,7 @@ if not OPENROUTER_API_KEY:
     raise ValueError("OPENROUTER_API_KEY environment variable is not set")
 
 OPENROUTER_API_URL = "https://agentrouter.org/v1/chat/completions"
-OPENROUTER_MODEL = "deepseek-v3.2"
+OPENROUTER_MODEL = "openrouter/free"
 
 import re
 
@@ -114,7 +114,7 @@ def fetch_health_updates():
         Review the list of titles and select up to 3 that are HIGHLY RELEVANT to Community Medicine.
         
         STRICT INCLUSION CRITERIA:
-        - National Health Programs (e.g., NHM, Ayushman Bharat, RNTCP/NTEP)
+        - National Health Programs (e.g., NHM, Ayushman Bharat, NTEP, NACP, etc.)
         - Vaccines, Immunization, and infectious disease outbreaks
         - Maternal and Child Health (MCH), Family Planning
         - Public Health infrastructure, epidemiology, or vital statistics
@@ -122,7 +122,7 @@ def fetch_health_updates():
         STRICT EXCLUSION CRITERIA (IGNORE THESE COMPLETELY):
         - Telecom, TRAI, IT, 5G, or generic technology (unless strictly health-tech eSanjeevani)
         - Defense, Military, or routine political visits
-        - General economics, finance, or unrelated agriculture
+        - Any other topic unrelated to public health or community medicine
         
         Return ONLY a JSON array of objects containing the "id" of the selected items. 
         Example: [{{"id": 4}}, {{"id": 12}}]
@@ -132,7 +132,7 @@ def fetch_health_updates():
         {json.dumps(feed_items, indent=2)}
         """
         
-        print("Filtering relevant Community Medicine articles with OpenRouter (Qwen3.6 Plus)...")
+        print("Filtering relevant Community Medicine articles with OpenRouter...")
         selected_ids_response = call_openrouter(filter_prompt)
         
         if selected_ids_response is None:

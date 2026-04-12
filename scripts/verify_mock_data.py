@@ -7,13 +7,14 @@ from difflib import SequenceMatcher
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 import requests  # type: ignore
+from bs4 import BeautifulSoup  # type: ignore
 
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
 if not OPENROUTER_API_KEY:
     raise ValueError("OPENROUTER_API_KEY environment variable is not set")
 
 OPENROUTER_API_URL = "https://agentrouter.org/v1/chat/completions"
-OPENROUTER_MODEL = "deepseek-v3.2"
+OPENROUTER_MODEL = "openrouter/free"
 REQUEST_TIMEOUT_SECONDS = int(os.environ.get("OPENROUTER_TIMEOUT_SECONDS", "90"))
 
 MOCK_DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "src", "data", "mockData.json")
@@ -31,13 +32,14 @@ TODAY_LABEL = datetime.utcnow().date().isoformat()
 OPENROUTER_FATAL_ERROR: Optional[str] = None
 
 VOLATILE_KEYWORDS = (
-    "who",
+    "WHO",
     "guideline",
     "guidelines",
     "policy",
     "programme",
     "program",
     "scheme",
+    "strategy"
     "mission",
     "yojana",
     "incentive",
@@ -64,6 +66,8 @@ VOLATILE_KEYWORDS = (
     "iphs",
     "nhm",
     "ntep",
+    "nacp",
+    "nlep",
     "uip",
     "icmr",
     "mohfw",
@@ -95,7 +99,7 @@ UPDATE_SENSITIVE_TOKEN_RE = re.compile(
 
 
 def _call_openrouter(prompt: str) -> Optional[Any]:
-    """Call OpenRouter API (Qwen3.6 Plus) and parse JSON response."""
+    """Call OpenRouter API and parse JSON response."""
     global OPENROUTER_FATAL_ERROR
 
     if OPENROUTER_FATAL_ERROR:
@@ -419,14 +423,14 @@ RULES:
    {{
      "original": "exact original line from input",
      "replacement": "corrected line in the same concise style",
-     "reason": "very short reason mentioning what changed (deadline, amount, eligibility, name, etc.)",
+     "reason": "very short reason mentioning what changed (deadline, amount, eligibility, name, strategy, target, statistics, achievement etc.)",
      "source": "PIB title or URL"
    }}
-4. Only update specific factual tokens: amounts, target years, thresholds, doses, durations, coverage figures, age cutoffs, validity periods, program names, eligibility criteria, benefit amounts, or strategy changes.
-5. Do NOT create new standalone bullets or new sections. Anchor every change to an existing input line.
-6. Preserve the exam-oriented wording and formatting style. Do not rewrite entire paragraphs.
+4. Only update specific factual tokens like (but not limited to): amounts, target years, thresholds, doses, durations, coverage figures, age cutoffs, validity periods, program names, eligibility criteria, benefit amounts, or strategy changes.
+5. Do NOT create new standalone bullets or new sections unless absolutely necessary. Anchor every change to an existing input line.
+6. Preserve the exam-oriented wording and formatting style.
 7. If the correction is only a money amount, year, percentage, count, dose, or similar factual token, keep the rest of the line unchanged.
-8. If unsure, do not guess. Omit that line.
+8. If unsure, do not guess. Ignore that line.
 9. Focus on: deadlines, eligibility criteria, name changes, strategies, objectives, achievements, benefit amounts, coverage targets, and any other relevant data changes.
 
 Claim lines to verify:
