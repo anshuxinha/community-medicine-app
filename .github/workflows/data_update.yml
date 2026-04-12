@@ -3,19 +3,21 @@ name: Update Data
 on:
   push:
     paths:
-      - 'data_source/**' # Assuming PDFs are pushed here
+      - "data_source/**" # Assuming PDFs are pushed here
   workflow_dispatch:
 
 jobs:
   update-json:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: "3.10"
 
       - name: Install dependencies
         run: |

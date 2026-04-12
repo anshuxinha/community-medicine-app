@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        env:
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -23,7 +25,7 @@ jobs:
           python-version: "3.10"
 
       - name: Install dependencies
-        run: pip install requests beautifulsoup4
+        run: pip install requests beautifulsoup4 google-auth google-auth-oauthlib
 
       - name: Run Verification Script
         run: python scripts/verify_mock_data.py
@@ -63,7 +65,7 @@ jobs:
         if: ${{ steps.commit_changes.outputs.has_changes == 'true' && steps.expo_token_check.outputs.has_token == 'true' }}
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
 
       - name: Install JS Dependencies
         if: ${{ steps.commit_changes.outputs.has_changes == 'true' && steps.expo_token_check.outputs.has_token == 'true' }}
