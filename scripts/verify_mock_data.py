@@ -690,5 +690,5 @@ def verify_and_update_all() -> None:
 
 if __name__ == "__main__":
     print("Starting MoHFW claim-focused verification of mockData.json against current monthly guidance...")
-    print(f"Using OpenRouter API with model: {OPENROUTER_MODEL}")
+    print(f"Using Gemini API with model: {GEMINI_MODEL}")
     verify_and_update_all()
