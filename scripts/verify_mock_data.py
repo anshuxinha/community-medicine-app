@@ -333,89 +333,79 @@ def _batched(items: List[str], batch_size: int) -> Iterable[List[str]]:
 
 
 def _fetch_pib_notifications_for_programs(program_keywords: List[str]) -> str:
-    """Fetch recent PIB notifications for MoHFW for the current month."""
-    url = "[https://pib.gov.in/allRel.aspx](https://pib.gov.in/allRel.aspx)"
+    """Fetch recent PIB notifications for MoHFW for the current month.
+
+    Uses ASP.NET postback mechanism: the PIB AllRelease page has no submit
+    button; selecting a ministry dropdown triggers a postback via __EVENTTARGET.
+    MoHFW is value 31 in the ministry dropdown.
+    """
+    url = "https://www.pib.gov.in/AllRelease.aspx?MenuId=30&reg=3&lang=1"
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "Referer": "[https://pib.gov.in/indexd.aspx](https://pib.gov.in/indexd.aspx)"
+        "Referer": "https://www.pib.gov.in/index.aspx"
     }
+
+    # Stable ASP.NET control names (derived from page inspection)
+    MINISTRY_FIELD = "ctl00$ContentPlaceHolder1$ddlMinistry"
+    MOHFW_VALUE = "31"  # Ministry of Health and Family Welfare
 
     try:
         session = requests.Session()
-        
-        # Step 1: GET request to grab ASP.NET viewstates and dynamic names
-        response = session.get(url, headers=headers, timeout=15)
+
+        # Step 1: GET the page to extract ASP.NET hidden fields
+        print("  PIB: Fetching AllRelease page...")
+        response = session.get(url, headers=headers, timeout=30)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        viewstate = soup.find("input", {"id": "__VIEWSTATE"})
-        viewstate_val = viewstate["value"] if viewstate else ""
-        
-        viewstategenerator = soup.find("input", {"id": "__VIEWSTATEGENERATOR"})
-        viewstategen_val = viewstategenerator["value"] if viewstategenerator else ""
-        
-        eventvalidation = soup.find("input", {"id": "__EVENTVALIDATION"})
-        eventvalidation_val = eventvalidation["value"] if eventvalidation else ""
+        # Extract required ASP.NET hidden fields
+        def _hidden_val(field_id: str) -> str:
+            tag = soup.find("input", {"id": field_id})
+            return tag["value"] if tag else ""
 
-        # Dynamically find the dropdown names
-        min_dropdown = soup.find("select", id=re.compile(r".*ddlMinistry.*", re.IGNORECASE))
-        min_name = min_dropdown.get("name") if min_dropdown else "ctl00$ContentPlaceHolder1$ddlMinistry"
-        
-        day_dropdown = soup.find("select", id=re.compile(r".*ddlday.*", re.IGNORECASE))
-        day_name = day_dropdown.get("name") if day_dropdown else "ctl00$ContentPlaceHolder1$ddlday"
-        
-        month_dropdown = soup.find("select", id=re.compile(r".*ddlMonth.*", re.IGNORECASE))
-        month_name = month_dropdown.get("name") if month_dropdown else "ctl00$ContentPlaceHolder1$ddlMonth"
-        
-        year_dropdown = soup.find("select", id=re.compile(r".*ddlYear.*", re.IGNORECASE))
-        year_name = year_dropdown.get("name") if year_dropdown else "ctl00$ContentPlaceHolder1$ddlYear"
+        viewstate_val = _hidden_val("__VIEWSTATE")
+        viewstategen_val = _hidden_val("__VIEWSTATEGENERATOR")
+        eventvalidation_val = _hidden_val("__EVENTVALIDATION")
 
-        # Find the specific ID for Ministry of Health and Family Welfare
-        mohfw_id = "0"
-        if min_dropdown:
-            for option in min_dropdown.find_all("option"):
-                if "Health and Family Welfare" in option.text:
-                    mohfw_id = option["value"]
-                    break
+        if not viewstate_val:
+            print("  PIB: WARNING - __VIEWSTATE not found on the page.")
 
-        # Setup current dates
-        now = datetime.utcnow()
-        current_month = str(now.month)
-        current_year = str(now.year)
-
-        # Step 2: POST request to filter by MoHFW and current month
+        # Step 2: POST to filter by MoHFW using __EVENTTARGET postback
+        # The PIB page has no submit button — dropdown selection triggers
+        # an ASP.NET autopostback via __EVENTTARGET.
+        print(f"  PIB: Posting ministry filter (MoHFW={MOHFW_VALUE})...")
         payload = {
-            "__EVENTTARGET": "",
+            "__EVENTTARGET": MINISTRY_FIELD,
             "__EVENTARGUMENT": "",
             "__VIEWSTATE": viewstate_val,
             "__VIEWSTATEGENERATOR": viewstategen_val,
             "__EVENTVALIDATION": eventvalidation_val,
-            min_name: mohfw_id,
-            day_name: "0",      # 0 pulls all days in the selected month
-            month_name: current_month,
-            year_name: current_year,
+            "__VIEWSTATEENCRYPTED": "",
+            MINISTRY_FIELD: MOHFW_VALUE,
         }
 
-        post_response = session.post(url, data=payload, headers=headers, timeout=15)
+        post_response = session.post(url, data=payload, headers=headers, timeout=30)
         post_response.raise_for_status()
         post_soup = BeautifulSoup(post_response.text, 'html.parser')
 
+        # Step 3: Extract press release links from the filtered results
         feed_items = []
         for a in post_soup.find_all('a'):
             href = a.get('href', '')
             text = a.text.strip()
             if text and 'PRID=' in href:
                 prid = href.split('PRID=')[-1].split('&')[0]
-                link = f"[https://pib.gov.in/PressReleasePage.aspx?PRID=](https://pib.gov.in/PressReleasePage.aspx?PRID=){prid}"
+                link = f"https://www.pib.gov.in/PressReleseDetail.aspx?PRID={prid}"
                 if not any(i['link'] == link for i in feed_items):
                     feed_items.append({"title": text, "link": link})
 
-        # Process the results through OpenRouter to find relevant ones
+        print(f"  PIB: Found {len(feed_items)} MoHFW press releases this month.")
+
         if not feed_items:
             return "No recent PIB notifications found for MoHFW this month."
 
         # Truncate to avoid massive context payloads if it's a busy month
-        feed_items = feed_items[:40] 
+        feed_items = feed_items[:40]
 
         filter_prompt = f"""
 You are an expert in Indian Public Health policy.
@@ -605,7 +595,8 @@ def process_file_verification(file_path: str) -> None:
 
         updates_made = 0
 
-        def verify_item_recursively(item: Dict[str, Any], index_str: str) -> None:
+        def verify_item_recursively(item: Dict[str, Any], index_str: str, pib_context: str) -> None:
+            """Verify an item and its subsections against cached PIB context."""
             nonlocal updates_made
 
             if str(item.get("id")) == "7-0":
@@ -618,10 +609,6 @@ def process_file_verification(file_path: str) -> None:
                 original_content = item["content"]
                 candidate_lines = _extract_claim_lines(original_content)
                 if candidate_lines:
-                    program_keywords = _get_program_keywords_for_item(item)
-                    print(f"  Fetching MoHFW PIB notifications for the current month...")
-                    pib_context = _fetch_pib_notifications_for_programs(program_keywords)
-
                     all_corrections: List[Dict[str, str]] = []
                     for batch_index, batch in enumerate(_batched(candidate_lines, VERIFY_MAX_CLAIMS_PER_BATCH)):
                         if batch_index >= VERIFY_MAX_BATCHES_PER_ITEM:
@@ -657,10 +644,14 @@ def process_file_verification(file_path: str) -> None:
 
             if "subsections" in item:
                 for sub_index, subsection in enumerate(item["subsections"]):
-                    verify_item_recursively(subsection, f"{index_str}.{sub_index + 1}")
+                    verify_item_recursively(subsection, f"{index_str}.{sub_index + 1}", pib_context)
 
         for item in target_root_items:
-            verify_item_recursively(item, str(item.get("id", "Unknown")))
+            # Fetch PIB context ONCE per root chapter, then reuse for all subsections
+            program_keywords = _get_program_keywords_for_item(item)
+            print(f"\nFetching MoHFW PIB notifications for root chapter '{item.get('title', 'Unknown')}'...")
+            cached_pib_context = _fetch_pib_notifications_for_programs(program_keywords)
+            verify_item_recursively(item, str(item.get("id", "Unknown")), cached_pib_context)
 
         if updates_made > 0:
             print(f"\nVerification complete for {filename}. {updates_made} sections were updated.")
