@@ -8,24 +8,23 @@ from datetime import datetime
 from bs4 import BeautifulSoup  # type: ignore
 from typing import List, Dict, Any
 
-OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
-if not OPENROUTER_API_KEY:
-    raise ValueError("OPENROUTER_API_KEY environment variable is not set")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+if not GEMINI_API_KEY:
+    raise ValueError("GEMINI_API_KEY environment variable is not set")
 
-# FIXED: Pointing to the official OpenRouter endpoint
-OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL", "openrouter/free")
+GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
+GEMINI_MODEL = "gemini-flash-latest"
 
-MAX_OPENROUTER_RETRIES = 2
+MAX_GEMINI_RETRIES = 2
 RETRY_DELAY_SECONDS = 5
 
 
-def _parse_openrouter_response(response):
-    """Parse a successful OpenRouter response and extract the JSON payload."""
+def _parse_gemini_response(response):
+    """Parse a successful Gemini API response and extract the JSON payload."""
     try:
         data = response.json()
     except (json.JSONDecodeError, ValueError) as exc:
-        print(f"OpenRouter returned non-JSON body (status {response.status_code}): {exc}")
+        print(f"Gemini API returned non-JSON body (status {response.status_code}): {exc}")
         return None
 
     if data and "choices" in data and len(data["choices"]) > 0:
@@ -43,26 +42,26 @@ def _parse_openrouter_response(response):
                 print(f"Failed to parse extracted JSON. Error: {e}")
                 print(f"Extracted string was: {extracted_json_str}")
         else:
-            print(f"Could not find valid JSON in OpenRouter response: {text_response}")
+            print(f"Could not find valid JSON in Gemini response: {text_response}")
 
     return None
 
 
-def call_openrouter(prompt):
+def call_gemini(prompt):
     last_error = None
 
-    for attempt in range(1 + MAX_OPENROUTER_RETRIES):
+    for attempt in range(1 + MAX_GEMINI_RETRIES):
         try:
             response = requests.post(
-                OPENROUTER_API_URL,
+                GEMINI_API_URL,
                 headers={
                     "Content-Type": "application/json",
-                    "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                    "Authorization": f"Bearer {GEMINI_API_KEY}",
                     "HTTP-Referer": "https://github.com",
                     "X-Title": "Public Health Updates Fetcher"
                 },
                 json={
-                    "model": OPENROUTER_MODEL,
+                    "model": GEMINI_MODEL,
                     "messages": [
                         {"role": "user", "content": prompt}
                     ]
@@ -71,26 +70,26 @@ def call_openrouter(prompt):
             )
 
             if response.status_code == 200:
-                result = _parse_openrouter_response(response)
+                result = _parse_gemini_response(response)
                 if result is not None:
                     return result
                 last_error = "empty or unparseable response body"
             elif response.status_code in (429, 500, 503):
                 last_error = f"HTTP {response.status_code}: {response.text[:200]}"
-                print(f"OpenRouter API Error (attempt {attempt + 1}): {last_error}")
+                print(f"Gemini API Error (attempt {attempt + 1}): {last_error}")
             else:
-                print(f"OpenRouter API Error {response.status_code}: {response.text[:200]}")
+                print(f"Gemini API Error {response.status_code}: {response.text[:200]}")
                 return None  # non-retryable status
 
         except requests.RequestException as exc:
             last_error = str(exc)
-            print(f"OpenRouter request exception (attempt {attempt + 1}): {last_error}")
+            print(f"Gemini API request exception (attempt {attempt + 1}): {last_error}")
 
-        if attempt < MAX_OPENROUTER_RETRIES:
+        if attempt < MAX_GEMINI_RETRIES:
             print(f"Retrying in {RETRY_DELAY_SECONDS}s...")
             time.sleep(RETRY_DELAY_SECONDS)
 
-    print(f"OpenRouter failed after {1 + MAX_OPENROUTER_RETRIES} attempts. Last error: {last_error}")
+    print(f"Gemini API failed after {1 + MAX_GEMINI_RETRIES} attempts. Last error: {last_error}")
     return None
 
 def fetch_health_updates():
@@ -162,11 +161,12 @@ def fetch_health_updates():
         print(f"Querying MoHFW (ID: {mohfw_id}) updates for Month: {current_month}, Year: {current_year}...")
         # Step 2: POST request to filter by MoHFW and current month
         payload = {
-            "__EVENTTARGET": "",
+            "__EVENTTARGET": min_name,
             "__EVENTARGUMENT": "",
             "__VIEWSTATE": viewstate_val,
             "__VIEWSTATEGENERATOR": viewstategen_val,
             "__EVENTVALIDATION": eventvalidation_val,
+            "__VIEWSTATEENCRYPTED": "",
             min_name: mohfw_id,
             day_name: "0",      # 0 pulls all days in the selected month
             month_name: current_month,
@@ -221,8 +221,8 @@ def fetch_health_updates():
         {json.dumps(feed_items, indent=2)}
         """
         
-        print("Filtering relevant Community Medicine articles with OpenRouter...")
-        selected_ids_response = call_openrouter(filter_prompt)
+        print("Filtering relevant Community Medicine articles with Gemini...")
+        selected_ids_response = call_gemini(filter_prompt)
         
         if selected_ids_response is None:
             print("Failed to filter articles.")
@@ -258,8 +258,8 @@ def fetch_health_updates():
                 {truncated_text}
                 """
                 
-                print("Generating summary...")
-                summary_data = call_openrouter(summary_prompt)
+                print("Generating summary with Gemini...")
+                summary_data = call_gemini(summary_prompt)
                 
                 if summary_data and "title" in summary_data and "summary" in summary_data:
                     title = summary_data["title"]

@@ -9,18 +9,14 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 import requests  # type: ignore
 from bs4 import BeautifulSoup  # type: ignore
 
-# --- OPENROUTER CONFIGURATION ---
-OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
-if not OPENROUTER_API_KEY:
-    raise ValueError("OPENROUTER_API_KEY environment variable is not set")
+# --- GEMINI CONFIGURATION ---
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+if not GEMINI_API_KEY:
+    raise ValueError("GEMINI_API_KEY environment variable is not set")
 
-# FIXED: Pointing to the official OpenRouter endpoint
-OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-
-# Note: "openrouter/free" routes to available free models. 
-# Alternatively, you can specify a distinct free model like "meta-llama/llama-3-8b-instruct:free"
-OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL", "openrouter/free")
-REQUEST_TIMEOUT_SECONDS = int(os.environ.get("OPENROUTER_TIMEOUT_SECONDS", "90"))
+GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
+GEMINI_MODEL = "gemini-flash-latest"
+REQUEST_TIMEOUT_SECONDS = int(os.environ.get("GEMINI_TIMEOUT_SECONDS", "90"))
 
 # --- APP DATA SETTINGS ---
 MOCK_DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "src", "data", "mockData.json")
@@ -35,7 +31,7 @@ VERIFY_MAX_BATCHES_PER_ITEM = int(os.environ.get("VERIFY_MAX_BATCHES_PER_ITEM", 
 MIN_SAFE_LINE_REPLACEMENT_SIMILARITY = float(os.environ.get("VERIFY_MIN_SAFE_REPLACEMENT_SIMILARITY", "0.72"))
 
 TODAY_LABEL = datetime.utcnow().date().isoformat()
-OPENROUTER_FATAL_ERROR: Optional[str] = None
+GEMINI_FATAL_ERROR: Optional[str] = None
 
 VOLATILE_KEYWORDS = (
     "WHO",
@@ -104,57 +100,72 @@ UPDATE_SENSITIVE_TOKEN_RE = re.compile(
 
 
 def _call_openrouter(prompt: str) -> Optional[Any]:
-    global OPENROUTER_FATAL_ERROR
+    global GEMINI_FATAL_ERROR
 
-    if OPENROUTER_FATAL_ERROR:
+    if GEMINI_FATAL_ERROR:
         return None
 
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-        "HTTP-Referer": "https://github.com/your-repo",  # Update with your actual site/repo if desired
-        "X-Title": "Mock Data Verifier"
-    }
-
-    payload = {
-        "model": OPENROUTER_MODEL,
-        "messages": [
-            {"role": "user", "content": prompt}
-        ],
-        "temperature": 0.1,
-    }
-
     try:
-        response = requests.post(OPENROUTER_API_URL, headers=headers, json=payload, timeout=REQUEST_TIMEOUT_SECONDS)
+        response = requests.post(
+            GEMINI_API_URL,
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {GEMINI_API_KEY}",
+                "HTTP-Referer": "https://github.com",
+                "X-Title": "Mock Data Verifier"
+            },
+            json={
+                "model": GEMINI_MODEL,
+                "messages": [
+                    {"role": "user", "content": prompt}
+                ],
+                "temperature": 0.1,
+            },
+            timeout=REQUEST_TIMEOUT_SECONDS,
+        )
     except requests.RequestException as exc:
-        print(f"OpenRouter request exception: {exc}")
+        print(f"Gemini API request exception: {exc}")
         return None
 
     if response.status_code == 200:
         try:
             data = response.json()
         except (json.JSONDecodeError, ValueError) as exc:
-            print(f"OpenRouter returned non-JSON body (status 200): {exc}")
+            print(f"Gemini API returned non-JSON body (status 200): {exc}")
             return None
         text_response = _extract_candidate_text(data)
         if text_response:
-            json_payload = _extract_json_payload(text_response)
-            if json_payload is not None:
-                return json_payload
-        print(f"OpenRouter: could not parse JSON payload from response")
+            payload = _extract_json_payload(text_response)
+            if payload is not None:
+                return payload
+        print(f"Gemini API: could not parse JSON payload from response")
         return None
 
     message = _error_message_from_response(response)
-    print(f"OpenRouter API Error {response.status_code}: {message}")
+    print(f"Gemini API Error {response.status_code}: {message}")
 
-    # Simple Retry Logic for Rate Limits or Server Errors
     if response.status_code in (429, 500, 503):
-        print("Retrying OpenRouter API in 5 seconds...")
         time.sleep(5)
         try:
-            retry = requests.post(OPENROUTER_API_URL, headers=headers, json=payload, timeout=REQUEST_TIMEOUT_SECONDS)
+            retry = requests.post(
+                GEMINI_API_URL,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {GEMINI_API_KEY}",
+                    "HTTP-Referer": "https://github.com",
+                    "X-Title": "Mock Data Verifier"
+                },
+                json={
+                    "model": GEMINI_MODEL,
+                    "messages": [
+                        {"role": "user", "content": prompt}
+                    ],
+                    "temperature": 0.1,
+                },
+                timeout=REQUEST_TIMEOUT_SECONDS,
+            )
         except requests.RequestException as exc:
-            print(f"OpenRouter retry failed: {exc}")
+            print(f"Gemini API retry failed: {exc}")
             return None
 
         if retry.status_code == 200:
@@ -167,11 +178,15 @@ def _call_openrouter(prompt: str) -> Optional[Any]:
                 json_payload = _extract_json_payload(text_response)
                 if json_payload is not None:
                     return json_payload
+        elif retry.status_code == 401:
+            print("Gemini API: Fatal Authentication Error (401).")
+            GEMINI_FATAL_ERROR = "Gemini API authentication/configuration error."
+        return None
 
     combined_error = f"{response.status_code} {message}".lower()
     if "api key" in combined_error or "unauthorized" in combined_error or "forbidden" in combined_error:
-        OPENROUTER_FATAL_ERROR = "OpenRouter authentication/configuration error."
-        print("OpenRouter is marked unavailable for the rest of this run.")
+        GEMINI_FATAL_ERROR = "Gemini API authentication/configuration error."
+        print("Gemini is marked unavailable for the rest of this run.")
 
     return None
 

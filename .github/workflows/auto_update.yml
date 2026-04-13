@@ -29,7 +29,7 @@ jobs:
 
       - name: Run Fetch Script
         env:
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.EXPO_PUBLIC_GEMINI_API_KEY }}
         run: python scripts/fetch_updates.py
 
       - name: Commit and Push Changes
