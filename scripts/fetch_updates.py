@@ -1,6 +1,8 @@
 import json
 import os
 import uuid
+import re
+import time
 import requests  # type: ignore
 from datetime import datetime
 from bs4 import BeautifulSoup  # type: ignore
@@ -10,62 +12,93 @@ OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
 if not OPENROUTER_API_KEY:
     raise ValueError("OPENROUTER_API_KEY environment variable is not set")
 
-OPENROUTER_API_URL = "https://agentrouter.org/v1/chat/completions"
-OPENROUTER_MODEL = "openrouter/free"
+# FIXED: Pointing to the official OpenRouter endpoint
+OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL", "openrouter/free")
 
-import re
+MAX_OPENROUTER_RETRIES = 2
+RETRY_DELAY_SECONDS = 5
+
+
+def _parse_openrouter_response(response):
+    """Parse a successful OpenRouter response and extract the JSON payload."""
+    try:
+        data = response.json()
+    except (json.JSONDecodeError, ValueError) as exc:
+        print(f"OpenRouter returned non-JSON body (status {response.status_code}): {exc}")
+        return None
+
+    if data and "choices" in data and len(data["choices"]) > 0:
+        text_response = data["choices"][0]["message"]["content"].strip()
+
+        # Use regex to extract the first JSON block (array or object)
+        # This handles cases where the model writes conversational text before/after the JSON
+        json_match = re.search(r'(\{.*?\}|\[.*?\])', text_response, re.DOTALL)
+
+        if json_match:
+            extracted_json_str = json_match.group(1)
+            try:
+                return json.loads(extracted_json_str)
+            except json.JSONDecodeError as e:
+                print(f"Failed to parse extracted JSON. Error: {e}")
+                print(f"Extracted string was: {extracted_json_str}")
+        else:
+            print(f"Could not find valid JSON in OpenRouter response: {text_response}")
+
+    return None
+
 
 def call_openrouter(prompt):
-    try:
-        response = requests.post(
-            OPENROUTER_API_URL,
-            headers={
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                "HTTP-Referer": "https://github.com",  # Optional, for OpenRouter rankings
-                "X-Title": "Public Health Updates Fetcher"
-            },
-            json={
-                "model": OPENROUTER_MODEL,
-                "messages": [
-                    {"role": "user", "content": prompt}
-                ]
-            },
-            timeout=60
-        )
-        if response.status_code != 200:
-            print(f"OpenRouter API Error {response.status_code}: {response.text}")
-            response.raise_for_status()
-            
-        data = response.json()
-        
-        if data and "choices" in data and len(data["choices"]) > 0:
-            text_response = data["choices"][0]["message"]["content"].strip()
-            
-            # Use regex to extract the first JSON block (array or object)
-            # This handles cases where the model writes conversational text before/after the JSON
-            json_match = re.search(r'(\{.*?\}|\[.*?\])', text_response, re.DOTALL)
-            
-            if json_match:
-                extracted_json_str = json_match.group(1)
-                try:
-                    return json.loads(extracted_json_str)
-                except json.JSONDecodeError as e:
-                    print(f"Failed to parse extracted JSON. Error: {e}")
-                    print(f"Extracted string was: {extracted_json_str}")
+    last_error = None
+
+    for attempt in range(1 + MAX_OPENROUTER_RETRIES):
+        try:
+            response = requests.post(
+                OPENROUTER_API_URL,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                    "HTTP-Referer": "https://github.com",
+                    "X-Title": "Public Health Updates Fetcher"
+                },
+                json={
+                    "model": OPENROUTER_MODEL,
+                    "messages": [
+                        {"role": "user", "content": prompt}
+                    ]
+                },
+                timeout=60
+            )
+
+            if response.status_code == 200:
+                result = _parse_openrouter_response(response)
+                if result is not None:
+                    return result
+                last_error = "empty or unparseable response body"
+            elif response.status_code in (429, 500, 503):
+                last_error = f"HTTP {response.status_code}: {response.text[:200]}"
+                print(f"OpenRouter API Error (attempt {attempt + 1}): {last_error}")
             else:
-                print(f"Could not find valid JSON in OpenRouter response: {text_response}")
-                
-    except Exception as e:
-        print(f"OpenRouter API Exception: {e}")
-        
+                print(f"OpenRouter API Error {response.status_code}: {response.text[:200]}")
+                return None  # non-retryable status
+
+        except requests.RequestException as exc:
+            last_error = str(exc)
+            print(f"OpenRouter request exception (attempt {attempt + 1}): {last_error}")
+
+        if attempt < MAX_OPENROUTER_RETRIES:
+            print(f"Retrying in {RETRY_DELAY_SECONDS}s...")
+            time.sleep(RETRY_DELAY_SECONDS)
+
+    print(f"OpenRouter failed after {1 + MAX_OPENROUTER_RETRIES} attempts. Last error: {last_error}")
     return None
 
 def fetch_health_updates():
-    """Fetches real updates from the Government of India PIB feed."""
-    url = "https://www.pib.gov.in/allRel.aspx?reg=3&lang=1"  
+    """Fetches real updates from the Government of India PIB feed for MoHFW."""
+    url = "https://pib.gov.in/allRel.aspx"  
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "Referer": "https://pib.gov.in/indexd.aspx"
     }
     
     output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'src', 'data')
@@ -83,13 +116,69 @@ def fetch_health_updates():
             print(f"Error loading existing updates: {e}")
             
     try:
-        response = requests.get(url, headers=headers, timeout=15)
-        response.raise_for_status()
+        session = requests.Session()
         
+        print("Fetching initial ViewState tokens from PIB...")
+        # Step 1: GET request to grab ASP.NET viewstates and dynamic names
+        response = session.get(url, headers=headers, timeout=15)
+        response.raise_for_status()
         soup = BeautifulSoup(response.text, 'html.parser')
+
+        viewstate = soup.find("input", {"id": "__VIEWSTATE"})
+        viewstate_val = viewstate["value"] if viewstate else ""
+        
+        viewstategenerator = soup.find("input", {"id": "__VIEWSTATEGENERATOR"})
+        viewstategen_val = viewstategenerator["value"] if viewstategenerator else ""
+        
+        eventvalidation = soup.find("input", {"id": "__EVENTVALIDATION"})
+        eventvalidation_val = eventvalidation["value"] if eventvalidation else ""
+
+        # Dynamically find the dropdown names
+        min_dropdown = soup.find("select", id=re.compile(r".*ddlMinistry.*", re.IGNORECASE))
+        min_name = min_dropdown.get("name") if min_dropdown else "ctl00$ContentPlaceHolder1$ddlMinistry"
+        
+        day_dropdown = soup.find("select", id=re.compile(r".*ddlday.*", re.IGNORECASE))
+        day_name = day_dropdown.get("name") if day_dropdown else "ctl00$ContentPlaceHolder1$ddlday"
+        
+        month_dropdown = soup.find("select", id=re.compile(r".*ddlMonth.*", re.IGNORECASE))
+        month_name = month_dropdown.get("name") if month_dropdown else "ctl00$ContentPlaceHolder1$ddlMonth"
+        
+        year_dropdown = soup.find("select", id=re.compile(r".*ddlYear.*", re.IGNORECASE))
+        year_name = year_dropdown.get("name") if year_dropdown else "ctl00$ContentPlaceHolder1$ddlYear"
+
+        # Find the specific ID for Ministry of Health and Family Welfare
+        mohfw_id = "0"
+        if min_dropdown:
+            for option in min_dropdown.find_all("option"):
+                if "Health and Family Welfare" in option.text:
+                    mohfw_id = option["value"]
+                    break
+
+        # Setup current dates
+        now = datetime.utcnow()
+        current_month = str(now.month)
+        current_year = str(now.year)
+
+        print(f"Querying MoHFW (ID: {mohfw_id}) updates for Month: {current_month}, Year: {current_year}...")
+        # Step 2: POST request to filter by MoHFW and current month
+        payload = {
+            "__EVENTTARGET": "",
+            "__EVENTARGUMENT": "",
+            "__VIEWSTATE": viewstate_val,
+            "__VIEWSTATEGENERATOR": viewstategen_val,
+            "__EVENTVALIDATION": eventvalidation_val,
+            min_name: mohfw_id,
+            day_name: "0",      # 0 pulls all days in the selected month
+            month_name: current_month,
+            year_name: current_year,
+        }
+
+        post_response = session.post(url, data=payload, headers=headers, timeout=15)
+        post_response.raise_for_status()
+        post_soup = BeautifulSoup(post_response.text, 'html.parser')
         
         feed_items: List[Dict[str, Any]] = []
-        for a in soup.find_all('a'):
+        for a in post_soup.find_all('a'):
             href = a.get('href', '')
             text = a.text.strip()
             if text and 'PRID=' in href:
@@ -103,7 +192,7 @@ def fetch_health_updates():
         feed_items = feed_items[:50]  # type: ignore
         
         if not feed_items:
-            print("No links found on PIB page.")
+            print("No links found on PIB page for MoHFW this month.")
             return
             
         filter_prompt = f"""

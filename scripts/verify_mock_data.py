@@ -9,14 +9,20 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 import requests  # type: ignore
 from bs4 import BeautifulSoup  # type: ignore
 
+# --- OPENROUTER CONFIGURATION ---
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
 if not OPENROUTER_API_KEY:
     raise ValueError("OPENROUTER_API_KEY environment variable is not set")
 
-OPENROUTER_API_URL = "https://agentrouter.org/v1/chat/completions"
-OPENROUTER_MODEL = "openrouter/free"
+# FIXED: Pointing to the official OpenRouter endpoint
+OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+
+# Note: "openrouter/free" routes to available free models. 
+# Alternatively, you can specify a distinct free model like "meta-llama/llama-3-8b-instruct:free"
+OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL", "openrouter/free")
 REQUEST_TIMEOUT_SECONDS = int(os.environ.get("OPENROUTER_TIMEOUT_SECONDS", "90"))
 
+# --- APP DATA SETTINGS ---
 MOCK_DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "src", "data", "mockData.json")
 VERIFY_TARGET_ROOT_IDS = {
     item.strip()
@@ -39,7 +45,7 @@ VOLATILE_KEYWORDS = (
     "programme",
     "program",
     "scheme",
-    "strategy"
+    "strategy",
     "mission",
     "yojana",
     "incentive",
@@ -87,8 +93,7 @@ UPDATE_SENSITIVE_TOKEN_RE = re.compile(
     (?:₹\s*\d[\d,]*(?:\.\d+)?)
     |(?:\b(?:rs\.?|inr)\s*\d[\d,]*(?:\.\d+)?)
     |(?:\b(?:<=|>=|<|>)?\s*\d+(?:\.\d+)?(?:\s*-\s*\d+(?:\.\d+)?)?\s*
-        (?:%|percent|mg|g|kg|mcg|ml|l|days?|weeks?|months?|years?|hrs?|hours?|minutes?|
-        lakhs?|crores?|million|billion|beds?)\b)
+        (?:%|percent|mg|g|kg|mcg|ml|l|days?|weeks?|months?|years?|hrs?|hours?|minutes?|lakhs?|crores?|million|billion|beds?)\b)
     |(?:\b\d+(?:\.\d+)?/\d+(?:,\d{3})*(?:\.\d+)?\b)
     |(?:\b\d+(?:\.\d+)?[A-Za-z]{1,6}\b)
     |(?:\b[A-Za-z]+\d+[A-Za-z]*\b)
@@ -99,78 +104,69 @@ UPDATE_SENSITIVE_TOKEN_RE = re.compile(
 
 
 def _call_openrouter(prompt: str) -> Optional[Any]:
-    """Call OpenRouter API and parse JSON response."""
     global OPENROUTER_FATAL_ERROR
 
     if OPENROUTER_FATAL_ERROR:
         return None
 
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "HTTP-Referer": "https://github.com/your-repo",  # Update with your actual site/repo if desired
+        "X-Title": "Mock Data Verifier"
+    }
+
+    payload = {
+        "model": OPENROUTER_MODEL,
+        "messages": [
+            {"role": "user", "content": prompt}
+        ],
+        "temperature": 0.1,
+    }
+
     try:
-        response = requests.post(
-            OPENROUTER_API_URL,
-            headers={
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                "HTTP-Referer": "https://github.com",
-                "X-Title": "Mock Data Verifier"
-            },
-            json={
-                "model": OPENROUTER_MODEL,
-                "messages": [
-                    {"role": "user", "content": prompt}
-                ],
-                "temperature": 0.1,
-            },
-            timeout=REQUEST_TIMEOUT_SECONDS,
-        )
+        response = requests.post(OPENROUTER_API_URL, headers=headers, json=payload, timeout=REQUEST_TIMEOUT_SECONDS)
     except requests.RequestException as exc:
         print(f"OpenRouter request exception: {exc}")
         return None
 
     if response.status_code == 200:
-        data = response.json()
+        try:
+            data = response.json()
+        except (json.JSONDecodeError, ValueError) as exc:
+            print(f"OpenRouter returned non-JSON body (status 200): {exc}")
+            return None
         text_response = _extract_candidate_text(data)
         if text_response:
-            payload = _extract_json_payload(text_response)
-            if payload is not None:
-                return payload
+            json_payload = _extract_json_payload(text_response)
+            if json_payload is not None:
+                return json_payload
         print(f"OpenRouter: could not parse JSON payload from response")
         return None
 
     message = _error_message_from_response(response)
     print(f"OpenRouter API Error {response.status_code}: {message}")
 
+    # Simple Retry Logic for Rate Limits or Server Errors
     if response.status_code in (429, 500, 503):
+        print("Retrying OpenRouter API in 5 seconds...")
         time.sleep(5)
         try:
-            retry = requests.post(
-                OPENROUTER_API_URL,
-                headers={
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                    "HTTP-Referer": "https://github.com",
-                    "X-Title": "Mock Data Verifier"
-                },
-                json={
-                    "model": OPENROUTER_MODEL,
-                    "messages": [
-                        {"role": "user", "content": prompt}
-                    ],
-                    "temperature": 0.1,
-                },
-                timeout=REQUEST_TIMEOUT_SECONDS,
-            )
+            retry = requests.post(OPENROUTER_API_URL, headers=headers, json=payload, timeout=REQUEST_TIMEOUT_SECONDS)
         except requests.RequestException as exc:
             print(f"OpenRouter retry failed: {exc}")
             return None
 
         if retry.status_code == 200:
-            data = retry.json()
+            try:
+                data = retry.json()
+            except (json.JSONDecodeError, ValueError):
+                return None
             text_response = _extract_candidate_text(data)
             if text_response:
-                payload = _extract_json_payload(text_response)
-                if payload is not None:
-                    return payload
+                json_payload = _extract_json_payload(text_response)
+                if json_payload is not None:
+                    return json_payload
 
     combined_error = f"{response.status_code} {message}".lower()
     if "api key" in combined_error or "unauthorized" in combined_error or "forbidden" in combined_error:
@@ -181,7 +177,6 @@ def _call_openrouter(prompt: str) -> Optional[Any]:
 
 
 def _extract_candidate_text(payload: Dict[str, Any]) -> Optional[str]:
-    """Extract text from OpenRouter chat completion response."""
     choices = payload.get("choices", [])
     if not choices:
         return None
@@ -338,37 +333,94 @@ def _batched(items: List[str], batch_size: int) -> Iterable[List[str]]:
 
 
 def _fetch_pib_notifications_for_programs(program_keywords: List[str]) -> str:
-    """Fetch recent PIB notifications relevant to the given program keywords."""
-    url = "https://www.pib.gov.in/allRel.aspx?reg=3&lang=1"
+    """Fetch recent PIB notifications for MoHFW for the current month."""
+    url = "[https://pib.gov.in/allRel.aspx](https://pib.gov.in/allRel.aspx)"
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "Referer": "[https://pib.gov.in/indexd.aspx](https://pib.gov.in/indexd.aspx)"
     }
 
     try:
-        response = requests.get(url, headers=headers, timeout=15)
+        session = requests.Session()
+        
+        # Step 1: GET request to grab ASP.NET viewstates and dynamic names
+        response = session.get(url, headers=headers, timeout=15)
         response.raise_for_status()
-
-        from bs4 import BeautifulSoup
         soup = BeautifulSoup(response.text, 'html.parser')
 
+        viewstate = soup.find("input", {"id": "__VIEWSTATE"})
+        viewstate_val = viewstate["value"] if viewstate else ""
+        
+        viewstategenerator = soup.find("input", {"id": "__VIEWSTATEGENERATOR"})
+        viewstategen_val = viewstategenerator["value"] if viewstategenerator else ""
+        
+        eventvalidation = soup.find("input", {"id": "__EVENTVALIDATION"})
+        eventvalidation_val = eventvalidation["value"] if eventvalidation else ""
+
+        # Dynamically find the dropdown names
+        min_dropdown = soup.find("select", id=re.compile(r".*ddlMinistry.*", re.IGNORECASE))
+        min_name = min_dropdown.get("name") if min_dropdown else "ctl00$ContentPlaceHolder1$ddlMinistry"
+        
+        day_dropdown = soup.find("select", id=re.compile(r".*ddlday.*", re.IGNORECASE))
+        day_name = day_dropdown.get("name") if day_dropdown else "ctl00$ContentPlaceHolder1$ddlday"
+        
+        month_dropdown = soup.find("select", id=re.compile(r".*ddlMonth.*", re.IGNORECASE))
+        month_name = month_dropdown.get("name") if month_dropdown else "ctl00$ContentPlaceHolder1$ddlMonth"
+        
+        year_dropdown = soup.find("select", id=re.compile(r".*ddlYear.*", re.IGNORECASE))
+        year_name = year_dropdown.get("name") if year_dropdown else "ctl00$ContentPlaceHolder1$ddlYear"
+
+        # Find the specific ID for Ministry of Health and Family Welfare
+        mohfw_id = "0"
+        if min_dropdown:
+            for option in min_dropdown.find_all("option"):
+                if "Health and Family Welfare" in option.text:
+                    mohfw_id = option["value"]
+                    break
+
+        # Setup current dates
+        now = datetime.utcnow()
+        current_month = str(now.month)
+        current_year = str(now.year)
+
+        # Step 2: POST request to filter by MoHFW and current month
+        payload = {
+            "__EVENTTARGET": "",
+            "__EVENTARGUMENT": "",
+            "__VIEWSTATE": viewstate_val,
+            "__VIEWSTATEGENERATOR": viewstategen_val,
+            "__EVENTVALIDATION": eventvalidation_val,
+            min_name: mohfw_id,
+            day_name: "0",      # 0 pulls all days in the selected month
+            month_name: current_month,
+            year_name: current_year,
+        }
+
+        post_response = session.post(url, data=payload, headers=headers, timeout=15)
+        post_response.raise_for_status()
+        post_soup = BeautifulSoup(post_response.text, 'html.parser')
+
         feed_items = []
-        for a in soup.find_all('a'):
+        for a in post_soup.find_all('a'):
             href = a.get('href', '')
             text = a.text.strip()
             if text and 'PRID=' in href:
                 prid = href.split('PRID=')[-1].split('&')[0]
-                link = f"https://pib.gov.in/PressReleasePage.aspx?PRID={prid}"
+                link = f"[https://pib.gov.in/PressReleasePage.aspx?PRID=](https://pib.gov.in/PressReleasePage.aspx?PRID=){prid}"
                 if not any(i['link'] == link for i in feed_items):
                     feed_items.append({"title": text, "link": link})
 
-        feed_items = feed_items[:30]
-
+        # Process the results through OpenRouter to find relevant ones
         if not feed_items:
-            return "No recent PIB notifications found."
+            return "No recent PIB notifications found for MoHFW this month."
+
+        # Truncate to avoid massive context payloads if it's a busy month
+        feed_items = feed_items[:40] 
 
         filter_prompt = f"""
 You are an expert in Indian Public Health policy.
-Review these PIB press release titles and select up to 5 that relate to these program areas:
+Review these PIB press release titles from the Ministry of Health and Family Welfare. 
+Select up to 5 that are highly relevant to these Community Medicine program areas:
 {', '.join(program_keywords)}
 
 Return ONLY a JSON array of objects with "title" and "link" for relevant items.
@@ -387,7 +439,6 @@ Titles:
             try:
                 pr_response = requests.get(item['link'], headers=headers, timeout=15)
                 pr_response.raise_for_status()
-                from bs4 import BeautifulSoup
                 pr_soup = BeautifulSoup(pr_response.text, 'html.parser')
                 raw_text = " ".join(pr_soup.get_text(separator=' ', strip=True).split())
                 notifications_text.append(f"TITLE: {item['title']}\nLINK: {item['link']}\nCONTENT: {raw_text[:4000]}")
@@ -427,12 +478,12 @@ RULES:
      "source": "PIB title or URL"
    }}
 4. Only update specific factual tokens like (but not limited to): amounts, target years, thresholds, doses, durations, coverage figures, age cutoffs, validity periods, program names, eligibility criteria, benefit amounts, or strategy changes.
-5. Do NOT create new standalone bullets or new sections unless absolutely necessary. Anchor every change to an existing input line.
+5. Do NOT create new standalone bullets or new sections unless absolutely necessary.
+Anchor every change to an existing input line.
 6. Preserve the exam-oriented wording and formatting style.
 7. If the correction is only a money amount, year, percentage, count, dose, or similar factual token, keep the rest of the line unchanged.
 8. If unsure, do not guess. Ignore that line.
 9. Focus on: deadlines, eligibility criteria, name changes, strategies, objectives, achievements, benefit amounts, coverage targets, and any other relevant data changes.
-
 Claim lines to verify:
 {json.dumps(claim_lines, ensure_ascii=False, indent=2)}
 """
@@ -514,7 +565,6 @@ def _strip_recently_updated(items: List[Dict[str, Any]]) -> None:
 
 
 def _get_program_keywords_for_item(item: Dict[str, Any]) -> List[str]:
-    """Extract program-relevant keywords from a mockData item."""
     title = item.get("title", "").lower()
     content = item.get("content", "").lower()
 
@@ -558,7 +608,6 @@ def process_file_verification(file_path: str) -> None:
         def verify_item_recursively(item: Dict[str, Any], index_str: str) -> None:
             nonlocal updates_made
 
-            # Skip subsection 7-0 (Administrative Hierarchy) - it's structural, not policy-driven
             if str(item.get("id")) == "7-0":
                 print(f"Skipping [{index_str}]: {item.get('title', 'Unknown')} (excluded)")
                 return
@@ -570,7 +619,7 @@ def process_file_verification(file_path: str) -> None:
                 candidate_lines = _extract_claim_lines(original_content)
                 if candidate_lines:
                     program_keywords = _get_program_keywords_for_item(item)
-                    print(f"  Fetching relevant PIB notifications for: {', '.join(program_keywords[:5])}...")
+                    print(f"  Fetching MoHFW PIB notifications for the current month...")
                     pib_context = _fetch_pib_notifications_for_programs(program_keywords)
 
                     all_corrections: List[Dict[str, str]] = []
@@ -602,7 +651,7 @@ def process_file_verification(file_path: str) -> None:
                             reason_text = correction.get("reason") or "claim updated"
                             print(f"     - {reason_text} [{source_text}]")
                     else:
-                        print("  -> No changes needed based on current PIB notifications.")
+                        print("  -> No changes needed based on current MoHFW notifications.")
                 else:
                     print("  -> No high-volatility claims detected; skipped to save cost.")
 
@@ -634,6 +683,6 @@ def verify_and_update_all() -> None:
 
 
 if __name__ == "__main__":
-    print("Starting claim-focused verification of mockData.json against current public-health guidance...")
+    print("Starting MoHFW claim-focused verification of mockData.json against current monthly guidance...")
     print(f"Using OpenRouter API with model: {OPENROUTER_MODEL}")
     verify_and_update_all()
