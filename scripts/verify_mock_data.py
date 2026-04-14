@@ -1,5 +1,11 @@
 import json
 import os
+import asyncio
+import base64
+import io
+from telethon.sync import TelegramClient
+from telethon.sessions import StringSession
+
 import re
 import time
 from datetime import datetime
@@ -9,14 +15,35 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 import requests  # type: ignore
 from bs4 import BeautifulSoup  # type: ignore
 
+def load_env():
+    # Simple .env parser since python-dotenv might not be installed
+    env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
+    if os.path.exists(env_path):
+        with open(env_path, "r", encoding="utf-8") as file:
+            for line in file:
+                line = line.strip()
+                if line and not line.startswith("#"):
+                    parts = line.split("=", 1)
+                    if len(parts) == 2:
+                        os.environ[parts[0].strip()] = parts[1].strip()
+
+load_env()
+
 # --- GEMINI CONFIGURATION ---
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+GEMINI_API_KEY = os.environ.get("EXPO_PUBLIC_GEMINI_API_KEY") or os.environ.get("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
-    raise ValueError("GEMINI_API_KEY environment variable is not set")
+    raise ValueError("GEMINI_API_KEY or EXPO_PUBLIC_GEMINI_API_KEY environment variable is not set")
 
 GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
 GEMINI_MODEL = "gemini-flash-latest"
 REQUEST_TIMEOUT_SECONDS = int(os.environ.get("GEMINI_TIMEOUT_SECONDS", "90"))
+
+
+# --- TELEGRAM CONFIGURATION ---
+TELEGRAM_API_ID = int(os.environ.get('TELEGRAM_API_ID', '1133218'))
+TELEGRAM_API_HASH = os.environ.get('TELEGRAM_API_HASH', '5a0f5247fa89b8e191c4f0259468f9a5')
+TELEGRAM_SESSION = os.environ.get('TELEGRAM_SESSION', '1BVtsOLYBu7ruqd6GsfNUGIZNqx_dwdNlsSrQzOlh3j1wd1A_Tz2Ajx9zYJjNSBJPSQPySJGI3P093qvOj4nuzWDdpVHIcezCvQ-Kyy2KIkp-uWAPIJDI5q3BWbzV4LHHLb4KsCAEahH88ttzHlm1bWIIemKPy9TBIDSLRN24d_AAK8wSXamkN1aGi_a1PPTQ6wQyCFbKajw6si-iDBD8c_1oiij2-5_tYO-Q5T3gxxWGNLwqhZTSc44VdmFWngKPDI8YcRYxAkWoswqOr-udyo1_4V_kQ7jHHxWjYsxy3mIWP_WwRblX_tLJpaaOr2-24k7lESvIz9zC2UwClLR9dNtvTsmNTg0=')
+
 
 # --- APP DATA SETTINGS ---
 MOCK_DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "src", "data", "mockData.json")
@@ -191,6 +218,32 @@ def _call_openrouter(prompt: str) -> Optional[Any]:
     return None
 
 
+
+def _call_openrouter_vision(prompt: str, base64_image: str) -> Optional[str]:
+    try:
+        response = requests.post(
+            GEMINI_API_URL,
+            headers={"Content-Type": "application/json", "Authorization": f"Bearer {GEMINI_API_KEY}"},
+            json={
+                "model": "gemini-1.5-flash",
+                "messages": [
+                    {"role": "user", "content": [
+                        {"type": "text", "text": prompt},
+                        {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
+                    ]}
+                ],
+                "temperature": 0.1,
+            },
+            timeout=REQUEST_TIMEOUT_SECONDS,
+        )
+        if response.status_code == 200:
+            return _extract_candidate_text(response.json())
+        print(f'Gemini Vision status {response.status_code}: {response.text}')
+    except Exception as exc:
+        print(f'Gemini Vision error: {exc}')
+    return None
+
+
 def _extract_candidate_text(payload: Dict[str, Any]) -> Optional[str]:
     choices = payload.get("choices", [])
     if not choices:
@@ -347,114 +400,63 @@ def _batched(items: List[str], batch_size: int) -> Iterable[List[str]]:
         yield items[index:index + batch_size]
 
 
-def _fetch_pib_notifications_for_programs(program_keywords: List[str]) -> str:
-    """Fetch recent PIB notifications for MoHFW for the current month.
 
-    Uses ASP.NET postback mechanism: the PIB AllRelease page has no submit
-    button; selecting a ministry dropdown triggers a postback via __EVENTTARGET.
-    MoHFW is value 31 in the ministry dropdown.
-    """
-    url = "https://www.pib.gov.in/AllRelease.aspx?MenuId=30&reg=3&lang=1"
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "Referer": "https://www.pib.gov.in/index.aspx"
-    }
-
-    # Stable ASP.NET control names (derived from page inspection)
-    MINISTRY_FIELD = "ctl00$ContentPlaceHolder1$ddlMinistry"
-    MOHFW_VALUE = "31"  # Ministry of Health and Family Welfare
-
+async def _async_fetch_telegram_updates(program_keywords: List[str]) -> str:
+    print('  Telegram: Connecting...')
     try:
-        session = requests.Session()
-
-        # Step 1: GET the page to extract ASP.NET hidden fields
-        print("  PIB: Fetching AllRelease page...")
-        response = session.get(url, headers=headers, timeout=30)
-        response.raise_for_status()
-        soup = BeautifulSoup(response.text, 'html.parser')
-
-        # Extract required ASP.NET hidden fields
-        def _hidden_val(field_id: str) -> str:
-            tag = soup.find("input", {"id": field_id})
-            return tag["value"] if tag else ""
-
-        viewstate_val = _hidden_val("__VIEWSTATE")
-        viewstategen_val = _hidden_val("__VIEWSTATEGENERATOR")
-        eventvalidation_val = _hidden_val("__EVENTVALIDATION")
-
-        if not viewstate_val:
-            print("  PIB: WARNING - __VIEWSTATE not found on the page.")
-
-        # Step 2: POST to filter by MoHFW using __EVENTTARGET postback
-        # The PIB page has no submit button — dropdown selection triggers
-        # an ASP.NET autopostback via __EVENTTARGET.
-        print(f"  PIB: Posting ministry filter (MoHFW={MOHFW_VALUE})...")
-        payload = {
-            "__EVENTTARGET": MINISTRY_FIELD,
-            "__EVENTARGUMENT": "",
-            "__VIEWSTATE": viewstate_val,
-            "__VIEWSTATEGENERATOR": viewstategen_val,
-            "__EVENTVALIDATION": eventvalidation_val,
-            "__VIEWSTATEENCRYPTED": "",
-            MINISTRY_FIELD: MOHFW_VALUE,
-        }
-
-        post_response = session.post(url, data=payload, headers=headers, timeout=30)
-        post_response.raise_for_status()
-        post_soup = BeautifulSoup(post_response.text, 'html.parser')
-
-        # Step 3: Extract press release links from the filtered results
+        client = TelegramClient(StringSession(TELEGRAM_SESSION), TELEGRAM_API_ID, TELEGRAM_API_HASH)
+        await client.connect()
+        if not await client.is_user_authorized():
+            return 'Telegram session is invalid.'
+        
+        msgs = await client.get_messages('kayspsm', limit=30)
+        
         feed_items = []
-        for a in post_soup.find_all('a'):
-            href = a.get('href', '')
-            text = a.text.strip()
-            if text and 'PRID=' in href:
-                prid = href.split('PRID=')[-1].split('&')[0]
-                link = f"https://www.pib.gov.in/PressReleseDetail.aspx?PRID={prid}"
-                if not any(i['link'] == link for i in feed_items):
-                    feed_items.append({"title": text, "link": link})
-
-        print(f"  PIB: Found {len(feed_items)} MoHFW press releases this month.")
-
+        image_count = 0
+        
+        for m in msgs:
+            text = m.message or ''
+            
+            # Use Gemini Vision for Images
+            if m.photo and image_count < 5:
+                print(f'  Telegram: Processing image in message {m.id}...')
+                img_bytes = await client.download_media(m.photo, bytes)
+                encoded = base64.b64encode(img_bytes).decode('utf-8')
+                vision_prompt = f"Extract any medical statistics, targets, or program updates from this image. Keep it brief. Context tags: {', '.join(program_keywords)}"
+                vision_text = _call_openrouter_vision(vision_prompt, encoded)
+                if vision_text:
+                    text += f'\n\n[Extracted from Image]: {vision_text}'
+                image_count += 1
+            
+            if text.strip() and len(text) > 20:
+                feed_items.append({'title': f'Post {m.id}', 'text': text[:3000]})
+                
         if not feed_items:
-            return "No recent PIB notifications found for MoHFW this month."
+            return 'No relevant Telegram notifications found.'
 
-        # Truncate to avoid massive context payloads if it's a busy month
-        feed_items = feed_items[:40]
-
-        filter_prompt = f"""
-You are an expert in Indian Public Health policy.
-Review these PIB press release titles from the Ministry of Health and Family Welfare. 
-Select up to 5 that are highly relevant to these Community Medicine program areas:
-{', '.join(program_keywords)}
-
-Return ONLY a JSON array of objects with "title" and "link" for relevant items.
-If none are relevant, return [].
-
-Titles:
-{json.dumps(feed_items, indent=2)}
-"""
-        selected = _call_openrouter(filter_prompt)
-        if not selected or not isinstance(selected, list):
-            return "No relevant PIB notifications found for the target programs."
-
-        selected = selected[:5]
+        # Standard keyword filtering locally (light filtering)
+        kw_lower = [k.lower() for k in program_keywords]
+        relevant_items = []
+        for fi in feed_items:
+            lt = fi['text'].lower()
+            if any(k in lt for k in kw_lower[:5]):
+                 relevant_items.append(fi)
+        
+        # If too strict, just use the first 10
+        if not relevant_items:
+            relevant_items = feed_items[:10]
+            
         notifications_text = []
-        for item in selected:
-            try:
-                pr_response = requests.get(item['link'], headers=headers, timeout=15)
-                pr_response.raise_for_status()
-                pr_soup = BeautifulSoup(pr_response.text, 'html.parser')
-                raw_text = " ".join(pr_soup.get_text(separator=' ', strip=True).split())
-                notifications_text.append(f"TITLE: {item['title']}\nLINK: {item['link']}\nCONTENT: {raw_text[:4000]}")
-            except Exception as e:
-                print(f"  Error fetching {item['link']}: {e}")
+        for item in relevant_items[:6]:
+            notifications_text.append(f"TITLE: {item['title']}\nCONTENT: {item['text']}")
+            
+        return '\n\n---\n\n'.join(notifications_text) if notifications_text else 'No relevant Telegram notifications found.'
+    except Exception as exc:
+         print(f'Error fetching Telegram feed: {exc}')
+         return 'Could not fetch Telegram notifications.'
 
-        return "\n\n---\n\n".join(notifications_text) if notifications_text else "No relevant PIB notifications found."
-
-    except Exception as e:
-        print(f"Error fetching PIB feed: {e}")
-        return "Could not fetch PIB notifications."
+def _fetch_telegram_updates_for_programs(program_keywords: List[str]) -> str:
+    return asyncio.run(_async_fetch_telegram_updates(program_keywords))
 
 
 def _verify_claim_batch(item_title: str, item_id: str, claim_lines: List[str], pib_context: str) -> List[Dict[str, str]]:
@@ -480,6 +482,8 @@ RULES:
      "original": "exact original line from input",
      "replacement": "corrected line in the same concise style",
      "reason": "very short reason mentioning what changed (deadline, amount, eligibility, name, strategy, target, statistics, achievement etc.)",
+     "quote_from_source": "EXACT word-for-word quote from the PIB text that proves this change",
+     "confidence": 100,
      "source": "PIB title or URL"
    }}
 4. Only update specific factual tokens like (but not limited to): amounts, target years, thresholds, doses, durations, coverage figures, age cutoffs, validity periods, program names, eligibility criteria, benefit amounts, or strategy changes.
@@ -489,6 +493,9 @@ Anchor every change to an existing input line.
 7. If the correction is only a money amount, year, percentage, count, dose, or similar factual token, keep the rest of the line unchanged.
 8. If unsure, do not guess. Ignore that line.
 9. Focus on: deadlines, eligibility criteria, name changes, strategies, objectives, achievements, benefit amounts, coverage targets, and any other relevant data changes.
+10. VERIFICATION REQUIREMENT: You MUST verify the change against the text. Provide a 'confidence' score (0-100). Only output changes with a confidence of 95 or higher.
+11. CRITICAL: Distinguish between formal policy revisions and general ministerial speeches, projections, or quotes. Do NOT update long-term national targets (e.g., demographic targets, stable population year) based merely on speeches, reflections, or unofficial projections unless the text explicitly announces a formal 'policy revision' or 'amendment'.
+
 Claim lines to verify:
 {json.dumps(claim_lines, ensure_ascii=False, indent=2)}
 """
@@ -509,13 +516,31 @@ Claim lines to verify:
         replacement = str(item.get("replacement", "")).strip()
         reason = str(item.get("reason", "")).strip()
         source = str(item.get("source", "")).strip()
+        quote = str(item.get("quote_from_source", "")).strip()
+        
+        try:
+            confidence = int(item.get("confidence", 0))
+        except ValueError:
+            confidence = 0
+
         if not original or not replacement:
             continue
+            
+        if confidence < 95:
+            print(f"  -> Ignoring change for '{original[:30]}...' (Confidence {confidence} < 95)")
+            continue
+            
+        if not quote:
+            print(f"  -> Ignoring change for '{original[:30]}...' (Missing exact quote from source)")
+            continue
+
         corrections.append({
             "original": original,
             "replacement": replacement,
             "reason": reason,
             "source": source,
+            "quote_from_source": quote,
+            "confidence": str(confidence)
         })
     return corrections
 
@@ -653,7 +678,7 @@ def process_file_verification(file_path: str) -> None:
                             reason_text = correction.get("reason") or "claim updated"
                             print(f"     - {reason_text} [{source_text}]")
                     else:
-                        print("  -> No changes needed based on current MoHFW notifications.")
+                        print("  -> No changes needed based on current Telegram updates.")
                 else:
                     print("  -> No high-volatility claims detected; skipped to save cost.")
 
@@ -664,8 +689,8 @@ def process_file_verification(file_path: str) -> None:
         for item in target_root_items:
             # Fetch PIB context ONCE per root chapter, then reuse for all subsections
             program_keywords = _get_program_keywords_for_item(item)
-            print(f"\nFetching MoHFW PIB notifications for root chapter '{item.get('title', 'Unknown')}'...")
-            cached_pib_context = _fetch_pib_notifications_for_programs(program_keywords)
+            print(f"\nFetching Telegram updates for root chapter '{item.get('title', 'Unknown')}'...")
+            cached_pib_context = _fetch_telegram_updates_for_programs(program_keywords)
             verify_item_recursively(item, str(item.get("id", "Unknown")), cached_pib_context)
 
         if updates_made > 0:
