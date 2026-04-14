@@ -31,6 +31,7 @@ jobs:
         run: python scripts/verify_mock_data.py
         env:
           GEMINI_API_KEY: ${{ secrets.EXPO_PUBLIC_GEMINI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           VERIFY_TARGET_ROOT_IDS: "7,8"
 
       - name: Commit and Push Changes
