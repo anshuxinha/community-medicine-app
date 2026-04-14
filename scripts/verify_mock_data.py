@@ -29,20 +29,24 @@ def load_env():
 
 load_env()
 
-# --- GEMINI CONFIGURATION ---
-GEMINI_API_KEY = os.environ.get("EXPO_PUBLIC_GEMINI_API_KEY") or os.environ.get("GEMINI_API_KEY")
-if not GEMINI_API_KEY:
-    raise ValueError("GEMINI_API_KEY or EXPO_PUBLIC_GEMINI_API_KEY environment variable is not set")
+# --- OPENROUTER CONFIGURATION ---
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
+if not OPENROUTER_API_KEY:
+    raise ValueError("OPENROUTER_API_KEY environment variable is not set")
 
-GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
-GEMINI_MODEL = "gemini-flash-latest"
-REQUEST_TIMEOUT_SECONDS = int(os.environ.get("GEMINI_TIMEOUT_SECONDS", "90"))
+OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+OPENROUTER_MODEL = "openrouter/free"
+OPENROUTER_VISION_MODEL = "openrouter/free"  # Free tier vision model
+REQUEST_TIMEOUT_SECONDS = int(os.environ.get("OPENROUTER_TIMEOUT_SECONDS", "90"))
 
 
 # --- TELEGRAM CONFIGURATION ---
 TELEGRAM_API_ID = int(os.environ.get('TELEGRAM_API_ID', '1133218'))
 TELEGRAM_API_HASH = os.environ.get('TELEGRAM_API_HASH', '5a0f5247fa89b8e191c4f0259468f9a5')
 TELEGRAM_SESSION = os.environ.get('TELEGRAM_SESSION', '1BVtsOLYBu7ruqd6GsfNUGIZNqx_dwdNlsSrQzOlh3j1wd1A_Tz2Ajx9zYJjNSBJPSQPySJGI3P093qvOj4nuzWDdpVHIcezCvQ-Kyy2KIkp-uWAPIJDI5q3BWbzV4LHHLb4KsCAEahH88ttzHlm1bWIIemKPy9TBIDSLRN24d_AAK8wSXamkN1aGi_a1PPTQ6wQyCFbKajw6si-iDBD8c_1oiij2-5_tYO-Q5T3gxxWGNLwqhZTSc44VdmFWngKPDI8YcRYxAkWoswqOr-udyo1_4V_kQ7jHHxWjYsxy3mIWP_WwRblX_tLJpaaOr2-24k7lESvIz9zC2UwClLR9dNtvTsmNTg0=')
+
+# --- TELEGRAM CACHE ---
+_cached_raw_feed_items = None
 
 
 # --- APP DATA SETTINGS ---
@@ -58,7 +62,7 @@ VERIFY_MAX_BATCHES_PER_ITEM = int(os.environ.get("VERIFY_MAX_BATCHES_PER_ITEM", 
 MIN_SAFE_LINE_REPLACEMENT_SIMILARITY = float(os.environ.get("VERIFY_MIN_SAFE_REPLACEMENT_SIMILARITY", "0.72"))
 
 TODAY_LABEL = datetime.utcnow().date().isoformat()
-GEMINI_FATAL_ERROR: Optional[str] = None
+OPENROUTER_FATAL_ERROR: Optional[str] = None
 
 VOLATILE_KEYWORDS = (
     "WHO",
@@ -127,22 +131,22 @@ UPDATE_SENSITIVE_TOKEN_RE = re.compile(
 
 
 def _call_openrouter(prompt: str) -> Optional[Any]:
-    global GEMINI_FATAL_ERROR
+    global OPENROUTER_FATAL_ERROR
 
-    if GEMINI_FATAL_ERROR:
+    if OPENROUTER_FATAL_ERROR:
         return None
 
     try:
         response = requests.post(
-            GEMINI_API_URL,
+            OPENROUTER_API_URL,
             headers={
                 "Content-Type": "application/json",
-                "Authorization": f"Bearer {GEMINI_API_KEY}",
+                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
                 "HTTP-Referer": "https://github.com",
                 "X-Title": "Mock Data Verifier"
             },
             json={
-                "model": GEMINI_MODEL,
+                "model": OPENROUTER_MODEL,
                 "messages": [
                     {"role": "user", "content": prompt}
                 ],
@@ -151,39 +155,39 @@ def _call_openrouter(prompt: str) -> Optional[Any]:
             timeout=REQUEST_TIMEOUT_SECONDS,
         )
     except requests.RequestException as exc:
-        print(f"Gemini API request exception: {exc}")
+        print(f"OpenRouter API request exception: {exc}")
         return None
 
     if response.status_code == 200:
         try:
             data = response.json()
         except (json.JSONDecodeError, ValueError) as exc:
-            print(f"Gemini API returned non-JSON body (status 200): {exc}")
+            print(f"OpenRouter API returned non-JSON body (status 200): {exc}")
             return None
         text_response = _extract_candidate_text(data)
         if text_response:
             payload = _extract_json_payload(text_response)
             if payload is not None:
                 return payload
-        print(f"Gemini API: could not parse JSON payload from response")
+        print(f"OpenRouter API: could not parse JSON payload from response")
         return None
 
     message = _error_message_from_response(response)
-    print(f"Gemini API Error {response.status_code}: {message}")
+    print(f"OpenRouter API Error {response.status_code}: {message}")
 
     if response.status_code in (429, 500, 503):
         time.sleep(5)
         try:
             retry = requests.post(
-                GEMINI_API_URL,
+                OPENROUTER_API_URL,
                 headers={
                     "Content-Type": "application/json",
-                    "Authorization": f"Bearer {GEMINI_API_KEY}",
+                    "Authorization": f"Bearer {OPENROUTER_API_KEY}",
                     "HTTP-Referer": "https://github.com",
                     "X-Title": "Mock Data Verifier"
                 },
                 json={
-                    "model": GEMINI_MODEL,
+                    "model": OPENROUTER_MODEL,
                     "messages": [
                         {"role": "user", "content": prompt}
                     ],
@@ -192,7 +196,7 @@ def _call_openrouter(prompt: str) -> Optional[Any]:
                 timeout=REQUEST_TIMEOUT_SECONDS,
             )
         except requests.RequestException as exc:
-            print(f"Gemini API retry failed: {exc}")
+            print(f"OpenRouter API retry failed: {exc}")
             return None
 
         if retry.status_code == 200:
@@ -206,14 +210,14 @@ def _call_openrouter(prompt: str) -> Optional[Any]:
                 if json_payload is not None:
                     return json_payload
         elif retry.status_code == 401:
-            print("Gemini API: Fatal Authentication Error (401).")
-            GEMINI_FATAL_ERROR = "Gemini API authentication/configuration error."
+            print("OpenRouter API: Fatal Authentication Error (401).")
+            OPENROUTER_FATAL_ERROR = "OpenRouter API authentication/configuration error."
         return None
 
     combined_error = f"{response.status_code} {message}".lower()
     if "api key" in combined_error or "unauthorized" in combined_error or "forbidden" in combined_error:
-        GEMINI_FATAL_ERROR = "Gemini API authentication/configuration error."
-        print("Gemini is marked unavailable for the rest of this run.")
+        OPENROUTER_FATAL_ERROR = "OpenRouter API authentication/configuration error."
+        print("OpenRouter is marked unavailable for the rest of this run.")
 
     return None
 
@@ -222,10 +226,10 @@ def _call_openrouter(prompt: str) -> Optional[Any]:
 def _call_openrouter_vision(prompt: str, base64_image: str) -> Optional[str]:
     try:
         response = requests.post(
-            GEMINI_API_URL,
-            headers={"Content-Type": "application/json", "Authorization": f"Bearer {GEMINI_API_KEY}"},
+            OPENROUTER_API_URL,
+            headers={"Content-Type": "application/json", "Authorization": f"Bearer {OPENROUTER_API_KEY}"},
             json={
-                "model": "gemini-1.5-flash",
+                "model": OPENROUTER_VISION_MODEL,
                 "messages": [
                     {"role": "user", "content": [
                         {"type": "text", "text": prompt},
@@ -238,9 +242,9 @@ def _call_openrouter_vision(prompt: str, base64_image: str) -> Optional[str]:
         )
         if response.status_code == 200:
             return _extract_candidate_text(response.json())
-        print(f'Gemini Vision status {response.status_code}: {response.text}')
+        print(f'OpenRouter Vision status {response.status_code}: {response.text}')
     except Exception as exc:
-        print(f'Gemini Vision error: {exc}')
+        print(f'OpenRouter Vision error: {exc}')
     return None
 
 
@@ -399,61 +403,64 @@ def _batched(items: List[str], batch_size: int) -> Iterable[List[str]]:
     for index in range(0, len(items), batch_size):
         yield items[index:index + batch_size]
 
-
-
-async def _async_fetch_telegram_updates(program_keywords: List[str]) -> str:
+async def _async_fetch_raw_telegram_messages() -> List[Dict[str, str]]:
+    global _cached_raw_feed_items
+    if _cached_raw_feed_items is not None:
+        return _cached_raw_feed_items
     print('  Telegram: Connecting...')
     try:
         client = TelegramClient(StringSession(TELEGRAM_SESSION), TELEGRAM_API_ID, TELEGRAM_API_HASH)
         await client.connect()
         if not await client.is_user_authorized():
-            return 'Telegram session is invalid.'
-        
+            return []
         msgs = await client.get_messages('kayspsm', limit=30)
-        
         feed_items = []
         image_count = 0
-        
         for m in msgs:
             text = m.message or ''
-            
-            # Use Gemini Vision for Images
+            # Use OpenRouter Vision for Images
             if m.photo and image_count < 5:
                 print(f'  Telegram: Processing image in message {m.id}...')
                 img_bytes = await client.download_media(m.photo, bytes)
                 encoded = base64.b64encode(img_bytes).decode('utf-8')
-                vision_prompt = f"Extract any medical statistics, targets, or program updates from this image. Keep it brief. Context tags: {', '.join(program_keywords)}"
+                vision_prompt = "Extract any medical statistics, targets, or program updates from this image. Keep it brief."
                 vision_text = _call_openrouter_vision(vision_prompt, encoded)
                 if vision_text:
                     text += f'\n\n[Extracted from Image]: {vision_text}'
                 image_count += 1
-            
             if text.strip() and len(text) > 20:
                 feed_items.append({'title': f'Post {m.id}', 'text': text[:3000]})
-                
-        if not feed_items:
-            return 'No relevant Telegram notifications found.'
-
-        # Standard keyword filtering locally (light filtering)
-        kw_lower = [k.lower() for k in program_keywords]
-        relevant_items = []
-        for fi in feed_items:
-            lt = fi['text'].lower()
-            if any(k in lt for k in kw_lower[:5]):
-                 relevant_items.append(fi)
-        
-        # If too strict, just use the first 10
-        if not relevant_items:
-            relevant_items = feed_items[:10]
-            
-        notifications_text = []
-        for item in relevant_items[:6]:
-            notifications_text.append(f"TITLE: {item['title']}\nCONTENT: {item['text']}")
-            
-        return '\n\n---\n\n'.join(notifications_text) if notifications_text else 'No relevant Telegram notifications found.'
+        _cached_raw_feed_items = feed_items
+        return feed_items
     except Exception as exc:
-         print(f'Error fetching Telegram feed: {exc}')
-         return 'Could not fetch Telegram notifications.'
+        print(f'Error fetching Telegram feed: {exc}')
+        return []
+
+
+
+async def _async_fetch_telegram_updates(program_keywords: List[str]) -> str:
+    # Use cached raw feed items (fetched once per run)
+    feed_items = await _async_fetch_raw_telegram_messages()
+    if not feed_items:
+        return 'No relevant Telegram notifications found.'
+
+    # Standard keyword filtering locally (light filtering)
+    kw_lower = [k.lower() for k in program_keywords]
+    relevant_items = []
+    for fi in feed_items:
+        lt = fi['text'].lower()
+        if any(k in lt for k in kw_lower[:5]):
+             relevant_items.append(fi)
+    
+    # If too strict, just use the first 10
+    if not relevant_items:
+        relevant_items = feed_items[:10]
+        
+    notifications_text = []
+    for item in relevant_items[:6]:
+        notifications_text.append(f"TITLE: {item['title']}\nCONTENT: {item['text']}")
+        
+    return '\n\n---\n\n'.join(notifications_text) if notifications_text else 'No relevant Telegram notifications found.'
 
 def _fetch_telegram_updates_for_programs(program_keywords: List[str]) -> str:
     return asyncio.run(_async_fetch_telegram_updates(program_keywords))
@@ -715,5 +722,5 @@ def verify_and_update_all() -> None:
 
 if __name__ == "__main__":
     print("Starting MoHFW claim-focused verification of mockData.json against current monthly guidance...")
-    print(f"Using Gemini API with model: {GEMINI_MODEL}")
+    print(f"Using OpenRouter API with model: {OPENROUTER_MODEL}")
     verify_and_update_all()
