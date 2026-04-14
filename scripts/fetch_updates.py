@@ -4,93 +4,117 @@ import uuid
 import re
 import time
 import requests  # type: ignore
-from datetime import datetime
+from datetime import datetime, timezone
 from bs4 import BeautifulSoup  # type: ignore
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-if not GEMINI_API_KEY:
-    raise ValueError("GEMINI_API_KEY environment variable is not set")
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
+if not OPENROUTER_API_KEY:
+    raise ValueError("OPENROUTER_API_KEY environment variable is not set")
 
-GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
-GEMINI_MODEL = "gemini-flash-latest"
+OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+OPENROUTER_MODEL = "openrouter/free"
 
-MAX_GEMINI_RETRIES = 2
+MAX_OPENROUTER_RETRIES = 2
 RETRY_DELAY_SECONDS = 5
 
 
-def _parse_gemini_response(response):
-    """Parse a successful Gemini API response and extract the JSON payload."""
-    try:
-        data = response.json()
-    except (json.JSONDecodeError, ValueError) as exc:
-        print(f"Gemini API returned non-JSON body (status {response.status_code}): {exc}")
+def _extract_candidate_text(payload: Dict[str, Any]) -> Optional[str]:
+    choices = payload.get("choices", [])
+    if not choices:
         return None
-
-    if data and "choices" in data and len(data["choices"]) > 0:
-        text_response = data["choices"][0]["message"]["content"].strip()
-
-        # Use regex to extract the first JSON block (array or object)
-        # This handles cases where the model writes conversational text before/after the JSON
-        json_match = re.search(r'(\{.*?\}|\[.*?\])', text_response, re.DOTALL)
-
-        if json_match:
-            extracted_json_str = json_match.group(1)
-            try:
-                return json.loads(extracted_json_str)
-            except json.JSONDecodeError as e:
-                print(f"Failed to parse extracted JSON. Error: {e}")
-                print(f"Extracted string was: {extracted_json_str}")
-        else:
-            print(f"Could not find valid JSON in Gemini response: {text_response}")
-
-    return None
+    message = choices[0].get("message", {})
+    content = message.get("content")
+    return content if isinstance(content, str) else None
 
 
-def call_gemini(prompt):
+def _error_message_from_response(response: requests.Response) -> str:
+    try:
+        payload = response.json()
+        error_obj = payload.get("error", {})
+        if isinstance(error_obj, dict):
+            return error_obj.get("message") or error_obj.get("status") or response.text
+        return response.text
+    except Exception:
+        return response.text
+
+
+def _strip_code_fence(text: str) -> str:
+    stripped = text.strip()
+    if stripped.startswith("```"):
+        lines = stripped.splitlines()
+        return "\n".join(lines[1:-1]).strip()
+    return stripped
+
+
+def _extract_json_payload(text: str) -> Optional[Any]:
+    candidate = _strip_code_fence(text)
+    try:
+        return json.loads(candidate)
+    except json.JSONDecodeError:
+        match = re.search(r"(\[.*\]|\{.*\})", candidate, re.DOTALL)
+        if not match:
+            return None
+        try:
+            return json.loads(match.group(1))
+        except json.JSONDecodeError:
+            return None
+
+
+def call_openrouter(prompt: str) -> Optional[Any]:
     last_error = None
 
-    for attempt in range(1 + MAX_GEMINI_RETRIES):
+    for attempt in range(1 + MAX_OPENROUTER_RETRIES):
         try:
             response = requests.post(
-                GEMINI_API_URL,
+                OPENROUTER_API_URL,
                 headers={
                     "Content-Type": "application/json",
-                    "Authorization": f"Bearer {GEMINI_API_KEY}",
+                    "Authorization": f"Bearer {OPENROUTER_API_KEY}",
                     "HTTP-Referer": "https://github.com",
                     "X-Title": "Public Health Updates Fetcher"
                 },
                 json={
-                    "model": GEMINI_MODEL,
+                    "model": OPENROUTER_MODEL,
                     "messages": [
                         {"role": "user", "content": prompt}
-                    ]
+                    ],
+                    "temperature": 0.1,
                 },
                 timeout=60
             )
 
             if response.status_code == 200:
-                result = _parse_gemini_response(response)
-                if result is not None:
-                    return result
+                try:
+                    data = response.json()
+                except (json.JSONDecodeError, ValueError) as exc:
+                    print(f"OpenRouter API returned non-JSON body (status 200): {exc}")
+                    last_error = "invalid JSON"
+                    continue
+                text_response = _extract_candidate_text(data)
+                if text_response:
+                    payload = _extract_json_payload(text_response)
+                    if payload is not None:
+                        return payload
                 last_error = "empty or unparseable response body"
             elif response.status_code in (429, 500, 503):
                 last_error = f"HTTP {response.status_code}: {response.text[:200]}"
-                print(f"Gemini API Error (attempt {attempt + 1}): {last_error}")
+                print(f"OpenRouter API Error (attempt {attempt + 1}): {last_error}")
             else:
-                print(f"Gemini API Error {response.status_code}: {response.text[:200]}")
+                print(f"OpenRouter API Error {response.status_code}: {response.text[:200]}")
                 return None  # non-retryable status
 
         except requests.RequestException as exc:
             last_error = str(exc)
-            print(f"Gemini API request exception (attempt {attempt + 1}): {last_error}")
+            print(f"OpenRouter API request exception (attempt {attempt + 1}): {last_error}")
 
-        if attempt < MAX_GEMINI_RETRIES:
+        if attempt < MAX_OPENROUTER_RETRIES:
             print(f"Retrying in {RETRY_DELAY_SECONDS}s...")
             time.sleep(RETRY_DELAY_SECONDS)
 
-    print(f"Gemini API failed after {1 + MAX_GEMINI_RETRIES} attempts. Last error: {last_error}")
+    print(f"OpenRouter API failed after {1 + MAX_OPENROUTER_RETRIES} attempts. Last error: {last_error}")
     return None
+
 
 def fetch_health_updates():
     """Fetches real updates from the Government of India PIB feed for MoHFW."""
@@ -103,16 +127,20 @@ def fetch_health_updates():
     output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'src', 'data')
     output_path = os.path.join(output_dir, 'updates.json')
     
-    existing_updates: List[Dict[str, Any]] = []
-    updates: List[Dict[str, Any]] = []
+    MAX_UPDATES_TO_KEEP = 10
     
+    existing_updates: List[Dict[str, Any]] = []
     if os.path.exists(output_path):
         try:
             with open(output_path, 'r', encoding='utf-8') as f:
                 existing_updates = json.load(f)
-            updates = list(existing_updates)
         except Exception as e:
             print(f"Error loading existing updates: {e}")
+    
+    # Create a mapping of link -> update for deduplication
+    existing_links = {u['link'] for u in existing_updates if 'link' in u}
+    
+    updates: List[Dict[str, Any]] = []
             
     try:
         session = requests.Session()
@@ -154,7 +182,7 @@ def fetch_health_updates():
                     break
 
         # Setup current dates
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         current_month = str(now.month)
         current_year = str(now.year)
 
@@ -221,8 +249,8 @@ def fetch_health_updates():
         {json.dumps(feed_items, indent=2)}
         """
         
-        print("Filtering relevant Community Medicine articles with Gemini...")
-        selected_ids_response = call_gemini(filter_prompt)
+        print("Filtering relevant Community Medicine articles with OpenRouter...")
+        selected_ids_response = call_openrouter(filter_prompt)
         
         if selected_ids_response is None:
             print("Failed to filter articles.")
@@ -236,54 +264,92 @@ def fetch_health_updates():
         
         today_date = datetime.now().strftime('%Y-%m-%d')
         
+        # Fetch article contents for all selected items
+        articles = []
         for item in selected_items:
             try:
                 print(f"Fetching: {item['link']}")
                 pr_response = requests.get(item['link'], headers=headers, timeout=15)
                 pr_soup = BeautifulSoup(pr_response.text, 'html.parser')
-                
-                # Extract all text, replacing multiple newlines
                 raw_text: str = " ".join(pr_soup.get_text(separator=' ', strip=True).split())
                 truncated_text = raw_text[:6000]  # type: ignore
-                
-                summary_prompt = f"""
-                You are a public health journalist. I give you raw text from a Press Information Bureau (PIB) India release.
-                Extract the main health update.
-                Respond ONLY with a valid RAW JSON object (no markdown, no backticks) containing:
-                "title": "A short English headline",
-                "summary": "An English summary of the update, constrained to EXACTLY 60 words.",
-                "date": "The exact date of the release in YYYY-MM-DD format based on the text (default to today if unseen)"
-                
-                Text to parse:
-                {truncated_text}
-                """
-                
-                print("Generating summary with Gemini...")
-                summary_data = call_gemini(summary_prompt)
-                
-                if summary_data and "title" in summary_data and "summary" in summary_data:
-                    title = summary_data["title"]
-                    summary = summary_data["summary"]
-                    article_date = summary_data.get("date", today_date)
-                    
-                    # Deduplication logic
-                    is_duplicate = any(u['title'].lower() == title.lower() for u in updates)
-                    
-                    if title and summary and not is_duplicate:
-                        updates.append({
-                            "id": str(uuid.uuid4()),
-                            "date": article_date if article_date else today_date,
-                            "title": title,
-                            "summary": summary,
-                            "link": item['link']
-                        })
-                    elif is_duplicate:
-                        print(f"Skipping duplicate: {title}")
-                else:
-                    print(f"Failed to generate summary for {item['link']}")
-                    
+                articles.append({
+                    "id": item['id'],
+                    "link": item['link'],
+                    "text": truncated_text
+                })
             except Exception as e:
-                print(f"Error processing {item['link']}: {e}")
+                print(f"Error fetching {item['link']}: {e}")
+                # Skip this article; continue with others
+        
+        if not articles:
+            print("No articles could be fetched.")
+            return
+        
+        # Build batch prompt
+        articles_json = json.dumps([
+            {"id": a["id"], "text": a["text"][:2000]}  # further truncate for token limits
+            for a in articles
+        ], indent=2)
+        
+        batch_prompt = f"""
+        You are a public health journalist. I give you raw texts from multiple Press Information Bureau (PIB) India releases.
+        For each article, extract the main health update.
+        
+        Return ONLY a valid JSON array of objects, each containing:
+        - "id": the same id as provided (integer)
+        - "title": a short English headline
+        - "summary": an English summary of the update, constrained to EXACTLY 60 words.
+        - "date": the exact date of the release in YYYY-MM-DD format based on the text (default to today if unseen)
+        
+        Ensure the array length matches the number of articles provided.
+        
+        Articles:
+        {articles_json}
+        """
+        
+        print("Generating batch summaries with OpenRouter...")
+        batch_summaries = call_openrouter(batch_prompt)
+        
+        if not isinstance(batch_summaries, list):
+            print("Batch summarization failed or returned invalid format.")
+            return
+        
+        # Map summaries by id
+        summary_by_id = {s["id"]: s for s in batch_summaries if "id" in s and "title" in s and "summary" in s}
+        
+        # Track links already added in this run to avoid duplicates within the batch
+        added_links_in_run = set()
+        for article in articles:
+            article_id = article["id"]
+            if article_id not in summary_by_id:
+                print(f"No valid summary generated for article id {article_id}")
+                continue
+            s = summary_by_id[article_id]
+            title = s["title"]
+            summary = s["summary"]
+            article_date = s.get("date", today_date)
+            
+            # Skip if link already exists in existing updates or already added in this run
+            if article["link"] in existing_links or article["link"] in added_links_in_run:
+                print(f"Skipping duplicate link: {article['link']}")
+                continue
+            
+            # Also deduplicate by title within the new updates (optional)
+            is_duplicate_title = any(u['title'].lower() == title.lower() for u in updates)
+            if is_duplicate_title:
+                print(f"Skipping duplicate title: {title}")
+                continue
+            
+            if title and summary:
+                updates.append({
+                    "id": str(uuid.uuid4()),
+                    "date": article_date if article_date else today_date,
+                    "title": title,
+                    "summary": summary,
+                    "link": article["link"]
+                })
+                added_links_in_run.add(article["link"])
                 
     except requests.exceptions.RequestException as e:
         print(f"Error fetching PIB feed: {e}")
@@ -292,7 +358,27 @@ def fetch_health_updates():
          print(f"An unexpected error occurred: {e}")
          return
 
-    if updates == existing_updates:
+    # Combine existing updates with new updates, deduplicate by link
+    combined = []
+    seen_links = set()
+    # First add existing updates (preserve order? we'll sort later)
+    for u in existing_updates:
+        if u.get('link') not in seen_links:
+            seen_links.add(u['link'])
+            combined.append(u)
+    # Then add new updates (skip duplicates)
+    for u in updates:
+        if u.get('link') not in seen_links:
+            seen_links.add(u['link'])
+            combined.append(u)
+    
+    # Sort combined list by date descending (most recent first)
+    combined.sort(key=lambda x: x.get('date', ''), reverse=True)
+    
+    # Keep only the most recent MAX_UPDATES_TO_KEEP
+    combined = combined[:MAX_UPDATES_TO_KEEP]
+    
+    if combined == existing_updates:
         print("No new updates detected. updates.json unchanged.")
         return
 
@@ -300,9 +386,9 @@ def fetch_health_updates():
     os.makedirs(output_dir, exist_ok=True)
     
     with open(output_path, 'w', encoding='utf-8') as f:
-        json.dump(updates, f, indent=4)
+        json.dump(combined, f, indent=4)
         
-    print(f"Successfully saved {len(updates)} updates to {output_path}")
+    print(f"Successfully saved {len(combined)} updates to {output_path}")
 
 if __name__ == "__main__":
     fetch_health_updates()
