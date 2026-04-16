@@ -3,14 +3,12 @@ import {
   View,
   StyleSheet,
   SafeAreaView,
-  ScrollView,
   Alert,
+  Dimensions,
 } from "react-native";
 import { Text, Card, Button } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { theme } from "../styles/theme";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import {
   isSubscribedToWebinarNotifications,
@@ -20,6 +18,8 @@ import {
   unsubscribeFromWebinarNotifications,
 } from "../services/notificationService";
 
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+
 const WebinarsScreen = ({ navigation }) => {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +27,6 @@ const WebinarsScreen = ({ navigation }) => {
   useEffect(() => {
     checkSubscriptionStatus();
 
-    // Listen for subscription changes from other screens
     const unsubscribe = addWebinarSubscriptionListener((subscribed) => {
       setIsSubscribed(subscribed);
     });
@@ -48,7 +47,6 @@ const WebinarsScreen = ({ navigation }) => {
     setIsLoading(true);
     try {
       if (isSubscribed) {
-        // Unsubscribe using service function
         const success = await unsubscribeFromWebinarNotifications();
         if (success) {
           Alert.alert(
@@ -58,7 +56,6 @@ const WebinarsScreen = ({ navigation }) => {
           );
         }
       } else {
-        // Subscribe
         if (!Device.isDevice) {
           Alert.alert(
             "Simulator",
@@ -79,7 +76,6 @@ const WebinarsScreen = ({ navigation }) => {
           return;
         }
 
-        // Subscribe using service function
         const success = await subscribeToWebinarNotifications();
         if (success) {
           Alert.alert(
@@ -101,51 +97,54 @@ const WebinarsScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <View style={styles.content}>
+        {/* Header */}
         <View style={styles.header}>
           <MaterialIcons
             name="ondemand-video"
-            size={80}
-            color={theme.colors.secondary}
+            size={56}
+            color={theme.colors.primary}
           />
-          <Text variant="headlineMedium" style={styles.title}>
+          <Text variant="headlineSmall" style={styles.title}>
             Webinars
           </Text>
-          <Text variant="bodyLarge" style={styles.subtitle}>
+          <Text variant="bodyMedium" style={styles.subtitle}>
             Live and recorded sessions on Community Medicine topics
           </Text>
         </View>
 
+        {/* Coming Soon Card */}
         <Card style={styles.comingSoonCard}>
           <Card.Content style={styles.cardContent}>
             <MaterialIcons
               name="hourglass-empty"
-              size={48}
+              size={40}
               color={theme.colors.accent}
             />
-            <Text variant="headlineSmall" style={styles.comingSoonText}>
+            <Text variant="titleMedium" style={styles.comingSoonText}>
               Coming soon...
             </Text>
-            <Text variant="bodyMedium" style={styles.comingSoonDescription}>
-              We're preparing a series of expert-led webinars covering the
-              latest updates, case discussions, and interactive Q&A sessions.
+            <Text variant="bodySmall" style={styles.comingSoonDescription}>
+              We're preparing expert-led webinars covering the latest updates,
+              case discussions, and interactive Q&A sessions.
             </Text>
-            <Text variant="bodyMedium" style={styles.comingSoonDescription}>
+            <Text variant="bodySmall" style={styles.comingSoonDescription}>
               Stay tuned for announcements!
             </Text>
           </Card.Content>
         </Card>
 
+        {/* What to Expect Card */}
         <Card style={styles.infoCard}>
           <Card.Content>
-            <Text variant="titleMedium" style={styles.infoTitle}>
+            <Text variant="titleSmall" style={styles.infoTitle}>
               What to expect
             </Text>
             <View style={styles.bulletList}>
               <View style={styles.bulletItem}>
                 <MaterialIcons
                   name="check-circle"
-                  size={20}
+                  size={18}
                   color={theme.colors.success}
                 />
                 <Text style={styles.bulletText}>
@@ -155,7 +154,7 @@ const WebinarsScreen = ({ navigation }) => {
               <View style={styles.bulletItem}>
                 <MaterialIcons
                   name="check-circle"
-                  size={20}
+                  size={18}
                   color={theme.colors.success}
                 />
                 <Text style={styles.bulletText}>
@@ -165,7 +164,7 @@ const WebinarsScreen = ({ navigation }) => {
               <View style={styles.bulletItem}>
                 <MaterialIcons
                   name="check-circle"
-                  size={20}
+                  size={18}
                   color={theme.colors.success}
                 />
                 <Text style={styles.bulletText}>Interactive Q&A and polls</Text>
@@ -173,7 +172,7 @@ const WebinarsScreen = ({ navigation }) => {
               <View style={styles.bulletItem}>
                 <MaterialIcons
                   name="check-circle"
-                  size={20}
+                  size={18}
                   color={theme.colors.success}
                 />
                 <Text style={styles.bulletText}>
@@ -184,25 +183,28 @@ const WebinarsScreen = ({ navigation }) => {
           </Card.Content>
         </Card>
 
-        <Button
-          mode="contained"
-          icon={isSubscribed ? "bell-check" : "bell"}
-          style={styles.notifyButton}
-          onPress={handleNotifyPress}
-          loading={isLoading}
-          disabled={isLoading}
-        >
-          {isSubscribed
-            ? "Subscribed to Notifications"
-            : "Notify me when ready"}
-        </Button>
+        {/* Notify Button */}
+        <View style={styles.buttonContainer}>
+          <Button
+            mode="contained"
+            icon={isSubscribed ? "bell-check" : "bell"}
+            style={styles.notifyButton}
+            onPress={handleNotifyPress}
+            loading={isLoading}
+            disabled={isLoading}
+          >
+            {isSubscribed
+              ? "Subscribed to Notifications"
+              : "Notify me when ready"}
+          </Button>
 
-        {isSubscribed && (
-          <Text style={styles.subscriptionNote}>
-            ✓ You'll receive a push notification when new webinars are added
-          </Text>
-        )}
-      </ScrollView>
+          {isSubscribed && (
+            <Text style={styles.subscriptionNote}>
+              ✓ You'll receive a push notification when new webinars are added
+            </Text>
+          )}
+        </View>
+      </View>
     </SafeAreaView>
   );
 };
@@ -212,78 +214,81 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.backgroundMain,
   },
-  scrollContent: {
-    padding: 20,
-    paddingBottom: 40,
+  content: {
+    flex: 1,
+    padding: 16,
   },
   header: {
     alignItems: "center",
-    marginVertical: 30,
+    marginVertical: 16,
   },
   title: {
-    marginTop: 16,
+    marginTop: 12,
     color: theme.colors.textTitle,
     fontWeight: "bold",
   },
   subtitle: {
     color: theme.colors.textSecondary,
     textAlign: "center",
-    marginTop: 8,
-    maxWidth: 300,
+    marginTop: 6,
+    maxWidth: 280,
   },
   comingSoonCard: {
-    marginVertical: 20,
-    backgroundColor: theme.colors.surfaceSecondary,
+    marginVertical: 12,
+    backgroundColor: theme.colors.primaryLight,
     borderWidth: 1,
-    borderColor: theme.colors.primaryLight,
+    borderColor: theme.colors.primary,
   },
   cardContent: {
     alignItems: "center",
-    paddingVertical: 30,
+    paddingVertical: 20,
   },
   comingSoonText: {
-    marginTop: 20,
+    marginTop: 12,
     color: theme.colors.primary,
     fontWeight: "bold",
   },
   comingSoonDescription: {
     color: theme.colors.textSecondary,
     textAlign: "center",
-    marginTop: 12,
-    lineHeight: 22,
+    marginTop: 8,
+    lineHeight: 18,
   },
   infoCard: {
-    marginVertical: 20,
+    marginVertical: 12,
     backgroundColor: theme.colors.surfacePrimary,
   },
   infoTitle: {
     color: theme.colors.textTitle,
-    marginBottom: 16,
+    marginBottom: 12,
     fontWeight: "600",
   },
   bulletList: {
-    gap: 12,
+    gap: 8,
   },
   bulletItem: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    gap: 10,
   },
   bulletText: {
     color: theme.colors.textPrimary,
-    fontSize: 16,
+    fontSize: 14,
     flex: 1,
   },
+  buttonContainer: {
+    marginTop: "auto",
+    paddingBottom: 8,
+  },
   notifyButton: {
-    marginTop: 30,
-    backgroundColor: theme.colors.secondary,
-    paddingVertical: 8,
+    backgroundColor: theme.colors.primary,
+    paddingVertical: 4,
   },
   subscriptionNote: {
-    marginTop: 12,
+    marginTop: 10,
     textAlign: "center",
     color: theme.colors.success,
-    fontSize: 14,
+    fontSize: 12,
     fontStyle: "italic",
   },
 });
