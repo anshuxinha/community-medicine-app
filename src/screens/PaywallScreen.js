@@ -8,7 +8,7 @@ import {
   Linking,
   Image,
 } from "react-native";
-import { Text, Button, Card } from "react-native-paper";
+import { Text, Button, Card, TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import Constants from "expo-constants";
@@ -18,6 +18,40 @@ if (Constants.appOwnership !== "expo") {
 }
 import { AppContext } from "../context/AppContext";
 import { theme } from "../styles/theme";
+
+// 30 unique coupon codes for ₹49 monthly subscription
+const VALID_COUPON_CODES = [
+  "STROMA49A1",
+  "STROMA49B2",
+  "STROMA49C3",
+  "STROMA49D4",
+  "STROMA49E5",
+  "STROMA49F6",
+  "STROMA49G7",
+  "STROMA49H8",
+  "STROMA49I9",
+  "STROMA49J10",
+  "STROMA49K11",
+  "STROMA49L12",
+  "STROMA49M13",
+  "STROMA49N14",
+  "STROMA49O15",
+  "STROMA49P16",
+  "STROMA49Q17",
+  "STROMA49R18",
+  "STROMA49S19",
+  "STROMA49T20",
+  "STROMA49U21",
+  "STROMA49V22",
+  "STROMA49W23",
+  "STROMA49X24",
+  "STROMA49Y25",
+  "STROMA49Z26",
+  "STROMA49A27",
+  "STROMA49B28",
+  "STROMA49C29",
+  "STROMA49D30",
+];
 
 // Default plan metadata (prices are fetched from RevenueCat)
 const PLAN_METADATA = [
@@ -29,6 +63,8 @@ const PLAN_METADATA = [
     badge: null,
     saveText: null,
     packageType: "$rc_monthly",
+    basePrice: "₹9/mo",
+    couponPrice: "₹49/mo",
   },
   {
     id: "yearly",
@@ -38,6 +74,8 @@ const PLAN_METADATA = [
     badge: "Best Value",
     saveText: "SAVE 20%",
     packageType: "$rc_annual",
+    basePrice: "₹999/yr",
+    couponPrice: null,
   },
   {
     id: "lifetime",
@@ -47,6 +85,8 @@ const PLAN_METADATA = [
     badge: null,
     saveText: null,
     packageType: "$rc_lifetime",
+    basePrice: "₹25,000",
+    couponPrice: null,
   },
 ];
 
@@ -56,6 +96,9 @@ const PaywallScreen = ({ navigation }) => {
   const [offerings, setOfferings] = useState(null);
   const [packages, setPackages] = useState({});
   const [loadError, setLoadError] = useState(null);
+  const [couponCode, setCouponCode] = useState("");
+  const [couponApplied, setCouponApplied] = useState(false);
+  const [couponError, setCouponError] = useState(false);
   const { upgradeToPremium, isPremium } = useContext(AppContext);
 
   // Fetch offerings from RevenueCat on mount
@@ -103,6 +146,26 @@ const PaywallScreen = ({ navigation }) => {
       navigation.goBack();
     }
   }, [isPremium]);
+
+  const validateCoupon = (code) => {
+    const normalizedCode = code.trim().toUpperCase();
+    return VALID_COUPON_CODES.includes(normalizedCode);
+  };
+
+  const handleApplyCoupon = () => {
+    if (!couponCode.trim()) {
+      setCouponError(false);
+      setCouponApplied(false);
+      return;
+    }
+    if (validateCoupon(couponCode)) {
+      setCouponApplied(true);
+      setCouponError(false);
+    } else {
+      setCouponApplied(false);
+      setCouponError(true);
+    }
+  };
 
   const handlePurchase = async () => {
     if (!selectedPlan) return;
@@ -230,14 +293,11 @@ const PaywallScreen = ({ navigation }) => {
                 // Get price from RevenueCat package if available
                 const pkg = packages[plan.packageType] || packages[plan.id];
                 const rcPrice = pkg?.product?.priceString;
-                // Use RevenueCat price if available, otherwise use plan-specific fallback
-                const displayPrice =
-                  rcPrice ||
-                  (plan.id === "monthly"
-                    ? "₹9/mo"
-                    : plan.id === "yearly"
-                      ? "₹999/yr"
-                      : "₹25,000");
+                // Use coupon price for monthly plan when coupon is applied
+                const isCouponMonthly = couponApplied && plan.id === "monthly";
+                const showPrice = isCouponMonthly
+                  ? plan.couponPrice
+                  : rcPrice || plan.basePrice;
 
                 return (
                   <TouchableOpacity
@@ -260,12 +320,58 @@ const PaywallScreen = ({ navigation }) => {
                       )}
                       <Text style={styles.planName}>{plan.name}</Text>
                       <Text style={styles.planDuration}>{plan.duration}</Text>
-                      <Text style={styles.priceText}>{displayPrice}</Text>
+                      <Text style={styles.priceText}>{showPrice}</Text>
+                      {isCouponMonthly && (
+                        <Text style={styles.couponAppliedBadge}>
+                          Coupon Applied
+                        </Text>
+                      )}
                       <Text style={styles.planDesc}>{plan.desc}</Text>
                     </Card.Content>
                   </TouchableOpacity>
                 );
               })}
+            </View>
+
+            <View style={styles.couponSection}>
+              <View style={styles.couponInputRow}>
+                <TextInput
+                  mode="outlined"
+                  label="Coupon Code"
+                  value={couponCode}
+                  onChangeText={(text) => {
+                    setCouponCode(text.toUpperCase());
+                    setCouponApplied(false);
+                    setCouponError(false);
+                  }}
+                  style={styles.couponInput}
+                  outlineColor={theme.colors.surfaceSecondary}
+                  activeOutlineColor={theme.colors.secondary}
+                  textColor={theme.colors.textPrimary}
+                  autoCapitalize="characters"
+                  autoCorrect={false}
+                  dense
+                />
+                <Button
+                  mode="outlined"
+                  onPress={handleApplyCoupon}
+                  style={styles.applyButton}
+                  labelStyle={styles.applyButtonLabel}
+                  disabled={!couponCode.trim()}
+                >
+                  Apply
+                </Button>
+              </View>
+              {couponError && (
+                <Text style={styles.couponErrorText}>
+                  Invalid coupon code. Please try again.
+                </Text>
+              )}
+              {couponApplied && (
+                <Text style={styles.couponSuccessText}>
+                  Coupon applied! Monthly plan is now ₹49/month.
+                </Text>
+              )}
             </View>
 
             <Button
@@ -504,6 +610,49 @@ const styles = StyleSheet.create({
   footerLinkText: {
     color: theme.colors.textTertiary,
     fontSize: 12,
+  },
+  couponSection: {
+    marginBottom: 20,
+    paddingHorizontal: 4,
+  },
+  couponInputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  couponInput: {
+    flex: 1,
+    marginRight: 8,
+    backgroundColor: theme.colors.surfacePrimary,
+    height: 40,
+  },
+  applyButton: {
+    borderColor: theme.colors.secondary,
+    borderRadius: 8,
+    height: 40,
+    justifyContent: "center",
+  },
+  applyButtonLabel: {
+    color: theme.colors.secondary,
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  couponErrorText: {
+    color: theme.colors.error,
+    fontSize: 12,
+    marginTop: 8,
+    textAlign: "center",
+  },
+  couponSuccessText: {
+    color: theme.colors.success,
+    fontSize: 12,
+    marginTop: 8,
+    textAlign: "center",
+  },
+  couponAppliedBadge: {
+    color: theme.colors.success,
+    fontSize: 9,
+    fontWeight: "bold",
+    marginBottom: 4,
   },
 });
 
