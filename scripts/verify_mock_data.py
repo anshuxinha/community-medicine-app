@@ -53,7 +53,7 @@ _cached_raw_feed_items = None
 MOCK_DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "src", "data", "mockData.json")
 VERIFY_TARGET_ROOT_IDS = {
     item.strip()
-    for item in os.environ.get("VERIFY_TARGET_ROOT_IDS", "7,8,15,16,21,23,25,27").split(",")
+    for item in os.environ.get("VERIFY_TARGET_ROOT_IDS", "7,8,15").split(",")
     if item.strip()
 }
 VERIFY_MAX_CLAIMS_PER_ITEM = int(os.environ.get("VERIFY_MAX_CLAIMS_PER_ITEM", "18"))
@@ -66,6 +66,7 @@ OPENROUTER_FATAL_ERROR: Optional[str] = None
 
 VOLATILE_KEYWORDS = (
     "WHO",
+    "update",
     "guideline",
     "guidelines",
     "policy",

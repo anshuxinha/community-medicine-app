@@ -25,7 +25,7 @@ const MENU_ITEMS = [
   {
     icon: "person-outline",
     label: "Profile",
-    action: "profile",
+    screen: "Profile",
     iconLib: "material",
   },
   {
@@ -121,14 +121,6 @@ const DrawerMenu = ({ visible, onClose, user }) => {
     // (Modal unmounting on Android dismisses any Alert that opens during teardown)
     setTimeout(() => {
       switch (item.action) {
-        case "profile":
-          Alert.alert(
-            "👤 My Profile",
-            `Name: ${displayName}\nEmail: ${user?.email || "N/A"}\n\nAccount Type: ${user ? "Registered" : "Guest"}`,
-            [{ text: "Close", style: "cancel" }],
-          );
-          break;
-
         case "rate":
           Linking.openURL("market://details?id=com.communitymed.app");
           break;

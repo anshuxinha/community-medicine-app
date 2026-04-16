@@ -12,6 +12,7 @@ import DashboardScreen from "../screens/DashboardScreen";
 import LibraryScreen from "../screens/LibraryScreen";
 import BookmarksScreen from "../screens/BookmarksScreen";
 import WebinarsScreen from "../screens/WebinarsScreen";
+import ProfileScreen from "../screens/ProfileScreen";
 
 // Stack screens
 import ReadingScreen from "../screens/ReadingScreen";
@@ -196,6 +197,11 @@ const AppNavigator = () => {
               name="Notifications"
               component={NotificationsScreen}
               options={{ title: "Notifications" }}
+            />
+            <Stack.Screen
+              name="Profile"
+              component={ProfileScreen}
+              options={{ title: "👤 My Profile" }}
             />
           </>
         )}
