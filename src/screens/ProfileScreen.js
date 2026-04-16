@@ -205,12 +205,6 @@ const ProfileScreen = () => {
               </Text>
             </View>
             <Divider style={styles.accountDivider} />
-            <View style={styles.accountRow}>
-              <Text style={styles.accountLabel}>User ID</Text>
-              <Text style={styles.accountValue} numberOfLines={1}>
-                {user?.uid?.slice(0, 8) || "N/A"}
-              </Text>
-            </View>
           </Card.Content>
         </Card>
 

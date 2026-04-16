@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect, useRef } from "react";
+import { AppState } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
 import * as Device from "expo-device";
@@ -267,6 +268,24 @@ export const AppProvider = ({ children }) => {
 
     return () => unsubscribe();
   }, []);
+
+  // Check and reset streak when app comes to foreground
+  useEffect(() => {
+    const handleAppStateChange = (nextAppState) => {
+      if (nextAppState === "active" && lastReadDate) {
+        const diffDays = dayDiffFromToday(lastReadDate);
+        if (diffDays !== null && diffDays > 1) {
+          setCurrentStreak(0);
+        }
+      }
+    };
+
+    const subscription = AppState.addEventListener(
+      "change",
+      handleAppStateChange,
+    );
+    return () => subscription.remove();
+  }, [lastReadDate]);
 
   useEffect(() => {
     if (user === null) {

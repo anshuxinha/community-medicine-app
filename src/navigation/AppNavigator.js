@@ -201,7 +201,7 @@ const AppNavigator = () => {
             <Stack.Screen
               name="Profile"
               component={ProfileScreen}
-              options={{ title: "👤 My Profile" }}
+              options={{ title: "My Profile" }}
             />
           </>
         )}
