@@ -14,7 +14,6 @@ import { signOut } from "firebase/auth";
 import { auth } from "../config/firebase";
 import { AppContext } from "../context/AppContext";
 import { theme } from "../styles/theme";
-import { MaterialIcons } from "@expo/vector-icons";
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
