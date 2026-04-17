@@ -6,7 +6,6 @@ import {
   subscribeToScreenCaptureChange,
 } from "../utils/screenCaptureProtection";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Platform } from "react-native";
 import * as Device from "expo-device";
 import Constants from "expo-constants";
 import { db, auth } from "../config/firebase";
