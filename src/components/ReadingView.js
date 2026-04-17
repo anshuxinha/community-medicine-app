@@ -301,6 +301,7 @@ const ReadingView = ({
   showUpdateHighlights = false,
   illustrations = [],
   onReachEnd,
+  isScreenCapturePrevented = false,
 }) => {
   console.log("ReadingView: illustrations prop", illustrations);
   const insets = useSafeAreaInsets();
@@ -577,9 +578,16 @@ const ReadingView = ({
             </TouchableOpacity>
             <Pressable
               style={styles.inlineImageControl}
-              onPress={() => rotateImage(rotationKey, 90)}
+              onPress={() =>
+                openFullscreenImage({
+                  source,
+                  alt: block.alt || "Content image",
+                  aspectRatio,
+                  rotationKey,
+                })
+              }
             >
-              <MaterialIcons name="rotate-right" size={18} color="#FFFFFF" />
+              <MaterialIcons name="fullscreen" size={18} color="#FFFFFF" />
             </Pressable>
           </View>
         );
@@ -628,9 +636,16 @@ const ReadingView = ({
               </TouchableOpacity>
               <Pressable
                 style={styles.inlineImageControl}
-                onPress={() => rotateImage(rotationKey, 90)}
+                onPress={() =>
+                  openFullscreenImage({
+                    source,
+                    alt: block.alt || "Topic illustration",
+                    aspectRatio,
+                    rotationKey,
+                  })
+                }
               >
-                <MaterialIcons name="rotate-right" size={18} color="#FFFFFF" />
+                <MaterialIcons name="fullscreen" size={18} color="#FFFFFF" />
               </Pressable>
             </View>
             {block.caption || block.purpose ? (
@@ -659,6 +674,13 @@ const ReadingView = ({
 
   return (
     <View style={styles.container}>
+      {isScreenCapturePrevented && (
+        <View style={styles.captureProtectedOverlay} pointerEvents="none">
+          <Text style={styles.captureProtectedText}>
+            Screen recording is not allowed
+          </Text>
+        </View>
+      )}
       <View style={styles.headerRow}>
         <Text style={styles.headerTitle}>{title || ""}</Text>
         <View style={styles.fabRow}>
@@ -852,6 +874,18 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     backgroundColor: theme.colors.surfacePrimary,
     elevation: 2,
+  },
+  captureProtectedOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: theme.colors.surfacePrimary,
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1000,
+  },
+  captureProtectedText: {
+    color: theme.colors.textSecondary,
+    fontSize: 14,
+    fontWeight: "600",
   },
   headerRow: {
     flexDirection: "row",

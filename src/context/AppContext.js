@@ -1,11 +1,25 @@
 import React, { createContext, useState, useEffect, useRef } from "react";
-import { AppState } from "react-native";
+import { AppState, Platform } from "react-native";
+import {
+  enableScreenCaptureProtection,
+  disableScreenCaptureProtection,
+  subscribeToScreenCaptureChange,
+} from "../utils/screenCaptureProtection";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
 import * as Device from "expo-device";
 import Constants from "expo-constants";
 import { db, auth } from "../config/firebase";
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  serverTimestamp,
+  arrayUnion,
+  FieldValue,
+} from "firebase/firestore";
+import { getDeviceId, getDeviceInfo } from "../utils/deviceUtils";
 import { onAuthStateChanged, getIdTokenResult, signOut } from "firebase/auth";
 import * as Notifications from "expo-notifications";
 import { theme } from "../styles/theme";
@@ -31,6 +45,9 @@ if (Constants.appOwnership !== "expo") {
       "856703659616-8e0k1obmgom04783jjf695hkianm4hme.apps.googleusercontent.com",
   });
 }
+
+// Device limit constant
+const MAX_DEVICES = 2;
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const getAccountStateKey = (uid) => `accountState:${uid}`;
@@ -136,8 +153,13 @@ export const AppProvider = ({ children }) => {
   const [isPremium, setIsPremium] = useState(false);
   const [accountPremium, setAccountPremium] = useState(false);
   const [revenueCatPremium, setRevenueCatPremium] = useState(false);
+  const [deviceLimitReached, setDeviceLimitReached] = useState(false);
+  const [registeredDevices, setRegisteredDevices] = useState([]);
+  const [isScreenCapturePrevented, setIsScreenCapturePrevented] =
+    useState(false);
   const isLoggingOutRef = useRef(false);
   const cloudHydratedRef = useRef(false);
+  const currentDeviceIdRef = useRef(null);
 
   const totalItems =
     TOTAL_LEAF_CONTENT_ITEMS > 0 ? TOTAL_LEAF_CONTENT_ITEMS : 1;
@@ -178,6 +200,98 @@ export const AppProvider = ({ children }) => {
     setIsPremium(accountPremium || revenueCatPremium);
   }, [accountPremium, revenueCatPremium]);
 
+  // Register device and check device limit
+  const registerDeviceForUser = async (userId) => {
+    try {
+      const deviceInfo = await getDeviceInfo();
+      const deviceId = deviceInfo.deviceId;
+      currentDeviceIdRef.current = deviceId;
+
+      const userDocRef = doc(db, "users", userId);
+      const userDoc = await Promise.race([
+        getDoc(userDocRef),
+        timeoutPromise(5000),
+      ]);
+
+      const userData = userDoc.exists() ? userDoc.data() : {};
+      const devices = userData.devices || [];
+
+      // Check if this device is already registered
+      const existingDeviceIndex = devices.findIndex(
+        (d) => d.deviceId === deviceId,
+      );
+      const isExistingDevice = existingDeviceIndex >= 0;
+
+      // Update last active time for existing device or prepare new device
+      const updatedDeviceInfo = {
+        ...deviceInfo,
+        lastActive: new Date().toISOString(),
+        isCurrentDevice: true,
+      };
+
+      if (isExistingDevice) {
+        // Update existing device's last active time
+        const updatedDevices = [...devices];
+        updatedDevices[existingDeviceIndex] = updatedDeviceInfo;
+
+        await updateDoc(
+          userDocRef,
+          {
+            devices: updatedDevices,
+          },
+          { merge: true },
+        );
+
+        setRegisteredDevices(updatedDevices);
+
+        // If there's learning progress stored for this device, load it
+        if (userData.deviceStates && userData.deviceStates[deviceId]) {
+          const deviceState = userData.deviceStates[deviceId];
+          hydrateStoredState(deviceState);
+        }
+      } else {
+        // New device - check limit
+        if (devices.length >= MAX_DEVICES) {
+          // Device limit reached - check if we should replace an old device
+          setDeviceLimitReached(true);
+          setRegisteredDevices(devices);
+
+          // Find oldest device to suggest removal (but don't auto-remove)
+          const sortedDevices = [...devices].sort((a, b) => {
+            const aTime = a.lastActive ? new Date(a.lastActive).getTime() : 0;
+            const bTime = b.lastActive ? new Date(b.lastActive).getTime() : 0;
+            return aTime - bTime; // Oldest first
+          });
+
+          return {
+            success: false,
+            limitReached: true,
+            devices: sortedDevices,
+            currentDeviceId: deviceId,
+          };
+        }
+
+        // Under limit - add this device
+        const newDevices = [...devices, updatedDeviceInfo];
+
+        await updateDoc(
+          userDocRef,
+          {
+            devices: newDevices,
+          },
+          { merge: true },
+        );
+
+        setRegisteredDevices(newDevices);
+      }
+
+      return { success: true, limitReached: false };
+    } catch (error) {
+      console.error("Error registering device:", error);
+      return { success: false, limitReached: false, error };
+    }
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
@@ -193,6 +307,24 @@ export const AppProvider = ({ children }) => {
         }
 
         try {
+          // First, register device and check limit
+          const deviceResult = await registerDeviceForUser(firebaseUser.uid);
+
+          if (!deviceResult.success && deviceResult.limitReached) {
+            // Device limit reached - sign out and alert
+            setDeviceLimitReached(true);
+            setUser(null);
+            cloudHydratedRef.current = true;
+
+            // Sign out immediately
+            try {
+              await signOut(auth);
+            } catch (_) {}
+
+            // Don't proceed with login
+            return;
+          }
+
           const userDoc = await Promise.race([
             getDoc(doc(db, "users", firebaseUser.uid)),
             timeoutPromise(8000),
@@ -209,10 +341,13 @@ export const AppProvider = ({ children }) => {
             isAdmin,
           };
 
+          // Load cloud state for learning progress
           const cloudState = hydrateStoredState(data);
           setUser(userData);
           setAccountPremium(Boolean(premiumStatus));
+          setDeviceLimitReached(false);
           cloudHydratedRef.current = true;
+
           await AsyncStorage.setItem("user", JSON.stringify(userData));
           await AsyncStorage.setItem(
             getAccountStateKey(firebaseUser.uid),
@@ -249,6 +384,10 @@ export const AppProvider = ({ children }) => {
         }
       } else {
         cloudHydratedRef.current = false;
+        setDeviceLimitReached(false);
+        setRegisteredDevices([]);
+        currentDeviceIdRef.current = null;
+
         try {
           const storedUser = await AsyncStorage.getItem("user");
           if (storedUser) {
@@ -293,12 +432,39 @@ export const AppProvider = ({ children }) => {
     }
   }, [user]);
 
+  // Initialize screen capture protection on app start
+  useEffect(() => {
+    const initScreenCaptureProtection = async () => {
+      if (Platform.OS === "android") {
+        await enableScreenCaptureProtection();
+        setIsScreenCapturePrevented(true);
+      } else if (Platform.OS === "ios") {
+        // For iOS, subscribe to capture change events
+        const unsubscribe = subscribeToScreenCaptureChange((isCaptured) => {
+          setIsScreenCapturePrevented(isCaptured);
+        });
+        return unsubscribe;
+      }
+    };
+
+    initScreenCaptureProtection();
+  }, []);
+
+  // Load state from local storage ONLY if not authenticated (guest mode)
+  // When authenticated, data comes from cloud via hydrateStoredState in onAuthStateChanged
   useEffect(() => {
     const loadState = async () => {
+      // Skip if user is authenticated - cloud data will be loaded via onAuthStateChanged
+      // We only load local state for guest/unauthenticated users
       try {
-        const storedReadItems = await AsyncStorage.getItem("readItems");
-        if (cloudHydratedRef.current) return;
+        const storedUser = await AsyncStorage.getItem("user");
+        if (storedUser) {
+          // User is logged in, skip local load - cloud should provide data
+          return;
+        }
 
+        // Guest user - load from local storage
+        const storedReadItems = await AsyncStorage.getItem("readItems");
         const parsedReadItems = storedReadItems
           ? JSON.parse(storedReadItems)
           : [];
@@ -308,7 +474,6 @@ export const AppProvider = ({ children }) => {
 
         const storedReadItemVersions =
           await AsyncStorage.getItem("readItemVersions");
-        if (cloudHydratedRef.current) return;
         const parsedReadItemVersions = storedReadItemVersions
           ? JSON.parse(storedReadItemVersions)
           : {};
@@ -322,38 +487,32 @@ export const AppProvider = ({ children }) => {
         );
 
         const storedBookmarks = await AsyncStorage.getItem("bookmarks");
-        if (cloudHydratedRef.current) return;
         if (storedBookmarks) {
           setBookmarks(normalizeBookmarks(JSON.parse(storedBookmarks)));
         }
 
         const storedHighlights = await AsyncStorage.getItem("highlights");
-        if (cloudHydratedRef.current) return;
         if (storedHighlights) {
           setHighlights(JSON.parse(storedHighlights));
         }
 
         const storedStreak = await AsyncStorage.getItem("currentStreak");
-        if (cloudHydratedRef.current) return;
         if (storedStreak) {
           setCurrentStreak(parseInt(storedStreak, 10));
         }
 
         const storedLastRead = await AsyncStorage.getItem("lastReadDate");
-        if (cloudHydratedRef.current) return;
         if (storedLastRead) {
           setLastReadDate(storedLastRead);
         }
 
         const storedScore = await AsyncStorage.getItem("studyScore");
-        if (cloudHydratedRef.current) return;
         if (storedScore) {
           setStudyScore(parseInt(storedScore, 10));
         }
 
         const storedDailyHistory =
           await AsyncStorage.getItem("dailyReadHistory");
-        if (cloudHydratedRef.current) return;
         if (storedDailyHistory) {
           setDailyReadHistory(JSON.parse(storedDailyHistory));
         }
@@ -374,7 +533,18 @@ export const AppProvider = ({ children }) => {
 
   useEffect(() => {
     const saveState = async () => {
+      // Don't save if logging out or not authenticated
+      if (isLoggingOutRef.current || !user || !user.uid) {
+        return;
+      }
+
+      // Don't save until cloud is hydrated
+      if (!cloudHydratedRef.current) {
+        return;
+      }
+
       try {
+        // Save to local AsyncStorage
         await AsyncStorage.setItem("readItems", JSON.stringify(readItems));
         await AsyncStorage.setItem(
           "readItemVersions",
@@ -392,49 +562,63 @@ export const AppProvider = ({ children }) => {
           JSON.stringify(dailyReadHistory),
         );
 
-        if (user && user.uid) {
-          const accountStateSnapshot = {
-            readItems,
-            readItemVersions,
-            bookmarks,
-            currentStreak,
-            lastReadDate: lastReadDate || null,
-            dailyReadHistory,
-            studyScore,
-          };
-          await AsyncStorage.setItem(
-            getAccountStateKey(user.uid),
-            JSON.stringify(accountStateSnapshot),
-          );
-        }
+        const accountStateSnapshot = {
+          readItems,
+          readItemVersions,
+          bookmarks,
+          currentStreak,
+          lastReadDate: lastReadDate || null,
+          dailyReadHistory,
+          studyScore,
+        };
 
-        if (user) await AsyncStorage.setItem("user", JSON.stringify(user));
-        else await AsyncStorage.removeItem("user");
+        // Save to user's cached state in AsyncStorage
+        await AsyncStorage.setItem(
+          getAccountStateKey(user.uid),
+          JSON.stringify(accountStateSnapshot),
+        );
+
+        await AsyncStorage.setItem("user", JSON.stringify(user));
         await AsyncStorage.setItem("isPremium", JSON.stringify(isPremium));
 
-        if (
-          user &&
-          user.uid &&
-          !isLoggingOutRef.current &&
-          cloudHydratedRef.current
-        ) {
+        // Save to Firebase - both global (for initial load) and device-specific (for device limit)
+        if (user.uid && cloudHydratedRef.current) {
           try {
-            await setDoc(
-              doc(db, "users", user.uid),
-              {
-                readItems,
-                readItemVersions,
-                bookmarks,
-                currentStreak,
-                lastReadDate: lastReadDate || null,
-                dailyReadHistory,
-                studyScore,
-                syncedAt: serverTimestamp(),
-              },
-              { merge: true },
-            );
+            const deviceId =
+              currentDeviceIdRef.current || (await getDeviceId());
+
+            // Use updateDoc to update specific fields
+            await updateDoc(doc(db, "users", user.uid), {
+              // Global learning progress (latest state)
+              readItems,
+              readItemVersions,
+              bookmarks,
+              currentStreak,
+              lastReadDate: lastReadDate || null,
+              dailyReadHistory,
+              studyScore,
+              // Device-specific learning progress (for device switching)
+              [`deviceStates.${deviceId}`]: accountStateSnapshot,
+              // Update device last active
+              devices:
+                registeredDevices.length > 0
+                  ? registeredDevices
+                  : FieldValue.arrayUnion({
+                      deviceId,
+                      name:
+                        Device.deviceName ||
+                        Device.modelName ||
+                        "Unknown Device",
+                      type: Platform.OS,
+                      platform: Platform.OS,
+                      lastActive: new Date().toISOString(),
+                      isCurrentDevice: true,
+                    }),
+              syncedAt: serverTimestamp(),
+            });
           } catch (e) {
             // silently handle if they are offline
+            console.warn("Failed to sync to Firebase:", e?.message);
           }
         }
       } catch (error) {
@@ -454,6 +638,7 @@ export const AppProvider = ({ children }) => {
     dailyReadHistory,
     user,
     isPremium,
+    registeredDevices,
   ]);
 
   useEffect(() => {
@@ -817,6 +1002,9 @@ export const AppProvider = ({ children }) => {
     setUser(null);
     setAccountPremium(false);
     setRevenueCatPremium(false);
+    setDeviceLimitReached(false);
+    setRegisteredDevices([]);
+    currentDeviceIdRef.current = null;
     setReadItems([]);
     setReadItemVersions({});
     setBookmarks([]);
@@ -856,6 +1044,10 @@ export const AppProvider = ({ children }) => {
         login,
         logout,
         upgradeToPremium,
+        deviceLimitReached,
+        registeredDevices,
+        MAX_DEVICES,
+        isScreenCapturePrevented,
       }}
     >
       {children}

@@ -28,6 +28,7 @@ import AnthropometryScreen from "../screens/AnthropometryScreen";
 import VirtualMuseumScreen from "../screens/VirtualMuseumScreen";
 import BiostatsAssistantScreen from "../screens/BiostatsAssistantScreen";
 import NotificationsScreen from "../screens/NotificationsScreen";
+import DeviceManagementScreen from "../screens/DeviceManagementScreen";
 import { theme } from "../styles/theme";
 
 const Tab = createBottomTabNavigator();
@@ -202,6 +203,11 @@ const AppNavigator = () => {
               name="Profile"
               component={ProfileScreen}
               options={{ title: "My Profile" }}
+            />
+            <Stack.Screen
+              name="DeviceManagement"
+              component={DeviceManagementScreen}
+              options={{ title: "Device Management" }}
             />
           </>
         )}

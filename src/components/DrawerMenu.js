@@ -19,7 +19,8 @@ import { AppContext } from "../context/AppContext";
 import { theme } from "../styles/theme";
 
 const { width } = Dimensions.get("window");
-const DRAWER_WIDTH = width * 0.75;
+const isTabletBase = width >= 600;
+const DRAWER_WIDTH = isTabletBase ? Math.min(width * 0.4, 320) : width * 0.75;
 
 const MENU_ITEMS = [
   {

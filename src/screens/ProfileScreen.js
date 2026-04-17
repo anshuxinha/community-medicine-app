@@ -14,6 +14,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "../config/firebase";
 import { AppContext } from "../context/AppContext";
 import { theme } from "../styles/theme";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -72,6 +73,10 @@ const ProfileScreen = () => {
 
   const handleUpgradePremium = () => {
     navigation.navigate("Paywall");
+  };
+
+  const handleDeviceManagement = () => {
+    navigation.navigate("DeviceManagement");
   };
 
   const articlesRead = readItems?.length || 0;
@@ -242,6 +247,27 @@ const ProfileScreen = () => {
                 />
               </View>
               <Text style={styles.actionLabel}>Send Feedback</Text>
+              <MaterialIcons
+                name="chevron-right"
+                size={20}
+                color={theme.colors.textPlaceholder}
+              />
+            </TouchableOpacity>
+
+            <Divider style={styles.actionDivider} />
+
+            <TouchableOpacity
+              style={styles.actionItem}
+              onPress={handleDeviceManagement}
+            >
+              <View style={styles.actionIconBox}>
+                <MaterialIcons
+                  name="devices"
+                  size={20}
+                  color={theme.colors.secondary}
+                />
+              </View>
+              <Text style={styles.actionLabel}>Device Management</Text>
               <MaterialIcons
                 name="chevron-right"
                 size={20}
