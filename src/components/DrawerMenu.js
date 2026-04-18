@@ -17,6 +17,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "../config/firebase";
 import { AppContext } from "../context/AppContext";
 import { theme } from "../styles/theme";
+import Constants from "expo-constants";
 
 const { width } = Dimensions.get("window");
 const isTabletBase = width >= 600;
@@ -229,7 +230,9 @@ const DrawerMenu = ({ visible, onClose, user }) => {
         </ScrollView>
 
         {/* Footer version */}
-        <Text style={styles.version}>STROMA v1.0.0</Text>
+        <Text style={styles.version}>
+          STROMA v{Constants.expoConfig?.version || "1.0.0"}
+        </Text>
       </Animated.View>
     </Modal>
   );

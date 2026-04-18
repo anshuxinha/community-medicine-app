@@ -14,12 +14,15 @@ import { signOut } from "firebase/auth";
 import { auth } from "../config/firebase";
 import { AppContext } from "../context/AppContext";
 import { theme } from "../styles/theme";
+import Constants from "expo-constants";
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const {
     user,
     isPremium,
+    premiumType,
+    subscriptionExpiry,
     currentStreak,
     studyScore,
     readingProgress,
@@ -27,6 +30,41 @@ const ProfileScreen = () => {
     readItems,
     logout,
   } = React.useContext(AppContext);
+
+  // Helper function to calculate subscription expiry display
+  const getSubscriptionExpiryDisplay = () => {
+    // If premiumType is "lifetime", show "Lifetime"
+    if (premiumType === "lifetime") {
+      return "Lifetime";
+    }
+
+    // If subscriptionExpiry exists and is a valid date
+    if (subscriptionExpiry) {
+      const expiryDate = new Date(subscriptionExpiry);
+      if (!Number.isNaN(expiryDate.getTime())) {
+        const now = new Date();
+        const diffMs = expiryDate - now;
+        const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+        if (diffDays < 0) {
+          return "Expired";
+        } else if (diffDays < 30) {
+          return `${diffDays} day${diffDays !== 1 ? "s" : ""}`;
+        } else {
+          const months = Math.ceil(diffDays / 30);
+          return `${months} month${months !== 1 ? "s" : ""}`;
+        }
+      }
+    }
+
+    // If isPremium is true but no explicit type/expiry, default to "Lifetime"
+    if (isPremium) {
+      return "Lifetime";
+    }
+
+    // Not premium
+    return "—";
+  };
 
   const displayName = user?.username || user?.displayName || "STROMA User";
   const initials =
@@ -209,6 +247,12 @@ const ProfileScreen = () => {
               </Text>
             </View>
             <Divider style={styles.accountDivider} />
+            <View style={styles.accountRow}>
+              <Text style={styles.accountLabel}>Subscription Expiry</Text>
+              <Text style={styles.accountValue}>
+                {getSubscriptionExpiryDisplay()}
+              </Text>
+            </View>
           </Card.Content>
         </Card>
 
@@ -304,7 +348,9 @@ const ProfileScreen = () => {
         </TouchableOpacity>
 
         {/* App Version */}
-        <Text style={styles.version}>STROMA v1.0.0</Text>
+        <Text style={styles.version}>
+          STROMA v{Constants.expoConfig?.version || "1.0.0"}
+        </Text>
 
         <View style={styles.bottomPadding} />
       </ScrollView>

@@ -150,6 +150,8 @@ export const AppProvider = ({ children }) => {
 
   const [user, setUser] = useState(undefined);
   const [isPremium, setIsPremium] = useState(false);
+  const [premiumType, setPremiumType] = useState(null);
+  const [subscriptionExpiry, setSubscriptionExpiry] = useState(null);
   const [accountPremium, setAccountPremium] = useState(false);
   const [revenueCatPremium, setRevenueCatPremium] = useState(false);
   const [deviceLimitReached, setDeviceLimitReached] = useState(false);
@@ -324,14 +326,32 @@ export const AppProvider = ({ children }) => {
             return;
           }
 
+          // Reload devices from Firestore after registration to ensure
+          // DeviceManagementScreen shows the correct device count
+          const { getDoc } = require("firebase/firestore");
+          const userDocRef = doc(db, "users", firebaseUser.uid);
           const userDoc = await Promise.race([
-            getDoc(doc(db, "users", firebaseUser.uid)),
+            getDoc(userDocRef),
             timeoutPromise(8000),
           ]);
-
           const data = userDoc.exists() ? userDoc.data() : {};
+
+          if (userDoc.exists()) {
+            const devices = data.devices || [];
+            const currentDeviceId = currentDeviceIdRef.current;
+            const deviceList = devices.map((d) => ({
+              ...d,
+              isCurrentDevice: d.deviceId === currentDeviceId,
+            }));
+            setRegisteredDevices(deviceList);
+          }
+
           const premiumStatus = data.isPremium === true || claimsPremium;
           const isAdmin = data.isAdmin === true || claimsAdmin;
+          // Extract premiumType from Firestore
+          const fetchedPremiumType = data.premiumType || null;
+          setPremiumType(fetchedPremiumType);
+
           const userData = {
             uid: firebaseUser.uid,
             email: firebaseUser.email,
@@ -435,10 +455,13 @@ export const AppProvider = ({ children }) => {
   useEffect(() => {
     const initScreenCaptureProtection = async () => {
       if (Platform.OS === "android") {
+        // Android's FLAG_SECURE silently blocks capture without callbacks.
+        // We can't detect when capture is actually happening, so we don't
+        // show the overlay on Android - FLAG_SECURE provides the protection.
         await enableScreenCaptureProtection();
-        setIsScreenCapturePrevented(true);
       } else if (Platform.OS === "ios") {
-        // For iOS, subscribe to capture change events
+        // For iOS, subscribe to capture change events to update state
+        // based on actual capture detection.
         const unsubscribe = subscribeToScreenCaptureChange((isCaptured) => {
           setIsScreenCapturePrevented(isCaptured);
         });
@@ -878,6 +901,9 @@ export const AppProvider = ({ children }) => {
     Purchases.addCustomerInfoUpdateListener((info) => {
       const hasPremium = hasRevenueCatPremiumEntitlement(info);
       setRevenueCatPremium(hasPremium);
+      // Extract subscription expiry from RevenueCat
+      const expiresDate = info?.subscriptions?.Premium?.expiresDate;
+      setSubscriptionExpiry(expiresDate || null);
       if (hasPremium) {
         persistPremiumAccess({ premiumSource: "revenuecat_listener" });
       }
@@ -889,6 +915,9 @@ export const AppProvider = ({ children }) => {
       .then((info) => {
         const hasPremium = hasRevenueCatPremiumEntitlement(info);
         setRevenueCatPremium(hasPremium);
+        // Extract subscription expiry from RevenueCat
+        const expiresDate = info?.subscriptions?.Premium?.expiresDate;
+        setSubscriptionExpiry(expiresDate || null);
         if (hasPremium) {
           persistPremiumAccess({ premiumSource: "revenuecat_initial_check" });
         }
@@ -909,6 +938,9 @@ export const AppProvider = ({ children }) => {
       .then(({ customerInfo }) => {
         const hasPremium = hasRevenueCatPremiumEntitlement(customerInfo);
         setRevenueCatPremium(hasPremium);
+        // Extract subscription expiry from RevenueCat
+        const expiresDate = customerInfo?.subscriptions?.Premium?.expiresDate;
+        setSubscriptionExpiry(expiresDate || null);
         if (hasPremium) {
           persistPremiumAccess({ premiumSource: "revenuecat_login" });
         }
@@ -959,6 +991,9 @@ export const AppProvider = ({ children }) => {
         .then(({ customerInfo }) => {
           const hasPremium = hasRevenueCatPremiumEntitlement(customerInfo);
           setRevenueCatPremium(hasPremium);
+          // Extract subscription expiry from RevenueCat
+          const expiresDate = customerInfo?.subscriptions?.Premium?.expiresDate;
+          setSubscriptionExpiry(expiresDate || null);
           if (hasPremium) {
             persistPremiumAccess({ premiumSource: "revenuecat_login" });
           }
@@ -1040,6 +1075,8 @@ export const AppProvider = ({ children }) => {
         clearStorage,
         user,
         isPremium,
+        premiumType,
+        subscriptionExpiry,
         login,
         logout,
         upgradeToPremium,
