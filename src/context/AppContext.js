@@ -609,8 +609,9 @@ export const AppProvider = ({ children }) => {
             const deviceId =
               currentDeviceIdRef.current || (await getDeviceId());
 
-            // Use updateDoc to update specific fields
-            await updateDoc(doc(db, "users", user.uid), {
+            // Build update object - device registration happens in registerDeviceForUser,
+            // not here. Only update devices array if we have registered devices.
+            const updateData = {
               // Global learning progress (latest state)
               readItems,
               readItemVersions,
@@ -621,23 +622,22 @@ export const AppProvider = ({ children }) => {
               studyScore,
               // Device-specific learning progress (for device switching)
               [`deviceStates.${deviceId}`]: accountStateSnapshot,
-              // Update device last active
-              devices:
-                registeredDevices.length > 0
-                  ? registeredDevices
-                  : FieldValue.arrayUnion({
-                      deviceId,
-                      name:
-                        Device.deviceName ||
-                        Device.modelName ||
-                        "Unknown Device",
-                      type: Platform.OS,
-                      platform: Platform.OS,
-                      lastActive: new Date().toISOString(),
-                      isCurrentDevice: true,
-                    }),
               syncedAt: serverTimestamp(),
-            });
+            };
+
+            // Only update devices array if we have registered devices.
+            // Device registration is handled by registerDeviceForUser, not here.
+            // Using arrayUnion with an empty fallback caused race conditions
+            // where devices weren't properly tracked.
+            if (registeredDevices && registeredDevices.length > 0) {
+              updateData.devices = registeredDevices.map((d) =>
+                d.deviceId === deviceId
+                  ? { ...d, lastActive: new Date().toISOString() }
+                  : d,
+              );
+            }
+
+            await updateDoc(doc(db, "users", user.uid), updateData);
           } catch (e) {
             // silently handle if they are offline
             console.warn("Failed to sync to Firebase:", e?.message);
