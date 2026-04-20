@@ -1,8 +1,9 @@
 import React, { createContext, useState, useEffect, useRef } from "react";
 import { AppState, Platform } from "react-native";
 import {
-  useScreenCaptureProtection,
-  useScreenCaptureDetection,
+  enableScreenCaptureProtection,
+  disableScreenCaptureProtection,
+  subscribeToScreenCaptureChange,
 } from "../utils/screenCaptureProtection";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Device from "expo-device";
@@ -450,21 +451,26 @@ export const AppProvider = ({ children }) => {
     }
   }, [user]);
 
-  // Initialize screen capture protection using expo-screen-capture
-  // - On Android: preventScreenCapture() applies FLAG_SECURE to block screenshots
-  // - On iOS: preventScreenCapture() makes window secure + addScreenshotListener for overlay
+  // Initialize screen capture protection on app start
   useEffect(() => {
-    useScreenCaptureProtection();
-  }, []);
+    const initScreenCaptureProtection = async () => {
+      if (Platform.OS === "android") {
+        // Android's FLAG_SECURE silently blocks capture without callbacks.
+        // We can't detect when capture is actually happening, so we don't
+        // show the overlay on Android - FLAG_SECURE provides the protection.
+        await enableScreenCaptureProtection();
+      } else if (Platform.OS === "ios") {
+        // For iOS, subscribe to capture change events to update state
+        // based on actual capture detection.
+        const unsubscribe = subscribeToScreenCaptureChange((isCaptured) => {
+          setIsScreenCapturePrevented(isCaptured);
+        });
+        return unsubscribe;
+      }
+    };
 
-  // Set up screen capture detection callback for iOS to show overlay
-  const handleScreenCaptureChange = useCallback((isCaptured) => {
-    setIsScreenCapturePrevented(isCaptured);
+    initScreenCaptureProtection();
   }, []);
-
-  useEffect(() => {
-    useScreenCaptureDetection(handleScreenCaptureChange);
-  }, [handleScreenCaptureChange]);
 
   // Load state from local storage ONLY if not authenticated (guest mode)
   // When authenticated, data comes from cloud via hydrateStoredState in onAuthStateChanged
