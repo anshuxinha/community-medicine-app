@@ -25,7 +25,6 @@ import {
   getUpdatedSegmentsForItem,
 } from "../utils/contentRegistry";
 import { theme, useResponsive } from "../styles/theme";
-import { useFocusedScreenCaptureProtection } from "./useFocusedScreenCaptureProtection";
 
 const SECTION_ID_ICON_MAP = {
   "theory:27": "clipboard-text-search-outline",
@@ -85,8 +84,6 @@ const LibraryScreen = (props) => {
   const [openMenuKey, setOpenMenuKey] = useState(null);
   const insets = useSafeAreaInsets();
   const { isTablet, horizontalPadding, contentMaxWidth } = useResponsive();
-
-  useFocusedScreenCaptureProtection("library-screen");
 
   const currentTopics =
     activeSection === "theory" ? theoryTopics : practicalTopics;

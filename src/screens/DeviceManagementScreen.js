@@ -11,89 +11,55 @@ import { Text, Card, Divider, ActivityIndicator } from "react-native-paper";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppContext } from "../context/AppContext";
-import { getDeviceId, getDeviceInfo } from "../utils/deviceUtils";
+import { getDeviceId } from "../utils/deviceUtils";
 import { db } from "../config/firebase";
 import {
   doc,
-  getDoc,
-  setDoc,
-  deleteField,
+  updateDoc,
+  arrayRemove,
   serverTimestamp,
 } from "firebase/firestore";
 import { theme } from "../styles/theme";
 
 const MAX_DEVICES = 2;
 
-const getStoredDeviceInfo = (deviceInfo) => ({
-  deviceId: deviceInfo.deviceId,
-  name: deviceInfo.name,
-  type: deviceInfo.type,
-  platform: deviceInfo.platform,
-  lastActive: deviceInfo.lastActive || new Date().toISOString(),
-});
-
-const markCurrentDevice = (devices, currentDeviceId) =>
-  devices.map((device) => ({
-    ...device,
-    isCurrentDevice: device.deviceId === currentDeviceId,
-  }));
-
 const DeviceManagementScreen = () => {
-  const { user, registeredDevices } = React.useContext(AppContext);
+  const { user } = React.useContext(AppContext);
   const [devices, setDevices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [removingDeviceId, setRemovingDeviceId] = useState(null);
 
   const loadDevices = useCallback(async () => {
-    if (!user?.uid) {
-      setDevices([]);
-      setLoading(false);
-      return;
-    }
+    if (!user?.uid) return;
 
     try {
+      const { getDoc } = require("firebase/firestore");
       const userDoc = await getDoc(doc(db, "users", user.uid));
-      const data = userDoc.exists() ? userDoc.data() : {};
-      const currentDeviceId = await getDeviceId();
-      const currentDeviceInfo = getStoredDeviceInfo(await getDeviceInfo());
-      let deviceList = data.devices || registeredDevices || [];
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        const currentDeviceId = await getDeviceId();
 
-      if (!deviceList.some((device) => device.deviceId === currentDeviceId)) {
-        deviceList = [currentDeviceInfo, ...deviceList];
+        // Mark current device
+        const deviceList = (data.devices || []).map((d) => ({
+          ...d,
+          isCurrentDevice: d.deviceId === currentDeviceId,
+        }));
 
-        if (deviceList.length <= MAX_DEVICES) {
-          await setDoc(
-            doc(db, "users", user.uid),
-            {
-              devices: deviceList,
-              [`deviceStates.${currentDeviceId}`]: data.deviceStates?.[
-                currentDeviceId
-              ] || {},
-              syncedAt: serverTimestamp(),
-            },
-            { merge: true },
-          );
-        }
+        // Sort: current device first
+        deviceList.sort((a, b) => {
+          if (a.isCurrentDevice) return -1;
+          if (b.isCurrentDevice) return 1;
+          return 0;
+        });
+
+        setDevices(deviceList);
       }
-
-      const displayDevices = markCurrentDevice(deviceList, currentDeviceId);
-
-      // Sort: current device first
-      displayDevices.sort((a, b) => {
-        if (a.isCurrentDevice) return -1;
-        if (b.isCurrentDevice) return 1;
-        return 0;
-      });
-
-      setDevices(displayDevices);
     } catch (error) {
       console.error("Error loading devices:", error);
-      const currentDeviceInfo = getStoredDeviceInfo(await getDeviceInfo());
-      setDevices(markCurrentDevice([currentDeviceInfo], currentDeviceInfo.deviceId));
     } finally {
       setLoading(false);
     }
-  }, [registeredDevices, user?.uid]);
+  }, [user?.uid]);
 
   useEffect(() => {
     loadDevices();
@@ -120,20 +86,16 @@ const DeviceManagementScreen = () => {
     setRemovingDeviceId(deviceToRemove.deviceId);
 
     try {
-      const remainingDevices = devices
-        .filter((d) => d.deviceId !== deviceToRemove.deviceId)
-        .map(getStoredDeviceInfo);
+      // Remove device from devices array
+      await updateDoc(doc(db, "users", user.uid), {
+        devices: arrayRemove(deviceToRemove),
+      });
 
-      await setDoc(
-        doc(db, "users", user.uid),
-        {
-          devices: remainingDevices,
-          [`deviceStates.${deviceToRemove.deviceId}`]: deleteField(),
-          [`revokedDeviceIds.${deviceToRemove.deviceId}`]: true,
-          syncedAt: serverTimestamp(),
-        },
-        { merge: true },
-      );
+      // Also remove the device's individual state
+      const { FieldValue } = require("firebase/firestore");
+      await updateDoc(doc(db, "users", user.uid), {
+        [`deviceStates.${deviceToRemove.deviceId}`]: FieldValue.delete(),
+      });
 
       setDevices((prev) =>
         prev.filter((d) => d.deviceId !== deviceToRemove.deviceId),
@@ -167,26 +129,19 @@ const DeviceManagementScreen = () => {
 
     try {
       const currentDeviceId = await getDeviceId();
-      const currentDevices = devices.filter(
-        (device) => device.deviceId === currentDeviceId,
-      );
-      const removedDevices = devices.filter(
-        (device) => device.deviceId !== currentDeviceId,
-      );
+      const { FieldValue } = require("firebase/firestore");
 
-      const updates = {
-        devices: currentDevices.map(getStoredDeviceInfo),
-        syncedAt: serverTimestamp(),
-      };
+      // Remove all other devices
+      for (const device of devices) {
+        if (device.deviceId !== currentDeviceId) {
+          await updateDoc(doc(db, "users", user.uid), {
+            devices: arrayRemove(device),
+            [`deviceStates.${device.deviceId}`]: FieldValue.delete(),
+          });
+        }
+      }
 
-      removedDevices.forEach((device) => {
-        updates[`deviceStates.${device.deviceId}`] = deleteField();
-        updates[`revokedDeviceIds.${device.deviceId}`] = true;
-      });
-
-      await setDoc(doc(db, "users", user.uid), updates, { merge: true });
-
-      setDevices(markCurrentDevice(currentDevices, currentDeviceId));
+      setDevices((prev) => prev.filter((d) => d.deviceId === currentDeviceId));
       Alert.alert("Success", "Logged out from all other devices.");
     } catch (error) {
       console.error("Error logging out from other devices:", error);

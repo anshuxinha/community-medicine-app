@@ -16,7 +16,6 @@ import { useNavigation } from "@react-navigation/native";
 import { MUSEUM_ITEMS, CATEGORIES, FREE_CATEGORY } from "../data/museumData";
 import { AppContext } from "../context/AppContext";
 import { theme } from "../styles/theme";
-import { useFocusedScreenCaptureProtection } from "./useFocusedScreenCaptureProtection";
 
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 3;
@@ -203,8 +202,6 @@ const MuseumCard = ({ item }) => {
 
 // ── Main screen ─────────────────────────────────────────────
 const VirtualMuseumScreen = () => {
-  useFocusedScreenCaptureProtection("virtual-museum-screen");
-
   const { isPremium, isScreenCapturePrevented } = useContext(AppContext);
   const navigation = useNavigation();
   const [activeCategory, setActiveCategory] = useState(FREE_CATEGORY);
