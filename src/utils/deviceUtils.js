@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Platform, Device } from "react-native";
+import { Platform } from "react-native";
+import * as Device from "expo-device";
 
 // Generate a unique device identifier
 export const getDeviceId = async () => {

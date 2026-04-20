@@ -13,6 +13,7 @@ import {
   getUpdatedSegmentsForItem,
 } from "../utils/contentRegistry";
 import { getTopicIllustrations } from "../services/topicIllustrations";
+import { useFocusedScreenCaptureProtection } from "./useFocusedScreenCaptureProtection";
 
 const ReadingScreen = ({ route }) => {
   const {
@@ -34,6 +35,8 @@ const ReadingScreen = ({ route }) => {
     readItemVersions,
     isScreenCapturePrevented,
   } = useContext(AppContext);
+  useFocusedScreenCaptureProtection("reading-screen");
+
   const [isSpeaking, setIsSpeaking] = React.useState(false);
   const speechSessionRef = useRef(0);
   const speechQueueRef = useRef([]);

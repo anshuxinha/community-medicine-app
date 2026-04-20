@@ -23,7 +23,7 @@ import {
   getIdTokenResult,
   signOut,
 } from "firebase/auth";
-import { doc, setDoc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import { doc, setDoc, getDoc, deleteField } from "firebase/firestore";
 import Constants from "expo-constants";
 import { theme } from "../styles/theme";
 import { getDeviceInfo } from "../utils/deviceUtils";
@@ -45,6 +45,14 @@ const timeoutPromise = (ms) =>
   );
 
 const MAX_DEVICES = 2;
+
+const getStoredDeviceInfo = (deviceInfo) => ({
+  deviceId: deviceInfo.deviceId,
+  name: deviceInfo.name,
+  type: deviceInfo.type,
+  platform: deviceInfo.platform,
+  lastActive: deviceInfo.lastActive || new Date().toISOString(),
+});
 
 // ── Device registration and limit check ───
 const checkAndRegisterDevice = async (userId) => {
@@ -69,15 +77,19 @@ const checkAndRegisterDevice = async (userId) => {
     if (isExistingDevice) {
       // Update last active time for existing device
       const updatedDevices = [...devices];
-      updatedDevices[existingDeviceIndex] = {
+      updatedDevices[existingDeviceIndex] = getStoredDeviceInfo({
         ...deviceInfo,
         lastActive: new Date().toISOString(),
-        isCurrentDevice: true,
-      };
-
-      await updateDoc(userDocRef, {
-        devices: updatedDevices,
       });
+
+      await setDoc(
+        userDocRef,
+        {
+          devices: updatedDevices,
+          [`revokedDeviceIds.${deviceInfo.deviceId}`]: deleteField(),
+        },
+        { merge: true },
+      );
 
       return { success: true, limitReached: false };
     }
@@ -93,15 +105,19 @@ const checkAndRegisterDevice = async (userId) => {
     }
 
     // Under limit - add this device
-    const newDevice = {
+    const newDevice = getStoredDeviceInfo({
       ...deviceInfo,
       lastActive: new Date().toISOString(),
-      isCurrentDevice: true,
-    };
-
-    await updateDoc(userDocRef, {
-      devices: arrayUnion(newDevice),
     });
+
+    await setDoc(
+      userDocRef,
+      {
+        devices: [...devices, newDevice],
+        [`revokedDeviceIds.${deviceInfo.deviceId}`]: deleteField(),
+      },
+      { merge: true },
+    );
 
     return { success: true, limitReached: false };
   } catch (error) {
@@ -167,7 +183,7 @@ const LoginScreen = () => {
             email: user.email,
             isPremium: claimsPremium,
             createdAt: new Date().toISOString(),
-          });
+          }, { merge: true });
         }
       } catch (err) {
         // Offline or timeout - gracefully fallback to non-premium
@@ -231,7 +247,7 @@ const LoginScreen = () => {
           email,
           isPremium: false,
           createdAt: new Date().toISOString(),
-        });
+        }, { merge: true });
         login({ uid: user.uid, email, username: "New User", isPremium: false });
       } else {
         const userCredential = await signInWithEmailAndPassword(

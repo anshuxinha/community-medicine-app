@@ -5,6 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { theme } from '../styles/theme';
 import { AppContext } from '../context/AppContext';
+import { useFocusedScreenCaptureProtection } from './useFocusedScreenCaptureProtection';
 import {
     getContentKey,
     getContentSignature,
@@ -76,6 +77,7 @@ const buildReadingParams = (item, section, status) => ({
 
 const SubTopicsScreen = ({ route, navigation }) => {
     const { items, section = 'theory' } = route.params;
+    useFocusedScreenCaptureProtection('library-subtopics-screen');
     const { readItemVersions, markAsUnread } = useContext(AppContext);
     const [openMenuKey, setOpenMenuKey] = useState(null);
     const insets = useSafeAreaInsets();

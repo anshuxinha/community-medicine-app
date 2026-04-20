@@ -1,9 +1,5 @@
 import React, { createContext, useState, useEffect, useRef } from "react";
 import { AppState, Platform } from "react-native";
-import {
-  useScreenCaptureProtection,
-  useScreenCaptureDetection,
-} from "../utils/screenCaptureProtection";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Device from "expo-device";
 import Constants from "expo-constants";
@@ -13,9 +9,8 @@ import {
   getDoc,
   setDoc,
   updateDoc,
+  onSnapshot,
   serverTimestamp,
-  arrayUnion,
-  FieldValue,
 } from "firebase/firestore";
 import { getDeviceId, getDeviceInfo } from "../utils/deviceUtils";
 import { onAuthStateChanged, getIdTokenResult, signOut } from "firebase/auth";
@@ -46,6 +41,20 @@ if (Constants.appOwnership !== "expo") {
 
 // Device limit constant
 const MAX_DEVICES = 2;
+
+const getStoredDeviceInfo = (deviceInfo) => ({
+  deviceId: deviceInfo.deviceId,
+  name: deviceInfo.name,
+  type: deviceInfo.type,
+  platform: deviceInfo.platform,
+  lastActive: deviceInfo.lastActive || new Date().toISOString(),
+});
+
+const markCurrentDevice = (devices = [], currentDeviceId) =>
+  devices.map((device) => ({
+    ...device,
+    isCurrentDevice: device.deviceId === currentDeviceId,
+  }));
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const getAccountStateKey = (uid) => `accountState:${uid}`;
@@ -155,8 +164,6 @@ export const AppProvider = ({ children }) => {
   const [revenueCatPremium, setRevenueCatPremium] = useState(false);
   const [deviceLimitReached, setDeviceLimitReached] = useState(false);
   const [registeredDevices, setRegisteredDevices] = useState([]);
-  const [isScreenCapturePrevented, setIsScreenCapturePrevented] =
-    useState(false);
   const isLoggingOutRef = useRef(false);
   const cloudHydratedRef = useRef(false);
   const currentDeviceIdRef = useRef(null);
@@ -216,6 +223,10 @@ export const AppProvider = ({ children }) => {
       const userData = userDoc.exists() ? userDoc.data() : {};
       const devices = userData.devices || [];
 
+      if (userData.revokedDeviceIds?.[deviceId]) {
+        return { success: false, revoked: true, currentDeviceId: deviceId };
+      }
+
       // Check if this device is already registered
       const existingDeviceIndex = devices.findIndex(
         (d) => d.deviceId === deviceId,
@@ -224,9 +235,8 @@ export const AppProvider = ({ children }) => {
 
       // Update last active time for existing device or prepare new device
       const updatedDeviceInfo = {
-        ...deviceInfo,
+        ...getStoredDeviceInfo(deviceInfo),
         lastActive: new Date().toISOString(),
-        isCurrentDevice: true,
       };
 
       if (isExistingDevice) {
@@ -234,15 +244,9 @@ export const AppProvider = ({ children }) => {
         const updatedDevices = [...devices];
         updatedDevices[existingDeviceIndex] = updatedDeviceInfo;
 
-        await updateDoc(
-          userDocRef,
-          {
-            devices: updatedDevices,
-          },
-          { merge: true },
-        );
+        await setDoc(userDocRef, { devices: updatedDevices }, { merge: true });
 
-        setRegisteredDevices(updatedDevices);
+        setRegisteredDevices(markCurrentDevice(updatedDevices, deviceId));
 
         // If there's learning progress stored for this device, load it
         if (userData.deviceStates && userData.deviceStates[deviceId]) {
@@ -274,15 +278,9 @@ export const AppProvider = ({ children }) => {
         // Under limit - add this device
         const newDevices = [...devices, updatedDeviceInfo];
 
-        await updateDoc(
-          userDocRef,
-          {
-            devices: newDevices,
-          },
-          { merge: true },
-        );
+        await setDoc(userDocRef, { devices: newDevices }, { merge: true });
 
-        setRegisteredDevices(newDevices);
+        setRegisteredDevices(markCurrentDevice(newDevices, deviceId));
       }
 
       return { success: true, limitReached: false };
@@ -310,9 +308,12 @@ export const AppProvider = ({ children }) => {
           // First, register device and check limit
           const deviceResult = await registerDeviceForUser(firebaseUser.uid);
 
-          if (!deviceResult.success && deviceResult.limitReached) {
-            // Device limit reached - sign out and alert
-            setDeviceLimitReached(true);
+          if (
+            !deviceResult.success &&
+            (deviceResult.limitReached || deviceResult.revoked)
+          ) {
+            // Device limit reached or this persisted session was revoked.
+            setDeviceLimitReached(Boolean(deviceResult.limitReached));
             setUser(null);
             cloudHydratedRef.current = true;
 
@@ -338,11 +339,7 @@ export const AppProvider = ({ children }) => {
           if (userDoc.exists()) {
             const devices = data.devices || [];
             const currentDeviceId = currentDeviceIdRef.current;
-            const deviceList = devices.map((d) => ({
-              ...d,
-              isCurrentDevice: d.deviceId === currentDeviceId,
-            }));
-            setRegisteredDevices(deviceList);
+            setRegisteredDevices(markCurrentDevice(devices, currentDeviceId));
           }
 
           const premiumStatus = data.isPremium === true || claimsPremium;
@@ -450,21 +447,59 @@ export const AppProvider = ({ children }) => {
     }
   }, [user]);
 
-  // Initialize screen capture protection using expo-screen-capture
-  // - On Android: preventScreenCapture() applies FLAG_SECURE to block screenshots
-  // - On iOS: preventScreenCapture() makes window secure + addScreenshotListener for overlay
   useEffect(() => {
-    useScreenCaptureProtection();
-  }, []);
+    if (!user?.uid) return undefined;
 
-  // Set up screen capture detection callback for iOS to show overlay
-  const handleScreenCaptureChange = useCallback((isCaptured) => {
-    setIsScreenCapturePrevented(isCaptured);
-  }, []);
+    const userDocRef = doc(db, "users", user.uid);
+    const unsubscribe = onSnapshot(
+      userDocRef,
+      (snapshot) => {
+        if (!snapshot.exists()) return;
 
-  useEffect(() => {
-    useScreenCaptureDetection(handleScreenCaptureChange);
-  }, [handleScreenCaptureChange]);
+        const currentDeviceId = currentDeviceIdRef.current;
+        const data = snapshot.data();
+        const cloudDevices = data.devices || [];
+        const revokedDeviceIds = data.revokedDeviceIds || {};
+        setRegisteredDevices(markCurrentDevice(cloudDevices, currentDeviceId));
+
+        if (
+          cloudHydratedRef.current &&
+          currentDeviceId &&
+          (revokedDeviceIds[currentDeviceId] ||
+            (cloudDevices.length > 0 &&
+              !cloudDevices.some(
+                (device) => device.deviceId === currentDeviceId,
+              )))
+        ) {
+          isLoggingOutRef.current = true;
+          signOut(auth).catch(() => {});
+          AsyncStorage.multiRemove([
+            "user",
+            "isPremium",
+            "readItems",
+            "readItemVersions",
+            "bookmarks",
+            "highlights",
+            "currentStreak",
+            "lastReadDate",
+            "studyScore",
+            "dailyReadHistory",
+          ]).catch(() => {});
+          setUser(null);
+          setAccountPremium(false);
+          setRevenueCatPremium(false);
+          setRegisteredDevices([]);
+          currentDeviceIdRef.current = null;
+        }
+      },
+      (error) => {
+        console.warn("Device registration listener failed:", error?.message);
+      },
+    );
+
+    return unsubscribe;
+  }, [user?.uid]);
+
 
   // Load state from local storage ONLY if not authenticated (guest mode)
   // When authenticated, data comes from cloud via hydrateStoredState in onAuthStateChanged
@@ -626,8 +661,11 @@ export const AppProvider = ({ children }) => {
             if (registeredDevices && registeredDevices.length > 0) {
               updateData.devices = registeredDevices.map((d) =>
                 d.deviceId === deviceId
-                  ? { ...d, lastActive: new Date().toISOString() }
-                  : d,
+                  ? getStoredDeviceInfo({
+                      ...d,
+                      lastActive: new Date().toISOString(),
+                    })
+                  : getStoredDeviceInfo(d),
               );
             }
 
@@ -1077,7 +1115,7 @@ export const AppProvider = ({ children }) => {
         deviceLimitReached,
         registeredDevices,
         MAX_DEVICES,
-        isScreenCapturePrevented,
+        isScreenCapturePrevented: false,
       }}
     >
       {children}
