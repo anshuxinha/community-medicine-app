@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useRef } from "react";
+import React, { useContext, useMemo, useRef, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import * as Speech from "expo-speech";
 import ReadingView from "../components/ReadingView";
@@ -13,6 +13,10 @@ import {
   getUpdatedSegmentsForItem,
 } from "../utils/contentRegistry";
 import { getTopicIllustrations } from "../services/topicIllustrations";
+import {
+  enableScreenCaptureProtection,
+  disableScreenCaptureProtection,
+} from "../utils/screenCaptureProtection";
 
 const ReadingScreen = ({ route }) => {
   const {
@@ -156,6 +160,13 @@ const ReadingScreen = ({ route }) => {
       isMounted = false;
     };
   }, [effectiveSection, effectiveId, effectiveContentKey]);
+
+  useEffect(() => {
+    enableScreenCaptureProtection();
+    return () => {
+      disableScreenCaptureProtection();
+    };
+  }, []);
 
   const bookmarkPayload = {
     ...route.params,

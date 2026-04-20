@@ -1,4 +1,8 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
+import {
+  enableScreenCaptureProtection,
+  disableScreenCaptureProtection,
+} from "../utils/screenCaptureProtection";
 import { View, StyleSheet, FlatList } from "react-native";
 import { Searchbar, Text, Card, Badge } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -78,6 +82,13 @@ const SearchScreen = ({ navigation }) => {
   const { readItemVersions } = useContext(AppContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+
+  useEffect(() => {
+    enableScreenCaptureProtection();
+    return () => {
+      disableScreenCaptureProtection();
+    };
+  }, []);
 
   const handleSearch = (text) => {
     setSearchQuery(text);

@@ -18,6 +18,10 @@ if (Constants.appOwnership !== "expo") {
 }
 import { AppContext } from "../context/AppContext";
 import { theme } from "../styles/theme";
+import {
+  enableScreenCaptureProtection,
+  disableScreenCaptureProtection,
+} from "../utils/screenCaptureProtection";
 
 // 30 unique coupon codes for ₹49 monthly subscription
 const VALID_COUPON_CODES = [
@@ -93,6 +97,13 @@ const PLAN_METADATA = [
 const PaywallScreen = ({ navigation }) => {
   const [selectedPlan, setSelectedPlan] = useState("yearly");
   const [isPurchasing, setIsPurchasing] = useState(false);
+
+  useEffect(() => {
+    enableScreenCaptureProtection();
+    return () => {
+      disableScreenCaptureProtection();
+    };
+  }, []);
   const [offerings, setOfferings] = useState(null);
   const [packages, setPackages] = useState({});
   const [loadError, setLoadError] = useState(null);

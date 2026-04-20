@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -15,6 +15,10 @@ import { auth } from "../config/firebase";
 import { AppContext } from "../context/AppContext";
 import { theme } from "../styles/theme";
 import Constants from "expo-constants";
+import {
+  enableScreenCaptureProtection,
+  disableScreenCaptureProtection,
+} from "../utils/screenCaptureProtection";
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -30,6 +34,13 @@ const ProfileScreen = () => {
     readItems,
     logout,
   } = React.useContext(AppContext);
+
+  useEffect(() => {
+    enableScreenCaptureProtection();
+    return () => {
+      disableScreenCaptureProtection();
+    };
+  }, []);
 
   // Helper function to calculate subscription expiry display
   const getSubscriptionExpiryDisplay = () => {

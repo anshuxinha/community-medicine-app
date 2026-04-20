@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -14,6 +14,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { AppContext } from "../context/AppContext";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import { auth, db } from "../config/firebase";
+import {
+  enableScreenCaptureProtection,
+  disableScreenCaptureProtection,
+} from "../utils/screenCaptureProtection";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -114,6 +118,13 @@ const checkAndRegisterDevice = async (userId) => {
 const LoginScreen = () => {
   const { login } = useContext(AppContext);
   const [isRegistering, setIsRegistering] = useState(false);
+
+  useEffect(() => {
+    enableScreenCaptureProtection();
+    return () => {
+      disableScreenCaptureProtection();
+    };
+  }, []);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import {
   Text,
@@ -25,6 +25,10 @@ import {
   getUpdatedSegmentsForItem,
 } from "../utils/contentRegistry";
 import { theme, useResponsive } from "../styles/theme";
+import {
+  enableScreenCaptureProtection,
+  disableScreenCaptureProtection,
+} from "../utils/screenCaptureProtection";
 
 const SECTION_ID_ICON_MAP = {
   "theory:27": "clipboard-text-search-outline",
@@ -84,6 +88,13 @@ const LibraryScreen = (props) => {
   const [openMenuKey, setOpenMenuKey] = useState(null);
   const insets = useSafeAreaInsets();
   const { isTablet, horizontalPadding, contentMaxWidth } = useResponsive();
+
+  useEffect(() => {
+    enableScreenCaptureProtection();
+    return () => {
+      disableScreenCaptureProtection();
+    };
+  }, []);
 
   const currentTopics =
     activeSection === "theory" ? theoryTopics : practicalTopics;

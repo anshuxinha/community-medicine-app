@@ -16,6 +16,10 @@ import { useNavigation } from "@react-navigation/native";
 import { MUSEUM_ITEMS, CATEGORIES, FREE_CATEGORY } from "../data/museumData";
 import { AppContext } from "../context/AppContext";
 import { theme } from "../styles/theme";
+import {
+  enableScreenCaptureProtection,
+  disableScreenCaptureProtection,
+} from "../utils/screenCaptureProtection";
 
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 3;
@@ -218,6 +222,13 @@ const VirtualMuseumScreen = () => {
     activeCategory === "All"
       ? MUSEUM_ITEMS
       : MUSEUM_ITEMS.filter((i) => i.category === activeCategory);
+
+  useEffect(() => {
+    enableScreenCaptureProtection();
+    return () => {
+      disableScreenCaptureProtection();
+    };
+  }, []);
 
   return (
     <SafeAreaView style={styles.safeArea}>
