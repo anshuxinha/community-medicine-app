@@ -29,7 +29,7 @@ import AnthropometryScreen from "../screens/AnthropometryScreen";
 import VirtualMuseumScreen from "../screens/VirtualMuseumScreen";
 import BiostatsAssistantScreen from "../screens/BiostatsAssistantScreen";
 import NotificationsScreen from "../screens/NotificationsScreen";
-import DeviceManagementScreen from "../screens/DeviceManagementScreen";
+import DeviceConflictScreen from "../screens/DeviceConflictScreen";
 import { theme } from "../styles/theme";
 
 const Tab = createBottomTabNavigator();
@@ -95,7 +95,7 @@ const PremiumGuard = ({ navigation, route }) => {
 };
 
 const AppNavigator = () => {
-  const { user } = React.useContext(AppContext);
+  const { user, deviceConflict } = React.useContext(AppContext);
 
   // undefined = still resolving auth state (onAuthStateChanged not yet fired)
   if (user === undefined) {
@@ -116,10 +116,16 @@ const AppNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {!user ? (
+        {!user && !deviceConflict ? (
           <Stack.Screen
             name="Login"
             component={LoginScreen}
+            options={{ headerShown: false }}
+          />
+        ) : deviceConflict ? (
+          <Stack.Screen
+            name="DeviceConflict"
+            component={DeviceConflictScreen}
             options={{ headerShown: false }}
           />
         ) : (
@@ -209,11 +215,6 @@ const AppNavigator = () => {
               name="Bookmarks"
               component={BookmarksScreen}
               options={{ title: "Bookmarks" }}
-            />
-            <Stack.Screen
-              name="DeviceManagement"
-              component={DeviceManagementScreen}
-              options={{ title: "Device Management" }}
             />
           </>
         )}

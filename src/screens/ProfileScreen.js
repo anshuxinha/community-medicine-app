@@ -123,10 +123,6 @@ const ProfileScreen = () => {
     navigation.navigate("Paywall");
   };
 
-  const handleDeviceManagement = () => {
-    navigation.navigate("DeviceManagement");
-  };
-
   const articlesRead = readItems?.length || 0;
   const bookmarksCount = bookmarks?.length || 0;
   const progressPercent = Math.round((readingProgress || 0) * 100);
@@ -308,26 +304,6 @@ const ProfileScreen = () => {
               />
             </TouchableOpacity>
 
-            <Divider style={styles.actionDivider} />
-
-            <TouchableOpacity
-              style={styles.actionItem}
-              onPress={handleDeviceManagement}
-            >
-              <View style={styles.actionIconBox}>
-                <MaterialIcons
-                  name="devices"
-                  size={20}
-                  color={theme.colors.secondary}
-                />
-              </View>
-              <Text style={styles.actionLabel}>Device Management</Text>
-              <MaterialIcons
-                name="chevron-right"
-                size={20}
-                color={theme.colors.textPlaceholder}
-              />
-            </TouchableOpacity>
 
             <Divider style={styles.actionDivider} />
 

@@ -14,6 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { AppContext } from "../context/AppContext";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import { auth, db } from "../config/firebase";
+import NetInfo from "@react-native-community/netinfo";
 import {
   enableScreenCaptureProtection,
   disableScreenCaptureProtection,
@@ -21,16 +22,13 @@ import {
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  updateProfile,
   signInWithCredential,
   GoogleAuthProvider,
   getIdTokenResult,
-  signOut,
 } from "firebase/auth";
-import { doc, setDoc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import Constants from "expo-constants";
 import { theme } from "../styles/theme";
-import { getDeviceInfo } from "../utils/deviceUtils";
 
 let GoogleSignin;
 if (Constants.appOwnership !== "expo") {
@@ -47,73 +45,6 @@ const timeoutPromise = (ms) =>
   new Promise((_, reject) =>
     setTimeout(() => reject(new Error("Firebase Request Timed Out")), ms),
   );
-
-const MAX_DEVICES = 2;
-
-// ── Device registration and limit check ───
-const checkAndRegisterDevice = async (userId) => {
-  try {
-    const deviceInfo = await getDeviceInfo();
-    const userDocRef = doc(db, "users", userId);
-
-    const userDoc = await Promise.race([
-      getDoc(userDocRef),
-      timeoutPromise(5000),
-    ]);
-
-    const userData = userDoc.exists() ? userDoc.data() : {};
-    const devices = userData.devices || [];
-
-    // Check if this device is already registered
-    const existingDeviceIndex = devices.findIndex(
-      (d) => d.deviceId === deviceInfo.deviceId,
-    );
-    const isExistingDevice = existingDeviceIndex >= 0;
-
-    if (isExistingDevice) {
-      // Update last active time for existing device
-      const updatedDevices = [...devices];
-      updatedDevices[existingDeviceIndex] = {
-        ...deviceInfo,
-        lastActive: new Date().toISOString(),
-        isCurrentDevice: true,
-      };
-
-      await updateDoc(userDocRef, {
-        devices: updatedDevices,
-      });
-
-      return { success: true, limitReached: false };
-    }
-
-    // New device - check limit
-    if (devices.length >= MAX_DEVICES) {
-      // Device limit reached
-      return {
-        success: false,
-        limitReached: true,
-        devices,
-      };
-    }
-
-    // Under limit - add this device
-    const newDevice = {
-      ...deviceInfo,
-      lastActive: new Date().toISOString(),
-      isCurrentDevice: true,
-    };
-
-    await updateDoc(userDocRef, {
-      devices: arrayUnion(newDevice),
-    });
-
-    return { success: true, limitReached: false };
-  } catch (error) {
-    console.error("Error checking device limit:", error);
-    // On error, allow login to proceed (don't block for network issues)
-    return { success: true, limitReached: false, error };
-  }
-};
 
 const LoginScreen = () => {
   const { login } = useContext(AppContext);
@@ -140,6 +71,15 @@ const LoginScreen = () => {
     }
     try {
       setLoading(true);
+
+      // Check internet connectivity
+      const netState = await NetInfo.fetch();
+      if (!netState.isConnected) {
+        setValidationError("Please connect to the internet to sign in.");
+        setLoading(false);
+        return;
+      }
+
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
       const idToken = userInfo.data?.idToken || userInfo.idToken;
@@ -149,17 +89,8 @@ const LoginScreen = () => {
       const userCredential = await signInWithCredential(auth, googleCredential);
       const user = userCredential.user;
 
-      // Check device limit before proceeding
-      const deviceLimitResult = await checkAndRegisterDevice(user.uid);
-      if (!deviceLimitResult.success) {
-        // Sign out and show error
-        await signOut(auth);
-        setValidationError(
-          `Device limit reached. Your account is limited to 2 devices. Please remove a device from "Device Management" in your profile to log in here.`,
-        );
-        setLoading(false);
-        return;
-      }
+      // Device registration is handled by AppContext's onAuthStateChanged.
+      // If there's a conflict, it will show the DeviceConflict screen.
 
       const tokenResult = await getIdTokenResult(user, true);
       const claimsPremium = tokenResult.claims.isPremium === true;
@@ -218,6 +149,14 @@ const LoginScreen = () => {
     setLoading(true);
 
     try {
+      // Check internet connectivity
+      const netState = await NetInfo.fetch();
+      if (!netState.isConnected) {
+        setValidationError("Please connect to the internet to sign in.");
+        setLoading(false);
+        return;
+      }
+
       if (isRegistering) {
         const userCredential = await createUserWithEmailAndPassword(
           auth,
@@ -226,17 +165,7 @@ const LoginScreen = () => {
         );
         const user = userCredential.user;
 
-        // Check device limit for new registration
-        const deviceLimitResult = await checkAndRegisterDevice(user.uid);
-        if (!deviceLimitResult.success) {
-          // Sign out and show error
-          await signOut(auth);
-          setValidationError(
-            `Device limit reached. Your account is limited to 2 devices. Please remove a device from "Device Management" to create a new account here.`,
-          );
-          setLoading(false);
-          return;
-        }
+        // Device registration is handled by AppContext's onAuthStateChanged
 
         await setDoc(doc(db, "users", user.uid), {
           email,
@@ -252,17 +181,8 @@ const LoginScreen = () => {
         );
         const user = userCredential.user;
 
-        // Check device limit before login
-        const deviceLimitResult = await checkAndRegisterDevice(user.uid);
-        if (!deviceLimitResult.success) {
-          // Sign out and show error
-          await signOut(auth);
-          setValidationError(
-            `Device limit reached. Your account is limited to 2 devices. Please remove a device from "Device Management" in your profile to log in here.`,
-          );
-          setLoading(false);
-          return;
-        }
+        // Device registration is handled by AppContext's onAuthStateChanged.
+        // If there's a conflict, it will show the DeviceConflict screen.
 
         const tokenResult = await getIdTokenResult(user, true);
         const claimsPremium = tokenResult.claims.isPremium === true;

@@ -45,8 +45,8 @@ if (Constants.appOwnership !== "expo") {
   });
 }
 
-// Device limit constant
-const MAX_DEVICES = 2;
+// Device limit constant — single device enforcement
+const MAX_DEVICES = 1;
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const getAccountStateKey = (uid) => `accountState:${uid}`;
@@ -154,13 +154,14 @@ export const AppProvider = ({ children }) => {
   const [subscriptionExpiry, setSubscriptionExpiry] = useState(null);
   const [accountPremium, setAccountPremium] = useState(false);
   const [revenueCatPremium, setRevenueCatPremium] = useState(false);
-  const [deviceLimitReached, setDeviceLimitReached] = useState(false);
+  const [deviceConflict, setDeviceConflict] = useState(null);
   const [registeredDevices, setRegisteredDevices] = useState([]);
   const [isScreenCapturePrevented, setIsScreenCapturePrevented] =
     useState(false);
   const isLoggingOutRef = useRef(false);
   const cloudHydratedRef = useRef(false);
   const currentDeviceIdRef = useRef(null);
+  const lastRefreshRef = useRef(0);
 
   const totalItems =
     TOTAL_LEAF_CONTENT_ITEMS > 0 ? TOTAL_LEAF_CONTENT_ITEMS : 1;
@@ -201,7 +202,7 @@ export const AppProvider = ({ children }) => {
     setIsPremium(accountPremium || revenueCatPremium);
   }, [accountPremium, revenueCatPremium]);
 
-  // Register device and check device limit
+  // Register device and check device limit (single device enforcement)
   const registerDeviceForUser = async (userId) => {
     try {
       const deviceInfo = await getDeviceInfo();
@@ -223,7 +224,6 @@ export const AppProvider = ({ children }) => {
       );
       const isExistingDevice = existingDeviceIndex >= 0;
 
-      // Update last active time for existing device or prepare new device
       const updatedDeviceInfo = {
         ...deviceInfo,
         lastActive: new Date().toISOString(),
@@ -231,65 +231,36 @@ export const AppProvider = ({ children }) => {
       };
 
       if (isExistingDevice) {
-        // Update existing device's last active time
+        // This device is already registered — update last active time
         const updatedDevices = [...devices];
         updatedDevices[existingDeviceIndex] = updatedDeviceInfo;
 
-        await updateDoc(
-          userDocRef,
-          {
-            devices: updatedDevices,
-          },
-          { merge: true },
-        );
-
+        await updateDoc(userDocRef, { devices: updatedDevices });
         setRegisteredDevices(updatedDevices);
-
-        // If there's learning progress stored for this device, load it
-        if (userData.deviceStates && userData.deviceStates[deviceId]) {
-          const deviceState = userData.deviceStates[deviceId];
-          hydrateStoredState(deviceState);
-        }
       } else {
-        // New device - check limit
+        // New device — check limit
         if (devices.length >= MAX_DEVICES) {
-          // Device limit reached - check if we should replace an old device
-          setDeviceLimitReached(true);
-          setRegisteredDevices(devices);
-
-          // Find oldest device to suggest removal (but don't auto-remove)
-          const sortedDevices = [...devices].sort((a, b) => {
-            const aTime = a.lastActive ? new Date(a.lastActive).getTime() : 0;
-            const bTime = b.lastActive ? new Date(b.lastActive).getTime() : 0;
-            return aTime - bTime; // Oldest first
-          });
-
+          // Another device is active — return conflict info (don't sign out)
           return {
             success: false,
             limitReached: true,
-            devices: sortedDevices,
+            devices,
             currentDeviceId: deviceId,
+            currentDeviceInfo: updatedDeviceInfo,
           };
         }
 
-        // Under limit - add this device
+        // Under limit — register this device
         const newDevices = [...devices, updatedDeviceInfo];
-
-        await updateDoc(
-          userDocRef,
-          {
-            devices: newDevices,
-          },
-          { merge: true },
-        );
-
+        await updateDoc(userDocRef, { devices: newDevices });
         setRegisteredDevices(newDevices);
       }
 
       return { success: true, limitReached: false };
     } catch (error) {
       console.error("Error registering device:", error);
-      return { success: false, limitReached: false, error };
+      // On error, allow login (don't block for network issues)
+      return { success: true, limitReached: false, error };
     }
   };
 
@@ -312,22 +283,22 @@ export const AppProvider = ({ children }) => {
           const deviceResult = await registerDeviceForUser(firebaseUser.uid);
 
           if (!deviceResult.success && deviceResult.limitReached) {
-            // Device limit reached - sign out and alert
-            setDeviceLimitReached(true);
+            // Device conflict — keep Firebase auth alive, show intercept screen
+            setDeviceConflict({
+              userId: firebaseUser.uid,
+              devices: deviceResult.devices,
+              currentDeviceId: deviceResult.currentDeviceId,
+              currentDeviceInfo: deviceResult.currentDeviceInfo,
+              firebaseUser,
+              claimsPremium,
+              claimsAdmin,
+            });
+            // Don't set user (keeps app on conflict screen)
             setUser(null);
             cloudHydratedRef.current = true;
-
-            // Sign out immediately
-            try {
-              await signOut(auth);
-            } catch (_) {}
-
-            // Don't proceed with login
             return;
           }
 
-          // Reload devices from Firestore after registration to ensure
-          // DeviceManagementScreen shows the correct device count
           const { getDoc } = require("firebase/firestore");
           const userDocRef = doc(db, "users", firebaseUser.uid);
           const userDoc = await Promise.race([
@@ -362,9 +333,18 @@ export const AppProvider = ({ children }) => {
 
           // Load cloud state for learning progress
           const cloudState = hydrateStoredState(data);
+
+          // Reset streak if user hasn't read in over a day
+          if (cloudState.lastReadDate) {
+            const diffDays = dayDiffFromToday(cloudState.lastReadDate);
+            if (diffDays !== null && diffDays > 1) {
+              setCurrentStreak(0);
+            }
+          }
+
           setUser(userData);
           setAccountPremium(Boolean(premiumStatus));
-          setDeviceLimitReached(false);
+          setDeviceConflict(null);
           cloudHydratedRef.current = true;
 
           await AsyncStorage.setItem("user", JSON.stringify(userData));
@@ -390,7 +370,13 @@ export const AppProvider = ({ children }) => {
               getAccountStateKey(firebaseUser.uid),
             );
             if (cachedAccountState) {
-              hydrateStoredState(JSON.parse(cachedAccountState));
+              const cachedState = hydrateStoredState(JSON.parse(cachedAccountState));
+              if (cachedState.lastReadDate) {
+                const diffDays = dayDiffFromToday(cachedState.lastReadDate);
+                if (diffDays !== null && diffDays > 1) {
+                  setCurrentStreak(0);
+                }
+              }
             }
           } catch (_) {
             // ignore account cache parse failures
@@ -403,7 +389,7 @@ export const AppProvider = ({ children }) => {
         }
       } else {
         cloudHydratedRef.current = false;
-        setDeviceLimitReached(false);
+        setDeviceConflict(null);
         setRegisteredDevices([]);
         currentDeviceIdRef.current = null;
 
@@ -427,15 +413,54 @@ export const AppProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  // Check and reset streak when app comes to foreground
-  useEffect(() => {
-    const handleAppStateChange = (nextAppState) => {
-      if (nextAppState === "active" && lastReadDate) {
-        const diffDays = dayDiffFromToday(lastReadDate);
-        if (diffDays !== null && diffDays > 1) {
-          setCurrentStreak(0);
+  // Refresh learning progress from Firestore on app foreground
+  const refreshFromCloud = async () => {
+    if (!user?.uid || isLoggingOutRef.current || !cloudHydratedRef.current) return;
+    const now = Date.now();
+    if (now - lastRefreshRef.current < 30000) return;
+    lastRefreshRef.current = now;
+
+    try {
+      const userDocRef = doc(db, "users", user.uid);
+      const userDoc = await Promise.race([
+        getDoc(userDocRef),
+        timeoutPromise(5000),
+      ]);
+
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        const cloudState = hydrateStoredState(data);
+
+        // Reset streak if user hasn't read in over a day
+        if (cloudState.lastReadDate) {
+          const diffDays = dayDiffFromToday(cloudState.lastReadDate);
+          if (diffDays !== null && diffDays > 1) {
+            setCurrentStreak(0);
+          }
         }
+
+        await AsyncStorage.setItem(
+          getAccountStateKey(user.uid),
+          JSON.stringify(cloudState),
+        );
       }
+    } catch (err) {
+      console.warn("Cloud refresh failed:", err?.message);
+    }
+  };
+
+  // Sync from cloud and check streak when app comes to foreground
+  useEffect(() => {
+    let prevState = AppState.currentState;
+
+    const handleAppStateChange = (nextAppState) => {
+      if (
+        prevState.match(/inactive|background/) &&
+        nextAppState === "active"
+      ) {
+        refreshFromCloud();
+      }
+      prevState = nextAppState;
     };
 
     const subscription = AppState.addEventListener(
@@ -443,7 +468,7 @@ export const AppProvider = ({ children }) => {
       handleAppStateChange,
     );
     return () => subscription.remove();
-  }, [lastReadDate]);
+  }, [user]);
 
   useEffect(() => {
     if (user === null) {
@@ -1006,6 +1031,29 @@ export const AppProvider = ({ children }) => {
 
   const logout = async () => {
     isLoggingOutRef.current = true;
+
+    // Remove current device from Firestore so re-login on this device works
+    const uid = user?.uid || auth.currentUser?.uid;
+    const deviceId = currentDeviceIdRef.current;
+    if (uid && deviceId) {
+      try {
+        const userDocRef = doc(db, "users", uid);
+        const userDoc = await Promise.race([
+          getDoc(userDocRef),
+          timeoutPromise(5000),
+        ]);
+        if (userDoc.exists()) {
+          const currentDevices = userDoc.data().devices || [];
+          const filtered = currentDevices.filter(
+            (d) => d.deviceId !== deviceId,
+          );
+          await updateDoc(userDocRef, { devices: filtered });
+        }
+      } catch (e) {
+        console.warn("Failed to remove device on logout:", e?.message);
+      }
+    }
+
     try {
       await signOut(auth);
     } catch (_) {}
@@ -1036,7 +1084,7 @@ export const AppProvider = ({ children }) => {
     setUser(null);
     setAccountPremium(false);
     setRevenueCatPremium(false);
-    setDeviceLimitReached(false);
+    setDeviceConflict(null);
     setRegisteredDevices([]);
     currentDeviceIdRef.current = null;
     setReadItems([]);
@@ -1052,6 +1100,85 @@ export const AppProvider = ({ children }) => {
   const upgradeToPremium = async (metadata = {}) => {
     setAccountPremium(true);
     await persistPremiumAccess(metadata);
+  };
+
+  // Resolve device conflict: clear other device, register this one, proceed
+  const resolveDeviceConflict = async () => {
+    if (!deviceConflict) return;
+
+    const {
+      userId,
+      currentDeviceInfo,
+      firebaseUser,
+      claimsPremium,
+      claimsAdmin,
+    } = deviceConflict;
+
+    const userDocRef = doc(db, "users", userId);
+
+    // Replace all devices with just the current device
+    await updateDoc(userDocRef, {
+      devices: [currentDeviceInfo],
+    });
+
+    currentDeviceIdRef.current = currentDeviceInfo.deviceId;
+    setRegisteredDevices([currentDeviceInfo]);
+    setDeviceConflict(null);
+
+    // Now complete the login flow
+    try {
+      const userDoc = await Promise.race([
+        getDoc(userDocRef),
+        timeoutPromise(8000),
+      ]);
+      const data = userDoc.exists() ? userDoc.data() : {};
+      const premiumStatus = data.isPremium === true || claimsPremium;
+      const isAdmin = data.isAdmin === true || claimsAdmin;
+      const fetchedPremiumType = data.premiumType || null;
+      setPremiumType(fetchedPremiumType);
+
+      const userData = {
+        uid: userId,
+        email: firebaseUser.email,
+        username: firebaseUser.displayName || data.username || "User",
+        isPremium: premiumStatus,
+        isAdmin,
+      };
+
+      const cloudState = hydrateStoredState(data);
+      setUser(userData);
+      setAccountPremium(Boolean(premiumStatus));
+      cloudHydratedRef.current = true;
+
+      await AsyncStorage.setItem("user", JSON.stringify(userData));
+      await AsyncStorage.setItem(
+        getAccountStateKey(userId),
+        JSON.stringify(cloudState),
+      );
+    } catch (err) {
+      console.warn("Firestore unavailable after conflict resolution:", err?.message);
+      const userData = {
+        uid: userId,
+        email: firebaseUser.email,
+        username: firebaseUser.displayName || "User",
+        isPremium: claimsPremium,
+        isAdmin: claimsAdmin,
+      };
+      setUser(userData);
+      setAccountPremium(Boolean(claimsPremium));
+      cloudHydratedRef.current = true;
+      await AsyncStorage.setItem("user", JSON.stringify(userData));
+    }
+  };
+
+  // Cancel device conflict: sign out completely
+  const cancelDeviceConflict = async () => {
+    setDeviceConflict(null);
+    try {
+      await signOut(auth);
+    } catch (_) {}
+    setUser(null);
+    setAccountPremium(false);
   };
 
   return (
@@ -1080,7 +1207,9 @@ export const AppProvider = ({ children }) => {
         login,
         logout,
         upgradeToPremium,
-        deviceLimitReached,
+        deviceConflict,
+        resolveDeviceConflict,
+        cancelDeviceConflict,
         registeredDevices,
         MAX_DEVICES,
         isScreenCapturePrevented,
