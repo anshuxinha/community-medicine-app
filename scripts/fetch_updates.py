@@ -115,10 +115,11 @@ def call_ollama(prompt: str) -> Optional[Any]:
 
 def fetch_health_updates():
     """Fetches real updates from the Government of India PIB feed for MoHFW."""
-    url = "https://pib.gov.in/allRel.aspx"  
+    # Force English (lang=1) and Delhi region (reg=3) to get consistent results
+    url = "https://www.pib.gov.in/allRel.aspx?reg=3&lang=1"
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "Referer": "https://pib.gov.in/indexd.aspx"
+        "Referer": "https://www.pib.gov.in/indexd.aspx"
     }
     
     output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'src', 'data')
@@ -143,7 +144,7 @@ def fetch_health_updates():
         session = requests.Session()
         
         print("Fetching initial ViewState tokens from PIB...")
-        # Step 1: GET request to grab ASP.NET viewstates and dynamic names
+        # Step 1: GET the English page to grab ASP.NET viewstates and dynamic names
         response = session.get(url, headers=headers, timeout=15)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -204,6 +205,9 @@ def fetch_health_updates():
             day_name: "0",      # 0 pulls all days in the selected month
             month_name: current_month,
             year_name: current_year,
+            # Hidden region/language state fields required by PIB ASP.NET form
+            "ctl00$ContentPlaceHolder1$hydregionid": "3",   # Delhi
+            "ctl00$ContentPlaceHolder1$hydLangid": "1",     # English
         }
 
         post_response = session.post(url, data=payload, headers=headers, timeout=15)
