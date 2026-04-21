@@ -8,22 +8,20 @@ from datetime import datetime, timezone
 from bs4 import BeautifulSoup  # type: ignore
 from typing import List, Dict, Any, Optional
 
-OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
-if not OPENROUTER_API_KEY:
-    raise ValueError("OPENROUTER_API_KEY environment variable is not set")
+OLLAMA_API_KEY = os.environ.get("OLLAMA_API_KEY")
+if not OLLAMA_API_KEY:
+    raise ValueError("OLLAMA_API_KEY environment variable is not set")
 
-OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-OPENROUTER_MODEL = "openrouter/free"
+OLLAMA_API_URL = "https://ollama.com/api/chat"
+OLLAMA_MODEL = "gemma4:31b-cloud"
 
-MAX_OPENROUTER_RETRIES = 2
+MAX_RETRIES = 2
 RETRY_DELAY_SECONDS = 5
 
 
 def _extract_candidate_text(payload: Dict[str, Any]) -> Optional[str]:
-    choices = payload.get("choices", [])
-    if not choices:
-        return None
-    message = choices[0].get("message", {})
+    """Extract text from Ollama /api/chat response shape."""
+    message = payload.get("message", {})
     content = message.get("content")
     return content if isinstance(content, str) else None
 
@@ -61,34 +59,33 @@ def _extract_json_payload(text: str) -> Optional[Any]:
             return None
 
 
-def call_openrouter(prompt: str) -> Optional[Any]:
+def call_ollama(prompt: str) -> Optional[Any]:
     last_error = None
 
-    for attempt in range(1 + MAX_OPENROUTER_RETRIES):
+    for attempt in range(1 + MAX_RETRIES):
         try:
             response = requests.post(
-                OPENROUTER_API_URL,
+                OLLAMA_API_URL,
                 headers={
                     "Content-Type": "application/json",
-                    "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                    "HTTP-Referer": "https://github.com",
-                    "X-Title": "Public Health Updates Fetcher"
+                    "Authorization": f"Bearer {OLLAMA_API_KEY}",
                 },
                 json={
-                    "model": OPENROUTER_MODEL,
+                    "model": OLLAMA_MODEL,
                     "messages": [
                         {"role": "user", "content": prompt}
                     ],
-                    "temperature": 0.1,
+                    "stream": False,
+                    "options": {"temperature": 0.1},
                 },
-                timeout=60
+                timeout=120
             )
 
             if response.status_code == 200:
                 try:
                     data = response.json()
                 except (json.JSONDecodeError, ValueError) as exc:
-                    print(f"OpenRouter API returned non-JSON body (status 200): {exc}")
+                    print(f"Ollama API returned non-JSON body (status 200): {exc}")
                     last_error = "invalid JSON"
                     continue
                 text_response = _extract_candidate_text(data)
@@ -99,20 +96,20 @@ def call_openrouter(prompt: str) -> Optional[Any]:
                 last_error = "empty or unparseable response body"
             elif response.status_code in (429, 500, 503):
                 last_error = f"HTTP {response.status_code}: {response.text[:200]}"
-                print(f"OpenRouter API Error (attempt {attempt + 1}): {last_error}")
+                print(f"Ollama API Error (attempt {attempt + 1}): {last_error}")
             else:
-                print(f"OpenRouter API Error {response.status_code}: {response.text[:200]}")
+                print(f"Ollama API Error {response.status_code}: {response.text[:200]}")
                 return None  # non-retryable status
 
         except requests.RequestException as exc:
             last_error = str(exc)
-            print(f"OpenRouter API request exception (attempt {attempt + 1}): {last_error}")
+            print(f"Ollama API request exception (attempt {attempt + 1}): {last_error}")
 
-        if attempt < MAX_OPENROUTER_RETRIES:
+        if attempt < MAX_RETRIES:
             print(f"Retrying in {RETRY_DELAY_SECONDS}s...")
             time.sleep(RETRY_DELAY_SECONDS)
 
-    print(f"OpenRouter API failed after {1 + MAX_OPENROUTER_RETRIES} attempts. Last error: {last_error}")
+    print(f"Ollama API failed after {1 + MAX_RETRIES} attempts. Last error: {last_error}")
     return None
 
 
@@ -249,8 +246,8 @@ def fetch_health_updates():
         {json.dumps(feed_items, indent=2)}
         """
         
-        print("Filtering relevant Community Medicine articles with OpenRouter...")
-        selected_ids_response = call_openrouter(filter_prompt)
+        print("Filtering relevant Community Medicine articles with Ollama...")
+        selected_ids_response = call_ollama(filter_prompt)
         
         if selected_ids_response is None:
             print("Failed to filter articles.")
@@ -308,8 +305,8 @@ def fetch_health_updates():
         {articles_json}
         """
         
-        print("Generating batch summaries with OpenRouter...")
-        batch_summaries = call_openrouter(batch_prompt)
+        print("Generating batch summaries with Ollama...")
+        batch_summaries = call_ollama(batch_prompt)
         
         if not isinstance(batch_summaries, list):
             print("Batch summarization failed or returned invalid format.")
