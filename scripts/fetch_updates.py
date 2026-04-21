@@ -171,12 +171,20 @@ def fetch_health_updates():
         year_name = year_dropdown.get("name") if year_dropdown else "ctl00$ContentPlaceHolder1$ddlYear"
 
         # Find the specific ID for Ministry of Health and Family Welfare
+        # The page may load in Hindi by default, so check both languages.
+        MOHFW_KEYWORDS = ["Health and Family Welfare", "स्वास्थ्य", "परिवार कल्याण"]
+        MOHFW_FALLBACK_ID = "31"  # Known stable value on pib.gov.in
+
         mohfw_id = "0"
         if min_dropdown:
             for option in min_dropdown.find_all("option"):
-                if "Health and Family Welfare" in option.text:
+                if any(kw in option.text for kw in MOHFW_KEYWORDS):
                     mohfw_id = option["value"]
                     break
+
+        if mohfw_id == "0":
+            print(f"MoHFW not found in dropdown; using fallback ID {MOHFW_FALLBACK_ID}")
+            mohfw_id = MOHFW_FALLBACK_ID
 
         # Setup current dates
         now = datetime.now(timezone.utc)
@@ -210,6 +218,10 @@ def fetch_health_updates():
                 prid = href.split('PRID=')[-1].split('&')[0]
                 link = f"https://pib.gov.in/PressReleasePage.aspx?PRID={prid}"
                 
+                # Skip links already present in the dashboard
+                if link in existing_links:
+                    continue
+                
                 if not any(i['link'] == link for i in feed_items):
                     feed_items.append({"id": len(feed_items), "title": text, "link": link})
                     
@@ -217,7 +229,7 @@ def fetch_health_updates():
         feed_items = feed_items[:50]  # type: ignore
         
         if not feed_items:
-            print("No links found on PIB page for MoHFW this month.")
+            print("No new links found on PIB page for MoHFW this month.")
             return
             
         filter_prompt = f"""
