@@ -10,8 +10,9 @@ import { AppContext } from "../context/AppContext";
 // Tab screens
 import DashboardScreen from "../screens/DashboardScreen";
 import LibraryScreen from "../screens/LibraryScreen";
-import BookmarksScreen from "../screens/BookmarksScreen";
 import WebinarsScreen from "../screens/WebinarsScreen";
+import UpdatesScreen from "../screens/UpdatesScreen";
+import BookmarksScreen from "../screens/BookmarksScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 
 // Stack screens
@@ -44,7 +45,7 @@ const TabNavigator = () => {
           let iconName;
           if (route.name === "Dashboard") iconName = "dashboard";
           else if (route.name === "Library") iconName = "book";
-          else if (route.name === "Bookmarks") iconName = "bookmark";
+          else if (route.name === "Updates") iconName = "update";
           else if (route.name === "Webinars") iconName = "ondemand-video";
           return <MaterialIcons name={iconName} color={color} size={size} />;
         },
@@ -66,7 +67,7 @@ const TabNavigator = () => {
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen name="Library" component={LibraryScreen} />
       <Tab.Screen name="Webinars" component={WebinarsScreen} />
-      <Tab.Screen name="Bookmarks" component={BookmarksScreen} />
+      <Tab.Screen name="Updates" component={UpdatesScreen} />
     </Tab.Navigator>
   );
 };
@@ -203,6 +204,11 @@ const AppNavigator = () => {
               name="Profile"
               component={ProfileScreen}
               options={{ title: "My Profile" }}
+            />
+            <Stack.Screen
+              name="Bookmarks"
+              component={BookmarksScreen}
+              options={{ title: "Bookmarks" }}
             />
             <Stack.Screen
               name="DeviceManagement"

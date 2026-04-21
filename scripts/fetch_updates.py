@@ -124,9 +124,11 @@ def fetch_health_updates():
     
     output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'src', 'data')
     output_path = os.path.join(output_dir, 'updates.json')
+    archive_path = os.path.join(output_dir, 'updates_archive.json')
     
     MAX_UPDATES_TO_KEEP = 10
     
+    # ── Load existing current-month updates ──
     existing_updates: List[Dict[str, Any]] = []
     if os.path.exists(output_path):
         try:
@@ -135,6 +137,57 @@ def fetch_health_updates():
         except Exception as e:
             print(f"Error loading existing updates: {e}")
     
+    # ── Load archive ──
+    archive: Dict[str, List[Dict[str, Any]]] = {}
+    if os.path.exists(archive_path):
+        try:
+            with open(archive_path, 'r', encoding='utf-8') as f:
+                archive = json.load(f)
+        except Exception as e:
+            print(f"Error loading archive: {e}")
+    
+    # ── Monthly rotation ──
+    now = datetime.now(timezone.utc)
+    current_month_key = now.strftime("%Y-%m")  # e.g. "2026-04"
+    current_year = str(now.year)
+    archive_changed = False
+
+    # Move any updates from previous months into the archive
+    still_current = []
+    for u in existing_updates:
+        u_date = u.get("date", "")
+        u_month_key = u_date[:7] if len(u_date) >= 7 else ""  # "YYYY-MM"
+        if u_month_key and u_month_key != current_month_key:
+            archive.setdefault(u_month_key, [])
+            # Avoid duplicates in archive
+            archive_links = {a.get("link") for a in archive[u_month_key]}
+            if u.get("link") not in archive_links:
+                archive[u_month_key].append(u)
+                archive_changed = True
+        else:
+            still_current.append(u)
+
+    if len(still_current) != len(existing_updates):
+        print(f"Archived {len(existing_updates) - len(still_current)} updates from previous months.")
+        existing_updates = still_current
+
+    # Year rollover: delete previous years' data
+    stale_keys = [k for k in archive if not k.startswith(current_year)]
+    if stale_keys:
+        for k in stale_keys:
+            del archive[k]
+        archive_changed = True
+        print(f"Year rollover: removed archive months {stale_keys}")
+
+    # Persist archive if changed
+    if archive_changed:
+        os.makedirs(output_dir, exist_ok=True)
+        with open(archive_path, 'w', encoding='utf-8') as f:
+            json.dump(archive, f, indent=4)
+        # Also save the trimmed current updates
+        with open(output_path, 'w', encoding='utf-8') as f:
+            json.dump(existing_updates, f, indent=4)
+
     # Create a mapping of link -> update for deduplication
     existing_links = {u['link'] for u in existing_updates if 'link' in u}
     
@@ -187,10 +240,8 @@ def fetch_health_updates():
             print(f"MoHFW not found in dropdown; using fallback ID {MOHFW_FALLBACK_ID}")
             mohfw_id = MOHFW_FALLBACK_ID
 
-        # Setup current dates
-        now = datetime.now(timezone.utc)
+        # Use current dates (now/current_year already set above)
         current_month = str(now.month)
-        current_year = str(now.year)
 
         print(f"Querying MoHFW (ID: {mohfw_id}) updates for Month: {current_month}, Year: {current_year}...")
         # Step 2: POST request to filter by MoHFW and current month

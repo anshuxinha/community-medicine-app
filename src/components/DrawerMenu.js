@@ -31,9 +31,9 @@ const MENU_ITEMS = [
     iconLib: "material",
   },
   {
-    icon: "diamond",
-    label: "Go Premium",
-    screen: "Paywall",
+    icon: "bookmark",
+    label: "Bookmarks",
+    screen: "Bookmarks",
     iconLib: "material",
   },
   { divider: true },
