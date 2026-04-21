@@ -1,10 +1,31 @@
 [
     {
-        "id": "43e92a41-795a-4b95-a317-bdae7f6166da",
-        "date": "2026-03-09",
-        "title": "TRAI Assesses Network Quality at Key Puducherry Medical Facilities",
-        "summary": "The Telecom Regulatory Authority of India (TRAI) assessed mobile network quality at key healthcare facilities in Puducherry, including JIPMER Medical College and Rajiv Gandhi Government Women and Children Hospital, during its February 2026 independent drive test. Findings covered voice and data services from Airtel, BSNL, RJIL, and VIL, crucial for operational efficiency and emergency communications. This assessment highlights the importance of reliable telecom infrastructure for supporting public health services in the region.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2236857"
+        "id": "98df09c2-4212-4b79-a80d-773b34ae45bf",
+        "date": "2026-04-18",
+        "title": "NHA Concludes Chintan Shivir on Digital Health",
+        "summary": "The National Health Authority concluded a two-day Chintan Shivir in Pune focusing on AB PM-JAY and ABDM. The event highlighted innovation and cooperative governance, showcasing Karnataka's online referral system and Gujarat's clinical governance mechanisms. The initiative aims to strengthen healthcare delivery through data-driven decision-making and digital verification, ensuring improved clinical appropriateness and cost efficiencies across various Indian States and UTs.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2253329"
+    },
+    {
+        "id": "c3b901a7-b6cb-48a0-aceb-1a509987c3be",
+        "date": "2026-04-13",
+        "title": "MoHFW Launches Clinical Workflow App for CHOs",
+        "summary": "The Ministry of Health and Family Welfare launched an ICMR-developed mobile application to streamline clinical workflows for Community Health Officers at Sub-Centre Ayushman Arogya Mandirs. Aligned with 12 CPHC service packages, the app provides structured decision-support tools and checklists for patient assessment. This digital intervention aims to enhance primary healthcare delivery, ensuring timely referrals and informed clinical decision-making nationwide.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2251582"
+    },
+    {
+        "id": "591c148f-6f13-4906-b776-944a1b25ea58",
+        "date": "2026-04-07",
+        "title": "Union Health Minister Marks World Health Day",
+        "summary": "Union Minister Shri Jagat Prakash Nadda extended greetings on World Health Day, emphasizing the government's commitment to preventive and promotive healthcare. He highlighted the synergy between traditional wisdom and modern science, citing Ayushman Bharat and PM Bharatiya Janaushadhi Pariyojana as transformative initiatives. The Minister praised frontline healthcare workers for their dedication in making quality treatment accessible and affordable for citizens.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2249602"
+    },
+    {
+        "id": "396a7027-65f1-4152-8292-5f90c1d45e16",
+        "date": "2026-03-12",
+        "title": "India Begins 100-Day Countdown to International Yoga Day 2026",
+        "summary": "The Ministry of Ayush and Morarji Desai National Institute of Yoga are organizing Yoga Mahotsav-2026 on March 13, 2026, marking the 100-day countdown to International Day of Yoga (IDY) 2026. This initiative involves 100 organizations promoting yoga in 100 cities. The program aims to expand outreach, encourage public participation, and prepare for the 12th IDY, scheduled for commemoration at 100 iconic locations, inspiring holistic well-being through yoga. Preparations are gaining momentum.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2238717"
     },
     {
         "id": "b2676195-55ff-44cc-884c-ca644c9c9873",
@@ -14,10 +35,10 @@
         "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2237960"
     },
     {
-        "id": "396a7027-65f1-4152-8292-5f90c1d45e16",
-        "date": "2026-03-12",
-        "title": "India Begins 100-Day Countdown to International Yoga Day 2026",
-        "summary": "The Ministry of Ayush and Morarji Desai National Institute of Yoga are organizing Yoga Mahotsav-2026 on March 13, 2026, marking the 100-day countdown to International Day of Yoga (IDY) 2026. This initiative involves 100 organizations promoting yoga in 100 cities. The program aims to expand outreach, encourage public participation, and prepare for the 12th IDY, scheduled for commemoration at 100 iconic locations, inspiring holistic well-being through yoga. Preparations are gaining momentum.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2238717"
+        "id": "43e92a41-795a-4b95-a317-bdae7f6166da",
+        "date": "2026-03-09",
+        "title": "TRAI Assesses Network Quality at Key Puducherry Medical Facilities",
+        "summary": "The Telecom Regulatory Authority of India (TRAI) assessed mobile network quality at key healthcare facilities in Puducherry, including JIPMER Medical College and Rajiv Gandhi Government Women and Children Hospital, during its February 2026 independent drive test. Findings covered voice and data services from Airtel, BSNL, RJIL, and VIL, crucial for operational efficiency and emergency communications. This assessment highlights the importance of reliable telecom infrastructure for supporting public health services in the region.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2236857"
     }
 ]
