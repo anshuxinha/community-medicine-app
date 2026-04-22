@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { AppContext } from "../context/AppContext";
+import { useSessionEnforcer } from "../hooks/useSessionEnforcer";
 
 // Tab screens
 import DashboardScreen from "../screens/DashboardScreen";
@@ -95,7 +96,9 @@ const PremiumGuard = ({ navigation, route }) => {
 };
 
 const AppNavigator = () => {
-  const { user, deviceConflict } = React.useContext(AppContext);
+  const { user } = React.useContext(AppContext);
+
+  useSessionEnforcer();
 
   // undefined = still resolving auth state (onAuthStateChanged not yet fired)
   if (user === undefined) {

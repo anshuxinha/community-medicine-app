@@ -9,18 +9,22 @@ import {
 import { Text, Card } from "react-native-paper";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { doc, updateDoc } from "firebase/firestore";
+import { signOut } from "firebase/auth";
+import { db, auth } from "../config/firebase";
 import { AppContext } from "../context/AppContext";
 import { theme } from "../styles/theme";
 
 const DeviceConflictScreen = () => {
-  const { deviceConflict, resolveDeviceConflict, cancelDeviceConflict } =
-    useContext(AppContext);
+  const { login } = useContext(AppContext);
   const navigation = useNavigation();
+  const route = useRoute();
+  const { uid, newDeviceId, userData } = route.params || {};
   const [resolving, setResolving] = useState(false);
   const [error, setError] = useState("");
 
-  const conflictDevice = deviceConflict?.devices?.[0];
+  const conflictDevice = null;
 
   const getDeviceIcon = (deviceType) => {
     if (deviceType === "ios") return "apple";
@@ -52,7 +56,8 @@ const DeviceConflictScreen = () => {
     setResolving(true);
     setError("");
     try {
-      await resolveDeviceConflict();
+      await updateDoc(doc(db, "users", uid), { currentDeviceId: newDeviceId });
+      await login(userData);
     } catch (err) {
       setError(err.message || "Failed to sign out other device. Try again.");
       setResolving(false);
@@ -60,7 +65,7 @@ const DeviceConflictScreen = () => {
   };
 
   const handleCancel = async () => {
-    await cancelDeviceConflict();
+    try { await signOut(auth); } catch(e) {}
     navigation.replace("Login");
   };
 

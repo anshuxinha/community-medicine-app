@@ -12,6 +12,8 @@ import {
 import { Text, TextInput, Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppContext } from "../context/AppContext";
+import { useNavigation } from "@react-navigation/native";
+import { getDeviceId } from "../utils/deviceUtils";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import { auth, db } from "../config/firebase";
 import NetInfo from "@react-native-community/netinfo";
@@ -48,6 +50,7 @@ const timeoutPromise = (ms) =>
 
 const LoginScreen = () => {
   const { login } = useContext(AppContext);
+  const navigation = useNavigation();
   const [isRegistering, setIsRegistering] = useState(false);
 
   useEffect(() => {
