@@ -245,17 +245,19 @@ export const AppProvider = ({ children }) => {
           const lastDevice = await AsyncStorage.getItem(`lastDevice_${userId}`);
           const wasRegistered = lastDevice === deviceId;
 
-          if (wasRegistered) {
-            // This device was signed out by another device - return special flag
-            return {
-              success: false,
-              limitReached: false,
-              wasSignedOut: true,
-              devices,
-              currentDeviceId: deviceId,
-              currentDeviceInfo: updatedDeviceInfo,
-            };
-          }
+            if (wasRegistered) {
+              // This device was signed out by another device
+              // We must return success: false and wasSignedOut: true
+              // to trigger the complete logout in the onAuthStateChanged listener.
+              return {
+                success: false,
+                limitReached: false,
+                wasSignedOut: true,
+                devices,
+                currentDeviceId: deviceId,
+                currentDeviceInfo: updatedDeviceInfo,
+              };
+            }
 
           // New device trying to login while another is active - conflict
           return {
