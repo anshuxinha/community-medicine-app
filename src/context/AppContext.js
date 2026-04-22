@@ -45,8 +45,8 @@ if (Constants.appOwnership !== "expo") {
   });
 }
 
-// Device limit constant — single device enforcement
-const MAX_DEVICES = 1;
+// Device limit constant — set to 2 to allow conflict screen without immediate logout
+const MAX_DEVICES = 2;
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const getAccountStateKey = (uid) => `accountState:${uid}`;
@@ -240,30 +240,36 @@ export const AppProvider = ({ children }) => {
         setRegisteredDevices(updatedDevices);
       } else {
         // Device not registered - either new login OR was signed out by another device
-        if (devices.length >= MAX_DEVICES) {
+        if (devices.length >= 1) {
           // Check if this device was previously registered for this user
           const lastDevice = await AsyncStorage.getItem(`lastDevice_${userId}`);
           const wasRegistered = lastDevice === deviceId;
 
-            if (wasRegistered) {
-              // This device was signed out by another device
-              // We must return success: false and wasSignedOut: true
-              // to trigger the complete logout in the onAuthStateChanged listener.
-              return {
-                success: false,
-                limitReached: false,
-                wasSignedOut: true,
-                devices,
-                currentDeviceId: deviceId,
-                currentDeviceInfo: updatedDeviceInfo,
-              };
-            }
+          if (wasRegistered) {
+            // This device was signed out by another device
+            // We must return success: false and wasSignedOut: true
+            // to trigger the complete logout in the onAuthStateChanged listener.
+            return {
+              success: false,
+              limitReached: false,
+              wasSignedOut: true,
+              devices,
+              currentDeviceId: deviceId,
+              currentDeviceInfo: updatedDeviceInfo,
+            };
+          }
 
           // New device trying to login while another is active - conflict
+          // We allow registration to occur so the device is "known" but we return success: false
+          // to trigger the conflict screen.
+          const newDevices = [...devices, updatedDeviceInfo];
+          await updateDoc(userDocRef, { devices: newDevices });
+          setRegisteredDevices(newDevices);
+
           return {
             success: false,
             limitReached: true,
-            devices,
+            devices: newDevices,
             currentDeviceId: deviceId,
             currentDeviceInfo: updatedDeviceInfo,
           };
@@ -474,8 +480,21 @@ export const AppProvider = ({ children }) => {
 
         // If the array has devices but WE aren't in it, we got kicked out!
         if (activeCloudDevices.length > 0 && !isStillRegistered) {
-          console.warn("Session revoked by another device. Logging out.");
-          logout();
+          console.warn("Session revoked by another device. Showing conflict.");
+          setDeviceConflict({
+            userId: user.uid,
+            devices: activeCloudDevices,
+            currentDeviceId: currentDeviceId,
+            currentDeviceInfo: {
+              deviceId: currentDeviceId,
+              lastActive: new Date().toISOString(),
+              isCurrentDevice: true,
+            },
+            firebaseUser: auth.currentUser,
+            claimsPremium: isPremium,
+            claimsAdmin: !!(user?.isAdmin),
+          });
+          setUser(null);
           return; // Stop execution immediately
         }
         // -------------------------------
