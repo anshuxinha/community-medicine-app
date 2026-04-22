@@ -207,6 +207,9 @@ export const AppProvider = ({ children }) => {
       const deviceId = deviceInfo.deviceId;
       currentDeviceIdRef.current = deviceId;
 
+      // Store this deviceId as the last registered device for this user
+      await AsyncStorage.setItem(`lastDevice_${userId}`, deviceId);
+
       const userDocRef = doc(db, "users", userId);
       const userDoc = await Promise.race([
         getDoc(userDocRef),
@@ -236,9 +239,25 @@ export const AppProvider = ({ children }) => {
         await updateDoc(userDocRef, { devices: updatedDevices });
         setRegisteredDevices(updatedDevices);
       } else {
-        // New device — check limit
+        // Device not registered - either new login OR was signed out by another device
         if (devices.length >= MAX_DEVICES) {
-          // Another device is active — return conflict info (don't sign out)
+          // Check if this device was previously registered for this user
+          const lastDevice = await AsyncStorage.getItem(`lastDevice_${userId}`);
+          const wasRegistered = lastDevice === deviceId;
+
+          if (wasRegistered) {
+            // This device was signed out by another device - return special flag
+            return {
+              success: false,
+              limitReached: false,
+              wasSignedOut: true,
+              devices,
+              currentDeviceId: deviceId,
+              currentDeviceInfo: updatedDeviceInfo,
+            };
+          }
+
+          // New device trying to login while another is active - conflict
           return {
             success: false,
             limitReached: true,
@@ -248,7 +267,7 @@ export const AppProvider = ({ children }) => {
           };
         }
 
-        // Under limit — register this device
+        // Under limit or no devices — register this device
         const newDevices = [...devices, updatedDeviceInfo];
         await updateDoc(userDocRef, { devices: newDevices });
         setRegisteredDevices(newDevices);
@@ -280,7 +299,21 @@ export const AppProvider = ({ children }) => {
           // First, register device and check limit
           const deviceResult = await registerDeviceForUser(firebaseUser.uid);
 
-          if (!deviceResult.success && deviceResult.limitReached) {
+          if (!deviceResult.success) {
+            if (deviceResult.wasSignedOut) {
+              // This device was signed out by another device - sign out completely
+              setDeviceConflict(null);
+              try {
+                await signOut(auth);
+              } catch (_) { }
+              setUser(null);
+              setAccountPremium(false);
+              currentDeviceIdRef.current = null;
+              await AsyncStorage.removeItem(`lastDevice_${firebaseUser.uid}`);
+              cloudHydratedRef.current = true;
+              return;
+            }
+
             // Device conflict — keep Firebase auth alive, show intercept screen
             setDeviceConflict({
               userId: firebaseUser.uid,
@@ -1026,7 +1059,21 @@ export const AppProvider = ({ children }) => {
 
     // Check device conflict after login (same logic as onAuthStateChanged)
     const deviceResult = await registerDeviceForUser(userData.uid);
-    if (!deviceResult.success && deviceResult.limitReached) {
+    if (!deviceResult.success) {
+      if (deviceResult.wasSignedOut) {
+        // Was signed out by another device - sign out and redirect to login
+        setDeviceConflict(null);
+        try {
+          await signOut(auth);
+        } catch (_) { }
+        setUser(null);
+        setAccountPremium(false);
+        currentDeviceIdRef.current = null;
+        await AsyncStorage.removeItem(`lastDevice_${userData.uid}`);
+        return;
+      }
+
+      // Device conflict - show conflict screen
       setDeviceConflict({
         userId: userData.uid,
         devices: deviceResult.devices,
