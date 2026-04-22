@@ -1038,11 +1038,6 @@ export const AppProvider = ({ children }) => {
   };
 
   const login = async (userData) => {
-    setUser(userData);
-    if (userData.isPremium !== undefined) {
-      setAccountPremium(Boolean(userData.isPremium));
-    }
-
     if (Constants.appOwnership !== "expo" && Purchases && userData.uid) {
       Purchases.logIn(userData.uid)
         .then(({ customerInfo }) => {
@@ -1059,11 +1054,10 @@ export const AppProvider = ({ children }) => {
         });
     }
 
-    // Check device conflict after login (same logic as onAuthStateChanged)
+    // Check device conflict BEFORE setting the user state to prevent flashing the dashboard
     const deviceResult = await registerDeviceForUser(userData.uid);
     if (!deviceResult.success) {
       if (deviceResult.wasSignedOut) {
-        // Was signed out by another device - sign out and redirect to login
         setDeviceConflict(null);
         try {
           await signOut(auth);
@@ -1075,7 +1069,7 @@ export const AppProvider = ({ children }) => {
         return;
       }
 
-      // Device conflict - show conflict screen
+      // Device conflict - show conflict screen (user remains null)
       setDeviceConflict({
         userId: userData.uid,
         devices: deviceResult.devices,
@@ -1085,6 +1079,13 @@ export const AppProvider = ({ children }) => {
         claimsPremium: userData.isPremium,
         claimsAdmin: userData.isAdmin,
       });
+      return;
+    }
+
+    // No conflict - now it is safe to set the user
+    setUser(userData);
+    if (userData.isPremium !== undefined) {
+      setAccountPremium(Boolean(userData.isPremium));
     }
   };
 
