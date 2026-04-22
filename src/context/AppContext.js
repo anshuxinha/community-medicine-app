@@ -132,8 +132,6 @@ const dayDiffFromToday = (dateString) => {
   return Math.round((startToday - startParsed) / MS_PER_DAY);
 };
 
-// SafeNotifications wrapper removed — notificationService.js now handles
-// notification handler setup via ensureNotificationHandler() to avoid duplicates.
 const SafeNotifications = Notifications;
 
 export const AppContext = createContext();
@@ -429,6 +427,24 @@ export const AppProvider = ({ children }) => {
 
       if (userDoc.exists()) {
         const data = userDoc.data();
+
+        // --- DEVICE VALIDATION BLOCK ---
+        const activeCloudDevices = data.devices || [];
+        const currentDeviceId = currentDeviceIdRef.current;
+
+        // Check if our current device is still in the database
+        const isStillRegistered = activeCloudDevices.some(
+          (d) => d.deviceId === currentDeviceId
+        );
+
+        // If the array has devices but WE aren't in it, we got kicked out!
+        if (activeCloudDevices.length > 0 && !isStillRegistered) {
+          console.warn("Session revoked by another device. Logging out.");
+          logout();
+          return; // Stop execution immediately
+        }
+        // -------------------------------
+
         const cloudState = hydrateStoredState(data);
 
         // Reset streak if user hasn't read in over a day
@@ -480,13 +496,8 @@ export const AppProvider = ({ children }) => {
   useEffect(() => {
     const initScreenCaptureProtection = async () => {
       if (Platform.OS === "android") {
-        // Android's FLAG_SECURE silently blocks capture without callbacks.
-        // We can't detect when capture is actually happening, so we don't
-        // show the overlay on Android - FLAG_SECURE provides the protection.
         await enableScreenCaptureProtection();
       } else if (Platform.OS === "ios") {
-        // For iOS, subscribe to capture change events to update state
-        // based on actual capture detection.
         const unsubscribe = subscribeToScreenCaptureChange((isCaptured) => {
           setIsScreenCapturePrevented(isCaptured);
         });
@@ -498,19 +509,14 @@ export const AppProvider = ({ children }) => {
   }, []);
 
   // Load state from local storage ONLY if not authenticated (guest mode)
-  // When authenticated, data comes from cloud via hydrateStoredState in onAuthStateChanged
   useEffect(() => {
     const loadState = async () => {
-      // Skip if user is authenticated - cloud data will be loaded via onAuthStateChanged
-      // We only load local state for guest/unauthenticated users
       try {
         const storedUser = await AsyncStorage.getItem("user");
         if (storedUser) {
-          // User is logged in, skip local load - cloud should provide data
           return;
         }
 
-        // Guest user - load from local storage
         const storedReadItems = await AsyncStorage.getItem("readItems");
         const parsedReadItems = storedReadItems
           ? JSON.parse(storedReadItems)
@@ -634,8 +640,6 @@ export const AppProvider = ({ children }) => {
             const deviceId =
               currentDeviceIdRef.current || (await getDeviceId());
 
-            // Build update object - device registration happens in registerDeviceForUser,
-            // not here. Only update devices array if we have registered devices.
             const updateData = {
               // Global learning progress (latest state)
               readItems,
@@ -650,16 +654,18 @@ export const AppProvider = ({ children }) => {
               syncedAt: serverTimestamp(),
             };
 
-            // Only update devices array if we have registered devices.
-            // Device registration is handled by registerDeviceForUser, not here.
-            // Using arrayUnion with an empty fallback caused race conditions
-            // where devices weren't properly tracked.
+            // Only update the lastActive time IF we already verified we are the active device
             if (registeredDevices && registeredDevices.length > 0) {
-              updateData.devices = registeredDevices.map((d) =>
-                d.deviceId === deviceId
-                  ? { ...d, lastActive: new Date().toISOString() }
-                  : d,
-              );
+              // Check if we are still the registered device in our local state
+              const amIRegistered = registeredDevices.some(d => d.deviceId === deviceId);
+
+              if (amIRegistered) {
+                updateData.devices = registeredDevices.map((d) =>
+                  d.deviceId === deviceId
+                    ? { ...d, lastActive: new Date().toISOString() }
+                    : d,
+                );
+              }
             }
 
             await updateDoc(doc(db, "users", user.uid), updateData);
@@ -922,31 +928,25 @@ export const AppProvider = ({ children }) => {
 
     Purchases.configure({ apiKey: rcApiKey });
 
-    // Listen for subscription status changes from RevenueCat
     Purchases.addCustomerInfoUpdateListener((info) => {
       const hasPremium = hasRevenueCatPremiumEntitlement(info);
       setRevenueCatPremium(hasPremium);
-      // Extract subscription expiry from RevenueCat
       const expiresDate = info?.subscriptions?.Premium?.expiresDate;
       setSubscriptionExpiry(expiresDate || null);
       if (hasPremium) {
         persistPremiumAccess({ premiumSource: "revenuecat_listener" });
       }
-      console.log("RevenueCat listener — isPremium:", hasPremium);
     });
 
-    // Check if user is already premium on mount
     Purchases.getCustomerInfo()
       .then((info) => {
         const hasPremium = hasRevenueCatPremiumEntitlement(info);
         setRevenueCatPremium(hasPremium);
-        // Extract subscription expiry from RevenueCat
         const expiresDate = info?.subscriptions?.Premium?.expiresDate;
         setSubscriptionExpiry(expiresDate || null);
         if (hasPremium) {
           persistPremiumAccess({ premiumSource: "revenuecat_initial_check" });
         }
-        console.log("RevenueCat initial check — isPremium:", hasPremium);
       })
       .catch((err) => {
         console.warn("RevenueCat getCustomerInfo failed:", err.message);
@@ -963,13 +963,11 @@ export const AppProvider = ({ children }) => {
       .then(({ customerInfo }) => {
         const hasPremium = hasRevenueCatPremiumEntitlement(customerInfo);
         setRevenueCatPremium(hasPremium);
-        // Extract subscription expiry from RevenueCat
         const expiresDate = customerInfo?.subscriptions?.Premium?.expiresDate;
         setSubscriptionExpiry(expiresDate || null);
         if (hasPremium) {
           persistPremiumAccess({ premiumSource: "revenuecat_login" });
         }
-        console.log("RevenueCat logIn — isPremium:", hasPremium);
       })
       .catch((err) => {
         console.warn("RevenueCat logIn failed:", err.message);
@@ -1010,13 +1008,11 @@ export const AppProvider = ({ children }) => {
       setAccountPremium(Boolean(userData.isPremium));
     }
 
-    // Identify user with RevenueCat on login
     if (Constants.appOwnership !== "expo" && Purchases && userData.uid) {
       Purchases.logIn(userData.uid)
         .then(({ customerInfo }) => {
           const hasPremium = hasRevenueCatPremiumEntitlement(customerInfo);
           setRevenueCatPremium(hasPremium);
-          // Extract subscription expiry from RevenueCat
           const expiresDate = customerInfo?.subscriptions?.Premium?.expiresDate;
           setSubscriptionExpiry(expiresDate || null);
           if (hasPremium) {
@@ -1056,17 +1052,17 @@ export const AppProvider = ({ children }) => {
 
     try {
       await signOut(auth);
-    } catch (_) {}
+    } catch (_) { }
     if (Constants.appOwnership !== "expo" && GoogleSignin) {
       try {
         await GoogleSignin.signOut();
-      } catch (_) {}
+      } catch (_) { }
     }
     // Log out of RevenueCat
     if (Constants.appOwnership !== "expo" && Purchases) {
       try {
         await Purchases.logOut();
-      } catch (_) {}
+      } catch (_) { }
     }
     await AsyncStorage.multiRemove([
       "user",
@@ -1176,7 +1172,7 @@ export const AppProvider = ({ children }) => {
     setDeviceConflict(null);
     try {
       await signOut(auth);
-    } catch (_) {}
+    } catch (_) { }
     setUser(null);
     setAccountPremium(false);
   };
