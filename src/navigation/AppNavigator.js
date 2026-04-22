@@ -119,16 +119,10 @@ const AppNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {!user && !deviceConflict ? (
+        {!user ? (
           <Stack.Screen
             name="Login"
             component={LoginScreen}
-            options={{ headerShown: false }}
-          />
-        ) : deviceConflict ? (
-          <Stack.Screen
-            name="DeviceConflict"
-            component={DeviceConflictScreen}
             options={{ headerShown: false }}
           />
         ) : (
