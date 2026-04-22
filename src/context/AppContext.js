@@ -1002,7 +1002,7 @@ export const AppProvider = ({ children }) => {
     setRevenueCatPremium(false);
   };
 
-  const login = (userData) => {
+  const login = async (userData) => {
     setUser(userData);
     if (userData.isPremium !== undefined) {
       setAccountPremium(Boolean(userData.isPremium));
@@ -1022,6 +1022,20 @@ export const AppProvider = ({ children }) => {
         .catch((err) => {
           console.warn("RevenueCat logIn during login failed:", err.message);
         });
+    }
+
+    // Check device conflict after login (same logic as onAuthStateChanged)
+    const deviceResult = await registerDeviceForUser(userData.uid);
+    if (!deviceResult.success && deviceResult.limitReached) {
+      setDeviceConflict({
+        userId: userData.uid,
+        devices: deviceResult.devices,
+        currentDeviceId: deviceResult.currentDeviceId,
+        currentDeviceInfo: deviceResult.currentDeviceInfo,
+        firebaseUser: auth.currentUser,
+        claimsPremium: userData.isPremium,
+        claimsAdmin: userData.isAdmin,
+      });
     }
   };
 

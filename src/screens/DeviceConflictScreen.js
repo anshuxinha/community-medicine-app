@@ -9,12 +9,14 @@ import {
 import { Text, Card } from "react-native-paper";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
 import { AppContext } from "../context/AppContext";
 import { theme } from "../styles/theme";
 
 const DeviceConflictScreen = () => {
   const { deviceConflict, resolveDeviceConflict, cancelDeviceConflict } =
     useContext(AppContext);
+  const navigation = useNavigation();
   const [resolving, setResolving] = useState(false);
   const [error, setError] = useState("");
 
@@ -57,8 +59,9 @@ const DeviceConflictScreen = () => {
     }
   };
 
-  const handleCancel = () => {
-    cancelDeviceConflict();
+  const handleCancel = async () => {
+    await cancelDeviceConflict();
+    navigation.replace("Login");
   };
 
   return (

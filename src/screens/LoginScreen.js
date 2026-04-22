@@ -115,7 +115,7 @@ const LoginScreen = () => {
         // Offline or timeout - gracefully fallback to non-premium
         console.warn("Firestore unavailable during Google Login:", err.message);
       }
-      login({
+      await login({
         uid: user.uid,
         email: user.email,
         username: user.displayName || "Google User",
@@ -172,7 +172,7 @@ const LoginScreen = () => {
           isPremium: false,
           createdAt: new Date().toISOString(),
         });
-        login({ uid: user.uid, email, username: "New User", isPremium: false });
+        await login({ uid: user.uid, email, username: "New User", isPremium: false });
       } else {
         const userCredential = await signInWithEmailAndPassword(
           auth,
@@ -201,7 +201,7 @@ const LoginScreen = () => {
         }
 
         const displayName = user.displayName || "User";
-        login({
+        await login({
           uid: user.uid,
           email,
           username: displayName,
