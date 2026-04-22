@@ -289,168 +289,163 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        cloudHydratedRef.current = false;
-        let claimsPremium = false;
-        let claimsAdmin = false;
-        try {
-          const tokenResult = await getIdTokenResult(firebaseUser, true);
-          claimsPremium = tokenResult.claims.isPremium === true;
-          claimsAdmin = tokenResult.claims.isAdmin === true;
-        } catch {
-          // ignore
-        }
+    useEffect(() => {
+      const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+        if (firebaseUser) {
+          cloudHydratedRef.current = false;
+          let claimsPremium = false;
+          let claimsAdmin = false;
+          try {
+            const tokenResult = await getIdTokenResult(firebaseUser, true);
+            claimsPremium = tokenResult.claims.isPremium === true;
+            claimsAdmin = tokenResult.claims.isAdmin === true;
+          } catch {
+            // ignore
+          }
 
-        try {
-          // First, register device and check limit
-          const deviceResult = await registerDeviceForUser(firebaseUser.uid);
+          try {
+            // First, register device and check limit
+            const deviceResult = await registerDeviceForUser(firebaseUser.uid);
 
-          if (!deviceResult.success) {
-            if (deviceResult.wasSignedOut) {
-              // This device was signed out by another device - sign out completely
-              setDeviceConflict(null);
-              try {
-                await signOut(auth);
-              } catch (_) { }
+            if (!deviceResult.success) {
+              if (deviceResult.wasSignedOut) {
+                setDeviceConflict(null);
+                try {
+                  await signOut(auth);
+                } catch (_) { }
+                setUser(null);
+                setAccountPremium(false);
+                currentDeviceIdRef.current = null;
+                await AsyncStorage.removeItem(`lastDevice_${firebaseUser.uid}`);
+                cloudHydratedRef.current = true;
+                return;
+              }
+
+              setDeviceConflict({
+                userId: firebaseUser.uid,
+                devices: deviceResult.devices,
+                currentDeviceId: deviceResult.currentDeviceId,
+                currentDeviceInfo: deviceResult.currentDeviceInfo,
+                firebaseUser,
+                claimsPremium,
+                claimsAdmin,
+              });
               setUser(null);
-              setAccountPremium(false);
-              currentDeviceIdRef.current = null;
-              await AsyncStorage.removeItem(`lastDevice_${firebaseUser.uid}`);
               cloudHydratedRef.current = true;
               return;
             }
 
-            // Device conflict — keep Firebase auth alive, show intercept screen
-            setDeviceConflict({
-              userId: firebaseUser.uid,
-              devices: deviceResult.devices,
-              currentDeviceId: deviceResult.currentDeviceId,
-              currentDeviceInfo: deviceResult.currentDeviceInfo,
-              firebaseUser,
-              claimsPremium,
-              claimsAdmin,
-            });
-            // Don't set user (keeps app on conflict screen)
-            setUser(null);
-            cloudHydratedRef.current = true;
-            return;
-          }
-
-          const { getDoc } = require("firebase/firestore");
-          const userDocRef = doc(db, "users", firebaseUser.uid);
-          const userDoc = await Promise.race([
-            getDoc(userDocRef),
-            timeoutPromise(8000),
-          ]);
-          const data = userDoc.exists() ? userDoc.data() : {};
-
-          if (userDoc.exists()) {
-            const devices = data.devices || [];
-            const currentDeviceId = currentDeviceIdRef.current;
-            const deviceList = devices.map((d) => ({
-              ...d,
-              isCurrentDevice: d.deviceId === currentDeviceId,
-            }));
-            setRegisteredDevices(deviceList);
-          }
-
-          const premiumStatus = data.isPremium === true || claimsPremium;
-          const isAdmin = data.isAdmin === true || claimsAdmin;
-          // Extract premiumType from Firestore
-          const fetchedPremiumType = data.premiumType || null;
-          setPremiumType(fetchedPremiumType);
-
-          const userData = {
-            uid: firebaseUser.uid,
-            email: firebaseUser.email,
-            username: firebaseUser.displayName || data.username || "User",
-            isPremium: premiumStatus,
-            isAdmin,
-          };
-
-          // Load cloud state for learning progress
-          const cloudState = hydrateStoredState(data);
-
-          // Reset streak if user hasn't read in over a day
-          if (cloudState.lastReadDate) {
-            const diffDays = dayDiffFromToday(cloudState.lastReadDate);
-            if (diffDays !== null && diffDays > 1) {
-              setCurrentStreak(0);
+            // IMPORTANT: If we are here, success is true.
+            // However, we must NOT call setUser() if the 'login' function's
+            // registerDeviceForUser call has already flagged a conflict.
+            // Use a small delay or check for existing conflict state.
+            if (deviceConflict?.userId === firebaseUser.uid) {
+               return;
             }
-          }
 
-          setUser(userData);
-          setAccountPremium(Boolean(premiumStatus));
-          setDeviceConflict(null);
-          cloudHydratedRef.current = true;
+            const { getDoc } = require("firebase/firestore");
+            const userDocRef = doc(db, "users", firebaseUser.uid);
+            const userDoc = await Promise.race([
+              getDoc(userDocRef),
+              timeoutPromise(8000),
+            ]);
+            const data = userDoc.exists() ? userDoc.data() : {};
 
-          await AsyncStorage.setItem("user", JSON.stringify(userData));
-          await AsyncStorage.setItem(
-            getAccountStateKey(firebaseUser.uid),
-            JSON.stringify(cloudState),
-          );
-        } catch (err) {
-          console.warn(
-            "Firestore fetch failed/timed out, using auth claims:",
-            err?.message,
-          );
-          const userData = {
-            uid: firebaseUser.uid,
-            email: firebaseUser.email,
-            username: firebaseUser.displayName || "User",
-            isPremium: claimsPremium,
-            isAdmin: claimsAdmin,
-          };
+            if (userDoc.exists()) {
+              const devices = data.devices || [];
+              const currentDeviceId = currentDeviceIdRef.current;
+              const deviceList = devices.map((d) => ({
+                ...d,
+                isCurrentDevice: d.deviceId === currentDeviceId,
+              }));
+              setRegisteredDevices(deviceList);
+            }
 
-          try {
-            const cachedAccountState = await AsyncStorage.getItem(
-              getAccountStateKey(firebaseUser.uid),
-            );
-            if (cachedAccountState) {
-              const cachedState = hydrateStoredState(JSON.parse(cachedAccountState));
-              if (cachedState.lastReadDate) {
-                const diffDays = dayDiffFromToday(cachedState.lastReadDate);
-                if (diffDays !== null && diffDays > 1) {
-                  setCurrentStreak(0);
-                }
+            const premiumStatus = data.isPremium === true || claimsPremium;
+            const isAdmin = data.isAdmin === true || claimsAdmin;
+            const fetchedPremiumType = data.premiumType || null;
+            setPremiumType(fetchedPremiumType);
+
+            const userData = {
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              username: firebaseUser.displayName || data.username || "User",
+              isPremium: premiumStatus,
+              isAdmin,
+            };
+
+            const cloudState = hydrateStoredState(data);
+
+            if (cloudState.lastReadDate) {
+              const diffDays = dayDiffFromToday(cloudState.lastReadDate);
+              if (diffDays !== null && diffDays > 1) {
+                setCurrentStreak(0);
               }
             }
-          } catch (_) {
-            // ignore account cache parse failures
+
+            setUser(userData);
+            setAccountPremium(Boolean(premiumStatus));
+            setDeviceConflict(null);
+            cloudHydratedRef.current = true;
+
+            await AsyncStorage.setItem("user", JSON.stringify(userData));
+            await AsyncStorage.setItem(
+              getAccountStateKey(firebaseUser.uid),
+              JSON.stringify(cloudState),
+            );
+          } catch (err) {
+            console.warn("Firestore fetch failed/timed out, using auth claims:", err?.message);
+            const userData = {
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              username: firebaseUser.displayName || "User",
+              isPremium: claimsPremium,
+              isAdmin: claimsAdmin,
+            };
+
+            try {
+              const cachedAccountState = await AsyncStorage.getItem(getAccountStateKey(firebaseUser.uid));
+              if (cachedAccountState) {
+                const cachedState = hydrateStoredState(JSON.parse(cachedAccountState));
+                if (cachedState.lastReadDate) {
+                  const diffDays = dayDiffFromToday(cachedState.lastReadDate);
+                  if (diffDays !== null && diffDays > 1) {
+                    setCurrentStreak(0);
+                  }
+                }
+              }
+            } catch (_) { }
+
+            setUser(userData);
+            setAccountPremium(Boolean(claimsPremium));
+            cloudHydratedRef.current = true;
+            await AsyncStorage.setItem("user", JSON.stringify(userData));
           }
+        } else {
+          cloudHydratedRef.current = false;
+          setDeviceConflict(null);
+          setRegisteredDevices([]);
+          currentDeviceIdRef.current = null;
 
-          setUser(userData);
-          setAccountPremium(Boolean(claimsPremium));
-          cloudHydratedRef.current = true;
-          await AsyncStorage.setItem("user", JSON.stringify(userData));
-        }
-      } else {
-        cloudHydratedRef.current = false;
-        setDeviceConflict(null);
-        setRegisteredDevices([]);
-        currentDeviceIdRef.current = null;
-
-        try {
-          const storedUser = await AsyncStorage.getItem("user");
-          if (storedUser) {
-            const parsed = JSON.parse(storedUser);
-            setUser(parsed);
-            setAccountPremium(Boolean(parsed.isPremium));
-          } else {
+          try {
+            const storedUser = await AsyncStorage.getItem("user");
+            if (storedUser) {
+              const parsed = JSON.parse(storedUser);
+              setUser(parsed);
+              setAccountPremium(Boolean(parsed.isPremium));
+            } else {
+              setUser(null);
+              setAccountPremium(false);
+            }
+          } catch {
             setUser(null);
             setAccountPremium(false);
           }
-        } catch {
-          setUser(null);
-          setAccountPremium(false);
         }
-      }
-    });
+      });
 
-    return () => unsubscribe();
-  }, []);
+      return () => unsubscribe();
+    }, [deviceConflict]);
 
   // Refresh learning progress from Firestore on app foreground
   const refreshFromCloud = async () => {
