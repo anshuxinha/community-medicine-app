@@ -301,6 +301,7 @@ export const AppProvider = ({ children }) => {
           }
         } else {
           cloudHydratedRef.current = false;
+          initialLoadRef.current = false;
           currentDeviceIdRef.current = null;
 
           try {
