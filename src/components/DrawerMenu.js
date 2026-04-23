@@ -14,7 +14,8 @@ import { Text, Avatar, Divider } from "react-native-paper";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { signOut } from "firebase/auth";
-import { auth } from "../config/firebase";
+import { doc, updateDoc } from "firebase/firestore";
+import { auth, db } from "../config/firebase";
 import { AppContext } from "../context/AppContext";
 import { theme } from "../styles/theme";
 import Constants from "expo-constants";
@@ -141,6 +142,12 @@ const DrawerMenu = ({ visible, onClose, user }) => {
               text: "Log Out",
               style: "destructive",
               onPress: async () => {
+                const uid = auth.currentUser?.uid;
+                if (uid) {
+                  try {
+                    await updateDoc(doc(db, "users", uid), { currentDeviceId: null });
+                  } catch (_) {}
+                }
                 await signOut(auth);
                 logout();
                 navigation.reset({

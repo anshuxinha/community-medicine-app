@@ -30,7 +30,6 @@ import AnthropometryScreen from "../screens/AnthropometryScreen";
 import VirtualMuseumScreen from "../screens/VirtualMuseumScreen";
 import BiostatsAssistantScreen from "../screens/BiostatsAssistantScreen";
 import NotificationsScreen from "../screens/NotificationsScreen";
-import DeviceConflictScreen from "../screens/DeviceConflictScreen";
 import { theme } from "../styles/theme";
 
 const Tab = createBottomTabNavigator();

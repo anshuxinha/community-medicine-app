@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -8,11 +8,12 @@ import {
   ScrollView,
   Image,
   Linking,
+  Modal,
+  ActivityIndicator,
 } from "react-native";
 import { Text, TextInput, Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppContext } from "../context/AppContext";
-import { useNavigation } from "@react-navigation/native";
 import { getDeviceId } from "../utils/deviceUtils";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import { auth, db } from "../config/firebase";
@@ -27,8 +28,9 @@ import {
   signInWithCredential,
   GoogleAuthProvider,
   getIdTokenResult,
+  signOut,
 } from "firebase/auth";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import Constants from "expo-constants";
 import { theme } from "../styles/theme";
 
@@ -50,7 +52,6 @@ const timeoutPromise = (ms) =>
 
 const LoginScreen = () => {
   const { login } = useContext(AppContext);
-  const navigation = useNavigation();
   const [isRegistering, setIsRegistering] = useState(false);
 
   useEffect(() => {
@@ -64,6 +65,77 @@ const LoginScreen = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [validationError, setValidationError] = useState("");
+
+  // ── Device conflict modal state ──
+  const [isConflictModalVisible, setIsConflictModalVisible] = useState(false);
+  const [pendingUserUid, setPendingUserUid] = useState(null);
+  const [pendingUserData, setPendingUserData] = useState(null);
+  const [localDeviceId, setLocalDeviceId] = useState(null);
+  const [conflictLoading, setConflictLoading] = useState(false);
+
+  // Fetch local device ID on mount
+  useEffect(() => {
+    getDeviceId().then(setLocalDeviceId).catch(() => {});
+  }, []);
+
+  // ── Shared device conflict check ──
+  const checkDeviceConflict = async (firebaseUser, userData) => {
+    try {
+      const deviceId = localDeviceId || (await getDeviceId());
+      const userDocRef = doc(db, "users", firebaseUser.uid);
+      const userDoc = await Promise.race([
+        getDoc(userDocRef),
+        timeoutPromise(8000),
+      ]);
+      const data = userDoc.exists() ? userDoc.data() : {};
+
+      if (!data.currentDeviceId || data.currentDeviceId === deviceId) {
+        // No conflict — register this device and proceed
+        await setDoc(userDocRef, { currentDeviceId: deviceId }, { merge: true });
+        await login(userData);
+      } else {
+        // Conflict — show modal, don't let user in
+        setPendingUserUid(firebaseUser.uid);
+        setPendingUserData(userData);
+        setIsConflictModalVisible(true);
+      }
+    } catch (err) {
+      // Firestore unreachable — let user through with a warning
+      console.warn("Device conflict check failed:", err?.message);
+      await login(userData);
+    }
+  };
+
+  // ── Conflict modal handlers ──
+  const handleCancelConflict = async () => {
+    try {
+      await signOut(auth);
+    } catch (_) {}
+    setPendingUserUid(null);
+    setPendingUserData(null);
+    setIsConflictModalVisible(false);
+  };
+
+  const handleProceedConflict = async () => {
+    setConflictLoading(true);
+    try {
+      const deviceId = localDeviceId || (await getDeviceId());
+      await updateDoc(doc(db, "users", pendingUserUid), {
+        currentDeviceId: deviceId,
+      });
+      setIsConflictModalVisible(false);
+      await login(pendingUserData);
+    } catch (err) {
+      console.warn("Failed to resolve conflict:", err?.message);
+      setValidationError("Failed to sign out the other device. Please try again.");
+      setIsConflictModalVisible(false);
+      try { await signOut(auth); } catch (_) {}
+    } finally {
+      setPendingUserUid(null);
+      setPendingUserData(null);
+      setConflictLoading(false);
+    }
+  };
 
   const handleGoogleLogin = async () => {
     if (Constants.appOwnership === "expo") {
@@ -92,9 +164,6 @@ const LoginScreen = () => {
       const userCredential = await signInWithCredential(auth, googleCredential);
       const user = userCredential.user;
 
-      // Device registration is handled by AppContext's onAuthStateChanged.
-      // If there's a conflict, it will show the DeviceConflict screen.
-
       const tokenResult = await getIdTokenResult(user, true);
       const claimsPremium = tokenResult.claims.isPremium === true;
 
@@ -118,14 +187,20 @@ const LoginScreen = () => {
         // Offline or timeout - gracefully fallback to non-premium
         console.warn("Firestore unavailable during Google Login:", err.message);
       }
-      await login({
+
+      const userData = {
         uid: user.uid,
         email: user.email,
         username: user.displayName || "Google User",
         isPremium: premiumStatus,
-      });
+      };
+
+      // Intercept: check device conflict before allowing in
+      await checkDeviceConflict(user, userData);
     } catch (error) {
-      alert(`Google Sign-In Error: ${error.message}`);
+      if (!isConflictModalVisible) {
+        alert(`Google Sign-In Error: ${error.message}`);
+      }
     } finally {
       setLoading(false);
     }
@@ -168,12 +243,12 @@ const LoginScreen = () => {
         );
         const user = userCredential.user;
 
-        // Device registration is handled by AppContext's onAuthStateChanged
-
+        const deviceId = localDeviceId || (await getDeviceId());
         await setDoc(doc(db, "users", user.uid), {
           email,
           isPremium: false,
           createdAt: new Date().toISOString(),
+          currentDeviceId: deviceId,
         });
         await login({ uid: user.uid, email, username: "New User", isPremium: false });
       } else {
@@ -183,9 +258,6 @@ const LoginScreen = () => {
           password,
         );
         const user = userCredential.user;
-
-        // Device registration is handled by AppContext's onAuthStateChanged.
-        // If there's a conflict, it will show the DeviceConflict screen.
 
         const tokenResult = await getIdTokenResult(user, true);
         const claimsPremium = tokenResult.claims.isPremium === true;
@@ -204,12 +276,15 @@ const LoginScreen = () => {
         }
 
         const displayName = user.displayName || "User";
-        await login({
+        const userData = {
           uid: user.uid,
           email,
           username: displayName,
           isPremium: premiumStatus,
-        });
+        };
+
+        // Intercept: check device conflict before allowing in
+        await checkDeviceConflict(user, userData);
       }
     } catch (error) {
       if (error.message.includes("auth/email-already-in-use")) {
@@ -394,6 +469,77 @@ const LoginScreen = () => {
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      {/* ── Device Conflict Modal ── */}
+      <Modal
+        transparent
+        visible={isConflictModalVisible}
+        animationType="fade"
+        onRequestClose={handleCancelConflict}
+        statusBarTranslucent
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            {/* Icon */}
+            <View style={styles.modalIconCircle}>
+              <MaterialIcons
+                name="devices-other"
+                size={36}
+                color={theme.colors.accent}
+              />
+            </View>
+
+            {/* Title */}
+            <Text style={styles.modalTitle}>Account in Use</Text>
+
+            {/* Body */}
+            <Text style={styles.modalBody}>
+              You are currently logged in on another device. Do you want to sign
+              out of the other device and log in here?
+            </Text>
+
+            {/* Primary action */}
+            <TouchableOpacity
+              style={[
+                styles.modalPrimaryBtn,
+                conflictLoading && styles.primaryBtnDisabled,
+              ]}
+              onPress={handleProceedConflict}
+              disabled={conflictLoading}
+              activeOpacity={0.85}
+            >
+              {conflictLoading ? (
+                <ActivityIndicator
+                  size="small"
+                  color={theme.colors.surfacePrimary}
+                />
+              ) : (
+                <>
+                  <MaterialIcons
+                    name="logout"
+                    size={18}
+                    color={theme.colors.surfacePrimary}
+                    style={{ marginRight: 8 }}
+                  />
+                  <Text style={styles.modalPrimaryBtnText}>
+                    Sign Out Other Device
+                  </Text>
+                </>
+              )}
+            </TouchableOpacity>
+
+            {/* Cancel action */}
+            <TouchableOpacity
+              style={styles.modalCancelBtn}
+              onPress={handleCancelConflict}
+              disabled={conflictLoading}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.modalCancelBtnText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -553,6 +699,86 @@ const styles = StyleSheet.create({
     color: theme.colors.secondary,
     fontSize: 12,
     textDecorationLine: "underline",
+  },
+
+  // ── Conflict Modal ───────────────────────────────────────────
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 24,
+  },
+  modalCard: {
+    backgroundColor: theme.colors.surfacePrimary,
+    borderRadius: 20,
+    paddingVertical: 32,
+    paddingHorizontal: 28,
+    width: "100%",
+    maxWidth: 400,
+    alignItems: "center",
+    elevation: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 24,
+  },
+  modalIconCircle: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: theme.colors.surfaceSecondary,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 20,
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: theme.colors.textTitle,
+    textAlign: "center",
+    marginBottom: 12,
+  },
+  modalBody: {
+    fontSize: 14,
+    color: theme.colors.textSecondary,
+    textAlign: "center",
+    lineHeight: 21,
+    marginBottom: 28,
+  },
+  modalPrimaryBtn: {
+    flexDirection: "row",
+    backgroundColor: theme.colors.secondary,
+    borderRadius: 14,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    marginBottom: 12,
+    elevation: 4,
+    shadowColor: theme.colors.secondary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+  },
+  modalPrimaryBtnText: {
+    color: theme.colors.surfacePrimary,
+    fontSize: 15,
+    fontWeight: "700",
+  },
+  modalCancelBtn: {
+    borderRadius: 14,
+    height: 46,
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    borderWidth: 1.5,
+    borderColor: "#E5E7EB",
+  },
+  modalCancelBtnText: {
+    color: theme.colors.textSecondary,
+    fontSize: 15,
+    fontWeight: "600",
   },
 });
 

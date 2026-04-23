@@ -1,11 +1,13 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
-import * as Device from "expo-device"; // <-- CORRECT IMPORT
+import * as Device from "expo-device";
 
-// Generate a unique device identifier
+const DEVICE_ID_KEY = "deviceId";
+
+// Generate a unique device identifier, persisted in encrypted secure storage
 export const getDeviceId = async () => {
   try {
-    let deviceId = await AsyncStorage.getItem("deviceId");
+    let deviceId = await SecureStore.getItemAsync(DEVICE_ID_KEY);
 
     if (!deviceId) {
       // Generate a unique ID based on device info + random
@@ -15,7 +17,7 @@ export const getDeviceId = async () => {
       const deviceInfo = Device.modelName || Device.deviceName || "unknown";
       deviceId = `${deviceInfo}-${randomPart}`;
 
-      await AsyncStorage.setItem("deviceId", deviceId);
+      await SecureStore.setItemAsync(DEVICE_ID_KEY, deviceId);
     }
 
     return deviceId;
@@ -60,10 +62,10 @@ export const isFirstDeviceLogin = async (userUid) => {
   try {
     const deviceId = await getDeviceId();
     const key = `firstLogin_${userUid}_${deviceId}`;
-    const isFirst = await AsyncStorage.getItem(key);
+    const isFirst = await SecureStore.getItemAsync(key);
 
     if (!isFirst) {
-      await AsyncStorage.setItem(key, "false");
+      await SecureStore.setItemAsync(key, "false");
       return true;
     }
     return false;

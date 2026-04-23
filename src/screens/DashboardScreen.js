@@ -27,11 +27,16 @@ import { auth } from "../config/firebase";
 import { theme, useResponsive } from "../styles/theme";
 
 const DashboardScreen = ({ navigation }) => {
-  const { readingProgress, currentStreak, studyScore, user } =
+  const { readingProgress, currentStreak, studyScore, user, refreshFromCloud } =
     useContext(AppContext);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { isTablet, horizontalPadding, scaleFactor, contentMaxWidth } =
     useResponsive();
+
+  // Refresh learning progress from cloud when Dashboard mounts
+  useEffect(() => {
+    if (refreshFromCloud) refreshFromCloud();
+  }, []);
 
   const [visible, setVisible] = React.useState(false);
   const [healthDaysVisible, setHealthDaysVisible] = useState(false);

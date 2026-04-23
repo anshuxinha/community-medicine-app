@@ -1,4 +1,4 @@
-import { useEffect, useContext } from 'react';
+import { useEffect, useContext, useRef } from 'react';
 import { AppContext } from '../context/AppContext';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../config/firebase';
@@ -7,9 +7,13 @@ import { Alert } from 'react-native';
 
 export const useSessionEnforcer = () => {
   const { user, logout } = useContext(AppContext);
+  const hasLoggedOutRef = useRef(false);
 
   useEffect(() => {
-    if (!user?.uid) return;
+    if (!user?.uid) {
+      hasLoggedOutRef.current = false;
+      return;
+    }
 
     let unsubscribe = () => {};
 
@@ -18,17 +22,18 @@ export const useSessionEnforcer = () => {
         const localDeviceId = await getDeviceId();
         const userRef = doc(db, 'users', user.uid);
 
-        unsubscribe = onSnapshot(userRef, (docSnap) => {
+        unsubscribe = onSnapshot(userRef, async (docSnap) => {
+          if (hasLoggedOutRef.current) return;
+
           if (docSnap.exists()) {
             const data = docSnap.data();
             if (data.currentDeviceId && data.currentDeviceId !== localDeviceId) {
-              // Conflict detected
+              // Another device took over — force logout immediately
+              hasLoggedOutRef.current = true;
+              await logout();
               Alert.alert(
                 "Session Expired",
-                "You have been logged out because your account was accessed from another device.",
-                [{ text: "OK", onPress: async () => {
-                    await logout();
-                }}]
+                "You have been logged out because your account was accessed from another device."
               );
             }
           }

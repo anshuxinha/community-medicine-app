@@ -15,10 +15,8 @@ import {
   setDoc,
   updateDoc,
   serverTimestamp,
-  arrayUnion,
-  FieldValue,
 } from "firebase/firestore";
-import { getDeviceId, getDeviceInfo } from "../utils/deviceUtils";
+import { getDeviceId } from "../utils/deviceUtils";
 import { onAuthStateChanged, getIdTokenResult, signOut } from "firebase/auth";
 import * as Notifications from "expo-notifications";
 import { theme } from "../styles/theme";
@@ -45,8 +43,7 @@ if (Constants.appOwnership !== "expo") {
   });
 }
 
-// Device limit constant — set to 2 to allow conflict screen without immediate logout
-const MAX_DEVICES = 2;
+
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const getAccountStateKey = (uid) => `accountState:${uid}`;
@@ -216,6 +213,7 @@ export const AppProvider = ({ children }) => {
 
           try {
             const deviceId = await getDeviceId();
+            currentDeviceIdRef.current = deviceId;
             const userDocRef = doc(db, "users", firebaseUser.uid);
             const userDoc = await Promise.race([
               getDoc(userDocRef),
@@ -223,24 +221,17 @@ export const AppProvider = ({ children }) => {
             ]);
             const data = userDoc.exists() ? userDoc.data() : {};
 
-            const isInitialLoad = initialLoadRef.current;
             initialLoadRef.current = false;
 
+            // Safety net: if app cold-restarts with a stale Firebase auth
+            // session but Firestore shows a different active device, sign out.
+            // Normal login conflict is handled by the LoginScreen modal.
             if (data.currentDeviceId && data.currentDeviceId !== deviceId) {
-              if (isInitialLoad) {
-                try { await signOut(auth); } catch(e) {}
-                setUser(null);
-                setAccountPremium(false);
-                cloudHydratedRef.current = true;
-              } else {
-                setUser(null);
-                cloudHydratedRef.current = true;
-              }
+              try { await signOut(auth); } catch(e) {}
+              setUser(null);
+              setAccountPremium(false);
+              cloudHydratedRef.current = true;
               return;
-            }
-
-            if (!data.currentDeviceId) {
-               await setDoc(userDocRef, { currentDeviceId: deviceId }, { merge: true }).catch(()=>{});
             }
 
             const premiumStatus = data.isPremium === true || claimsPremium;
@@ -915,25 +906,13 @@ export const AppProvider = ({ children }) => {
   const logout = async () => {
     isLoggingOutRef.current = true;
 
-    // Remove current device from Firestore so re-login on this device works
+    // Clear currentDeviceId in Firestore so re-login won't trigger conflict
     const uid = user?.uid || auth.currentUser?.uid;
-    const deviceId = currentDeviceIdRef.current;
-    if (uid && deviceId) {
+    if (uid) {
       try {
-        const userDocRef = doc(db, "users", uid);
-        const userDoc = await Promise.race([
-          getDoc(userDocRef),
-          timeoutPromise(5000),
-        ]);
-        if (userDoc.exists()) {
-          const currentDevices = userDoc.data().devices || [];
-          const filtered = currentDevices.filter(
-            (d) => d.deviceId !== deviceId,
-          );
-          await updateDoc(userDocRef, { devices: filtered });
-        }
+        await updateDoc(doc(db, "users", uid), { currentDeviceId: null });
       } catch (e) {
-        console.warn("Failed to remove device on logout:", e?.message);
+        console.warn("Failed to clear currentDeviceId on logout:", e?.message);
       }
     }
 
@@ -1005,6 +984,7 @@ export const AppProvider = ({ children }) => {
         toggleBookmark,
         saveHighlight,
         clearStorage,
+        refreshFromCloud,
         user,
         isPremium,
         premiumType,
