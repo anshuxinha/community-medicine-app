@@ -908,6 +908,40 @@ export const AppProvider = ({ children }) => {
     if (userData.isPremium !== undefined) {
       setAccountPremium(Boolean(userData.isPremium));
     }
+
+    // If onAuthStateChanged didn't hydrate (e.g. device conflict resolved
+    // via LoginScreen modal), fetch learning progress from cloud now.
+    if (!cloudHydratedRef.current && userData.uid) {
+      try {
+        const userDocRef = doc(db, "users", userData.uid);
+        const userDoc = await Promise.race([
+          getDoc(userDocRef),
+          timeoutPromise(5000),
+        ]);
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          const cloudState = hydrateStoredState(data);
+          if (cloudState.lastReadDate) {
+            const diffDays = dayDiffFromToday(cloudState.lastReadDate);
+            if (diffDays !== null && diffDays > 1) {
+              setCurrentStreak(0);
+            }
+          }
+          await AsyncStorage.setItem(
+            getAccountStateKey(userData.uid),
+            JSON.stringify(cloudState),
+          );
+        }
+        cloudHydratedRef.current = true;
+      } catch (err) {
+        console.warn("Cloud hydration during login failed:", err?.message);
+        try {
+          const cached = await AsyncStorage.getItem(getAccountStateKey(userData.uid));
+          if (cached) hydrateStoredState(JSON.parse(cached));
+        } catch (_) {}
+        cloudHydratedRef.current = true;
+      }
+    }
   };
 
   const logout = async () => {
