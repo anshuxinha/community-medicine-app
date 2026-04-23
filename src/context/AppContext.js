@@ -221,16 +221,22 @@ export const AppProvider = ({ children }) => {
             ]);
             const data = userDoc.exists() ? userDoc.data() : {};
 
+            const isInitialLoad = initialLoadRef.current;
             initialLoadRef.current = false;
 
-            // Safety net: if app cold-restarts with a stale Firebase auth
-            // session but Firestore shows a different active device, sign out.
-            // Normal login conflict is handled by the LoginScreen modal.
-            if (data.currentDeviceId && data.currentDeviceId !== deviceId) {
+            // Safety net: ONLY on cold restart with a stale Firebase auth
+            // session. Fresh logins are handled by the LoginScreen modal.
+            if (isInitialLoad && data.currentDeviceId && data.currentDeviceId !== deviceId) {
               try { await signOut(auth); } catch(e) {}
               setUser(null);
               setAccountPremium(false);
               cloudHydratedRef.current = true;
+              return;
+            }
+
+            // Fresh login with device conflict: don't set user here.
+            // LoginScreen's conflict modal will handle it and call login().
+            if (!isInitialLoad && data.currentDeviceId && data.currentDeviceId !== deviceId) {
               return;
             }
 
