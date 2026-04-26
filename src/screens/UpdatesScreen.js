@@ -4,12 +4,12 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  Linking,
 } from "react-native";
-import { Text, Card, Button, Dialog, Portal, Paragraph } from "react-native-paper";
+import { Text, Card, Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { theme, useResponsive } from "../styles/theme";
+import UpdateDetailDialog from "../components/UpdateDetailDialog";
 import currentUpdates from "../data/updates.json";
 import archiveData from "../data/updates_archive.json";
 
@@ -226,47 +226,11 @@ const UpdatesScreen = () => {
         )}
       </ScrollView>
 
-      {/* Update detail dialog */}
-      <Portal>
-        <Dialog
-          visible={dialogVisible}
-          onDismiss={() => setDialogVisible(false)}
-        >
-          <Dialog.Title>{selectedUpdate?.title}</Dialog.Title>
-          <Dialog.Content>
-            <Text
-              variant="labelSmall"
-              style={{
-                marginBottom: 16,
-                color: theme.colors.primary,
-                fontWeight: "bold",
-              }}
-            >
-              {selectedUpdate?.date}
-            </Text>
-            <Paragraph style={{ lineHeight: 22 }}>
-              {selectedUpdate?.summary}
-            </Paragraph>
-            {selectedUpdate?.link && (
-              <Button
-                mode="text"
-                onPress={() => Linking.openURL(selectedUpdate.link)}
-                style={{
-                  marginTop: 16,
-                  alignSelf: "flex-start",
-                  marginLeft: -8,
-                }}
-                icon="open-in-new"
-              >
-                Source Article
-              </Button>
-            )}
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setDialogVisible(false)}>Close</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
+      <UpdateDetailDialog
+        visible={dialogVisible}
+        update={selectedUpdate}
+        onDismiss={() => setDialogVisible(false)}
+      />
     </SafeAreaView>
   );
 };

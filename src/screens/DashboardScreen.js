@@ -3,7 +3,6 @@ import {
   ScrollView,
   View,
   StyleSheet,
-  Linking,
   Platform,
   TouchableOpacity,
 } from "react-native";
@@ -14,7 +13,6 @@ import {
   Button,
   Dialog,
   Portal,
-  Paragraph,
 } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import recentUpdates from "../data/updates.json";
@@ -22,6 +20,7 @@ import publicHealthDays from "../data/publicHealthDays.json";
 import { AppContext } from "../context/AppContext";
 import { MaterialIcons } from "@expo/vector-icons";
 import DrawerMenu from "../components/DrawerMenu";
+import UpdateDetailDialog from "../components/UpdateDetailDialog";
 import { scheduleAllNotifications } from "../services/notificationService";
 import { auth } from "../config/firebase";
 import { theme, useResponsive } from "../styles/theme";
@@ -312,60 +311,13 @@ const DashboardScreen = ({ navigation }) => {
         ))}
       </ScrollView>
 
-      <Portal>
-        <Dialog visible={visible} onDismiss={hideDialog}>
-          <Dialog.Title>{selectedUpdate?.title}</Dialog.Title>
-          <Dialog.Content>
-            <Text
-              variant="labelSmall"
-              style={{
-                marginBottom: 16,
-                color: theme.colors.primary,
-                fontWeight: "bold",
-              }}
-            >
-              {selectedUpdate?.date}
-            </Text>
-            {selectedUpdate?.source ? (
-              <Text
-                variant="labelSmall"
-                style={{ marginBottom: 8, color: theme.colors.textSecondary }}
-              >
-                Source: {selectedUpdate.source}
-              </Text>
-            ) : null}
-            {Array.isArray(selectedUpdate?.updatedItems) &&
-            selectedUpdate.updatedItems.length > 0 ? (
-              <Text
-                variant="bodySmall"
-                style={{ marginBottom: 8, color: theme.colors.textSecondary }}
-              >
-                Updated topics: {selectedUpdate.updatedItems.join(", ")}
-              </Text>
-            ) : null}
-            <Paragraph style={{ lineHeight: 22 }}>
-              {selectedUpdate?.summary}
-            </Paragraph>
-            {selectedUpdate?.link && (
-              <Button
-                mode="text"
-                onPress={() => Linking.openURL(selectedUpdate.link)}
-                style={{
-                  marginTop: 16,
-                  alignSelf: "flex-start",
-                  marginLeft: -8,
-                }}
-                icon="open-in-new"
-              >
-                Source Article
-              </Button>
-            )}
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={hideDialog}>Close</Button>
-          </Dialog.Actions>
-        </Dialog>
+      <UpdateDetailDialog
+        visible={visible}
+        update={selectedUpdate}
+        onDismiss={hideDialog}
+      />
 
+      <Portal>
         <Dialog
           visible={healthDaysVisible}
           onDismiss={() => setHealthDaysVisible(false)}
