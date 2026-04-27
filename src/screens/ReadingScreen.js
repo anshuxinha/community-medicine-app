@@ -37,6 +37,7 @@ const ReadingScreen = ({ route }) => {
     toggleBookmark,
     readItemVersions,
     isScreenCapturePrevented,
+    contentRegistryVersion,
   } = useContext(AppContext);
   const [isSpeaking, setIsSpeaking] = React.useState(false);
   const speechSessionRef = useRef(0);
@@ -44,7 +45,7 @@ const ReadingScreen = ({ route }) => {
 
   const currentEntry = useMemo(
     () => getCurrentContentEntry(route.params),
-    [route.params],
+    [route.params, contentRegistryVersion],
   );
   const currentItem = currentEntry?.item || null;
 

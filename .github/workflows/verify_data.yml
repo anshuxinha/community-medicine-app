@@ -22,27 +22,27 @@ jobs:
           python-version: "3.10"
 
       - name: Install dependencies
-        run: pip install requests beautifulsoup4 google-auth google-auth-oauthlib telethon
+        run: pip install requests beautifulsoup4 google-auth
 
       - name: Run Verification Script
         run: python scripts/verify_mock_data.py
         env:
-          GEMINI_API_KEY: ${{ secrets.EXPO_PUBLIC_GEMINI_API_KEY }}
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          VERIFY_TARGET_ROOT_IDS: "7,8"
+          OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+          GOOGLE_CLOUD_PROJECT: community-med-app
 
       - name: Commit and Push Changes
         id: commit_changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add src/data/mockData.json src/data/updates.json
+          git add src/data/updates.json src/data/updates_archive.json
           # Commit only if there are changes
           if git diff --staged --quiet; then
             echo "has_changes=false" >> "$GITHUB_OUTPUT"
             echo "No changes to commit"
           else
-            git commit -m "chore(data): Weekly verification for IDs 7 and 8"
+            git commit -m "chore(data): run weekly library verification review"
             git pull --rebase origin main
             git push
             echo "has_changes=true" >> "$GITHUB_OUTPUT"
@@ -75,7 +75,7 @@ jobs:
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           EXPO_PUBLIC_RC_API_KEY: ${{ secrets.EXPO_PUBLIC_RC_API_KEY }}
-        run: npx eas-cli update --channel production --message "Weekly verified updates for IDs 7 and 8" --non-interactive
+        run: npx eas-cli update --channel production --message "Weekly library verification review" --non-interactive
 
       - name: Broadcast Push Notifications
         run: python scripts/push_notifications.py

@@ -30,6 +30,7 @@ import AnthropometryScreen from "../screens/AnthropometryScreen";
 import VirtualMuseumScreen from "../screens/VirtualMuseumScreen";
 import BiostatsAssistantScreen from "../screens/BiostatsAssistantScreen";
 import NotificationsScreen from "../screens/NotificationsScreen";
+import AdminLibraryReviewScreen from "../screens/AdminLibraryReviewScreen";
 import { theme } from "../styles/theme";
 
 const Tab = createBottomTabNavigator();
@@ -211,6 +212,11 @@ const AppNavigator = () => {
               name="Bookmarks"
               component={BookmarksScreen}
               options={{ title: "Bookmarks" }}
+            />
+            <Stack.Screen
+              name="AdminLibraryReview"
+              component={AdminLibraryReviewScreen}
+              options={{ title: "Library Review Queue" }}
             />
           </>
         )}

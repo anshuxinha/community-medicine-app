@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useMemo } from "react";
 import {
   enableScreenCaptureProtection,
   disableScreenCaptureProtection,
@@ -7,10 +7,9 @@ import { View, StyleSheet, FlatList } from "react-native";
 import { Searchbar, Text, Card, Badge } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import mockData from "../data/mockData.json";
-import practicalData from "../data/practical.json";
 import { AppContext } from "../context/AppContext";
 import {
+  CONTENT_SECTIONS,
   getContentKey,
   getContentSignature,
   getItemStatus,
@@ -41,11 +40,6 @@ const flattenTopics = (data, section) => {
   });
   return result;
 };
-
-const allData = [
-  ...flattenTopics(mockData, "theory"),
-  ...flattenTopics(practicalData, "practical"),
-];
 
 const StatusMark = ({ status }) => {
   if (status === "updated") {
@@ -79,9 +73,16 @@ const buildReadingParams = (item, status) => ({
 });
 
 const SearchScreen = ({ navigation }) => {
-  const { readItemVersions } = useContext(AppContext);
+  const { readItemVersions, contentRegistryVersion } = useContext(AppContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const allData = useMemo(
+    () => [
+      ...flattenTopics(CONTENT_SECTIONS.theory, "theory"),
+      ...flattenTopics(CONTENT_SECTIONS.practical, "practical"),
+    ],
+    [contentRegistryVersion],
+  );
 
   useEffect(() => {
     enableScreenCaptureProtection();
@@ -89,6 +90,18 @@ const SearchScreen = ({ navigation }) => {
       disableScreenCaptureProtection();
     };
   }, []);
+
+  useEffect(() => {
+    if (searchQuery.trim() !== "") {
+      const lowercasedText = searchQuery.toLowerCase();
+      const filteredData = allData.filter(
+        (item) =>
+          (item.title || "").toLowerCase().includes(lowercasedText) ||
+          (item.content || "").toLowerCase().includes(lowercasedText),
+      );
+      setSearchResults(filteredData);
+    }
+  }, [allData, searchQuery]);
 
   const handleSearch = (text) => {
     setSearchQuery(text);

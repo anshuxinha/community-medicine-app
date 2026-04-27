@@ -10,8 +10,10 @@ import * as Device from "expo-device";
 import Constants from "expo-constants";
 import { db, auth } from "../config/firebase";
 import {
+  collection,
   doc,
   getDoc,
+  getDocs,
   setDoc,
   updateDoc,
   serverTimestamp,
@@ -28,6 +30,7 @@ import {
   getEffectiveReadCount,
   getContentKey,
   getReadTitles,
+  hydrateContentRegistry,
   migrateLegacyReadItems,
 } from "../utils/contentRegistry";
 
@@ -149,6 +152,7 @@ export const AppProvider = ({ children }) => {
   const [subscriptionExpiry, setSubscriptionExpiry] = useState(null);
   const [accountPremium, setAccountPremium] = useState(false);
   const [revenueCatPremium, setRevenueCatPremium] = useState(false);
+  const [contentRegistryVersion, setContentRegistryVersion] = useState(0);
   
   const [isScreenCapturePrevented, setIsScreenCapturePrevented] =
     useState(false);
@@ -171,6 +175,31 @@ export const AppProvider = ({ children }) => {
         ms,
       ),
     );
+
+  const refreshLibraryContent = async () => {
+    try {
+      const snapshot = await Promise.race([
+        getDocs(collection(db, "libraryContentOverrides")),
+        timeoutPromise(5000),
+      ]);
+
+      const approvedOverrides = snapshot.docs
+        .map((itemDoc) => ({
+          id: itemDoc.id,
+          ...itemDoc.data(),
+        }))
+        .filter(
+          (override) =>
+            override?.status === "active" &&
+            typeof override?.proposedContent === "string",
+        );
+
+      hydrateContentRegistry(approvedOverrides);
+      setContentRegistryVersion((current) => current + 1);
+    } catch (err) {
+      console.warn("Library override refresh failed:", err?.message);
+    }
+  };
 
   const hydrateStoredState = (rawState = {}) => {
     const parsedState = sanitizeCloudState(rawState);
@@ -201,6 +230,7 @@ export const AppProvider = ({ children }) => {
       const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
         if (firebaseUser) {
           cloudHydratedRef.current = false;
+          await refreshLibraryContent();
           let claimsPremium = false;
           let claimsAdmin = false;
           try {
@@ -340,8 +370,7 @@ export const AppProvider = ({ children }) => {
 
       if (userDoc.exists()) {
         const data = userDoc.data();
-
-        
+        await refreshLibraryContent();
 
         const cloudState = hydrateStoredState(data);
 
@@ -1026,6 +1055,8 @@ export const AppProvider = ({ children }) => {
         saveHighlight,
         clearStorage,
         refreshFromCloud,
+        refreshLibraryContent,
+        contentRegistryVersion,
         user,
         isPremium,
         premiumType,

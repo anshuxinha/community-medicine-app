@@ -130,6 +130,10 @@ const ProfileScreen = () => {
     navigation.navigate("Paywall");
   };
 
+  const handleOpenAdminQueue = () => {
+    navigation.navigate("AdminLibraryReview");
+  };
+
   const articlesRead = readItems?.length || 0;
   const bookmarksCount = bookmarks?.length || 0;
   const progressPercent = Math.round((readingProgress || 0) * 100);
@@ -332,6 +336,31 @@ const ProfileScreen = () => {
                 color={theme.colors.textPlaceholder}
               />
             </TouchableOpacity>
+
+            {user?.isAdmin ? (
+              <>
+                <Divider style={styles.actionDivider} />
+
+                <TouchableOpacity
+                  style={styles.actionItem}
+                  onPress={handleOpenAdminQueue}
+                >
+                  <View style={styles.actionIconBox}>
+                    <MaterialIcons
+                      name="fact-check"
+                      size={20}
+                      color={theme.colors.secondary}
+                    />
+                  </View>
+                  <Text style={styles.actionLabel}>Library Review Queue</Text>
+                  <MaterialIcons
+                    name="chevron-right"
+                    size={20}
+                    color={theme.colors.textPlaceholder}
+                  />
+                </TouchableOpacity>
+              </>
+            ) : null}
           </Card.Content>
         </Card>
 

@@ -1,86 +1,147 @@
 import json
 import os
-import asyncio
-import base64
-import io
-from telethon.sync import TelegramClient
-from telethon.sessions import StringSession
-
 import re
 import time
-from datetime import datetime
-from difflib import SequenceMatcher
+import hashlib
+from datetime import datetime, timedelta, timezone
+from difflib import SequenceMatcher, unified_diff
+from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 import requests  # type: ignore
 from bs4 import BeautifulSoup  # type: ignore
 
-def load_env():
-    # Simple .env parser since python-dotenv might not be installed
-    env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
-    if os.path.exists(env_path):
-        with open(env_path, "r", encoding="utf-8") as file:
-            for line in file:
-                line = line.strip()
-                if line and not line.startswith("#"):
-                    parts = line.split("=", 1)
-                    if len(parts) == 2:
-                        os.environ[parts[0].strip()] = parts[1].strip()
+try:
+    from google.auth.transport.requests import Request as GoogleAuthRequest  # type: ignore
+    from google.oauth2 import service_account  # type: ignore
+except ImportError:  # pragma: no cover - optional local dependency
+    GoogleAuthRequest = None
+    service_account = None
+
+
+ROOT_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = ROOT_DIR / "src" / "data"
+MOCK_DATA_PATH = DATA_DIR / "mockData.json"
+UPDATES_PATH = DATA_DIR / "updates.json"
+REVIEW_ROOT = ROOT_DIR / "dist" / "library_update_reviews"
+GOOGLE_CLOUD_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT", "community-med-app")
+FIRESTORE_API_ROOT = (
+    f"https://firestore.googleapis.com/v1/projects/{GOOGLE_CLOUD_PROJECT}"
+    "/databases/(default)/documents"
+)
+REVIEW_QUEUE_COLLECTION = os.environ.get(
+    "LIBRARY_REVIEW_QUEUE_COLLECTION", "libraryReviewSuggestions"
+)
+
+
+def load_env() -> None:
+    env_path = ROOT_DIR / ".env"
+    if not env_path.exists():
+        return
+
+    with env_path.open("r", encoding="utf-8") as env_file:
+        for raw_line in env_file:
+            line = raw_line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            os.environ[key.strip()] = value.strip()
+
 
 load_env()
 
-# --- OPENROUTER CONFIGURATION ---
-OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
-if not OPENROUTER_API_KEY:
-    raise ValueError("OPENROUTER_API_KEY environment variable is not set")
+OLLAMA_API_KEY = os.environ.get("OLLAMA_API_KEY")
+if not OLLAMA_API_KEY:
+    raise ValueError("OLLAMA_API_KEY environment variable is not set")
 
-OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-OPENROUTER_MODEL = "openrouter/free"
-OPENROUTER_VISION_MODEL = "openrouter/free"  # Free tier vision model
-REQUEST_TIMEOUT_SECONDS = int(os.environ.get("OPENROUTER_TIMEOUT_SECONDS", "90"))
+OLLAMA_API_URL = os.environ.get("OLLAMA_API_URL", "https://ollama.com/api/chat")
+OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "gemma4:31b-cloud")
+REQUEST_TIMEOUT_SECONDS = int(os.environ.get("VERIFY_REQUEST_TIMEOUT_SECONDS", "120"))
+MAX_RETRIES = int(os.environ.get("VERIFY_MAX_RETRIES", "2"))
+RETRY_DELAY_SECONDS = int(os.environ.get("VERIFY_RETRY_DELAY_SECONDS", "5"))
 
+LOOKBACK_DAYS = int(os.environ.get("VERIFY_LOOKBACK_DAYS", "7"))
+MAX_SOURCE_UPDATES = int(os.environ.get("VERIFY_MAX_SOURCE_UPDATES", "6"))
+MAX_CANDIDATES_PER_UPDATE = int(os.environ.get("VERIFY_MAX_CANDIDATES_PER_UPDATE", "6"))
+MAX_ITEMS_TO_VERIFY = int(os.environ.get("VERIFY_MAX_ITEMS_TO_VERIFY", "12"))
+MIN_CANDIDATE_SCORE = int(os.environ.get("VERIFY_MIN_CANDIDATE_SCORE", "2"))
 
-# --- TELEGRAM CONFIGURATION ---
-TELEGRAM_API_ID = int(os.environ.get('TELEGRAM_API_ID', '1133218'))
-TELEGRAM_API_HASH = os.environ.get('TELEGRAM_API_HASH', '5a0f5247fa89b8e191c4f0259468f9a5')
-TELEGRAM_SESSION = os.environ.get('TELEGRAM_SESSION', '1BVtsOLYBu7ruqd6GsfNUGIZNqx_dwdNlsSrQzOlh3j1wd1A_Tz2Ajx9zYJjNSBJPSQPySJGI3P093qvOj4nuzWDdpVHIcezCvQ-Kyy2KIkp-uWAPIJDI5q3BWbzV4LHHLb4KsCAEahH88ttzHlm1bWIIemKPy9TBIDSLRN24d_AAK8wSXamkN1aGi_a1PPTQ6wQyCFbKajw6si-iDBD8c_1oiij2-5_tYO-Q5T3gxxWGNLwqhZTSc44VdmFWngKPDI8YcRYxAkWoswqOr-udyo1_4V_kQ7jHHxWjYsxy3mIWP_WwRblX_tLJpaaOr2-24k7lESvIz9zC2UwClLR9dNtvTsmNTg0=')
-
-# --- TELEGRAM CACHE ---
-_cached_raw_feed_items = None
-
-
-# --- APP DATA SETTINGS ---
-MOCK_DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "src", "data", "mockData.json")
-VERIFY_TARGET_ROOT_IDS = {
-    item.strip()
-    for item in os.environ.get("VERIFY_TARGET_ROOT_IDS", "7,8,15").split(",")
-    if item.strip()
-}
 VERIFY_MAX_CLAIMS_PER_ITEM = int(os.environ.get("VERIFY_MAX_CLAIMS_PER_ITEM", "18"))
 VERIFY_MAX_CLAIMS_PER_BATCH = int(os.environ.get("VERIFY_MAX_CLAIMS_PER_BATCH", "6"))
 VERIFY_MAX_BATCHES_PER_ITEM = int(os.environ.get("VERIFY_MAX_BATCHES_PER_ITEM", "3"))
-MIN_SAFE_LINE_REPLACEMENT_SIMILARITY = float(os.environ.get("VERIFY_MIN_SAFE_REPLACEMENT_SIMILARITY", "0.72"))
+MIN_SAFE_LINE_REPLACEMENT_SIMILARITY = float(
+    os.environ.get("VERIFY_MIN_SAFE_REPLACEMENT_SIMILARITY", "0.72")
+)
 
-TODAY_LABEL = datetime.utcnow().date().isoformat()
-OPENROUTER_FATAL_ERROR: Optional[str] = None
+RAW_TARGET_ROOT_IDS = os.environ.get("VERIFY_TARGET_ROOT_IDS", "").strip()
+VERIFY_TARGET_ROOT_IDS = {
+    item.strip() for item in RAW_TARGET_ROOT_IDS.split(",") if item.strip()
+}
+
+HTTP_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0 Safari/537.36"
+    )
+}
+
+TODAY = datetime.now().astimezone()
+TODAY_LABEL = TODAY.date().isoformat()
+WINDOW_START = (TODAY - timedelta(days=max(LOOKBACK_DAYS - 1, 0))).date()
+
+STOPWORDS = {
+    "about",
+    "after",
+    "again",
+    "against",
+    "being",
+    "between",
+    "chapter",
+    "community",
+    "content",
+    "current",
+    "disease",
+    "during",
+    "exact",
+    "family",
+    "from",
+    "government",
+    "health",
+    "india",
+    "indian",
+    "information",
+    "library",
+    "medical",
+    "medicine",
+    "national",
+    "programme",
+    "program",
+    "public",
+    "release",
+    "releases",
+    "scheme",
+    "their",
+    "there",
+    "these",
+    "this",
+    "under",
+    "update",
+    "updates",
+    "using",
+    "week",
+    "with",
+}
 
 VOLATILE_KEYWORDS = (
-    "WHO",
-    "update",
+    "who",
     "guideline",
     "guidelines",
     "policy",
     "programme",
     "program",
     "scheme",
-    "strategy",
     "mission",
     "yojana",
-    "incentive",
-    "benefit",
-    "financial",
-    "cash",
-    "dbt",
     "surveillance",
     "notification",
     "vaccination",
@@ -114,6 +175,9 @@ VOLATILE_KEYWORDS = (
     "air pollution",
     "plastic waste",
     "waste management",
+    "polio",
+    "sanitation",
+    "water",
 )
 
 UPDATE_SENSITIVE_TOKEN_RE = re.compile(
@@ -121,7 +185,7 @@ UPDATE_SENSITIVE_TOKEN_RE = re.compile(
     (?:₹\s*\d[\d,]*(?:\.\d+)?)
     |(?:\b(?:rs\.?|inr)\s*\d[\d,]*(?:\.\d+)?)
     |(?:\b(?:<=|>=|<|>)?\s*\d+(?:\.\d+)?(?:\s*-\s*\d+(?:\.\d+)?)?\s*
-        (?:%|percent|mg|g|kg|mcg|ml|l|days?|weeks?|months?|years?|hrs?|hours?|minutes?|lakhs?|crores?|million|billion|beds?)\b)
+        (?:%|percent|mg|g|kg|mcg|ml|l|days?|weeks?|months?|years?|hrs?|hours?|minutes?|lakhs?|crores?|million|billion|beds?|lpcd)\b)
     |(?:\b\d+(?:\.\d+)?/\d+(?:,\d{3})*(?:\.\d+)?\b)
     |(?:\b\d+(?:\.\d+)?[A-Za-z]{1,6}\b)
     |(?:\b[A-Za-z]+\d+[A-Za-z]*\b)
@@ -131,129 +195,12 @@ UPDATE_SENSITIVE_TOKEN_RE = re.compile(
 )
 
 
-def _call_openrouter(prompt: str) -> Optional[Any]:
-    global OPENROUTER_FATAL_ERROR
-
-    if OPENROUTER_FATAL_ERROR:
-        return None
-
-    try:
-        response = requests.post(
-            OPENROUTER_API_URL,
-            headers={
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                "HTTP-Referer": "https://github.com",
-                "X-Title": "Mock Data Verifier"
-            },
-            json={
-                "model": OPENROUTER_MODEL,
-                "messages": [
-                    {"role": "user", "content": prompt}
-                ],
-                "temperature": 0.1,
-            },
-            timeout=REQUEST_TIMEOUT_SECONDS,
-        )
-    except requests.RequestException as exc:
-        print(f"OpenRouter API request exception: {exc}")
-        return None
-
-    if response.status_code == 200:
-        try:
-            data = response.json()
-        except (json.JSONDecodeError, ValueError) as exc:
-            print(f"OpenRouter API returned non-JSON body (status 200): {exc}")
-            return None
-        text_response = _extract_candidate_text(data)
-        if text_response:
-            payload = _extract_json_payload(text_response)
-            if payload is not None:
-                return payload
-        print(f"OpenRouter API: could not parse JSON payload from response")
-        return None
-
-    message = _error_message_from_response(response)
-    print(f"OpenRouter API Error {response.status_code}: {message}")
-
-    if response.status_code in (429, 500, 503):
-        time.sleep(5)
-        try:
-            retry = requests.post(
-                OPENROUTER_API_URL,
-                headers={
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                    "HTTP-Referer": "https://github.com",
-                    "X-Title": "Mock Data Verifier"
-                },
-                json={
-                    "model": OPENROUTER_MODEL,
-                    "messages": [
-                        {"role": "user", "content": prompt}
-                    ],
-                    "temperature": 0.1,
-                },
-                timeout=REQUEST_TIMEOUT_SECONDS,
-            )
-        except requests.RequestException as exc:
-            print(f"OpenRouter API retry failed: {exc}")
-            return None
-
-        if retry.status_code == 200:
-            try:
-                data = retry.json()
-            except (json.JSONDecodeError, ValueError):
-                return None
-            text_response = _extract_candidate_text(data)
-            if text_response:
-                json_payload = _extract_json_payload(text_response)
-                if json_payload is not None:
-                    return json_payload
-        elif retry.status_code == 401:
-            print("OpenRouter API: Fatal Authentication Error (401).")
-            OPENROUTER_FATAL_ERROR = "OpenRouter API authentication/configuration error."
-        return None
-
-    combined_error = f"{response.status_code} {message}".lower()
-    if "api key" in combined_error or "unauthorized" in combined_error or "forbidden" in combined_error:
-        OPENROUTER_FATAL_ERROR = "OpenRouter API authentication/configuration error."
-        print("OpenRouter is marked unavailable for the rest of this run.")
-
-    return None
-
-
-
-def _call_openrouter_vision(prompt: str, base64_image: str) -> Optional[str]:
-    try:
-        response = requests.post(
-            OPENROUTER_API_URL,
-            headers={"Content-Type": "application/json", "Authorization": f"Bearer {OPENROUTER_API_KEY}"},
-            json={
-                "model": OPENROUTER_VISION_MODEL,
-                "messages": [
-                    {"role": "user", "content": [
-                        {"type": "text", "text": prompt},
-                        {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
-                    ]}
-                ],
-                "temperature": 0.1,
-            },
-            timeout=REQUEST_TIMEOUT_SECONDS,
-        )
-        if response.status_code == 200:
-            return _extract_candidate_text(response.json())
-        print(f'OpenRouter Vision status {response.status_code}: {response.text}')
-    except Exception as exc:
-        print(f'OpenRouter Vision error: {exc}')
-    return None
+def _normalize_whitespace(value: str) -> str:
+    return re.sub(r"\s+", " ", value).strip()
 
 
 def _extract_candidate_text(payload: Dict[str, Any]) -> Optional[str]:
-    choices = payload.get("choices", [])
-    if not choices:
-        return None
-    message = choices[0].get("message", {})
+    message = payload.get("message", {})
     content = message.get("content")
     return content if isinstance(content, str) else None
 
@@ -291,8 +238,52 @@ def _extract_json_payload(text: str) -> Optional[Any]:
             return None
 
 
-def _normalize_whitespace(value: str) -> str:
-    return re.sub(r"\s+", " ", value).strip()
+def call_ollama(prompt: str) -> Optional[Any]:
+    last_error = None
+
+    for attempt in range(1 + MAX_RETRIES):
+        try:
+            response = requests.post(
+                OLLAMA_API_URL,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {OLLAMA_API_KEY}",
+                },
+                json={
+                    "model": OLLAMA_MODEL,
+                    "messages": [{"role": "user", "content": prompt}],
+                    "stream": False,
+                    "options": {"temperature": 0.1},
+                },
+                timeout=REQUEST_TIMEOUT_SECONDS,
+            )
+
+            if response.status_code == 200:
+                data = response.json()
+                text_response = _extract_candidate_text(data)
+                if text_response:
+                    payload = _extract_json_payload(text_response)
+                    if payload is not None:
+                        return payload
+                last_error = "empty or unparseable response body"
+            elif response.status_code in (429, 500, 503):
+                last_error = f"HTTP {response.status_code}: {response.text[:200]}"
+                print(f"Ollama retryable error (attempt {attempt + 1}): {last_error}")
+            else:
+                print(
+                    f"Ollama API Error {response.status_code}: "
+                    f"{_error_message_from_response(response)[:300]}"
+                )
+                return None
+        except (requests.RequestException, ValueError, json.JSONDecodeError) as exc:
+            last_error = str(exc)
+            print(f"Ollama request exception (attempt {attempt + 1}): {last_error}")
+
+        if attempt < MAX_RETRIES:
+            time.sleep(RETRY_DELAY_SECONDS)
+
+    print(f"Ollama API failed after retries. Last error: {last_error}")
+    return None
 
 
 def _line_shape_without_sensitive_tokens(value: str) -> str:
@@ -306,7 +297,9 @@ def _minimal_sensitive_token_update(original_line: str, replacement_line: str) -
     if not original_matches or len(original_matches) != len(replacement_matches):
         return None
 
-    if _line_shape_without_sensitive_tokens(original_line) != _line_shape_without_sensitive_tokens(replacement_line):
+    if _line_shape_without_sensitive_tokens(original_line) != _line_shape_without_sensitive_tokens(
+        replacement_line
+    ):
         return None
 
     pieces: List[str] = []
@@ -362,11 +355,11 @@ def _volatility_score(line: str) -> int:
 
     if any(keyword in lowered for keyword in VOLATILE_KEYWORDS):
         score += 2
-    if re.search(r"\b(rs\.?|inr)\b", lowered) or "\u20b9" in lowered:
+    if re.search(r"\b(rs\.?|inr)\b", lowered) or "₹" in lowered:
         score += 4
     if re.search(r"\b\d{4}\b", lowered):
         score += 2
-    if re.search(r"\b\d+(\.\d+)?\s*(%|percent|mg|ml|days?|weeks?|months?|years?)\b", lowered):
+    if re.search(r"\b\d+(\.\d+)?\s*(%|percent|mg|ml|days?|weeks?|months?|years?|lpcd)\b", lowered):
         score += 2
     if re.search(r"\b(by|target|goal|valid|effective|launched|implemented|notified)\b", lowered):
         score += 1
@@ -393,10 +386,7 @@ def _extract_claim_lines(text_content: str) -> List[str]:
         if existing is None or score > existing["score"]:
             seen[normalized] = {"line": line, "score": score}
 
-    ranked = sorted(
-        seen.values(),
-        key=lambda item: (-item["score"], len(item["line"])),
-    )
+    ranked = sorted(seen.values(), key=lambda item: (-item["score"], len(item["line"])))
     return [item["line"] for item in ranked[:VERIFY_MAX_CLAIMS_PER_ITEM]]
 
 
@@ -404,111 +394,498 @@ def _batched(items: List[str], batch_size: int) -> Iterable[List[str]]:
     for index in range(0, len(items), batch_size):
         yield items[index:index + batch_size]
 
-async def _async_fetch_raw_telegram_messages() -> List[Dict[str, str]]:
-    global _cached_raw_feed_items
-    if _cached_raw_feed_items is not None:
-        return _cached_raw_feed_items
-    print('  Telegram: Connecting...')
+
+def load_json(path: Path) -> Any:
+    with path.open("r", encoding="utf-8") as file:
+        return json.load(file)
+
+
+def save_json(path: Path, payload: Any) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as file:
+        json.dump(payload, file, indent=2, ensure_ascii=False)
+
+
+def _load_service_account_info() -> Optional[Dict[str, Any]]:
+    raw_json = os.environ.get("FIREBASE_SERVICE_ACCOUNT_JSON")
+    if raw_json:
+        try:
+            return json.loads(raw_json)
+        except json.JSONDecodeError as exc:
+            print(f"FIREBASE_SERVICE_ACCOUNT_JSON is invalid JSON: {exc}")
+            return None
+
+    credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+    if credentials_path and os.path.exists(credentials_path):
+        try:
+            with open(credentials_path, "r", encoding="utf-8") as file:
+                return json.load(file)
+        except Exception as exc:
+            print(f"Could not read GOOGLE_APPLICATION_CREDENTIALS file: {exc}")
+            return None
+
+    local_path = ROOT_DIR / "serviceAccountKey.json"
+    if local_path.exists():
+        try:
+            return json.loads(local_path.read_text(encoding="utf-8"))
+        except Exception as exc:
+            print(f"Could not read local serviceAccountKey.json: {exc}")
+            return None
+
+    return None
+
+
+def _get_firestore_access_token() -> Optional[str]:
+    if GoogleAuthRequest is None or service_account is None:
+        print("google-auth is not installed; skipping Firestore review queue sync.")
+        return None
+
+    service_account_info = _load_service_account_info()
+    if not service_account_info:
+        print("No Firebase service account credentials found; skipping Firestore review queue sync.")
+        return None
+
     try:
-        client = TelegramClient(StringSession(TELEGRAM_SESSION), TELEGRAM_API_ID, TELEGRAM_API_HASH)
-        await client.connect()
-        if not await client.is_user_authorized():
-            return []
-        msgs = await client.get_messages('kayspsm', limit=30)
-        feed_items = []
-        image_count = 0
-        for m in msgs:
-            text = m.message or ''
-            # Use OpenRouter Vision for Images
-            if m.photo and image_count < 5:
-                print(f'  Telegram: Processing image in message {m.id}...')
-                img_bytes = await client.download_media(m.photo, bytes)
-                encoded = base64.b64encode(img_bytes).decode('utf-8')
-                vision_prompt = "Extract any medical statistics, targets, or program updates from this image. Keep it brief."
-                vision_text = _call_openrouter_vision(vision_prompt, encoded)
-                if vision_text:
-                    text += f'\n\n[Extracted from Image]: {vision_text}'
-                image_count += 1
-            if text.strip() and len(text) > 20:
-                feed_items.append({'title': f'Post {m.id}', 'text': text[:3000]})
-        _cached_raw_feed_items = feed_items
-        return feed_items
+        credentials = service_account.Credentials.from_service_account_info(
+            service_account_info,
+            scopes=["https://www.googleapis.com/auth/datastore"],
+        )
+        credentials.refresh(GoogleAuthRequest())
+        return credentials.token
     except Exception as exc:
-        print(f'Error fetching Telegram feed: {exc}')
+        print(f"Failed to mint Firestore access token: {exc}")
+        return None
+
+
+def _to_firestore_value(value: Any) -> Dict[str, Any]:
+    if value is None:
+        return {"nullValue": None}
+    if isinstance(value, bool):
+        return {"booleanValue": value}
+    if isinstance(value, int) and not isinstance(value, bool):
+        return {"integerValue": str(value)}
+    if isinstance(value, float):
+        return {"doubleValue": value}
+    if isinstance(value, str):
+        return {"stringValue": value}
+    if isinstance(value, list):
+        return {"arrayValue": {"values": [_to_firestore_value(item) for item in value]}}
+    if isinstance(value, dict):
+        return {
+            "mapValue": {
+                "fields": {
+                    key: _to_firestore_value(item)
+                    for key, item in value.items()
+                }
+            }
+        }
+    return {"stringValue": json.dumps(value, ensure_ascii=False)}
+
+
+def _from_firestore_value(value: Dict[str, Any]) -> Any:
+    if "stringValue" in value:
+        return value["stringValue"]
+    if "integerValue" in value:
+        try:
+            return int(value["integerValue"])
+        except (TypeError, ValueError):
+            return value["integerValue"]
+    if "doubleValue" in value:
+        return value["doubleValue"]
+    if "booleanValue" in value:
+        return value["booleanValue"]
+    if "nullValue" in value:
+        return None
+    if "arrayValue" in value:
+        values = value.get("arrayValue", {}).get("values", [])
+        return [_from_firestore_value(item) for item in values]
+    if "mapValue" in value:
+        fields = value.get("mapValue", {}).get("fields", {})
+        return {key: _from_firestore_value(item) for key, item in fields.items()}
+    return None
+
+
+def _document_url(collection_name: str, document_id: str) -> str:
+    return f"{FIRESTORE_API_ROOT}/{collection_name}/{document_id}"
+
+
+def _fetch_firestore_document(
+    access_token: str,
+    collection_name: str,
+    document_id: str,
+) -> Optional[Dict[str, Any]]:
+    response = requests.get(
+        _document_url(collection_name, document_id),
+        headers={"Authorization": f"Bearer {access_token}"},
+        timeout=20,
+    )
+    if response.status_code == 404:
+        return None
+    if response.status_code != 200:
+        print(
+            f"Failed to fetch Firestore document {collection_name}/{document_id} "
+            f"({response.status_code}): {response.text[:200]}"
+        )
+        return None
+
+    payload = response.json()
+    fields = payload.get("fields", {})
+    return {key: _from_firestore_value(value) for key, value in fields.items()}
+
+
+def _write_firestore_document(
+    access_token: str,
+    collection_name: str,
+    document_id: str,
+    payload: Dict[str, Any],
+) -> bool:
+    response = requests.patch(
+        _document_url(collection_name, document_id),
+        headers={
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": "application/json",
+        },
+        json={"fields": {key: _to_firestore_value(value) for key, value in payload.items()}},
+        timeout=30,
+    )
+
+    if response.status_code not in (200, 201):
+        print(
+            f"Failed to write Firestore document {collection_name}/{document_id} "
+            f"({response.status_code}): {response.text[:200]}"
+        )
+        return False
+
+    return True
+
+
+def sync_review_bundle_to_firestore(review_bundle: Dict[str, Any]) -> None:
+    access_token = _get_firestore_access_token()
+    if not access_token:
+        return
+
+    proposals = review_bundle.get("proposals", [])
+    synced = 0
+
+    for proposal in proposals:
+        proposal_id = str(proposal.get("proposalId", "")).strip()
+        if not proposal_id:
+            continue
+
+        existing = _fetch_firestore_document(
+            access_token,
+            REVIEW_QUEUE_COLLECTION,
+            proposal_id,
+        ) or {}
+
+        payload = {
+            "proposalId": proposal_id,
+            "status": existing.get("status", proposal.get("status", "pending")),
+            "libraryId": str(proposal.get("libraryId", "")),
+            "libraryTitle": proposal.get("libraryTitle", ""),
+            "rootChapterId": str(proposal.get("rootChapterId", "")),
+            "rootChapterTitle": proposal.get("rootChapterTitle", ""),
+            "aggregateRelevanceScore": int(proposal.get("aggregateRelevanceScore", 0)),
+            "summaryReason": existing.get(
+                "summaryReason",
+                proposal.get("summaryReason", ""),
+            ),
+            "sourceUpdates": proposal.get("sourceUpdates", []),
+            "changes": proposal.get("changes", []),
+            "originalContent": proposal.get("originalContent", ""),
+            "proposedContent": existing.get(
+                "proposedContent",
+                proposal.get("proposedContent", ""),
+            ),
+            "updatedSegments": proposal.get("updatedSegments", []),
+            "diff": proposal.get("diff", ""),
+            "generatedAt": review_bundle.get("generatedAt", ""),
+            "windowStart": review_bundle.get("windowStart", ""),
+            "windowEnd": review_bundle.get("windowEnd", ""),
+            "model": review_bundle.get("model", ""),
+            "sourceUpdateCount": int(review_bundle.get("sourceUpdateCount", 0)),
+            "sourceReviewWindow": (
+                f"{review_bundle.get('windowStart', '')} to "
+                f"{review_bundle.get('windowEnd', '')}"
+            ).strip(),
+            "approvedAt": existing.get("approvedAt"),
+            "approvedBy": existing.get("approvedBy"),
+            "lastEditedAt": existing.get("lastEditedAt"),
+            "editedBy": existing.get("editedBy"),
+        }
+
+        if _write_firestore_document(
+            access_token,
+            REVIEW_QUEUE_COLLECTION,
+            proposal_id,
+            payload,
+        ):
+            synced += 1
+
+    meta_payload = {
+        "generatedAt": review_bundle.get("generatedAt", ""),
+        "windowStart": review_bundle.get("windowStart", ""),
+        "windowEnd": review_bundle.get("windowEnd", ""),
+        "model": review_bundle.get("model", ""),
+        "sourceUpdateCount": int(review_bundle.get("sourceUpdateCount", 0)),
+        "proposalCount": int(review_bundle.get("proposalCount", 0)),
+    }
+    _write_firestore_document(access_token, "libraryReviewMeta", "latest", meta_payload)
+    print(f"Synced {synced} review proposal(s) to Firestore collection {REVIEW_QUEUE_COLLECTION}.")
+
+
+def flatten_leaf_items(items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    flattened: List[Dict[str, Any]] = []
+
+    def walk(item: Dict[str, Any], root_item: Dict[str, Any]) -> None:
+        if VERIFY_TARGET_ROOT_IDS and str(root_item.get("id")) not in VERIFY_TARGET_ROOT_IDS:
+            return
+
+        subsections = item.get("subsections") or []
+        if subsections:
+            for subsection in subsections:
+                walk(subsection, root_item)
+            return
+
+        content = str(item.get("content", "")).strip()
+        if not content:
+            return
+
+        flattened.append(
+            {
+                "id": str(item.get("id", "")),
+                "title": str(item.get("title", "")),
+                "content": content,
+                "rootId": str(root_item.get("id", "")),
+                "rootTitle": str(root_item.get("title", "")),
+                "searchBlob": _normalize_whitespace(
+                    f"{item.get('title', '')} {root_item.get('title', '')} {content[:12000]}"
+                ).lower(),
+            }
+        )
+
+    for root in items:
+        walk(root, root)
+
+    return flattened
+
+
+def parse_update_date(value: str) -> Optional[datetime]:
+    if not value:
+        return None
+    try:
+        return datetime.strptime(value[:10], "%Y-%m-%d").replace(tzinfo=timezone.utc)
+    except ValueError:
+        return None
+
+
+def load_recent_updates() -> List[Dict[str, Any]]:
+    if not UPDATES_PATH.exists():
         return []
 
-
-
-async def _async_fetch_telegram_updates(program_keywords: List[str]) -> str:
-    # Use cached raw feed items (fetched once per run)
-    feed_items = await _async_fetch_raw_telegram_messages()
-    if not feed_items:
-        return 'No relevant Telegram notifications found.'
-
-    # Standard keyword filtering locally (light filtering)
-    kw_lower = [k.lower() for k in program_keywords]
-    relevant_items = []
-    for fi in feed_items:
-        lt = fi['text'].lower()
-        if any(k in lt for k in kw_lower[:5]):
-             relevant_items.append(fi)
-    
-    # If too strict, just use the first 10
-    if not relevant_items:
-        relevant_items = feed_items[:10]
-        
-    notifications_text = []
-    for item in relevant_items[:6]:
-        notifications_text.append(f"TITLE: {item['title']}\nCONTENT: {item['text']}")
-        
-    return '\n\n---\n\n'.join(notifications_text) if notifications_text else 'No relevant Telegram notifications found.'
-
-def _fetch_telegram_updates_for_programs(program_keywords: List[str]) -> str:
-    return asyncio.run(_async_fetch_telegram_updates(program_keywords))
-
-
-def _verify_claim_batch(item_title: str, item_id: str, claim_lines: List[str], pib_context: str) -> List[Dict[str, str]]:
-    if not claim_lines:
+    data = load_json(UPDATES_PATH)
+    if not isinstance(data, list):
         return []
 
+    recent: List[Dict[str, Any]] = []
+    for item in data:
+        if not isinstance(item, dict):
+            continue
+        update_date = parse_update_date(str(item.get("date", "")))
+        if update_date is None:
+            continue
+        if update_date.date() < WINDOW_START:
+            continue
+        recent.append(
+            {
+                "id": str(item.get("id", "")),
+                "date": update_date.date().isoformat(),
+                "title": str(item.get("title", "")).strip(),
+                "summary": str(item.get("summary", "")).strip(),
+                "link": str(item.get("link", "")).strip(),
+            }
+        )
+
+    recent.sort(key=lambda item: item.get("date", ""), reverse=True)
+    return recent[:MAX_SOURCE_UPDATES]
+
+
+def fetch_article_text(update: Dict[str, Any]) -> str:
+    link = update.get("link", "")
+    if not link:
+        return update.get("summary", "")
+
+    try:
+        response = requests.get(link, headers=HTTP_HEADERS, timeout=20)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, "html.parser")
+        raw_text = " ".join(soup.get_text(separator=" ", strip=True).split())
+        return raw_text[:12000]
+    except requests.RequestException as exc:
+        print(f"Failed to fetch source article {link}: {exc}")
+        return update.get("summary", "")
+
+
+def enrich_updates_with_source_text(updates: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    enriched: List[Dict[str, Any]] = []
+    for update in updates:
+        source_text = fetch_article_text(update)
+        if not source_text:
+            continue
+        enriched.append({**update, "sourceText": source_text})
+    return enriched
+
+
+def extract_keywords(*chunks: str) -> List[str]:
+    keyword_scores: Dict[str, int] = {}
+
+    for chunk in chunks:
+        text = chunk.lower()
+        for phrase in VOLATILE_KEYWORDS:
+            if phrase in text:
+                keyword_scores[phrase] = keyword_scores.get(phrase, 0) + 4
+
+        for token in re.findall(r"[a-z][a-z0-9\-]{2,}", text):
+            if token in STOPWORDS:
+                continue
+            score = 1
+            if token in {"tb", "hiv", "iphs", "icmr", "nhm", "nacp", "nlep", "ntep", "uip"}:
+                score = 4
+            elif len(token) >= 8:
+                score = 2
+            keyword_scores[token] = keyword_scores.get(token, 0) + score
+
+    ranked = sorted(keyword_scores.items(), key=lambda item: (-item[1], item[0]))
+    return [keyword for keyword, _ in ranked[:24]]
+
+
+def score_item_for_update(update: Dict[str, Any], item: Dict[str, Any]) -> int:
+    title_blob = _normalize_whitespace(
+        f"{item.get('title', '')} {item.get('rootTitle', '')}"
+    ).lower()
+    content_blob = item.get("searchBlob", "")
+    update_keywords = extract_keywords(
+        update.get("title", ""),
+        update.get("summary", ""),
+        update.get("sourceText", "")[:4000],
+    )
+
+    score = 0
+    for keyword in update_keywords:
+        if keyword in title_blob:
+            score += 5
+        elif keyword in content_blob:
+            score += 1
+
+    update_title = update.get("title", "").lower()
+    if update_title and update_title in title_blob:
+        score += 8
+
+    return score
+
+
+def build_candidate_map(
+    leaf_items: List[Dict[str, Any]], updates: List[Dict[str, Any]]
+) -> List[Tuple[Dict[str, Any], List[Dict[str, Any]], int]]:
+    aggregate: Dict[str, Dict[str, Any]] = {}
+
+    for update in updates:
+        scored_items: List[Tuple[int, Dict[str, Any]]] = []
+        for item in leaf_items:
+            score = score_item_for_update(update, item)
+            if score >= MIN_CANDIDATE_SCORE:
+                scored_items.append((score, item))
+
+        scored_items.sort(key=lambda entry: (-entry[0], entry[1]["id"]))
+        for score, item in scored_items[:MAX_CANDIDATES_PER_UPDATE]:
+            bucket = aggregate.setdefault(
+                item["id"],
+                {"item": item, "updates": [], "score": 0},
+            )
+            bucket["updates"].append(
+                {
+                    "score": score,
+                    "id": update["id"],
+                    "date": update["date"],
+                    "title": update["title"],
+                    "summary": update["summary"],
+                    "link": update["link"],
+                    "sourceText": update["sourceText"],
+                }
+            )
+            bucket["score"] += score
+
+    ranked = sorted(
+        aggregate.values(),
+        key=lambda entry: (-entry["score"], entry["item"]["id"]),
+    )
+    return [
+        (entry["item"], entry["updates"], entry["score"])
+        for entry in ranked[:MAX_ITEMS_TO_VERIFY]
+    ]
+
+
+def build_source_context(relevant_updates: List[Dict[str, Any]]) -> str:
+    blocks = []
+    for update in relevant_updates:
+        blocks.append(
+            "\n".join(
+                [
+                    f"TITLE: {update.get('title', '')}",
+                    f"DATE: {update.get('date', '')}",
+                    f"LINK: {update.get('link', '')}",
+                    f"SUMMARY: {update.get('summary', '')}",
+                    f"FULL_TEXT_EXCERPT: {update.get('sourceText', '')[:5000]}",
+                ]
+            )
+        )
+    return "\n\n---\n\n".join(blocks)
+
+
+def verify_claim_batch(
+    item_title: str,
+    item_id: str,
+    claim_lines: List[str],
+    source_context: str,
+) -> List[Dict[str, str]]:
     prompt = f"""
-You are an expert Indian Community Medicine and Public Health editor.
+You are an expert Indian Community Medicine textbook editor.
 Today is {TODAY_LABEL}.
 
 TASK:
-Verify the factual accuracy of claim lines for a medical learning app chapter titled "{item_title}" (ID: {item_id}).
-Compare each line against the recent PIB notifications provided below.
+Verify whether any of the following existing textbook/library lines for "{item_title}" (Library ID: {item_id})
+should be updated using THIS WEEK'S PIB-derived public-health evidence.
 
-RECENT PIB NOTIFICATIONS:
-{pib_context}
+SOURCE EVIDENCE:
+{source_context}
 
 RULES:
 1. Return ONLY a JSON array of objects.
-2. Omit any line that is still accurate and complete enough.
-3. For each outdated, inaccurate, or materially incomplete line, return:
+2. Omit lines that remain accurate enough for an exam-oriented textbook.
+3. Only propose a change if the source clearly indicates an official update that should be incorporated into a Community Medicine reference.
+4. Ignore ceremonial statements, generic speeches, political praise, and projections that are not formal policy/programme/guideline changes.
+5. For each accepted change, return:
    {{
      "original": "exact original line from input",
      "replacement": "corrected line in the same concise style",
-     "reason": "very short reason mentioning what changed (deadline, amount, eligibility, name, strategy, target, statistics, achievement etc.)",
-     "quote_from_source": "EXACT word-for-word quote from the PIB text that proves this change",
+     "reason": "very short reason mentioning what changed",
+     "quote_from_source": "short exact quote proving the change",
      "confidence": 100,
-     "source": "PIB title or URL"
+     "source_title": "title of PIB update",
+     "source_link": "PIB URL",
+     "source_date": "YYYY-MM-DD"
    }}
-4. Only update specific factual tokens like (but not limited to): amounts, target years, thresholds, doses, durations, coverage figures, age cutoffs, validity periods, program names, eligibility criteria, benefit amounts, or strategy changes.
-5. Do NOT create new standalone bullets or new sections unless absolutely necessary.
-Anchor every change to an existing input line.
-6. Preserve the exam-oriented wording and formatting style.
-7. If the correction is only a money amount, year, percentage, count, dose, or similar factual token, keep the rest of the line unchanged.
-8. If unsure, do not guess. Ignore that line.
-9. Focus on: deadlines, eligibility criteria, name changes, strategies, objectives, achievements, benefit amounts, coverage targets, and any other relevant data changes.
-10. VERIFICATION REQUIREMENT: You MUST verify the change against the text. Provide a 'confidence' score (0-100). Only output changes with a confidence of 95 or higher.
-11. CRITICAL: Distinguish between formal policy revisions and general ministerial speeches, projections, or quotes. Do NOT update long-term national targets (e.g., demographic targets, stable population year) based merely on speeches, reflections, or unofficial projections unless the text explicitly announces a formal 'policy revision' or 'amendment'.
+6. Preserve the chapter's wording style. Keep replacements tight and factual.
+7. Do NOT invent new bullets or paragraphs. Anchor every change to an existing line.
+8. Prefer minimal token-level corrections for years, targets, benefits, criteria, programme names, schedules, or official deadlines.
+9. If unsure, do not guess.
+10. Only output changes with confidence 95 or higher.
 
 Claim lines to verify:
 {json.dumps(claim_lines, ensure_ascii=False, indent=2)}
 """
 
-    payload = _call_openrouter(prompt)
+    payload = call_ollama(prompt)
     if payload is None:
         return []
     if isinstance(payload, dict):
@@ -520,40 +897,40 @@ Claim lines to verify:
     for item in payload:
         if not isinstance(item, dict):
             continue
+
         original = str(item.get("original", "")).strip()
         replacement = str(item.get("replacement", "")).strip()
-        reason = str(item.get("reason", "")).strip()
-        source = str(item.get("source", "")).strip()
         quote = str(item.get("quote_from_source", "")).strip()
-        
+        if not original or not replacement or not quote:
+            continue
+
         try:
             confidence = int(item.get("confidence", 0))
-        except ValueError:
+        except (TypeError, ValueError):
             confidence = 0
 
-        if not original or not replacement:
-            continue
-            
         if confidence < 95:
-            print(f"  -> Ignoring change for '{original[:30]}...' (Confidence {confidence} < 95)")
-            continue
-            
-        if not quote:
-            print(f"  -> Ignoring change for '{original[:30]}...' (Missing exact quote from source)")
             continue
 
-        corrections.append({
-            "original": original,
-            "replacement": replacement,
-            "reason": reason,
-            "source": source,
-            "quote_from_source": quote,
-            "confidence": str(confidence)
-        })
+        corrections.append(
+            {
+                "original": original,
+                "replacement": replacement,
+                "reason": str(item.get("reason", "")).strip(),
+                "quote_from_source": quote,
+                "confidence": str(confidence),
+                "source_title": str(item.get("source_title", "")).strip(),
+                "source_link": str(item.get("source_link", "")).strip(),
+                "source_date": str(item.get("source_date", "")).strip(),
+            }
+        )
+
     return corrections
 
 
-def _apply_corrections(text_content: str, corrections: List[Dict[str, str]]) -> Tuple[str, List[Dict[str, str]]]:
+def apply_corrections(
+    text_content: str, corrections: List[Dict[str, str]]
+) -> Tuple[str, List[Dict[str, str]]]:
     updated_content = text_content
     applied: List[Dict[str, str]] = []
     used_originals = set()
@@ -581,147 +958,234 @@ def _apply_corrections(text_content: str, corrections: List[Dict[str, str]]) -> 
                 continue
             leading_whitespace = matched_line[: len(matched_line) - len(matched_line.lstrip())]
             replacement_line = f"{leading_whitespace}{replacement}"
+
         updated_content = updated_content.replace(matched_line, replacement_line, 1)
         used_originals.add(original)
-        applied.append({
-            **correction,
-            "matched_line": matched_line.strip(),
-            "replacement_line": replacement_line.strip(),
-        })
+        applied.append(
+            {
+                **correction,
+                "matched_line": matched_line.strip(),
+                "replacement_line": replacement_line.strip(),
+            }
+        )
 
     return updated_content, applied
 
 
-def _strip_recently_updated(items: List[Dict[str, Any]]) -> None:
-    for item in items:
-        if "recentlyUpdated" in item:
-            del item["recentlyUpdated"]
-        if "updatedSegments" in item:
-            del item["updatedSegments"]
-        if "subsections" in item:
-            _strip_recently_updated(item["subsections"])
+def build_unified_diff(original: str, proposed: str) -> str:
+    diff_lines = unified_diff(
+        original.splitlines(),
+        proposed.splitlines(),
+        fromfile="original",
+        tofile="proposed",
+        lineterm="",
+    )
+    return "\n".join(diff_lines)
 
 
-def _get_program_keywords_for_item(item: Dict[str, Any]) -> List[str]:
-    title = item.get("title", "").lower()
-    content = item.get("content", "").lower()
-
-    keywords = set()
-    for kw in VOLATILE_KEYWORDS:
-        if kw in title or kw in content:
-            keywords.add(kw)
-
-    title_words = title.split()
-    for word in title_words:
-        if len(word) > 3:
-            keywords.add(word)
-
-    return list(keywords)[:15]
+def make_proposal_id(item_id: str, proposed_text: str) -> str:
+    digest = hashlib.sha1(f"{item_id}\n{proposed_text}".encode("utf-8")).hexdigest()[:10]
+    return f"{TODAY.date().isoformat()}-{item_id}-{digest}"
 
 
-def process_file_verification(file_path: str) -> None:
-    try:
-        with open(file_path, "r", encoding="utf-8") as file:
-            data: List[Dict[str, Any]] = json.load(file)
+def build_review_markdown(review_bundle: Dict[str, Any]) -> str:
+    lines = [
+        "# Library Update Review",
+        "",
+        f"- Generated at: {review_bundle.get('generatedAt', '')}",
+        f"- Window: {review_bundle.get('windowStart', '')} to {review_bundle.get('windowEnd', '')}",
+        f"- Source updates reviewed: {review_bundle.get('sourceUpdateCount', 0)}",
+        f"- Proposed library changes: {review_bundle.get('proposalCount', 0)}",
+        "",
+    ]
 
-        filename = os.path.basename(file_path)
-        if filename != "mockData.json":
-            print(f"\n--- Skipping {filename}: this workflow only updates mockData.json ---")
-            return
-
-        target_root_items = [item for item in data if str(item.get("id")) in VERIFY_TARGET_ROOT_IDS]
-        if not target_root_items:
-            print(f"No matching target IDs found in {filename}.")
-            return
-
-        print(f"\n--- Verifying {filename} ({len(target_root_items)} targeted root chapters) ---")
-        print(
-            "Target scope: "
-            + ", ".join(f"{item.get('id')}: {item.get('title', 'Unknown')}" for item in target_root_items)
+    proposals = review_bundle.get("proposals", [])
+    if not proposals:
+        lines.extend(
+            [
+                "## No staged Library changes this run",
+                "",
+                "No PIB-derived updates met the threshold for a textbook or Library content revision this week.",
+                "",
+            ]
         )
-        _strip_recently_updated(target_root_items)
+        return "\n".join(lines)
 
-        updates_made = 0
+    for proposal in proposals:
+        lines.extend(
+            [
+                f"## {proposal.get('libraryTitle', 'Untitled')} ({proposal.get('libraryId', '')})",
+                "",
+                f"- Proposal ID: `{proposal.get('proposalId', '')}`",
+                f"- Root chapter: `{proposal.get('rootChapterId', '')}` {proposal.get('rootChapterTitle', '')}",
+                f"- Status: `{proposal.get('status', '')}`",
+                f"- Reason: {proposal.get('summaryReason', '')}",
+                "",
+                "### Exact lines to update",
+                "",
+            ]
+        )
 
-        def verify_item_recursively(item: Dict[str, Any], index_str: str, pib_context: str) -> None:
-            """Verify an item and its subsections against cached PIB context."""
-            nonlocal updates_made
+        for change in proposal.get("changes", []):
+            lines.extend(
+                [
+                    f"- Source: [{change.get('source_title', 'PIB update')}]({change.get('source_link', '')})",
+                    f"  Date: {change.get('source_date', '')}",
+                    f"  Reason: {change.get('reason', '')}",
+                    f"  Original: `{change.get('matched_line', '')}`",
+                    f"  Replacement: `{change.get('replacement_line', '')}`",
+                    f"  Proof quote: `{change.get('quote_from_source', '')}`",
+                    "",
+                ]
+            )
 
-            if str(item.get("id")) == "7-0":
-                print(f"Skipping [{index_str}]: {item.get('title', 'Unknown')} (excluded)")
-                return
-
-            print(f"Verifying [{index_str}]: {item.get('title', 'Unknown')}")
-
-            if "content" in item:
-                original_content = item["content"]
-                candidate_lines = _extract_claim_lines(original_content)
-                if candidate_lines:
-                    all_corrections: List[Dict[str, str]] = []
-                    for batch_index, batch in enumerate(_batched(candidate_lines, VERIFY_MAX_CLAIMS_PER_BATCH)):
-                        if batch_index >= VERIFY_MAX_BATCHES_PER_ITEM:
-                            break
-                        batch_corrections = _verify_claim_batch(
-                            item.get("title", "Unknown"),
-                            str(item.get("id", "")),
-                            batch,
-                            pib_context
-                        )
-                        all_corrections.extend(batch_corrections)
-                        time.sleep(2)
-
-                    new_content, applied_corrections = _apply_corrections(original_content, all_corrections)
-                    if new_content != original_content:
-                        item["content"] = new_content
-                        item["recentlyUpdated"] = True
-                        item["updatedSegments"] = list(dict.fromkeys(
-                            correction.get("replacement_line", "").strip()
-                            for correction in applied_corrections
-                            if correction.get("replacement_line", "").strip()
-                        ))
-                        updates_made += 1
-                        print(f"  -> Applied {len(applied_corrections)} claim-level corrections.")
-                        for correction in applied_corrections[:3]:
-                            source_text = correction.get("source") or "PIB notification"
-                            reason_text = correction.get("reason") or "claim updated"
-                            print(f"     - {reason_text} [{source_text}]")
-                    else:
-                        print("  -> No changes needed based on current Telegram updates.")
-                else:
-                    print("  -> No high-volatility claims detected; skipped to save cost.")
-
-            if "subsections" in item:
-                for sub_index, subsection in enumerate(item["subsections"]):
-                    verify_item_recursively(subsection, f"{index_str}.{sub_index + 1}", pib_context)
-
-        for item in target_root_items:
-            # Fetch PIB context ONCE per root chapter, then reuse for all subsections
-            program_keywords = _get_program_keywords_for_item(item)
-            print(f"\nFetching Telegram updates for root chapter '{item.get('title', 'Unknown')}'...")
-            cached_pib_context = _fetch_telegram_updates_for_programs(program_keywords)
-            verify_item_recursively(item, str(item.get("id", "Unknown")), cached_pib_context)
-
-        if updates_made > 0:
-            print(f"\nVerification complete for {filename}. {updates_made} sections were updated.")
-            with open(file_path, "w", encoding="utf-8") as file:
-                json.dump(data, file, indent=4, ensure_ascii=False)
-            print(f"Successfully wrote updated data to {filename}.")
-        else:
-            print(f"\nVerification complete for {filename}. No factual changes were needed.")
-
-    except FileNotFoundError:
-        print(f"Error: Could not find data file at {file_path}")
-    except json.JSONDecodeError:
-        print(f"Error: {file_path} is not valid JSON.")
-    except Exception as exc:
-        print(f"An unexpected error occurred: {exc}")
+    return "\n".join(lines)
 
 
-def verify_and_update_all() -> None:
-    process_file_verification(MOCK_DATA_PATH)
+def generate_review_bundle() -> Dict[str, Any]:
+    if not MOCK_DATA_PATH.exists():
+        raise FileNotFoundError(f"Could not find {MOCK_DATA_PATH}")
+
+    library_data = load_json(MOCK_DATA_PATH)
+    if not isinstance(library_data, list):
+        raise ValueError("mockData.json must be a JSON array")
+
+    recent_updates = load_recent_updates()
+    enriched_updates = enrich_updates_with_source_text(recent_updates)
+    leaf_items = flatten_leaf_items(library_data)
+    candidate_map = build_candidate_map(leaf_items, enriched_updates)
+
+    proposals: List[Dict[str, Any]] = []
+
+    for item, relevant_updates, aggregate_score in candidate_map:
+        source_context = build_source_context(relevant_updates)
+        claim_lines = _extract_claim_lines(item["content"])
+        if not claim_lines:
+            continue
+
+        print(
+            f"Reviewing Library ID {item['id']} ({item['title']}) "
+            f"against {len(relevant_updates)} recent update(s)..."
+        )
+
+        all_corrections: List[Dict[str, str]] = []
+        for batch_index, batch in enumerate(_batched(claim_lines, VERIFY_MAX_CLAIMS_PER_BATCH)):
+            if batch_index >= VERIFY_MAX_BATCHES_PER_ITEM:
+                break
+            batch_corrections = verify_claim_batch(
+                item["title"],
+                item["id"],
+                batch,
+                source_context,
+            )
+            all_corrections.extend(batch_corrections)
+            time.sleep(1)
+
+        proposed_content, applied_corrections = apply_corrections(item["content"], all_corrections)
+        if proposed_content == item["content"] or not applied_corrections:
+            continue
+
+        proposal_id = make_proposal_id(item["id"], proposed_content)
+        summary_reason = "; ".join(
+            list(
+                dict.fromkeys(
+                    change.get("reason", "").strip()
+                    for change in applied_corrections
+                    if change.get("reason")
+                )
+            )
+        )
+        if not summary_reason:
+            summary_reason = "PIB-backed factual update identified"
+
+        proposals.append(
+            {
+                "proposalId": proposal_id,
+                "status": "pending",
+                "libraryId": item["id"],
+                "libraryTitle": item["title"],
+                "rootChapterId": item["rootId"],
+                "rootChapterTitle": item["rootTitle"],
+                "aggregateRelevanceScore": aggregate_score,
+                "summaryReason": summary_reason,
+                "sourceUpdates": [
+                    {
+                        "id": update["id"],
+                        "date": update["date"],
+                        "title": update["title"],
+                        "link": update["link"],
+                    }
+                    for update in relevant_updates
+                ],
+                "changes": applied_corrections,
+                "originalContent": item["content"],
+                "proposedContent": proposed_content,
+                "updatedSegments": list(
+                    dict.fromkeys(
+                        change.get("replacement_line", "").strip()
+                        for change in applied_corrections
+                        if change.get("replacement_line", "").strip()
+                    )
+                ),
+                "diff": build_unified_diff(item["content"], proposed_content),
+            }
+        )
+
+    proposals.sort(key=lambda proposal: proposal.get("libraryId", ""))
+
+    return {
+        "generatedAt": TODAY.isoformat(),
+        "windowStart": WINDOW_START.isoformat(),
+        "windowEnd": TODAY.date().isoformat(),
+        "model": OLLAMA_MODEL,
+        "sourceUpdateCount": len(enriched_updates),
+        "proposalCount": len(proposals),
+        "sourceUpdatesReviewed": [
+            {
+                "id": update["id"],
+                "date": update["date"],
+                "title": update["title"],
+                "link": update["link"],
+            }
+            for update in enriched_updates
+        ],
+        "proposals": proposals,
+    }
+
+
+def write_review_bundle(review_bundle: Dict[str, Any]) -> Tuple[Path, Path]:
+    week_folder = REVIEW_ROOT / TODAY.date().isoformat()
+    json_path = week_folder / "pending_changes.json"
+    md_path = week_folder / "pending_changes.md"
+    latest_json_path = REVIEW_ROOT / "latest.json"
+    latest_md_path = REVIEW_ROOT / "latest.md"
+
+    save_json(json_path, review_bundle)
+    md_path.write_text(build_review_markdown(review_bundle), encoding="utf-8")
+    save_json(latest_json_path, review_bundle)
+    latest_md_path.write_text(build_review_markdown(review_bundle), encoding="utf-8")
+
+    return json_path, md_path
+
+
+def main() -> None:
+    print("Starting weekly Library verification review...")
+    print(f"Using Ollama model: {OLLAMA_MODEL}")
+    print(f"Review window: {WINDOW_START.isoformat()} to {TODAY.date().isoformat()}")
+    if VERIFY_TARGET_ROOT_IDS:
+        print(f"Scoped root chapters: {', '.join(sorted(VERIFY_TARGET_ROOT_IDS))}")
+    else:
+        print("Scoped root chapters: auto-discovered across the full Library")
+
+    review_bundle = generate_review_bundle()
+    json_path, md_path = write_review_bundle(review_bundle)
+    sync_review_bundle_to_firestore(review_bundle)
+
+    print(f"\nReview complete. Source updates checked: {review_bundle['sourceUpdateCount']}")
+    print(f"Staged Library proposals: {review_bundle['proposalCount']}")
+    print(f"Review JSON: {json_path}")
+    print(f"Review Markdown: {md_path}")
 
 
 if __name__ == "__main__":
-    print("Starting MoHFW claim-focused verification of mockData.json against current monthly guidance...")
-    print(f"Using OpenRouter API with model: {OPENROUTER_MODEL}")
-    verify_and_update_all()
+    main()

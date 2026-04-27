@@ -24,7 +24,7 @@ const { width } = Dimensions.get("window");
 const isTabletBase = width >= 600;
 const DRAWER_WIDTH = isTabletBase ? Math.min(width * 0.4, 320) : width * 0.75;
 
-const MENU_ITEMS = [
+const BASE_MENU_ITEMS = [
   {
     icon: "person-outline",
     label: "Profile",
@@ -83,6 +83,22 @@ const DrawerMenu = ({ visible, onClose, user }) => {
       .join("")
       .toUpperCase()
       .slice(0, 2) || "S";
+  const menuItems = React.useMemo(() => {
+    if (!user?.isAdmin) {
+      return BASE_MENU_ITEMS;
+    }
+
+    return [
+      ...BASE_MENU_ITEMS.slice(0, 2),
+      {
+        icon: "fact-check",
+        label: "Library Review Queue",
+        screen: "AdminLibraryReview",
+        iconLib: "material",
+      },
+      ...BASE_MENU_ITEMS.slice(2),
+    ];
+  }, [user?.isAdmin]);
 
   useEffect(() => {
     if (visible) {
@@ -201,7 +217,7 @@ const DrawerMenu = ({ visible, onClose, user }) => {
           showsVerticalScrollIndicator={false}
           style={styles.menuScroll}
         >
-          {MENU_ITEMS.map((item, idx) => {
+          {menuItems.map((item, idx) => {
             if (item.divider)
               return <Divider key={`div-${idx}`} style={styles.divider} />;
             return (

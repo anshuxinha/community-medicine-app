@@ -25,12 +25,19 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests beautifulsoup4
+          pip install requests beautifulsoup4 google-auth
 
       - name: Run Fetch Script
         env:
           OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
         run: python scripts/fetch_updates.py
+
+      - name: Run Library Verification Review
+        env:
+          OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+          GOOGLE_CLOUD_PROJECT: community-med-app
+        run: python scripts/verify_mock_data.py
 
       - name: Commit and Push Changes
         id: commit_changes

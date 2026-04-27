@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useMemo } from "react";
 import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import {
   Text,
@@ -14,10 +14,9 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import theoryTopics from "../data/mockData.json";
-import practicalTopics from "../data/practical.json";
 import { AppContext } from "../context/AppContext";
 import {
+  CONTENT_SECTIONS,
   getContentKey,
   getContentSignature,
   getItemStatus,
@@ -82,6 +81,7 @@ const LibraryScreen = (props) => {
     markAsUnread,
     isPremium,
     isScreenCapturePrevented,
+    contentRegistryVersion,
   } = useContext(AppContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeSection, setActiveSection] = useState("theory");
@@ -96,8 +96,13 @@ const LibraryScreen = (props) => {
     };
   }, []);
 
-  const currentTopics =
-    activeSection === "theory" ? theoryTopics : practicalTopics;
+  const currentTopics = useMemo(
+    () =>
+      activeSection === "theory"
+        ? CONTENT_SECTIONS.theory
+        : CONTENT_SECTIONS.practical,
+    [activeSection, contentRegistryVersion],
+  );
   const filteredTopics = currentTopics.filter(
     (topic) =>
       topic.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
