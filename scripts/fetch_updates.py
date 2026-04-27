@@ -13,7 +13,7 @@ if not OLLAMA_API_KEY:
     raise ValueError("OLLAMA_API_KEY environment variable is not set")
 
 OLLAMA_API_URL = "https://ollama.com/api/chat"
-OLLAMA_MODEL = "kimi-k2.6:cloud"
+OLLAMA_MODEL = "gemma4:31b-cloud"
 
 MAX_RETRIES = 2
 RETRY_DELAY_SECONDS = 5
