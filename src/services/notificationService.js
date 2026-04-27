@@ -14,6 +14,7 @@
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import { Platform } from "react-native";
+import publicHealthDays from "../data/publicHealthDays.json";
 
 // Study tips rotation
 const STUDY_TIPS = [
@@ -85,7 +86,7 @@ export async function scheduleAllNotifications() {
       title: "📊 Your Weekly Progress",
       body: "Check your study stats and see how far you've come this week!",
       sound: true,
-      data: { screen: "Stats" },
+      data: { screen: "Dashboard" },
     },
     trigger: {
       weekday: 1, // Sunday (expo-notifications uses 1=Sunday)
@@ -95,8 +96,31 @@ export async function scheduleAllNotifications() {
     },
   });
 
-  // Note: Daily Study Reminder and Rotating Study Tips have been removed
-  // as per user request to reduce notification frequency
+  // ── 2. Public Health Day / Week Notifications @ 8:00 AM ────────
+  // For weeks (dateLabel contains "-"), the notification fires on the first day
+  // which is already represented by the `day` field in the data.
+  for (const healthDay of publicHealthDays) {
+    const isWeek = healthDay.dateLabel.includes("-");
+    const emoji = isWeek ? "📅" : "🏥";
+    const label = isWeek ? "Week begins today" : "Today";
+
+    await Notifications.scheduleNotificationAsync({
+      identifier: `health-day-${healthDay.month}-${healthDay.day}`,
+      content: {
+        title: `${emoji} ${healthDay.name}`,
+        body: `${label}! ${healthDay.description.split(".")[0]}.`,
+        sound: true,
+        data: { screen: "Dashboard" },
+      },
+      trigger: {
+        month: healthDay.month,
+        day: healthDay.day,
+        hour: 8,
+        minute: 0,
+        repeats: true,
+      },
+    });
+  }
 }
 
 /**

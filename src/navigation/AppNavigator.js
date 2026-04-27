@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Platform, View, ActivityIndicator } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  createNavigationContainerRef,
+} from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { AppContext } from "../context/AppContext";
 import { useSessionEnforcer } from "../hooks/useSessionEnforcer";
+import { setupNotificationTapHandler } from "../services/notificationService";
 
 // Tab screens
 import DashboardScreen from "../screens/DashboardScreen";
@@ -35,6 +39,7 @@ import { theme } from "../styles/theme";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
+const navigationRef = createNavigationContainerRef();
 
 const TabNavigator = () => {
   const insets = useSafeAreaInsets();
@@ -100,6 +105,10 @@ const AppNavigator = () => {
 
   useSessionEnforcer();
 
+  useEffect(() => {
+    setupNotificationTapHandler(navigationRef);
+  }, []);
+
   // undefined = still resolving auth state (onAuthStateChanged not yet fired)
   if (user === undefined) {
     return (
@@ -117,7 +126,7 @@ const AppNavigator = () => {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator>
         {!user ? (
           <Stack.Screen

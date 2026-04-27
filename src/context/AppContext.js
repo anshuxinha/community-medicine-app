@@ -627,7 +627,7 @@ export const AppProvider = ({ children }) => {
   async function registerForPushNotificationsAsync() {
     let token;
 
-    if (!SafeNotifications) {
+    if (!Notifications) {
       console.log("Skipping push notification registration in Expo Go.");
       return null;
     }
@@ -635,17 +635,17 @@ export const AppProvider = ({ children }) => {
     if (Device.isDevice) {
       try {
         const { status: existingStatus } =
-          await SafeNotifications.getPermissionsAsync();
+          await Notifications.getPermissionsAsync();
         let finalStatus = existingStatus;
         if (existingStatus !== "granted") {
-          const { status } = await SafeNotifications.requestPermissionsAsync();
+          const { status } = await Notifications.requestPermissionsAsync();
           finalStatus = status;
         }
         if (finalStatus !== "granted") {
           console.log("Push notification permission denied.");
           return null;
         }
-        token = (await SafeNotifications.getExpoPushTokenAsync()).data;
+        token = (await Notifications.getExpoPushTokenAsync()).data;
       } catch (err) {
         console.log("Expo notification error:", err);
         return null;
@@ -656,9 +656,9 @@ export const AppProvider = ({ children }) => {
     }
 
     if (Platform.OS === "android") {
-      await SafeNotifications.setNotificationChannelAsync("default", {
+      await Notifications.setNotificationChannelAsync("default", {
         name: "default",
-        importance: SafeNotifications.AndroidImportance.MAX,
+        importance: Notifications.AndroidImportance.MAX,
         vibrationPattern: [0, 250, 250, 250],
         lightColor: theme.colors.primaryDark,
       });
