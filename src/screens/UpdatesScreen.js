@@ -25,13 +25,13 @@ const MONTH_SHORT = [
 ];
 
 const UpdatesScreen = () => {
-  const [selectedMonth, setSelectedMonth] = useState(null);
+  const currentYear = new Date().getFullYear();
+  const currentMonthIndex = new Date().getMonth(); // 0-based
+
+  const [selectedMonth, setSelectedMonth] = useState(currentMonthIndex);
   const [selectedUpdate, setSelectedUpdate] = useState(null);
   const [dialogVisible, setDialogVisible] = useState(false);
   const { isTablet, horizontalPadding, contentMaxWidth } = useResponsive();
-
-  const currentYear = new Date().getFullYear();
-  const currentMonthIndex = new Date().getMonth(); // 0-based
 
   // Build a map: monthIndex -> updates[]
   const monthData = useMemo(() => {
