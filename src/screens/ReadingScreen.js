@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useRef, useEffect } from "react";
+import React, { useContext, useMemo, useRef, useEffect, useState, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import * as Speech from "expo-speech";
 import ReadingView from "../components/ReadingView";
@@ -17,8 +17,12 @@ import {
   enableScreenCaptureProtection,
   disableScreenCaptureProtection,
 } from "../utils/screenCaptureProtection";
+import {
+  loadAnnotations,
+  saveAnnotations,
+} from "../services/annotationService";
 
-const ReadingScreen = ({ route }) => {
+const ReadingScreen = ({ route, navigation }) => {
   const {
     id,
     title,
@@ -38,10 +42,12 @@ const ReadingScreen = ({ route }) => {
     readItemVersions,
     isScreenCapturePrevented,
     contentRegistryVersion,
+    user,
   } = useContext(AppContext);
-  const [isSpeaking, setIsSpeaking] = React.useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const speechSessionRef = useRef(0);
   const speechQueueRef = useRef([]);
+  const [annotations, setAnnotations] = useState([]);
 
   const currentEntry = useMemo(
     () => getCurrentContentEntry(route.params),
@@ -62,8 +68,8 @@ const ReadingScreen = ({ route }) => {
   const effectiveUpdatedSegments = currentItem
     ? getUpdatedSegmentsForItem(currentItem)
     : updatedSegments || [];
-  const [topicIllustrations, setTopicIllustrations] = React.useState([]);
-  const [sessionHighlightUpdates] = React.useState(() => {
+  const [topicIllustrations, setTopicIllustrations] = useState([]);
+  const [sessionHighlightUpdates] = useState(() => {
     if (showUpdateHighlights === true) {
       return true;
     }
@@ -76,6 +82,51 @@ const ReadingScreen = ({ route }) => {
     );
   });
 
+  // ── Annotations ──
+  useEffect(() => {
+    if (!user?.uid || !effectiveContentKey) return;
+    let cancelled = false;
+
+    loadAnnotations(user.uid, effectiveContentKey).then((loaded) => {
+      if (!cancelled) setAnnotations(loaded);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.uid, effectiveContentKey]);
+
+  const handleSaveAnnotation = useCallback(
+    (annotation) => {
+      setAnnotations((prev) => {
+        const existing = prev.findIndex((a) => a.id === annotation.id);
+        const next =
+          existing >= 0
+            ? prev.map((a) => (a.id === annotation.id ? annotation : a))
+            : [...prev, annotation];
+        if (user?.uid && effectiveContentKey) {
+          saveAnnotations(user.uid, effectiveContentKey, next);
+        }
+        return next;
+      });
+    },
+    [user?.uid, effectiveContentKey],
+  );
+
+  const handleDeleteAnnotation = useCallback(
+    (annotationId) => {
+      setAnnotations((prev) => {
+        const next = prev.filter((a) => a.id !== annotationId);
+        if (user?.uid && effectiveContentKey) {
+          saveAnnotations(user.uid, effectiveContentKey, next);
+        }
+        return next;
+      });
+    },
+    [user?.uid, effectiveContentKey],
+  );
+
+  // ── TTS ──
   const stopSpeech = () => {
     speechSessionRef.current += 1;
     speechQueueRef.current = [];
@@ -113,14 +164,14 @@ const ReadingScreen = ({ route }) => {
     });
   };
 
-  React.useEffect(
+  useEffect(
     () => () => {
       stopSpeech();
     },
     [],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     let isMounted = true;
 
     const loadIllustrations = async () => {
@@ -229,6 +280,11 @@ const ReadingScreen = ({ route }) => {
         illustrations={topicIllustrations}
         onReachEnd={handleReachEnd}
         isScreenCapturePrevented={isScreenCapturePrevented}
+        navigation={navigation}
+        section={effectiveSection}
+        annotations={annotations}
+        onSaveAnnotation={handleSaveAnnotation}
+        onDeleteAnnotation={handleDeleteAnnotation}
       />
     </View>
   );

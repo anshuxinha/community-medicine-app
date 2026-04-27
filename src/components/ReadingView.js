@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   Dimensions,
   Modal,
   Pressable,
+  TextInput,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -302,6 +303,11 @@ const ReadingView = ({
   illustrations = [],
   onReachEnd,
   isScreenCapturePrevented = false,
+  navigation,
+  section,
+  annotations = [],
+  onSaveAnnotation,
+  onDeleteAnnotation,
 }) => {
   console.log("ReadingView: illustrations prop", illustrations);
   const insets = useSafeAreaInsets();
@@ -319,6 +325,10 @@ const ReadingView = ({
     width: SCREEN.width - 32,
     height: SCREEN.height * 0.78,
   });
+  const [isAnnotationMode, setIsAnnotationMode] = useState(false);
+  const [editingAnnotation, setEditingAnnotation] = useState(null);
+  const [annotationText, setAnnotationText] = useState("");
+  const [showHighlightsLocal, setShowHighlightsLocal] = useState(showUpdateHighlights);
   const hasReachedEndRef = useRef(false);
   const viewportHeightRef = useRef(0);
   const contentHeightRef = useRef(0);
@@ -404,8 +414,47 @@ const ReadingView = ({
   );
 
   const shouldHighlightText = (text) =>
-    showUpdateHighlights &&
+    showHighlightsLocal &&
     highlightSet.has(normalizeUpdatedSnippet(text || ""));
+
+  const handleBlockPress = useCallback(
+    (blockIndex) => {
+      if (!isAnnotationMode) return;
+      setEditingAnnotation({ blockIndex, id: null });
+      setAnnotationText("");
+    },
+    [isAnnotationMode],
+  );
+
+  const handleSaveAnnotation = useCallback(() => {
+    if (!annotationText.trim() || !editingAnnotation) return;
+    const annotation = {
+      id: editingAnnotation.id || `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+      blockIndex: editingAnnotation.blockIndex,
+      text: annotationText.trim(),
+      createdAt: new Date().toISOString(),
+    };
+    onSaveAnnotation?.(annotation);
+    setEditingAnnotation(null);
+    setAnnotationText("");
+    setIsAnnotationMode(false);
+  }, [annotationText, editingAnnotation, onSaveAnnotation]);
+
+  const handleDeleteAnnotation = useCallback(
+    (annotationId) => {
+      onDeleteAnnotation?.(annotationId);
+    },
+    [onDeleteAnnotation],
+  );
+
+  const annotationsByBlock = useMemo(() => {
+    const map = {};
+    (annotations || []).forEach((a) => {
+      if (!map[a.blockIndex]) map[a.blockIndex] = [];
+      map[a.blockIndex].push(a);
+    });
+    return map;
+  }, [annotations]);
 
   const maybeMarkAsReachedEnd = (progress, viewportHeight, contentHeight) => {
     if (hasReachedEndRef.current) {
@@ -672,8 +721,93 @@ const ReadingView = ({
     }
   };
 
+  const renderAnnotationCard = (annotation) => (
+    <View key={annotation.id} style={styles.annotationCard}>
+      <View style={styles.annotationCardHeader}>
+        <MaterialIcons name="sticky-note-2" size={14} color="#D4A853" />
+        <Text style={styles.annotationCardLabel} selectable={false}>
+          Note
+        </Text>
+        <TouchableOpacity
+          onPress={() => handleDeleteAnnotation(annotation.id)}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <MaterialIcons name="close" size={16} color="#9CA3AF" />
+        </TouchableOpacity>
+      </View>
+      <Text style={styles.annotationCardText} selectable={false}>
+        {annotation.text}
+      </Text>
+    </View>
+  );
+
+  const renderBlockWithAnnotations = (block, index) => {
+    const blockAnnotations = annotationsByBlock[index] || [];
+    const isEditingThisBlock =
+      editingAnnotation && editingAnnotation.blockIndex === index;
+    const tappable = isAnnotationMode && block.type !== "spacing";
+
+    return (
+      <View key={`block-wrapper-${index}`}>
+        {tappable ? (
+          <Pressable
+            onPress={() => handleBlockPress(index)}
+            style={({ pressed }) => [
+              pressed && styles.annotationModePressedBlock,
+              isAnnotationMode && styles.annotationModeBlock,
+            ]}
+          >
+            {renderBlock(block, index)}
+          </Pressable>
+        ) : (
+          renderBlock(block, index)
+        )}
+        {blockAnnotations.map(renderAnnotationCard)}
+        {isEditingThisBlock ? (
+          <View style={styles.annotationInputCard}>
+            <TextInput
+              style={styles.annotationInput}
+              placeholder="Write your note..."
+              placeholderTextColor="#9CA3AF"
+              value={annotationText}
+              onChangeText={setAnnotationText}
+              multiline
+              autoFocus
+              selectable
+            />
+            <View style={styles.annotationInputActions}>
+              <TouchableOpacity
+                style={styles.annotationCancelBtn}
+                onPress={() => {
+                  setEditingAnnotation(null);
+                  setAnnotationText("");
+                }}
+              >
+                <Text style={styles.annotationCancelText} selectable={false}>
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.annotationSaveBtn,
+                  !annotationText.trim() && styles.annotationSaveBtnDisabled,
+                ]}
+                onPress={handleSaveAnnotation}
+                disabled={!annotationText.trim()}
+              >
+                <Text style={styles.annotationSaveText} selectable={false}>
+                  Save
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : null}
+      </View>
+    );
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       {isScreenCapturePrevented && (
         <View style={styles.captureProtectedOverlay} pointerEvents="none">
           <Text style={styles.captureProtectedText}>
@@ -681,24 +815,28 @@ const ReadingView = ({
           </Text>
         </View>
       )}
+
+      {/* ── Header ── */}
       <View style={styles.headerRow}>
-        <Text style={styles.headerTitle}>{title || ""}</Text>
-        <View style={styles.fabRow}>
+        <TouchableOpacity
+          style={styles.headerBackBtn}
+          onPress={() => navigation?.goBack()}
+          activeOpacity={0.7}
+        >
+          <MaterialIcons name="arrow-back" size={24} color={theme.colors.textTitle} />
+        </TouchableOpacity>
+        <Text style={styles.headerSectionTitle} numberOfLines={1} selectable={false}>
+          {section === "theory"
+            ? "Theory"
+            : section === "practical"
+              ? "Practical"
+              : section || ""}
+        </Text>
+        <View style={styles.headerActions}>
           <TouchableOpacity
-            style={styles.fabBtn}
-            onPress={onToggleSpeak}
-            activeOpacity={0.85}
-          >
-            <MaterialIcons
-              name={isSpeaking ? "stop" : "volume-up"}
-              size={22}
-              color={theme.colors.secondary}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.fabBtn}
+            style={styles.headerActionBtn}
             onPress={onToggleBookmark}
-            activeOpacity={0.85}
+            activeOpacity={0.7}
           >
             <MaterialIcons
               name={isBookmarked ? "bookmark" : "bookmark-border"}
@@ -706,8 +844,21 @@ const ReadingView = ({
               color={theme.colors.secondary}
             />
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.headerActionBtn}
+            onPress={onToggleSpeak}
+            activeOpacity={0.7}
+          >
+            <MaterialIcons
+              name={isSpeaking ? "stop" : "volume-up"}
+              size={22}
+              color={theme.colors.secondary}
+            />
+          </TouchableOpacity>
         </View>
       </View>
+
+      {/* ── Progress Bar ── */}
       <View style={styles.progressBarBackground}>
         <View
           style={[
@@ -717,11 +868,12 @@ const ReadingView = ({
         />
       </View>
 
+      {/* ── Content ── */}
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingBottom: 100 + insets.bottom },
+          { paddingBottom: 80 + insets.bottom },
         ]}
         showsVerticalScrollIndicator={false}
         onLayout={handleLayout}
@@ -729,6 +881,27 @@ const ReadingView = ({
         onScroll={handleScroll}
         scrollEventThrottle={16}
       >
+        {/* Chapter intro block */}
+        <View style={styles.chapterIntro}>
+          <Text style={styles.chapterLabel} selectable={false}>
+            {section ? section.toUpperCase() : ""}
+          </Text>
+          <Text style={styles.chapterTitle} selectable={false}>
+            {title || ""}
+          </Text>
+          <View style={styles.chapterDivider} />
+        </View>
+
+        {/* Annotation mode banner */}
+        {isAnnotationMode ? (
+          <View style={styles.annotationModeBanner}>
+            <MaterialIcons name="touch-app" size={18} color={theme.colors.secondary} />
+            <Text style={styles.annotationModeBannerText} selectable={false}>
+              Tap on any paragraph to add a note
+            </Text>
+          </View>
+        ) : null}
+
         {showUpdateHighlights && highlightSet.size > 0 ? (
           <View style={styles.updateBanner}>
             <MaterialIcons
@@ -741,9 +914,62 @@ const ReadingView = ({
             </Text>
           </View>
         ) : null}
-        {mergedBlocks.map(renderBlock)}
+        {mergedBlocks.map(renderBlockWithAnnotations)}
       </ScrollView>
 
+      {/* ── Bottom Toolbar ── */}
+      <View style={[styles.bottomToolbar, { paddingBottom: insets.bottom || 8 }]}>
+        <TouchableOpacity
+          style={styles.toolbarItem}
+          onPress={() => navigation?.navigate("MainTabs", { screen: "Library" })}
+          activeOpacity={0.7}
+        >
+          <MaterialIcons name="menu-book" size={22} color={theme.colors.textTertiary} />
+          <Text style={styles.toolbarLabel} selectable={false}>LIBRARY</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.toolbarItem}
+          onPress={() => setShowHighlightsLocal((prev) => !prev)}
+          activeOpacity={0.7}
+        >
+          <MaterialIcons
+            name="border-color"
+            size={22}
+            color={showHighlightsLocal ? theme.colors.secondary : theme.colors.textTertiary}
+          />
+          <Text
+            style={[
+              styles.toolbarLabel,
+              showHighlightsLocal && styles.toolbarLabelActive,
+            ]}
+            selectable={false}
+          >
+            HIGHLIGHT
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.toolbarItem}
+          onPress={() => setIsAnnotationMode((prev) => !prev)}
+          activeOpacity={0.7}
+        >
+          <MaterialIcons
+            name="edit-note"
+            size={24}
+            color={isAnnotationMode ? theme.colors.secondary : theme.colors.textTertiary}
+          />
+          <Text
+            style={[
+              styles.toolbarLabel,
+              isAnnotationMode && styles.toolbarLabelActive,
+            ]}
+            selectable={false}
+          >
+            NOTE
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* ── Fullscreen Image Modal ── */}
       <Modal
         visible={Boolean(fullscreenImage)}
         transparent
@@ -868,12 +1094,7 @@ const ReadingView = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginHorizontal: 16,
-    marginVertical: 8,
-    borderRadius: 12,
-    overflow: "hidden",
     backgroundColor: theme.colors.surfacePrimary,
-    elevation: 2,
   },
   captureProtectedOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -887,27 +1108,48 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
   },
+
+  // ── Header ──
   headerRow: {
     flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.surfaceSecondary,
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     backgroundColor: theme.colors.surfacePrimary,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: "#E5E7EB",
     zIndex: 10,
   },
-  headerTitle: {
-    flex: 1,
-    fontSize: 15,
-    fontWeight: "700",
-    lineHeight: 21,
-    color: theme.colors.textTitle,
-    marginRight: 12,
+  headerBackBtn: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 20,
   },
+  headerSectionTitle: {
+    flex: 1,
+    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "700",
+    color: theme.colors.secondary,
+    marginHorizontal: 8,
+  },
+  headerActions: {
+    flexDirection: "row",
+    gap: 4,
+  },
+  headerActionBtn: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 20,
+  },
+
+  // ── Progress ──
   progressBarBackground: {
-    height: 3,
+    height: 2.5,
     backgroundColor: theme.colors.surfaceSecondary,
     width: "100%",
   },
@@ -915,30 +1157,42 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: theme.colors.primary,
   },
-  fabRow: {
-    flexDirection: "row",
-    gap: 8,
+
+  // ── Chapter Intro ──
+  chapterIntro: {
+    paddingTop: 24,
+    paddingBottom: 8,
+    paddingHorizontal: 4,
   },
-  fabBtn: {
-    width: 44,
-    height: 44,
-    backgroundColor: theme.colors.surfacePrimary,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
+  chapterLabel: {
+    fontSize: 12,
+    fontWeight: "600",
+    letterSpacing: 1.5,
+    color: theme.colors.textTertiary,
+    marginBottom: 8,
   },
+  chapterTitle: {
+    fontSize: 24,
+    fontWeight: "800",
+    color: theme.colors.textTitle,
+    lineHeight: 32,
+    marginBottom: 16,
+  },
+  chapterDivider: {
+    height: 1,
+    backgroundColor: "#E5E7EB",
+  },
+
+  // ── Scroll ──
   scroll: {
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
+    paddingHorizontal: 20,
+    paddingTop: 4,
   },
+
+  // ── Banners ──
   updateBanner: {
     flexDirection: "row",
     alignItems: "center",
@@ -959,6 +1213,28 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     fontWeight: "600",
   },
+  annotationModeBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginTop: 8,
+    marginBottom: 10,
+    borderRadius: 12,
+    backgroundColor: "#F3F0FF",
+    borderWidth: 1,
+    borderColor: "#DDD6FE",
+  },
+  annotationModeBannerText: {
+    flex: 1,
+    color: theme.colors.secondary,
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: "600",
+  },
+
+  // ── Typography (body size unchanged) ──
   h1: {
     color: theme.colors.secondary,
     fontSize: 22,
@@ -1022,26 +1298,31 @@ const styles = StyleSheet.create({
     fontSize: 14.5,
     lineHeight: 22,
   },
+
+  // ── Highlights (gold left-border style) ──
   highlightBlock: {
-    marginHorizontal: -6,
     marginVertical: 2,
-    paddingHorizontal: 6,
-    borderRadius: 10,
-    backgroundColor: "#FFF7D6",
-    borderWidth: 1,
-    borderColor: "#FDE68A",
+    paddingLeft: 14,
+    paddingVertical: 4,
+    borderLeftWidth: 4,
+    borderLeftColor: "#D4A853",
+    backgroundColor: "#FDFAF3",
+    borderRadius: 0,
   },
   highlightBulletRow: {
-    marginHorizontal: -6,
-    paddingHorizontal: 6,
-    borderRadius: 10,
-    backgroundColor: "#FFF7D6",
-    borderWidth: 1,
-    borderColor: "#FDE68A",
+    paddingLeft: 10,
+    borderLeftWidth: 4,
+    borderLeftColor: "#D4A853",
+    backgroundColor: "#FDFAF3",
+    borderRadius: 0,
   },
+
+  // ── Spacing ──
   spacing: {
     height: 14,
   },
+
+  // ── Images ──
   inlineImageShell: {
     position: "relative",
     marginVertical: 12,
@@ -1107,6 +1388,140 @@ const styles = StyleSheet.create({
     fontSize: 13.5,
     lineHeight: 20,
   },
+
+  // ── Bottom Toolbar ──
+  bottomToolbar: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
+    paddingTop: 8,
+    backgroundColor: theme.colors.surfacePrimary,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: "#E5E7EB",
+    elevation: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+  },
+  toolbarItem: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 4,
+    minWidth: 64,
+  },
+  toolbarLabel: {
+    fontSize: 10,
+    fontWeight: "700",
+    letterSpacing: 0.5,
+    color: theme.colors.textTertiary,
+    marginTop: 3,
+  },
+  toolbarLabelActive: {
+    color: theme.colors.secondary,
+  },
+
+  // ── Annotation Mode ──
+  annotationModeBlock: {
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "transparent",
+    borderStyle: "dashed",
+  },
+  annotationModePressedBlock: {
+    backgroundColor: "#F3F0FF",
+    borderRadius: 6,
+    borderColor: theme.colors.secondary,
+    borderWidth: 1,
+    borderStyle: "dashed",
+  },
+
+  // ── Annotation Cards ──
+  annotationCard: {
+    marginTop: 6,
+    marginBottom: 8,
+    marginLeft: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderLeftWidth: 3,
+    borderLeftColor: "#D4A853",
+    backgroundColor: "#FEFCE8",
+    borderRadius: 8,
+  },
+  annotationCardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginBottom: 4,
+  },
+  annotationCardLabel: {
+    flex: 1,
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#92400E",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+  annotationCardText: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: theme.colors.textPrimary,
+  },
+
+  // ── Annotation Input ──
+  annotationInputCard: {
+    marginTop: 6,
+    marginBottom: 8,
+    marginLeft: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderLeftWidth: 3,
+    borderLeftColor: theme.colors.secondary,
+    backgroundColor: "#F9FAFB",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#DDD6FE",
+  },
+  annotationInput: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: theme.colors.textTitle,
+    minHeight: 48,
+    textAlignVertical: "top",
+    padding: 0,
+  },
+  annotationInputActions: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: 10,
+    marginTop: 8,
+  },
+  annotationCancelBtn: {
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 6,
+  },
+  annotationCancelText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: theme.colors.textTertiary,
+  },
+  annotationSaveBtn: {
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 6,
+    backgroundColor: theme.colors.secondary,
+  },
+  annotationSaveBtnDisabled: {
+    opacity: 0.4,
+  },
+  annotationSaveText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#FFFFFF",
+  },
+
+  // ── Fullscreen Image Viewer ──
   fullscreenBackdrop: {
     flex: 1,
     backgroundColor: "rgba(13, 20, 28, 0.95)",

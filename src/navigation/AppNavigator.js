@@ -138,7 +138,7 @@ const AppNavigator = () => {
             <Stack.Screen
               name="Reading"
               component={ReadingScreen}
-              options={({ route }) => ({ title: route.params.title })}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="SubTopics"
