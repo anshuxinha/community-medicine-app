@@ -21,6 +21,10 @@ import {
   loadAnnotations,
   saveAnnotations,
 } from "../services/annotationService";
+import {
+  loadHighlights,
+  saveHighlights,
+} from "../services/highlightService";
 
 const ReadingScreen = ({ route, navigation }) => {
   const {
@@ -48,6 +52,7 @@ const ReadingScreen = ({ route, navigation }) => {
   const speechSessionRef = useRef(0);
   const speechQueueRef = useRef([]);
   const [annotations, setAnnotations] = useState([]);
+  const [userHighlights, setUserHighlights] = useState({});
 
   const currentEntry = useMemo(
     () => getCurrentContentEntry(route.params),
@@ -95,6 +100,38 @@ const ReadingScreen = ({ route, navigation }) => {
       cancelled = true;
     };
   }, [user?.uid, effectiveContentKey]);
+
+  // ── Highlights ──
+  useEffect(() => {
+    if (!user?.uid || !effectiveContentKey) return;
+    let cancelled = false;
+
+    loadHighlights(user.uid, effectiveContentKey).then((loaded) => {
+      if (!cancelled) setUserHighlights(loaded);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.uid, effectiveContentKey]);
+
+  const handleToggleHighlight = useCallback(
+    (key) => {
+      setUserHighlights((prev) => {
+        const next = { ...prev };
+        if (next[key]) {
+          delete next[key];
+        } else {
+          next[key] = true;
+        }
+        if (user?.uid && effectiveContentKey) {
+          saveHighlights(user.uid, effectiveContentKey, next);
+        }
+        return next;
+      });
+    },
+    [user?.uid, effectiveContentKey],
+  );
 
   const handleSaveAnnotation = useCallback(
     (annotation) => {
@@ -285,6 +322,8 @@ const ReadingScreen = ({ route, navigation }) => {
         annotations={annotations}
         onSaveAnnotation={handleSaveAnnotation}
         onDeleteAnnotation={handleDeleteAnnotation}
+        userHighlights={userHighlights}
+        onToggleHighlight={handleToggleHighlight}
       />
     </View>
   );

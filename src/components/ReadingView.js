@@ -325,6 +325,8 @@ const ReadingView = ({
   annotations = [],
   onSaveAnnotation,
   onDeleteAnnotation,
+  userHighlights = {},
+  onToggleHighlight,
 }) => {
   console.log("ReadingView: illustrations prop", illustrations);
   const insets = useSafeAreaInsets();
@@ -347,7 +349,6 @@ const ReadingView = ({
   const [annotationText, setAnnotationText] = useState("");
   const [showHighlightsLocal, setShowHighlightsLocal] = useState(showUpdateHighlights);
   const [isHighlightMode, setIsHighlightMode] = useState(false);
-  const [userHighlightedBlocks, setUserHighlightedBlocks] = useState({});
   const [noteModalVisible, setNoteModalVisible] = useState(false);
   const hasReachedEndRef = useRef(false);
   const viewportHeightRef = useRef(0);
@@ -456,17 +457,7 @@ const ReadingView = ({
     });
   }, [showToast]);
 
-  const toggleHighlight = useCallback((key) => {
-    setUserHighlightedBlocks((prev) => {
-      const next = { ...prev };
-      if (next[key]) {
-        delete next[key];
-      } else {
-        next[key] = true;
-      }
-      return next;
-    });
-  }, []);
+
 
   const handleBlockPress = useCallback(
     (blockIndex) => {
@@ -565,7 +556,7 @@ const ReadingView = ({
       case "h1": {
         const highlighted = shouldHighlightText(block.text);
         const hlKey = `${index}`;
-        const userHighlighted = userHighlightedBlocks[hlKey];
+        const userHighlighted = userHighlights[hlKey];
         const inner = (
           <View key={index} style={[highlighted ? styles.highlightBlock : null, userHighlighted ? styles.userHighlightBlock : null]}>
             <Text style={styles.h1} selectable={false}>
@@ -574,14 +565,14 @@ const ReadingView = ({
           </View>
         );
         if (isHighlightMode) {
-          return <Pressable key={index} onPress={() => toggleHighlight(hlKey)}>{inner}</Pressable>;
+          return <Pressable key={index} onPress={() => onToggleHighlight(hlKey)}>{inner}</Pressable>;
         }
         return inner;
       }
       case "h2": {
         const highlighted = shouldHighlightText(block.text);
         const hlKey = `${index}`;
-        const userHighlighted = userHighlightedBlocks[hlKey];
+        const userHighlighted = userHighlights[hlKey];
         const inner = (
           <View key={index} style={[highlighted ? styles.highlightBlock : null, userHighlighted ? styles.userHighlightBlock : null]}>
             <Text style={styles.h2} selectable={false}>
@@ -590,7 +581,7 @@ const ReadingView = ({
           </View>
         );
         if (isHighlightMode) {
-          return <Pressable key={index} onPress={() => toggleHighlight(hlKey)}>{inner}</Pressable>;
+          return <Pressable key={index} onPress={() => onToggleHighlight(hlKey)}>{inner}</Pressable>;
         }
         return inner;
       }
@@ -602,12 +593,12 @@ const ReadingView = ({
             <View key={index} style={[highlighted ? styles.highlightBlock : null, styles.sentenceWrap]}>
               {sentences.map((sentence, sIdx) => {
                 const hlKey = `${index}:${sIdx}`;
-                const isHl = userHighlightedBlocks[hlKey];
+                const isHl = userHighlights[hlKey];
                 return (
                   <TouchableOpacity
                     key={sIdx}
                     activeOpacity={0.6}
-                    onPress={() => toggleHighlight(hlKey)}
+                    onPress={() => onToggleHighlight(hlKey)}
                   >
                     <Text
                       style={[styles.body, styles.sentenceInline, isHl ? styles.userHighlightSentence : null]}
@@ -626,7 +617,7 @@ const ReadingView = ({
             <Text style={styles.body} selectable={false}>
               {sentences.map((sentence, sIdx) => {
                 const hlKey = `${index}:${sIdx}`;
-                const isHl = userHighlightedBlocks[hlKey];
+                const isHl = userHighlights[hlKey];
                 return (
                   <Text
                     key={sIdx}
