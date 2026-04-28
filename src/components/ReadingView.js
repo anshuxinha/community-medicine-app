@@ -13,6 +13,7 @@ import {
   Platform,
   ToastAndroid,
   Alert,
+  KeyboardAvoidingView,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -236,6 +237,18 @@ const mergeBlocksWithIllustrations = (blocks, illustrations = []) => {
   return [...mergedBlocks, ...unmatchedBottomBlocks];
 };
 
+/** Split text into sentences for granular highlighting. */
+const splitSentences = (text) => {
+  if (!text) return [text || ""];
+  // Match runs of text ending with sentence punctuation
+  const matches = text.match(/[^.!?]*[.!?]+/g);
+  if (!matches) return [text];
+  const joined = matches.join("");
+  const remaining = text.slice(joined.length).trim();
+  if (remaining) matches.push(remaining);
+  return matches.map((s) => s.trim()).filter(Boolean);
+};
+
 const REACH_END_THRESHOLD = 0.98;
 const SHORT_CONTENT_TOLERANCE = 24;
 const SCREEN = Dimensions.get("window");
@@ -443,26 +456,26 @@ const ReadingView = ({
     });
   }, [showToast]);
 
+  const toggleHighlight = useCallback((key) => {
+    setUserHighlightedBlocks((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      return next;
+    });
+  }, []);
+
   const handleBlockPress = useCallback(
     (blockIndex) => {
-      if (isHighlightMode) {
-        setUserHighlightedBlocks((prev) => {
-          const next = new Set(prev);
-          if (next.has(blockIndex)) {
-            next.delete(blockIndex);
-          } else {
-            next.add(blockIndex);
-          }
-          return next;
-        });
-        return;
-      }
       if (!isAnnotationMode) return;
       setEditingAnnotation({ blockIndex, id: null });
       setAnnotationText("");
       setNoteModalVisible(true);
     },
-    [isAnnotationMode, isHighlightMode],
+    [isAnnotationMode],
   );
 
   const handleSaveAnnotation = useCallback(() => {
@@ -551,33 +564,67 @@ const ReadingView = ({
     switch (block.type) {
       case "h1": {
         const highlighted = shouldHighlightText(block.text);
-        const userHighlighted = userHighlightedBlocks.has(index);
-        return (
+        const hlKey = `${index}`;
+        const userHighlighted = userHighlightedBlocks.has(hlKey);
+        const inner = (
           <View key={index} style={[highlighted ? styles.highlightBlock : null, userHighlighted ? styles.userHighlightBlock : null]}>
             <Text style={styles.h1} selectable={false}>
               {block.text}
             </Text>
           </View>
         );
+        if (isHighlightMode) {
+          return <Pressable key={index} onPress={() => toggleHighlight(hlKey)}>{inner}</Pressable>;
+        }
+        return inner;
       }
       case "h2": {
         const highlighted = shouldHighlightText(block.text);
-        const userHighlighted = userHighlightedBlocks.has(index);
-        return (
+        const hlKey = `${index}`;
+        const userHighlighted = userHighlightedBlocks.has(hlKey);
+        const inner = (
           <View key={index} style={[highlighted ? styles.highlightBlock : null, userHighlighted ? styles.userHighlightBlock : null]}>
             <Text style={styles.h2} selectable={false}>
               {block.text}
             </Text>
           </View>
         );
+        if (isHighlightMode) {
+          return <Pressable key={index} onPress={() => toggleHighlight(hlKey)}>{inner}</Pressable>;
+        }
+        return inner;
       }
       case "body": {
         const highlighted = shouldHighlightText(block.text);
-        const userHighlighted = userHighlightedBlocks.has(index);
+        const sentences = splitSentences(block.text);
         return (
-          <View key={index} style={[highlighted ? styles.highlightBlock : null, userHighlighted ? styles.userHighlightBlock : null]}>
+          <View key={index} style={[highlighted ? styles.highlightBlock : null, { marginVertical: 4 }]}>
             <Text style={styles.body} selectable={false}>
-              {block.text}
+              {sentences.map((sentence, sIdx) => {
+                const hlKey = `${index}:${sIdx}`;
+                const sentenceHighlighted = userHighlightedBlocks.has(hlKey);
+                if (isHighlightMode) {
+                  return (
+                    <Text
+                      key={sIdx}
+                      onPress={() => toggleHighlight(hlKey)}
+                      style={sentenceHighlighted ? styles.userHighlightSentence : null}
+                      selectable={false}
+                    >
+                      {sIdx > 0 ? " " : ""}{sentence}
+                    </Text>
+                  );
+                }
+                return (
+                  <Text
+                    key={sIdx}
+                    style={sentenceHighlighted ? styles.userHighlightSentence : null}
+                    selectable={false}
+                  >
+                    {sIdx > 0 ? " " : ""}{sentence}
+                  </Text>
+                );
+              })}
             </Text>
           </View>
         );
@@ -795,7 +842,7 @@ const ReadingView = ({
 
   const renderBlockWithAnnotations = (block, index) => {
     const blockAnnotations = annotationsByBlock[index] || [];
-    const tappable = (isAnnotationMode || isHighlightMode) && block.type !== "spacing";
+    const tappable = isAnnotationMode && block.type !== "spacing";
 
     return (
       <View key={`block-wrapper-${index}`}>
@@ -805,7 +852,6 @@ const ReadingView = ({
             style={({ pressed }) => [
               pressed && styles.annotationModePressedBlock,
               isAnnotationMode && styles.annotationModeBlock,
-              isHighlightMode && styles.highlightModeBlock,
             ]}
           >
             {renderBlock(block, index)}
@@ -994,56 +1040,61 @@ const ReadingView = ({
           setAnnotationText("");
         }}
       >
-        <Pressable
-          style={styles.noteModalBackdrop}
-          onPress={() => {
-            setNoteModalVisible(false);
-            setEditingAnnotation(null);
-            setAnnotationText("");
-          }}
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-          <Pressable style={styles.noteModalContent} onPress={() => {}}>
-            <Text style={styles.noteModalTitle} selectable={false}>
-              {editingAnnotation?.id ? "Edit Note" : "Add Note"}
-            </Text>
-            <TextInput
-              style={styles.noteModalInput}
-              placeholder="Write your note..."
-              placeholderTextColor="#9CA3AF"
-              value={annotationText}
-              onChangeText={setAnnotationText}
-              multiline
-              autoFocus
-              selectable
-            />
-            <View style={styles.noteModalActions}>
-              <TouchableOpacity
-                style={styles.annotationCancelBtn}
-                onPress={() => {
-                  setNoteModalVisible(false);
-                  setEditingAnnotation(null);
-                  setAnnotationText("");
-                }}
-              >
-                <Text style={styles.annotationCancelText} selectable={false}>
-                  Cancel
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.annotationSaveBtn,
-                  !annotationText.trim() && styles.annotationSaveBtnDisabled,
-                ]}
-                onPress={handleSaveAnnotation}
-                disabled={!annotationText.trim()}
-              >
-                <Text style={styles.annotationSaveText} selectable={false}>
-                  Save
-                </Text>
-              </TouchableOpacity>
-            </View>
+          <Pressable
+            style={styles.noteModalBackdrop}
+            onPress={() => {
+              setNoteModalVisible(false);
+              setEditingAnnotation(null);
+              setAnnotationText("");
+            }}
+          >
+            <Pressable style={styles.noteModalContent} onPress={() => {}}>
+              <Text style={styles.noteModalTitle} selectable={false}>
+                {editingAnnotation?.id ? "Edit Note" : "Add Note"}
+              </Text>
+              <TextInput
+                style={styles.noteModalInput}
+                placeholder="Write your note..."
+                placeholderTextColor="#9CA3AF"
+                value={annotationText}
+                onChangeText={setAnnotationText}
+                multiline
+                autoFocus
+                selectable
+              />
+              <View style={styles.noteModalActions}>
+                <TouchableOpacity
+                  style={styles.annotationCancelBtn}
+                  onPress={() => {
+                    setNoteModalVisible(false);
+                    setEditingAnnotation(null);
+                    setAnnotationText("");
+                  }}
+                >
+                  <Text style={styles.annotationCancelText} selectable={false}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.annotationSaveBtn,
+                    !annotationText.trim() && styles.annotationSaveBtnDisabled,
+                  ]}
+                  onPress={handleSaveAnnotation}
+                  disabled={!annotationText.trim()}
+                >
+                  <Text style={styles.annotationSaveText} selectable={false}>
+                    Save
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </Pressable>
           </Pressable>
-        </Pressable>
+        </KeyboardAvoidingView>
       </Modal>
 
       {/* ── Fullscreen Image Modal ── */}
@@ -1205,12 +1256,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   headerSectionTitle: {
-    flex: 1,
-    textAlign: "center",
     fontSize: 16,
     fontWeight: "700",
     color: theme.colors.secondary,
-    marginHorizontal: 8,
+    marginLeft: 4,
+    marginRight: "auto",
   },
   headerActions: {
     flexDirection: "row",
@@ -1407,6 +1457,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "transparent",
     borderStyle: "dashed",
+  },
+  userHighlightSentence: {
+    backgroundColor: "#FEF08A",
+    borderRadius: 2,
   },
 
   // ── Spacing ──
