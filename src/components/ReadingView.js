@@ -637,12 +637,15 @@ const ReadingView = ({
           <View key={index} style={styles.bulletGroup}>
             {block.items.map((item, itemIndex) => {
               const highlighted = shouldHighlightText(item);
-              return (
+              const hlKey = `${index}:b${itemIndex}`;
+              const isHl = userHighlights[hlKey];
+              const row = (
                 <View
                   key={itemIndex}
                   style={[
                     styles.bulletRow,
                     highlighted ? styles.highlightBulletRow : null,
+                    isHl ? styles.userHighlightSentence : null,
                   ]}
                 >
                   <Text style={styles.bulletDot} selectable={false}>
@@ -653,6 +656,14 @@ const ReadingView = ({
                   </Text>
                 </View>
               );
+              if (isHighlightMode) {
+                return (
+                  <TouchableOpacity key={itemIndex} activeOpacity={0.6} onPress={() => onToggleHighlight(hlKey)}>
+                    {row}
+                  </TouchableOpacity>
+                );
+              }
+              return row;
             })}
           </View>
         );
@@ -661,12 +672,15 @@ const ReadingView = ({
           <View key={index} style={styles.nestedBulletGroup}>
             {block.items.map((item, itemIndex) => {
               const highlighted = shouldHighlightText(item);
-              return (
+              const hlKey = `${index}:b${itemIndex}`;
+              const isHl = userHighlights[hlKey];
+              const row = (
                 <View
                   key={itemIndex}
                   style={[
                     styles.nestedBulletRow,
                     highlighted ? styles.highlightBulletRow : null,
+                    isHl ? styles.userHighlightSentence : null,
                   ]}
                 >
                   <Text style={styles.nestedBulletDot} selectable={false}>
@@ -677,6 +691,14 @@ const ReadingView = ({
                   </Text>
                 </View>
               );
+              if (isHighlightMode) {
+                return (
+                  <TouchableOpacity key={itemIndex} activeOpacity={0.6} onPress={() => onToggleHighlight(hlKey)}>
+                    {row}
+                  </TouchableOpacity>
+                );
+              }
+              return row;
             })}
           </View>
         );
