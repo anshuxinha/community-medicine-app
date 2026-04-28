@@ -10,6 +10,9 @@ import {
   Modal,
   Pressable,
   TextInput,
+  Platform,
+  ToastAndroid,
+  Alert,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -294,6 +297,7 @@ const getRotatedAspectRatio = (aspectRatio, rotation = 0) => {
 const ReadingView = ({
   content,
   title,
+  topicId,
   isBookmarked,
   onToggleBookmark,
   isSpeaking,
@@ -329,6 +333,9 @@ const ReadingView = ({
   const [editingAnnotation, setEditingAnnotation] = useState(null);
   const [annotationText, setAnnotationText] = useState("");
   const [showHighlightsLocal, setShowHighlightsLocal] = useState(showUpdateHighlights);
+  const [isHighlightMode, setIsHighlightMode] = useState(false);
+  const [userHighlightedBlocks, setUserHighlightedBlocks] = useState(new Set());
+  const [noteModalVisible, setNoteModalVisible] = useState(false);
   const hasReachedEndRef = useRef(false);
   const viewportHeightRef = useRef(0);
   const contentHeightRef = useRef(0);
@@ -417,13 +424,45 @@ const ReadingView = ({
     showHighlightsLocal &&
     highlightSet.has(normalizeUpdatedSnippet(text || ""));
 
+  const showToast = useCallback((message) => {
+    if (Platform.OS === "android") {
+      ToastAndroid.show(message, ToastAndroid.SHORT);
+    } else {
+      Alert.alert("", message);
+    }
+  }, []);
+
+  const toggleHighlightMode = useCallback(() => {
+    setIsHighlightMode((prev) => {
+      const next = !prev;
+      if (next) {
+        setIsAnnotationMode(false);
+        showToast("Click on any sentence to highlight it");
+      }
+      return next;
+    });
+  }, [showToast]);
+
   const handleBlockPress = useCallback(
     (blockIndex) => {
+      if (isHighlightMode) {
+        setUserHighlightedBlocks((prev) => {
+          const next = new Set(prev);
+          if (next.has(blockIndex)) {
+            next.delete(blockIndex);
+          } else {
+            next.add(blockIndex);
+          }
+          return next;
+        });
+        return;
+      }
       if (!isAnnotationMode) return;
       setEditingAnnotation({ blockIndex, id: null });
       setAnnotationText("");
+      setNoteModalVisible(true);
     },
-    [isAnnotationMode],
+    [isAnnotationMode, isHighlightMode],
   );
 
   const handleSaveAnnotation = useCallback(() => {
@@ -437,6 +476,7 @@ const ReadingView = ({
     onSaveAnnotation?.(annotation);
     setEditingAnnotation(null);
     setAnnotationText("");
+    setNoteModalVisible(false);
     setIsAnnotationMode(false);
   }, [annotationText, editingAnnotation, onSaveAnnotation]);
 
@@ -511,8 +551,9 @@ const ReadingView = ({
     switch (block.type) {
       case "h1": {
         const highlighted = shouldHighlightText(block.text);
+        const userHighlighted = userHighlightedBlocks.has(index);
         return (
-          <View key={index} style={highlighted ? styles.highlightBlock : null}>
+          <View key={index} style={[highlighted ? styles.highlightBlock : null, userHighlighted ? styles.userHighlightBlock : null]}>
             <Text style={styles.h1} selectable={false}>
               {block.text}
             </Text>
@@ -521,8 +562,9 @@ const ReadingView = ({
       }
       case "h2": {
         const highlighted = shouldHighlightText(block.text);
+        const userHighlighted = userHighlightedBlocks.has(index);
         return (
-          <View key={index} style={highlighted ? styles.highlightBlock : null}>
+          <View key={index} style={[highlighted ? styles.highlightBlock : null, userHighlighted ? styles.userHighlightBlock : null]}>
             <Text style={styles.h2} selectable={false}>
               {block.text}
             </Text>
@@ -531,8 +573,9 @@ const ReadingView = ({
       }
       case "body": {
         const highlighted = shouldHighlightText(block.text);
+        const userHighlighted = userHighlightedBlocks.has(index);
         return (
-          <View key={index} style={highlighted ? styles.highlightBlock : null}>
+          <View key={index} style={[highlighted ? styles.highlightBlock : null, userHighlighted ? styles.userHighlightBlock : null]}>
             <Text style={styles.body} selectable={false}>
               {block.text}
             </Text>
@@ -722,7 +765,16 @@ const ReadingView = ({
   };
 
   const renderAnnotationCard = (annotation) => (
-    <View key={annotation.id} style={styles.annotationCard}>
+    <TouchableOpacity
+      key={annotation.id}
+      style={styles.annotationCard}
+      activeOpacity={0.7}
+      onPress={() => {
+        setEditingAnnotation({ blockIndex: annotation.blockIndex, id: annotation.id });
+        setAnnotationText(annotation.text);
+        setNoteModalVisible(true);
+      }}
+    >
       <View style={styles.annotationCardHeader}>
         <MaterialIcons name="sticky-note-2" size={14} color="#D4A853" />
         <Text style={styles.annotationCardLabel} selectable={false}>
@@ -738,14 +790,12 @@ const ReadingView = ({
       <Text style={styles.annotationCardText} selectable={false}>
         {annotation.text}
       </Text>
-    </View>
+    </TouchableOpacity>
   );
 
   const renderBlockWithAnnotations = (block, index) => {
     const blockAnnotations = annotationsByBlock[index] || [];
-    const isEditingThisBlock =
-      editingAnnotation && editingAnnotation.blockIndex === index;
-    const tappable = isAnnotationMode && block.type !== "spacing";
+    const tappable = (isAnnotationMode || isHighlightMode) && block.type !== "spacing";
 
     return (
       <View key={`block-wrapper-${index}`}>
@@ -755,6 +805,7 @@ const ReadingView = ({
             style={({ pressed }) => [
               pressed && styles.annotationModePressedBlock,
               isAnnotationMode && styles.annotationModeBlock,
+              isHighlightMode && styles.highlightModeBlock,
             ]}
           >
             {renderBlock(block, index)}
@@ -763,45 +814,6 @@ const ReadingView = ({
           renderBlock(block, index)
         )}
         {blockAnnotations.map(renderAnnotationCard)}
-        {isEditingThisBlock ? (
-          <View style={styles.annotationInputCard}>
-            <TextInput
-              style={styles.annotationInput}
-              placeholder="Write your note..."
-              placeholderTextColor="#9CA3AF"
-              value={annotationText}
-              onChangeText={setAnnotationText}
-              multiline
-              autoFocus
-              selectable
-            />
-            <View style={styles.annotationInputActions}>
-              <TouchableOpacity
-                style={styles.annotationCancelBtn}
-                onPress={() => {
-                  setEditingAnnotation(null);
-                  setAnnotationText("");
-                }}
-              >
-                <Text style={styles.annotationCancelText} selectable={false}>
-                  Cancel
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.annotationSaveBtn,
-                  !annotationText.trim() && styles.annotationSaveBtnDisabled,
-                ]}
-                onPress={handleSaveAnnotation}
-                disabled={!annotationText.trim()}
-              >
-                <Text style={styles.annotationSaveText} selectable={false}>
-                  Save
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ) : null}
       </View>
     );
   };
@@ -826,11 +838,7 @@ const ReadingView = ({
           <MaterialIcons name="arrow-back" size={24} color={theme.colors.textTitle} />
         </TouchableOpacity>
         <Text style={styles.headerSectionTitle} numberOfLines={1} selectable={false}>
-          {section === "theory"
-            ? "Theory"
-            : section === "practical"
-              ? "Practical"
-              : section || ""}
+          {topicId ? `Chapter ${topicId}` : section || ""}
         </Text>
         <View style={styles.headerActions}>
           <TouchableOpacity
@@ -929,18 +937,18 @@ const ReadingView = ({
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.toolbarItem}
-          onPress={() => setShowHighlightsLocal((prev) => !prev)}
+          onPress={toggleHighlightMode}
           activeOpacity={0.7}
         >
           <MaterialIcons
             name="border-color"
             size={22}
-            color={showHighlightsLocal ? theme.colors.secondary : theme.colors.textTertiary}
+            color={isHighlightMode ? theme.colors.secondary : theme.colors.textTertiary}
           />
           <Text
             style={[
               styles.toolbarLabel,
-              showHighlightsLocal && styles.toolbarLabelActive,
+              isHighlightMode && styles.toolbarLabelActive,
             ]}
             selectable={false}
           >
@@ -949,7 +957,13 @@ const ReadingView = ({
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.toolbarItem}
-          onPress={() => setIsAnnotationMode((prev) => !prev)}
+          onPress={() => {
+            setIsAnnotationMode((prev) => {
+              const next = !prev;
+              if (next) setIsHighlightMode(false);
+              return next;
+            });
+          }}
           activeOpacity={0.7}
         >
           <MaterialIcons
@@ -968,6 +982,69 @@ const ReadingView = ({
           </Text>
         </TouchableOpacity>
       </View>
+
+      {/* ── Note Modal ── */}
+      <Modal
+        visible={noteModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => {
+          setNoteModalVisible(false);
+          setEditingAnnotation(null);
+          setAnnotationText("");
+        }}
+      >
+        <Pressable
+          style={styles.noteModalBackdrop}
+          onPress={() => {
+            setNoteModalVisible(false);
+            setEditingAnnotation(null);
+            setAnnotationText("");
+          }}
+        >
+          <Pressable style={styles.noteModalContent} onPress={() => {}}>
+            <Text style={styles.noteModalTitle} selectable={false}>
+              {editingAnnotation?.id ? "Edit Note" : "Add Note"}
+            </Text>
+            <TextInput
+              style={styles.noteModalInput}
+              placeholder="Write your note..."
+              placeholderTextColor="#9CA3AF"
+              value={annotationText}
+              onChangeText={setAnnotationText}
+              multiline
+              autoFocus
+              selectable
+            />
+            <View style={styles.noteModalActions}>
+              <TouchableOpacity
+                style={styles.annotationCancelBtn}
+                onPress={() => {
+                  setNoteModalVisible(false);
+                  setEditingAnnotation(null);
+                  setAnnotationText("");
+                }}
+              >
+                <Text style={styles.annotationCancelText} selectable={false}>
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.annotationSaveBtn,
+                  !annotationText.trim() && styles.annotationSaveBtnDisabled,
+                ]}
+                onPress={handleSaveAnnotation}
+                disabled={!annotationText.trim()}
+              >
+                <Text style={styles.annotationSaveText} selectable={false}>
+                  Save
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
 
       {/* ── Fullscreen Image Modal ── */}
       <Modal
@@ -1317,6 +1394,21 @@ const styles = StyleSheet.create({
     borderRadius: 0,
   },
 
+  // ── User Highlights (yellow background) ──
+  userHighlightBlock: {
+    backgroundColor: "#FEF9C3",
+    borderRadius: 4,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    marginVertical: 1,
+  },
+  highlightModeBlock: {
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "transparent",
+    borderStyle: "dashed",
+  },
+
   // ── Spacing ──
   spacing: {
     height: 14,
@@ -1519,6 +1611,46 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "600",
     color: "#FFFFFF",
+  },
+
+  // ── Note Modal ──
+  noteModalBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
+  },
+  noteModalContent: {
+    backgroundColor: theme.colors.surfacePrimary,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 32,
+    minHeight: 220,
+  },
+  noteModalTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: theme.colors.textTitle,
+    marginBottom: 16,
+  },
+  noteModalInput: {
+    fontSize: 15,
+    lineHeight: 22,
+    color: theme.colors.textTitle,
+    minHeight: 80,
+    textAlignVertical: "top",
+    padding: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: 10,
+    backgroundColor: "#F9FAFB",
+  },
+  noteModalActions: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: 10,
+    marginTop: 16,
   },
 
   // ── Fullscreen Image Viewer ──
