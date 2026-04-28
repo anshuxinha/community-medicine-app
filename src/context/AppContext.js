@@ -23,6 +23,7 @@ import { onAuthStateChanged, getIdTokenResult, signOut } from "firebase/auth";
 import * as Notifications from "expo-notifications";
 import { theme } from "../styles/theme";
 import { triggerStreakMilestone } from "../services/notificationService";
+import { maybePromptReview } from "../utils/reviewPrompt";
 import {
   VALID_MASTER_TITLES,
   VALID_CONTENT_KEYS,
@@ -725,6 +726,13 @@ export const AppProvider = ({ children }) => {
       triggerStreakMilestone(currentStreak);
     }
   }, [currentStreak]);
+
+  // Evaluate in-app review pre-prompt when reading progress changes
+  useEffect(() => {
+    if (readingProgress > 0) {
+      maybePromptReview(readingProgress);
+    }
+  }, [readingProgress]);
 
   const markAsUnread = (contentRefs = []) => {
     const refsToClear = contentRefs.filter((ref) => ref?.contentKey);
