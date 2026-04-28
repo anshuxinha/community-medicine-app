@@ -347,7 +347,7 @@ const ReadingView = ({
   const [annotationText, setAnnotationText] = useState("");
   const [showHighlightsLocal, setShowHighlightsLocal] = useState(showUpdateHighlights);
   const [isHighlightMode, setIsHighlightMode] = useState(false);
-  const [userHighlightedBlocks, setUserHighlightedBlocks] = useState(new Set());
+  const [userHighlightedBlocks, setUserHighlightedBlocks] = useState({});
   const [noteModalVisible, setNoteModalVisible] = useState(false);
   const hasReachedEndRef = useRef(false);
   const viewportHeightRef = useRef(0);
@@ -458,11 +458,11 @@ const ReadingView = ({
 
   const toggleHighlight = useCallback((key) => {
     setUserHighlightedBlocks((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) {
-        next.delete(key);
+      const next = { ...prev };
+      if (next[key]) {
+        delete next[key];
       } else {
-        next.add(key);
+        next[key] = true;
       }
       return next;
     });
@@ -565,7 +565,7 @@ const ReadingView = ({
       case "h1": {
         const highlighted = shouldHighlightText(block.text);
         const hlKey = `${index}`;
-        const userHighlighted = userHighlightedBlocks.has(hlKey);
+        const userHighlighted = userHighlightedBlocks[hlKey];
         const inner = (
           <View key={index} style={[highlighted ? styles.highlightBlock : null, userHighlighted ? styles.userHighlightBlock : null]}>
             <Text style={styles.h1} selectable={false}>
@@ -581,7 +581,7 @@ const ReadingView = ({
       case "h2": {
         const highlighted = shouldHighlightText(block.text);
         const hlKey = `${index}`;
-        const userHighlighted = userHighlightedBlocks.has(hlKey);
+        const userHighlighted = userHighlightedBlocks[hlKey];
         const inner = (
           <View key={index} style={[highlighted ? styles.highlightBlock : null, userHighlighted ? styles.userHighlightBlock : null]}>
             <Text style={styles.h2} selectable={false}>
@@ -602,7 +602,7 @@ const ReadingView = ({
             <Text style={styles.body} selectable={false}>
               {sentences.map((sentence, sIdx) => {
                 const hlKey = `${index}:${sIdx}`;
-                const sentenceHighlighted = userHighlightedBlocks.has(hlKey);
+                const sentenceHighlighted = userHighlightedBlocks[hlKey];
                 if (isHighlightMode) {
                   return (
                     <Text
@@ -946,15 +946,7 @@ const ReadingView = ({
           <View style={styles.chapterDivider} />
         </View>
 
-        {/* Annotation mode banner */}
-        {isAnnotationMode ? (
-          <View style={styles.annotationModeBanner}>
-            <MaterialIcons name="touch-app" size={18} color={theme.colors.secondary} />
-            <Text style={styles.annotationModeBannerText} selectable={false}>
-              Tap on any paragraph to add a note
-            </Text>
-          </View>
-        ) : null}
+
 
         {showUpdateHighlights && highlightSet.size > 0 ? (
           <View style={styles.updateBanner}>
@@ -1006,7 +998,10 @@ const ReadingView = ({
           onPress={() => {
             setIsAnnotationMode((prev) => {
               const next = !prev;
-              if (next) setIsHighlightMode(false);
+              if (next) {
+                setIsHighlightMode(false);
+                showToast("Tap on any paragraph to add a note");
+              }
               return next;
             });
           }}
@@ -1033,7 +1028,7 @@ const ReadingView = ({
       <Modal
         visible={noteModalVisible}
         transparent
-        animationType="slide"
+        animationType="fade"
         onRequestClose={() => {
           setNoteModalVisible(false);
           setEditingAnnotation(null);
@@ -1671,16 +1666,17 @@ const styles = StyleSheet.create({
   noteModalBackdrop: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "flex-end",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 24,
   },
   noteModalContent: {
+    width: "100%",
     backgroundColor: theme.colors.surfacePrimary,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderRadius: 16,
     paddingHorizontal: 20,
     paddingTop: 20,
-    paddingBottom: 32,
-    minHeight: 220,
+    paddingBottom: 24,
   },
   noteModalTitle: {
     fontSize: 18,
