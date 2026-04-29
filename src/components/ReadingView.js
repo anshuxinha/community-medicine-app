@@ -564,10 +564,11 @@ const ReadingView = ({
             </Text>
           </View>
         );
-        if (isHighlightMode) {
-          return <Pressable key={index} onPress={() => onToggleHighlight(hlKey)}>{inner}</Pressable>;
-        }
-        return inner;
+        return (
+          <Pressable key={index} disabled={!isHighlightMode} onPress={() => onToggleHighlight(hlKey)}>
+            {inner}
+          </Pressable>
+        );
       }
       case "h2": {
         const highlighted = shouldHighlightText(block.text);
@@ -580,38 +581,15 @@ const ReadingView = ({
             </Text>
           </View>
         );
-        if (isHighlightMode) {
-          return <Pressable key={index} onPress={() => onToggleHighlight(hlKey)}>{inner}</Pressable>;
-        }
-        return inner;
+        return (
+          <Pressable key={index} disabled={!isHighlightMode} onPress={() => onToggleHighlight(hlKey)}>
+            {inner}
+          </Pressable>
+        );
       }
       case "body": {
         const highlighted = shouldHighlightText(block.text);
         const sentences = splitSentences(block.text);
-        if (isHighlightMode) {
-          return (
-            <View key={index} style={[highlighted ? styles.highlightBlock : null, styles.sentenceWrap]}>
-              {sentences.map((sentence, sIdx) => {
-                const hlKey = `${index}:${sIdx}`;
-                const isHl = userHighlights[hlKey];
-                return (
-                  <TouchableOpacity
-                    key={sIdx}
-                    activeOpacity={0.6}
-                    onPress={() => onToggleHighlight(hlKey)}
-                  >
-                    <Text
-                      style={[styles.body, styles.sentenceInline, isHl ? styles.userHighlightSentence : null]}
-                      selectable={false}
-                    >
-                      {sentence}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          );
-        }
         return (
           <View key={index} style={[highlighted ? styles.highlightBlock : null, { marginVertical: 4 }]}>
             <Text style={styles.body} selectable={false}>
@@ -623,6 +601,8 @@ const ReadingView = ({
                     key={sIdx}
                     style={isHl ? styles.userHighlightSentence : null}
                     selectable={false}
+                    onPress={isHighlightMode ? () => onToggleHighlight(hlKey) : undefined}
+                    suppressHighlighting={true}
                   >
                     {sIdx > 0 ? " " : ""}{sentence}
                   </Text>
@@ -656,14 +636,11 @@ const ReadingView = ({
                   </Text>
                 </View>
               );
-              if (isHighlightMode) {
-                return (
-                  <TouchableOpacity key={itemIndex} activeOpacity={0.6} onPress={() => onToggleHighlight(hlKey)}>
-                    {row}
-                  </TouchableOpacity>
-                );
-              }
-              return row;
+              return (
+                <Pressable key={itemIndex} disabled={!isHighlightMode} onPress={() => onToggleHighlight(hlKey)}>
+                  {row}
+                </Pressable>
+              );
             })}
           </View>
         );
@@ -691,14 +668,11 @@ const ReadingView = ({
                   </Text>
                 </View>
               );
-              if (isHighlightMode) {
-                return (
-                  <TouchableOpacity key={itemIndex} activeOpacity={0.6} onPress={() => onToggleHighlight(hlKey)}>
-                    {row}
-                  </TouchableOpacity>
-                );
-              }
-              return row;
+              return (
+                <Pressable key={itemIndex} disabled={!isHighlightMode} onPress={() => onToggleHighlight(hlKey)}>
+                  {row}
+                </Pressable>
+              );
             })}
           </View>
         );
@@ -871,19 +845,16 @@ const ReadingView = ({
 
     return (
       <View key={`block-wrapper-${index}`}>
-        {tappable ? (
-          <Pressable
-            onPress={() => handleBlockPress(index)}
-            style={({ pressed }) => [
-              pressed && styles.annotationModePressedBlock,
-              isAnnotationMode && styles.annotationModeBlock,
-            ]}
-          >
-            {renderBlock(block, index)}
-          </Pressable>
-        ) : (
-          renderBlock(block, index)
-        )}
+        <Pressable
+          disabled={!tappable}
+          onPress={() => handleBlockPress(index)}
+          style={({ pressed }) => [
+            { borderWidth: 1, borderColor: "transparent", borderRadius: 6, borderStyle: "dashed" },
+            tappable && pressed && styles.annotationModePressedBlock,
+          ]}
+        >
+          {renderBlock(block, index)}
+        </Pressable>
         {blockAnnotations.map(renderAnnotationCard)}
       </View>
     );
