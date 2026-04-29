@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, collection, getDocs } from "firebase/firestore";
+import { doc, getDoc, setDoc, collection, getDocs, getDocFromServer, getDocsFromServer } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { db } from "../config/firebase";
 
@@ -27,7 +27,7 @@ export const loadHighlights = async (uid, contentKey, onUpdate) => {
     try {
       const docRef = doc(db, "users", uid, "highlights", contentKey);
       const snapshot = await Promise.race([
-        getDoc(docRef),
+        getDocFromServer(docRef),
         new Promise((_, reject) =>
           setTimeout(() => reject(new Error("Timeout")), 10000),
         ),
@@ -103,7 +103,7 @@ export const syncAllHighlights = async (uid) => {
 
   try {
     const highlightsRef = collection(db, "users", uid, "highlights");
-    const snapshot = await getDocs(highlightsRef);
+    const snapshot = await getDocsFromServer(highlightsRef);
 
     const cachePromises = snapshot.docs.map(async (docSnap) => {
       const contentKey = docSnap.id;
