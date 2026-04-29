@@ -34,6 +34,8 @@ import {
   hydrateContentRegistry,
   migrateLegacyReadItems,
 } from "../utils/contentRegistry";
+import { syncAllAnnotations } from "../services/annotationService";
+import { syncAllHighlights } from "../services/highlightService";
 
 let Purchases;
 let GoogleSignin;
@@ -292,6 +294,22 @@ export const AppProvider = ({ children }) => {
                 setCurrentStreak(0);
               }
             }
+            const userData = {
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              username: firebaseUser.displayName || data.username || "User",
+              isPremium: premiumStatus,
+              isAdmin,
+            };
+
+            const cloudState = hydrateStoredState(data);
+
+            if (cloudState.lastReadDate) {
+              const diffDays = dayDiffFromToday(cloudState.lastReadDate);
+              if (diffDays !== null && diffDays > 1) {
+                setCurrentStreak(0);
+              }
+            }
 
             setUser(userData);
             setAccountPremium(Boolean(premiumStatus));
@@ -302,6 +320,9 @@ export const AppProvider = ({ children }) => {
               getAccountStateKey(firebaseUser.uid),
               JSON.stringify(cloudState),
             );
+
+            syncAllAnnotations(firebaseUser.uid);
+            syncAllHighlights(firebaseUser.uid);
           } catch (err) {
             console.warn("Firestore fetch failed/timed out, using auth claims:", err?.message);
             const userData = {
@@ -387,6 +408,9 @@ export const AppProvider = ({ children }) => {
           getAccountStateKey(user.uid),
           JSON.stringify(cloudState),
         );
+
+        syncAllAnnotations(user.uid);
+        syncAllHighlights(user.uid);
       }
     } catch (err) {
       console.warn("Cloud refresh failed:", err?.message);

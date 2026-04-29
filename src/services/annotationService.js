@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, collection, getDocs } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { db } from "../config/firebase";
 
@@ -86,5 +86,32 @@ export const saveAnnotations = async (uid, contentKey, annotations) => {
     await setDoc(docRef, { annotations: safe }, { merge: true });
   } catch (err) {
     console.warn("Failed to sync annotations to Firestore:", err?.message);
+  }
+};
+
+/**
+ * Fetch all annotations for a user from Firestore and cache them locally.
+ */
+export const syncAllAnnotations = async (uid) => {
+  if (!uid) return;
+
+  try {
+    const annotationsRef = collection(db, "users", uid, "annotations");
+    const snapshot = await getDocs(annotationsRef);
+
+    const cachePromises = snapshot.docs.map(async (docSnap) => {
+      const contentKey = docSnap.id;
+      const data = docSnap.data();
+      if (data && Array.isArray(data.annotations)) {
+        await AsyncStorage.setItem(
+          getCacheKey(uid, contentKey),
+          JSON.stringify(data.annotations)
+        );
+      }
+    });
+
+    await Promise.all(cachePromises);
+  } catch (err) {
+    console.warn("Failed to sync all annotations:", err?.message);
   }
 };

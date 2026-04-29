@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, collection, getDocs } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { db } from "../config/firebase";
 
@@ -87,5 +87,32 @@ export const saveHighlights = async (uid, contentKey, highlights) => {
     await setDoc(docRef, { highlights: safe }, { merge: true });
   } catch (err) {
     console.warn("Failed to sync highlights to Firestore:", err?.message);
+  }
+};
+
+/**
+ * Fetch all highlights for a user from Firestore and cache them locally.
+ */
+export const syncAllHighlights = async (uid) => {
+  if (!uid) return;
+
+  try {
+    const highlightsRef = collection(db, "users", uid, "highlights");
+    const snapshot = await getDocs(highlightsRef);
+
+    const cachePromises = snapshot.docs.map(async (docSnap) => {
+      const contentKey = docSnap.id;
+      const data = docSnap.data();
+      if (data && data.highlights && typeof data.highlights === "object") {
+        await AsyncStorage.setItem(
+          getCacheKey(uid, contentKey),
+          JSON.stringify(data.highlights)
+        );
+      }
+    });
+
+    await Promise.all(cachePromises);
+  } catch (err) {
+    console.warn("Failed to sync all highlights:", err?.message);
   }
 };
