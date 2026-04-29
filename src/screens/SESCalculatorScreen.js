@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Platform } from 'react-native';
 import { TextInput, Button, Card, Text, SegmentedButtons } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Picker } from '@react-native-picker/picker'; // requires @react-native-picker/picker
+import DropdownPicker from '../components/DropdownPicker';
 import { theme } from '../styles/theme';
 
 const EDUCATION_OPTIONS = [
@@ -126,32 +126,20 @@ const SESCalculatorScreen = () => {
                             <Text style={styles.sectionTitle}>Modified Kuppuswamy Scale</Text>
 
                             <Text style={styles.label}>Education of Head of Family</Text>
-                            <View style={styles.pickerContainer}>
-                                <Picker
-                                    selectedValue={education}
-                                    onValueChange={(itemValue) => setEducation(itemValue)}
-                                    style={{ color: theme.colors.textTitle }}
-                                    dropdownIconColor={theme.colors.textTitle}
-                                >
-                                    {EDUCATION_OPTIONS.map((opt) => (
-                                        <Picker.Item key={opt.value} label={`${opt.label} (${opt.value})`} value={opt.value} color={theme.colors.textTitle} style={{ fontSize: 14 }} />
-                                    ))}
-                                </Picker>
-                            </View>
+                            <DropdownPicker
+                                selectedValue={education}
+                                onValueChange={(itemValue) => setEducation(itemValue)}
+                                items={EDUCATION_OPTIONS}
+                                labelExtractor={(opt) => `${opt.label} (${opt.value})`}
+                            />
 
                             <Text style={styles.label}>Occupation of Head of Family</Text>
-                            <View style={styles.pickerContainer}>
-                                <Picker
-                                    selectedValue={occupation}
-                                    onValueChange={(itemValue) => setOccupation(itemValue)}
-                                    style={{ color: theme.colors.textTitle }}
-                                    dropdownIconColor={theme.colors.textTitle}
-                                >
-                                    {OCCUPATION_OPTIONS.map((opt) => (
-                                        <Picker.Item key={opt.value} label={`${opt.label} (${opt.value})`} value={opt.value} color={theme.colors.textTitle} style={{ fontSize: 14 }} />
-                                    ))}
-                                </Picker>
-                            </View>
+                            <DropdownPicker
+                                selectedValue={occupation}
+                                onValueChange={(itemValue) => setOccupation(itemValue)}
+                                items={OCCUPATION_OPTIONS}
+                                labelExtractor={(opt) => `${opt.label} (${opt.value})`}
+                            />
 
                             <TextInput
                                 label="Total Monthly Family Income (₹)"
@@ -247,13 +235,6 @@ const styles = StyleSheet.create({
         marginTop: 16,
         color: theme.colors.textSecondary,
         fontWeight: 'bold',
-    },
-    pickerContainer: {
-        borderWidth: 1,
-        borderColor: '#D1D5DB',
-        borderRadius: 4,
-        marginTop: 8,
-        backgroundColor: theme.colors.surfacePrimary,
     },
     calcButton: {
         marginVertical: 16,

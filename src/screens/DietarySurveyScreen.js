@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Text, TextInput, Button, Card, Divider } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Picker } from "@react-native-picker/picker";
+import DropdownPicker from "../components/DropdownPicker";
 import foodData from "../data/foodData.json";
 import { theme } from "../styles/theme";
 
@@ -123,24 +123,11 @@ const DietarySurveyScreen = () => {
         <Card style={styles.card}>
           <Card.Content>
             <Text style={styles.sectionTitle}>Reference Standard</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={referenceKey}
-                onValueChange={setReferenceKey}
-                style={{ color: theme.colors.textTitle }}
-                dropdownIconColor={theme.colors.textTitle}
-              >
-                {Object.entries(REFERENCE_VALUES).map(([k, v]) => (
-                  <Picker.Item
-                    key={k}
-                    label={v.label}
-                    value={k}
-                    color={theme.colors.textTitle}
-                    style={{ fontSize: 14 }}
-                  />
-                ))}
-              </Picker>
-            </View>
+            <DropdownPicker
+              selectedValue={referenceKey}
+              onValueChange={setReferenceKey}
+              items={Object.entries(REFERENCE_VALUES).map(([k, v]) => ({ label: v.label, value: k }))}
+            />
           </Card.Content>
         </Card>
 
@@ -151,25 +138,14 @@ const DietarySurveyScreen = () => {
             {rows.map((row, index) => (
               <View key={index} style={styles.rowContainer}>
                 <View style={styles.pickerContainerSmall}>
-                  <Picker
+                  <DropdownPicker
                     selectedValue={row.foodId}
                     onValueChange={(v) => updateRow(index, "foodId", v)}
-                    style={{ height: 44, color: theme.colors.textTitle }}
-                    dropdownIconColor={theme.colors.textTitle}
-                  >
-                    {foodData.map((f) => (
-                      <Picker.Item
-                        key={f.id}
-                        label={f.name}
-                        value={f.id}
-                        style={{
-                          fontSize: 13,
-                          color: theme.colors.textTitle,
-                          backgroundColor: theme.colors.surfacePrimary,
-                        }}
-                      />
-                    ))}
-                  </Picker>
+                    items={foodData}
+                    labelExtractor={(f) => f.name}
+                    valueExtractor={(f) => f.id}
+                    style={{ borderWidth: 0, marginTop: 0 }}
+                  />
                 </View>
                 <TextInput
                   label="g"
@@ -280,13 +256,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: theme.colors.textTitle,
     marginBottom: 8,
-  },
-  pickerContainer: {
-    borderWidth: 1,
-    borderColor: "#D1D5DB",
-    borderRadius: 4,
-    marginTop: 8,
-    backgroundColor: theme.colors.surfacePrimary,
   },
   pickerContainerSmall: {
     flex: 2,
