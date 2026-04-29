@@ -9,21 +9,27 @@ const getCacheKey = (uid, contentKey) =>
 
 /**
  * Load highlights for a specific content item.
- * Returns an object where keys are highlight IDs (e.g. "12:0") and values are true.
- * Tries Firestore first, falls back to AsyncStorage cache.
+ * Returns cached data immediately and fetches from Firestore in the background.
+ * The onUpdate callback is called if the server returns different data.
  */
-export const loadHighlights = async (uid, contentKey) => {
+export const loadHighlights = async (uid, contentKey, onUpdate) => {
   if (!uid || !contentKey) return {};
 
-  const docRef = doc(db, "users", uid, "highlights", contentKey);
-  const timeouts = [5000, 8000, 12000];
+  // 1. Try AsyncStorage cache first (instant, populated by syncAllHighlights)
+  let cached = null;
+  try {
+    const raw = await AsyncStorage.getItem(getCacheKey(uid, contentKey));
+    if (raw) cached = JSON.parse(raw);
+  } catch {}
 
-  for (let attempt = 0; attempt < timeouts.length; attempt++) {
+  // 2. Fetch from Firestore server (authoritative)
+  const fetchFromServer = async () => {
     try {
+      const docRef = doc(db, "users", uid, "highlights", contentKey);
       const snapshot = await Promise.race([
         getDoc(docRef),
         new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Timeout")), timeouts[attempt]),
+          setTimeout(() => reject(new Error("Timeout")), 10000),
         ),
       ]);
 
@@ -32,7 +38,7 @@ export const loadHighlights = async (uid, contentKey) => {
         const highlights = data.highlights && typeof data.highlights === "object"
           ? data.highlights
           : {};
-        // Cache locally
+        // Update cache
         await AsyncStorage.setItem(
           getCacheKey(uid, contentKey),
           JSON.stringify(highlights),
@@ -40,27 +46,26 @@ export const loadHighlights = async (uid, contentKey) => {
         return highlights;
       }
 
-      // Doc doesn't exist on server — no data to restore
       return {};
     } catch (err) {
-      console.warn(
-        `Failed to load highlights (attempt ${attempt + 1}/${timeouts.length}):`,
-        err?.message,
-      );
-
-      // Only fall back to cache on the final attempt
-      if (attempt === timeouts.length - 1) {
-        try {
-          const cached = await AsyncStorage.getItem(getCacheKey(uid, contentKey));
-          return cached ? JSON.parse(cached) : {};
-        } catch {
-          return {};
-        }
-      }
+      console.warn("Failed to load highlights from server:", err?.message);
+      return null; // null = server unavailable, keep cached
     }
+  };
+
+  if (cached && Object.keys(cached).length > 0) {
+    // Return cache immediately, refresh from server in the background
+    fetchFromServer().then((serverData) => {
+      if (serverData !== null && onUpdate) {
+        onUpdate(serverData);
+      }
+    });
+    return cached;
   }
 
-  return {};
+  // No cache — must wait for server
+  const serverData = await fetchFromServer();
+  return serverData !== null ? serverData : {};
 };
 
 /**

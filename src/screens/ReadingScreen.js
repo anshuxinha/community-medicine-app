@@ -92,7 +92,9 @@ const ReadingScreen = ({ route, navigation }) => {
     if (!user?.uid || !effectiveContentKey) return;
     let cancelled = false;
 
-    loadAnnotations(user.uid, effectiveContentKey).then((loaded) => {
+    loadAnnotations(user.uid, effectiveContentKey, (serverData) => {
+      if (!cancelled) setAnnotations(serverData);
+    }).then((loaded) => {
       if (!cancelled) setAnnotations(loaded);
     });
 
@@ -106,7 +108,9 @@ const ReadingScreen = ({ route, navigation }) => {
     if (!user?.uid || !effectiveContentKey) return;
     let cancelled = false;
 
-    loadHighlights(user.uid, effectiveContentKey).then((loaded) => {
+    loadHighlights(user.uid, effectiveContentKey, (serverData) => {
+      if (!cancelled) setUserHighlights(serverData);
+    }).then((loaded) => {
       if (!cancelled) setUserHighlights(loaded);
     });
 
