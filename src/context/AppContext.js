@@ -294,22 +294,6 @@ export const AppProvider = ({ children }) => {
                 setCurrentStreak(0);
               }
             }
-            const userData = {
-              uid: firebaseUser.uid,
-              email: firebaseUser.email,
-              username: firebaseUser.displayName || data.username || "User",
-              isPremium: premiumStatus,
-              isAdmin,
-            };
-
-            const cloudState = hydrateStoredState(data);
-
-            if (cloudState.lastReadDate) {
-              const diffDays = dayDiffFromToday(cloudState.lastReadDate);
-              if (diffDays !== null && diffDays > 1) {
-                setCurrentStreak(0);
-              }
-            }
 
             setUser(userData);
             setAccountPremium(Boolean(premiumStatus));
