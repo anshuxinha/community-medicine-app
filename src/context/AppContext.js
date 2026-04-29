@@ -978,6 +978,8 @@ export const AppProvider = ({ children }) => {
           );
         }
         cloudHydratedRef.current = true;
+        syncAllAnnotations(userData.uid);
+        syncAllHighlights(userData.uid);
       } catch (err) {
         console.warn("Cloud hydration during login failed:", err?.message);
         try {
@@ -985,6 +987,8 @@ export const AppProvider = ({ children }) => {
           if (cached) hydrateStoredState(JSON.parse(cached));
         } catch (_) {}
         cloudHydratedRef.current = true;
+        syncAllAnnotations(userData.uid);
+        syncAllHighlights(userData.uid);
       }
     }
   };
