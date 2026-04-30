@@ -172,8 +172,7 @@ const AdminLibraryReviewScreen = () => {
     }
   };
 
-  const handleApprove = async () => {
-    if (!selectedSuggestion) return;
+  const applyApproval = async (shouldNotify) => {
     setSaving(true);
 
     try {
@@ -208,12 +207,15 @@ const AdminLibraryReviewScreen = () => {
 
       await refreshLibraryContent?.();
       closeEditor();
-      Alert.alert("Approved", "The Library override is now live. A notification will be sent to all users.");
 
-      // Send push notification in the background (don't block the UI)
-      sendLibraryUpdateNotification(
-        selectedSuggestion.libraryTitle || "Community Medicine Library",
-      );
+      if (shouldNotify) {
+        Alert.alert("Approved", "The Library override is now live. A notification will be sent to all users.");
+        sendLibraryUpdateNotification(
+          selectedSuggestion.libraryTitle || "Community Medicine Library",
+        );
+      } else {
+        Alert.alert("Approved", "The Library override is now live. No notification was sent.");
+      }
     } catch (error) {
       Alert.alert(
         "Approval failed",
@@ -222,6 +224,27 @@ const AdminLibraryReviewScreen = () => {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleApprove = () => {
+    if (!selectedSuggestion) return;
+
+    Alert.alert(
+      "Approve Live",
+      "This will make the change live for all users. Do you also want to send a push notification?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Approve Only",
+          onPress: () => applyApproval(false),
+        },
+        {
+          text: "Approve + Notify",
+          style: "default",
+          onPress: () => applyApproval(true),
+        },
+      ],
+    );
   };
 
   const handleDelete = (suggestion) => {
