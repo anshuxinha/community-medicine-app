@@ -2,8 +2,10 @@ import React, { useContext, useEffect, useMemo, useState } from "react";
 import {
   Alert,
   Linking,
+  Modal,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -12,8 +14,6 @@ import {
   Button,
   Card,
   Chip,
-  Dialog,
-  Portal,
   Text,
   TextInput,
 } from "react-native-paper";
@@ -21,6 +21,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDocs,
   onSnapshot,
   serverTimestamp,
   setDoc,
@@ -30,6 +31,8 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { db } from "../config/firebase";
 import { AppContext } from "../context/AppContext";
 import { theme } from "../styles/theme";
+
+const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
 
 const getSortValue = (value) => {
   if (!value) return 0;
@@ -47,6 +50,54 @@ const STATUS_TONES = {
   pending: { backgroundColor: "#FEF3C7", textColor: "#92400E" },
   approved: { backgroundColor: "#DCFCE7", textColor: "#166534" },
   superseded: { backgroundColor: "#E5E7EB", textColor: "#374151" },
+};
+
+/**
+ * Fetch all Expo push tokens from the users collection and send
+ * a broadcast notification about a library update.
+ */
+const sendLibraryUpdateNotification = async (libraryTitle) => {
+  try {
+    const usersSnapshot = await getDocs(collection(db, "users"));
+    const tokens = [];
+    usersSnapshot.forEach((userDoc) => {
+      const data = userDoc.data();
+      const token = data.pushToken;
+      if (
+        typeof token === "string" &&
+        (token.startsWith("ExponentPushToken[") ||
+          token.startsWith("ExpoPushToken["))
+      ) {
+        tokens.push(token);
+      }
+    });
+
+    if (tokens.length === 0) return;
+
+    const messages = tokens.map((token) => ({
+      to: token,
+      sound: "default",
+      title: "Library Updated",
+      body: `"${libraryTitle}" has been updated with the latest information. Tap to check it out.`,
+      data: { screen: "Dashboard" },
+    }));
+
+    // Expo recommends up to 100 per request
+    for (let i = 0; i < messages.length; i += 100) {
+      const chunk = messages.slice(i, i + 100);
+      await fetch(EXPO_PUSH_URL, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Accept-encoding": "gzip, deflate",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(chunk),
+      });
+    }
+  } catch (err) {
+    console.warn("Failed to send library update notification:", err?.message);
+  }
 };
 
 const AdminLibraryReviewScreen = () => {
@@ -86,8 +137,7 @@ const AdminLibraryReviewScreen = () => {
   }, []);
 
   const pendingSuggestions = useMemo(
-    () =>
-      suggestions.filter((item) => item.status === "pending" || item.status === "approved"),
+    () => suggestions.filter((item) => item.status === "pending"),
     [suggestions],
   );
 
@@ -158,7 +208,12 @@ const AdminLibraryReviewScreen = () => {
 
       await refreshLibraryContent?.();
       closeEditor();
-      Alert.alert("Approved", "The Library override is now live in the app.");
+      Alert.alert("Approved", "The Library override is now live. A notification will be sent to all users.");
+
+      // Send push notification in the background (don't block the UI)
+      sendLibraryUpdateNotification(
+        selectedSuggestion.libraryTitle || "Community Medicine Library",
+      );
     } catch (error) {
       Alert.alert(
         "Approval failed",
@@ -196,6 +251,30 @@ const AdminLibraryReviewScreen = () => {
           },
         },
       ],
+    );
+  };
+
+  const renderChangeItem = (change, index) => {
+    const original = change.originalLine || change.original || "";
+    const replacement = change.replacementLine || change.replacement || "";
+    return (
+      <View key={index} style={styles.changeItem}>
+        <Text style={styles.changeLabel}>Change {index + 1}</Text>
+        <View style={styles.changeDiffRow}>
+          <View style={styles.changeOld}>
+            <Text style={styles.changePrefixOld}>−</Text>
+            <Text style={styles.changeTextOld} selectable>
+              {original}
+            </Text>
+          </View>
+          <View style={styles.changeNew}>
+            <Text style={styles.changePrefixNew}>+</Text>
+            <Text style={styles.changeTextNew} selectable>
+              {replacement}
+            </Text>
+          </View>
+        </View>
+      </View>
     );
   };
 
@@ -320,59 +399,84 @@ const AdminLibraryReviewScreen = () => {
         )}
       </View>
 
-      <Portal>
-        <Dialog
-          visible={Boolean(selectedSuggestion)}
-          onDismiss={saving ? undefined : closeEditor}
-          style={styles.dialog}
-        >
-          <Dialog.Title style={styles.dialogTitle}>
-            {selectedSuggestion?.libraryTitle || "Edit suggestion"}
-          </Dialog.Title>
-          <Dialog.ScrollArea style={styles.dialogScrollArea}>
-            <ScrollView>
-              <Text style={styles.dialogLabel}>Summary reason</Text>
-              <TextInput
-                mode="outlined"
-                value={editedReason}
-                onChangeText={setEditedReason}
-                multiline
-                style={styles.input}
-              />
+      {/* ── Full-screen Editor Modal ── */}
+      <Modal
+        visible={Boolean(selectedSuggestion)}
+        animationType="slide"
+        onRequestClose={saving ? undefined : closeEditor}
+        statusBarTranslucent
+      >
+        <SafeAreaView style={styles.modalSafeArea}>
+          {/* Fixed header */}
+          <View style={styles.modalHeader}>
+            <TouchableOpacity
+              onPress={closeEditor}
+              disabled={saving}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <MaterialIcons name="close" size={24} color={theme.colors.textTitle} />
+            </TouchableOpacity>
+            <Text style={styles.modalHeaderTitle} numberOfLines={1}>
+              {selectedSuggestion?.libraryTitle || "Edit suggestion"}
+            </Text>
+            <View style={{ width: 24 }} />
+          </View>
 
-              <Text style={styles.dialogLabel}>Original content</Text>
-              <Text style={styles.readOnlyBlock}>
-                {selectedSuggestion?.originalContent || ""}
+          {/* Scrollable content */}
+          <ScrollView
+            style={styles.modalScroll}
+            contentContainerStyle={styles.modalScrollContent}
+            keyboardShouldPersistTaps="handled"
+          >
+            <Text style={styles.dialogLabel}>Summary reason</Text>
+            <TextInput
+              mode="outlined"
+              value={editedReason}
+              onChangeText={setEditedReason}
+              multiline
+              style={styles.input}
+            />
+
+            <Text style={styles.dialogLabel}>Line Changes</Text>
+            {Array.isArray(selectedSuggestion?.changes) &&
+            selectedSuggestion.changes.length > 0 ? (
+              selectedSuggestion.changes.map(renderChangeItem)
+            ) : (
+              <Text style={styles.noChangesText}>
+                No exact line changes recorded. The proposed content is a full replacement.
               </Text>
+            )}
 
-              <Text style={styles.dialogLabel}>Proposed content</Text>
-              <TextInput
-                mode="outlined"
-                value={editedContent}
-                onChangeText={setEditedContent}
-                multiline
-                style={styles.contentInput}
-              />
-            </ScrollView>
-          </Dialog.ScrollArea>
-          <Dialog.Actions style={styles.dialogActions}>
+            <Text style={styles.dialogLabel}>Proposed content (editable)</Text>
+            <TextInput
+              mode="outlined"
+              value={editedContent}
+              onChangeText={setEditedContent}
+              multiline
+              style={styles.contentInput}
+            />
+          </ScrollView>
+
+          {/* Fixed bottom actions */}
+          <View style={styles.modalActions}>
             <Button onPress={closeEditor} disabled={saving}>
               Cancel
             </Button>
             <Button onPress={handleSaveDraft} loading={saving} disabled={saving}>
-              Save
+              Save Draft
             </Button>
             <Button
               mode="contained"
               onPress={handleApprove}
               loading={saving}
               disabled={saving}
+              buttonColor={theme.colors.chartGreen}
             >
               Approve Live
             </Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
+          </View>
+        </SafeAreaView>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -487,41 +591,126 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 14,
   },
-  dialog: {
+
+  // ── Full-screen Modal ──
+  modalSafeArea: {
+    flex: 1,
+    backgroundColor: theme.colors.backgroundMain,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.surfaceSecondary,
     backgroundColor: theme.colors.surfacePrimary,
   },
-  dialogTitle: {
-    color: theme.colors.textTitle,
+  modalHeaderTitle: {
+    flex: 1,
+    fontSize: 17,
     fontWeight: "700",
+    color: theme.colors.textTitle,
+    textAlign: "center",
+    marginHorizontal: 12,
   },
-  dialogScrollArea: {
-    borderColor: "transparent",
-    paddingHorizontal: 20,
+  modalScroll: {
+    flex: 1,
+  },
+  modalScrollContent: {
+    padding: 16,
+    paddingBottom: 24,
+  },
+  modalActions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.surfaceSecondary,
+    backgroundColor: theme.colors.surfacePrimary,
   },
   dialogLabel: {
-    marginTop: 8,
+    marginTop: 16,
     marginBottom: 8,
     color: theme.colors.textTitle,
     fontWeight: "700",
+    fontSize: 15,
   },
   input: {
     backgroundColor: theme.colors.surfacePrimary,
   },
   contentInput: {
-    minHeight: 220,
+    minHeight: 180,
     backgroundColor: theme.colors.surfacePrimary,
   },
-  readOnlyBlock: {
-    padding: 12,
-    borderRadius: 12,
-    backgroundColor: theme.colors.surfaceSecondary,
+  noChangesText: {
     color: theme.colors.textSecondary,
+    fontStyle: "italic",
     lineHeight: 20,
   },
-  dialogActions: {
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    justifyContent: "space-between",
+
+  // ── Line change diff items ──
+  changeItem: {
+    marginBottom: 12,
+    borderRadius: 10,
+    backgroundColor: theme.colors.surfacePrimary,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: theme.colors.surfaceSecondary,
+  },
+  changeLabel: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: theme.colors.textTertiary,
+    paddingHorizontal: 12,
+    paddingTop: 8,
+    paddingBottom: 4,
+  },
+  changeDiffRow: {
+    paddingHorizontal: 8,
+    paddingBottom: 8,
+  },
+  changeOld: {
+    flexDirection: "row",
+    backgroundColor: "#FEE2E2",
+    borderRadius: 6,
+    padding: 8,
+    marginBottom: 4,
+  },
+  changePrefixOld: {
+    color: "#B91C1C",
+    fontWeight: "700",
+    fontSize: 14,
+    marginRight: 6,
+    width: 16,
+  },
+  changeTextOld: {
+    flex: 1,
+    color: "#991B1B",
+    fontSize: 13,
+    lineHeight: 19,
+  },
+  changeNew: {
+    flexDirection: "row",
+    backgroundColor: "#DCFCE7",
+    borderRadius: 6,
+    padding: 8,
+  },
+  changePrefixNew: {
+    color: "#166534",
+    fontWeight: "700",
+    fontSize: 14,
+    marginRight: 6,
+    width: 16,
+  },
+  changeTextNew: {
+    flex: 1,
+    color: "#14532D",
+    fontSize: 13,
+    lineHeight: 19,
   },
 });
 

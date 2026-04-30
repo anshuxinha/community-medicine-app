@@ -565,7 +565,7 @@ const ReadingView = ({
           </View>
         );
         return (
-          <Pressable key={index} disabled={!isHighlightMode} onPress={() => onToggleHighlight(hlKey)}>
+          <Pressable key={index} disabled={!isHighlightMode && !userHighlighted} onPress={() => onToggleHighlight(hlKey)}>
             {inner}
           </Pressable>
         );
@@ -582,7 +582,7 @@ const ReadingView = ({
           </View>
         );
         return (
-          <Pressable key={index} disabled={!isHighlightMode} onPress={() => onToggleHighlight(hlKey)}>
+          <Pressable key={index} disabled={!isHighlightMode && !userHighlighted} onPress={() => onToggleHighlight(hlKey)}>
             {inner}
           </Pressable>
         );
@@ -601,7 +601,7 @@ const ReadingView = ({
                     key={sIdx}
                     style={isHl ? styles.userHighlightSentence : null}
                     selectable={false}
-                    onPress={isHighlightMode ? () => onToggleHighlight(hlKey) : undefined}
+                    onPress={(isHighlightMode || isHl) ? () => onToggleHighlight(hlKey) : undefined}
                     suppressHighlighting={true}
                   >
                     {sIdx > 0 ? " " : ""}{sentence}
@@ -637,7 +637,7 @@ const ReadingView = ({
                 </View>
               );
               return (
-                <Pressable key={itemIndex} disabled={!isHighlightMode} onPress={() => onToggleHighlight(hlKey)}>
+                <Pressable key={itemIndex} disabled={!isHighlightMode && !isHl} onPress={() => onToggleHighlight(hlKey)}>
                   {row}
                 </Pressable>
               );
@@ -669,7 +669,7 @@ const ReadingView = ({
                 </View>
               );
               return (
-                <Pressable key={itemIndex} disabled={!isHighlightMode} onPress={() => onToggleHighlight(hlKey)}>
+                <Pressable key={itemIndex} disabled={!isHighlightMode && !isHl} onPress={() => onToggleHighlight(hlKey)}>
                   {row}
                 </Pressable>
               );
