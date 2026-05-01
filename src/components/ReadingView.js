@@ -590,9 +590,11 @@ const ReadingView = ({
       case "body": {
         const highlighted = shouldHighlightText(block.text);
         const sentences = splitSentences(block.text);
+        const blockHighlightSig = sentences.map((_, sIdx) => userHighlights[`${index}:${sIdx}`] ? "1" : "0").join("");
+
         return (
           <View key={index} style={[highlighted ? styles.highlightBlock : null, { marginVertical: 4 }]}>
-            <Text style={styles.body} selectable={false}>
+            <Text key={blockHighlightSig} style={styles.body} selectable={false}>
               {sentences.map((sentence, sIdx) => {
                 const hlKey = `${index}:${sIdx}`;
                 const isHl = userHighlights[hlKey];
