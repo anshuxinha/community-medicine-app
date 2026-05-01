@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, collection, getDocs, getDocFromServer, getDocsFromServer } from "firebase/firestore";
+import { doc, getDoc, setDoc, collection, getDocs, getDocFromServer, getDocsFromServer, onSnapshot } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { db } from "../config/firebase";
 
@@ -89,10 +89,33 @@ export const saveAnnotations = async (uid, contentKey, annotations) => {
   // Sync to Firestore
   try {
     const docRef = doc(db, "users", uid, "annotations", contentKey);
-    await setDoc(docRef, { annotations: safe }, { merge: true });
+    await setDoc(docRef, { annotations: safe });
   } catch (err) {
     console.warn("Failed to sync annotations to Firestore:", err?.message);
   }
+};
+
+/**
+ * Subscribe to annotations for a specific content item in real-time.
+ */
+export const subscribeAnnotations = (uid, contentKey, onUpdate) => {
+  if (!uid || !contentKey) return () => {};
+
+  const docRef = doc(db, "users", uid, "annotations", contentKey);
+  const unsubscribe = onSnapshot(docRef, (snapshot) => {
+    if (snapshot.exists()) {
+      const data = snapshot.data();
+      const annotations = Array.isArray(data.annotations) ? data.annotations : [];
+      AsyncStorage.setItem(getCacheKey(uid, contentKey), JSON.stringify(annotations)).catch(() => {});
+      if (onUpdate) onUpdate(annotations);
+    } else {
+      if (onUpdate) onUpdate([]);
+    }
+  }, (err) => {
+    console.warn("Failed to subscribe to annotations:", err?.message);
+  });
+
+  return unsubscribe;
 };
 
 /**

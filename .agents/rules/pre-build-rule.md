@@ -10,4 +10,4 @@ Step 3: Once the deployment method is confirmed by the user, run git status to v
 Step 4: If there are uncommitted changes, think of a concise commit message yourself, run git add ., and then execute git commit -m "[message]".
 Step 5: Execute git pull --rebase to fetch and apply the latest updates from the remote GitHub repository. (If merge conflicts occur, pause and prompt the user to resolve them before continuing).
 Step 6: Run git push to upload all commits to the remote GitHub repository.
-Step 7: Only after the push is successful, proceed with executing the confirmed eas build or eas update command.
+Step 7: Only after the push is successful, proceed with executing the confirmed eas build or eas update command. Always push to main eas branch, unless I state otherwise.

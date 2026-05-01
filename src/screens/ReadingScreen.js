@@ -18,11 +18,11 @@ import {
   disableScreenCaptureProtection,
 } from "../utils/screenCaptureProtection";
 import {
-  loadAnnotations,
+  subscribeAnnotations,
   saveAnnotations,
 } from "../services/annotationService";
 import {
-  loadHighlights,
+  subscribeHighlights,
   saveHighlights,
 } from "../services/highlightService";
 
@@ -90,32 +90,26 @@ const ReadingScreen = ({ route, navigation }) => {
   // ── Annotations ──
   useEffect(() => {
     if (!user?.uid || !effectiveContentKey) return;
-    let cancelled = false;
-
-    loadAnnotations(user.uid, effectiveContentKey, (serverData) => {
-      if (!cancelled) setAnnotations(serverData);
-    }).then((loaded) => {
-      if (!cancelled) setAnnotations(loaded);
+    
+    const unsubscribe = subscribeAnnotations(user.uid, effectiveContentKey, (serverData) => {
+      setAnnotations(serverData);
     });
 
     return () => {
-      cancelled = true;
+      unsubscribe();
     };
   }, [user?.uid, effectiveContentKey]);
 
   // ── Highlights ──
   useEffect(() => {
     if (!user?.uid || !effectiveContentKey) return;
-    let cancelled = false;
-
-    loadHighlights(user.uid, effectiveContentKey, (serverData) => {
-      if (!cancelled) setUserHighlights(serverData);
-    }).then((loaded) => {
-      if (!cancelled) setUserHighlights(loaded);
+    
+    const unsubscribe = subscribeHighlights(user.uid, effectiveContentKey, (serverData) => {
+      setUserHighlights(serverData);
     });
 
     return () => {
-      cancelled = true;
+      unsubscribe();
     };
   }, [user?.uid, effectiveContentKey]);
 

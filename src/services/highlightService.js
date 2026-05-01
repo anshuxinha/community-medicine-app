@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, collection, getDocs, getDocFromServer, getDocsFromServer } from "firebase/firestore";
+import { doc, getDoc, setDoc, collection, getDocs, getDocFromServer, getDocsFromServer, onSnapshot } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { db } from "../config/firebase";
 
@@ -89,10 +89,33 @@ export const saveHighlights = async (uid, contentKey, highlights) => {
   // Sync to Firestore
   try {
     const docRef = doc(db, "users", uid, "highlights", contentKey);
-    await setDoc(docRef, { highlights: safe }, { merge: true });
+    await setDoc(docRef, { highlights: safe });
   } catch (err) {
     console.warn("Failed to sync highlights to Firestore:", err?.message);
   }
+};
+
+/**
+ * Subscribe to highlights for a specific content item in real-time.
+ */
+export const subscribeHighlights = (uid, contentKey, onUpdate) => {
+  if (!uid || !contentKey) return () => {};
+
+  const docRef = doc(db, "users", uid, "highlights", contentKey);
+  const unsubscribe = onSnapshot(docRef, (snapshot) => {
+    if (snapshot.exists()) {
+      const data = snapshot.data();
+      const highlights = data.highlights && typeof data.highlights === "object" ? data.highlights : {};
+      AsyncStorage.setItem(getCacheKey(uid, contentKey), JSON.stringify(highlights)).catch(() => {});
+      if (onUpdate) onUpdate(highlights);
+    } else {
+      if (onUpdate) onUpdate({});
+    }
+  }, (err) => {
+    console.warn("Failed to subscribe to highlights:", err?.message);
+  });
+
+  return unsubscribe;
 };
 
 /**
