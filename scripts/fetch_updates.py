@@ -363,7 +363,7 @@ def fetch_health_updates():
         Return ONLY a valid JSON array of objects, each containing:
         - "id": the same id as provided (integer)
         - "title": a short English headline
-        - "summary": an English summary of the update, constrained to EXACTLY 60 words (try to include any updated figures or numbers).
+        - "summary": an English summary of the update, constrained to EXACTLY 60 words (try to include important figures or numbers).
         - "date": the exact date of the release in YYYY-MM-DD format based on the text (default to today if unseen)
         
         Ensure the array length matches the number of articles provided.

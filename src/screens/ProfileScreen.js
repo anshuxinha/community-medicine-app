@@ -10,8 +10,8 @@ import {
 import { Text, Avatar, Card, Divider } from "react-native-paper";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { signOut } from "firebase/auth";
-import { doc, updateDoc } from "firebase/firestore";
+import { signOut, deleteUser } from "firebase/auth";
+import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
 import { AppContext } from "../context/AppContext";
 import { theme } from "../styles/theme";
@@ -110,6 +110,56 @@ const ProfileScreen = () => {
         },
       },
     ]);
+  };
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      "Delete Account",
+      "Are you sure you want to permanently delete your account? This action cannot be undone and you will lose all your progress, bookmarks, and premium status.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            const user = auth.currentUser;
+            if (user) {
+              const uid = user.uid;
+              try {
+                // Delete user document from Firestore first
+                try {
+                  await deleteDoc(doc(db, "users", uid));
+                } catch (e) {
+                  console.error("Error deleting user document:", e);
+                }
+                
+                // Delete user from Firebase Auth
+                await deleteUser(user);
+                
+                // Call context logout
+                logout();
+                
+                Alert.alert("Account Deleted", "Your account has been successfully deleted.");
+                
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: "Login" }],
+                });
+              } catch (error) {
+                if (error.code === 'auth/requires-recent-login') {
+                  Alert.alert(
+                    "Re-authentication Required",
+                    "For security reasons, please log out and log back in before deleting your account.",
+                  );
+                } else {
+                  Alert.alert("Error", error.message || "Failed to delete account. Please try again.");
+                }
+              }
+            }
+          },
+        },
+      ],
+    );
   };
 
   const handleRateApp = () => {
@@ -370,6 +420,12 @@ const ProfileScreen = () => {
           <Text style={styles.logoutText}>Log Out</Text>
         </TouchableOpacity>
 
+        {/* Delete Account Button */}
+        <TouchableOpacity style={styles.deleteAccountButton} onPress={handleDeleteAccount}>
+          <MaterialIcons name="delete-forever" size={20} color={theme.colors.error} />
+          <Text style={styles.deleteAccountText}>Delete Account</Text>
+        </TouchableOpacity>
+
         {/* App Version */}
         <Text style={styles.version}>
           STROMA v{Constants.expoConfig?.version || "1.0.0"}
@@ -607,6 +663,24 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   logoutText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: theme.colors.error,
+  },
+  deleteAccountButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: 16,
+    marginTop: 12,
+    paddingVertical: 14,
+    backgroundColor: "transparent",
+    borderWidth: 1,
+    borderColor: theme.colors.errorLight,
+    borderRadius: 12,
+    gap: 8,
+  },
+  deleteAccountText: {
     fontSize: 15,
     fontWeight: "600",
     color: theme.colors.error,
