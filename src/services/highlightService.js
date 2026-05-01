@@ -71,28 +71,24 @@ export const loadHighlights = async (uid, contentKey, onUpdate) => {
 /**
  * Save the full highlights object for a content item.
  */
-export const saveHighlights = async (uid, contentKey, highlights) => {
+export const saveHighlights = (uid, contentKey, highlights) => {
   if (!uid || !contentKey) return;
 
   const safe = highlights && typeof highlights === "object" ? highlights : {};
 
-  // Always cache locally first
-  try {
-    await AsyncStorage.setItem(
-      getCacheKey(uid, contentKey),
-      JSON.stringify(safe),
-    );
-  } catch (err) {
+  // Always cache locally first, fire-and-forget
+  AsyncStorage.setItem(
+    getCacheKey(uid, contentKey),
+    JSON.stringify(safe),
+  ).catch((err) => {
     console.warn("Failed to cache highlights:", err?.message);
-  }
+  });
 
-  // Sync to Firestore
-  try {
-    const docRef = doc(db, "users", uid, "highlights", contentKey);
-    await setDoc(docRef, { highlights: safe });
-  } catch (err) {
+  // Sync to Firestore immediately to guarantee order and avoid race conditions
+  const docRef = doc(db, "users", uid, "highlights", contentKey);
+  setDoc(docRef, { highlights: safe }).catch((err) => {
     console.warn("Failed to sync highlights to Firestore:", err?.message);
-  }
+  });
 };
 
 /**

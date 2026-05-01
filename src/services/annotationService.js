@@ -71,28 +71,24 @@ export const loadAnnotations = async (uid, contentKey, onUpdate) => {
 /**
  * Save the full annotations array for a content item.
  */
-export const saveAnnotations = async (uid, contentKey, annotations) => {
+export const saveAnnotations = (uid, contentKey, annotations) => {
   if (!uid || !contentKey) return;
 
   const safe = Array.isArray(annotations) ? annotations : [];
 
-  // Always cache locally first
-  try {
-    await AsyncStorage.setItem(
-      getCacheKey(uid, contentKey),
-      JSON.stringify(safe),
-    );
-  } catch (err) {
+  // Always cache locally first, fire-and-forget
+  AsyncStorage.setItem(
+    getCacheKey(uid, contentKey),
+    JSON.stringify(safe),
+  ).catch((err) => {
     console.warn("Failed to cache annotations:", err?.message);
-  }
+  });
 
-  // Sync to Firestore
-  try {
-    const docRef = doc(db, "users", uid, "annotations", contentKey);
-    await setDoc(docRef, { annotations: safe });
-  } catch (err) {
+  // Sync to Firestore immediately to guarantee order and avoid race conditions
+  const docRef = doc(db, "users", uid, "annotations", contentKey);
+  setDoc(docRef, { annotations: safe }).catch((err) => {
     console.warn("Failed to sync annotations to Firestore:", err?.message);
-  }
+  });
 };
 
 /**
