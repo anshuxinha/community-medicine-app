@@ -47,21 +47,19 @@ const UpdatesScreen = () => {
       }
     }
 
-    // Current month: use live updates.json
-    const currentMonthUpdates = currentUpdates.filter((u) => {
+    // Process all live updates.json (in case they haven't been archived yet)
+    currentUpdates.forEach((u) => {
       const d = u.date || "";
-      if (d.length < 7) return true; // include if no date info
-      const [yearStr, monthStr] = d.split("-");
-      return (
-        parseInt(yearStr, 10) === currentYear &&
-        parseInt(monthStr, 10) === currentMonthIndex + 1
-      );
+      let mIdx = currentMonthIndex; // default to current month if no date info
+      if (d.length >= 7) {
+        const [yearStr, monthStr] = d.split("-");
+        if (parseInt(yearStr, 10) !== currentYear) return;
+        mIdx = parseInt(monthStr, 10) - 1;
+      }
+      if (mIdx >= 0 && mIdx < 12) {
+        map[mIdx] = (map[mIdx] || []).concat(u);
+      }
     });
-    if (currentMonthUpdates.length > 0) {
-      map[currentMonthIndex] = (map[currentMonthIndex] || []).concat(
-        currentMonthUpdates,
-      );
-    }
 
     // Deduplicate within each month by link
     for (const mIdx of Object.keys(map)) {
