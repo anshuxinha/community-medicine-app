@@ -5,7 +5,7 @@
  * Notification schedule:
  *  - Weekly digest: Every Sunday at 10:00 AM
  *  - Streak milestones: Fired immediately on 3, 7, 14, 30 day streaks
- *  - Webinar notifications: When new webinars are added (user subscription based)
+ *  - Video notifications: When new videos are added
  *
  * Note: Daily study reminder and rotating study tips have been removed
  * to reduce notification frequency.
@@ -13,7 +13,10 @@
 
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { auth, db } from "../config/firebase";
 import publicHealthDays from "../data/publicHealthDays.json";
 
 // Study tips rotation
@@ -31,6 +34,41 @@ const STUDY_TIPS = [
 ];
 
 let tipIndex = 0;
+const STREAK_MILESTONE_NOTIFICATION_KEY = "streakMilestoneLastNotified";
+const VIDEO_NOTIFICATION_STORAGE_KEY = "video_notification_subscribed";
+const LEGACY_WEBINAR_NOTIFICATION_STORAGE_KEY =
+  "webinar_notification_subscribed";
+
+const getTodayNotificationKey = () => new Date().toISOString().split("T")[0];
+
+async function wasStreakMilestoneSentToday(streak) {
+  try {
+    const storedValue = await AsyncStorage.getItem(
+      STREAK_MILESTONE_NOTIFICATION_KEY,
+    );
+    const streakMilestones = storedValue ? JSON.parse(storedValue) : {};
+    return streakMilestones?.[streak] === getTodayNotificationKey();
+  } catch (error) {
+    console.warn("Failed to read streak notification state:", error);
+    return false;
+  }
+}
+
+async function markStreakMilestoneSentToday(streak) {
+  try {
+    const storedValue = await AsyncStorage.getItem(
+      STREAK_MILESTONE_NOTIFICATION_KEY,
+    );
+    const streakMilestones = storedValue ? JSON.parse(storedValue) : {};
+    streakMilestones[streak] = getTodayNotificationKey();
+    await AsyncStorage.setItem(
+      STREAK_MILESTONE_NOTIFICATION_KEY,
+      JSON.stringify(streakMilestones),
+    );
+  } catch (error) {
+    console.warn("Failed to persist streak notification state:", error);
+  }
+}
 
 // Configure notification handling behaviour
 // Note: AppContext.js also sets a notification handler as a fallback.
@@ -147,6 +185,11 @@ export async function triggerStreakMilestone(streak) {
     },
   };
   if (!milestones[streak]) return;
+  if (await wasStreakMilestoneSentToday(streak)) return;
+
+  const granted = await requestPermissions();
+  if (!granted) return;
+
   const { emoji, msg } = milestones[streak];
 
   await Notifications.scheduleNotificationAsync({
@@ -158,11 +201,13 @@ export async function triggerStreakMilestone(streak) {
     },
     trigger: null, // Fire immediately
   });
+
+  await markStreakMilestoneSentToday(streak);
 }
 
 /**
- * Send a webinar notification to subscribed users.
- * This would typically be called from a backend when new webinars are added.
+ * Backward-compatible wrapper for the old webinar notification API.
+ * New code should use the video notification helpers below.
  * For local testing, we can call this manually.
  * @param {string} webinarTitle - Title of the new webinar
  * @param {string} webinarDescription - Description of the webinar
@@ -200,8 +245,8 @@ export async function sendWebinarNotification(
         body: `${webinarTitle} - ${webinarDescription}`,
         sound: true,
         data: {
-          screen: "Webinars",
-          type: "webinar",
+          screen: "Videos",
+          type: "video",
           title: webinarTitle,
           description: webinarDescription,
         },
@@ -296,7 +341,138 @@ export function setupNotificationTapHandler(navigationRef) {
   Notifications.addNotificationResponseReceivedListener((response) => {
     const screen = response.notification.request.content.data?.screen;
     if (screen && navigationRef?.current) {
+      if (["Dashboard", "Library", "Videos", "Updates"].includes(screen)) {
+        navigationRef.current.navigate("MainTabs", { screen });
+        return;
+      }
+
       navigationRef.current.navigate(screen);
     }
   });
+}
+
+/**
+ * Send an immediate local notification for a newly available video.
+ * Server-side broadcast push is handled by scripts/bunny-videos.js.
+ */
+export async function sendVideoNotification(videoTitle, videoDescription) {
+  try {
+    const subscribed = await isSubscribedToVideoNotifications();
+
+    if (!subscribed) {
+      console.log("User not subscribed to video notifications");
+      return;
+    }
+
+    const granted = await requestPermissions();
+    if (!granted) {
+      console.log("Notification permissions not granted");
+      return;
+    }
+
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "New Video Available",
+        body: videoDescription
+          ? `${videoTitle} - ${videoDescription}`
+          : videoTitle,
+        sound: true,
+        data: {
+          screen: "Videos",
+          type: "video",
+          title: videoTitle,
+          description: videoDescription,
+        },
+      },
+      trigger: null,
+    });
+
+    console.log("Video notification sent successfully");
+  } catch (error) {
+    console.error("Error sending video notification:", error);
+  }
+}
+
+const videoSubscriptionListeners = new Set();
+
+function emitVideoSubscriptionChange(isSubscribed) {
+  videoSubscriptionListeners.forEach((listener) => {
+    try {
+      listener(isSubscribed);
+    } catch (error) {
+      console.error("Error in video subscription listener:", error);
+    }
+  });
+}
+
+async function persistVideoNotificationPreference(isSubscribed) {
+  await AsyncStorage.setItem(
+    VIDEO_NOTIFICATION_STORAGE_KEY,
+    isSubscribed ? "true" : "false",
+  );
+  await AsyncStorage.removeItem(LEGACY_WEBINAR_NOTIFICATION_STORAGE_KEY);
+
+  const uid = auth.currentUser?.uid;
+  if (!uid) return;
+
+  await setDoc(
+    doc(db, "users", uid),
+    {
+      videoNotificationsEnabled: isSubscribed,
+      videoNotificationsUpdatedAt: serverTimestamp(),
+    },
+    { merge: true },
+  );
+}
+
+export function addVideoSubscriptionListener(listener) {
+  videoSubscriptionListeners.add(listener);
+  return () => videoSubscriptionListeners.delete(listener);
+}
+
+export async function isSubscribedToVideoNotifications() {
+  try {
+    const subscribed = await AsyncStorage.getItem(VIDEO_NOTIFICATION_STORAGE_KEY);
+
+    if (subscribed === "true") return true;
+    if (subscribed === "false") return false;
+
+    const legacySubscribed = await AsyncStorage.getItem(
+      LEGACY_WEBINAR_NOTIFICATION_STORAGE_KEY,
+    );
+
+    if (legacySubscribed === "true") {
+      await persistVideoNotificationPreference(true);
+      return true;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error checking video subscription:", error);
+    return true;
+  }
+}
+
+export async function unsubscribeFromVideoNotifications() {
+  try {
+    await persistVideoNotificationPreference(false);
+    console.log("User unsubscribed from video notifications");
+    emitVideoSubscriptionChange(false);
+    return true;
+  } catch (error) {
+    console.error("Error unsubscribing from video notifications:", error);
+    return false;
+  }
+}
+
+export async function subscribeToVideoNotifications() {
+  try {
+    await persistVideoNotificationPreference(true);
+    console.log("User subscribed to video notifications");
+    emitVideoSubscriptionChange(true);
+    return true;
+  } catch (error) {
+    console.error("Error subscribing to video notifications:", error);
+    return false;
+  }
 }

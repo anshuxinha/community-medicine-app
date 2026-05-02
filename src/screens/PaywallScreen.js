@@ -221,7 +221,7 @@ const PaywallScreen = ({ navigation }) => {
 
         <View style={styles.featuresList}>
           <FeatureItem text="Unlimited Library Access" />
-          <FeatureItem text="Live Webinars Access" />
+          <FeatureItem text="Premium Video Lessons" />
           <FeatureItem text="Offline Content Downloads" />
           <FeatureItem text="Exclusive Study Resources" />
           <FeatureItem text="Ad-Free Experience" />

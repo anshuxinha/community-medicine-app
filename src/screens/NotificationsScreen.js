@@ -12,10 +12,10 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { theme } from "../styles/theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
-  isSubscribedToWebinarNotifications,
-  addWebinarSubscriptionListener,
-  subscribeToWebinarNotifications,
-  unsubscribeFromWebinarNotifications,
+  isSubscribedToVideoNotifications,
+  addVideoSubscriptionListener,
+  subscribeToVideoNotifications,
+  unsubscribeFromVideoNotifications,
   requestPermissions,
 } from "../services/notificationService";
 import * as Notifications from "expo-notifications";
@@ -23,15 +23,15 @@ import * as Device from "expo-device";
 
 const NotificationsScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
-  const [isWebinarSubscribed, setIsWebinarSubscribed] = useState(false);
+  const [isVideoSubscribed, setIsVideoSubscribed] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     loadData();
 
     // Listen for subscription changes from other screens
-    const unsubscribe = addWebinarSubscriptionListener((subscribed) => {
-      setIsWebinarSubscribed(subscribed);
+    const unsubscribe = addVideoSubscriptionListener((subscribed) => {
+      setIsVideoSubscribed(subscribed);
     });
 
     return unsubscribe;
@@ -39,9 +39,8 @@ const NotificationsScreen = () => {
 
   const loadData = async () => {
     try {
-      // Check webinar subscription status
-      const subscribed = await isSubscribedToWebinarNotifications();
-      setIsWebinarSubscribed(subscribed);
+      const subscribed = await isSubscribedToVideoNotifications();
+      setIsVideoSubscribed(subscribed);
     } catch (error) {
       console.error("Error loading notification data:", error);
     }
@@ -53,18 +52,17 @@ const NotificationsScreen = () => {
     setRefreshing(false);
   };
 
-  const toggleWebinarSubscription = async () => {
+  const toggleVideoSubscription = async () => {
     if (isLoading) return;
 
     setIsLoading(true);
     try {
-      if (isWebinarSubscribed) {
-        // Unsubscribe using service function
-        const success = await unsubscribeFromWebinarNotifications();
+      if (isVideoSubscribed) {
+        const success = await unsubscribeFromVideoNotifications();
         if (success) {
           Alert.alert(
             "Unsubscribed",
-            "You've been unsubscribed from webinar notifications. You won't receive updates about new webinars.",
+            "You've been unsubscribed from video notifications.",
             [{ text: "OK" }],
           );
         }
@@ -83,25 +81,24 @@ const NotificationsScreen = () => {
         if (!granted) {
           Alert.alert(
             "Permission Required",
-            "Please enable notifications in your device settings to get webinar updates.",
+            "Please enable notifications in your device settings to get video updates.",
             [{ text: "OK" }],
           );
           setIsLoading(false);
           return;
         }
 
-        // Subscribe using service function
-        const success = await subscribeToWebinarNotifications();
+        const success = await subscribeToVideoNotifications();
         if (success) {
           Alert.alert(
             "Subscribed!",
-            "You'll receive push notifications when new webinars are added. Stay tuned!",
+            "You'll receive push notifications when new videos are added.",
             [{ text: "OK" }],
           );
         }
       }
     } catch (error) {
-      console.error("Error toggling webinar subscription:", error);
+      console.error("Error toggling video subscription:", error);
       Alert.alert("Error", "Failed to update subscription. Please try again.", [
         { text: "OK" },
       ]);
@@ -151,28 +148,28 @@ const NotificationsScreen = () => {
                   size={20}
                   color={theme.colors.secondary}
                 />
-                <Text style={styles.preferenceText}>Webinar Updates</Text>
+                <Text style={styles.preferenceText}>Video Updates</Text>
               </View>
               <Chip
-                icon={isWebinarSubscribed ? "bell-check" : "bell-outline"}
+                icon={isVideoSubscribed ? "bell-check" : "bell-outline"}
                 mode="outlined"
                 style={[
                   styles.chip,
-                  isWebinarSubscribed ? styles.chipActive : styles.chipInactive,
+                  isVideoSubscribed ? styles.chipActive : styles.chipInactive,
                 ]}
                 textStyle={styles.chipText}
-                onPress={toggleWebinarSubscription}
+                onPress={toggleVideoSubscription}
                 disabled={isLoading}
                 showSelectedOverlay={false}
               >
-                {isWebinarSubscribed ? "Subscribed" : "Subscribe"}
+                {isVideoSubscribed ? "Subscribed" : "Subscribe"}
               </Chip>
             </View>
 
             <Text style={styles.preferenceDescription}>
-              {isWebinarSubscribed
-                ? "You'll receive push notifications when new webinars are added."
-                : "Enable webinar notifications to get updates about new sessions."}
+              {isVideoSubscribed
+                ? "You'll receive push notifications when new videos are added."
+                : "Enable video notifications to get updates about new lessons."}
             </Text>
           </Card.Content>
         </Card>
@@ -190,7 +187,7 @@ const NotificationsScreen = () => {
             </View>
             <Text style={styles.infoText}>
               • Weekly progress digest every Sunday at 10:00 AM
-              {"\n"}• Webinar notifications when new sessions are added
+              {"\n"}• Video notifications when new lessons are added
               {"\n"}• Streak milestones for consistent study habits
             </Text>
           </Card.Content>

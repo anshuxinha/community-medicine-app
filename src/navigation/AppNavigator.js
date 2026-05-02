@@ -15,7 +15,7 @@ import { setupNotificationTapHandler } from "../services/notificationService";
 // Tab screens
 import DashboardScreen from "../screens/DashboardScreen";
 import LibraryScreen from "../screens/LibraryScreen";
-import WebinarsScreen from "../screens/WebinarsScreen";
+import VideosScreen from "../screens/VideosScreen";
 import UpdatesScreen from "../screens/UpdatesScreen";
 import BookmarksScreen from "../screens/BookmarksScreen";
 import ProfileScreen from "../screens/ProfileScreen";
@@ -52,7 +52,7 @@ const TabNavigator = () => {
           if (route.name === "Dashboard") iconName = "dashboard";
           else if (route.name === "Library") iconName = "book";
           else if (route.name === "Updates") iconName = "update";
-          else if (route.name === "Webinars") iconName = "ondemand-video";
+          else if (route.name === "Videos") iconName = "ondemand-video";
           return <MaterialIcons name={iconName} color={color} size={size} />;
         },
         tabBarActiveTintColor: theme.colors.secondary,
@@ -72,7 +72,7 @@ const TabNavigator = () => {
     >
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen name="Library" component={LibraryScreen} />
-      <Tab.Screen name="Webinars" component={WebinarsScreen} />
+      <Tab.Screen name="Videos" component={VideosScreen} />
       <Tab.Screen name="Updates" component={UpdatesScreen} />
     </Tab.Navigator>
   );
