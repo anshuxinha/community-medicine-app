@@ -1,51 +1,9 @@
 [
     {
-        "id": "f46e8da2-10c7-455e-b066-269da061ddd1",
-        "date": "2026-04-29",
-        "title": "NSO 80th Round Survey Shows Transformative Progress in India's Healthcare",
-        "summary": "The NSO 80th Round survey reveals significant improvements in India's healthcare access, marked by a threefold increase in government insurance coverage and rising institutional deliveries. Public health facility utilization has grown, particularly in rural areas, while median outpatient expenditure remains zero. These findings underscore the government's commitment to affordable healthcare, effectively reducing the financial burden of out-of-pocket expenses for citizens.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2256538"
-    },
-    {
-        "id": "3bcc7980-9ebf-43db-859a-180c6d63f926",
-        "date": "2026-04-21",
-        "title": "India Shifts Focus to Combat Non-Communicable Diseases",
-        "summary": "Union Health Minister JP Nadda highlighted India's transition toward a holistic health policy to combat rising non-communicable diseases. The government is accelerating NCD control through expanded infrastructure and massive screening drives, having already screened millions for hypertension, diabetes, and cancer. The strategy emphasizes that 70% of NCD risk factors are lifestyle-driven, urging a shift toward prevention and healthier living.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2254227"
-    },
-    {
-        "id": "98df09c2-4212-4b79-a80d-773b34ae45bf",
-        "date": "2026-04-18",
-        "title": "NHA Concludes Chintan Shivir on Digital Health",
-        "summary": "The National Health Authority concluded a two-day Chintan Shivir in Pune focusing on AB PM-JAY and ABDM. The event highlighted innovation and cooperative governance, showcasing Karnataka's online referral system and Gujarat's clinical governance mechanisms. The initiative aims to strengthen healthcare delivery through data-driven decision-making and digital verification, ensuring improved clinical appropriateness and cost efficiencies across various Indian States and UTs.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2253329"
-    },
-    {
-        "id": "51e0b2b0-9dec-462d-88ad-af371662c046",
-        "date": "2026-04-17",
-        "title": "NHA Holds Chintan Shivir to Accelerate Digital Health",
-        "summary": "The National Health Authority convened a two-day Chintan Shivir in Pune to review and accelerate the implementation of AB PM-JAY and ABDM. The event focused on preventive, technology-driven healthcare and unveiled new guidelines and the NHCX strategy. Officials aim to strengthen digital health architecture and build a future-ready workforce to streamline health claims and improve overall healthcare delivery systems.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2253117"
-    },
-    {
-        "id": "c3b901a7-b6cb-48a0-aceb-1a509987c3be",
-        "date": "2026-04-13",
-        "title": "MoHFW Launches Clinical Workflow App for CHOs",
-        "summary": "The Ministry of Health and Family Welfare launched an ICMR-developed mobile application to streamline clinical workflows for Community Health Officers at Sub-Centre Ayushman Arogya Mandirs. Aligned with 12 CPHC service packages, the app provides structured decision-support tools and checklists for patient assessment. This digital intervention aims to enhance primary healthcare delivery, ensuring timely referrals and informed clinical decision-making nationwide.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2251582"
-    },
-    {
-        "id": "23362429-1cdb-4492-adeb-26dcdb108811",
-        "date": "2026-04-13",
-        "title": "NHA Launches Auto-Adjudication Hackathon for AB PM-JAY",
-        "summary": "The National Health Authority has invited innovators to the AB PM-JAY Auto-Adjudication Hackathon 2026 to develop digital solutions for claims processing. With over 2,600 participants registered, the initiative seeks to leverage AI and automation to reduce manual workloads and fraud. The goal is to create a scalable, transparent, and future-ready framework to handle the high volume of daily health claims.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2251434"
-    },
-    {
-        "id": "591c148f-6f13-4906-b776-944a1b25ea58",
-        "date": "2026-04-07",
-        "title": "Union Health Minister Marks World Health Day",
-        "summary": "Union Minister Shri Jagat Prakash Nadda extended greetings on World Health Day, emphasizing the government's commitment to preventive and promotive healthcare. He highlighted the synergy between traditional wisdom and modern science, citing Ayushman Bharat and PM Bharatiya Janaushadhi Pariyojana as transformative initiatives. The Minister praised frontline healthcare workers for their dedication in making quality treatment accessible and affordable for citizens.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2249602"
+        "id": "9fb5a2a2-4afb-45a4-9847-a7bb2ed440d8",
+        "date": "2026-05-01",
+        "title": "National Summit on Innovation and Inclusivity Concludes",
+        "summary": "The two-day National Summit concluded with a focus on the 17th Common Review Mission findings to drive evidence-based reforms under the National Health Mission. Key discussions highlighted progress in Ayushman Arogya Mandirs, digital health adoption, and primary healthcare expansion. The event emphasized optimizing human resources and improving drug availability to enhance healthcare outreach and inclusivity across India's underserved rural areas.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2257267"
     }
 ]
