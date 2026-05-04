@@ -164,6 +164,7 @@ export const AppProvider = ({ children }) => {
   const cloudHydratedRef = useRef(false);
   const currentDeviceIdRef = useRef(null);
   const lastRefreshRef = useRef(0);
+  const prevStreakRef = useRef(0);
 
   const totalItems =
     TOTAL_LEAF_CONTENT_ITEMS > 0 ? TOTAL_LEAF_CONTENT_ITEMS : 1;
@@ -211,6 +212,7 @@ export const AppProvider = ({ children }) => {
       parsedState.readItemVersions,
     );
 
+    prevStreakRef.current = parsedState.currentStreak;
     setReadItems(parsedState.readItems);
     setReadItemVersions(migratedReadItemVersions);
     setBookmarks(parsedState.bookmarks);
@@ -487,7 +489,11 @@ export const AppProvider = ({ children }) => {
 
         const storedStreak = await AsyncStorage.getItem("currentStreak");
         if (storedStreak) {
-          setCurrentStreak(parseInt(storedStreak, 10));
+          const parsedStreak = parseInt(storedStreak, 10);
+          if (!Number.isNaN(parsedStreak)) {
+            prevStreakRef.current = parsedStreak;
+            setCurrentStreak(parsedStreak);
+          }
         }
 
         const storedLastRead = await AsyncStorage.getItem("lastReadDate");
@@ -679,8 +685,6 @@ export const AppProvider = ({ children }) => {
   const readingProgress =
     totalItems === 0 ? 0 : Math.min(effectiveReadCount / totalItems, 1);
 
-  const prevStreakRef = useRef(0);
-
   const markAsRead = ({ itemTitle, contentKey, contentSignature }) => {
     if (!itemTitle || !contentKey || !contentSignature) {
       return;
@@ -729,8 +733,14 @@ export const AppProvider = ({ children }) => {
 
   // Trigger streak milestone notifications when streak changes
   useEffect(() => {
-    if (currentStreak > 0 && currentStreak !== prevStreakRef.current) {
-      prevStreakRef.current = currentStreak;
+    if (currentStreak === prevStreakRef.current) {
+      return;
+    }
+
+    const previousStreak = prevStreakRef.current;
+    prevStreakRef.current = currentStreak;
+
+    if (currentStreak > 0 && currentStreak > previousStreak) {
       triggerStreakMilestone(currentStreak);
     }
   }, [currentStreak]);
