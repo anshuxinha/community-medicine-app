@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import {
   Alert,
   FlatList,
@@ -20,6 +20,7 @@ import {
 import { WebView } from "react-native-webview";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as Device from "expo-device";
+import { AppContext } from "../context/AppContext";
 import { theme } from "../styles/theme";
 import {
   formatDuration,
@@ -87,7 +88,8 @@ const EmptyState = ({ isFiltered }) => (
   </View>
 );
 
-const VideosScreen = () => {
+const VideosScreen = ({ navigation }) => {
+  const { isPremium } = useContext(AppContext);
   const [videos, setVideos] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedVideo, setSelectedVideo] = useState(null);
@@ -99,6 +101,14 @@ const VideosScreen = () => {
 
   useEffect(() => {
     let mounted = true;
+
+    if (!isPremium) {
+      navigation.getParent()?.navigate("Paywall");
+      setIsLoadingVideos(false);
+      return () => {
+        mounted = false;
+      };
+    }
 
     isSubscribedToVideoNotifications().then((subscribed) => {
       if (mounted) setIsSubscribed(subscribed);
@@ -128,7 +138,7 @@ const VideosScreen = () => {
       unsubscribeVideos?.();
       unsubscribeNotifications?.();
     };
-  }, []);
+  }, [isPremium, navigation]);
 
   const categories = useMemo(() => getVideoCategories(videos), [videos]);
 
@@ -240,6 +250,10 @@ const VideosScreen = () => {
       </Pressable>
     );
   };
+
+  if (!isPremium) {
+    return null;
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>

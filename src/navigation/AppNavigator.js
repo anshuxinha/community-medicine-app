@@ -43,6 +43,8 @@ const navigationRef = createNavigationContainerRef();
 
 const TabNavigator = () => {
   const insets = useSafeAreaInsets();
+  const { isPremium } = React.useContext(AppContext);
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -72,7 +74,18 @@ const TabNavigator = () => {
     >
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen name="Library" component={LibraryScreen} />
-      <Tab.Screen name="Videos" component={VideosScreen} />
+      <Tab.Screen
+        name="Videos"
+        component={VideosScreen}
+        listeners={({ navigation }) => ({
+          tabPress: (event) => {
+            if (isPremium) return;
+
+            event.preventDefault();
+            navigation.getParent()?.navigate("Paywall");
+          },
+        })}
+      />
       <Tab.Screen name="Updates" component={UpdatesScreen} />
     </Tab.Navigator>
   );
