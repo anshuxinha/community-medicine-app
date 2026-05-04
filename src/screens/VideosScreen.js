@@ -67,6 +67,8 @@ const getThumbnailSource = (thumbnailUrl) => {
   return { uri: thumbnailUrl };
 };
 
+const formatCategoryLabel = (label) => (label || "Lecture").toUpperCase();
+
 const EmptyState = ({ isFiltered }) => (
   <View style={styles.emptyState}>
     <MaterialIcons
@@ -220,13 +222,9 @@ const VideosScreen = () => {
 
           <Card.Content style={styles.videoContent}>
             <View style={styles.videoMetaRow}>
-              <Chip
-                compact
-                style={styles.categoryChip}
-                textStyle={styles.categoryChipText}
-              >
-                {item.categoryLabel || "Lecture"}
-              </Chip>
+              <Text style={styles.categoryLabel}>
+                {formatCategoryLabel(item.categoryLabel)}
+              </Text>
               <Text style={styles.videoDate}>{publishedAt}</Text>
             </View>
             <Text style={styles.videoTitle} numberOfLines={2}>
@@ -318,6 +316,7 @@ const VideosScreen = () => {
                     selectedCategory === item.id &&
                       styles.filterChipTextSelected,
                   ]}
+                  selectedColor="#9333ea"
                   onPress={() => setSelectedCategory(item.id)}
                   showSelectedOverlay={false}
                 >
@@ -519,15 +518,11 @@ const styles = StyleSheet.create({
     gap: 10,
     marginBottom: 10,
   },
-  categoryChip: {
-    backgroundColor: "#EEF2FF",
-    borderColor: "#C7D2FE",
-    borderWidth: 1,
-  },
-  categoryChipText: {
-    color: "#3730A3",
+  categoryLabel: {
+    color: "#9333ea",
     fontSize: 12,
     fontWeight: "800",
+    letterSpacing: 0,
   },
   videoDate: {
     color: theme.colors.textTertiary,
