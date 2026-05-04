@@ -69,7 +69,7 @@ export const getVideoCategories = (videos = []) => {
 export const subscribeToVideos = ({ onData, onError }) => {
   const videosQuery = query(
     collection(db, "videos"),
-    orderBy("publishedAt", "desc"),
+    // orderBy("publishedAt", "desc"),
   );
 
   return onSnapshot(

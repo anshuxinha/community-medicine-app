@@ -124,10 +124,57 @@ const buildThumbnailUrl = (config, video) => {
   return `https://${hostname}/${video.guid}/${thumbnail}`;
 };
 
+const discoverPullZoneHostname = async (config, video) => {
+  if (config.pullZoneHostname || !video.guid) return config.pullZoneHostname;
+
+  const embedUrl = `https://player.mediadelivery.net/embed/${config.libraryId}/${video.guid}`;
+  const response = await fetch(embedUrl);
+  if (!response.ok) return "";
+
+  const html = await response.text();
+  const thumbnail = video.thumbnailFileName || "thumbnail.jpg";
+  const escapedVideoId = video.guid.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const escapedThumbnail = thumbnail.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = html.match(
+    new RegExp(`https://([^/"'\\s<>]+)/${escapedVideoId}/${escapedThumbnail}`),
+  );
+
+  config.pullZoneHostname = match?.[1] || "";
+  return config.pullZoneHostname;
+};
+
+const resolveThumbnailUrl = async (config, video, existing = {}) => {
+  const configuredUrl = buildThumbnailUrl(config, video);
+  if (configuredUrl) return configuredUrl;
+
+  await discoverPullZoneHostname(config, video);
+  return buildThumbnailUrl(config, video) || existing.thumbnailUrl || null;
+};
+
+const parseFirestoreDate = (value) => {
+  if (!value) return null;
+  // Handle Firestore Timestamp (firebase-admin)
+  if (typeof value.toDate === "function") return value.toDate();
+  // Handle already a Date object
+  if (value instanceof Date) return value;
+  // Handle string or number
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+
 const toVideoDoc = (config, video, options = {}, existing = {}) => {
-  const now = new Date().toISOString();
+  const now = new Date();
   const title = options.title || video.title || existing.title || "Untitled video";
   const category = options.category || existing.category || "lectures";
+
+  const publishedDate =
+    parseFirestoreDate(existing.publishedAt) ||
+    parseFirestoreDate(video.dateUploaded) ||
+    now;
+  const createdDate =
+    parseFirestoreDate(existing.createdAt) ||
+    parseFirestoreDate(video.dateUploaded) ||
+    now;
 
   return {
     bunnyVideoId: video.guid,
@@ -139,12 +186,12 @@ const toVideoDoc = (config, video, options = {}, existing = {}) => {
     tags: options.tags || existing.tags || [],
     duration: Number(video.length || video.duration || existing.duration || 0),
     status: String(video.status ?? existing.status ?? "processing"),
-    thumbnailUrl: buildThumbnailUrl(config, video) || existing.thumbnailUrl || null,
+    thumbnailUrl: options.thumbnailUrl || existing.thumbnailUrl || null,
     embedUrl: video.guid
       ? `https://iframe.mediadelivery.net/embed/${config.libraryId}/${video.guid}`
       : existing.embedUrl || null,
-    publishedAt: existing.publishedAt || video.dateUploaded || now,
-    createdAt: existing.createdAt || video.dateUploaded || now,
+    publishedAt: admin.firestore.Timestamp.fromDate(publishedDate),
+    createdAt: admin.firestore.Timestamp.fromDate(createdDate),
     updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     source: "bunny",
   };
@@ -154,8 +201,10 @@ const upsertVideoDoc = async (db, config, video, options = {}) => {
   const docRef = db.collection("videos").doc(video.guid);
   const snapshot = await docRef.get();
   const existing = snapshot.exists ? snapshot.data() : {};
-  const payload = toVideoDoc(config, video, options, existing);
+  const thumbnailUrl = await resolveThumbnailUrl(config, video, existing);
+  const payload = toVideoDoc(config, video, { ...options, thumbnailUrl }, existing);
 
+  console.log(`Upserting video ${video.guid}:`, JSON.stringify(payload, null, 2));
   await docRef.set(payload, { merge: true });
 
   return {
@@ -278,7 +327,7 @@ const syncVideos = async (db, config, options) => {
     if (items.length === 0) break;
 
     for (const video of items) {
-      const result = await upsertVideoDoc(db, config, video);
+      const result = await upsertVideoDoc(db, config, video, options);
       syncedCount += 1;
 
       if (notifyNew && result.isNew && !result.wasNotified) {

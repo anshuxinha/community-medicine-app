@@ -51,8 +51,21 @@ const playerHtml = (embedUrl) => `
       allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
       allowfullscreen="true"
     ></iframe>
-  </body>
+</body>
 </html>`;
+
+const getThumbnailSource = (thumbnailUrl) => {
+  if (!thumbnailUrl) return null;
+
+  if (thumbnailUrl.includes(".b-cdn.net/")) {
+    return {
+      uri: thumbnailUrl,
+      headers: { Referer: "https://player.mediadelivery.net/" },
+    };
+  }
+
+  return { uri: thumbnailUrl };
+};
 
 const EmptyState = ({ isFiltered }) => (
   <View style={styles.emptyState}>
@@ -170,13 +183,14 @@ const VideosScreen = () => {
   const renderVideoCard = ({ item }) => {
     const duration = formatDuration(item.duration);
     const publishedAt = formatPublishedDate(item.publishedAt || item.createdAt);
+    const thumbnailSource = getThumbnailSource(item.thumbnailUrl);
 
     return (
       <Pressable onPress={() => setSelectedVideo(item)}>
         <Card style={styles.videoCard}>
-          {item.thumbnailUrl ? (
+          {thumbnailSource ? (
             <ImageBackground
-              source={{ uri: item.thumbnailUrl }}
+              source={thumbnailSource}
               style={styles.thumbnail}
               imageStyle={styles.thumbnailImage}
             >
@@ -206,7 +220,11 @@ const VideosScreen = () => {
 
           <Card.Content style={styles.videoContent}>
             <View style={styles.videoMetaRow}>
-              <Chip compact style={styles.categoryChip}>
+              <Chip
+                compact
+                style={styles.categoryChip}
+                textStyle={styles.categoryChipText}
+              >
                 {item.categoryLabel || "Lecture"}
               </Chip>
               <Text style={styles.videoDate}>{publishedAt}</Text>
@@ -502,7 +520,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   categoryChip: {
-    backgroundColor: theme.colors.surfaceSecondary,
+    backgroundColor: "#EEF2FF",
+    borderColor: "#C7D2FE",
+    borderWidth: 1,
+  },
+  categoryChipText: {
+    color: "#3730A3",
+    fontSize: 12,
+    fontWeight: "800",
   },
   videoDate: {
     color: theme.colors.textTertiary,

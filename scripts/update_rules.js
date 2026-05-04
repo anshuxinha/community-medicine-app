@@ -41,6 +41,11 @@ service cloud.firestore {
     match /libraryReviewMeta/{docId} {
       allow read: if request.auth != null && request.auth.token.isAdmin == true;
     }
+
+    match /videos/{videoId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.token.isAdmin == true;
+    }
   }
 }`;
 
