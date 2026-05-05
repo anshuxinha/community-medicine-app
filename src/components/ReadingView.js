@@ -53,12 +53,14 @@ const parseMarkdown = (content) => {
       flushBullets();
       flushNested();
       blocks.push({ type: "h2", text: stripBold(line.replace(/^## /, "")) });
-    } else if (/^  - /.test(line)) {
+        } else if (/^  - /.test(line)) {
       flushBullets();
-      nestedGroup.push(stripBold(line.replace(/^  - /, "")));
-    } else if (/^[*\-] /.test(line)) {
+      const bText = stripBold(line.replace(/^  - /, "")).trim();
+      if (bText) nestedGroup.push(bText);
+    } else if (/^[*-] /.test(line)) {
       flushNested();
-      bulletGroup.push(stripBold(line.replace(/^[*\-] /, "")));
+      const bText = stripBold(line.replace(/^[*-] /, "")).trim();
+      if (bText) bulletGroup.push(bText);
     } else if (line.match(/^!\[(.*?)\]\((.*?)\)$/)) {
       flushBullets();
       flushNested();
