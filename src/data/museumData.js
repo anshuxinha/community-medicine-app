@@ -2,9 +2,11 @@
 // Virtual Museum Data
 // Spotters extracted from figures in chapters 12-20.
 // ============================================================
- const BASE =
+
+const BASE =
   "https://storage.googleapis.com/community-med-app.firebasestorage.app/museum";
- export const MUSEUM_ITEMS = [
+
+export const MUSEUM_ITEMS = [
   {
     id: "1",
     category: "Cold Chain Equipment",
@@ -612,7 +614,7 @@
     emoji: "💊",
     image: `${BASE}/fig_16_9.png`,
     description:
-      "Formulation\nLiquid syrup and gelatin capsules.\nRoute\nOral route\nDosage and Schedule\n9 months, repeat dose 6 monthly till 5 years age [9 doses], 1 lac IU (< 1 year), 2 lac IU (>1 year)\nFirst Clinical Sign of Vitamin A Deficiency\nXerophthalmia (dry eye)\nFirst Clinical Symptom of Vitamin A Deficiency\nNight blindness",
+      "Formulation\nLiquid syrup and gelatin capsules.\nRoute\nOral route\nDosage and Schedule\n9 months, repeat dose 6 monthly till 5 years age [9 doses], 1 lac IU (< 1 year), 2 lac IU (>1 year)\nFirst Clinical Sign of Vitamin A Deficiency:\nXerophthalmia (dry eye)\nFirst Clinical Symptom of Vitamin A Deficiency:\nNight blindness",
     keyFact:
       "State key indication, public health use, and relevant national-program context for each medicine.",
   },
@@ -623,7 +625,7 @@
     emoji: "💊",
     image: `${BASE}/fig_16_10.png`,
     description:
-      "Table 16.1 Syndromic case management protocol\nKit no., syndrome, colour and drug contents are used for standard syndromic STI/RTI management.",
+      "Syndromic case management protocol\nKit no., syndrome, colour and drug contents are used for standard syndromic STI/RTI management.",
     keyFact:
       "State key indication, public health use, and relevant national-program context for each medicine.",
   },
@@ -711,7 +713,7 @@
     emoji: "🥗",
     image: `${BASE}/fig_17_8.png`,
     description:
-      "Nutritive value\nBuffalo milk: Energy 117 kcal/100 ml; Protein 4.3 g%\nCow milk: Energy 67 kcal/100 ml; Protein 3.2 g%\nHuman milk: Energy: 65 kcal/100 ml; Protein: 1.1 g%\nRich source: Calcium, vitamins\nPoor source: Iron, vitamin C.",
+      "Nutritive value:\nBuffalo milk: Energy 117 kcal/100 ml; Protein 4.3 g%\nCow milk: Energy 67 kcal/100 ml; Protein 3.2 g%\nHuman milk: Energy: 65 kcal/100 ml; Protein: 1.1 g%\nRich source: Calcium, vitamins\nPoor source: Iron, vitamin C.",
     keyFact:
       "Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.",
   },
@@ -942,7 +944,7 @@
     emoji: "🦟",
     image: `${BASE}/fig_19_6.png`,
     description:
-      "Characteristic features: 3 body parts (head, thorax and abdomen), smaller in size than mosquito, wings upright, hairy antennae\nVector species: Phlebotomus argentipes , P . papatasii , P. sergentii, Sergentomyia punjabensis .\nDiseases transmitted: Kala azar ( P . argentipes), sand fly fever, oriental sore\nControl measures: Insecticide (DDT or lindane), sanitation\n(removal of shrubs, filling up cracks and crevices, location\naway from cattle sheds and poultry house).",
+      "Characteristic features: 3 body parts (head, thorax and abdomen), smaller in size than mosquito, wings upright, hairy antennae\nVector species: Phlebotomus argentipes , P . papatasii , P. sergentii, Sergentomyia punjabensis .\nDiseases transmitted: Kala azar ( P . argentipes), sand fly fever, oriental sore\nControl measures: Insecticide (DDT or lindane), sanitation (removal of shrubs, filling up cracks and crevices, location\naway from cattle sheds and poultry house).",
     keyFact:
       "Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.",
   },
@@ -1029,7 +1031,7 @@
     emoji: "🦟",
     image: `${BASE}/fig_19_14.png`,
     description:
-      "insoluble in water\nMechanism of action: Stomach poison\nResidual action: Nil\nRepellent action: Nil\nDose: 250-500 g/acre or 1 kg per hectare water surface area",
+      "Insoluble in water\nMechanism of action: Stomach poison\nResidual action: Nil\nRepellent action: Nil\nDose: 250-500 g/acre or 1 kg per hectare water surface area",
     keyFact:
       "Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.",
   },
@@ -1133,7 +1135,8 @@
       "These spotters support MCH records, growth monitoring, and safe-water/public-health field work.",
   },
 ];
- export const CATEGORIES = [
+
+export const CATEGORIES = [
   "All",
   "Cold Chain Equipment",
   "Vaccines",
@@ -1145,4 +1148,5 @@
   "Entomology",
   "Miscellaneous",
 ];
- export const FREE_CATEGORY = "Contraceptives";
+
+export const FREE_CATEGORY = "Contraceptives";
