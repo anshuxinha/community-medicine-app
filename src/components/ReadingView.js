@@ -1435,6 +1435,13 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     marginVertical: 4,
   },
+  allCapsTitle: {
+    color: "#9333ea",
+    fontSize: 16,
+    fontWeight: "bold",
+    lineHeight: 24,
+    marginVertical: 4,
+  },
   bulletGroup: {
     marginVertical: 4,
   },
