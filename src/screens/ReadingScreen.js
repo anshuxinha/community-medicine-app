@@ -37,6 +37,7 @@ const ReadingScreen = ({ route, navigation }) => {
     contentSignature,
     updatedSegments,
     showUpdateHighlights,
+    searchTerms = "",
   } = route.params;
 
   const {
@@ -322,6 +323,7 @@ const ReadingScreen = ({ route, navigation }) => {
         onDeleteAnnotation={handleDeleteAnnotation}
         userHighlights={userHighlights}
         onToggleHighlight={handleToggleHighlight}
+        searchTerms={searchTerms}
       />
     </View>
   );

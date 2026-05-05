@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useMemo } from "react";
+import React, { useContext, useState, useEffect, useMemo, useCallback } from "react";
 import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import {
   Text,
@@ -62,7 +62,7 @@ const FreeLabel = () => {
   return <Badge style={styles.freeBadge}>FREE</Badge>;
 };
 
-const buildReadingParams = (item, section, status) => ({
+const buildReadingParams = (item, section, status, searchTerms = "") => ({
   id: item.id,
   title: item.title,
   content: item.content || "# No Content\n\nThis topic has no content yet.",
@@ -72,7 +72,50 @@ const buildReadingParams = (item, section, status) => ({
   contentSignature: getContentSignature(item),
   updatedSegments: getUpdatedSegmentsForItem(item),
   showUpdateHighlights: status === "updated",
+  searchTerms,
 });
+
+// ── Search excerpt: finds keyword context in body content ──────────────────
+const EXCERPT_CONTEXT = 55; // chars of context before/after match
+const SEARCH_PURPLE = "#9333ea";
+
+const getExcerptAroundMatch = (text, query) => {
+  if (!text || !query) return null;
+  const lowerText = text.toLowerCase();
+  const lowerQuery = query.toLowerCase();
+  const idx = lowerText.indexOf(lowerQuery);
+  if (idx === -1) return null;
+
+  const start = Math.max(0, idx - EXCERPT_CONTEXT);
+  const end = Math.min(text.length, idx + query.length + EXCERPT_CONTEXT);
+  const prefix = (start > 0 ? "\u2026" : "") + text.slice(start, idx);
+  const match = text.slice(idx, idx + query.length);
+  const suffix =
+    text.slice(idx + query.length, end) + (end < text.length ? "\u2026" : "");
+  return { prefix, match, suffix };
+};
+
+const SearchExcerpt = ({ item, searchQuery }) => {
+  if (!searchQuery) return null;
+  const bodyText = item.content || "";
+  const bodyMatch = bodyText.toLowerCase().includes(searchQuery.toLowerCase());
+  if (!bodyMatch) return null;
+  const excerpt = getExcerptAroundMatch(bodyText, searchQuery);
+  if (!excerpt) return null;
+  return (
+    <Text style={excerptStyles.container} numberOfLines={2}>
+      <Text style={excerptStyles.plain}>{excerpt.prefix}</Text>
+      <Text style={excerptStyles.match}>{excerpt.match}</Text>
+      <Text style={excerptStyles.plain}>{excerpt.suffix}</Text>
+    </Text>
+  );
+};
+
+const excerptStyles = {
+  container: { fontSize: 12, lineHeight: 17, color: "#6B7280", marginTop: 2 },
+  plain: { color: "#6B7280" },
+  match: { color: SEARCH_PURPLE, fontWeight: "700" },
+};
 
 const LibraryScreen = (props) => {
   const { navigation } = props;
@@ -114,37 +157,45 @@ const LibraryScreen = (props) => {
 
   const closeMenu = () => setOpenMenuKey(null);
 
-  const openItem = (item, itemStatus) => {
-    const isFree = item.id === "1" || item.title === "Man and Medicine";
+  const openItem = useCallback(
+    (item, itemStatus) => {
+      const isFree = item.id === "1" || item.title === "Man and Medicine";
 
-    if (item.subsections) {
-      const subTopicsParams = {
-        title: item.title,
-        items: item.subsections,
-        section: activeSection,
-      };
+      if (item.subsections) {
+        const subTopicsParams = {
+          title: item.title,
+          items: item.subsections,
+          section: activeSection,
+        };
 
+        if (isFree) {
+          navigation.navigate("SubTopics", subTopicsParams);
+        } else {
+          navigation.navigate("PremiumGuard", {
+            destination: "SubTopics",
+            subTopicsParams,
+          });
+        }
+        return;
+      }
+
+      const readingParams = buildReadingParams(
+        item,
+        activeSection,
+        itemStatus,
+        searchQuery.trim(),
+      );
       if (isFree) {
-        navigation.navigate("SubTopics", subTopicsParams);
+        navigation.navigate("Reading", readingParams);
       } else {
         navigation.navigate("PremiumGuard", {
-          destination: "SubTopics",
-          subTopicsParams,
+          destination: "Reading",
+          readingParams,
         });
       }
-      return;
-    }
-
-    const readingParams = buildReadingParams(item, activeSection, itemStatus);
-    if (isFree) {
-      navigation.navigate("Reading", readingParams);
-    } else {
-      navigation.navigate("PremiumGuard", {
-        destination: "Reading",
-        readingParams,
-      });
-    }
-  };
+    },
+    [activeSection, navigation, searchQuery],
+  );
 
   const handleMarkUnread = (item) => {
     markAsUnread(getLeafContentRefsForItem(item, activeSection));
@@ -378,11 +429,24 @@ const LibraryScreen = (props) => {
                 title={item.title}
                 titleNumberOfLines={3}
                 titleStyle={styles.listItemTitle}
-                description={
-                  item.id === "1" && !isPremium
-                    ? "Free for all users"
-                    : undefined
-                }
+                description={() => {
+                  if (searchQuery.trim().length > 0) {
+                    return (
+                      <SearchExcerpt
+                        item={item}
+                        searchQuery={searchQuery.trim()}
+                      />
+                    );
+                  }
+                  if (item.id === "1" && !isPremium) {
+                    return (
+                      <Text style={styles.freeDescText}>
+                        Free for all users
+                      </Text>
+                    );
+                  }
+                  return null;
+                }}
                 left={(leftProps) => (
                   <List.Icon
                     {...leftProps}
@@ -511,6 +575,12 @@ const styles = StyleSheet.create({
     color: "#111827",
     fontWeight: "500",
     paddingRight: 12,
+  },
+  freeDescText: {
+    fontSize: 12,
+    color: theme.colors.success,
+    fontWeight: "600",
+    marginTop: 2,
   },
   rightSlot: {
     minWidth: 56,

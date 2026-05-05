@@ -14,6 +14,7 @@ import {
   ToastAndroid,
   Alert,
   KeyboardAvoidingView,
+  Animated,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -327,6 +328,7 @@ const ReadingView = ({
   onDeleteAnnotation,
   userHighlights = {},
   onToggleHighlight,
+  searchTerms = "",
 }) => {
   console.log("ReadingView: illustrations prop", illustrations);
   const insets = useSafeAreaInsets();
@@ -551,17 +553,85 @@ const ReadingView = ({
     );
   };
 
+  // -- Search term helpers ------------------------------------------------
+  const normalizedSearchTerm = searchTerms ? searchTerms.trim().toLowerCase() : "";
+
+  const blockContainsSearch = (text) => {
+    if (!normalizedSearchTerm || !text) return false;
+    return text.toLowerCase().includes(normalizedSearchTerm);
+  };
+
+  const getSearchFadeAnim = (index) => {
+    if (!searchFadeAnimsRef.current[index]) {
+      searchFadeAnimsRef.current[index] = new Animated.Value(1);
+    }
+    return searchFadeAnimsRef.current[index];
+  };
+
+  // Splits text around the search term and renders animated purple spans for matches
+  const renderSearchSpans = (text, baseStyle, blockIndex) => {
+    if (!normalizedSearchTerm || !text) {
+      return <Text style={baseStyle} selectable={false}>{text}</Text>;
+    }
+    const lowerText = text.toLowerCase();
+    const parts = [];
+    let lastIdx = 0;
+    let idx = lowerText.indexOf(normalizedSearchTerm);
+    while (idx !== -1) {
+      if (idx > lastIdx) parts.push({ text: text.slice(lastIdx, idx), match: false });
+      parts.push({ text: text.slice(idx, idx + normalizedSearchTerm.length), match: true });
+      lastIdx = idx + normalizedSearchTerm.length;
+      idx = lowerText.indexOf(normalizedSearchTerm, lastIdx);
+    }
+    if (lastIdx < text.length) parts.push({ text: text.slice(lastIdx), match: false });
+    if (parts.length === 0) return <Text style={baseStyle} selectable={false}>{text}</Text>;
+
+    // Get or create the fade anim for this block
+    const fadeAnim = getSearchFadeAnim(blockIndex);
+    const animatedColor = fadeAnim.interpolate({
+      inputRange: [0, 1],
+      outputRange: [String(baseStyle?.color || "#1F2937"), "#9333ea"],
+    });
+    const animatedFontWeight = fadeAnim.interpolate({
+      inputRange: [0, 1],
+      outputRange: ["400", "700"],
+    });
+
+    return (
+      <Text style={baseStyle} selectable={false}>
+        {parts.map((p, i) =>
+          p.match ? (
+            <Animated.Text
+              key={i}
+              style={[styles.searchTermMatch, { color: animatedColor }]}
+              selectable={false}
+            >
+              {p.text}
+            </Animated.Text>
+          ) : (
+            <Text key={i}>{p.text}</Text>
+          )
+        )}
+      </Text>
+    );
+  };
+
   const renderBlock = (block, index) => {
     switch (block.type) {
       case "h1": {
         const highlighted = shouldHighlightText(block.text);
         const hlKey = `${index}`;
         const userHighlighted = userHighlights[hlKey];
+        const hasSearchMatch = blockContainsSearch(block.text);
         const inner = (
-          <View key={index} style={[highlighted ? styles.highlightBlock : null, userHighlighted ? styles.userHighlightBlock : null]}>
-            <Text style={styles.h1} selectable={false}>
-              {block.text}
-            </Text>
+          <View
+            key={index}
+            style={[highlighted ? styles.highlightBlock : null, userHighlighted ? styles.userHighlightBlock : null]}
+            onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
+          >
+            {hasSearchMatch
+              ? renderSearchSpans(block.text, styles.h1, index)
+              : <Text style={styles.h1} selectable={false}>{block.text}</Text>}
           </View>
         );
         return (
@@ -574,11 +644,16 @@ const ReadingView = ({
         const highlighted = shouldHighlightText(block.text);
         const hlKey = `${index}`;
         const userHighlighted = userHighlights[hlKey];
+        const hasSearchMatch = blockContainsSearch(block.text);
         const inner = (
-          <View key={index} style={[highlighted ? styles.highlightBlock : null, userHighlighted ? styles.userHighlightBlock : null]}>
-            <Text style={styles.h2} selectable={false}>
-              {block.text}
-            </Text>
+          <View
+            key={index}
+            style={[highlighted ? styles.highlightBlock : null, userHighlighted ? styles.userHighlightBlock : null]}
+            onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
+          >
+            {hasSearchMatch
+              ? renderSearchSpans(block.text, styles.h2, index)
+              : <Text style={styles.h2} selectable={false}>{block.text}</Text>}
           </View>
         );
         return (
@@ -591,36 +666,46 @@ const ReadingView = ({
         const highlighted = shouldHighlightText(block.text);
         const sentences = splitSentences(block.text);
         const blockHighlightSig = sentences.map((_, sIdx) => userHighlights[`${index}:${sIdx}`] ? "1" : "0").join("");
+        const hasSearchMatch = blockContainsSearch(block.text);
 
         return (
-          <View key={index} style={[highlighted ? styles.highlightBlock : null, { marginVertical: 4 }]}>
-            <Text key={blockHighlightSig} style={styles.body} selectable={false}>
-              {sentences.map((sentence, sIdx) => {
-                const hlKey = `${index}:${sIdx}`;
-                const isHl = userHighlights[hlKey];
-                return (
-                  <Text
-                    key={sIdx}
-                    style={isHl ? styles.userHighlightSentence : null}
-                    selectable={false}
-                    onPress={isHighlightMode ? () => onToggleHighlight(hlKey) : undefined}
-                    suppressHighlighting={true}
-                  >
-                    {sIdx > 0 ? " " : ""}{sentence}
-                  </Text>
-                );
-              })}
-            </Text>
+          <View
+            key={index}
+            style={[highlighted ? styles.highlightBlock : null, { marginVertical: 4 }]}
+            onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
+          >
+            {hasSearchMatch && !isHighlightMode ? (
+              renderSearchSpans(block.text, styles.body, index)
+            ) : (
+              <Text key={blockHighlightSig} style={styles.body} selectable={false}>
+                {sentences.map((sentence, sIdx) => {
+                  const hlKey = `${index}:${sIdx}`;
+                  const isHl = userHighlights[hlKey];
+                  return (
+                    <Text
+                      key={sIdx}
+                      style={isHl ? styles.userHighlightSentence : null}
+                      selectable={false}
+                      onPress={isHighlightMode ? () => onToggleHighlight(hlKey) : undefined}
+                      suppressHighlighting={true}
+                    >
+                      {sIdx > 0 ? " " : ""}{sentence}
+                    </Text>
+                  );
+                })}
+              </Text>
+            )}
           </View>
         );
       }
       case "bullets":
         return (
-          <View key={index} style={styles.bulletGroup}>
+          <View key={index} style={styles.bulletGroup} onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}>
             {block.items.map((item, itemIndex) => {
               const highlighted = shouldHighlightText(item);
               const hlKey = `${index}:b${itemIndex}`;
               const isHl = userHighlights[hlKey];
+              const hasSearchMatch = blockContainsSearch(item);
               const row = (
                 <View
                   key={itemIndex}
@@ -633,9 +718,9 @@ const ReadingView = ({
                   <Text style={styles.bulletDot} selectable={false}>
                     {"\u2022"}
                   </Text>
-                  <Text style={styles.bulletText} selectable={false}>
-                    {item}
-                  </Text>
+                  {hasSearchMatch && !isHighlightMode
+                    ? renderSearchSpans(item, styles.bulletText, index)
+                    : <Text style={styles.bulletText} selectable={false}>{item}</Text>}
                 </View>
               );
               return (
@@ -648,11 +733,12 @@ const ReadingView = ({
         );
       case "nested_bullets":
         return (
-          <View key={index} style={styles.nestedBulletGroup}>
+          <View key={index} style={styles.nestedBulletGroup} onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}>
             {block.items.map((item, itemIndex) => {
               const highlighted = shouldHighlightText(item);
               const hlKey = `${index}:b${itemIndex}`;
               const isHl = userHighlights[hlKey];
+              const hasSearchMatch = blockContainsSearch(item);
               const row = (
                 <View
                   key={itemIndex}
@@ -665,9 +751,9 @@ const ReadingView = ({
                   <Text style={styles.nestedBulletDot} selectable={false}>
                     -
                   </Text>
-                  <Text style={styles.nestedBulletText} selectable={false}>
-                    {item}
-                  </Text>
+                  {hasSearchMatch && !isHighlightMode
+                    ? renderSearchSpans(item, styles.nestedBulletText, index)
+                    : <Text style={styles.nestedBulletText} selectable={false}>{item}</Text>}
                 </View>
               );
               return (
@@ -1779,6 +1865,12 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
     textAlign: "center",
+  },
+
+  // ── Search Term Highlight ──
+  searchTermMatch: {
+    color: "#9333ea",
+    fontWeight: "700",
   },
 });
 

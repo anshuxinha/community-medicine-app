@@ -115,7 +115,7 @@ const MuseumCard = ({ item }) => {
             <Text style={styles.imageHint}>
               Tap the image to open and zoom.
             </Text>
-            <Text style={styles.description}>{item.description}</Text>
+            <DescriptionBlock text={item.description} />
           </Card.Content>
         )}
       </Card>
@@ -281,6 +281,36 @@ const VirtualMuseumScreen = () => {
   );
 };
 
+// Renders description lines with highlighted labels ("Label: value" format)
+const LABEL_REGEX = /^([^:\n]{1,40}):\s*/;
+
+const DescriptionBlock = ({ text }) => {
+  if (!text) return null;
+  const lines = text.split("\n");
+  return (
+    <View style={styles.descriptionBlock}>
+      {lines.map((line, idx) => {
+        const match = line.match(LABEL_REGEX);
+        if (match) {
+          const label = match[1];
+          const value = line.slice(match[0].length);
+          return (
+            <View key={idx} style={styles.descriptionRow}>
+              <Text style={styles.descriptionLabel}>{label}: </Text>
+              <Text style={styles.descriptionValue}>{value}</Text>
+            </View>
+          );
+        }
+        return (
+          <Text key={idx} style={styles.descriptionPlain}>
+            {line}
+          </Text>
+        );
+      })}
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: theme.colors.backgroundMain },
   container: { padding: 16, paddingBottom: 48 },
@@ -328,14 +358,17 @@ const styles = StyleSheet.create({
   cardHeaderLeft: { flex: 1 },
   cardTitle: {
     fontSize: 15,
-    fontWeight: "bold",
+    fontWeight: "700",
     color: theme.colors.textTitle,
-    marginBottom: 2,
+    marginBottom: 3,
+    lineHeight: 20,
   },
   cardSubtitle: {
     color: theme.colors.secondary,
     fontSize: 11,
     fontWeight: "600",
+    letterSpacing: 0.3,
+    textTransform: "uppercase",
   },
   expandedContent: { paddingTop: 0, paddingBottom: 14 },
   contentDivider: { marginBottom: 12 },
@@ -382,7 +415,30 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginTop: -2,
   },
-  description: { color: "#374151", lineHeight: 22 },
+  descriptionBlock: { marginTop: 4 },
+  descriptionRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginBottom: 5,
+  },
+  descriptionLabel: {
+    color: theme.colors.secondary,
+    fontWeight: "700",
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  descriptionValue: {
+    color: theme.colors.textTitle ?? "#1F2937",
+    fontSize: 13,
+    lineHeight: 20,
+    flex: 1,
+  },
+  descriptionPlain: {
+    color: "#374151",
+    fontSize: 13,
+    lineHeight: 20,
+    marginBottom: 3,
+  },
   viewerBackdrop: {
     flex: 1,
     backgroundColor: "rgba(3, 7, 18, 0.96)",
