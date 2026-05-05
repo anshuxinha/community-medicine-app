@@ -2,11 +2,9 @@
 // Virtual Museum Data
 // Spotters extracted from figures in chapters 12-20.
 // ============================================================
-
-const BASE =
+ const BASE =
   "https://storage.googleapis.com/community-med-app.firebasestorage.app/museum";
-
-export const MUSEUM_ITEMS = [
+ export const MUSEUM_ITEMS = [
   {
     id: "1",
     category: "Cold Chain Equipment",
@@ -111,7 +109,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💉",
     image: `${BASE}/fig_13_5.png`,
     description:
-      "Stages of vaccine vial monitor: Stage 1= Inner square is white (vaccine okay); Stage 2= Inner square is lighter than outer\ncircle (vaccine okay but use first); Stage 3= Inner square is of same colour as outer circle (Do not use); Stage 4= Inner\nsquare is darker than outer circle (Do not use)",
+      "Stages of vaccine vial monitor: Stage 1= Inner square is white (vaccine okay); Stage 2= Inner square is lighter than outer circle (vaccine okay but use first); Stage 3= Inner square is of same colour as outer circle (Do not use); Stage 4= Inner square is darker than outer circle (Do not use)",
     keyFact:
       "For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.",
   },
@@ -132,7 +130,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💉",
     image: `${BASE}/fig_13_8.png`,
     description:
-      "Composition, strain of vaccine: Bacillus Calmette-Guérin, Danish 1331\n(strain)\nAdverse effects: Suppurative lymphadenitis, local site reactions,\nosteomyelitis, disseminated BCG .\nContraindications: Pregnancy, generalised eczema, infective dermatosis,\nimmunocompromised states\nNormal BCG reaction: Wheal (5 mm, immediate)>> Papule (4-8 mm, 2-3\nweeks)>> Ulcer (5 weeks) >> Scar (4-8 mm, 6-12 weeks)\nType: Live attenuated vaccine\nDiluent: Normal saline\nRoute and site: Intradermal, left arm\nDosage and schedule: At birth 0.05 ml up to 1 month: 1 year (0.1 ml)",
+      "Composition, strain of vaccine: Bacillus Calmette-Guérin, Danish 1331 (strain)\nAdverse effects: Suppurative lymphadenitis, local site reactions, osteomyelitis, disseminated BCG .\nContraindications: Pregnancy, generalised eczema, infective dermatosis, immunocompromised states\nNormal BCG reaction: Wheal (5 mm, immediate)>> Papule (4-8 mm, 2-3 weeks)>> Ulcer (5 weeks) >> Scar (4-8 mm, 6-12 weeks)\nType: Live attenuated vaccine\nDiluent: Normal saline\nRoute and site: Intradermal, left arm\nDosage and schedule: At birth 0.05 ml up to 1 month: 1 year (0.1 ml)",
     keyFact:
       "For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.",
   },
@@ -143,7 +141,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💉",
     image: `${BASE}/fig_13_7.png`,
     description:
-      "Composition, strain of vaccine: Diphtheria, pertussis, tetanus, hepatitis B,\nhaemophilus influenzae B\nAdverse effects: Local reaction, fever (pertussis component), persistent\ninconsolable screaming, etc.\nContraindications: Serious illness (hospital admission), neurological\ndisorders, convulsion, severe reaction to previous dose (shock, persistent\ncrying, etc).\nType: Killed vaccine\nRoute and site: Intramuscular, anterolateral aspect of thigh\nDosage and schedule: 0.5 ml, 6, 10, 14 weeks",
+      "Composition, strain of vaccine: Diphtheria, pertussis, tetanus, hepatitis B, haemophilus influenzae B\nAdverse effects: Local reaction, fever (pertussis component), persistent inconsolable screaming, etc.\nContraindications: Serious illness (hospital admission), neurological disorders, convulsion, severe reaction to previous dose (shock, persistent crying, etc).\nType: Killed vaccine\nRoute and site: Intramuscular, anterolateral aspect of thigh\nDosage and schedule: 0.5 ml, 6, 10, 14 weeks",
     keyFact:
       "For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.",
   },
@@ -154,7 +152,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💉",
     image: `${BASE}/fig_13_9.png`,
     description:
-      "Composition, strain of vaccine: Diphtheria and tetanus (toxoid), pertussis\n(killed acellular bacilli)\nAdverse effects: Local reaction, fever (pertussis component), persistent\ninconsolable screaming, hypotonic- hyporesponsive episode (HHE), etc\nContraindications: Serious illness (hospital admission), neurological\ndisorders, convulsion, severe reaction to previous dose (shock, persistent\ncrying, etc).\nType: Killed vaccine\nRoute and site: Intramuscular, anterolateral aspect of thigh\nDosage and schedule: 0.5 ml, 16-24 months, 5 years (booster)",
+      "Composition, strain of vaccine: Diphtheria and tetanus (toxoid), pertussis (killed acellular bacilli)\nAdverse effects: Local reaction, fever (pertussis component), persistent inconsolable screaming, hypotonic- hyporesponsive episode (HHE), etc\nContraindications: Serious illness (hospital admission), neurological disorders, convulsion, severe reaction to previous dose (shock, persistent crying, etc).\nType: Killed vaccine\nRoute and site: Intramuscular, anterolateral aspect of thigh\nDosage and schedule: 0.5 ml, 16-24 months, 5 years (booster)",
     keyFact:
       "For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.",
   },
@@ -198,7 +196,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💉",
     image: `${BASE}/fig_13_13.png`,
     description:
-      "Type: Killed vaccine\nAdverse effects: Local reaction. Fever.\nContraindications: History of allergic reaction. Children less than weeks age,\nsevere illness.\nRoute and site: Intramuscular, anterolateral aspect of thigh\nDosage and schedule: 0.5 ml, 6, 10, 14 weeks (pentavalent vaccine)",
+      "Type: Killed vaccine\nAdverse effects: Local reaction. Fever.\nContraindications: History of allergic reaction. Children less than weeks age, severe illness.\nRoute and site: Intramuscular, anterolateral aspect of thigh\nDosage and schedule: 0.5 ml, 6, 10, 14 weeks (pentavalent vaccine)",
     keyFact:
       "For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.",
   },
@@ -209,7 +207,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💉",
     image: `${BASE}/fig_13_14.png`,
     description:
-      "Type: Live attenuated\nComposition, strain of vaccine: Measles: Edmonston-Zagreb strain.\nAdverse effects: Local reaction, toxic shock syndrome (TSS)\nContraindications: High fever, serious illness, pregnant women, history\nof allergic reaction, immunocompromised.\nDiluents: Distilled water\nRoute and site: Subcutaneous, right upper arm\nDosage and schedule: 0.5 ml, 9 months (1st dose), 16-24 months\n(2nd dose)",
+      "Type: Live attenuated\nComposition, strain of vaccine: Measles: Edmonston-Zagreb strain.\nAdverse effects: Local reaction, toxic shock syndrome (TSS)\nContraindications: High fever, serious illness, pregnant women, history of allergic reaction, immunocompromised.\nDiluents: Distilled water\nRoute and site: Subcutaneous, right upper arm\nDosage and schedule: 0.5 ml, 9 months (1st dose), 16-24 months (2nd dose)",
     keyFact:
       "For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.",
   },
@@ -220,7 +218,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💉",
     image: `${BASE}/fig_13_15.png`,
     description:
-      "Type: Live attenuated\nComposition, strain of vaccine: Measles (EZ strain), mumps (Jeryl-lynn)\nand rubella (RA 27/3)\nAdverse effects: TSS, arthralgia, thrombocytopenia, convulsion,\nencephalopathy.\nContraindications: Pregnancy\nDiluent: Distilled water\nRoute and site: Subcutaneous, right upper arm\nDosage and schedule: 0.5 ml , 16-24 months (booster)",
+      "Type: Live attenuated\nComposition, strain of vaccine: Measles (EZ strain), mumps (Jeryl-lynn) and rubella (RA 27/3)\nAdverse effects: TSS, arthralgia, thrombocytopenia, convulsion, encephalopathy.\nContraindications: Pregnancy\nDiluent: Distilled water\nRoute and site: Subcutaneous, right upper arm\nDosage and schedule: 0.5 ml , 16-24 months (booster)",
     keyFact:
       "For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.",
   },
@@ -231,7 +229,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💉",
     image: `${BASE}/fig_13_16.png`,
     description:
-      "Type: Live attenuated vaccine\nComposition, strain of vaccine: SA 14 -14- 2 strain\nDiluent: Distilled water\nAdverse effects: Fever, local reaction\nContraindications: Local reaction, myalgia, fever, irritability, etc.\nRoute and site: Subcutaneous, upper arm\nDosage and schedule: 0.5 ml , 9 months, 16-24 months [booster](endemic\nareas)",
+      "Type: Live attenuated vaccine\nComposition, strain of vaccine: SA 14 -14- 2 strain\nDiluent: Distilled water\nAdverse effects: Fever, local reaction\nContraindications: Local reaction, myalgia, fever, irritability, etc.\nRoute and site: Subcutaneous, upper arm\nDosage and schedule: 0.5 ml , 9 months, 16-24 months [booster](endemic areas)",
     keyFact:
       "For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.",
   },
@@ -253,7 +251,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💉",
     image: `${BASE}/fig_13_18.png`,
     description:
-      "Type: Live attenuated\nComposition, strain of vaccine: Oka strain\nAdverse effects: Local reaction, fever, local vesicular rash.\nContraindications: Immunocompromised state, pregnant women,\nallergy to neomycin.\nRoute and site: Subcutaneous, upper arm\nDosage and schedule: 0.5 ml, 2 dose schedule (4 weeks apart)",
+      "Type: Live attenuated\nComposition, strain of vaccine: Oka strain\nAdverse effects: Local reaction, fever, local vesicular rash.\nContraindications: Immunocompromised state, pregnant women, allergy to neomycin.\nRoute and site: Subcutaneous, upper arm\nDosage and schedule: 0.5 ml, 2 dose schedule (4 weeks apart)",
     keyFact:
       "For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.",
   },
@@ -264,7 +262,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💉",
     image: `${BASE}/fig_13_19.png`,
     description:
-      "Type: Killed vaccine and live (nasal spray)\nComposition, strain of vaccine: Type (A1, A2, B) trivalent\nAdverse effects: Local reaction, fever, headache, Guillain-Barré\nsyndrome (rare)\nContraindications: History of allergic reaction and chicken eggs,\nchildren less than 6 months.\nRoute and site: Intramuscular/subcutaneous, anterolateral aspect\nof thigh/upper arm\nDosage and schedule: 0.5 ml, 1 dose (>9 years), 2 dose (<9 years,\nwithout pre-exposure)",
+      "Type: Killed vaccine and live (nasal spray)\nComposition, strain of vaccine: Type (A1, A2, B) trivalent\nAdverse effects: Local reaction, fever, headache, Guillain-Barré syndrome (rare)\nContraindications: History of allergic reaction and chicken eggs, children less than 6 months.\nRoute and site: Intramuscular/subcutaneous, anterolateral aspect of thigh/upper arm\nDosage and schedule: 0.5 ml, 1 dose (>9 years), 2 dose (<9 years, without pre-exposure)",
     keyFact:
       "For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.",
   },
@@ -275,7 +273,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💉",
     image: `${BASE}/fig_13_20.png`,
     description:
-      "Type: Killed conjugate vaccine\nComposition, strain of vaccine: Polyvalent (7, 10, 13, 23 valent), PCV 13\nused in India.\nAdverse effects: Local site reaction\nContraindications: History of allergic reaction.\nRoute and site: Intramuscular/subcutaneous, anterolateral aspect of thigh/\nupper arm\nDosage and schedule: 0.5 ml, 6, 14 weeks, 9 months (booster)",
+      "Type: Killed conjugate vaccine\nComposition, strain of vaccine: Polyvalent (7, 10, 13, 23 valent), PCV 13 used in India.\nAdverse effects: Local site reaction\nContraindications: History of allergic reaction.\nRoute and site: Intramuscular/subcutaneous, anterolateral aspect of thigh/ upper arm\nDosage and schedule: 0.5 ml, 6, 14 weeks, 9 months (booster)",
     keyFact:
       "For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.",
   },
@@ -286,7 +284,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💉",
     image: `${BASE}/fig_13_21.png`,
     description:
-      "Type: Killed vaccine\nComposition, strain of vaccine: Purified chick embryo cell vaccine\nRoute and site: Intradermal and intramuscular, deltoid/anterolateral\naspect of thigh\nDosage and schedule-2-site injection: 0.5 ml intramuscular, 0.1 ml\nintradermal\nPre-exposure: Day 0, 7, 21/28\nPost-exposure: 0, 3, 7, 14, 28 , 90 (B) for IM schedule, 0, 3, 7, 28 for ID\nschedule.\nAdverse effects: Local site reaction, fever, headache and GI symptoms\nContraindications: No contraindications for post-exposure prophylaxis\nas lethal disease",
+      "Type: Killed vaccine\nComposition, strain of vaccine: Purified chick embryo cell vaccine\nRoute and site: Intradermal and intramuscular, deltoid/anterolateral aspect of thigh\nDosage and schedule-2-site injection: 0.5 ml intramuscular, 0.1 ml intradermal\nPre-exposure: Day 0, 7, 21/28\nPost-exposure: 0, 3, 7, 14, 28 , 90 (B) for IM schedule, 0, 3, 7, 28 for ID schedule.\nAdverse effects: Local site reaction, fever, headache and GI symptoms\nContraindications: No contraindications for post-exposure prophylaxis as lethal disease",
     keyFact:
       "For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.",
   },
@@ -297,7 +295,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💉",
     image: `${BASE}/fig_13_22.png`,
     description:
-      "Type: Killed vaccine\nComposition, strain of vaccine: HPV (16, 18) Bivalent HPV (6, 11, 16,\n18) Quadrivalent, Nonavalent HPV (6, 11, 16, 18, 31, 33, 45, 52, and 58)\nRoute: 0.5 ml I/M in deltoid\nIndication: Girls 11 or 12 years\nDosage and schedule: 0, 1, 6 months\nAdverse effects: Local reaction\nContraindications: History of previous hypersensitivity, pregnant women",
+      "Type: Killed vaccine\nComposition, strain of vaccine: HPV (16, 18) Bivalent HPV (6, 11, 16, 18) Quadrivalent, Nonavalent HPV (6, 11, 16, 18, 31, 33, 45, 52, and 58)\nRoute: 0.5 ml I/M in deltoid\nIndication: Girls 11 or 12 years\nDosage and schedule: 0, 1, 6 months\nAdverse effects: Local reaction\nContraindications: History of previous hypersensitivity, pregnant women",
     keyFact:
       "For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.",
   },
@@ -308,7 +306,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💉",
     image: `${BASE}/fig_13_23.png`,
     description:
-      "Nature of vaccine: Killed vaccine, oral vaccine\nComposition, strain of vaccine: Vi polysaccharide, Ty21a strain (typhoral)\nRoute and site: Intramuscular and oral, anterolateral aspect of thigh\nDosage and schedule: Given at 2 years (0 doses), repeat booster 3 years for\nkilled vaccine, day 1, 3, 5 oral capsules (for children >5 years)\nAdverse effects: Local site reactions ( IM ), diarrhea (oral)\nContraindications: Congenital or acquired immunodeficiency, acute febrile\nillness and acute intestinal infection",
+      "Nature of vaccine: Killed vaccine, oral vaccine\nComposition, strain of vaccine: Vi polysaccharide, Ty21a strain (typhoral)\nRoute and site: Intramuscular and oral, anterolateral aspect of thigh\nDosage and schedule: Given at 2 years (0 doses), repeat booster 3 years for killed vaccine, day 1, 3, 5 oral capsules (for children >5 years)\nAdverse effects: Local site reactions ( IM ), diarrhea (oral)\nContraindications: Congenital or acquired immunodeficiency, acute febrile illness and acute intestinal infection",
     keyFact:
       "For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.",
   },
@@ -319,7 +317,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💉",
     image: `${BASE}/fig_13_24.png`,
     description:
-      "Type: Killed vaccine (unconjugated/conjugated)\nComposition, strain of vaccine: Serogroup A, C, W / 135, X and Y.\nRoute: Subcutaneous (unconjugated), intramuscular (conjugated)\nDosage and schedule: Single dose (> 2 years) [unconjugated/conjugated], 2 dose\nadministration 2 months apart and 1 year booster (2-11 months)[conjugated]\nAdverse effects: Local reaction, fever\nContraindications : History of previous hypersensitivity, pregnant and\nbreastfeeding women, moderately and severely ill children",
+      "Type: Killed vaccine (unconjugated/conjugated)\nComposition, strain of vaccine: Serogroup A, C, W / 135, X and Y.\nRoute: Subcutaneous (unconjugated), intramuscular (conjugated)\nDosage and schedule: Single dose (> 2 years) [unconjugated/conjugated], 2 dose administration 2 months apart and 1 year booster (2-11 months)[conjugated]\nAdverse effects: Local reaction, fever\nContraindications : History of previous hypersensitivity, pregnant and breastfeeding women, moderately and severely ill children",
     keyFact:
       "For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.",
   },
@@ -330,7 +328,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💉",
     image: `${BASE}/fig_13_25.png`,
     description:
-      "Type: Viral vector-based (They do not contain antigens, but use the body's cells to produce them, by using\na modified virus (the vector) to deliver genetic code for antigen-COVID-19\nspike proteins. This has the advantage of triggering a strong cellular immune\nresponse by T cells as well the production of antibodies by B cells).\nComposition: Inactivated adenovirus with segments of coronavirus, aluminium\nhydroxide gel, L-histidine, L-histidine hydrochloride monohydrate, magnesium\nchloride hexahydrate, polysorbate 80, ethanol, sucrose, sodium chloride, and\ndisodium edetate dihydrate (EDTA).\nRoute: Intramuscular in the deltoid muscle\nDosage and schedule: 0.5 ml, 2 doses (12-16 weeks apart)\nStorage temperature: 2-8°C",
+      "Type: Viral vector-based (They do not contain antigens, but use the body's cells to produce them, by using a modified virus (the vector) to deliver genetic code for antigen-COVID-19 spike proteins. This has the advantage of triggering a strong cellular immune response by T cells as well the production of antibodies by B cells).\nComposition: Inactivated adenovirus with segments of coronavirus, aluminium hydroxide gel, L-histidine, L-histidine hydrochloride monohydrate, magnesium chloride hexahydrate, polysorbate 80, ethanol, sucrose, sodium chloride, and disodium edetate dihydrate (EDTA).\nRoute: Intramuscular in the deltoid muscle\nDosage and schedule: 0.5 ml, 2 doses (12-16 weeks apart)\nStorage temperature: 2-8°C",
     keyFact:
       "For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.",
   },
@@ -341,7 +339,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💉",
     image: `${BASE}/fig_13_26.png`,
     description:
-      "Type: Whole-virion Inactivated Coronavirus Vaccine\nComposition: Inactivated coronavirus, aluminum hydroxide gel,\nTLR 7/8 agonist, 2-phenoxyethanol and phosphate buffered saline\n[NKA1].\nRoute: Intramuscular in the deltoid muscle\nDosage and schedule: 0.5 ml, 2 doses (4-6 weeks apart)\nStorage temperature: 2-8°C\nAdverse effects: Pain or swelling at the injection site, mild headache, mild fever, irritability\nContraindications: Anaphylactic or allergic reaction to a previous dose of COVID-19 vaccine. Persons\nhaving active symptoms of SARS-CoV-2 infection (to be deferred for 4-8 weeks after recovery)",
+      "Type: Whole-virion Inactivated Coronavirus Vaccine\nComposition: Inactivated coronavirus, aluminum hydroxide gel, TLR 7/8 agonist, 2-phenoxyethanol and phosphate buffered saline\n[NKA1].\nRoute: Intramuscular in the deltoid muscle\nDosage and schedule: 0.5 ml, 2 doses (4-6 weeks apart)\nStorage temperature: 2-8°C\nAdverse effects: Pain or swelling at the injection site, mild headache, mild fever, irritability\nContraindications: Anaphylactic or allergic reaction to a previous dose of COVID-19 vaccine. Persons having active symptoms of SARS-CoV-2 infection (to be deferred for 4-8 weeks after recovery)",
     keyFact:
       "For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.",
   },
@@ -352,7 +350,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💉",
     image: `${BASE}/fig_13_27.png`,
     description:
-      'Type: mRNA vaccine (COVID-19 mRNA vaccines give instructions for\nour cells to make a harmless piece of what is called the "spike protein)"\nComposition: Nucleoside-modified mRNA encoding the viral spike\n(S) glycoprotein of SARS-CoV-2\nRoute: Intramuscular in the deltoid muscle\nDosage and schedule: 0.3 ml, 2 doses, 21 days apart\nStorage temperature: Ultra-cold freezer between -90 ºC and -60 ºC\n(-130ºF and -76ºF).\nAdverse effects: Pain, redness, swelling, fever\nContraindications: Anaphylactic or allergic reaction to a previous dose\nof COVID-19 vaccine',
+      'Type: mRNA vaccine (COVID-19 mRNA vaccines give instructions for our cells to make a harmless piece of what is called the "spike protein)"\nComposition: Nucleoside-modified mRNA encoding the viral spike (S) glycoprotein of SARS-CoV-2\nRoute: Intramuscular in the deltoid muscle\nDosage and schedule: 0.3 ml, 2 doses, 21 days apart\nStorage temperature: Ultra-cold freezer between -90 ºC and -60 ºC (-130ºF and -76ºF).\nAdverse effects: Pain, redness, swelling, fever\nContraindications: Anaphylactic or allergic reaction to a previous dose of COVID-19 vaccine',
     keyFact:
       "For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.",
   },
@@ -363,7 +361,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💉",
     image: `${BASE}/fig_13_28.png`,
     description:
-      "Type: Viral vector-based (adenoviral-based uses a weakened virus\nto deliver small parts of a pathogen and stimulate an immune\nresponse)\nComposition: Lyophilized formulation of Gam-COVID-Vac spike\nprotein gene: Adenovirus 26 (Ad26) and Adenovirus 5 (Ad5).",
+      "Type: Viral vector-based (adenoviral-based uses a weakened virus to deliver small parts of a pathogen and stimulate an immune response)\nComposition: Lyophilized formulation of Gam-COVID-Vac spike protein gene: Adenovirus 26 (Ad26) and Adenovirus 5 (Ad5).",
     keyFact:
       "For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.",
   },
@@ -374,7 +372,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💉",
     image: `${BASE}/fig_13_29.png`,
     description:
-      "Composition: It contains recombinant human adenovirus serotype\nnumber 26 (rAd26)) of the Sputnik V coronavirus vaccine and is a\nsingle dose vaccine.\nRoute: Intramuscular\nDosage and schedule: 0.5 ml, two doses (21 days apart)\nStorage temperature: 2-8°C\nAdverse effects: Redness, swelling at the injection site\nContraindications: Pregnancy",
+      "Composition: It contains recombinant human adenovirus serotype number 26 (rAd26)) of the Sputnik V coronavirus vaccine and is a single dose vaccine.\nRoute: Intramuscular\nDosage and schedule: 0.5 ml, two doses (21 days apart)\nStorage temperature: 2-8°C\nAdverse effects: Redness, swelling at the injection site\nContraindications: Pregnancy",
     keyFact:
       "For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.",
   },
@@ -405,7 +403,7 @@ export const MUSEUM_ITEMS = [
     emoji: "🛡️",
     image: `${BASE}/fig_15_1.png`,
     description:
-      "Advantages\nProtection from STIs, easily available, inexpensive, safe to use\nDisadvantages\nReduced sensation, may slip off due to incorrect use, latex\nallergy\nFailure rate: Variable 2-14, >14 HWY (in a few cases)",
+      "Advantages\nProtection from STIs, easily available, inexpensive, safe to use\nDisadvantages\nReduced sensation, may slip off due to incorrect use, latex allergy\nFailure rate: Variable 2-14, >14 HWY (in a few cases)",
     keyFact:
       "Classify each method as temporary or permanent and mention indications, advantages, and limitations.",
   },
@@ -460,7 +458,7 @@ export const MUSEUM_ITEMS = [
     emoji: "🛡️",
     image: `${BASE}/fig_15_6.png`,
     description:
-      "Advantages\nHigh rate of efficacy\nRegulates menstrual cycle\nConvenient\nDisadvantages/Side Effects\nDoes not protect against STI\nIncreased risk of CVDs, hypertension, liver disorder,\ncervical cancer and DVT, etc.",
+      "Advantages\nHigh rate of efficacy\nRegulates menstrual cycle\nConvenient\nDisadvantages/Side Effects\nDoes not protect against STI\nIncreased risk of CVDs, hypertension, liver disorder, cervical cancer and DVT, etc.",
     keyFact:
       "Classify each method as temporary or permanent and mention indications, advantages, and limitations.",
   },
@@ -526,7 +524,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💊",
     image: `${BASE}/fig_16_1.png`,
     description:
-      "Composition\nFerrous Sulphate: 60 mg elemental iron (POSHAN abhiyan), 500 mg\nfolic acid\nDosage\nANC: 1 tablet daily for 180 days (4th month onwards)\nPNC: 1 tablet daily for 180 days\nFor adolescents: 1 tablet weekly (blue colored tablets)\nFor children: 6 m-5 yrs (biweekly, 1 ml IFA syrup: 20 mg iron and\n100 mg FA)\n5-9 yrs (weekly, 1 tablet, 45 mg iron and 400 mg FA) (pink-colored tablets)",
+      "Composition\nFerrous Sulphate: 60 mg elemental iron (POSHAN abhiyan), 500 mg folic acid\nDosage\nANC: 1 tablet daily for 180 days (4th month onwards)\nPNC: 1 tablet daily for 180 days\nFor adolescents: 1 tablet weekly (blue colored tablets)\nFor children: 6 m-5 yrs (biweekly, 1 ml IFA syrup: 20 mg iron and 100 mg FA)\n5-9 yrs (weekly, 1 tablet, 45 mg iron and 400 mg FA) (pink-colored tablets)",
     keyFact:
       "State key indication, public health use, and relevant national-program context for each medicine.",
   },
@@ -559,7 +557,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💊",
     image: `${BASE}/fig_16_4.png`,
     description:
-      "Composition\nAnti-tubercular drugs (first line and second line drugs)\nDosage (Adults)\nIsoniazid (600 mg), rifampicin (<60 kg: 450 mg, >60 kg: 600 mg),\npyrizinamide (1500 mg), ethambutol (1200 mg)\nAdverse Effects\nHepatotoxicity, gastritis, peripheral neuropathy, retrobulbar neuritis, etc.",
+      "Composition\nAnti-tubercular drugs (first line and second line drugs)\nDosage (Adults)\nIsoniazid (600 mg), rifampicin (<60 kg: 450 mg, >60 kg: 600 mg), pyrizinamide (1500 mg), ethambutol (1200 mg)\nAdverse Effects\nHepatotoxicity, gastritis, peripheral neuropathy, retrobulbar neuritis, etc.",
     keyFact:
       "State key indication, public health use, and relevant national-program context for each medicine.",
   },
@@ -570,7 +568,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💊",
     image: `${BASE}/fig_16_5.png`,
     description:
-      "Composition\nRifampicin, dapsone and clofazimine\nDosage\nPaucibacillary [Supervised: Rifampicin 600 mg (monthly),\ndapsone 100 mg; Unsupervised: Dapsone 100 mg (daily)]\nMultibacillary [Supervised: Rifampicin 600 mg (monthly),\ndapsone 100, clofazimine 300 mg (monthly); Unsupervised:\nDapsone 100 (daily), Clofazimine 50 mg (daily)",
+      "Composition\nRifampicin, dapsone and clofazimine\nDosage\nPaucibacillary [Supervised: Rifampicin 600 mg (monthly), dapsone 100 mg; Unsupervised: Dapsone 100 mg (daily)]\nMultibacillary [Supervised: Rifampicin 600 mg (monthly), dapsone 100, clofazimine 300 mg (monthly); Unsupervised:\nDapsone 100 (daily), Clofazimine 50 mg (daily)",
     keyFact:
       "State key indication, public health use, and relevant national-program context for each medicine.",
   },
@@ -614,7 +612,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💊",
     image: `${BASE}/fig_16_9.png`,
     description:
-      "Formulation\nLiquid syrup and gelatin capsules.\nRoute\nOral route\nDosage and Schedule\n9 months, repeat dose 6 monthly till 5 years\nage [9 doses], 1 lac IU (< 1 year), 2 lac IU\n(>1 year)\nFirst Clinical Sign of Vitamin A Deficiency\nXerophthalmia (dry eye)\nFirst Clinical Symptom of Vitamin A Deficiency\nNight blindness",
+      "Formulation\nLiquid syrup and gelatin capsules.\nRoute\nOral route\nDosage and Schedule\n9 months, repeat dose 6 monthly till 5 years age [9 doses], 1 lac IU (< 1 year), 2 lac IU (>1 year)\nFirst Clinical Sign of Vitamin A Deficiency\nXerophthalmia (dry eye)\nFirst Clinical Symptom of Vitamin A Deficiency\nNight blindness",
     keyFact:
       "State key indication, public health use, and relevant national-program context for each medicine.",
   },
@@ -647,7 +645,7 @@ export const MUSEUM_ITEMS = [
     emoji: "🥗",
     image: `${BASE}/fig_17_2.png`,
     description:
-      "Nutritive value: Calorie: 346 kcal/100 g; Protein: 11.8 g% (whole\nwheat)\nLimiting amino acids: Lysine and threonine",
+      "Nutritive value: Calorie: 346 kcal/100 g; Protein: 11.8 g% (whole wheat)\nLimiting amino acids: Lysine and threonine",
     keyFact:
       "Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.",
   },
@@ -724,7 +722,7 @@ export const MUSEUM_ITEMS = [
     emoji: "🥗",
     image: `${BASE}/fig_17_9.png`,
     description:
-      "Nutritive value: Energy 70 kcal/60 g; Protein 6 g%\nNet protein utilization (NPU) formula: Nitrogen retained by\nbody/nitrogen intake * 100 (digestibility coefficient * biological\nvalue/100)\nNet protein utilization (NPU) of an egg is: 1 (Reference\nprotein)",
+      "Nutritive value: Energy 70 kcal/60 g; Protein 6 g%\nNet protein utilization (NPU) formula: Nitrogen retained by body/nitrogen intake * 100 (digestibility coefficient * biological value/100)\nNet protein utilization (NPU) of an egg is: 1 (Reference protein)",
     keyFact:
       "Identify food groups and relate them to nutritive value, deficiency states, or toxic effects.",
   },
@@ -757,7 +755,7 @@ export const MUSEUM_ITEMS = [
     emoji: "🧪",
     image: `${BASE}/fig_18_1.png`,
     description:
-      "Standard range: It measures the available chlorine\ncontent in the range from 0 .1 to 2.0 ppm (parts per\nmillion).\nMechanism of action: It utilizes the reagent ortho -\ntolidine which changes the colour of the water to\ngreenish-yellow (if chlorine is present). The shade of\nthe tint indicates the content ( quantitative estimate)\nof chlorine present in water, by comparing it with\nthe attached colour s cale.",
+      "Standard range: It measures the available chlorine content in the range from 0 .1 to 2.0 ppm (parts per million).\nMechanism of action: It utilizes the reagent ortho - tolidine which changes the colour of the water to greenish-yellow (if chlorine is present). The shade of the tint indicates the content ( quantitative estimate) of chlorine present in water, by comparing it with the attached colour s cale.",
     keyFact:
       "Explain principle of operation, field use, and interpretation of findings in practical exams.",
   },
@@ -812,7 +810,7 @@ export const MUSEUM_ITEMS = [
     emoji: "🧪",
     image: `${BASE}/fig_18_6.png`,
     description:
-      "Components: Iodine test kit consists of 2-3 ampoules\nof 10 ml each containing test solution, 1 red ampoule\ncontaining recheck solution, a detailed instruction sheet\nin the local language, a colour chart with circular colour\nspots, and one small container.\nProcedure\n1. A few spoons of salt for testing is spread flat. The test\nsolution ampoule is opened and the test solution is\ndropped on the salt surface till the surface is flooded.\n2. The reaction liberates the iodine in the salt, and\ndepending on the content of iodine, the solution\nchanges the colour of the salt.\n3. The intensity of the colour varies with the amount of\niodine and by matching it with the colour chart the\nrange of iodine can be ascertained.\n4. In the absence of the colour formation, a few drops of\nthe recheck solution is to be spread on the salt surface\nbefore using the test solution.",
+      "Components: Iodine test kit consists of 2-3 ampoules of 10 ml each containing test solution, 1 red ampoule containing recheck solution, a detailed instruction sheet in the local language, a colour chart with circular colour spots, and one small container.\nProcedure\n1. A few spoons of salt for testing is spread flat. The test solution ampoule is opened and the test solution is dropped on the salt surface till the surface is flooded.\n2. The reaction liberates the iodine in the salt, and depending on the content of iodine, the solution\nchanges the colour of the salt.\n3. The intensity of the colour varies with the amount of iodine and by matching it with the colour chart the range of iodine can be ascertained.\n4. In the absence of the colour formation, a few drops of the recheck solution is to be spread on the salt surface before using the test solution.",
     keyFact:
       "Explain principle of operation, field use, and interpretation of findings in practical exams.",
   },
@@ -823,7 +821,7 @@ export const MUSEUM_ITEMS = [
     emoji: "🧪",
     image: `${BASE}/fig_18_7.png`,
     description:
-      "Procedure: Liquid to be tested poured into a tall\ncontainer and hydrometer gently lowered until it floats\nfreely then specific gravity measured.",
+      "Procedure: Liquid to be tested poured into a tall container and hydrometer gently lowered until it floats freely then specific gravity measured.",
     keyFact:
       "Explain principle of operation, field use, and interpretation of findings in practical exams.",
   },
@@ -834,7 +832,7 @@ export const MUSEUM_ITEMS = [
     emoji: "🧪",
     image: `${BASE}/fig_18_8.png`,
     description:
-      "Standard range: Normal milk has a density of 1.026-1.032\ng/ml (or 26-32 on the lactometer reading). If water has\nbeen added, the lactometer reading will be below 26. If\nany solid such as flour has been added, the reading will\nbe above 32.",
+      "Standard range: Normal milk has a density of 1.026-1.032 g/ml (or 26-32 on the lactometer reading). If water has been added, the lactometer reading will be below 26. If any solid such as flour has been added, the reading will be above 32.",
     keyFact:
       "Explain principle of operation, field use, and interpretation of findings in practical exams.",
   },
@@ -845,7 +843,7 @@ export const MUSEUM_ITEMS = [
     emoji: "🧪",
     image: `${BASE}/fig_18_9.png`,
     description:
-      "1. Dry bulb thermometer: This is an ordinary thermometer which measures the air\ntemperature.\n2. Wet bulb thermometer: The wet bulb thermometer is precisely the same as the\ndry-bulb thermometer excepting the bulb is kept wet by a muslin cloth fed by\nwater from a bottle through a wick.",
+      "1. Dry bulb thermometer: This is an ordinary thermometer which measures the air temperature.\n2. Wet bulb thermometer: The wet bulb thermometer is precisely the same as the dry-bulb thermometer excepting the bulb is kept wet by a muslin cloth fed by water from a bottle through a wick.",
     keyFact:
       "Explain principle of operation, field use, and interpretation of findings in practical exams.",
   },
@@ -856,7 +854,7 @@ export const MUSEUM_ITEMS = [
     emoji: "🧪",
     image: `${BASE}/fig_18_10.png`,
     description:
-      "Components\n1. A globe thermometer consists of a black, hollow, air-filled metal globe with an outer\ndiameter of 50-150 mm. The globe wall is thin and consists of a material, such as a\ncopper alloy, with very high thermal conductivity.\n2. The globe is clamped to a stem which contains a temperature sensor that is positioned at the centre of the\nglobe.",
+      "Components\n1. A globe thermometer consists of a black, hollow, air-filled metal globe with an outer diameter of 50-150 mm. The globe wall is thin and consists of a material, such as a copper alloy, with very high thermal conductivity.\n2. The globe is clamped to a stem which contains a temperature sensor that is positioned at the centre of the globe.",
     keyFact:
       "Explain principle of operation, field use, and interpretation of findings in practical exams.",
   },
@@ -867,7 +865,7 @@ export const MUSEUM_ITEMS = [
     emoji: "🧪",
     image: `${BASE}/fig_18_11.png`,
     description:
-      "Mechanism of action: The kata thermometer is a heated-alcohol thermometer; the\ntime it takes to cool is measured and used to determine air current. It is useful for\nmeasuring low speeds in studies of air circulation.",
+      "Mechanism of action: The kata thermometer is a heated-alcohol thermometer; the time it takes to cool is measured and used to determine air current. It is useful for measuring low speeds in studies of air circulation.",
     keyFact:
       "Explain principle of operation, field use, and interpretation of findings in practical exams.",
   },
@@ -900,7 +898,7 @@ export const MUSEUM_ITEMS = [
     emoji: "🦟",
     image: `${BASE}/fig_19_2.png`,
     description:
-      "Characteristic features: 3 body parts (head, thorax and abdomen), pair of spotted wings, 3 pairs of legs,\ninclined at an angle during rest.\nVector species: Culicifacies, Fluvialis, Minimus, Stephensi, Sundaicus, Phillipensis and Darius.\nVector of diseases: Malaria.",
+      "Characteristic features: 3 body parts (head, thorax and abdomen), pair of spotted wings, 3 pairs of legs, inclined at an angle during rest.\nVector species: Culicifacies, Fluvialis, Minimus, Stephensi, Sundaicus, Phillipensis and Darius.\nVector of diseases: Malaria.",
     keyFact:
       "Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.",
   },
@@ -933,7 +931,7 @@ export const MUSEUM_ITEMS = [
     emoji: "🦟",
     image: `${BASE}/fig_19_5.png`,
     description:
-      "Characteristic features: 3 body parts (head, thorax and\nabdomen)\nHead bears a pair of antennae and a pair of large\ncompound eyes\nThorax bears 3 pairs of legs and a pair of wings\nAbdomen: Segmented\nVector of diseases: Typhoid, paratyphoid, diarrhoea,\ndysentery, cholera, polio, etc\nControl measures:\n1. Environmental: Sanitation and garbage disposal\n2. Insecticidal: Residual spray (DDT, lindane and\nmalathion), baits (malathion), cords and ribbons,\nspace sprays (DDT, pyrethrum, etc.), larvicides (diazinon)",
+      "Characteristic features: 3 body parts (head, thorax and abdomen)\nHead bears a pair of antennae and a pair of large compound eyes\nThorax bears 3 pairs of legs and a pair of wings\nAbdomen: Segmented\nVector of diseases: Typhoid, paratyphoid, diarrhoea, dysentery, cholera, polio, etc\nControl measures:\n1. Environmental: Sanitation and garbage disposal\n2. Insecticidal: Residual spray (DDT, lindane and malathion), baits (malathion), cords and ribbons, space sprays (DDT, pyrethrum, etc.), larvicides (diazinon)",
     keyFact:
       "Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.",
   },
@@ -944,7 +942,7 @@ export const MUSEUM_ITEMS = [
     emoji: "🦟",
     image: `${BASE}/fig_19_6.png`,
     description:
-      "Characteristic features: 3 body parts (head, thorax and\nabdomen), smaller in size than mosquito, wings upright,\nhairy antennae\nVector species: Phlebotomus argentipes , P . papatasii , P.\nsergentii, Sergentomyia punjabensis .\nDiseases transmitted: Kala azar ( P . argentipes), sand fly\nfever, oriental sore\nControl measures: Insecticide (DDT or lindane), sanitation\n(removal of shrubs, filling up cracks and crevices, location\naway from cattle sheds and poultry house).",
+      "Characteristic features: 3 body parts (head, thorax and abdomen), smaller in size than mosquito, wings upright, hairy antennae\nVector species: Phlebotomus argentipes , P . papatasii , P. sergentii, Sergentomyia punjabensis .\nDiseases transmitted: Kala azar ( P . argentipes), sand fly fever, oriental sore\nControl measures: Insecticide (DDT or lindane), sanitation\n(removal of shrubs, filling up cracks and crevices, location\naway from cattle sheds and poultry house).",
     keyFact:
       "Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.",
   },
@@ -966,7 +964,7 @@ export const MUSEUM_ITEMS = [
     emoji: "🦟",
     image: `${BASE}/fig_19_8.png`,
     description:
-      "Characteristic features: Wingless ectoparasites,\ndorsoventrally flattened body, 3 pair of legs attached\nto thorax, abdomen segmented.\nVector species: Pediculus capitis (head louse),\npediculus corporis (body louse), crab louse ( Pthirus\npubis).\nVector of diseases: Pediculosis, epidemic typhus,\nrelapsing fever and trench fever ( PERT ).\nControl measures: Insecticidal (malathion lotion) and personal hygiene.",
+      "Characteristic features: Wingless ectoparasites, dorsoventrally flattened body, 3 pair of legs attached to thorax, abdomen segmented.\nVector species: Pediculus capitis (head louse), pediculus corporis (body louse), crab louse ( Pthirus pubis).\nVector of diseases: Pediculosis, epidemic typhus, relapsing fever and trench fever ( PERT ).\nControl measures: Insecticidal (malathion lotion) and personal hygiene.",
     keyFact:
       "Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.",
   },
@@ -987,7 +985,7 @@ export const MUSEUM_ITEMS = [
     emoji: "🦟",
     image: `${BASE}/fig_19_10.png`,
     description:
-      "Characteristic features: Globular arthropod (rounded above, flattened below),\nno demarcation into cephalothorax and abdomen, two pair of legs each in front and behind.\nVector species: Sarcoptes/acarus scabiei\nVector of diseases: Scabies\nControl measures: Personal hygiene",
+      "Characteristic features: Globular arthropod (rounded above, flattened below), no demarcation into cephalothorax and abdomen, two pair of legs each in front and behind.\nVector species: Sarcoptes/acarus scabiei\nVector of diseases: Scabies\nControl measures: Personal hygiene",
     keyFact:
       "Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.",
   },
@@ -1042,7 +1040,7 @@ export const MUSEUM_ITEMS = [
     emoji: "🦟",
     image: `${BASE}/fig_19_15.png`,
     description:
-      "Mechanism of action: Mosquito larvicide\nResidual action: 25 ml of abate 50% is mixed in 10 litre water and\npoured in 500 m 2\nRepellent action: Yes\nDose: Less than 1 ppm\nSpecial features: Safely used in drinking water sources.",
+      "Mechanism of action: Mosquito larvicide\nResidual action: 25 ml of abate 50% is mixed in 10 litre water and poured in 500 m 2\nRepellent action: Yes\nDose: Less than 1 ppm\nSpecial features: Safely used in drinking water sources.",
     keyFact:
       "Identify vectors/insecticides and mention diseases transmitted, breeding habits, and control measures.",
   },
@@ -1135,8 +1133,7 @@ export const MUSEUM_ITEMS = [
       "These spotters support MCH records, growth monitoring, and safe-water/public-health field work.",
   },
 ];
-
-export const CATEGORIES = [
+ export const CATEGORIES = [
   "All",
   "Cold Chain Equipment",
   "Vaccines",
@@ -1148,5 +1145,4 @@ export const CATEGORIES = [
   "Entomology",
   "Miscellaneous",
 ];
-
-export const FREE_CATEGORY = "Contraceptives";
+ export const FREE_CATEGORY = "Contraceptives";
