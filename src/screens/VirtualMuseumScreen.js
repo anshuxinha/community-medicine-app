@@ -281,8 +281,14 @@ const VirtualMuseumScreen = () => {
   );
 };
 
-// Renders description lines with highlighted labels ("Label: value" format)
+// Renders description lines with highlighted labels
 const LABEL_REGEX = /^([^:\n]{1,40}):\s*/;
+const KNOWN_HEADERS = [
+  "Advantages", "Disadvantages", "Disadvantages/Side Effects", "Disadvantages/Side effects",
+  "Adverse Effects", "Adverse effects", "Failure Rate", "Failure rate", "Dosage", "Dosage (Adults)",
+  "Contraindications", "Action", "Composition", "Composition, strain of vaccine",
+  "Types of IUCD and Composition", "Malaria Types Detected", "Confirmatory Test"
+];
 
 const DescriptionBlock = ({ text }) => {
   if (!text) return null;
@@ -291,14 +297,28 @@ const DescriptionBlock = ({ text }) => {
     <View style={styles.descriptionBlock}>
       {lines.map((line, idx) => {
         const match = line.match(LABEL_REGEX);
+        let label = null;
+        let value = "";
+
         if (match) {
-          const label = match[1];
-          const value = line.slice(match[0].length);
+          label = match[1];
+          value = line.slice(match[0].length);
+        } else {
+          // Check if the entire line is a known header
+          const trimmed = line.trim();
+          const isKnownHeader = KNOWN_HEADERS.some(h => h.toLowerCase() === trimmed.toLowerCase());
+          if (isKnownHeader) {
+            label = trimmed;
+            value = "";
+          }
+        }
+
+        if (label) {
           return (
-            <View key={idx} style={styles.descriptionRow}>
-              <Text style={styles.descriptionLabel}>{label}: </Text>
+            <Text key={idx} style={styles.descriptionRowText}>
+              <Text style={styles.descriptionLabel}>{label}{value ? ": " : ""}</Text>
               <Text style={styles.descriptionValue}>{value}</Text>
-            </View>
+            </Text>
           );
         }
         return (
@@ -416,11 +436,7 @@ const styles = StyleSheet.create({
     marginTop: -2,
   },
   descriptionBlock: { marginTop: 4 },
-  descriptionRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginBottom: 5,
-  },
+  descriptionRowText: { marginBottom: 5, lineHeight: 20 },
   descriptionLabel: {
     color: theme.colors.secondary,
     fontWeight: "700",
@@ -431,7 +447,6 @@ const styles = StyleSheet.create({
     color: theme.colors.textTitle ?? "#1F2937",
     fontSize: 13,
     lineHeight: 20,
-    flex: 1,
   },
   descriptionPlain: {
     color: "#374151",
