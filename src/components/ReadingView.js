@@ -354,6 +354,7 @@ const ReadingView = ({
   const hasReachedEndRef = useRef(false);
   const viewportHeightRef = useRef(0);
   const contentHeightRef = useRef(0);
+  const blockYMapRef = useRef({});
 
   const highlightSet = useMemo(
     () =>
