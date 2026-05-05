@@ -645,6 +645,8 @@ const ReadingView = ({
         const sentences = splitSentences(block.text);
         const blockHighlightSig = sentences.map((_, sIdx) => userHighlights[`${index}:${sIdx}`] ? "1" : "0").join("");
         const hasSearchMatch = blockContainsSearch(block.text);
+        const isAllCapsTitle = block.text.length > 3 && block.text === block.text.toUpperCase() && /[A-Z]/.test(block.text);
+        const baseStyle = isAllCapsTitle ? styles.allCapsTitle : styles.body;
 
         return (
           <View
@@ -653,9 +655,9 @@ const ReadingView = ({
             onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
           >
             {hasSearchMatch && !isHighlightMode ? (
-              renderSearchSpans(block.text, styles.body, index)
+              renderSearchSpans(block.text, baseStyle, index)
             ) : (
-              <Text key={blockHighlightSig} style={styles.body} selectable={false}>
+              <Text key={blockHighlightSig} style={baseStyle} selectable={false}>
                 {sentences.map((sentence, sIdx) => {
                   const hlKey = `${index}:${sIdx}`;
                   const isHl = userHighlights[hlKey];

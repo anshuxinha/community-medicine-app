@@ -287,7 +287,8 @@ const KNOWN_HEADERS = [
   "Advantages", "Disadvantages", "Disadvantages/Side Effects", "Disadvantages/Side effects",
   "Adverse Effects", "Adverse effects", "Failure Rate", "Failure rate", "Dosage", "Dosage (Adults)",
   "Contraindications", "Action", "Composition", "Composition, strain of vaccine",
-  "Types of IUCD and Composition", "Malaria Types Detected", "Confirmatory Test"
+  "Types of IUCD and Composition", "Malaria Types Detected", "Confirmatory Test",
+  "Formulation", "Route", "Dosage and Schedule"
 ];
 
 const DescriptionBlock = ({ text }) => {
