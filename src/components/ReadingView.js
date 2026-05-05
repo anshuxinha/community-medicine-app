@@ -14,7 +14,6 @@ import {
   ToastAndroid,
   Alert,
   KeyboardAvoidingView,
-  Animated,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -561,14 +560,7 @@ const ReadingView = ({
     return text.toLowerCase().includes(normalizedSearchTerm);
   };
 
-  const getSearchFadeAnim = (index) => {
-    if (!searchFadeAnimsRef.current[index]) {
-      searchFadeAnimsRef.current[index] = new Animated.Value(1);
-    }
-    return searchFadeAnimsRef.current[index];
-  };
-
-  // Splits text around the search term and renders animated purple spans for matches
+  // Splits text around the search term and renders static purple spans for matches
   const renderSearchSpans = (text, baseStyle, blockIndex) => {
     if (!normalizedSearchTerm || !text) {
       return <Text style={baseStyle} selectable={false}>{text}</Text>;
@@ -586,28 +578,11 @@ const ReadingView = ({
     if (lastIdx < text.length) parts.push({ text: text.slice(lastIdx), match: false });
     if (parts.length === 0) return <Text style={baseStyle} selectable={false}>{text}</Text>;
 
-    // Get or create the fade anim for this block
-    const fadeAnim = getSearchFadeAnim(blockIndex);
-    const animatedColor = fadeAnim.interpolate({
-      inputRange: [0, 1],
-      outputRange: [String(baseStyle?.color || "#1F2937"), "#9333ea"],
-    });
-    const animatedFontWeight = fadeAnim.interpolate({
-      inputRange: [0, 1],
-      outputRange: ["400", "700"],
-    });
-
     return (
       <Text style={baseStyle} selectable={false}>
         {parts.map((p, i) =>
           p.match ? (
-            <Animated.Text
-              key={i}
-              style={[styles.searchTermMatch, { color: animatedColor }]}
-              selectable={false}
-            >
-              {p.text}
-            </Animated.Text>
+            <Text key={i} style={styles.searchTermMatch}>{p.text}</Text>
           ) : (
             <Text key={i}>{p.text}</Text>
           )
