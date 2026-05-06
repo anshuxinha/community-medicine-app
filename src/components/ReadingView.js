@@ -70,6 +70,10 @@ const parseMarkdown = (content) => {
       flushBullets();
       flushNested();
       blocks.push({ type: "spacing" });
+    } else if (line.startsWith("> ")) {
+      flushBullets();
+      flushNested();
+      blocks.push({ type: "blockquote", text: stripBold(line.replace(/^>\s*/, "")) });
     } else {
       flushBullets();
       flushNested();
@@ -84,7 +88,7 @@ const parseMarkdown = (content) => {
 
 const getBlockAnchorText = (block) => {
   if (!block) return "";
-  if (block.type === "h1" || block.type === "h2" || block.type === "body") {
+  if (block.type === "h1" || block.type === "h2" || block.type === "body" || block.type === "blockquote") {
     return normalizeAnchorText(block.text);
   }
   return "";
@@ -638,6 +642,42 @@ const ReadingView = ({
           <Pressable key={index} disabled={!isHighlightMode} onPress={() => onToggleHighlight(hlKey)}>
             {inner}
           </Pressable>
+        );
+      }
+      case "blockquote": {
+        const highlighted = shouldHighlightText(block.text);
+        const sentences = splitSentences(block.text);
+        const blockHighlightSig = sentences.map((_, sIdx) => userHighlights[`${index}:${sIdx}`] ? "1" : "0").join("");
+        const hasSearchMatch = blockContainsSearch(block.text);
+
+        return (
+          <View
+            key={index}
+            style={[styles.blockquoteContainer, highlighted ? styles.highlightBlock : null, { marginVertical: 4 }]}
+            onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
+          >
+            {hasSearchMatch && !isHighlightMode ? (
+              renderSearchSpans(block.text, styles.blockquoteText, index)
+            ) : (
+              <Text key={blockHighlightSig} style={styles.blockquoteText} selectable={false}>
+                {sentences.map((sentence, sIdx) => {
+                  const hlKey = `${index}:${sIdx}`;
+                  const isHl = userHighlights[hlKey];
+                  return (
+                    <Text
+                      key={sIdx}
+                      style={isHl ? styles.userHighlightSentence : null}
+                      selectable={false}
+                      onPress={isHighlightMode ? () => onToggleHighlight(hlKey) : undefined}
+                      suppressHighlighting={true}
+                    >
+                      {sIdx > 0 ? " " : ""}{sentence}
+                    </Text>
+                  );
+                })}
+              </Text>
+            )}
+          </View>
         );
       }
       case "body": {
@@ -1530,6 +1570,24 @@ const styles = StyleSheet.create({
   sentenceInline: {
     marginVertical: 0,
     marginRight: 4,
+  },
+
+  // ── Blockquote ──
+  blockquoteContainer: {
+    marginVertical: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: theme.colors.primary,
+    backgroundColor: theme.colors.primaryLight || "#F3E8FF",
+    borderRadius: 4,
+  },
+  blockquoteText: {
+    color: theme.colors.textTitle || "#1F2937",
+    fontSize: 15,
+    fontStyle: "italic",
+    lineHeight: 24,
+    fontWeight: "600",
   },
 
   // ── Spacing ──
