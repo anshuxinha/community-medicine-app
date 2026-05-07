@@ -199,25 +199,39 @@ const parseMarkdown = (content) => {
   flushNested();
 
   // Post-process: remove body lines that duplicate table cell content
-  const blocks = [];
+  const dedupBlocks = [];
   let recentCellSet = new Set();
   for (const block of rawBlocks) {
     if (block.type === "table") {
       recentCellSet = buildTableCellSet(block);
-      blocks.push(block);
+      dedupBlocks.push(block);
     } else if (block.type === "spacing") {
-      // Keep spacers but don't clear dedup set yet
-      blocks.push(block);
+      dedupBlocks.push(block);
     } else if (
       block.type === "body" &&
       recentCellSet.size > 0 &&
       recentCellSet.has(block.text.trim())
     ) {
-      // This line is a verbatim repeat of a table cell — skip it
       continue;
     } else {
-      // Non-duplicate body or other block — clear the dedup window
       recentCellSet = new Set();
+      dedupBlocks.push(block);
+    }
+  }
+
+  // Post-process: merge consecutive body blocks where the second starts with lowercase
+  const blocks = [];
+  for (const block of dedupBlocks) {
+    const prev = blocks.length > 0 ? blocks[blocks.length - 1] : null;
+    if (
+      block.type === "body" &&
+      prev &&
+      prev.type === "body" &&
+      block.text.trim() &&
+      /^[a-z(]/.test(block.text.trim())
+    ) {
+      prev.text = prev.text.trimEnd() + " " + block.text.trim();
+    } else {
       blocks.push(block);
     }
   }
@@ -1051,52 +1065,47 @@ const ReadingView = ({
         );
       }
       case "question": {
+        // Strip [year] / [date] tags from question text
+        const cleanedQuestion = block.text.replace(/(\s*\[[^\]]*\])+\s*$/g, "").trim();
         return (
           <View
             key={index}
             style={styles.questionBlock}
             onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
           >
-            <Text style={styles.questionText} selectable={false}>{block.text}</Text>
+            <Text style={styles.questionText} selectable={false}>{cleanedQuestion}</Text>
           </View>
         );
       }
       case "table": {
         const { headers, rows } = block;
-        // Minimum column width so text isn't squished; allow horizontal scroll
-        const colMinWidth = 90;
-        const tableMinWidth = headers.length * colMinWidth;
         return (
           <View
             key={index}
             style={styles.tableContainer}
             onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
           >
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} bounces={false}>
-              <View style={{ minWidth: tableMinWidth }}>
-                {/* Header row */}
-                <View style={styles.tableHeaderRow}>
-                  {headers.map((h, hi) => (
-                    <View key={hi} style={[styles.tableCell, styles.tableHeaderCell, hi < headers.length - 1 && styles.tableCellBorderRight]}>
-                      <Text style={styles.tableHeaderText} selectable={false}>{h}</Text>
-                    </View>
-                  ))}
+            {/* Header row */}
+            <View style={styles.tableHeaderRow}>
+              {headers.map((h, hi) => (
+                <View key={hi} style={[styles.tableCell, styles.tableHeaderCell, hi < headers.length - 1 && styles.tableCellBorderRight]}>
+                  <Text style={styles.tableHeaderText} selectable={false}>{h}</Text>
                 </View>
-                {/* Data rows */}
-                {rows.map((row, ri) => (
-                  <View
-                    key={ri}
-                    style={[styles.tableRow, ri % 2 === 1 && styles.tableRowAlt]}
-                  >
-                    {headers.map((_, ci) => (
-                      <View key={ci} style={[styles.tableCell, ci < headers.length - 1 && styles.tableCellBorderRight]}>
-                        <Text style={styles.tableCellText} selectable={false}>{row[ci] ?? ""}</Text>
-                      </View>
-                    ))}
+              ))}
+            </View>
+            {/* Data rows */}
+            {rows.map((row, ri) => (
+              <View
+                key={ri}
+                style={[styles.tableRow, ri % 2 === 1 && styles.tableRowAlt]}
+              >
+                {headers.map((_, ci) => (
+                  <View key={ci} style={[styles.tableCell, ci < headers.length - 1 && styles.tableCellBorderRight]}>
+                    <Text style={styles.tableCellText} selectable={false}>{row[ci] ?? ""}</Text>
                   </View>
                 ))}
               </View>
-            </ScrollView>
+            ))}
           </View>
         );
       }
@@ -1822,7 +1831,6 @@ const styles = StyleSheet.create({
   },
   tableCell: {
     flex: 1,
-    minWidth: 90,
     paddingHorizontal: 10,
     paddingVertical: 8,
   },
