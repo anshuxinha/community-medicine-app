@@ -29,6 +29,7 @@ const parseMarkdown = (content) => {
   const blocks = [];
   let bulletGroup = [];
   let nestedGroup = [];
+  let tableLines = [];
 
   const flushBullets = () => {
     if (bulletGroup.length > 0) {
@@ -44,7 +45,39 @@ const parseMarkdown = (content) => {
     }
   };
 
+  const flushTable = () => {
+    if (tableLines.length < 2) {
+      // Not a valid table — emit as body lines
+      tableLines.forEach((l) => blocks.push({ type: "body", text: stripBold(l) }));
+      tableLines = [];
+      return;
+    }
+    // Parse header row
+    const parseRow = (row) =>
+      row
+        .split("|")
+        .map((c) => c.trim())
+        .filter((_, i, arr) => i > 0 && i < arr.length - 1); // drop leading/trailing empty
+    const headers = parseRow(tableLines[0]);
+    // tableLines[1] is the separator line (|---|---|) — skip it
+    const rows = tableLines.slice(2).map(parseRow);
+    blocks.push({ type: "table", headers, rows });
+    tableLines = [];
+  };
+
+  const isTableRow = (line) => line.trim().startsWith("|") && line.trim().endsWith("|");
+
   for (const line of lines) {
+    // Table accumulation
+    if (isTableRow(line)) {
+      flushBullets();
+      flushNested();
+      tableLines.push(line);
+      continue;
+    } else if (tableLines.length > 0) {
+      flushTable();
+    }
+
     if (line.startsWith("# ")) {
       flushBullets();
       flushNested();
@@ -81,6 +114,7 @@ const parseMarkdown = (content) => {
     }
   }
 
+  if (tableLines.length > 0) flushTable();
   flushBullets();
   flushNested();
   return blocks;
@@ -911,6 +945,38 @@ const ReadingView = ({
           </View>
         );
       }
+      case "table": {
+        const { headers, rows } = block;
+        return (
+          <View
+            key={index}
+            style={styles.tableContainer}
+            onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
+          >
+            {/* Header row */}
+            <View style={styles.tableHeaderRow}>
+              {headers.map((h, hi) => (
+                <View key={hi} style={[styles.tableCell, styles.tableHeaderCell, hi < headers.length - 1 && styles.tableCellBorderRight]}>
+                  <Text style={styles.tableHeaderText} selectable={false}>{h}</Text>
+                </View>
+              ))}
+            </View>
+            {/* Data rows */}
+            {rows.map((row, ri) => (
+              <View
+                key={ri}
+                style={[styles.tableRow, ri % 2 === 1 && styles.tableRowAlt]}
+              >
+                {headers.map((_, ci) => (
+                  <View key={ci} style={[styles.tableCell, ci < headers.length - 1 && styles.tableCellBorderRight]}>
+                    <Text style={styles.tableCellText} selectable={false}>{row[ci] ?? ""}</Text>
+                  </View>
+                ))}
+              </View>
+            ))}
+          </View>
+        );
+      }
       case "spacing":
         return <View key={index} style={styles.spacing} />;
       default:
@@ -1593,6 +1659,49 @@ const styles = StyleSheet.create({
   // ── Spacing ──
   spacing: {
     height: 14,
+  },
+
+  // ── Tables ──
+  tableContainer: {
+    marginVertical: 12,
+    borderRadius: 8,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: theme.colors.surfaceSecondary || "#E5E7EB",
+  },
+  tableHeaderRow: {
+    flexDirection: "row",
+    backgroundColor: theme.colors.primary || "#7C3AED",
+  },
+  tableRow: {
+    flexDirection: "row",
+    backgroundColor: theme.colors.surfacePrimary || "#FFFFFF",
+  },
+  tableRowAlt: {
+    backgroundColor: theme.colors.surfaceSecondary || "#F9FAFB",
+  },
+  tableCell: {
+    flex: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  tableHeaderCell: {
+    paddingVertical: 10,
+  },
+  tableCellBorderRight: {
+    borderRightWidth: 1,
+    borderRightColor: "rgba(255,255,255,0.2)",
+  },
+  tableHeaderText: {
+    color: "#FFFFFF",
+    fontSize: 13,
+    fontWeight: "700",
+    lineHeight: 18,
+  },
+  tableCellText: {
+    color: theme.colors.textTitle || "#1F2937",
+    fontSize: 13,
+    lineHeight: 19,
   },
 
   // ── Images ──

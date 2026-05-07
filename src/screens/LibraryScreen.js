@@ -179,6 +179,30 @@ const LibraryScreen = (props) => {
         return;
       }
 
+      if (item.isLazyLoaded) {
+        if (item.lazyDataSource === "pyqData") {
+          const loadedData = require("../data/pyqData.json");
+          item.subsections = loadedData.subsections;
+          item.isLazyLoaded = false;
+          
+          const subTopicsParams = {
+            title: item.title,
+            items: item.subsections,
+            section: activeSection,
+          };
+          
+          if (isFree) {
+            navigation.navigate("SubTopics", subTopicsParams);
+          } else {
+            navigation.navigate("PremiumGuard", {
+              destination: "SubTopics",
+              subTopicsParams,
+            });
+          }
+        }
+        return;
+      }
+
       const readingParams = buildReadingParams(
         item,
         activeSection,
