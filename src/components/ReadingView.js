@@ -94,16 +94,40 @@ const parseMarkdown = (content) => {
         .split("|")
         .map((c) => c.trim())
         .filter((_, i, arr) => i > 0 && i < arr.length - 1);
-    const headers = parseRow(tableLines[0]);
-    const rows = tableLines.slice(2).map(parseRow);
+    let headers = parseRow(tableLines[0]);
+    let rows = tableLines.slice(2).map(parseRow);
 
     // Check if it's a question-wrapper table
     const questionText = extractQuestionTable(headers, rows);
     if (questionText !== null) {
       rawBlocks.push({ type: "question", text: stripBold(questionText) });
-    } else {
-      rawBlocks.push({ type: "table", headers, rows });
+      tableLines = [];
+      return;
     }
+
+    // Strip empty padding columns from PDF-extracted tables
+    const realHeaders = headers.filter((h) => h.trim() !== "");
+    if (realHeaders.length > 0 && realHeaders.length < headers.length) {
+      const cleaned = [];
+      for (const row of rows) {
+        const nonEmpty = row.filter((c) => (c || "").trim() !== "");
+        if (nonEmpty.length >= realHeaders.length) {
+          cleaned.push(nonEmpty.slice(0, realHeaders.length));
+        } else if (nonEmpty.length > 0 && cleaned.length > 0) {
+          // Continuation row — append to last cell of previous row
+          const prev = cleaned[cleaned.length - 1];
+          prev[prev.length - 1] += " " + nonEmpty.join(" ");
+        } else {
+          // Pad short rows
+          while (nonEmpty.length < realHeaders.length) nonEmpty.push("");
+          cleaned.push(nonEmpty);
+        }
+      }
+      headers = realHeaders;
+      rows = cleaned;
+    }
+
+    rawBlocks.push({ type: "table", headers, rows });
     tableLines = [];
   };
 
@@ -135,9 +159,9 @@ const parseMarkdown = (content) => {
       flushBullets();
       const bText = stripBold(line.replace(/^  - /, "")).trim();
       if (bText) nestedGroup.push(bText);
-    } else if (/^[*-] /.test(line)) {
+    } else if (/^[*\u2022-] /.test(line)) {
       flushNested();
-      const bText = stripBold(line.replace(/^[*-] /, "")).trim();
+      const bText = stripBold(line.replace(/^[*\u2022-] /, "")).trim();
       if (bText) bulletGroup.push(bText);
     } else if (line.match(/^!\[(.*?)\]\((.*?)\)$/)) {
       flushBullets();
@@ -153,11 +177,19 @@ const parseMarkdown = (content) => {
       flushNested();
       rawBlocks.push({ type: "blockquote", text: stripBold(line.replace(/^>\s*/, "")) });
     } else {
-      flushBullets();
-      flushNested();
       const bodyText = stripBold(line);
-      if (!isNtruHsMetaLine(bodyText)) {
-        rawBlocks.push({ type: "body", text: bodyText });
+      const trimmedBody = bodyText.trim();
+      // Continuation of a bullet: non-empty, starts with lowercase, currently accumulating bullets
+      if (bulletGroup.length > 0 && trimmedBody && /^[a-z]/.test(trimmedBody)) {
+        bulletGroup[bulletGroup.length - 1] += " " + trimmedBody;
+      } else if (nestedGroup.length > 0 && trimmedBody && /^[a-z]/.test(trimmedBody)) {
+        nestedGroup[nestedGroup.length - 1] += " " + trimmedBody;
+      } else {
+        flushBullets();
+        flushNested();
+        if (!isNtruHsMetaLine(bodyText)) {
+          rawBlocks.push({ type: "body", text: bodyText });
+        }
       }
     }
   }
@@ -1789,7 +1821,8 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surfaceSecondary || "#F9FAFB",
   },
   tableCell: {
-    width: 90,
+    flex: 1,
+    minWidth: 90,
     paddingHorizontal: 10,
     paddingVertical: 8,
   },
