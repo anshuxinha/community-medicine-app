@@ -24,51 +24,92 @@ const stripBold = (text) => text.replace(/\*\*(.+?)\*\*/g, "$1");
 const normalizeAnchorText = (text = "") =>
   stripBold(String(text)).replace(/\s+/g, " ").trim().toLowerCase();
 
+// Matches: "Grade A ★★★★★ | Asked 20x | NTRUHS SPM Paper I" style headings
+const isNtruHsHeading = (text) =>
+  /Grade [A-C].*Asked.*x/i.test(text) || /NTRUHS/i.test(text);
+
+// Matches standalone metadata lines from the PDF extractor (body lines to skip)
+const isNtruHsMetaLine = (text) =>
+  /NTRUHS/i.test(text) ||
+  /^Frequency:\s*\d+\s+Times?\s+Asked/i.test(text) ||
+  /^Detailed Model Answers for Q\d/i.test(text) ||
+  /^GRADE [A-C] Priority/i.test(text) ||
+  /^—\s*End of Document/i.test(text);
+
+// A "question wrapper" table: 3 cols, all headers empty, only middle col of data rows has text.
+const extractQuestionTable = (headers, rows) => {
+  if (headers.length !== 3) return null;
+  if (headers.some((h) => h.trim() !== "")) return null;
+  // Each data row: col[0] and col[2] are empty; col[1] has the text (or all empty = spacer)
+  const textParts = [];
+  for (const row of rows) {
+    const mid = (row[1] || "").trim();
+    if (mid) textParts.push(mid);
+  }
+  if (textParts.length === 0) return null;
+  return textParts.join(" ");
+};
+
+// Build a set of all non-empty cell values from a table block, for dedup.
+const buildTableCellSet = (block) => {
+  const set = new Set();
+  if (block.type === "table") {
+    block.headers.forEach((h) => { if (h.trim()) set.add(h.trim()); });
+    block.rows.forEach((row) => row.forEach((c) => { if (c && c.trim()) set.add(c.trim()); }));
+  } else if (block.type === "question") {
+    // question blocks don't need dedup tracking
+  }
+  return set;
+};
+
 const parseMarkdown = (content) => {
   const lines = content.split("\n");
-  const blocks = [];
+  const rawBlocks = [];
   let bulletGroup = [];
   let nestedGroup = [];
   let tableLines = [];
 
   const flushBullets = () => {
     if (bulletGroup.length > 0) {
-      blocks.push({ type: "bullets", items: [...bulletGroup] });
+      rawBlocks.push({ type: "bullets", items: [...bulletGroup] });
       bulletGroup = [];
     }
   };
 
   const flushNested = () => {
     if (nestedGroup.length > 0) {
-      blocks.push({ type: "nested_bullets", items: [...nestedGroup] });
+      rawBlocks.push({ type: "nested_bullets", items: [...nestedGroup] });
       nestedGroup = [];
     }
   };
 
   const flushTable = () => {
     if (tableLines.length < 2) {
-      // Not a valid table — emit as body lines
-      tableLines.forEach((l) => blocks.push({ type: "body", text: stripBold(l) }));
+      tableLines.forEach((l) => rawBlocks.push({ type: "body", text: stripBold(l) }));
       tableLines = [];
       return;
     }
-    // Parse header row
     const parseRow = (row) =>
       row
         .split("|")
         .map((c) => c.trim())
-        .filter((_, i, arr) => i > 0 && i < arr.length - 1); // drop leading/trailing empty
+        .filter((_, i, arr) => i > 0 && i < arr.length - 1);
     const headers = parseRow(tableLines[0]);
-    // tableLines[1] is the separator line (|---|---|) — skip it
     const rows = tableLines.slice(2).map(parseRow);
-    blocks.push({ type: "table", headers, rows });
+
+    // Check if it's a question-wrapper table
+    const questionText = extractQuestionTable(headers, rows);
+    if (questionText !== null) {
+      rawBlocks.push({ type: "question", text: stripBold(questionText) });
+    } else {
+      rawBlocks.push({ type: "table", headers, rows });
+    }
     tableLines = [];
   };
 
   const isTableRow = (line) => line.trim().startsWith("|") && line.trim().endsWith("|");
 
   for (const line of lines) {
-    // Table accumulation
     if (isTableRow(line)) {
       flushBullets();
       flushNested();
@@ -81,12 +122,16 @@ const parseMarkdown = (content) => {
     if (line.startsWith("# ")) {
       flushBullets();
       flushNested();
-      blocks.push({ type: "h1", text: stripBold(line.replace(/^# /, "")) });
+      rawBlocks.push({ type: "h1", text: stripBold(line.replace(/^# /, "")) });
     } else if (line.startsWith("## ")) {
       flushBullets();
       flushNested();
-      blocks.push({ type: "h2", text: stripBold(line.replace(/^## /, "")) });
-        } else if (/^  - /.test(line)) {
+      const h2Text = stripBold(line.replace(/^## /, ""));
+      // Skip NTRUHS/grade headings entirely
+      if (!isNtruHsHeading(h2Text)) {
+        rawBlocks.push({ type: "h2", text: h2Text });
+      }
+    } else if (/^  - /.test(line)) {
       flushBullets();
       const bText = stripBold(line.replace(/^  - /, "")).trim();
       if (bText) nestedGroup.push(bText);
@@ -98,25 +143,53 @@ const parseMarkdown = (content) => {
       flushBullets();
       flushNested();
       const match = line.match(/^!\[(.*?)\]\((.*?)\)$/);
-      blocks.push({ type: "image", url: match[2], alt: match[1] });
+      rawBlocks.push({ type: "image", url: match[2], alt: match[1] });
     } else if (line.trim() === "") {
       flushBullets();
       flushNested();
-      blocks.push({ type: "spacing" });
+      rawBlocks.push({ type: "spacing" });
     } else if (line.startsWith("> ")) {
       flushBullets();
       flushNested();
-      blocks.push({ type: "blockquote", text: stripBold(line.replace(/^>\s*/, "")) });
+      rawBlocks.push({ type: "blockquote", text: stripBold(line.replace(/^>\s*/, "")) });
     } else {
       flushBullets();
       flushNested();
-      blocks.push({ type: "body", text: stripBold(line) });
+      const bodyText = stripBold(line);
+      if (!isNtruHsMetaLine(bodyText)) {
+        rawBlocks.push({ type: "body", text: bodyText });
+      }
     }
   }
 
   if (tableLines.length > 0) flushTable();
   flushBullets();
   flushNested();
+
+  // Post-process: remove body lines that duplicate table cell content
+  const blocks = [];
+  let recentCellSet = new Set();
+  for (const block of rawBlocks) {
+    if (block.type === "table") {
+      recentCellSet = buildTableCellSet(block);
+      blocks.push(block);
+    } else if (block.type === "spacing") {
+      // Keep spacers but don't clear dedup set yet
+      blocks.push(block);
+    } else if (
+      block.type === "body" &&
+      recentCellSet.size > 0 &&
+      recentCellSet.has(block.text.trim())
+    ) {
+      // This line is a verbatim repeat of a table cell — skip it
+      continue;
+    } else {
+      // Non-duplicate body or other block — clear the dedup window
+      recentCellSet = new Set();
+      blocks.push(block);
+    }
+  }
+
   return blocks;
 };
 
@@ -945,35 +1018,53 @@ const ReadingView = ({
           </View>
         );
       }
+      case "question": {
+        return (
+          <View
+            key={index}
+            style={styles.questionBlock}
+            onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
+          >
+            <Text style={styles.questionText} selectable={false}>{block.text}</Text>
+          </View>
+        );
+      }
       case "table": {
         const { headers, rows } = block;
+        // Minimum column width so text isn't squished; allow horizontal scroll
+        const colMinWidth = 90;
+        const tableMinWidth = headers.length * colMinWidth;
         return (
           <View
             key={index}
             style={styles.tableContainer}
             onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
           >
-            {/* Header row */}
-            <View style={styles.tableHeaderRow}>
-              {headers.map((h, hi) => (
-                <View key={hi} style={[styles.tableCell, styles.tableHeaderCell, hi < headers.length - 1 && styles.tableCellBorderRight]}>
-                  <Text style={styles.tableHeaderText} selectable={false}>{h}</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} bounces={false}>
+              <View style={{ minWidth: tableMinWidth }}>
+                {/* Header row */}
+                <View style={styles.tableHeaderRow}>
+                  {headers.map((h, hi) => (
+                    <View key={hi} style={[styles.tableCell, styles.tableHeaderCell, hi < headers.length - 1 && styles.tableCellBorderRight]}>
+                      <Text style={styles.tableHeaderText} selectable={false}>{h}</Text>
+                    </View>
+                  ))}
                 </View>
-              ))}
-            </View>
-            {/* Data rows */}
-            {rows.map((row, ri) => (
-              <View
-                key={ri}
-                style={[styles.tableRow, ri % 2 === 1 && styles.tableRowAlt]}
-              >
-                {headers.map((_, ci) => (
-                  <View key={ci} style={[styles.tableCell, ci < headers.length - 1 && styles.tableCellBorderRight]}>
-                    <Text style={styles.tableCellText} selectable={false}>{row[ci] ?? ""}</Text>
+                {/* Data rows */}
+                {rows.map((row, ri) => (
+                  <View
+                    key={ri}
+                    style={[styles.tableRow, ri % 2 === 1 && styles.tableRowAlt]}
+                  >
+                    {headers.map((_, ci) => (
+                      <View key={ci} style={[styles.tableCell, ci < headers.length - 1 && styles.tableCellBorderRight]}>
+                        <Text style={styles.tableCellText} selectable={false}>{row[ci] ?? ""}</Text>
+                      </View>
+                    ))}
                   </View>
                 ))}
               </View>
-            ))}
+            </ScrollView>
           </View>
         );
       }
@@ -1661,14 +1752,31 @@ const styles = StyleSheet.create({
     height: 14,
   },
 
+  // ── Question blocks (extracted from question-wrapper tables) ──
+  questionBlock: {
+    marginVertical: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderLeftWidth: 4,
+    borderLeftColor: theme.colors.secondary || "#7C3AED",
+    backgroundColor: "#F5F3FF",
+    borderRadius: 4,
+  },
+  questionText: {
+    color: theme.colors.textTitle || "#1F2937",
+    fontSize: 15,
+    fontWeight: "600",
+    lineHeight: 22,
+  },
+
   // ── Tables ──
   tableContainer: {
     marginVertical: 12,
     borderRadius: 8,
-    overflow: "hidden",
     borderWidth: 1,
     borderColor: theme.colors.surfaceSecondary || "#E5E7EB",
   },
+
   tableHeaderRow: {
     flexDirection: "row",
     backgroundColor: theme.colors.primary || "#7C3AED",
@@ -1681,7 +1789,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surfaceSecondary || "#F9FAFB",
   },
   tableCell: {
-    flex: 1,
+    width: 90,
     paddingHorizontal: 10,
     paddingVertical: 8,
   },
