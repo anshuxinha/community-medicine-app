@@ -68,6 +68,7 @@ const parseMarkdown = (content) => {
   let bulletGroup = [];
   let nestedGroup = [];
   let tableLines = [];
+  let lastTableCells = [];
 
   const flushBullets = () => {
     if (bulletGroup.length > 0) {
@@ -128,6 +129,10 @@ const parseMarkdown = (content) => {
     }
 
     rawBlocks.push({ type: "table", headers, rows });
+    // Store flattened cell values for duplicate detection
+    lastTableCells = [];
+    headers.forEach((h) => { if (h.trim()) lastTableCells.push(h.trim()); });
+    rows.forEach((row) => row.forEach((c) => { if (c && c.trim()) lastTableCells.push(c.trim()); }));
     tableLines = [];
   };
 
@@ -141,6 +146,21 @@ const parseMarkdown = (content) => {
       continue;
     } else if (tableLines.length > 0) {
       flushTable();
+    }
+
+    // Skip lines that duplicate the last table's content
+    if (lastTableCells.length > 0) {
+      const trimmedLine = line.trim();
+      if (trimmedLine) {
+        const cellIndex = lastTableCells.indexOf(trimmedLine);
+        if (cellIndex !== -1) {
+          lastTableCells.splice(cellIndex, 1);
+          continue;
+        } else {
+          // No match, reset tracker
+          lastTableCells = [];
+        }
+      }
     }
 
     if (line.startsWith("# ")) {
@@ -1079,33 +1099,43 @@ const ReadingView = ({
       }
       case "table": {
         const { headers, rows } = block;
+        const minColumnWidth = 120;
+        const totalTableWidth = headers.length * minColumnWidth;
         return (
           <View
             key={index}
-            style={styles.tableContainer}
+            style={styles.tableScrollContainer}
             onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
           >
-            {/* Header row */}
-            <View style={styles.tableHeaderRow}>
-              {headers.map((h, hi) => (
-                <View key={hi} style={[styles.tableCell, styles.tableHeaderCell, hi < headers.length - 1 && styles.tableCellBorderRight]}>
-                  <Text style={styles.tableHeaderText} selectable={false}>{h}</Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={true}
+              contentContainerStyle={{ width: totalTableWidth }}
+            >
+              <View style={[styles.tableContainer, { width: totalTableWidth }]}>
+                {/* Header row */}
+                <View style={styles.tableHeaderRow}>
+                  {headers.map((h, hi) => (
+                    <View key={hi} style={[styles.tableCell, styles.tableHeaderCell, hi < headers.length - 1 && styles.tableCellBorderRight]}>
+                      <Text style={styles.tableHeaderText} selectable={false}>{h}</Text>
+                    </View>
+                  ))}
                 </View>
-              ))}
-            </View>
-            {/* Data rows */}
-            {rows.map((row, ri) => (
-              <View
-                key={ri}
-                style={[styles.tableRow, ri % 2 === 1 && styles.tableRowAlt]}
-              >
-                {headers.map((_, ci) => (
-                  <View key={ci} style={[styles.tableCell, ci < headers.length - 1 && styles.tableCellBorderRight]}>
-                    <Text style={styles.tableCellText} selectable={false}>{row[ci] ?? ""}</Text>
+                {/* Data rows */}
+                {rows.map((row, ri) => (
+                  <View
+                    key={ri}
+                    style={[styles.tableRow, ri % 2 === 1 && styles.tableRowAlt]}
+                  >
+                    {headers.map((_, ci) => (
+                      <View key={ci} style={[styles.tableCell, ci < headers.length - 1 && styles.tableCellBorderRight]}>
+                        <Text style={styles.tableCellText} selectable={false}>{row[ci] ?? ""}</Text>
+                      </View>
+                    ))}
                   </View>
                 ))}
               </View>
-            ))}
+            </ScrollView>
           </View>
         );
       }
@@ -1812,10 +1842,12 @@ const styles = StyleSheet.create({
 
   // ── Tables ──
   tableContainer: {
-    marginVertical: 12,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: theme.colors.surfaceSecondary || "#E5E7EB",
+  },
+  tableScrollContainer: {
+    marginVertical: 12,
   },
 
   tableHeaderRow: {
@@ -1830,9 +1862,9 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surfaceSecondary || "#F9FAFB",
   },
   tableCell: {
-    flex: 1,
     paddingHorizontal: 10,
     paddingVertical: 8,
+    width: 120,
   },
   tableHeaderCell: {
     paddingVertical: 10,
