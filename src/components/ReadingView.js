@@ -62,8 +62,124 @@ const buildTableCellSet = (block) => {
   return set;
 };
 
-const parseMarkdown = (content) => {
+const parseTextTable = (lines, startIndex) => {
+  const n = lines.length;
+  let i = startIndex;
+  
+  // Collect headers (consecutive non-empty lines, each < 60 chars, not starting with special chars)
+  const headers = [];
+  while (i < n && lines[i].trim() && lines[i].trim().length < 60) {
+    const line = lines[i].trim();
+    // Skip lines that are clearly not headers
+    if (line.startsWith("Q") || line.startsWith("A)") || line.startsWith("-") || 
+        line.startsWith("•") || line.startsWith("◦") || line.startsWith("#") || 
+        line.startsWith("##") || line.startsWith("!") || line.startsWith(">") ||
+        line.startsWith("|")) {
+      break;
+    }
+    headers.push(line);
+    i++;
+  }
+  
+  // Need 2+ headers to be a table
+  if (headers.length < 2) return null;
+  
+  // Skip empty lines after headers
+  while (i < n && !lines[i].trim()) {
+    i++;
+  }
+  
+  // Collect data cells (non-empty lines, empty lines separate cells)
+  const dataCells = [];
+  while (i < n) {
+    const line = lines[i].trim();
+    
+    // Stop if we hit a section header
+    if (!line) {
+      i++;
+      continue;
+    }
+    
+    if (line.startsWith("Q") || line.startsWith("A)") || line.startsWith("#") || 
+        line.startsWith("##") || line.startsWith("!") || line.startsWith(">") ||
+        line.startsWith("|")) {
+      break;
+    }
+    if (/^(Introduction|Detailed|Critical|Advantages|Limitations|Relevance)/i.test(line)) {
+      break;
+    }
+    
+    dataCells.push(line);
+    i++;
+    
+    // Skip empty line after cell
+    if (i < n && !lines[i].trim()) {
+      i++;
+    }
+  }
+  
+  // Validate: need enough data cells (at least one row)
+  if (dataCells.length < headers.length) return null;
+  
+  return { headers, dataCells, endIndex: i };
+};
+
+const preprocessTextTables = (content) => {
   const lines = content.split("\n");
+  const n = lines.length;
+  const newLines = [];
+  let i = 0;
+
+  while (i < n) {
+    const line = lines[i].trim();
+    
+    // Check if this could be the start of a text table
+    // Headers: non-empty, <60 chars, not starting with special chars
+    let isTableStart = line && line.length < 60 && 
+        !line.startsWith("Q") && !line.startsWith("A)") && !line.startsWith("-") && 
+        !line.startsWith("•") && !line.startsWith("◦") && !line.startsWith("#") && 
+        !line.startsWith("##") && !line.startsWith("!") && !line.startsWith(">") &&
+        !line.startsWith("|");
+    
+    if (isTableStart) {
+      // Try to parse a text table starting at i
+      const table = parseTextTable(lines, i);
+      
+      if (table) {
+        // We have a table! Convert to markdown
+        newLines.push(""); // blank line before table
+        // Header row
+        newLines.push("| " + table.headers.join(" | ") + " |");
+        // Separator row
+        newLines.push("| " + table.headers.map(() => "---").join(" | ") + " |");
+        // Data rows
+        for (let j = 0; j < table.dataCells.length; j += table.headers.length) {
+          const row = table.dataCells.slice(j, j + table.headers.length);
+          // Pad if necessary
+          while (row.length < table.headers.length) row.push("");
+          newLines.push("| " + row.join(" | ") + " |");
+        }
+        newLines.push(""); // blank line after table
+        
+        // Skip past the table
+        i = table.endIndex;
+        continue;
+      }
+      // If we get here, table is null - fall through to add line
+    }
+    
+    // Not a table start or table parsing failed, add the line
+    newLines.push(lines[i]);
+    i++;
+  }
+
+  return newLines.join("\n");
+};
+
+const parseMarkdown = (content) => {
+  // Preprocess text tables to markdown format
+  const processedContent = preprocessTextTables(content);
+  const lines = processedContent.split("\n");
   const rawBlocks = [];
   let bulletGroup = [];
   let nestedGroup = [];
@@ -1852,7 +1968,7 @@ const styles = StyleSheet.create({
 
   tableHeaderRow: {
     flexDirection: "row",
-    backgroundColor: theme.colors.primary || "#7C3AED",
+    backgroundColor: "#9333ea",
   },
   tableRow: {
     flexDirection: "row",

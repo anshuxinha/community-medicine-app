@@ -1,0 +1,28 @@
+0 verbose cli C:\Program Files\nodejs\node.exe C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js
+1 info using npm@10.9.2
+2 info using node@v22.17.0
+3 silly config load:file:C:\Program Files\nodejs\node_modules\npm\npmrc
+4 silly config load:file:D:\The App\.npmrc
+5 silly config load:file:C:\Users\Anshuman Sinha\.npmrc
+6 silly config load:file:C:\Users\Anshuman Sinha\AppData\Roaming\npm\etc\npmrc
+7 verbose title npm exec eas whoami
+8 verbose argv "exec" "--" "eas" "whoami"
+9 verbose logfile logs-max:10 dir:D:\The App\npmcache\_logs\2026-05-02T03_02_36_318Z-
+10 verbose logfile D:\The App\npmcache\_logs\2026-05-02T03_02_36_318Z-debug-0.log
+11 silly logfile done cleaning log files
+12 silly packumentCache heap:2197815296 maxSize:549453824 maxEntrySize:274726912
+13 http fetch GET 200 https://registry.npmjs.org/eas 1348ms (cache miss)
+14 verbose stack Error: could not determine executable to run
+14 verbose stack     at getBinFromManifest (C:\Program Files\nodejs\node_modules\npm\node_modules\libnpmexec\lib\get-bin-from-manifest.js:17:23)
+14 verbose stack     at exec (C:\Program Files\nodejs\node_modules\npm\node_modules\libnpmexec\lib\index.js:202:15)
+14 verbose stack     at async Npm.exec (C:\Program Files\nodejs\node_modules\npm\lib\npm.js:207:9)
+14 verbose stack     at async module.exports (C:\Program Files\nodejs\node_modules\npm\lib\cli\entry.js:74:5)
+15 verbose pkgid eas@0.1.0
+16 error could not determine executable to run
+17 verbose cwd D:\The App
+18 verbose os Windows_NT 10.0.26200
+19 verbose node v22.17.0
+20 verbose npm  v10.9.2
+21 verbose exit 1
+22 verbose code 1
+23 error A complete log of this run can be found in: D:\The App\npmcache\_logs\2026-05-02T03_02_36_318Z-debug-0.log
