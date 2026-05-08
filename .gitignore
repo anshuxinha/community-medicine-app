@@ -42,3 +42,12 @@ yarn-error.*
 /android
 
 serviceAccountKey.json
+
+# PDF extraction temp files
+pdf_raw_extracted*.txt
+topic*_raw.txt
+topic*_years.txt
+topic*_current.txt
+topic2_*.txt
+layout_*.txt
+table_test.txt
