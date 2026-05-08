@@ -31,10 +31,13 @@ const isNtruHsHeading = (text) =>
 // Matches standalone metadata lines from the PDF extractor (body lines to skip)
 const isNtruHsMetaLine = (text) =>
   /NTRUHS/i.test(text) ||
-  /^Frequency:\s*\d+\s+Times?\s+Asked/i.test(text) ||
+  /^\(?\s*Frequency:\s*\d+\s+Times?\s+Asked/i.test(text) ||
   /^Detailed Model Answers for Q\d/i.test(text) ||
-  /^GRADE [A-C] Priority/i.test(text) ||
-  /^—\s*End of Document/i.test(text);
+  /GRADE [A-C] Priority/i.test(text) ||
+  /^—\s*End of Document/i.test(text) ||
+  /^— END OF GOLD MEDAL/i.test(text) ||
+  /^Prepared with Gold (Standard|Medal)/i.test(text) ||
+  /^COMMUNITY MEDICINE\b.*GOLD MEDAL/i.test(text);
 
 // A "question wrapper" table: 3 cols, all headers empty, only middle col of data rows has text.
 const extractQuestionTable = (headers, rows) => {
@@ -77,6 +80,14 @@ const parseTextTable = (lines, startIndex) => {
         line.startsWith("|")) {
       break;
     }
+    // Numbered list items (1. 2. 25.1.5 etc) are lists, not table headers
+    if (/^\d+[\.\)](?:\d+[\.\)])*\d*\s/.test(line)) {
+      break;
+    }
+    // MockData section keywords — structural headings, never table columns
+    if (/^(CORE CONCEPTS|FORMULAS AND CALCULATIONS|MNEMONICS|KEY POINTS|NOT APPLICABLE|OVERVIEW)\b/.test(line)) {
+      break;
+    }
     headers.push(line);
     i++;
   }
@@ -102,10 +113,23 @@ const parseTextTable = (lines, startIndex) => {
     
     if (line.startsWith("Q") || line.startsWith("A)") || line.startsWith("#") || 
         line.startsWith("##") || line.startsWith("!") || line.startsWith(">") ||
-        line.startsWith("|")) {
+        line.startsWith("|") || line.startsWith("-") || line.startsWith("•") ||
+        line.startsWith("◦")) {
       break;
     }
     if (/^(Introduction|Detailed|Critical|Advantages|Limitations|Relevance)/i.test(line)) {
+      break;
+    }
+    // Block numbered list items (1. 2. 3. 25.1.5 etc) which are lists, not table cells
+    if (/^\d+[\.\)](?:\d+[\.\)])*\d*\s/.test(line)) {
+      break;
+    }
+    // Block mockData section keywords that should never be table data
+    if (/^(CORE CONCEPTS|FORMULAS AND CALCULATIONS|MNEMONICS|NOT APPLICABLE)\b/.test(line)) {
+      break;
+    }
+    // Block ALL-CAPS short lines (section headings that shouldn't become table cells)
+    if (line.length < 50 && line === line.toUpperCase() && /[A-Z]/.test(line)) {
       break;
     }
     
@@ -210,9 +234,17 @@ const parseMarkdown = (content) => {
       row
         .split("|")
         .map((c) => c.trim())
-        .filter((_, i, arr) => i > 0 && i < arr.length - 1);
+        .filter((_, i, arr) => i > 0 && i < arr.length - 1);  // Remove first/last (from leading/trailing |)
     let headers = parseRow(tableLines[0]);
     let rows = tableLines.slice(2).map(parseRow);
+
+    // Filter out separator artifact rows (rows where every cell is just dashes)
+    rows = rows.filter(row => {
+      const nonEmptyCells = row.filter(c => c.trim());
+      if (nonEmptyCells.length === 0) return false;
+      if (nonEmptyCells.every(c => /^-+$/.test(c))) return false;
+      return true;
+    });
 
     // Check if it's a question-wrapper table
     const questionText = extractQuestionTable(headers, rows);
@@ -223,25 +255,58 @@ const parseMarkdown = (content) => {
     }
 
     // Strip empty padding columns from PDF-extracted tables
-    const realHeaders = headers.filter((h) => h.trim() !== "");
-    if (realHeaders.length > 0 && realHeaders.length < headers.length) {
-      const cleaned = [];
+    // First, find which columns have any non-empty content
+    const nonEmptyCols = [];
+    for (let col = 0; col < headers.length; col++) {
+      let allEmpty = true;
+      if (headers[col] && headers[col].trim()) allEmpty = false;
       for (const row of rows) {
-        const nonEmpty = row.filter((c) => (c || "").trim() !== "");
-        if (nonEmpty.length >= realHeaders.length) {
-          cleaned.push(nonEmpty.slice(0, realHeaders.length));
-        } else if (nonEmpty.length > 0 && cleaned.length > 0) {
-          // Continuation row — append to last cell of previous row
-          const prev = cleaned[cleaned.length - 1];
-          prev[prev.length - 1] += " " + nonEmpty.join(" ");
+        if (row[col] && row[col].trim()) allEmpty = false;
+      }
+      if (!allEmpty) nonEmptyCols.push(col);
+    }
+    
+    if (nonEmptyCols.length > 0) {
+      const newHeaders = nonEmptyCols.map((col) => headers[col]);
+      const newRows = [];
+      for (const row of rows) {
+        const newRow = nonEmptyCols.map((col) => row[col] || "");
+        newRows.push(newRow);
+      }
+      
+      // Merge continuation rows: if a row has only content in last column(s)
+      // and previous row exists, merge into previous row's last cell
+      const mergedRows = [];
+      for (const row of newRows) {
+        const hasContent = row.some((c) => c.trim());
+        if (!hasContent) continue;
+        
+        // Check if this looks like a continuation: only the last column(s) have content
+        const firstContentIdx = row.findIndex(c => c.trim());
+        const lastContentIdx = row.length - 1 - [...row].reverse().findIndex(c => c.trim());
+        const isContinuation = mergedRows.length > 0 && 
+          firstContentIdx >= Math.floor(row.length / 2) &&
+          row.slice(0, Math.floor(row.length / 2)).every(c => !c.trim());
+        
+        if (isContinuation) {
+          const prev = mergedRows[mergedRows.length - 1];
+          const continuationText = row.filter(c => c.trim()).join(" ");
+          if (continuationText) {
+            prev[prev.length - 1] += " " + continuationText;
+          }
         } else {
-          // Pad short rows
-          while (nonEmpty.length < realHeaders.length) nonEmpty.push("");
-          cleaned.push(nonEmpty);
+          mergedRows.push(row);
         }
       }
-      headers = realHeaders;
-      rows = cleaned;
+      
+      if (nonEmptyCols.length < headers.length) {
+        // Only rebuild if we actually stripped columns
+        headers = newHeaders;
+        rows = mergedRows;
+      } else {
+        // Columns unchanged but we still want merged rows
+        rows = mergedRows;
+      }
     }
 
     rawBlocks.push({ type: "table", headers, rows });
