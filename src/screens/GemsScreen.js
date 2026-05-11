@@ -10,6 +10,7 @@ import {
   Card,
   Searchbar,
   Chip,
+  IconButton,
 } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -175,7 +176,7 @@ const GemsScreen = ({ navigation }) => {
                     icon={isGemBookmarked ? "bookmark" : "bookmark-outline"} 
                     iconColor={isGemBookmarked ? theme.colors.secondary : undefined}
                     size={20} 
-                    onPress={() => handleToggleBookmark(gem, activeSection.title)}
+                    onPress={() => handleToggleBookmark(gem, sectionTitle)}
                   />
                 </View>
                 <Text 

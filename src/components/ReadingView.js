@@ -686,6 +686,7 @@ const getRotatedAspectRatio = (aspectRatio, rotation = 0) => {
 const ReadingView = ({
   content,
   title,
+  headerTitle,
   topicId,
   isBookmarked,
   onToggleBookmark,
@@ -1434,7 +1435,7 @@ const ReadingView = ({
           <MaterialIcons name="arrow-back" size={24} color={theme.colors.textTitle} />
         </TouchableOpacity>
         <Text style={styles.headerSectionTitle} numberOfLines={1} selectable={false}>
-          {topicId ? `Chapter ${topicId}` : section || ""}
+          {headerTitle}
         </Text>
         <View style={styles.headerActions}>
           <TouchableOpacity

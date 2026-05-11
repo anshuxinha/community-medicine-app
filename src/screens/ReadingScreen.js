@@ -302,11 +302,14 @@ const ReadingScreen = ({ route, navigation }) => {
     speakNextChunk(sessionId);
   };
 
+  const headerTitle = isGem ? (effectiveTitle || title) : (effectiveId ? `Chapter ${effectiveId}` : effectiveSection || "");
+
   return (
     <View style={styles.container}>
       <ReadingView
         content={effectiveContent}
         title={effectiveTitle}
+        headerTitle={headerTitle}
         topicId={effectiveId}
         isGem={isGem}
         isBookmarked={bookmarked}
