@@ -35,6 +35,7 @@ import VirtualMuseumScreen from "../screens/VirtualMuseumScreen";
 import BiostatsAssistantScreen from "../screens/BiostatsAssistantScreen";
 import NotificationsScreen from "../screens/NotificationsScreen";
 import AdminLibraryReviewScreen from "../screens/AdminLibraryReviewScreen";
+import GemsScreen from "../screens/GemsScreen";
 import { theme } from "../styles/theme";
 
 const Tab = createBottomTabNavigator();
@@ -205,6 +206,11 @@ const AppNavigator = () => {
               name="BiostatsAssistant"
               component={BiostatsAssistantScreen}
               options={{ title: "📊 Biostats Assistant" }}
+            />
+            <Stack.Screen
+              name="Gems"
+              component={GemsScreen}
+              options={{ title: "💎 Study Gems" }}
             />
 
             {/* ── Paywall / Guards ── */}

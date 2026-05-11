@@ -18,6 +18,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { theme } from "../styles/theme";
+import { GEM_IMAGE_MAP, parseFigureNumbers } from "../data/gemImages";
 import { normalizeUpdatedSnippet } from "../utils/contentRegistry";
 
 const stripBold = (text) => text.replace(/\*\*(.+?)\*\*/g, "$1");
@@ -369,6 +370,19 @@ const parseMarkdown = (content) => {
       flushNested();
       const match = line.match(/^!\[(.*?)\]\((.*?)\)$/);
       rawBlocks.push({ type: "image", url: match[2], alt: match[1] });
+    } else if (line.trim().match(/^\*\[Image Placeholders?:\s*(.+?)\]\*$/)) {
+      flushBullets();
+      flushNested();
+      const desc = line.trim().match(/^\*\[Image Placeholders?:\s*(.+?)\]\*$/)[1];
+      const figures = parseFigureNumbers(desc);
+      figures.forEach((fig) => {
+        if (GEM_IMAGE_MAP[fig]) {
+          rawBlocks.push({ type: "image", url: GEM_IMAGE_MAP[fig], alt: fig });
+        }
+      });
+      if (figures.length === 0 || figures.every((fig) => !GEM_IMAGE_MAP[fig])) {
+        rawBlocks.push({ type: "body", text: line.trim() });
+      }
     } else if (line.trim() === "") {
       flushBullets();
       flushNested();

@@ -236,7 +236,22 @@ const DashboardScreen = ({ navigation }) => {
             </Card.Content>
           </Card>
           <Card
-            style={[styles.quickCard, { marginHorizontal: 8 }]}
+            style={[styles.quickCard, { marginLeft: 8 }]}
+            onPress={() => navigation.navigate("Gems")}
+          >
+            <Card.Content style={styles.quickCardContent}>
+              <MaterialIcons
+                name="diamond"
+                size={32}
+                color={theme.colors.secondary}
+              />
+              <Text variant="labelMedium" style={styles.quickText}>
+                Gems
+              </Text>
+            </Card.Content>
+          </Card>
+          <Card
+            style={[styles.quickCard, { marginLeft: 8 }]}
             onPress={() => navigation.navigate("VirtualMuseum")}
           >
             <Card.Content style={styles.quickCardContent}>
@@ -251,7 +266,7 @@ const DashboardScreen = ({ navigation }) => {
             </Card.Content>
           </Card>
           <Card
-            style={styles.quickCard}
+            style={[styles.quickCard, { marginLeft: 8 }]}
             onPress={() => navigation.navigate("BiostatsAssistant")}
           >
             <Card.Content style={styles.quickCardContent}>
