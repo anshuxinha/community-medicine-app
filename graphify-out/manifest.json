@@ -1,153 +1,658 @@
 {
-  "App.js": 1776686094.4752614,
-  "generate-icons.js": 1772355532.980013,
-  "index.js": 499162500.0,
-  "metro.config.js": 1772354980.3964348,
-  "modifyAppContext.js": 1777203592.1637194,
-  "modifyAppNavigator.js": 1777203592.165375,
-  "modifyDeviceConflictScreen.js": 1777203592.166486,
-  "modifyLoginScreen.js": 1777203592.168841,
-  "patch.py": 1776157242.0266774,
-  "patch_appcontext.js": 1777203592.1709535,
-  "patch_coupon.js": 1777203592.172481,
-  "patch_login.js": 1777203592.173993,
-  "query_graph.py": 1778158905.826352,
-  "upload-museum-images.js": 1772355532.5442288,
-  "validate_json.js": 1774937138.5212317,
-  "android\\app\\src\\main\\java\\com\\communitymed\\app\\MainActivity.kt": 1771997218.373908,
-  "android\\app\\src\\main\\java\\com\\communitymed\\app\\MainApplication.kt": 1776437175.429324,
-  "android\\app\\src\\main\\java\\com\\communitymed\\app\\ScreenCaptureProtectionModule.java": 1776678968.6954668,
-  "android\\app\\src\\main\\java\\com\\communitymed\\app\\ScreenCaptureProtectionPackage.java": 1776437152.4591136,
-  "scratch\\format_data.js": 1777954874.6410227,
-  "scratch\\inject_style.js": 1777957155.4982417,
-  "scratch\\list-bunny-libs.js": 1777821658.160189,
-  "scratch\\list-bunny-videos.js": 1777821686.895701,
-  "scratch\\list-videos.js": 1777821602.7211404,
-  "scratch\\parse-bunny-dump.js": 1777821766.5411088,
-  "scripts\\apply_staged_library_updates.py": 1777265229.3049736,
-  "scripts\\audit_colors.js": 1772547735.8824155,
-  "scripts\\auth_telegram.py": 1776158882.4297302,
-  "scripts\\bunny-videos.js": 1777869755.7249196,
-  "scripts\\check_review_queue.js": 1777560719.6051679,
-  "scripts\\check_rules.js": 1777560719.6057596,
-  "scripts\\create_admin.js": 1772355533.378721,
-  "scripts\\download-remaining-nhp-logos.js": 1775300401.579737,
-  "scripts\\dump_review_doc.js": 1777560719.6063821,
-  "scripts\\fetch_updates.py": 1777643989.0439153,
-  "scripts\\generate-reading-illustrations.js": 1774758104.8590746,
-  "scripts\\grant_lifetime_premium.js": 1775412414.646668,
-  "scripts\\patch-mockData.js": 1772355533.3797212,
-  "scripts\\pdf_to_json.py": 1771522074.787421,
-  "scripts\\push_notifications.py": 1773332175.836584,
-  "scripts\\refactor_colors.js": 1772547910.835821,
-  "scripts\\reset_all_devices.js": 1776773141.873905,
-  "scripts\\reset_devices.js": 1776771290.9485075,
-  "scripts\\set_admin.js": 1777560719.6075256,
-  "scripts\\stage-nhp-logo-crops.js": 1775298689.7760763,
-  "scripts\\sync-reading-illustrations.js": 1775306756.8060327,
-  "scripts\\update_rules.js": 1777869755.725922,
-  "scripts\\upload-biostat-images.js": 1772355533.380719,
-  "scripts\\upload-biostat-images.py": 1772355533.3817184,
-  "scripts\\verify_mock_data.py": 1777266343.004308,
-  "src\\components\\DrawerMenu.js": 1777266264.8196857,
-  "src\\components\\DropdownPicker.js": 1777467083.0792534,
-  "src\\components\\ErrorBoundary.js": 1775309431.080167,
-  "src\\components\\ReadingView.js": 1778155785.6767108,
-  "src\\components\\UpdateDetailDialog.js": 1777203329.2302506,
-  "src\\config\\firebase.js": 1772355531.2110212,
-  "src\\context\\AppContext.js": 1777871079.3061538,
-  "src\\data\\defaultTopicIllustrations.js": 1775143847.0992994,
-  "src\\data\\museumData.js": 1777956926.1768365,
-  "src\\hooks\\useSessionEnforcer.js": 1776915623.531863,
-  "src\\navigation\\AppNavigator.js": 1777871988.995083,
-  "src\\screens\\AdminLibraryReviewScreen.js": 1777561970.1780882,
-  "src\\screens\\AnthropometryScreen.js": 1772880768.4740195,
-  "src\\screens\\BiostatsAssistantScreen.js": 1772955351.187009,
-  "src\\screens\\BookmarksScreen.js": 1776677220.440355,
-  "src\\screens\\DashboardScreen.js": 1777203362.7726176,
-  "src\\screens\\DietarySurveyScreen.js": 1777467165.6328642,
-  "src\\screens\\FieldToolboxScreen.js": 1772880766.4451642,
-  "src\\screens\\LibraryScreen.js": 1778131963.850783,
-  "src\\screens\\LoginScreen.js": 1776915579.839864,
-  "src\\screens\\NotificationsScreen.js": 1777714475.7269208,
-  "src\\screens\\PaywallScreen.js": 1777714483.3702476,
-  "src\\screens\\ProfileScreen.js": 1777644143.6820407,
-  "src\\screens\\QuizScreen.js": 1776677579.0425787,
-  "src\\screens\\ReadingScreen.js": 1777949505.5862641,
-  "src\\screens\\SearchScreen.js": 1777266393.020213,
-  "src\\screens\\SESCalculatorScreen.js": 1777467142.2705004,
-  "src\\screens\\SubTopicsScreen.js": 1776677237.0528798,
-  "src\\screens\\UpdatesScreen.js": 1777605775.571606,
-  "src\\screens\\VideosScreen.js": 1777872012.1809382,
-  "src\\screens\\VirtualMuseumScreen.js": 1777955992.852251,
-  "src\\services\\annotationService.js": 1777659007.7819853,
-  "src\\services\\highlightService.js": 1777659005.6232884,
-  "src\\services\\notificationService.js": 1777714709.3918688,
-  "src\\services\\topicIllustrations.js": 1775143906.3026435,
-  "src\\services\\videoService.js": 1777869755.728923,
-  "src\\styles\\theme.js": 1776440555.8890755,
-  "src\\utils\\contentRegistry.js": 1777266111.568834,
-  "src\\utils\\deviceUtils.js": 1776915497.5873566,
-  "src\\utils\\reviewPrompt.js": 1777871530.6764872,
-  "src\\utils\\screenCaptureProtection.js": 1776675749.994553,
-  "src\\utils\\tts.js": 1773723664.9753537,
-  "AGENTS.md": 1777781256.5515063,
-  "CUSTOM_INSTRUCTION_EAS.md": 1775129844.3814962,
-  "EAS_UPDATE_GUIDELINES.md": 1775129820.4595375,
-  "docs\\library-update-review-workflow.md": 1777266382.0541723,
-  "docs\\play_store_metadata.md": 1772355533.364325,
-  "docs\\privacy.html": 1776931500.240169,
-  "docs\\purposeful-image-placement.md": 1774754386.8025944,
-  "android\\app\\src\\main\\res\\drawable-hdpi\\notification_icon.png": 1776686130.2448807,
-  "android\\app\\src\\main\\res\\drawable-hdpi\\splashscreen_logo.png": 1776686127.6926472,
-  "android\\app\\src\\main\\res\\drawable-mdpi\\notification_icon.png": 1776686130.247039,
-  "android\\app\\src\\main\\res\\drawable-mdpi\\splashscreen_logo.png": 1776686127.6945374,
-  "android\\app\\src\\main\\res\\drawable-xhdpi\\notification_icon.png": 1776686130.2496662,
-  "android\\app\\src\\main\\res\\drawable-xhdpi\\splashscreen_logo.png": 1776686127.6926472,
-  "android\\app\\src\\main\\res\\drawable-xxhdpi\\notification_icon.png": 1776686130.2597253,
-  "android\\app\\src\\main\\res\\drawable-xxhdpi\\splashscreen_logo.png": 1776686127.6926472,
-  "android\\app\\src\\main\\res\\drawable-xxxhdpi\\notification_icon.png": 1776686130.247039,
-  "android\\app\\src\\main\\res\\drawable-xxxhdpi\\splashscreen_logo.png": 1776686129.9631119,
-  "android\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher.webp": 1776686117.717298,
-  "android\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher_foreground.webp": 1776686120.535461,
-  "android\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher_round.webp": 1776686118.8370156,
-  "android\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher.webp": 1776686117.717298,
-  "android\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher_foreground.webp": 1776686120.535461,
-  "android\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher_round.webp": 1776686118.8370156,
-  "android\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher.webp": 1776686117.717298,
-  "android\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher_foreground.webp": 1776686120.535461,
-  "android\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher_round.webp": 1776686118.7064822,
-  "android\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher.webp": 1776686117.8249168,
-  "android\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher_foreground.webp": 1776686120.5369792,
-  "android\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher_round.webp": 1776686118.7064822,
-  "android\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher.webp": 1776686117.829291,
-  "android\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher_foreground.webp": 1776686120.538747,
-  "android\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher_round.webp": 1776686118.9550035,
-  "assets\\adaptive-icon.png": 1772355533.1958623,
-  "assets\\favicon.png": 1772355533.196859,
-  "assets\\icon.png": 1772355533.2122355,
-  "assets\\notification-icon.png": 1772355532.9760008,
-  "assets\\splash.png": 1772355533.2839482,
-  "assets\\pyq\\Paper1_Diag1.png": 1777965241.4542718,
-  "assets\\pyq\\Paper2_Diag1.png": 1777965241.6987722,
-  "assets\\pyq\\Paper3_Diag1.png": 1777965241.864399,
-  "assets\\pyq\\Paper4_Diag1.png": 1777965242.2362163,
-  "reading-illustrations\\nhp-logo-staging-contact-sheet.png": 1775300411.9803963,
-  "reading-illustrations\\stage_7-10_npncd.png": 1775298704.9441788,
-  "reading-illustrations\\stage_7-11_nmhp.png": 1775300411.6131117,
-  "reading-illustrations\\stage_7-12_idsp.png": 1775306498.8033462,
-  "reading-illustrations\\stage_7-13_pmjay.png": 1775298705.393551,
-  "reading-illustrations\\stage_7-2_inap.png": 1775306387.935285,
-  "reading-illustrations\\stage_7-2_laqshya.png": 1775306189.9939032,
-  "reading-illustrations\\stage_7-2_maa.png": 1775298703.5207498,
-  "reading-illustrations\\stage_7-2_pmmvy.png": 1775300408.0918765,
-  "reading-illustrations\\stage_7-2_pmsma.png": 1775306241.8776388,
-  "reading-illustrations\\stage_7-2_rksk.png": 1775300408.4566119,
-  "reading-illustrations\\stage_7-2_suman.png": 1775306361.4364448,
-  "reading-illustrations\\stage_7-3_nvbdcp.png": 1775300408.8238385,
-  "reading-illustrations\\stage_7-4_nlep.png": 1775300409.2212546,
-  "reading-illustrations\\stage_7-5_ntep.png": 1775300410.196958,
-  "reading-illustrations\\stage_7-5_rntcp_dots.png": 1775306414.0252402,
-  "reading-illustrations\\stage_7-6_naco.png": 1775298704.5439606,
-  "reading-illustrations\\stage_7-7_npcbvi.png": 1775300410.457045
+  "D:\\The App\\App.js": {
+    "mtime": 1776686094.4752614,
+    "hash": "11256ef8e15184f8a4dcf5b67b8b13d3"
+  },
+  "D:\\The App\\ast_extract.py": {
+    "mtime": 1778159580.4395475,
+    "hash": "30cd4cbfb4254ddca0501bc108563988"
+  },
+  "D:\\The App\\build_graph.py": {
+    "mtime": 1778160247.7569287,
+    "hash": "7a256d3bb95d9adead34e3f540952a2a"
+  },
+  "D:\\The App\\cache_check.py": {
+    "mtime": 1778159617.4435666,
+    "hash": "ceb1c041c91b368f865b78c3cc3ff075"
+  },
+  "D:\\The App\\generate-icons.js": {
+    "mtime": 1772355532.980013,
+    "hash": "38b5d2dd80847395a7caef1e901cf267"
+  },
+  "D:\\The App\\index.js": {
+    "mtime": 499162500.0,
+    "hash": "33caa6d28d87fc7e637c033d0d7124b1"
+  },
+  "D:\\The App\\label_communities.py": {
+    "mtime": 1778160324.8007102,
+    "hash": "fac72462e0cce7dc61218f2a5c744021"
+  },
+  "D:\\The App\\merge_all.py": {
+    "mtime": 1778160134.0521314,
+    "hash": "df2cc2eddb54695b3c4066d764bca9b1"
+  },
+  "D:\\The App\\merge_semantic.py": {
+    "mtime": 1778160020.7827966,
+    "hash": "d1009f603c77dfca406ad66f9348810a"
+  },
+  "D:\\The App\\metro.config.js": {
+    "mtime": 1772354980.3964348,
+    "hash": "06c001da3dc866dfd89ff0e1b4e1c2df"
+  },
+  "D:\\The App\\modifyAppContext.js": {
+    "mtime": 1777203592.1637194,
+    "hash": "556e0a3ca0825186ca5f69dd91007e08"
+  },
+  "D:\\The App\\modifyAppNavigator.js": {
+    "mtime": 1777203592.165375,
+    "hash": "63886e69a417809d2b321ae6f746a65e"
+  },
+  "D:\\The App\\modifyDeviceConflictScreen.js": {
+    "mtime": 1777203592.166486,
+    "hash": "2b7c0ea6e5b480256d5e3823308c1be4"
+  },
+  "D:\\The App\\modifyLoginScreen.js": {
+    "mtime": 1777203592.168841,
+    "hash": "b30e210cd63fe87cacc42ffa7cf3889f"
+  },
+  "D:\\The App\\patch.py": {
+    "mtime": 1776157242.0266774,
+    "hash": "cd647817b4bdb230aa0b0286bd06fd91"
+  },
+  "D:\\The App\\patch_appcontext.js": {
+    "mtime": 1777203592.1709535,
+    "hash": "2a70b04b9b3b63d7755ab921b3cd80a9"
+  },
+  "D:\\The App\\patch_coupon.js": {
+    "mtime": 1777203592.172481,
+    "hash": "d8d0fcd309cf3b3616aeede897979c97"
+  },
+  "D:\\The App\\patch_login.js": {
+    "mtime": 1777203592.173993,
+    "hash": "47e7a1b0eeb69dfe7de1ef94f32f932c"
+  },
+  "D:\\The App\\query_graph.py": {
+    "mtime": 1778158905.826352,
+    "hash": "2b9996b4e42ee8391322fca25aae798b"
+  },
+  "D:\\The App\\upload-museum-images.js": {
+    "mtime": 1772355532.5442288,
+    "hash": "524407ee3c6d116d3b57bd7fd684eb75"
+  },
+  "D:\\The App\\validate_json.js": {
+    "mtime": 1774937138.5212317,
+    "hash": "1422cdafd4202b2f44f734e6d8bd9c66"
+  },
+  "D:\\The App\\android\\build.gradle": {
+    "mtime": 1776686130.358033,
+    "hash": "c1e50c7ff1340048f86481dd340ad736"
+  },
+  "D:\\The App\\android\\gradlew": {
+    "mtime": 1771997174.316188,
+    "hash": "ff1ddbebbc9b4d04f2e9f8cab50d6595"
+  },
+  "D:\\The App\\android\\settings.gradle": {
+    "mtime": 1776686130.3046508,
+    "hash": "c1f194df6986b55c1ff8b75bd0afe65e"
+  },
+  "D:\\The App\\android\\app\\build.gradle": {
+    "mtime": 1776686130.361584,
+    "hash": "9189307c2d4e5bdfb298d551e40ad5c4"
+  },
+  "D:\\The App\\android\\app\\src\\main\\java\\com\\communitymed\\app\\MainActivity.kt": {
+    "mtime": 1771997218.373908,
+    "hash": "8ff0a163ce7031b2b67e80ab808e96d9"
+  },
+  "D:\\The App\\android\\app\\src\\main\\java\\com\\communitymed\\app\\MainApplication.kt": {
+    "mtime": 1776437175.429324,
+    "hash": "c5f64fedf32512eb71508cc2c4e02042"
+  },
+  "D:\\The App\\android\\app\\src\\main\\java\\com\\communitymed\\app\\ScreenCaptureProtectionModule.java": {
+    "mtime": 1776678968.6954668,
+    "hash": "9a6ae9e67da00d1fc1c84217faaabf3e"
+  },
+  "D:\\The App\\android\\app\\src\\main\\java\\com\\communitymed\\app\\ScreenCaptureProtectionPackage.java": {
+    "mtime": 1776437152.4591136,
+    "hash": "d86677b7acb85461ac8aa6026ba52141"
+  },
+  "D:\\The App\\scratch\\format_data.js": {
+    "mtime": 1777954874.6410227,
+    "hash": "868d15fc1c9845259c75220ce86264d2"
+  },
+  "D:\\The App\\scratch\\inject_style.js": {
+    "mtime": 1777957155.4982417,
+    "hash": "401c7aab066e4a90bad68b9369008b0d"
+  },
+  "D:\\The App\\scratch\\list-bunny-libs.js": {
+    "mtime": 1777821658.160189,
+    "hash": "2e84af4d1f81cf2ca5d4c0a28a2098ed"
+  },
+  "D:\\The App\\scratch\\list-bunny-videos.js": {
+    "mtime": 1777821686.895701,
+    "hash": "a4ab0d677d5a53ad9caf94440a453980"
+  },
+  "D:\\The App\\scratch\\list-videos.js": {
+    "mtime": 1777821602.7211404,
+    "hash": "5560095267a3577f773c6a201ab578ca"
+  },
+  "D:\\The App\\scratch\\parse-bunny-dump.js": {
+    "mtime": 1777821766.5411088,
+    "hash": "a5d973d1c0f46f980e159c9b5aee520c"
+  },
+  "D:\\The App\\scripts\\apply_staged_library_updates.py": {
+    "mtime": 1777265229.3049736,
+    "hash": "54936b9b06f3ffedf69217c6f0accca5"
+  },
+  "D:\\The App\\scripts\\audit_colors.js": {
+    "mtime": 1772547735.8824155,
+    "hash": "d0f2bdc45d4c5d38de313a0a4bc3d5c7"
+  },
+  "D:\\The App\\scripts\\auth_telegram.py": {
+    "mtime": 1776158882.4297302,
+    "hash": "d2356a6192520e31f73a149eeed2931b"
+  },
+  "D:\\The App\\scripts\\bunny-videos.js": {
+    "mtime": 1777869755.7249196,
+    "hash": "7b2562ca3e56793428e6d1b6bbff80b3"
+  },
+  "D:\\The App\\scripts\\check_review_queue.js": {
+    "mtime": 1777560719.6051679,
+    "hash": "462cd0d59d1a18375571773e76232a54"
+  },
+  "D:\\The App\\scripts\\check_rules.js": {
+    "mtime": 1777560719.6057596,
+    "hash": "77c003ad67cdd2a5cf7a1adcb2d28b33"
+  },
+  "D:\\The App\\scripts\\create_admin.js": {
+    "mtime": 1772355533.378721,
+    "hash": "340987431de13941db032f91d2540782"
+  },
+  "D:\\The App\\scripts\\download-remaining-nhp-logos.js": {
+    "mtime": 1775300401.579737,
+    "hash": "fcab1fff7667f905fb7a05124be450ea"
+  },
+  "D:\\The App\\scripts\\dump_review_doc.js": {
+    "mtime": 1777560719.6063821,
+    "hash": "113e41920f0703cdd6ac12124ca636c4"
+  },
+  "D:\\The App\\scripts\\fetch_updates.py": {
+    "mtime": 1777643989.0439153,
+    "hash": "14c421e12c1afdc51e2027ef01abdfbc"
+  },
+  "D:\\The App\\scripts\\generate-reading-illustrations.js": {
+    "mtime": 1774758104.8590746,
+    "hash": "014b0f6f589429da2857b0dbefee63a6"
+  },
+  "D:\\The App\\scripts\\grant_lifetime_premium.js": {
+    "mtime": 1775412414.646668,
+    "hash": "039ef18442ec3977c1ae32fc965da703"
+  },
+  "D:\\The App\\scripts\\patch-mockData.js": {
+    "mtime": 1772355533.3797212,
+    "hash": "817e8ee56ab277895de8804e95e83ac1"
+  },
+  "D:\\The App\\scripts\\pdf_to_json.py": {
+    "mtime": 1778395627.2862573,
+    "hash": "3da4cd0fc30e74dc4ef35813e2634863"
+  },
+  "D:\\The App\\scripts\\push_notifications.py": {
+    "mtime": 1773332175.836584,
+    "hash": "f2c0caa8600f2a7b598b8ab0fdb7422f"
+  },
+  "D:\\The App\\scripts\\refactor_colors.js": {
+    "mtime": 1772547910.835821,
+    "hash": "ab38612c7db54d2ac44bc6833c58fdb3"
+  },
+  "D:\\The App\\scripts\\reset_all_devices.js": {
+    "mtime": 1776773141.873905,
+    "hash": "6a3bdb40df56a6159de014422b3e6d4c"
+  },
+  "D:\\The App\\scripts\\reset_devices.js": {
+    "mtime": 1776771290.9485075,
+    "hash": "f024e7b721a3c582829bc7b05c03a814"
+  },
+  "D:\\The App\\scripts\\set_admin.js": {
+    "mtime": 1777560719.6075256,
+    "hash": "ac70e79e9a4b9bc3aedddbaf334b0080"
+  },
+  "D:\\The App\\scripts\\stage-nhp-logo-crops.js": {
+    "mtime": 1775298689.7760763,
+    "hash": "3edeca7925804a5d889104af8669964e"
+  },
+  "D:\\The App\\scripts\\sync-gem-images.js": {
+    "mtime": 1778505702.999863,
+    "hash": "4465f57603470d0649709fe4bc2be7c5"
+  },
+  "D:\\The App\\scripts\\sync-reading-illustrations.js": {
+    "mtime": 1775306756.8060327,
+    "hash": "fad85bbe9647a11753c0e33d597086ee"
+  },
+  "D:\\The App\\scripts\\update_rules.js": {
+    "mtime": 1777869755.725922,
+    "hash": "ec36202344d3e5f9bfadb0b34c70e0a1"
+  },
+  "D:\\The App\\scripts\\upload-biostat-images.js": {
+    "mtime": 1772355533.380719,
+    "hash": "8e9f21ecea21407e84a384be88ce9986"
+  },
+  "D:\\The App\\scripts\\upload-biostat-images.py": {
+    "mtime": 1772355533.3817184,
+    "hash": "7f1309f7b80e7f81379541523bafabca"
+  },
+  "D:\\The App\\scripts\\verify_mock_data.py": {
+    "mtime": 1777266343.004308,
+    "hash": "12690b096f69a1b922321f9f33e019b1"
+  },
+  "D:\\The App\\src\\components\\DrawerMenu.js": {
+    "mtime": 1777266264.8196857,
+    "hash": "63b417c58d6ed8841ecb02eda98383fb"
+  },
+  "D:\\The App\\src\\components\\DropdownPicker.js": {
+    "mtime": 1777467083.0792534,
+    "hash": "e4ab8aa45161245e41eb826e92a06bd2"
+  },
+  "D:\\The App\\src\\components\\ErrorBoundary.js": {
+    "mtime": 1775309431.080167,
+    "hash": "97abdb8fd522462f616d41d6c847c9b9"
+  },
+  "D:\\The App\\src\\components\\ReadingView.js": {
+    "mtime": 1778505622.3668525,
+    "hash": "90863d0b656270e5fca724e3ca0a0638"
+  },
+  "D:\\The App\\src\\components\\UpdateDetailDialog.js": {
+    "mtime": 1777203329.2302506,
+    "hash": "fe73d807b895c27263593e0a3d11725e"
+  },
+  "D:\\The App\\src\\config\\firebase.js": {
+    "mtime": 1772355531.2110212,
+    "hash": "b6d28a52efa63c1ccfa616dabffb7bd9"
+  },
+  "D:\\The App\\src\\context\\AppContext.js": {
+    "mtime": 1778502162.3367505,
+    "hash": "69c7681458f90a6f9d870bcbeafa4c4c"
+  },
+  "D:\\The App\\src\\data\\defaultTopicIllustrations.js": {
+    "mtime": 1775143847.0992994,
+    "hash": "6d7efe5eaf665c93daf1b4265c4c2234"
+  },
+  "D:\\The App\\src\\data\\museumData.js": {
+    "mtime": 1777956926.1768365,
+    "hash": "d5305855ff24b13ac6432cc141e8dd4f"
+  },
+  "D:\\The App\\src\\hooks\\useSessionEnforcer.js": {
+    "mtime": 1776915623.531863,
+    "hash": "f486f262d18f04ca01c8458ba191645d"
+  },
+  "D:\\The App\\src\\navigation\\AppNavigator.js": {
+    "mtime": 1778499619.4760294,
+    "hash": "7322b69a4aa38f678e3467ceb3e90b5f"
+  },
+  "D:\\The App\\src\\screens\\AdminLibraryReviewScreen.js": {
+    "mtime": 1777561970.1780882,
+    "hash": "f1373ea2f15ef5a5ea9b44489ce781fc"
+  },
+  "D:\\The App\\src\\screens\\AnthropometryScreen.js": {
+    "mtime": 1772880768.4740195,
+    "hash": "54013a2dce3b49a24e6041e30b20eb1d"
+  },
+  "D:\\The App\\src\\screens\\BiostatsAssistantScreen.js": {
+    "mtime": 1772955351.187009,
+    "hash": "052902ce68da516d6e30ca3db9cd0ae1"
+  },
+  "D:\\The App\\src\\screens\\BookmarksScreen.js": {
+    "mtime": 1776677220.440355,
+    "hash": "797040b44d5d8e7e9c7d7415031b7ba7"
+  },
+  "D:\\The App\\src\\screens\\DashboardScreen.js": {
+    "mtime": 1778499619.4780269,
+    "hash": "c7c0d08e7722012740e677a4095bcba6"
+  },
+  "D:\\The App\\src\\screens\\DietarySurveyScreen.js": {
+    "mtime": 1777467165.6328642,
+    "hash": "36870779cc060d0a416e2f89b7108b5f"
+  },
+  "D:\\The App\\src\\screens\\FieldToolboxScreen.js": {
+    "mtime": 1772880766.4451642,
+    "hash": "23400106cbd356f911b74bf0164c2c44"
+  },
+  "D:\\The App\\src\\screens\\GemsScreen.js": {
+    "mtime": 1778505558.8965936,
+    "hash": "c2cb66bf3e4f2b2732b618239d185c7e"
+  },
+  "D:\\The App\\src\\screens\\LibraryScreen.js": {
+    "mtime": 1778395627.2983596,
+    "hash": "033963dc913e703b1aaa054f80db2c54"
+  },
+  "D:\\The App\\src\\screens\\LoginScreen.js": {
+    "mtime": 1778505815.0154502,
+    "hash": "aef1e08acd615e9dcd55e4a667edc752"
+  },
+  "D:\\The App\\src\\screens\\NotificationsScreen.js": {
+    "mtime": 1777714475.7269208,
+    "hash": "a5c4606f94a696d570286b0c63951ff5"
+  },
+  "D:\\The App\\src\\screens\\PaywallScreen.js": {
+    "mtime": 1778502162.3427618,
+    "hash": "592a1c1dc5f5753847d15e279cc8bda8"
+  },
+  "D:\\The App\\src\\screens\\ProfileScreen.js": {
+    "mtime": 1777644143.6820407,
+    "hash": "837aefd134749b9d5f52b4f0f85658bb"
+  },
+  "D:\\The App\\src\\screens\\QuizScreen.js": {
+    "mtime": 1776677579.0425787,
+    "hash": "3a967d076b1f6aee2312f5417a95bd3e"
+  },
+  "D:\\The App\\src\\screens\\ReadingScreen.js": {
+    "mtime": 1778505563.7785437,
+    "hash": "6753a8920bd77d9989d4312a08146515"
+  },
+  "D:\\The App\\src\\screens\\SearchScreen.js": {
+    "mtime": 1777266393.020213,
+    "hash": "b53afd189f11f368790fe5d6e084a0a4"
+  },
+  "D:\\The App\\src\\screens\\SESCalculatorScreen.js": {
+    "mtime": 1777467142.2705004,
+    "hash": "85a798a97aa1abc084130c47e0941180"
+  },
+  "D:\\The App\\src\\screens\\SubTopicsScreen.js": {
+    "mtime": 1776677237.0528798,
+    "hash": "a59c3a2904c65b5b99817a8437cb969c"
+  },
+  "D:\\The App\\src\\screens\\UpdatesScreen.js": {
+    "mtime": 1777605775.571606,
+    "hash": "9d6b13f69d293e04eaa0bf6b8ada3b3b"
+  },
+  "D:\\The App\\src\\screens\\VideosScreen.js": {
+    "mtime": 1777872012.1809382,
+    "hash": "1468dc1d53dc12d1689d43d426ece78b"
+  },
+  "D:\\The App\\src\\screens\\VirtualMuseumScreen.js": {
+    "mtime": 1777955992.852251,
+    "hash": "0ab62ed1ad4b0afd5e24d4cca8b258d9"
+  },
+  "D:\\The App\\src\\services\\annotationService.js": {
+    "mtime": 1777659007.7819853,
+    "hash": "fa8a9d7557e57fb61e4688fea1702d7b"
+  },
+  "D:\\The App\\src\\services\\highlightService.js": {
+    "mtime": 1777659005.6232884,
+    "hash": "2e97f9fae198d3f94ab87018343b085b"
+  },
+  "D:\\The App\\src\\services\\notificationService.js": {
+    "mtime": 1777714709.3918688,
+    "hash": "d5996fbf6d919d49215aabd38760d86b"
+  },
+  "D:\\The App\\src\\services\\topicIllustrations.js": {
+    "mtime": 1775143906.3026435,
+    "hash": "ff45cb4fe415d7e5c8c191e227461fad"
+  },
+  "D:\\The App\\src\\services\\videoService.js": {
+    "mtime": 1777869755.728923,
+    "hash": "606f1f22b4009a501bdba435caa2e0e0"
+  },
+  "D:\\The App\\src\\styles\\theme.js": {
+    "mtime": 1776440555.8890755,
+    "hash": "6cae6f2b864f8821e251ee9f0415959d"
+  },
+  "D:\\The App\\src\\utils\\contentRegistry.js": {
+    "mtime": 1777266111.568834,
+    "hash": "ad58d777d50b67587b5169e0c6194aa1"
+  },
+  "D:\\The App\\src\\utils\\deviceUtils.js": {
+    "mtime": 1776915497.5873566,
+    "hash": "3173bec75bf9e2ad87bedbd9cf0360eb"
+  },
+  "D:\\The App\\src\\utils\\reviewPrompt.js": {
+    "mtime": 1777871530.6764872,
+    "hash": "bd619f447007710e25ee5b530d182902"
+  },
+  "D:\\The App\\src\\utils\\screenCaptureProtection.js": {
+    "mtime": 1776675749.994553,
+    "hash": "46b405486a3e84834aec07dbf3892129"
+  },
+  "D:\\The App\\src\\utils\\tts.js": {
+    "mtime": 1773723664.9753537,
+    "hash": "522bf0a626c6273ef0c931297aab724e"
+  },
+  "D:\\The App\\AGENTS.md": {
+    "mtime": 1778215878.445492,
+    "hash": "04f5cc21fb908cfe9aa492bd9b36433c"
+  },
+  "D:\\The App\\CUSTOM_INSTRUCTION_EAS.md": {
+    "mtime": 1775129844.3814962,
+    "hash": "08fd33d545d0a42216deb3a0d673fbd4"
+  },
+  "D:\\The App\\EAS_UPDATE_GUIDELINES.md": {
+    "mtime": 1775129820.4595375,
+    "hash": "2f501b9056ffaccc0b27d9b30ad02133"
+  },
+  "D:\\The App\\paper1_extracted.txt": {
+    "mtime": 1778502162.3317487,
+    "hash": "7226b3eb13693e04216b9518652aceb7"
+  },
+  "D:\\The App\\docs\\library-update-review-workflow.md": {
+    "mtime": 1777266382.0541723,
+    "hash": "b978bb720ee1a90212eb4a18b30f06e0"
+  },
+  "D:\\The App\\docs\\play_store_metadata.md": {
+    "mtime": 1772355533.364325,
+    "hash": "5b0fefdb07f48da3f6019e4d429b0580"
+  },
+  "D:\\The App\\docs\\privacy.html": {
+    "mtime": 1776931500.240169,
+    "hash": "301611da67c4f29e59fc4a4704d6a60c"
+  },
+  "D:\\The App\\docs\\purposeful-image-placement.md": {
+    "mtime": 1774754386.8025944,
+    "hash": "5e82753109b3afce714615abb1526d63"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\drawable-hdpi\\notification_icon.png": {
+    "mtime": 1776686130.2448807,
+    "hash": "b6f62471bcca5acd216f6ab238e60399"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\drawable-hdpi\\splashscreen_logo.png": {
+    "mtime": 1776686127.6926472,
+    "hash": "c38b52bf0662ef781c83a4a5903b775b"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\drawable-mdpi\\notification_icon.png": {
+    "mtime": 1776686130.247039,
+    "hash": "b856d9a36efa8ea6ca7ab6d3650d114e"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\drawable-mdpi\\splashscreen_logo.png": {
+    "mtime": 1776686127.6945374,
+    "hash": "3d9bf67c5efee7d9aa01ec55df3b9b60"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\drawable-xhdpi\\notification_icon.png": {
+    "mtime": 1776686130.2496662,
+    "hash": "33323992e1aeb31ce5db6fbb25e594b0"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\drawable-xhdpi\\splashscreen_logo.png": {
+    "mtime": 1776686127.6926472,
+    "hash": "393f41903aa160a95772b7ee880cad5a"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\drawable-xxhdpi\\notification_icon.png": {
+    "mtime": 1776686130.2597253,
+    "hash": "171a2a82c0ccae1379192f3ef74fa1f2"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\drawable-xxhdpi\\splashscreen_logo.png": {
+    "mtime": 1776686127.6926472,
+    "hash": "b785919709c74b7ba3ece396d7598437"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\drawable-xxxhdpi\\notification_icon.png": {
+    "mtime": 1776686130.247039,
+    "hash": "dc3a3c8cc04f13d048dd849ba002c2da"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\drawable-xxxhdpi\\splashscreen_logo.png": {
+    "mtime": 1776686129.9631119,
+    "hash": "bf54c9c55e2bb3e76410b321c6cb7191"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher.webp": {
+    "mtime": 1776686117.717298,
+    "hash": "6a22de7c2e0b4edb340c8812ce5381fb"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher_foreground.webp": {
+    "mtime": 1776686120.535461,
+    "hash": "4ed719f1dbc1a710f2000dc529274187"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher_round.webp": {
+    "mtime": 1776686118.8370156,
+    "hash": "fc24b7a51bd3297c6fc7ac82a81fc68a"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher.webp": {
+    "mtime": 1776686117.717298,
+    "hash": "d12b3e68c7794e336c79c7d9402a5d44"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher_foreground.webp": {
+    "mtime": 1776686120.535461,
+    "hash": "0c36fff3371232ebd5d005f1314d0515"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher_round.webp": {
+    "mtime": 1776686118.8370156,
+    "hash": "525ba49eca5918e4a4e0e0f493e2751a"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher.webp": {
+    "mtime": 1776686117.717298,
+    "hash": "8f94b9e8491971f163ad082a56f0855d"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher_foreground.webp": {
+    "mtime": 1776686120.535461,
+    "hash": "d5e6a80d6f55dfb50c5c7d43275388cd"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher_round.webp": {
+    "mtime": 1776686118.7064822,
+    "hash": "d5c6fa3e578a80d25196d8652c4b7f09"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher.webp": {
+    "mtime": 1776686117.8249168,
+    "hash": "0d9ca27a655a47b30ca3d402448133d9"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher_foreground.webp": {
+    "mtime": 1776686120.5369792,
+    "hash": "ebfa0c6cdabb07af3fee5605985ddf9b"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher_round.webp": {
+    "mtime": 1776686118.7064822,
+    "hash": "7f46f95b6308c0f0ea26eaceef0d47cd"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher.webp": {
+    "mtime": 1776686117.829291,
+    "hash": "9b319bbbe476ce68c933167d823f1402"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher_foreground.webp": {
+    "mtime": 1776686120.538747,
+    "hash": "78d0f692493ac1f38856c6cb84aa5f6b"
+  },
+  "D:\\The App\\android\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher_round.webp": {
+    "mtime": 1776686118.9550035,
+    "hash": "aa5327d97b1fbe499a9e7f3c38ee3dd2"
+  },
+  "D:\\The App\\assets\\adaptive-icon.png": {
+    "mtime": 1772355533.1958623,
+    "hash": "87389e6edec2fb2fdf10a7a15f3887cb"
+  },
+  "D:\\The App\\assets\\favicon.png": {
+    "mtime": 1772355533.196859,
+    "hash": "6d6cda0fb74b68085a79aaf221459e3d"
+  },
+  "D:\\The App\\assets\\icon.png": {
+    "mtime": 1772355533.2122355,
+    "hash": "87389e6edec2fb2fdf10a7a15f3887cb"
+  },
+  "D:\\The App\\assets\\notification-icon.png": {
+    "mtime": 1772355532.9760008,
+    "hash": "e3d98aafe147a667be82baeeb47d98bd"
+  },
+  "D:\\The App\\assets\\splash.png": {
+    "mtime": 1772355533.2839482,
+    "hash": "8e7fa8c5e81f7b6f8b270692c680946b"
+  },
+  "D:\\The App\\assets\\pyq\\Paper1_Diag1.png": {
+    "mtime": 1777965241.4542718,
+    "hash": "d1efee9c72ebfe3085f881151e2410ef"
+  },
+  "D:\\The App\\assets\\pyq\\Paper2_Diag1.png": {
+    "mtime": 1777965241.6987722,
+    "hash": "22d7f59e6463b500335d8f3c080418bb"
+  },
+  "D:\\The App\\assets\\pyq\\Paper3_Diag1.png": {
+    "mtime": 1777965241.864399,
+    "hash": "3701e32473dbeb953eb5cfd1aa2d9713"
+  },
+  "D:\\The App\\assets\\pyq\\Paper4_Diag1.png": {
+    "mtime": 1777965242.2362163,
+    "hash": "7d55ddc0048727d7586ca27346e0adb2"
+  },
+  "D:\\The App\\reading-illustrations\\nhp-logo-staging-contact-sheet.png": {
+    "mtime": 1775300411.9803963,
+    "hash": "01cfafbcebd43026a52905b0dec6ffc7"
+  },
+  "D:\\The App\\reading-illustrations\\stage_7-10_npncd.png": {
+    "mtime": 1775298704.9441788,
+    "hash": "7f1af99d757623672191b1633475518e"
+  },
+  "D:\\The App\\reading-illustrations\\stage_7-11_nmhp.png": {
+    "mtime": 1775300411.6131117,
+    "hash": "6573be303a6087a81f6f6b374c2211d7"
+  },
+  "D:\\The App\\reading-illustrations\\stage_7-12_idsp.png": {
+    "mtime": 1775306498.8033462,
+    "hash": "6975dabaa883aa16aecedb5f852f6827"
+  },
+  "D:\\The App\\reading-illustrations\\stage_7-13_pmjay.png": {
+    "mtime": 1775298705.393551,
+    "hash": "1b8d269edf6652856de8d014384b9207"
+  },
+  "D:\\The App\\reading-illustrations\\stage_7-2_inap.png": {
+    "mtime": 1775306387.935285,
+    "hash": "e4bf1bea950a8f6ec32c26fe74440a7a"
+  },
+  "D:\\The App\\reading-illustrations\\stage_7-2_laqshya.png": {
+    "mtime": 1775306189.9939032,
+    "hash": "8db3f5270eb47c0016b4fb4faa428d61"
+  },
+  "D:\\The App\\reading-illustrations\\stage_7-2_maa.png": {
+    "mtime": 1775298703.5207498,
+    "hash": "50dacf81285ee510f49de8276ce7ed5b"
+  },
+  "D:\\The App\\reading-illustrations\\stage_7-2_pmmvy.png": {
+    "mtime": 1775300408.0918765,
+    "hash": "1ce9d047b8da1c17275c361e2614610a"
+  },
+  "D:\\The App\\reading-illustrations\\stage_7-2_pmsma.png": {
+    "mtime": 1775306241.8776388,
+    "hash": "abbb532693281a327ba71fb16d0cbfb8"
+  },
+  "D:\\The App\\reading-illustrations\\stage_7-2_rksk.png": {
+    "mtime": 1775300408.4566119,
+    "hash": "dd671d1df929bdbf3d8dff8856430d6f"
+  },
+  "D:\\The App\\reading-illustrations\\stage_7-2_suman.png": {
+    "mtime": 1775306361.4364448,
+    "hash": "8b7425f71d7382bd6ec4dd20ceb47728"
+  },
+  "D:\\The App\\reading-illustrations\\stage_7-3_nvbdcp.png": {
+    "mtime": 1775300408.8238385,
+    "hash": "98e8005e3002b8a885706697f939d2e4"
+  },
+  "D:\\The App\\reading-illustrations\\stage_7-4_nlep.png": {
+    "mtime": 1775300409.2212546,
+    "hash": "33ed4e79bfe24385ef557e2e9655fe87"
+  },
+  "D:\\The App\\reading-illustrations\\stage_7-5_ntep.png": {
+    "mtime": 1775300410.196958,
+    "hash": "bdfed5b7e90c6214302cfb74213761c6"
+  },
+  "D:\\The App\\reading-illustrations\\stage_7-5_rntcp_dots.png": {
+    "mtime": 1775306414.0252402,
+    "hash": "30f65875e2ddfc010a8a6c191d36dd1a"
+  },
+  "D:\\The App\\reading-illustrations\\stage_7-6_naco.png": {
+    "mtime": 1775298704.5439606,
+    "hash": "4e349a645072f44ff0433365577ab6ed"
+  },
+  "D:\\The App\\reading-illustrations\\stage_7-7_npcbvi.png": {
+    "mtime": 1775300410.457045,
+    "hash": "16f9c9ced01c92235f4827d69dd8298a"
+  }
 }

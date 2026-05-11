@@ -18,7 +18,6 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { theme } from "../styles/theme";
-import { GEM_IMAGE_MAP, parseFigureNumbers } from "../data/gemImages";
 import { normalizeUpdatedSnippet } from "../utils/contentRegistry";
 
 const stripBold = (text) => text.replace(/\*\*(.+?)\*\*/g, "$1");
@@ -201,9 +200,8 @@ const preprocessTextTables = (content) => {
   return newLines.join("\n");
 };
 
-const parseMarkdown = (content) => {
-  // Preprocess text tables to markdown format
-  const processedContent = preprocessTextTables(content);
+const parseMarkdown = (content, { isGem = false } = {}) => {
+  const processedContent = isGem ? content : preprocessTextTables(content);
   const lines = processedContent.split("\n");
   const rawBlocks = [];
   let bulletGroup = [];
@@ -345,6 +343,10 @@ const parseMarkdown = (content) => {
       }
     }
 
+    const trimmedLine = line.trim();
+    const tableTitleMatch = trimmedLine.match(/^\*\*Table\s+\d+(?:\.\d+)?\s*(.*?)\*\*$/i);
+    const refMatch = trimmedLine.match(/^\[REF\](.*?)\[\/REF\]$/i);
+
     if (line.startsWith("# ")) {
       flushBullets();
       flushNested();
@@ -373,16 +375,16 @@ const parseMarkdown = (content) => {
     } else if (line.trim().match(/^\*\[Image Placeholders?:\s*(.+?)\]\*$/)) {
       flushBullets();
       flushNested();
-      const desc = line.trim().match(/^\*\[Image Placeholders?:\s*(.+?)\]\*$/)[1];
-      const figures = parseFigureNumbers(desc);
-      figures.forEach((fig) => {
-        if (GEM_IMAGE_MAP[fig]) {
-          rawBlocks.push({ type: "image", url: GEM_IMAGE_MAP[fig], alt: fig });
-        }
-      });
-      if (figures.length === 0 || figures.every((fig) => !GEM_IMAGE_MAP[fig])) {
-        rawBlocks.push({ type: "body", text: line.trim() });
-      }
+      continue;
+    } else if (tableTitleMatch) {
+      flushBullets();
+      flushNested();
+      const tableTitle = tableTitleMatch[1]?.trim();
+      rawBlocks.push({ type: "tableTitle", text: tableTitle ? `Table: ${tableTitle}` : "Table" });
+    } else if (refMatch) {
+      flushBullets();
+      flushNested();
+      rawBlocks.push({ type: "reference", text: stripBold(refMatch[1].trim()) });
     } else if (line.trim() === "") {
       flushBullets();
       flushNested();
@@ -691,6 +693,7 @@ const ReadingView = ({
   onToggleSpeak,
   highlightedSegments = [],
   showUpdateHighlights = false,
+  isGem = false,
   illustrations = [],
   onReachEnd,
   isScreenCapturePrevented = false,
@@ -705,7 +708,7 @@ const ReadingView = ({
 }) => {
   console.log("ReadingView: illustrations prop", illustrations);
   const insets = useSafeAreaInsets();
-  const blocks = useMemo(() => parseMarkdown(content || ""), [content]);
+  const blocks = useMemo(() => parseMarkdown(content || "", { isGem }), [content, isGem]);
   const mergedBlocks = useMemo(
     () => mergeBlocksWithIllustrations(blocks, illustrations),
     [blocks, illustrations],
@@ -1012,6 +1015,26 @@ const ReadingView = ({
           </Pressable>
         );
       }
+      case "tableTitle":
+        return (
+          <View
+            key={index}
+            style={styles.tableTitleBlock}
+            onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
+          >
+            <Text style={styles.tableTitleText} selectable={false}>{block.text}</Text>
+          </View>
+        );
+      case "reference":
+        return (
+          <View
+            key={index}
+            style={styles.referenceBlock}
+            onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
+          >
+            <Text style={styles.referenceText} selectable={false}>{block.text}</Text>
+          </View>
+        );
       case "blockquote": {
         const highlighted = shouldHighlightText(block.text);
         const sentences = splitSentences(block.text);
@@ -1904,6 +1927,26 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     lineHeight: 24,
     marginVertical: 4,
+  },
+  tableTitleBlock: {
+    marginTop: 14,
+    marginBottom: 6,
+  },
+  tableTitleText: {
+    color: theme.colors.textTitle,
+    fontSize: 16,
+    fontWeight: "700",
+    lineHeight: 22,
+  },
+  referenceBlock: {
+    marginTop: 14,
+    marginBottom: 4,
+  },
+  referenceText: {
+    color: theme.colors.textTertiary,
+    fontSize: 12.5,
+    fontStyle: "italic",
+    lineHeight: 18,
   },
   bulletGroup: {
     marginVertical: 4,

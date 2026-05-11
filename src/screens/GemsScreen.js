@@ -8,7 +8,6 @@ import {
 import {
   Text,
   Card,
-  IconButton,
   Searchbar,
   Chip,
 } from "react-native-paper";
@@ -17,6 +16,17 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { theme, useResponsive } from "../styles/theme";
 import { AppContext } from "../context/AppContext";
 import gemsData from "../data/gemsData.json";
+
+const ALL_SECTIONS_ID = "all";
+
+const stripGemMarkup = (value = "") =>
+  value
+    .replace(/\*\[Image Placeholders?:\s*.+?\]\*/gi, "")
+    .replace(/\[REF\].*?\[\/REF\]/gis, "")
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/\[[^\]]+\]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
 
 const GemsScreen = ({ navigation }) => {
   const [searchQuery, setSearchbarQuery] = useState("");
@@ -33,7 +43,7 @@ const GemsScreen = ({ navigation }) => {
     return data;
   }, []);
 
-  const [selectedSection, setSelectedSection] = useState(sortedGemsData[0]?.id || null);
+  const [selectedSection, setSelectedSection] = useState(ALL_SECTIONS_ID);
   const { isTablet, contentMaxWidth } = useResponsive();
 
   const filteredSections = useMemo(() => {
@@ -48,16 +58,28 @@ const GemsScreen = ({ navigation }) => {
     })).filter(section => section.gems.length > 0);
   }, [searchQuery, sortedGemsData]);
 
-  const activeSection = useMemo(() => {
-    return filteredSections.find(s => s.id === selectedSection) || filteredSections[0];
+  const visibleGemItems = useMemo(() => {
+    const sections =
+      selectedSection === ALL_SECTIONS_ID
+        ? filteredSections
+        : filteredSections.filter((section) => section.id === selectedSection);
+
+    return sections.flatMap((section) =>
+      section.gems.map((gem) => ({
+        gem,
+        sectionId: section.id,
+        sectionTitle: section.title,
+      })),
+    );
   }, [filteredSections, selectedSection]);
 
-  const handleGemPress = (gem, sectionTitle) => {
+  const handleGemPress = (gem, sectionId, sectionTitle) => {
     navigation.navigate("Reading", {
+      id: gem.id,
       content: gem.content,
       title: gem.title,
       section: sectionTitle,
-      topicId: "GEM",
+      contentKey: `gems:${sectionId}:${gem.id}`,
       isGem: true,
     });
   };
@@ -74,15 +96,7 @@ const GemsScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <IconButton
-          icon="arrow-left"
-          onPress={() => navigation.goBack()}
-          iconColor={theme.colors.textTitle}
-        />
-      </View>
-
+    <SafeAreaView style={styles.container} edges={["left", "right", "bottom"]}>
       <View style={styles.searchContainer}>
         <Searchbar
           placeholder="Search gems..."
@@ -99,6 +113,21 @@ const GemsScreen = ({ navigation }) => {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.tabsScrollContent}
         >
+          <Chip
+            selected={selectedSection === ALL_SECTIONS_ID}
+            onPress={() => setSelectedSection(ALL_SECTIONS_ID)}
+            style={[
+              styles.chip,
+              selectedSection === ALL_SECTIONS_ID && styles.selectedChip
+            ]}
+            textStyle={[
+              styles.chipText,
+              selectedSection === ALL_SECTIONS_ID && styles.selectedChipText
+            ]}
+            showSelectedCheck={false}
+          >
+            All
+          </Chip>
           {filteredSections.map((section) => (
             <Chip
               key={section.id}
@@ -127,14 +156,14 @@ const GemsScreen = ({ navigation }) => {
           isTablet && { maxWidth: contentMaxWidth, alignSelf: 'center' }
         ]}
       >
-        {activeSection?.gems.map((gem) => {
+        {visibleGemItems.map(({ gem, sectionId, sectionTitle }) => {
           const isGemBookmarked = isBookmarked({ id: gem.id, title: gem.title, isGem: true });
           
           return (
             <Card 
-              key={gem.id} 
+              key={`${sectionId}:${gem.id}`}
               style={styles.gemCard}
-              onPress={() => handleGemPress(gem, activeSection.title)}
+              onPress={() => handleGemPress(gem, sectionId, sectionTitle)}
             >
               <Card.Content style={styles.gemCardContent}>
                 <View style={styles.gemHeader}>
@@ -154,7 +183,7 @@ const GemsScreen = ({ navigation }) => {
                   style={styles.gemSnippet}
                   variant="bodyMedium"
                 >
-                  {gem.content.replace(/\[.*?\]/g, '').replace(/\*\*.*?\*\*/g, '').trim()}
+                  {stripGemMarkup(gem.content)}
                 </Text>
                 <View style={styles.cardFooter}>
                   <Text style={styles.readMoreText}>Tap to read full gem</Text>
@@ -165,7 +194,7 @@ const GemsScreen = ({ navigation }) => {
           );
         })}
 
-        {filteredSections.length === 0 && (
+        {visibleGemItems.length === 0 && (
           <View style={styles.emptyState}>
             <MaterialIcons name="search-off" size={64} color={theme.colors.textPlaceholder} />
             <Text style={styles.emptyText}>No gems found matching your search</Text>
@@ -181,19 +210,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.backgroundMain,
   },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 4,
-    paddingVertical: 4,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: theme.colors.textTitle,
-  },
   searchContainer: {
     paddingHorizontal: 16,
+    paddingTop: 12,
     marginBottom: 16,
   },
   searchbar: {

@@ -27,12 +27,15 @@ import {
   signInWithEmailAndPassword,
   signInWithCredential,
   GoogleAuthProvider,
+  OAuthProvider,
   getIdTokenResult,
   signOut,
 } from "firebase/auth";
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import Constants from "expo-constants";
 import { theme } from "../styles/theme";
+import * as AppleAuthentication from "expo-apple-authentication";
+import * as Crypto from "expo-crypto";
 
 let GoogleSignin;
 if (Constants.appOwnership !== "expo") {
@@ -50,6 +53,22 @@ const timeoutPromise = (ms) =>
     setTimeout(() => reject(new Error("Firebase Request Timed Out")), ms),
   );
 
+const randomNonceString = (length = 32) => {
+  const charset = "0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._";
+  const randomBytes = Crypto.getRandomBytes(length);
+  return Array.from(randomBytes)
+    .map((byte) => charset[byte % charset.length])
+    .join("");
+};
+
+const formatAppleName = (fullName) => {
+  if (!fullName) return "";
+  return [fullName.givenName, fullName.middleName, fullName.familyName]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+};
+
 const LoginScreen = () => {
   const { login } = useContext(AppContext);
   const [isRegistering, setIsRegistering] = useState(false);
@@ -65,6 +84,7 @@ const LoginScreen = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [validationError, setValidationError] = useState("");
+  const [isAppleSignInAvailable, setIsAppleSignInAvailable] = useState(false);
 
   // ── Device conflict modal state ──
   const [isConflictModalVisible, setIsConflictModalVisible] = useState(false);
@@ -76,6 +96,33 @@ const LoginScreen = () => {
   // Fetch local device ID on mount
   useEffect(() => {
     getDeviceId().then(setLocalDeviceId).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+
+    if (Platform.OS !== "ios") {
+      setIsAppleSignInAvailable(false);
+      return () => {
+        mounted = false;
+      };
+    }
+
+    AppleAuthentication.isAvailableAsync()
+      .then((available) => {
+        if (mounted) {
+          setIsAppleSignInAvailable(available);
+        }
+      })
+      .catch(() => {
+        if (mounted) {
+          setIsAppleSignInAvailable(false);
+        }
+      });
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   // ── Shared device conflict check ──
@@ -200,6 +247,95 @@ const LoginScreen = () => {
     } catch (error) {
       if (!isConflictModalVisible) {
         alert(`Google Sign-In Error: ${error.message}`);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAppleLogin = async () => {
+    setValidationError("");
+
+    if (Platform.OS !== "ios" || !isAppleSignInAvailable) {
+      setValidationError("Apple Sign-In is available only on supported Apple devices.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const netState = await NetInfo.fetch();
+      if (!netState.isConnected) {
+        setValidationError("Please connect to the internet to sign in.");
+        setLoading(false);
+        return;
+      }
+
+      const rawNonce = randomNonceString();
+      const hashedNonce = await Crypto.digestStringAsync(
+        Crypto.CryptoDigestAlgorithm.SHA256,
+        rawNonce,
+      );
+
+      const appleCredential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+        nonce: hashedNonce,
+      });
+
+      if (!appleCredential.identityToken) {
+        throw new Error("No identity token returned from Apple Sign-In.");
+      }
+
+      const provider = new OAuthProvider("apple.com");
+      const authCredential = provider.credential({
+        idToken: appleCredential.identityToken,
+        rawNonce,
+      });
+      const userCredential = await signInWithCredential(auth, authCredential);
+      const user = userCredential.user;
+
+      const tokenResult = await getIdTokenResult(user, true);
+      const claimsPremium = tokenResult.claims.isPremium === true;
+      const appleDisplayName = formatAppleName(appleCredential.fullName);
+      const appleEmail = appleCredential.email || user.email || "";
+
+      let premiumStatus = claimsPremium;
+      try {
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await Promise.race([
+          getDoc(userDocRef),
+          timeoutPromise(2000),
+        ]);
+
+        if (userDoc.exists()) {
+          premiumStatus = userDoc.data().isPremium === true || claimsPremium;
+        } else {
+          await setDoc(userDocRef, {
+            email: appleEmail,
+            username: appleDisplayName || user.displayName || "Apple User",
+            appleUser: appleCredential.user,
+            isPremium: claimsPremium,
+            createdAt: new Date().toISOString(),
+          });
+        }
+      } catch (err) {
+        console.warn("Firestore unavailable during Apple Login:", err.message);
+      }
+
+      const userData = {
+        uid: user.uid,
+        email: appleEmail,
+        username: appleDisplayName || user.displayName || "Apple User",
+        isPremium: premiumStatus,
+      };
+
+      await checkDeviceConflict(user, userData);
+    } catch (error) {
+      if (error?.code !== "ERR_REQUEST_CANCELED" && !isConflictModalVisible) {
+        setValidationError(`Apple Sign-In Error: ${error.message}`);
       }
     } finally {
       setLoading(false);
@@ -443,6 +579,16 @@ const LoginScreen = () => {
             <Text style={styles.googleBtnText}>Continue with Google</Text>
           </TouchableOpacity>
 
+          {isAppleSignInAvailable ? (
+            <AppleAuthentication.AppleAuthenticationButton
+              buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+              buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+              cornerRadius={14}
+              style={[styles.appleBtn, loading && styles.primaryBtnDisabled]}
+              onPress={loading ? () => {} : handleAppleLogin}
+            />
+          ) : null}
+
           {/* Toggle */}
           <TouchableOpacity
             onPress={() => setIsRegistering(!isRegistering)}
@@ -674,7 +820,7 @@ const styles = StyleSheet.create({
     height: 52,
     borderWidth: 1.5,
     borderColor: "#E5E7EB",
-    marginBottom: 28,
+    marginBottom: 12,
     elevation: 1,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
@@ -686,6 +832,11 @@ const styles = StyleSheet.create({
     color: "#374151",
     fontSize: 15,
     fontWeight: "600",
+  },
+  appleBtn: {
+    width: "100%",
+    height: 52,
+    marginBottom: 28,
   },
 
   // ── Toggle ───────────────────────────────────────────────────

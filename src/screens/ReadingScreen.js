@@ -38,6 +38,7 @@ const ReadingScreen = ({ route, navigation }) => {
     updatedSegments,
     showUpdateHighlights,
     searchTerms = "",
+    isGem = false,
   } = route.params;
 
   const {
@@ -307,6 +308,7 @@ const ReadingScreen = ({ route, navigation }) => {
         content={effectiveContent}
         title={effectiveTitle}
         topicId={effectiveId}
+        isGem={isGem}
         isBookmarked={bookmarked}
         onToggleBookmark={() => toggleBookmark(bookmarkPayload)}
         isSpeaking={isSpeaking}

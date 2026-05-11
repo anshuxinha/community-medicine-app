@@ -15,6 +15,7 @@
     "ios": {
       "supportsTablet": true,
       "buildNumber": "6",
+      "usesAppleSignIn": true,
       "bundleIdentifier": "com.communitymed.app"
     },
     "android": {
@@ -63,6 +64,7 @@
           "defaultChannel": "default"
         }
       ],
+      "expo-apple-authentication",
       "expo-secure-store"
     ],
     "extra": {
