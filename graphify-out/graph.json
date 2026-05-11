@@ -2254,7 +2254,7 @@
       "source_file": "src/components/DrawerMenu.js",
       "source_location": "L1",
       "id": "src_components_drawermenu_js",
-      "community": 21,
+      "community": 22,
       "norm_label": "drawermenu.js"
     },
     {
@@ -2263,7 +2263,7 @@
       "source_file": "src/components/DrawerMenu.js",
       "source_location": "L69",
       "id": "drawermenu_drawermenu",
-      "community": 21,
+      "community": 22,
       "norm_label": "drawermenu()"
     },
     {
@@ -2542,7 +2542,7 @@
       "source_file": "src/components/UpdateDetailDialog.js",
       "source_location": "L1",
       "id": "src_components_updatedetaildialog_js",
-      "community": 21,
+      "community": 22,
       "norm_label": "updatedetaildialog.js"
     },
     {
@@ -2551,7 +2551,7 @@
       "source_file": "src/components/UpdateDetailDialog.js",
       "source_location": "L37",
       "id": "updatedetaildialog_updatedetaildialog",
-      "community": 21,
+      "community": 22,
       "norm_label": "updatedetaildialog()"
     },
     {
@@ -2560,7 +2560,7 @@
       "source_file": "src/config/firebase.js",
       "source_location": "L1",
       "id": "src_config_firebase_js",
-      "community": 21,
+      "community": 22,
       "norm_label": "firebase.js"
     },
     {
@@ -2929,7 +2929,7 @@
       "source_file": "src/screens/DashboardScreen.js",
       "source_location": "L1",
       "id": "src_screens_dashboardscreen_js",
-      "community": 21,
+      "community": 22,
       "norm_label": "dashboardscreen.js"
     },
     {
@@ -2938,7 +2938,7 @@
       "source_file": "src/screens/DashboardScreen.js",
       "source_location": "L28",
       "id": "screens_dashboardscreen_dashboardscreen",
-      "community": 21,
+      "community": 22,
       "norm_label": "dashboardscreen()"
     },
     {
@@ -2947,7 +2947,7 @@
       "source_file": "src/screens/DashboardScreen.js",
       "source_location": "L379",
       "id": "screens_dashboardscreen_styles",
-      "community": 21,
+      "community": 22,
       "norm_label": "styles"
     },
     {
@@ -3118,7 +3118,7 @@
       "source_file": "src/screens/LoginScreen.js",
       "source_location": "L1",
       "id": "src_screens_loginscreen_js",
-      "community": 22,
+      "community": 21,
       "norm_label": "loginscreen.js"
     },
     {
@@ -3127,7 +3127,7 @@
       "source_file": "src/screens/LoginScreen.js",
       "source_location": "L51",
       "id": "screens_loginscreen_timeoutpromise",
-      "community": 22,
+      "community": 21,
       "norm_label": "timeoutpromise()"
     },
     {
@@ -3136,7 +3136,7 @@
       "source_file": "src/screens/LoginScreen.js",
       "source_location": "L56",
       "id": "screens_loginscreen_randomnoncestring",
-      "community": 22,
+      "community": 21,
       "norm_label": "randomnoncestring()"
     },
     {
@@ -3145,7 +3145,7 @@
       "source_file": "src/screens/LoginScreen.js",
       "source_location": "L64",
       "id": "screens_loginscreen_formatapplename",
-      "community": 22,
+      "community": 21,
       "norm_label": "formatapplename()"
     },
     {
@@ -3154,7 +3154,7 @@
       "source_file": "src/screens/LoginScreen.js",
       "source_location": "L72",
       "id": "screens_loginscreen_loginscreen",
-      "community": 22,
+      "community": 21,
       "norm_label": "loginscreen()"
     },
     {
@@ -3163,7 +3163,7 @@
       "source_file": "src/screens/LoginScreen.js",
       "source_location": "L693",
       "id": "screens_loginscreen_styles",
-      "community": 22,
+      "community": 21,
       "norm_label": "styles"
     },
     {
@@ -5781,7 +5781,7 @@
       "file_type": "code",
       "source_file": "src/screens/LoginScreen.js",
       "source_location": "L48",
-      "community": 22,
+      "community": 21,
       "norm_label": "timeoutpromise()",
       "id": "loginscreen_timeoutpromise"
     },
@@ -5790,7 +5790,7 @@
       "file_type": "code",
       "source_file": "src/screens/LoginScreen.js",
       "source_location": "L53",
-      "community": 22,
+      "community": 21,
       "norm_label": "loginscreen()",
       "id": "loginscreen_loginscreen"
     },
@@ -14810,5 +14810,5 @@
       "source_file": "reading-illustrations"
     }
   ],
-  "built_at_commit": "2d6ac7b508f63d3188da15ef74fcb8103a2407ac"
+  "built_at_commit": "f8a90de669d46558c2944d17a955c43ae38d39da"
 }
