@@ -11,6 +11,7 @@ import {
 import { Text, Button, Card } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
+import NetInfo from "@react-native-community/netinfo";
 import Constants from "expo-constants";
 let Purchases;
 if (Constants.appOwnership !== "expo") {
@@ -22,6 +23,8 @@ import {
   enableScreenCaptureProtection,
   disableScreenCaptureProtection,
 } from "../utils/screenCaptureProtection";
+import { validateCoupon, applyDiscount, incrementCouponUsage } from "../services/couponService";
+import { TextInput } from "react-native-paper";
 
 // Default plan metadata (prices are fetched from RevenueCat)
 const PLAN_METADATA = [
@@ -60,6 +63,10 @@ const PLAN_METADATA = [
 const PaywallScreen = ({ navigation }) => {
   const [selectedPlan, setSelectedPlan] = useState("yearly");
   const [isPurchasing, setIsPurchasing] = useState(false);
+  const [showCouponInput, setShowCouponInput] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
 
   useEffect(() => {
     enableScreenCaptureProtection();
@@ -72,43 +79,54 @@ const PaywallScreen = ({ navigation }) => {
   const [loadError, setLoadError] = useState(null);
   const { upgradeToPremium, isPremium } = useContext(AppContext);
 
-  // Fetch offerings from RevenueCat on mount
+  // Reset coupon when plan changes if it's not applicable
   useEffect(() => {
+    if (appliedCoupon && appliedCoupon.targetPlans && !appliedCoupon.targetPlans.includes(selectedPlan)) {
+      setAppliedCoupon(null);
+      Alert.alert("Coupon Removed", "This coupon is not applicable to the newly selected plan.");
+    }
+  }, [selectedPlan]);
+
+  // Fetch offerings from RevenueCat on mount
+  const fetchOfferings = async () => {
     if (Constants.appOwnership === "expo" || !Purchases) {
       setLoadError("Purchases are not supported in Expo Go.");
       return;
     }
 
-    Purchases.getOfferings()
-      .then((result) => {
-        const current = result.current || Object.values(result.all)[0];
-        if (!current || !current.availablePackages) {
-          setLoadError(
-            "No subscription packages available. Please try again later.",
-          );
-          return;
-        }
-
-        setOfferings(current);
-
-        // Map available packages by their type for easy lookup
-        const pkgMap = {};
-        current.availablePackages.forEach((pkg) => {
-          pkgMap[pkg.packageType] = pkg;
-          // Also map by identifier as fallback
-          if (pkg.identifier) {
-            pkgMap[pkg.identifier] = pkg;
-          }
-        });
-        setPackages(pkgMap);
-        setLoadError(null);
-      })
-      .catch((err) => {
-        console.warn("Failed to fetch offerings:", err.message);
+    try {
+      const result = await Purchases.getOfferings();
+      const current = result.current || Object.values(result.all)[0];
+      if (!current || !current.availablePackages) {
         setLoadError(
-          "Failed to load subscription plans. Check your connection.",
+          "No subscription packages available. Please try again later.",
         );
+        return;
+      }
+
+      setOfferings(current);
+
+      // Map available packages by their type for easy lookup
+      const pkgMap = {};
+      current.availablePackages.forEach((pkg) => {
+        pkgMap[pkg.packageType] = pkg;
+        // Also map by identifier as fallback
+        if (pkg.identifier) {
+          pkgMap[pkg.identifier] = pkg;
+        }
       });
+      setPackages(pkgMap);
+      setLoadError(null);
+    } catch (err) {
+      console.warn("Failed to fetch offerings:", err.message);
+      setLoadError(
+        "Failed to load subscription plans. Check your connection.",
+      );
+    }
+  };
+
+  useEffect(() => {
+    fetchOfferings();
   }, []);
 
   // Redirect if already premium
@@ -117,6 +135,51 @@ const PaywallScreen = ({ navigation }) => {
       navigation.goBack();
     }
   }, [isPremium]);
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode) {
+      Alert.alert("Error", "Please enter a coupon code.");
+      return;
+    }
+
+    // Check network status to prevent stale validation
+    const state = await NetInfo.fetch();
+    if (!state.isConnected) {
+      Alert.alert("Offline", "Please check your internet connection to apply a coupon.");
+      return;
+    }
+
+    setIsValidatingCoupon(true);
+    try {
+      const coupon = await validateCoupon(couponCode, selectedPlan);
+      setAppliedCoupon(coupon);
+      setCouponCode("");
+      setShowCouponInput(false);
+
+      // Sync with RevenueCat for Targeting Rules
+      if (Purchases) {
+        await Purchases.setAttributes({ "coupon_code": coupon.code });
+        // Re-fetch offerings so the native modal gets the discounted product
+        await fetchOfferings();
+      }
+
+      Alert.alert("Success", "Coupon applied successfully!");
+    } catch (error) {
+      Alert.alert("Invalid Coupon", error.message);
+    } finally {
+      setIsValidatingCoupon(false);
+    }
+  };
+
+  const handleRemoveCoupon = async () => {
+    setAppliedCoupon(null);
+    if (Purchases) {
+      // Clear the attribute
+      await Purchases.setAttributes({ "coupon_code": "" });
+      // Re-fetch to restore original prices
+      await fetchOfferings();
+    }
+  };
 
   const handlePurchase = async () => {
     if (!selectedPlan) return;
@@ -151,9 +214,16 @@ const PaywallScreen = ({ navigation }) => {
           "Purchase completed, but premium entitlement was not activated yet. Please tap Restore Purchases.",
         );
       }
+
+      // If a custom app coupon was applied, increment its usage
+      if (appliedCoupon) {
+        await incrementCouponUsage(appliedCoupon.code);
+      }
+
       await upgradeToPremium({
         premiumSource: "purchase",
         premiumPlan: selectedPlan,
+        appliedCoupon: appliedCoupon?.code || null,
       });
       Alert.alert(
         "🎉 Welcome to Premium!",
@@ -245,13 +315,19 @@ const PaywallScreen = ({ navigation }) => {
                 const pkg = packages[plan.packageType] || packages[plan.id];
                 const rcPrice = pkg?.product?.priceString;
                 const showPrice = rcPrice || plan.basePrice;
+                
+                // Apply discount if this is the selected plan and a coupon is applied
+                const isSelected = selectedPlan === plan.id;
+                const finalPriceDisplay = (isSelected && appliedCoupon) 
+                  ? applyDiscount(showPrice, appliedCoupon) 
+                  : showPrice;
 
                 return (
                   <TouchableOpacity
                     key={plan.id}
                     style={[
                       styles.pricingCard,
-                      selectedPlan === plan.id && styles.pricingCardActive,
+                      isSelected && styles.pricingCardActive,
                     ]}
                     onPress={() => setSelectedPlan(plan.id)}
                     activeOpacity={0.8}
@@ -267,14 +343,73 @@ const PaywallScreen = ({ navigation }) => {
                       )}
                       <Text style={styles.planName}>{plan.name}</Text>
                       <Text style={styles.planDuration}>{plan.duration}</Text>
-                      <Text style={styles.priceText}>{showPrice}</Text>
-                        <Text style={styles.planDesc}>{plan.desc}</Text>
+                      
+                      {isSelected && appliedCoupon ? (
+                        <View style={{ alignItems: 'center' }}>
+                          <Text style={[styles.priceText, styles.strikethroughPrice]}>{showPrice}</Text>
+                          <Text style={[styles.priceText, styles.discountedPrice]}>{finalPriceDisplay}</Text>
+                        </View>
+                      ) : (
+                        <Text style={styles.priceText}>{showPrice}</Text>
+                      )}
+                      
+                      <Text style={styles.planDesc}>{plan.desc}</Text>
                     </Card.Content>
                   </TouchableOpacity>
                 );
               })}
             </View>
 
+            {/* Coupon Section */}
+            <View style={styles.couponContainer}>
+              {!appliedCoupon ? (
+                !showCouponInput ? (
+                  <TouchableOpacity 
+                    onPress={() => setShowCouponInput(true)}
+                    style={styles.couponTrigger}
+                  >
+                    <Text style={styles.couponTriggerText}>Have a coupon code? <Text style={styles.applyNowText}>Apply now</Text></Text>
+                  </TouchableOpacity>
+                ) : (
+                  <View style={styles.couponInputWrapper}>
+                    <TextInput
+                      mode="outlined"
+                      placeholder="Enter code"
+                      value={couponCode}
+                      onChangeText={setCouponCode}
+                      autoCapitalize="characters"
+                      style={styles.couponInput}
+                      dense
+                      outlineStyle={{ borderRadius: 8 }}
+                    />
+                    <Button 
+                      mode="contained" 
+                      onPress={handleApplyCoupon}
+                      loading={isValidatingCoupon}
+                      disabled={isValidatingCoupon}
+                      style={styles.applyButton}
+                    >
+                      Apply
+                    </Button>
+                    <TouchableOpacity onPress={() => setShowCouponInput(false)} style={styles.cancelCoupon}>
+                      <MaterialIcons name="close" size={20} color={theme.colors.textPlaceholder} />
+                    </TouchableOpacity>
+                  </View>
+                )
+              ) : (
+                <View style={styles.appliedCouponWrapper}>
+                  <View style={styles.appliedCouponTag}>
+                    <MaterialIcons name="local-offer" size={14} color="#A855F7" />
+                    <Text style={styles.appliedCouponText}>
+                      Code {appliedCoupon.code} applied!
+                    </Text>
+                  </View>
+                  <TouchableOpacity onPress={handleRemoveCoupon}>
+                    <Text style={styles.removeCouponText}>Remove</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
 
             <Button
               mode="contained"
@@ -284,7 +419,7 @@ const PaywallScreen = ({ navigation }) => {
               disabled={isPurchasing}
               onPress={handlePurchase}
             >
-              Subscribe Now
+              {appliedCoupon ? 'Get Discounted Price' : 'Subscribe Now'}
             </Button>
 
             <View style={styles.footerLinks}>
@@ -512,6 +647,77 @@ const styles = StyleSheet.create({
   footerLinkText: {
     color: theme.colors.textTertiary,
     fontSize: 12,
+  },
+  strikethroughPrice: {
+    textDecorationLine: 'line-through',
+    color: theme.colors.textPlaceholder,
+    fontSize: 10,
+    marginBottom: 0,
+  },
+  discountedPrice: {
+    color: '#10B981', // Green for discount
+    fontSize: 14,
+  },
+  couponContainer: {
+    marginBottom: 20,
+    paddingHorizontal: 8,
+  },
+  couponTrigger: {
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  couponTriggerText: {
+    color: theme.colors.textTertiary,
+    fontSize: 14,
+  },
+  applyNowText: {
+    color: '#A855F7',
+    fontWeight: 'bold',
+  },
+  couponInputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  couponInput: {
+    flex: 1,
+    height: 40,
+    backgroundColor: theme.colors.surfacePrimary,
+  },
+  applyButton: {
+    marginLeft: 8,
+    borderRadius: 8,
+    height: 40,
+    justifyContent: 'center',
+  },
+  cancelCoupon: {
+    marginLeft: 8,
+    padding: 4,
+  },
+  appliedCouponWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: theme.colors.surfaceTertiary,
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#A855F7',
+    borderStyle: 'dashed',
+  },
+  appliedCouponTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  appliedCouponText: {
+    marginLeft: 6,
+    color: theme.colors.textTitle,
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  removeCouponText: {
+    color: theme.colors.error,
+    fontSize: 12,
+    fontWeight: 'bold',
   },
 });
 

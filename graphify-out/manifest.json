@@ -7,6 +7,10 @@
     "mtime": 1778159580.4395475,
     "hash": "30cd4cbfb4254ddca0501bc108563988"
   },
+  "D:\\The App\\babel.config.js": {
+    "mtime": 1778556784.2426386,
+    "hash": "0cd171559601b8994a428952070f133d"
+  },
   "D:\\The App\\build_graph.py": {
     "mtime": 1778160247.7569287,
     "hash": "7a256d3bb95d9adead34e3f540952a2a"
@@ -22,6 +26,10 @@
   "D:\\The App\\index.js": {
     "mtime": 499162500.0,
     "hash": "33caa6d28d87fc7e637c033d0d7124b1"
+  },
+  "D:\\The App\\jest.config.js": {
+    "mtime": 1778556756.4210439,
+    "hash": "3d6a4ae91d897fadea9144bfc390a44e"
   },
   "D:\\The App\\label_communities.py": {
     "mtime": 1778160324.8007102,
@@ -82,6 +90,10 @@
   "D:\\The App\\validate_json.js": {
     "mtime": 1774937138.5212317,
     "hash": "1422cdafd4202b2f44f734e6d8bd9c66"
+  },
+  "D:\\The App\\write_v.py": {
+    "mtime": 1778556055.4033206,
+    "hash": "60ad28bf00326098dfa914651ecc76a8"
   },
   "D:\\The App\\android\\build.gradle": {
     "mtime": 1776686130.358033,
@@ -256,8 +268,8 @@
     "hash": "97abdb8fd522462f616d41d6c847c9b9"
   },
   "D:\\The App\\src\\components\\ReadingView.js": {
-    "mtime": 1778505622.3668525,
-    "hash": "90863d0b656270e5fca724e3ca0a0638"
+    "mtime": 1778521450.953066,
+    "hash": "c87254c5544201945185b43e5598e940"
   },
   "D:\\The App\\src\\components\\UpdateDetailDialog.js": {
     "mtime": 1777203329.2302506,
@@ -316,8 +328,8 @@
     "hash": "23400106cbd356f911b74bf0164c2c44"
   },
   "D:\\The App\\src\\screens\\GemsScreen.js": {
-    "mtime": 1778505558.8965936,
-    "hash": "c2cb66bf3e4f2b2732b618239d185c7e"
+    "mtime": 1778520714.4963987,
+    "hash": "668cf8653c020a16c182c7edf4fa0621"
   },
   "D:\\The App\\src\\screens\\LibraryScreen.js": {
     "mtime": 1778395627.2983596,
@@ -332,8 +344,8 @@
     "hash": "a5c4606f94a696d570286b0c63951ff5"
   },
   "D:\\The App\\src\\screens\\PaywallScreen.js": {
-    "mtime": 1778502162.3427618,
-    "hash": "592a1c1dc5f5753847d15e279cc8bda8"
+    "mtime": 1778553932.6864877,
+    "hash": "9375282bb44fc1df827a556d7d68f3e7"
   },
   "D:\\The App\\src\\screens\\ProfileScreen.js": {
     "mtime": 1777644143.6820407,
@@ -344,8 +356,8 @@
     "hash": "3a967d076b1f6aee2312f5417a95bd3e"
   },
   "D:\\The App\\src\\screens\\ReadingScreen.js": {
-    "mtime": 1778505563.7785437,
-    "hash": "6753a8920bd77d9989d4312a08146515"
+    "mtime": 1778521386.709771,
+    "hash": "f308304c355a7942253157f73ecffed5"
   },
   "D:\\The App\\src\\screens\\SearchScreen.js": {
     "mtime": 1777266393.020213,
@@ -374,6 +386,10 @@
   "D:\\The App\\src\\services\\annotationService.js": {
     "mtime": 1777659007.7819853,
     "hash": "fa8a9d7557e57fb61e4688fea1702d7b"
+  },
+  "D:\\The App\\src\\services\\couponService.js": {
+    "mtime": 1778553899.1410003,
+    "hash": "d02fb82c297102fcbbb07f589a91a306"
   },
   "D:\\The App\\src\\services\\highlightService.js": {
     "mtime": 1777659005.6232884,
@@ -415,9 +431,17 @@
     "mtime": 1773723664.9753537,
     "hash": "522bf0a626c6273ef0c931297aab724e"
   },
+  "D:\\The App\\1-CONTEXT.md": {
+    "mtime": 1778553954.6303537,
+    "hash": "0bf2a264d93b5a52932a583aa5745d61"
+  },
   "D:\\The App\\AGENTS.md": {
     "mtime": 1778215878.445492,
     "hash": "04f5cc21fb908cfe9aa492bd9b36433c"
+  },
+  "D:\\The App\\COUPON_SETUP.md": {
+    "mtime": 1778553947.628514,
+    "hash": "3cf53682ca29a79ec4d6899d2c41c273"
   },
   "D:\\The App\\CUSTOM_INSTRUCTION_EAS.md": {
     "mtime": 1775129844.3814962,
@@ -430,6 +454,14 @@
   "D:\\The App\\paper1_extracted.txt": {
     "mtime": 1778502162.3317487,
     "hash": "7226b3eb13693e04216b9518652aceb7"
+  },
+  "D:\\The App\\PROJECT.md": {
+    "mtime": 1778554279.0574803,
+    "hash": "66c7af753b0a3d795066ef52a904198f"
+  },
+  "D:\\The App\\ROADMAP.md": {
+    "mtime": 1778555851.6470485,
+    "hash": "41b72be6047eb24f6028e88a6e215dc6"
   },
   "D:\\The App\\docs\\library-update-review-workflow.md": {
     "mtime": 1777266382.0541723,
