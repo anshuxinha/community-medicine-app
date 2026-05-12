@@ -103,8 +103,19 @@ const PaywallScreen = ({ navigation }) => {
       const targetId = forcedOfferingId || appliedCoupon?.code;
       let current = result.current;
       
+      // DEBUG: Log available offering IDs to help diagnose mismatch
+      const allOfferingIds = Object.keys(result.all).join(", ");
+      
       if (targetId && result.all[targetId]) {
         current = result.all[targetId];
+        if (forcedOfferingId) {
+          Alert.alert("Debug: Offering Found", `Switched to offering: ${targetId}. Available: ${allOfferingIds}`);
+        }
+      } else if (targetId) {
+        if (forcedOfferingId) {
+          Alert.alert("Debug: Offering NOT Found", `Looking for: ${targetId}. Available: ${allOfferingIds}`);
+        }
+        if (!current) current = Object.values(result.all)[0];
       } else if (!current) {
         current = Object.values(result.all)[0];
       }
