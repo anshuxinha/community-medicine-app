@@ -46,7 +46,7 @@ const PLAN_METADATA = [
     badge: "Best Value",
     saveText: "SAVE 20%",
     packageType: "$rc_annual",
-    basePrice: "₹1,200/yr",
+    basePrice: "₹999/yr",
   },
   {
     id: "lifetime",
@@ -88,7 +88,7 @@ const PaywallScreen = ({ navigation }) => {
   }, [selectedPlan]);
 
   // Fetch offerings from RevenueCat on mount
-  const fetchOfferings = async (coupon = null) => {
+  const fetchOfferings = async () => {
     if (Constants.appOwnership === "expo" || !Purchases) {
       setLoadError("Purchases are not supported in Expo Go.");
       return;
@@ -96,18 +96,7 @@ const PaywallScreen = ({ navigation }) => {
 
     try {
       const result = await Purchases.getOfferings();
-      
-      // If a coupon is provided, try to find an offering that matches the coupon code
-      // This allows for immediate "Coupon-linked Offerings"
-      let current = result.current;
-      if (coupon && result.all[coupon.code]) {
-        current = result.all[coupon.code];
-      }
-      
-      if (!current) {
-        current = Object.values(result.all)[0];
-      }
-
+      const current = result.current || Object.values(result.all)[0];
       if (!current || !current.availablePackages) {
         setLoadError(
           "No subscription packages available. Please try again later.",
@@ -169,10 +158,9 @@ const PaywallScreen = ({ navigation }) => {
 
       // Sync with RevenueCat for Targeting Rules
       if (Purchases) {
-        // Important: set attributes BEFORE fetching offerings
         await Purchases.setAttributes({ "coupon_code": coupon.code });
-        // Re-fetch offerings, passing the coupon to check for direct offering matches
-        await fetchOfferings(coupon);
+        // Re-fetch offerings so the native modal gets the discounted product
+        await fetchOfferings();
       }
 
       Alert.alert("Success", "Coupon applied successfully!");
@@ -330,12 +318,7 @@ const PaywallScreen = ({ navigation }) => {
                 
                 // Apply discount if this is the selected plan and a coupon is applied
                 const isSelected = selectedPlan === plan.id;
-                
-                // Smart discount display:
-                // If rcPrice is already different from the basePrice, it's likely already discounted by RevenueCat
-                const isAlreadyDiscountedInRC = rcPrice && rcPrice !== plan.basePrice;
-                
-                const finalPriceDisplay = (isSelected && appliedCoupon && !isAlreadyDiscountedInRC) 
+                const finalPriceDisplay = (isSelected && appliedCoupon) 
                   ? applyDiscount(showPrice, appliedCoupon) 
                   : showPrice;
 
@@ -515,127 +498,176 @@ const styles = StyleSheet.create({
   logoImage: {
     width: 80,
     height: 80,
-    borderRadius: 20,
+    borderRadius: 16,
+    shadowColor: theme.colors.secondary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  iconBg: {
+    opacity: 0.8,
+    elevation: 10,
+    shadowColor: theme.colors.chartBlue,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 15,
+  },
+  iconFg: {
+    position: "absolute",
+    top: "30%",
   },
   title: {
-    fontWeight: "bold",
-    color: theme.colors.textMain,
+    color: theme.colors.textTitle,
+    fontFamily: Platform.OS === "ios" ? "Georgia" : "serif",
+    fontSize: 32,
     textAlign: "center",
   },
   featuresList: {
-    marginBottom: 20,
-    backgroundColor: theme.colors.surface,
-    padding: 15,
-    borderRadius: 12,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    marginBottom: 16,
+    paddingHorizontal: 8,
   },
   featureItem: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 12,
   },
   featureIcon: {
     marginRight: 12,
+    backgroundColor: theme.colors.primaryLight, // Soft circle background equivalent
+    borderRadius: 12,
   },
   featureText: {
+    color: "#374151",
     fontSize: 16,
-    color: theme.colors.textSecondary,
-    flex: 1,
+    fontWeight: "500",
   },
   pricingSection: {
-    width: "100%",
+    marginTop: "auto",
   },
   pricingCardsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 20,
-    gap: 10,
+    marginBottom: 24,
   },
   pricingCard: {
     flex: 1,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 12,
-    borderWidth: 2,
-    borderColor: "transparent",
+    borderWidth: 1,
+    borderColor: theme.colors.surfaceSecondary,
+    marginHorizontal: 4,
+    paddingVertical: 12,
     elevation: 2,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    overflow: "visible",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
   },
   pricingCardActive: {
-    borderColor: "#A855F7",
-    backgroundColor: "#F3E8FF",
-  },
-  badgeContainer: {
-    position: "absolute",
-    top: -10,
-    right: 5,
-    backgroundColor: "#A855F7",
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 10,
-    zIndex: 1,
-  },
-  badgeText: {
-    color: "white",
-    fontSize: 10,
-    fontWeight: "bold",
+    borderWidth: 2,
+    borderColor: "#A855F7", // Brand accent
+    backgroundColor: theme.colors.surfaceTertiary,
+    transform: [{ scale: 1.05 }],
+    zIndex: 10,
   },
   pricingContent: {
     alignItems: "center",
-    paddingVertical: 12,
     paddingHorizontal: 4,
   },
-  saveBadge: {
-    fontSize: 10,
-    fontWeight: "bold",
-    color: "#A855F7",
-    marginBottom: 4,
-  },
   planName: {
-    fontSize: 14,
+    color: theme.colors.textTitle,
     fontWeight: "bold",
-    color: theme.colors.textMain,
+    fontSize: 14,
+    marginBottom: 2,
   },
   planDuration: {
-    fontSize: 12,
-    color: theme.colors.textPlaceholder,
+    color: theme.colors.textTertiary,
+    fontSize: 10,
     marginBottom: 8,
   },
   priceText: {
-    fontSize: 18,
+    color: theme.colors.textTitle,
     fontWeight: "bold",
-    color: theme.colors.textMain,
-  },
-  strikethroughPrice: {
-    fontSize: 14,
-    color: theme.colors.textPlaceholder,
-    textDecorationLine: 'line-through',
-  },
-  discountedPrice: {
-    color: '#A855F7',
+    fontSize: 12,
+    marginBottom: 8,
+    textAlign: "center",
   },
   planDesc: {
+    color: theme.colors.textTertiary,
     fontSize: 10,
-    color: theme.colors.textPlaceholder,
-    marginTop: 4,
     textAlign: "center",
+  },
+  badgeContainer: {
+    position: "absolute",
+    top: -12,
+    alignSelf: "center",
+    backgroundColor: theme.colors.primaryLight,
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  badgeText: {
+    color: "#000000",
+    fontSize: 10,
+    fontWeight: "bold",
+  },
+  saveBadge: {
+    color: theme.colors.primaryDark,
+    backgroundColor: theme.colors.primaryLight,
+    borderRadius: 8,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    fontSize: 9,
+    fontWeight: "bold",
+    marginBottom: 4,
+    overflow: "hidden", // iOS rounding fix
+  },
+  subscribeButton: {
+    backgroundColor: theme.colors.secondary, // Match app theme color
+    paddingVertical: 10,
+    borderRadius: 30,
+    marginBottom: 24,
+    elevation: 4,
+    shadowColor: theme.colors.secondary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+  },
+  subscribeButtonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: theme.colors.buttonText, // Use theme for proper contrast
+  },
+  footerLinks: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+  },
+  footerLinkText: {
+    color: theme.colors.textTertiary,
+    fontSize: 12,
+  },
+  strikethroughPrice: {
+    textDecorationLine: 'line-through',
+    color: theme.colors.textPlaceholder,
+    fontSize: 10,
+    marginBottom: 0,
+  },
+  discountedPrice: {
+    color: '#10B981', // Green for discount
+    fontSize: 14,
   },
   couponContainer: {
     marginBottom: 20,
+    paddingHorizontal: 8,
   },
   couponTrigger: {
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: 8,
   },
   couponTriggerText: {
-    color: theme.colors.textSecondary,
+    color: theme.colors.textTertiary,
     fontSize: 14,
   },
   applyNowText: {
@@ -645,62 +677,47 @@ const styles = StyleSheet.create({
   couponInputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
   },
   couponInput: {
     flex: 1,
-    backgroundColor: 'white',
+    height: 40,
+    backgroundColor: theme.colors.surfacePrimary,
   },
   applyButton: {
+    marginLeft: 8,
     borderRadius: 8,
+    height: 40,
+    justifyContent: 'center',
   },
   cancelCoupon: {
+    marginLeft: 8,
     padding: 4,
   },
   appliedCouponWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#F3E8FF',
-    padding: 12,
+    backgroundColor: theme.colors.surfaceTertiary,
+    padding: 10,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#E9D5FF',
+    borderColor: '#A855F7',
+    borderStyle: 'dashed',
   },
   appliedCouponTag: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
   },
   appliedCouponText: {
-    color: '#7C3AED',
-    fontWeight: 'bold',
+    marginLeft: 6,
+    color: theme.colors.textTitle,
+    fontWeight: '600',
     fontSize: 14,
   },
   removeCouponText: {
-    color: theme.colors.textPlaceholder,
+    color: theme.colors.error,
     fontSize: 12,
-    textDecorationLine: 'underline',
-  },
-  subscribeButton: {
-    borderRadius: 12,
-    paddingVertical: 8,
-    backgroundColor: "#A855F7",
-    marginBottom: 20,
-  },
-  subscribeButtonText: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  footerLinks: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingBottom: 20,
-  },
-  footerLinkText: {
-    color: theme.colors.textPlaceholder,
-    fontSize: 12,
-    textDecorationLine: "underline",
+    fontWeight: 'bold',
   },
 });
 
