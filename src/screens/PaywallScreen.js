@@ -88,7 +88,7 @@ const PaywallScreen = ({ navigation }) => {
   }, [selectedPlan]);
 
   // Fetch offerings from RevenueCat on mount
-  const fetchOfferings = async () => {
+  const fetchOfferings = async (forcedOfferingId = null) => {
     if (Constants.appOwnership === "expo" || !Purchases) {
       setLoadError("Purchases are not supported in Expo Go.");
       return;
@@ -96,7 +96,19 @@ const PaywallScreen = ({ navigation }) => {
 
     try {
       const result = await Purchases.getOfferings();
-      const current = result.current || Object.values(result.all)[0];
+      
+      // Support immediate offering switching via coupon IDs
+      // If forcedOfferingId is provided (just applied), or if we have an applied coupon,
+      // look for a matching offering in result.all before falling back to current.
+      const targetId = forcedOfferingId || appliedCoupon?.code;
+      let current = result.current;
+      
+      if (targetId && result.all[targetId]) {
+        current = result.all[targetId];
+      } else if (!current) {
+        current = Object.values(result.all)[0];
+      }
+
       if (!current || !current.availablePackages) {
         setLoadError(
           "No subscription packages available. Please try again later.",
@@ -160,7 +172,8 @@ const PaywallScreen = ({ navigation }) => {
       if (Purchases) {
         await Purchases.setAttributes({ "coupon_code": coupon.code });
         // Re-fetch offerings so the native modal gets the discounted product
-        await fetchOfferings();
+        // Pass code explicitly as state update might be async
+        await fetchOfferings(coupon.code);
       }
 
       Alert.alert("Success", "Coupon applied successfully!");
