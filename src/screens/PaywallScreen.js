@@ -215,12 +215,19 @@ const PaywallScreen = ({ navigation }) => {
 
       // Find the package for the selected plan
       const metadata = PLAN_METADATA.find((p) => p.id === selectedPlan);
-      const pkg = packages[metadata?.packageType] || packages[selectedPlan];
+      let pkg = packages[metadata?.packageType] || packages[selectedPlan];
+      
+      // Fallback: If only one package exists in the current offering, use it.
+      // This helps with custom discounted offerings that might only have one package.
+      if (!pkg && Object.keys(packages).length === 1) {
+        pkg = Object.values(packages)[0];
+      }
 
       if (!pkg) {
+        const availablePkgIds = Object.keys(packages).join(", ");
         Alert.alert(
           "Not Found",
-          `The ${selectedPlan} plan is not configured in RevenueCat yet. Please set up the product in your RevenueCat dashboard.`,
+          `The ${selectedPlan} plan is not configured in RevenueCat yet. (Available: ${availablePkgIds})`,
         );
         setIsPurchasing(false);
         return;
