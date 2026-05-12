@@ -126,6 +126,8 @@ const PaywallScreen = ({ navigation }) => {
 
       // Map available packages by their type for easy lookup
       const pkgMap = {};
+      const pkgSummary = current.availablePackages.map(p => `${p.packageType}:${p.identifier}`).join(", ");
+      
       current.availablePackages.forEach((pkg) => {
         pkgMap[pkg.packageType] = pkg;
         // Also map by identifier as fallback
@@ -133,6 +135,12 @@ const PaywallScreen = ({ navigation }) => {
           pkgMap[pkg.identifier] = pkg;
         }
       });
+      
+      // DEBUG: Only alert on manual switch to help debug missing packages
+      if (forcedOfferingId) {
+        Alert.alert(`Debug: ${current.identifier} Packages`, pkgSummary || "No packages found!");
+      }
+
       setPackages(pkgMap);
       setLoadError(null);
     } catch (err) {
