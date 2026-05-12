@@ -9,7 +9,8 @@
     "web": "expo start --web",
     "videos:sync": "node scripts/bunny-videos.js sync",
     "videos:sync:notify": "node scripts/bunny-videos.js sync --notify-new",
-    "videos:upload": "node scripts/bunny-videos.js upload"
+    "videos:upload": "node scripts/bunny-videos.js upload",
+    "test": "jest"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -53,7 +54,13 @@
   },
   "private": true,
   "devDependencies": {
+    "@testing-library/react-native": "^13.3.3",
+    "babel-jest": "^30.4.1",
+    "babel-preset-expo": "^55.0.21",
     "canvas": "^3.2.1",
-    "firebase-admin": "^13.7.0"
+    "firebase-admin": "^13.7.0",
+    "jest": "^30.4.2",
+    "jest-expo": "^55.0.17",
+    "react-test-renderer": "^19.1.0"
   }
 }
