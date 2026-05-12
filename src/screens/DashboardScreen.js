@@ -237,7 +237,7 @@ const DashboardScreen = ({ navigation }) => {
           </Card>
           <Card
             style={[styles.quickCard, { marginLeft: 8 }]}
-            onPress={() => navigation.navigate("Gems")}
+            onPress={() => navigation.navigate("PremiumGuard", { destination: "Gems" })}
           >
             <Card.Content style={styles.quickCardContent}>
               <MaterialIcons

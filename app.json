@@ -16,7 +16,10 @@
       "supportsTablet": true,
       "buildNumber": "7",
       "usesAppleSignIn": true,
-      "bundleIdentifier": "com.communitymed.app"
+      "bundleIdentifier": "com.communitymed.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {

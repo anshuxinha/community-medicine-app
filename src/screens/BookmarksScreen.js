@@ -35,7 +35,7 @@ const BookmarksScreen = ({ navigation }) => {
       ? getItemStatus(currentItem, effectiveSection, readItemVersions)
       : "none";
 
-    navigation.navigate("Reading", {
+    const readingParams = {
       ...bookmark,
       id: currentItem.id,
       title: currentItem.title,
@@ -50,7 +50,19 @@ const BookmarksScreen = ({ navigation }) => {
       contentSignature: getContentSignature(currentItem),
       updatedSegments: getUpdatedSegmentsForItem(currentItem),
       showUpdateHighlights: itemStatus === "updated",
-    });
+    };
+
+    // Determine if the content is free
+    const isFree = !bookmark.isGem && (currentItem.id === "1" || currentItem.title === "Man and Medicine");
+
+    if (isFree) {
+      navigation.navigate("Reading", readingParams);
+    } else {
+      navigation.navigate("PremiumGuard", {
+        destination: "Reading",
+        readingParams,
+      });
+    }
   };
 
   return (

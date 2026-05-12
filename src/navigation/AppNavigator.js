@@ -109,6 +109,8 @@ const PremiumGuard = ({ navigation, route }) => {
         navigation.replace("Reading", route.params?.readingParams);
       else if (dest === "SubTopics")
         navigation.replace("SubTopics", route.params?.subTopicsParams);
+      else if (dest === "Gems")
+        navigation.replace("Gems");
     }
   }, [user, isPremium, navigation, route.params]);
   return null;

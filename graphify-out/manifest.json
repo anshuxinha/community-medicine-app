@@ -344,8 +344,8 @@
     "hash": "a5c4606f94a696d570286b0c63951ff5"
   },
   "D:\\The App\\src\\screens\\PaywallScreen.js": {
-    "mtime": 1778553932.6864877,
-    "hash": "9375282bb44fc1df827a556d7d68f3e7"
+    "mtime": 1778556943.845316,
+    "hash": "97c7af62fcb7d9894223962e310bb4f8"
   },
   "D:\\The App\\src\\screens\\ProfileScreen.js": {
     "mtime": 1777644143.6820407,
@@ -388,8 +388,8 @@
     "hash": "fa8a9d7557e57fb61e4688fea1702d7b"
   },
   "D:\\The App\\src\\services\\couponService.js": {
-    "mtime": 1778553899.1410003,
-    "hash": "d02fb82c297102fcbbb07f589a91a306"
+    "mtime": 1778558482.0754693,
+    "hash": "036f9c8c3c419dcf234303a7d733b05e"
   },
   "D:\\The App\\src\\services\\highlightService.js": {
     "mtime": 1777659005.6232884,
@@ -406,6 +406,10 @@
   "D:\\The App\\src\\services\\videoService.js": {
     "mtime": 1777869755.728923,
     "hash": "606f1f22b4009a501bdba435caa2e0e0"
+  },
+  "D:\\The App\\src\\services\\__tests__\\couponService.test.js": {
+    "mtime": 1778557022.4758713,
+    "hash": "c03f39c9fab5ab5d52a60b64c7f66f02"
   },
   "D:\\The App\\src\\styles\\theme.js": {
     "mtime": 1776440555.8890755,
@@ -435,6 +439,10 @@
     "mtime": 1778553954.6303537,
     "hash": "0bf2a264d93b5a52932a583aa5745d61"
   },
+  "D:\\The App\\1-UAT.md": {
+    "mtime": 1778561956.0666914,
+    "hash": "a5a23c32416d13ce0e517777c521b9ea"
+  },
   "D:\\The App\\AGENTS.md": {
     "mtime": 1778215878.445492,
     "hash": "04f5cc21fb908cfe9aa492bd9b36433c"
@@ -460,8 +468,8 @@
     "hash": "66c7af753b0a3d795066ef52a904198f"
   },
   "D:\\The App\\ROADMAP.md": {
-    "mtime": 1778555851.6470485,
-    "hash": "41b72be6047eb24f6028e88a6e215dc6"
+    "mtime": 1778557046.972756,
+    "hash": "741a0fea1856179ee2e72d1754a7fb6b"
   },
   "D:\\The App\\docs\\library-update-review-workflow.md": {
     "mtime": 1777266382.0541723,
