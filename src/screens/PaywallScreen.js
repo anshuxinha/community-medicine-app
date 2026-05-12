@@ -100,22 +100,17 @@ const PaywallScreen = ({ navigation }) => {
       // Support immediate offering switching via coupon IDs
       // If forcedOfferingId is provided (just applied), or if we have an applied coupon,
       // look for a matching offering in result.all before falling back to current.
-      const targetId = forcedOfferingId || appliedCoupon?.code;
+      const targetId = (forcedOfferingId || appliedCoupon?.code)?.toLowerCase();
       let current = result.current;
       
-      // DEBUG: Log available offering IDs to help diagnose mismatch
-      const allOfferingIds = Object.keys(result.all).join(", ");
-      
-      if (targetId && result.all[targetId]) {
-        current = result.all[targetId];
-        if (forcedOfferingId) {
-          Alert.alert("Debug: Offering Found", `Switched to offering: ${targetId}. Available: ${allOfferingIds}`);
+      if (targetId) {
+        // Find matching offering ID case-insensitively
+        const matchingId = Object.keys(result.all).find(id => id.toLowerCase() === targetId);
+        if (matchingId) {
+          current = result.all[matchingId];
+        } else if (!current) {
+          current = Object.values(result.all)[0];
         }
-      } else if (targetId) {
-        if (forcedOfferingId) {
-          Alert.alert("Debug: Offering NOT Found", `Looking for: ${targetId}. Available: ${allOfferingIds}`);
-        }
-        if (!current) current = Object.values(result.all)[0];
       } else if (!current) {
         current = Object.values(result.all)[0];
       }
