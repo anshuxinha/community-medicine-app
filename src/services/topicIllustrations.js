@@ -168,15 +168,21 @@ export const getTopicIllustrations = async ({
 
   try {
     const docRef = doc(db, COLLECTION_NAME, docId);
-    let snapshot = await getDoc(docRef);
+    let snapshot = null;
+    try {
+      snapshot = await getDoc(docRef);
+    } catch (e) {
+      console.warn(`getTopicIllustrations: getDoc failed for ${docId}, will try query fallback`, e);
+    }
+
     let remoteImages = [];
 
-    if (snapshot.exists() && Array.isArray(snapshot.data()?.images)) {
+    if (snapshot && snapshot.exists() && Array.isArray(snapshot.data()?.images)) {
       remoteImages = snapshot.data().images;
     } else {
       // Fallback query by contentKey (D-02, D-03)
       console.log(
-        "getTopicIllustrations: falling back to query for",
+        "getTopicIllustrations: attempting query fallback for",
         resolvedContentKey,
       );
       const q = query(
@@ -192,17 +198,16 @@ export const getTopicIllustrations = async ({
     }
 
     console.log(
-      "getTopicIllustrations: fetched remoteImages count",
+      "getTopicIllustrations: finished fetching",
       remoteImages.length,
-      "for docId/contentKey",
-      docId,
+      "images for",
       resolvedContentKey,
     );
     remoteIllustrationCache.set(docId, remoteImages);
     return mergeIllustrations(defaultIllustrations, remoteImages, basePath);
   } catch (error) {
-    console.log(
-      "getTopicIllustrations: error fetching remote illustrations",
+    console.error(
+      "getTopicIllustrations: FATAL error fetching remote illustrations",
       error,
     );
     return mergeIllustrations(defaultIllustrations, [], basePath);

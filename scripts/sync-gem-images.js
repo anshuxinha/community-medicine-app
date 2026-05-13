@@ -18,7 +18,7 @@ const GEM_IMAGE_ENTRIES = [
         fileName: "ors.png",
         sourceFileName: "ors.png",
         alt: "Packets of oral rehydration salt",
-        anchorText: "What are the constituents?",
+        anchorText: "Name the constituents of ORS?",
         placement: "before",
       },
     ],
