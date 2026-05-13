@@ -282,6 +282,7 @@ const VideosScreen = ({ navigation }) => {
                 <Chip
                   selected={selectedCategory === item.id}
                   mode={selectedCategory === item.id ? "flat" : "outlined"}
+                  selectedColor={theme.colors.primary}
                   style={[
                     styles.filterChip,
                     selectedCategory === item.id && styles.filterChipSelected,
@@ -293,6 +294,9 @@ const VideosScreen = ({ navigation }) => {
                   ]}
                   onPress={() => setSelectedCategory(item.id)}
                   showSelectedOverlay={false}
+                  icon={selectedCategory === item.id ? ({ size, color }) => (
+                    <MaterialIcons name="check" size={18} color={theme.colors.primary} />
+                  ) : undefined}
                 >
                   {item.label}
                 </Chip>

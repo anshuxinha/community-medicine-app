@@ -1497,7 +1497,7 @@ const ReadingView = ({
           {isGem && (
             <View style={{ backgroundColor: "#E0F2FE", padding: 8, borderRadius: 8, marginTop: 8 }}>
               <Text style={{ fontSize: 10, color: "#0369A1", fontWeight: "700" }}>
-                DEBUG: isGem=true | illustrations={illustrations.length} | title={title}
+                DEBUG: isGem=true | illustrations={illustrations.length} | key={contentKey}
               </Text>
             </View>
           )}
