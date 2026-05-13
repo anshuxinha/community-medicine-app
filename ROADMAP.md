@@ -7,5 +7,9 @@
 **Status:** Complete
 
 ## Phase 2: Deferred Ideas
+**Goal:** Hardening Gem image reliability and implementing Coupon Analytics.
+**Status:** Context Gathered
+
+## Deferred Ideas
 - [ ] Advanced analytics for coupon usage.
-- [ ] Referral system based on coupons.
+- [ ] Referral system (backlog).
