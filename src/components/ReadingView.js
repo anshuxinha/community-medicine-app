@@ -706,6 +706,7 @@ const ReadingView = ({
   userHighlights = {},
   onToggleHighlight,
   searchTerms = "",
+  contentKey,
 }) => {
   console.log("ReadingView: illustrations prop", illustrations);
   const insets = useSafeAreaInsets();
