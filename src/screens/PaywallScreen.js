@@ -88,7 +88,7 @@ const PaywallScreen = ({ navigation }) => {
   }, [selectedPlan]);
 
   // Fetch offerings from RevenueCat on mount
-  const fetchOfferings = async (forcedOfferingId = null) => {
+  const fetchOfferings = async (forcedOfferingId = undefined) => {
     if (Constants.appOwnership === "expo" || !Purchases) {
       setLoadError("Purchases are not supported in Expo Go.");
       return;
@@ -100,7 +100,8 @@ const PaywallScreen = ({ navigation }) => {
       // Support immediate offering switching via coupon IDs
       // If forcedOfferingId is provided (just applied), or if we have an applied coupon,
       // look for a matching offering in result.all before falling back to current.
-      const targetId = (forcedOfferingId || appliedCoupon?.code)?.toLowerCase();
+      // Use forcedOfferingId if provided (including null to clear), otherwise fallback to state.
+      const targetId = (forcedOfferingId !== undefined ? forcedOfferingId : appliedCoupon?.code)?.toLowerCase();
       let current = result.current;
       
       if (targetId) {
@@ -197,8 +198,8 @@ const PaywallScreen = ({ navigation }) => {
     if (Purchases) {
       // Clear the attribute
       await Purchases.setAttributes({ "coupon_code": "" });
-      // Re-fetch to restore original prices
-      await fetchOfferings();
+      // Re-fetch to restore original prices - pass null explicitly to clear the targeted offering
+      await fetchOfferings(null);
     }
   };
 
