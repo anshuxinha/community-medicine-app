@@ -1494,10 +1494,10 @@ const ReadingView = ({
           <Text style={styles.chapterTitle} selectable={false}>
             {title || ""}
           </Text>
-          {illustrations.length > 0 && (
+          {isGem && (
             <View style={{ backgroundColor: "#E0F2FE", padding: 8, borderRadius: 8, marginTop: 8 }}>
               <Text style={{ fontSize: 10, color: "#0369A1", fontWeight: "700" }}>
-                DEBUG: Found {illustrations.length} illustrations for this topic.
+                DEBUG: isGem=true | illustrations={illustrations.length} | title={title}
               </Text>
             </View>
           )}

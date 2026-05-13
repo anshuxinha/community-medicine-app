@@ -8,11 +8,11 @@ import {
   RefreshControl,
   StyleSheet,
   View,
+  Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   ActivityIndicator,
-  Card,
   Chip,
   IconButton,
   Text,
@@ -35,6 +35,8 @@ import {
   subscribeToVideoNotifications,
   unsubscribeFromVideoNotifications,
 } from "../services/notificationService";
+
+const { width } = Dimensions.get("window");
 
 const playerHtml = (embedUrl) => `
 <!doctype html>
@@ -68,8 +70,6 @@ const getThumbnailSource = (thumbnailUrl) => {
   return { uri: thumbnailUrl };
 };
 
-const formatCategoryLabel = (label) => (label || "Lecture").toUpperCase();
-
 const EmptyState = ({ isFiltered }) => (
   <View style={styles.emptyState}>
     <MaterialIcons
@@ -98,6 +98,7 @@ const VideosScreen = ({ navigation }) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isTogglingNotifications, setIsTogglingNotifications] =
     useState(false);
+  const [visibleCount, setVisibleCount] = useState(10);
 
   useEffect(() => {
     let mounted = true;
@@ -143,11 +144,14 @@ const VideosScreen = ({ navigation }) => {
   const categories = useMemo(() => getVideoCategories(videos), [videos]);
 
   const filteredVideos = useMemo(() => {
-    if (selectedCategory === "all") return videos;
-    return videos.filter((video) => video.category === selectedCategory);
+    let list = videos;
+    if (selectedCategory !== "all") {
+      list = videos.filter((video) => video.category === selectedCategory);
+    }
+    return list;
   }, [selectedCategory, videos]);
 
-  const featuredVideo = videos[0] || null;
+  const displayedVideos = useMemo(() => filteredVideos.slice(0, visibleCount), [filteredVideos, visibleCount]);
 
   const toggleNotifications = async () => {
     if (isTogglingNotifications) return;
@@ -192,61 +196,46 @@ const VideosScreen = ({ navigation }) => {
     setTimeout(() => setIsRefreshing(false), 700);
   };
 
-  const renderVideoCard = ({ item }) => {
+  const renderVideoItem = ({ item }) => {
     const duration = formatDuration(item.duration);
     const publishedAt = formatPublishedDate(item.publishedAt || item.createdAt);
     const thumbnailSource = getThumbnailSource(item.thumbnailUrl);
 
     return (
-      <Pressable onPress={() => setSelectedVideo(item)}>
-        <Card style={styles.videoCard}>
-          {thumbnailSource ? (
-            <ImageBackground
-              source={thumbnailSource}
-              style={styles.thumbnail}
-              imageStyle={styles.thumbnailImage}
-            >
-              <View style={styles.playOverlay}>
-                <MaterialIcons name="play-arrow" size={32} color="#FFFFFF" />
+      <Pressable style={styles.videoItem} onPress={() => setSelectedVideo(item)}>
+        <View style={styles.videoLeft}>
+          <ImageBackground
+            source={thumbnailSource}
+            style={styles.itemThumbnail}
+            imageStyle={styles.itemThumbnailImage}
+          >
+            <View style={styles.itemPlayOverlay}>
+              <MaterialIcons name="play-arrow" size={20} color="#FFFFFF" />
+            </View>
+            {duration ? (
+              <View style={styles.itemDurationBadge}>
+                <Text style={styles.itemDurationText}>{duration}</Text>
               </View>
-              {duration ? (
-                <View style={styles.durationBadge}>
-                  <Text style={styles.durationText}>{duration}</Text>
-                </View>
-              ) : null}
-            </ImageBackground>
-          ) : (
-            <View style={styles.thumbnailFallback}>
-              <MaterialIcons
-                name="play-circle-filled"
-                size={46}
-                color={theme.colors.secondary}
-              />
-              {duration ? (
-                <View style={styles.durationBadge}>
-                  <Text style={styles.durationText}>{duration}</Text>
-                </View>
-              ) : null}
-            </View>
-          )}
-
-          <Card.Content style={styles.videoContent}>
-            <View style={styles.videoMetaRow}>
-              <Text style={styles.categoryLabel}>
-                {formatCategoryLabel(item.categoryLabel)}
-              </Text>
-              <Text style={styles.videoDate}>{publishedAt}</Text>
-            </View>
-            <Text style={styles.videoTitle} numberOfLines={2}>
-              {item.title || "Untitled video"}
-            </Text>
-            {item.description ? (
-              <Text style={styles.videoDescription} numberOfLines={2}>
-                {item.description}
-              </Text>
             ) : null}
-          </Card.Content>
-        </Card>
+          </ImageBackground>
+        </View>
+        
+        <View style={styles.videoRight}>
+          <Text style={styles.itemTitle} numberOfLines={2}>
+            {item.title || "Untitled video"}
+          </Text>
+          <Text style={styles.itemMeta}>
+            {publishedAt}  •  {item.categoryLabel || "Lecture"}
+          </Text>
+        </View>
+
+        <IconButton
+          icon="dots-vertical"
+          size={20}
+          iconColor={theme.colors.textTertiary}
+          onPress={() => {}}
+          style={styles.itemOptions}
+        />
       </Pressable>
     );
   };
@@ -258,9 +247,9 @@ const VideosScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <FlatList
-        data={filteredVideos}
+        data={displayedVideos}
         keyExtractor={(item) => item.id}
-        renderItem={renderVideoCard}
+        renderItem={renderVideoItem}
         contentContainerStyle={styles.listContent}
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
@@ -275,41 +264,13 @@ const VideosScreen = ({ navigation }) => {
                 </Text>
               </View>
               <IconButton
-                icon={isSubscribed ? "bell-check" : "bell-outline"}
-                mode="contained-tonal"
-                iconColor={
-                  isSubscribed ? theme.colors.success : theme.colors.secondary
-                }
-                containerColor={theme.colors.surfacePrimary}
+                icon={isSubscribed ? "bell" : "bell-outline"}
+                iconColor={isSubscribed ? theme.colors.success : theme.colors.textTitle}
+                size={24}
                 onPress={toggleNotifications}
                 disabled={isTogglingNotifications}
               />
             </View>
-
-            {featuredVideo ? (
-              <Pressable onPress={() => setSelectedVideo(featuredVideo)}>
-                <View style={styles.featured}>
-                  <View style={styles.featuredIcon}>
-                    <MaterialIcons
-                      name="ondemand-video"
-                      size={28}
-                      color="#FFFFFF"
-                    />
-                  </View>
-                  <View style={styles.featuredCopy}>
-                    <Text style={styles.featuredLabel}>Latest video</Text>
-                    <Text style={styles.featuredTitle} numberOfLines={2}>
-                      {featuredVideo.title}
-                    </Text>
-                  </View>
-                  <MaterialIcons
-                    name="play-arrow"
-                    size={28}
-                    color={theme.colors.secondary}
-                  />
-                </View>
-              </Pressable>
-            ) : null}
 
             <FlatList
               horizontal
@@ -330,7 +291,6 @@ const VideosScreen = ({ navigation }) => {
                     selectedCategory === item.id &&
                       styles.filterChipTextSelected,
                   ]}
-                  selectedColor="#9333ea"
                   onPress={() => setSelectedCategory(item.id)}
                   showSelectedOverlay={false}
                 >
@@ -338,7 +298,20 @@ const VideosScreen = ({ navigation }) => {
                 </Chip>
               )}
             />
+
+            <Text style={styles.sectionHeading}>LATEST VIDEOS</Text>
           </View>
+        }
+        ListFooterComponent={
+          visibleCount < filteredVideos.length ? (
+            <Pressable 
+              style={styles.loadMoreBtn} 
+              onPress={() => setVisibleCount(prev => prev + 10)}
+            >
+              <Text style={styles.loadMoreText}>Load more</Text>
+              <MaterialIcons name="keyboard-arrow-down" size={20} color={theme.colors.textPrimary} />
+            </Pressable>
+          ) : null
         }
         ListEmptyComponent={
           isLoadingVideos ? (
@@ -400,21 +373,19 @@ const VideosScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: theme.colors.backgroundMain,
+    backgroundColor: theme.colors.surfacePrimary,
   },
   listContent: {
-    padding: 16,
     paddingBottom: 32,
-    gap: 14,
   },
   header: {
-    gap: 16,
+    padding: 20,
+    gap: 20,
   },
   titleRow: {
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
-    gap: 16,
   },
   title: {
     fontSize: 30,
@@ -424,135 +395,114 @@ const styles = StyleSheet.create({
   subtitle: {
     marginTop: 6,
     color: theme.colors.textSecondary,
+    fontSize: 14,
     lineHeight: 20,
-    maxWidth: 300,
-  },
-  featured: {
-    minHeight: 92,
-    borderRadius: 16,
-    padding: 16,
-    backgroundColor: theme.colors.surfacePrimary,
-    borderWidth: 1,
-    borderColor: theme.colors.primaryLight,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 14,
-  },
-  featuredIcon: {
-    width: 52,
-    height: 52,
-    borderRadius: 14,
-    backgroundColor: theme.colors.secondary,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  featuredCopy: {
-    flex: 1,
-  },
-  featuredLabel: {
-    color: theme.colors.textTertiary,
-    fontWeight: "700",
-    fontSize: 12,
-    textTransform: "uppercase",
-  },
-  featuredTitle: {
-    marginTop: 4,
-    color: theme.colors.textTitle,
-    fontWeight: "700",
-    fontSize: 16,
-    lineHeight: 21,
+    maxWidth: 260,
   },
   categoryList: {
     gap: 8,
-    paddingRight: 16,
+    paddingRight: 20,
   },
   filterChip: {
     backgroundColor: theme.colors.surfacePrimary,
-    borderColor: theme.colors.border || "#D1D5DB",
+    borderColor: "#E5E7EB",
+    borderRadius: 20,
   },
   filterChipSelected: {
-    backgroundColor: theme.colors.primaryLight,
+    backgroundColor: "#F3F0FF",
+    borderColor: "#F3F0FF",
   },
   filterChipText: {
     color: theme.colors.textSecondary,
     fontWeight: "600",
+    fontSize: 14,
   },
   filterChipTextSelected: {
-    color: theme.colors.primaryDark,
+    color: "#7C3AED",
   },
-  videoCard: {
-    backgroundColor: theme.colors.surfacePrimary,
-    borderRadius: 16,
-    overflow: "hidden",
-  },
-  thumbnail: {
-    height: 184,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  thumbnailImage: {
-    backgroundColor: theme.colors.surfaceSecondary,
-  },
-  thumbnailFallback: {
-    height: 184,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: theme.colors.primaryLight,
-  },
-  playOverlay: {
-    width: 58,
-    height: 58,
-    borderRadius: 29,
-    backgroundColor: "rgba(17, 24, 39, 0.72)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  durationBadge: {
-    position: "absolute",
-    right: 12,
-    bottom: 12,
-    borderRadius: 8,
-    backgroundColor: "rgba(17, 24, 39, 0.82)",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  durationText: {
-    color: "#FFFFFF",
-    fontSize: 12,
-    fontWeight: "700",
-  },
-  videoContent: {
-    paddingTop: 14,
-    paddingBottom: 16,
-  },
-  videoMetaRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 10,
-    marginBottom: 10,
-  },
-  categoryLabel: {
-    color: "#9333ea",
+  sectionHeading: {
     fontSize: 12,
     fontWeight: "800",
-    letterSpacing: 0,
+    color: theme.colors.textTertiary,
+    letterSpacing: 1,
+    marginTop: 10,
   },
-  videoDate: {
+  // -- New List Item Style --
+  videoItem: {
+    flexDirection: "row",
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    alignItems: "center",
+    gap: 16,
+  },
+  videoLeft: {
+    width: 110,
+    aspectRatio: 1.2,
+  },
+  itemThumbnail: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  itemThumbnailImage: {
+    borderRadius: 12,
+    backgroundColor: "#4C1D95", // Dark purple base
+  },
+  itemPlayOverlay: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "rgba(17, 24, 39, 0.4)",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.3)",
+  },
+  itemDurationBadge: {
+    position: "absolute",
+    right: 6,
+    bottom: 6,
+    borderRadius: 4,
+    backgroundColor: "rgba(0, 0, 0, 0.75)",
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+  },
+  itemDurationText: {
+    color: "#FFFFFF",
+    fontSize: 10,
+    fontWeight: "800",
+  },
+  videoRight: {
+    flex: 1,
+    justifyContent: "center",
+    gap: 4,
+  },
+  itemTitle: {
+    color: theme.colors.textTitle,
+    fontSize: 15,
+    fontWeight: "800",
+    lineHeight: 20,
+  },
+  itemMeta: {
     color: theme.colors.textTertiary,
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: "500",
   },
-  videoTitle: {
-    color: theme.colors.textTitle,
-    fontSize: 18,
-    lineHeight: 24,
+  itemOptions: {
+    margin: 0,
+    marginRight: -8,
+  },
+  loadMoreBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 24,
+    gap: 4,
+  },
+  loadMoreText: {
+    color: theme.colors.textPrimary,
+    fontSize: 15,
     fontWeight: "800",
-  },
-  videoDescription: {
-    marginTop: 8,
-    color: theme.colors.textSecondary,
-    lineHeight: 20,
   },
   loadingState: {
     alignItems: "center",

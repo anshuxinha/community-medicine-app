@@ -660,7 +660,9 @@ export const AppProvider = ({ children }) => {
           console.log("Push notification permission denied.");
           return null;
         }
-        token = (await Notifications.getExpoPushTokenAsync()).data;
+        token = (await Notifications.getExpoPushTokenAsync({
+          projectId: "0b2a61f3-1c01-4684-8f41-ca63b1c308a8"
+        })).data;
       } catch (err) {
         console.log("Expo notification error:", err);
         return null;
