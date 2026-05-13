@@ -1498,7 +1498,16 @@ const ReadingView = ({
           {isGem && (
             <View style={{ backgroundColor: "#E0F2FE", padding: 8, borderRadius: 8, marginTop: 8 }}>
               <Text style={{ fontSize: 10, color: "#0369A1", fontWeight: "700" }}>
-                DEBUG: isGem=true | illustrations={illustrations.length} | key={contentKey}
+                DEBUG: isGem=true | count={Array.isArray(illustrations) ? illustrations.filter(i => !i._diagnostic).length : "err"}
+              </Text>
+              {Array.isArray(illustrations) && illustrations.length > 0 && (illustrations[0]._diagnostic || illustrations[0]._debug) ? (
+                <Text style={{ fontSize: 9, color: "#0369A1", marginTop: 4 }}>
+                  Status: {illustrations[0]._diagnostic ? illustrations[0].fetchStatus : (illustrations[0]._debug?.fetchStatus || "unknown")} | 
+                  Error: {illustrations[0].errorDetail || "none"}
+                </Text>
+              ) : null}
+              <Text style={{ fontSize: 9, color: "#0369A1" }}>
+                Key: {contentKey || "missing"}
               </Text>
             </View>
           )}
