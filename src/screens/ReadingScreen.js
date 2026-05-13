@@ -327,12 +327,12 @@ const ReadingScreen = ({ route, navigation }) => {
         onSaveAnnotation={handleSaveAnnotation}
         onDeleteAnnotation={handleDeleteAnnotation}
         userHighlights={userHighlights}
-        onToggleHighlight={toggleHighlight}
+        onToggleHighlight={handleToggleHighlight}
         searchTerms={searchTerms}
         contentKey={effectiveContentKey}
-        />
-        </View>
-        );
+      />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
