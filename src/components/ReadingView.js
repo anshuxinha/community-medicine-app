@@ -1232,7 +1232,9 @@ const ReadingView = ({
         );
       }
       case "illustration": {
-        const source = block.source || { uri: block.url };
+        const source = block.source || (block.url ? { uri: block.url } : null);
+        if (!source) return null;
+
         const aspectRatio = resolveAspectRatio(source, block.aspectRatio || 1);
         const rotationKey = getRotationKey(
           source,
