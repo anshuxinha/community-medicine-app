@@ -409,16 +409,18 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   filterChipSelected: {
-    backgroundColor: "#F3F0FF",
-    borderColor: "#F3F0FF",
+    backgroundColor: "#EDE9FE", // Light purple background
+    borderColor: theme.colors.primary,
+    borderWidth: 1,
   },
   filterChipText: {
-    color: theme.colors.textSecondary,
+    color: "#4B5563",
     fontWeight: "600",
     fontSize: 14,
   },
   filterChipTextSelected: {
-    color: "#7C3AED",
+    color: theme.colors.primary,
+    fontWeight: "bold",
   },
   sectionHeading: {
     fontSize: 12,
