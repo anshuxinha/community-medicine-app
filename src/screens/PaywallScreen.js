@@ -25,6 +25,8 @@ import {
 } from "../utils/screenCaptureProtection";
 import { validateCoupon, applyDiscount, incrementCouponUsage } from "../services/couponService";
 import { TextInput } from "react-native-paper";
+import { logEvent } from "firebase/analytics";
+import { analytics } from "../config/firebase";
 
 // Default plan metadata (prices are fetched from RevenueCat)
 const PLAN_METADATA = [
@@ -67,6 +69,18 @@ const PaywallScreen = ({ navigation }) => {
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
+
+  // Helper for consistent analytics logging
+  const logCouponEvent = (eventName, params = {}) => {
+    if (analytics) {
+      logEvent(analytics, eventName, {
+        ...params,
+        selected_plan: selectedPlan,
+        coupon_applied: !!appliedCoupon,
+        platform: Platform.OS,
+      });
+    }
+  };
 
   useEffect(() => {
     enableScreenCaptureProtection();
@@ -163,6 +177,8 @@ const PaywallScreen = ({ navigation }) => {
       return;
     }
 
+    logCouponEvent('coupon_apply_attempt', { code: couponCode });
+
     // Check network status to prevent stale validation
     const state = await NetInfo.fetch();
     if (!state.isConnected) {
@@ -177,6 +193,12 @@ const PaywallScreen = ({ navigation }) => {
       setCouponCode("");
       setShowCouponInput(false);
 
+      logCouponEvent('coupon_apply_success', { 
+        code: coupon.code, 
+        discount_type: coupon.discountType,
+        discount_value: coupon.discountValue
+      });
+
       // Sync with RevenueCat for Targeting Rules
       if (Purchases) {
         await Purchases.setAttributes({ "coupon_code": coupon.code });
@@ -187,6 +209,7 @@ const PaywallScreen = ({ navigation }) => {
 
       Alert.alert("Success", "Coupon applied successfully!");
     } catch (error) {
+      logCouponEvent('coupon_apply_failure', { code: couponCode, reason: error.message });
       Alert.alert("Invalid Coupon", error.message);
     } finally {
       setIsValidatingCoupon(false);
@@ -254,6 +277,13 @@ const PaywallScreen = ({ navigation }) => {
         premiumPlan: selectedPlan,
         appliedCoupon: appliedCoupon?.code || null,
       });
+
+      logCouponEvent('purchase_success', { 
+        plan: selectedPlan, 
+        coupon: appliedCoupon?.code || null,
+        entitlement: 'Premium'
+      });
+
       Alert.alert(
         "🎉 Welcome to Premium!",
         "Your subscription is now active. Enjoy full access to STROMA.",
