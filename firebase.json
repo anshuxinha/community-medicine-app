@@ -11,5 +11,8 @@
                 "destination": "/privacy.html"
             }
         ]
+    },
+    "firestore": {
+        "rules": "firestore.rules"
     }
 }

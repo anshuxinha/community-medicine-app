@@ -166,25 +166,28 @@ export const getTopicIllustrations = async ({
     );
   }
 
+  let fetchStatus = "idle";
+  let errorDetail = null;
+
   try {
     const docRef = doc(db, COLLECTION_NAME, docId);
     let snapshot = null;
+    fetchStatus = "trying_getDoc";
     try {
       snapshot = await getDoc(docRef);
     } catch (e) {
-      console.warn(`getTopicIllustrations: getDoc failed for ${docId}, will try query fallback`, e);
+      console.warn(`getTopicIllustrations: getDoc failed for ${docId}`, e);
+      errorDetail = `getDoc_failed: ${e.message}`;
     }
 
     let remoteImages = [];
 
     if (snapshot && snapshot.exists() && Array.isArray(snapshot.data()?.images)) {
       remoteImages = snapshot.data().images;
+      fetchStatus = "success_getDoc";
     } else {
       // Fallback query by contentKey (D-02, D-03)
-      console.log(
-        "getTopicIllustrations: attempting query fallback for",
-        resolvedContentKey,
-      );
+      fetchStatus = "trying_query";
       const q = query(
         collection(db, COLLECTION_NAME),
         where("contentKey", "==", resolvedContentKey),
@@ -194,6 +197,9 @@ export const getTopicIllustrations = async ({
       if (!querySnapshot.empty) {
         const docData = querySnapshot.docs[0].data();
         remoteImages = Array.isArray(docData.images) ? docData.images : [];
+        fetchStatus = "success_query";
+      } else {
+        fetchStatus = "not_found";
       }
     }
 
