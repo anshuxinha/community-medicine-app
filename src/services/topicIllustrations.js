@@ -1,11 +1,19 @@
-import { doc, getDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  query,
+  collection,
+  where,
+  getDocs,
+  limit,
+} from "firebase/firestore";
 import { db } from "../config/firebase";
 import { DEFAULT_TOPIC_ILLUSTRATION_MAP } from "../data/defaultTopicIllustrations";
 
 const COLLECTION_NAME = "topicIllustrations";
 const remoteIllustrationCache = new Map();
 
-const normalizeIllustration = (image = {}) => {
+const normalizeIllustration = (image = {}, basePath = "reading-illustrations") => {
   // Prioritize Firebase Storage URL over local source
   // If we have a URL, we don't need a local source
   let url = image.url || null;
@@ -14,7 +22,9 @@ const normalizeIllustration = (image = {}) => {
   if (!url && image.fileName) {
     // Base URL for Firebase Storage bucket
     const storageBucket = "community-med-app.firebasestorage.app";
-    url = `https://storage.googleapis.com/${storageBucket}/reading-illustrations/${image.fileName}`;
+    // Sanitize fileName to prevent path traversal (T-02-01)
+    const sanitizedFileName = String(image.fileName).replace(/\.\.\//g, "");
+    url = `https://storage.googleapis.com/${storageBucket}/${basePath}/${sanitizedFileName}`;
   }
 
   // Only keep source if no URL is available (for fallback/offline support)
@@ -52,17 +62,23 @@ const normalizeIllustration = (image = {}) => {
   };
 };
 
-const mergeIllustrations = (defaults = [], remote = []) => {
+const mergeIllustrations = (
+  defaults = [],
+  remote = [],
+  basePath = "reading-illustrations",
+) => {
   console.log(
     "mergeIllustrations: defaults count",
     defaults.length,
     "remote count",
     remote.length,
+    "basePath",
+    basePath,
   );
   const merged = new Map();
 
   defaults.forEach((image) => {
-    const normalized = normalizeIllustration(image);
+    const normalized = normalizeIllustration(image, basePath);
     const key = normalized.id || `${normalized.anchorText}:${normalized.alt}`;
     console.log(
       "default image key",
@@ -76,7 +92,7 @@ const mergeIllustrations = (defaults = [], remote = []) => {
   });
 
   remote.forEach((image) => {
-    const normalized = normalizeIllustration(image);
+    const normalized = normalizeIllustration(image, basePath);
     const key = normalized.id || `${normalized.anchorText}:${normalized.alt}`;
     const existing = merged.get(key) || {};
 
@@ -119,7 +135,17 @@ export const getTopicIllustrations = async ({
   }
 
   const resolvedContentKey = contentKey || `${section}:${String(topicId)}`;
-  console.log("getTopicIllustrations: resolvedContentKey", resolvedContentKey);
+  const basePath = resolvedContentKey.startsWith("gems:")
+    ? "gems"
+    : "reading-illustrations";
+
+  console.log(
+    "getTopicIllustrations: resolvedContentKey",
+    resolvedContentKey,
+    "basePath",
+    basePath,
+  );
+
   const defaultIllustrations =
     DEFAULT_TOPIC_ILLUSTRATION_MAP.get(resolvedContentKey) || [];
   console.log(
@@ -136,29 +162,49 @@ export const getTopicIllustrations = async ({
     return mergeIllustrations(
       defaultIllustrations,
       remoteIllustrationCache.get(docId),
+      basePath,
     );
   }
 
   try {
-    const snapshot = await getDoc(doc(db, COLLECTION_NAME, docId));
-    const remoteImages =
-      snapshot.exists() && Array.isArray(snapshot.data()?.images)
-        ? snapshot.data().images
-        : [];
+    const docRef = doc(db, COLLECTION_NAME, docId);
+    let snapshot = await getDoc(docRef);
+    let remoteImages = [];
+
+    if (snapshot.exists() && Array.isArray(snapshot.data()?.images)) {
+      remoteImages = snapshot.data().images;
+    } else {
+      // Fallback query by contentKey (D-02, D-03)
+      console.log(
+        "getTopicIllustrations: falling back to query for",
+        resolvedContentKey,
+      );
+      const q = query(
+        collection(db, COLLECTION_NAME),
+        where("contentKey", "==", resolvedContentKey),
+        limit(1),
+      );
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        const docData = querySnapshot.docs[0].data();
+        remoteImages = Array.isArray(docData.images) ? docData.images : [];
+      }
+    }
 
     console.log(
       "getTopicIllustrations: fetched remoteImages count",
       remoteImages.length,
-      "for docId",
+      "for docId/contentKey",
       docId,
+      resolvedContentKey,
     );
     remoteIllustrationCache.set(docId, remoteImages);
-    return mergeIllustrations(defaultIllustrations, remoteImages);
+    return mergeIllustrations(defaultIllustrations, remoteImages, basePath);
   } catch (error) {
     console.log(
       "getTopicIllustrations: error fetching remote illustrations",
       error,
     );
-    return mergeIllustrations(defaultIllustrations, []);
+    return mergeIllustrations(defaultIllustrations, [], basePath);
   }
 };
