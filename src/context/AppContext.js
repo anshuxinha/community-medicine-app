@@ -855,14 +855,18 @@ export const AppProvider = ({ children }) => {
     if (Constants.appOwnership === "expo") return;
     if (!Purchases) return;
 
-    const rcApiKey = process.env.EXPO_PUBLIC_RC_API_KEY;
+    const rcApiKey = Platform.select({
+      ios: process.env.EXPO_PUBLIC_RC_API_KEY_IOS,
+      android: process.env.EXPO_PUBLIC_RC_API_KEY_ANDROID,
+    }) || process.env.EXPO_PUBLIC_RC_API_KEY;
+
     const isTestKey =
       typeof rcApiKey === "string" && rcApiKey.startsWith("test_");
     const isProdRuntime = !__DEV__;
 
     if (!rcApiKey || (isProdRuntime && isTestKey)) {
       console.warn(
-        "RevenueCat initialization skipped: missing or non-production API key.",
+        `RevenueCat initialization skipped for ${Platform.OS}: missing or non-production API key.`,
       );
       return;
     }

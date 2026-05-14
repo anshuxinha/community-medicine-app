@@ -2,9 +2,16 @@
 
 ## Current Status
 **Active Milestone:** Milestone 1 - Foundation & Monetization
-**Current Phase:** Shipped Phase 2
+**Current Phase:** Shipped Phase 3
 
 ## Shipped Phases
+### Phase 3: Apple Sign-In Fix (2026-05-14)
+**Goal:** Resolved audience mismatch error and hardened iOS Firebase configuration.
+**Key Deliverables:**
+- `GoogleService-Info.plist`: Registered native iOS app in Firebase.
+- `app.json`: Linked native iOS config to Expo build process.
+- **Verification:** Decisions locked in `3-CONTEXT.md` to use `com.communitymed.app` as the primary identifier.
+
 ### Phase 2: Deferred Ideas (2026-05-13)
 **Goal:** Hardened Gem image reliability and implemented Coupon Analytics logging.
 **Key Deliverables:**

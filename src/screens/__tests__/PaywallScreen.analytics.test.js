@@ -61,6 +61,17 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
   removeItem: jest.fn(),
 }));
 
+jest.mock('@react-native-google-signin/google-signin', () => ({
+  GoogleSignin: {
+    configure: jest.fn(),
+    hasPlayServices: jest.fn().mockResolvedValue(true),
+    signIn: jest.fn(),
+    signOut: jest.fn(),
+    isSignedIn: jest.fn(),
+    getTokens: jest.fn(),
+  },
+}));
+
 jest.mock('expo-notifications', () => ({
   addPushTokenListener: jest.fn(),
   setNotificationHandler: jest.fn(),

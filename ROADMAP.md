@@ -13,6 +13,12 @@
 - [x] 02-02-PLAN.md — Coupon Analytics & Sync
 **Status:** Complete
 
+## Phase 3: Apple Sign-In Fix
+**Goal:** Resolve audience mismatch error and harden iOS Firebase configuration.
+**Plans:** 1 plan executed
+- [x] 03-01-PLAN.md — Firebase iOS Registration & Config Alignment
+**Status:** Complete
+
 ## Deferred Ideas
 - [ ] Advanced analytics for coupon usage.
 - [ ] Referral system (backlog).

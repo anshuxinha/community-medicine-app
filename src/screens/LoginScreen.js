@@ -44,6 +44,8 @@ if (Constants.appOwnership !== "expo") {
   GoogleSignin.configure({
     webClientId:
       "856703659616-8e0k1obmgom04783jjf695hkianm4hme.apps.googleusercontent.com",
+    iosClientId: 
+      "856703659616-pel4uk9eb2u2qc12m2ldgk4o8eitu75v.apps.googleusercontent.com",
   });
 }
 

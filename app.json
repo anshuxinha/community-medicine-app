@@ -17,6 +17,7 @@
       "buildNumber": "7",
       "usesAppleSignIn": true,
       "bundleIdentifier": "com.communitymed.app",
+      "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
