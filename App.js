@@ -7,6 +7,7 @@ import { AppProvider } from "./src/context/AppContext";
 import { paperTheme } from "./src/styles/theme";
 import ErrorBoundary from "./src/components/ErrorBoundary";
 import { scheduleAllNotifications } from "./src/services/notificationService";
+import UpdateBottomSheet from "./src/components/UpdateBottomSheet";
 
 export default function App() {
   usePreventScreenCapture();
@@ -25,6 +26,7 @@ export default function App() {
         <AppProvider>
           <PaperProvider theme={paperTheme}>
             <AppNavigator />
+            <UpdateBottomSheet />
           </PaperProvider>
         </AppProvider>
       </ErrorBoundary>
