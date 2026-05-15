@@ -71,10 +71,6 @@ const DashboardScreen = ({ navigation }) => {
   const normalizeHealthDayDescription = (text) =>
     (text || "").replace(/\s+/g, " ").trim();
 
-  useEffect(() => {
-    scheduleAllNotifications();
-  }, []);
-
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return "Good morning";

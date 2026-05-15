@@ -83,4 +83,6 @@ jobs:
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           EXPO_PUBLIC_RC_API_KEY: ${{ secrets.EXPO_PUBLIC_RC_API_KEY }}
+          EXPO_PUBLIC_RC_API_KEY_IOS: ${{ secrets.EXPO_PUBLIC_RC_API_KEY_IOS }}
+          EXPO_PUBLIC_RC_API_KEY_ANDROID: ${{ secrets.EXPO_PUBLIC_RC_API_KEY_ANDROID }}
         run: npx eas-cli update --channel production --message "Weekly dashboard guideline updates" --non-interactive

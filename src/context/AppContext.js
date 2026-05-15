@@ -860,6 +860,8 @@ export const AppProvider = ({ children }) => {
       android: process.env.EXPO_PUBLIC_RC_API_KEY_ANDROID,
     }) || process.env.EXPO_PUBLIC_RC_API_KEY;
 
+    console.log(`[RevenueCat] Initializing on ${Platform.OS} with key: ${rcApiKey?.substring(0, 8)}...`);
+
     const isTestKey =
       typeof rcApiKey === "string" && rcApiKey.startsWith("test_");
     const isProdRuntime = !__DEV__;

@@ -110,6 +110,7 @@ const PaywallScreen = ({ navigation }) => {
 
     try {
       const result = await Purchases.getOfferings();
+      console.log("[RevenueCat] Offerings fetched:", JSON.stringify(result, null, 2));
       
       // Support immediate offering switching via coupon IDs
       // If forcedOfferingId is provided (just applied), or if we have an applied coupon,
