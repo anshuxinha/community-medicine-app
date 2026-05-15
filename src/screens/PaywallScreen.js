@@ -7,6 +7,7 @@ import {
   Alert,
   Linking,
   Image,
+  ScrollView,
 } from "react-native";
 import { Text, Button, Card } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -38,7 +39,7 @@ const PLAN_METADATA = [
     badge: null,
     saveText: null,
     packageType: "$rc_monthly",
-    basePrice: "₹9/mo",
+    basePrice: "₹299/mo", // Fixed fallback to match RC default
   },
   {
     id: "yearly",
@@ -48,7 +49,7 @@ const PLAN_METADATA = [
     badge: "Best Value",
     saveText: "SAVE 20%",
     packageType: "$rc_annual",
-    basePrice: "₹999/yr",
+    basePrice: "₹1,200/yr", // Fixed fallback to match RC default
   },
   {
     id: "lifetime",
@@ -58,7 +59,7 @@ const PLAN_METADATA = [
     badge: null,
     saveText: null,
     packageType: "$rc_lifetime",
-    basePrice: "₹25,000",
+    basePrice: "₹11,000", // Fixed fallback to match RC default
   },
 ];
 
@@ -113,9 +114,6 @@ const PaywallScreen = ({ navigation }) => {
       console.log("[RevenueCat] Offerings fetched:", JSON.stringify(result, null, 2));
       
       // Support immediate offering switching via coupon IDs
-      // If forcedOfferingId is provided (just applied), or if we have an applied coupon,
-      // look for a matching offering in result.all before falling back to current.
-      // Use forcedOfferingId if provided (including null to clear), otherwise fallback to state.
       const targetId = (forcedOfferingId !== undefined ? forcedOfferingId : appliedCoupon?.code)?.toLowerCase();
       let current = result.current;
       
@@ -162,7 +160,20 @@ const PaywallScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    fetchOfferings();
+    const init = async () => {
+      if (Purchases) {
+        try {
+          // Clear any previous coupon targeting on mount to reset to default offering
+          // This fixes the issue where YEARLY999 users see the discounted price by default even after reinstall
+          await Purchases.setAttributes({ "coupon_code": "" });
+          console.log("[RevenueCat] Attributes cleared on mount");
+        } catch (err) {
+          console.warn("[RevenueCat] Failed to clear attributes:", err);
+        }
+      }
+      fetchOfferings();
+    };
+    init();
   }, []);
 
   // Redirect if already premium
@@ -245,7 +256,6 @@ const PaywallScreen = ({ navigation }) => {
       let pkg = packages[metadata?.packageType] || packages[selectedPlan];
       
       // Fallback: If only one package exists in the current offering, use it.
-      // This helps with custom discounted offerings that might only have one package.
       if (!pkg && Object.keys(packages).length === 1) {
         pkg = Object.values(packages)[0];
       }
@@ -322,7 +332,10 @@ const PaywallScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
+      <ScrollView 
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.header}>
           <TouchableOpacity
             onPress={() => navigation.goBack()}
@@ -496,7 +509,7 @@ const PaywallScreen = ({ navigation }) => {
             </View>
           </View>
         )}
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -521,7 +534,7 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     paddingHorizontal: 20,
-    paddingBottom: 40,
+    paddingBottom: 60, // Increased to avoid overlap with system nav bar
   },
   errorContainer: {
     flex: 1,
@@ -546,14 +559,14 @@ const styles = StyleSheet.create({
   heroSection: {
     alignItems: "center",
     marginTop: 0,
-    marginBottom: 10,
+    marginBottom: 8, // Reduced for better fit
   },
   iconWrapper: {
     width: 80,
     height: 80,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 8, // Reduced
   },
   logoImage: {
     width: 80,
@@ -580,21 +593,21 @@ const styles = StyleSheet.create({
   title: {
     color: theme.colors.textTitle,
     fontFamily: Platform.OS === "ios" ? "Georgia" : "serif",
-    fontSize: 32,
+    fontSize: 28, // Reduced from 32
     textAlign: "center",
   },
   featuresList: {
-    marginBottom: 16,
+    marginBottom: 12, // Reduced from 16
     paddingHorizontal: 8,
   },
   featureItem: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: 8, // Reduced from 12
   },
   featureIcon: {
     marginRight: 12,
-    backgroundColor: theme.colors.primaryLight, // Soft circle background equivalent
+    backgroundColor: theme.colors.primaryLight, 
     borderRadius: 12,
   },
   featureText: {
@@ -608,7 +621,7 @@ const styles = StyleSheet.create({
   pricingCardsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 24,
+    marginBottom: 16, // Reduced from 24
   },
   pricingCard: {
     flex: 1,
@@ -626,7 +639,7 @@ const styles = StyleSheet.create({
   },
   pricingCardActive: {
     borderWidth: 2,
-    borderColor: "#A855F7", // Brand accent
+    borderColor: "#A855F7", 
     backgroundColor: theme.colors.surfaceTertiary,
     transform: [{ scale: 1.05 }],
     zIndex: 10,
@@ -681,13 +694,13 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontWeight: "bold",
     marginBottom: 4,
-    overflow: "hidden", // iOS rounding fix
+    overflow: "hidden", 
   },
   subscribeButton: {
-    backgroundColor: theme.colors.secondary, // Match app theme color
+    backgroundColor: theme.colors.secondary, 
     paddingVertical: 10,
     borderRadius: 30,
-    marginBottom: 24,
+    marginBottom: 16, // Reduced from 24
     elevation: 4,
     shadowColor: theme.colors.secondary,
     shadowOffset: { width: 0, height: 4 },
@@ -697,12 +710,13 @@ const styles = StyleSheet.create({
   subscribeButtonText: {
     fontSize: 18,
     fontWeight: "bold",
-    color: theme.colors.buttonText, // Use theme for proper contrast
+    color: theme.colors.buttonText, 
   },
   footerLinks: {
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: 16,
+    marginBottom: 10,
   },
   footerLinkText: {
     color: theme.colors.textTertiary,
@@ -715,11 +729,11 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   discountedPrice: {
-    color: '#10B981', // Green for discount
+    color: '#10B981', 
     fontSize: 14,
   },
   couponContainer: {
-    marginBottom: 20,
+    marginBottom: 16, // Reduced from 20
     paddingHorizontal: 8,
   },
   couponTrigger: {
