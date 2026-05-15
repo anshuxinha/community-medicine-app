@@ -16,7 +16,9 @@ import {
   Surface,
 } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-import * as Updates from "expo-updates";
+import Constants from "expo-constants";
+import { db } from "../config/firebase";
+import { doc, getDoc } from "firebase/firestore";
 import { theme } from "../styles/theme";
 
 const { height: WINDOW_HEIGHT } = Dimensions.get("window");
@@ -26,30 +28,66 @@ const UpdateBottomSheet = () => {
   const [updateInfo, setUpdateInfo] = useState({
     version: "",
     notes: "Security improvements and bug fixes.",
-    size: "2.4 MB",
+    size: "Optimized Download",
   });
   const slideAnim = useState(new Animated.Value(WINDOW_HEIGHT))[0];
   const opacityAnim = useState(new Animated.Value(0))[0];
 
   useEffect(() => {
-    checkUpdates();
+    checkStoreUpdates();
   }, []);
 
-  const checkUpdates = async () => {
+  const isVersionLower = (current, latest) => {
+    if (!current || !latest) return false;
+    const curr = current.split(".").map(Number);
+    const last = latest.split(".").map(Number);
+    for (let i = 0; i < Math.max(curr.length, last.length); i++) {
+      const v1 = curr[i] || 0;
+      const v2 = last[i] || 0;
+      if (v1 < v2) return true;
+      if (v1 > v2) return false;
+    }
+    return false;
+  };
+
+  const checkStoreUpdates = async () => {
     if (__DEV__) return; // Don't check in dev mode
 
     try {
-      const update = await Updates.checkForUpdateAsync();
-      if (update.isAvailable) {
-        setUpdateInfo({
-          version: update.manifest?.version || "New Version",
-          notes: update.manifest?.extra?.expoClient?.description || "Important performance and security updates.",
-          size: "Optimized Update",
-        });
-        show();
+      // We check a central config document in Firestore for the latest store version
+      const configRef = doc(db, "config", "app");
+      const configSnap = await getDoc(configRef);
+
+      if (configSnap.exists()) {
+        const data = configSnap.data();
+        const latestVersion = Platform.OS === "ios" 
+          ? data.latest_ios_version 
+          : data.latest_android_version;
+        
+        const latestBuild = Platform.OS === "ios"
+          ? parseInt(data.latest_ios_build || "0", 10)
+          : parseInt(data.latest_android_build || "0", 10);
+
+        const currentVersion = Constants.nativeAppVersion;
+        const currentBuild = Platform.OS === "ios"
+          ? parseInt(Constants.expoConfig?.ios?.buildNumber || "0", 10)
+          : parseInt(Constants.expoConfig?.android?.versionCode || "0", 10);
+
+        // Show popup if version is lower OR same version but lower build number
+        const needsUpdate = isVersionLower(currentVersion, latestVersion) || 
+                          (currentVersion === latestVersion && currentBuild < latestBuild);
+
+        if (needsUpdate) {
+          setUpdateInfo({
+            version: latestVersion || "New Version",
+            notes: data.update_notes || "Important performance and security updates.",
+            size: data.update_size || "Optimized Download",
+          });
+          show();
+        }
       }
     } catch (e) {
-      console.warn("Update check failed:", e);
+      console.warn("Store update check failed:", e);
     }
   };
 
@@ -84,18 +122,11 @@ const UpdateBottomSheet = () => {
     ]).start(() => setVisible(false));
   };
 
-  const handleUpdate = async () => {
-    try {
-      await Updates.fetchUpdateAsync();
-      await Updates.reloadAsync();
-    } catch (e) {
-      console.error("Update failed:", e);
-      // Fallback to store if OTA fails or if we want to redirect
-      const storeUrl = Platform.OS === "ios" 
-        ? "https://apps.apple.com/app/id6478051744" 
-        : "https://play.google.com/store/apps/details?id=com.community_medicine";
-      Linking.openURL(storeUrl);
-    }
+  const handleUpdate = () => {
+    const storeUrl = Platform.OS === "ios" 
+      ? "https://apps.apple.com/app/id6478051744" 
+      : "https://play.google.com/store/apps/details?id=com.communitymed.app";
+    Linking.openURL(storeUrl);
   };
 
   if (!visible) return null;
@@ -192,6 +223,7 @@ const UpdateBottomSheet = () => {
     </View>
   );
 };
+
 
 const flex1 = { flex: 1 };
 
