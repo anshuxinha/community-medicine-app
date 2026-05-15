@@ -1,7 +1,7 @@
 {
   "D:\\The App\\App.js": {
-    "mtime": 1776686094.4752614,
-    "hash": "11256ef8e15184f8a4dcf5b67b8b13d3"
+    "mtime": 1778818205.5139184,
+    "hash": "d747ea41ebf974eedac6ba46bf4f3e8f"
   },
   "D:\\The App\\ast_extract.py": {
     "mtime": 1778159580.4395475,
@@ -287,6 +287,10 @@
     "mtime": 1778666960.5170808,
     "hash": "582cd4aaeb9a0f37d53c8b0feeaca983"
   },
+  "D:\\The App\\src\\components\\UpdateBottomSheet.js": {
+    "mtime": 1778818198.1002393,
+    "hash": "08922dc3ccd5d314d4ac0f6cb08fdd31"
+  },
   "D:\\The App\\src\\components\\UpdateDetailDialog.js": {
     "mtime": 1777203329.2302506,
     "hash": "fe73d807b895c27263593e0a3d11725e"
@@ -296,8 +300,8 @@
     "hash": "b6d28a52efa63c1ccfa616dabffb7bd9"
   },
   "D:\\The App\\src\\context\\AppContext.js": {
-    "mtime": 1778735584.2748656,
-    "hash": "3d6885e460beb6306119f09d9850026b"
+    "mtime": 1778777235.3834925,
+    "hash": "4b680f231ec24eb368a5603494fa09eb"
   },
   "D:\\The App\\src\\data\\defaultTopicIllustrations.js": {
     "mtime": 1775143847.0992994,
@@ -332,8 +336,8 @@
     "hash": "22c1711fde70e060b0908dfa4bf5f069"
   },
   "D:\\The App\\src\\screens\\DashboardScreen.js": {
-    "mtime": 1778570823.6277897,
-    "hash": "91d1b00144701a8786d4170655dc333c"
+    "mtime": 1778816425.2208333,
+    "hash": "e74e405dad646d4727f8e22e32c7f23c"
   },
   "D:\\The App\\src\\screens\\DietarySurveyScreen.js": {
     "mtime": 1777467165.6328642,
@@ -360,8 +364,8 @@
     "hash": "a5c4606f94a696d570286b0c63951ff5"
   },
   "D:\\The App\\src\\screens\\PaywallScreen.js": {
-    "mtime": 1778646552.9619923,
-    "hash": "743b43c42a84dd32397e0b5ac9312cd9"
+    "mtime": 1778777242.2924058,
+    "hash": "7922c400b5e2717368b4d8e595e18198"
   },
   "D:\\The App\\src\\screens\\ProfileScreen.js": {
     "mtime": 1777644143.6820407,
@@ -459,22 +463,6 @@
     "mtime": 1773723664.9753537,
     "hash": "522bf0a626c6273ef0c931297aab724e"
   },
-  "D:\\The App\\1-CONTEXT.md": {
-    "mtime": 1778570823.4665358,
-    "hash": "0bf2a264d93b5a52932a583aa5745d61"
-  },
-  "D:\\The App\\1-UAT.md": {
-    "mtime": 1778641250.8056521,
-    "hash": "b2fc98e5edfd5a934a56295fae347ba4"
-  },
-  "D:\\The App\\2-CONTEXT.md": {
-    "mtime": 1778643967.341663,
-    "hash": "b71a466baeff2a7b2c1eac55a89ac217"
-  },
-  "D:\\The App\\3-CONTEXT.md": {
-    "mtime": 1778736561.234582,
-    "hash": "2177ed984da26b448d6e5de54721ec68"
-  },
   "D:\\The App\\AGENTS.md": {
     "mtime": 1778215878.445492,
     "hash": "04f5cc21fb908cfe9aa492bd9b36433c"
@@ -495,18 +483,6 @@
     "mtime": 1778502162.3317487,
     "hash": "7226b3eb13693e04216b9518652aceb7"
   },
-  "D:\\The App\\PROJECT.md": {
-    "mtime": 1778570823.4715426,
-    "hash": "66c7af753b0a3d795066ef52a904198f"
-  },
-  "D:\\The App\\ROADMAP.md": {
-    "mtime": 1778732336.0241268,
-    "hash": "c61b1627ab15714d3c70c24746332ac4"
-  },
-  "D:\\The App\\STATE.md": {
-    "mtime": 1778732344.7484336,
-    "hash": "7d216fae8291b53472abe5206d0f0d8d"
-  },
   "D:\\The App\\docs\\library-update-review-workflow.md": {
     "mtime": 1777266382.0541723,
     "hash": "b978bb720ee1a90212eb4a18b30f06e0"
@@ -522,30 +498,6 @@
   "D:\\The App\\docs\\purposeful-image-placement.md": {
     "mtime": 1774754386.8025944,
     "hash": "5e82753109b3afce714615abb1526d63"
-  },
-  "D:\\The App\\asc_agreements.png": {
-    "mtime": 1778742592.3683758,
-    "hash": "1d7703f296f38185639b66d0ceb38362"
-  },
-  "D:\\The App\\error_new_1.jpeg": {
-    "mtime": 1778739047.9605186,
-    "hash": "3e7a08ed7284dad3823d5314e3c5f3e2"
-  },
-  "D:\\The App\\error_new_2.jpeg": {
-    "mtime": 1778739047.9645295,
-    "hash": "64508b9373757bd8a3e635255f43702b"
-  },
-  "D:\\The App\\error_new_3.jpeg": {
-    "mtime": 1778739047.9625294,
-    "hash": "7cc29168305be450bd3fdcb697527dd9"
-  },
-  "D:\\The App\\error_new_4.jpeg": {
-    "mtime": 1778739047.9685342,
-    "hash": "3829e53f0b5d6f31b7ab26852fd95273"
-  },
-  "D:\\The App\\error_new_5.jpeg": {
-    "mtime": 1778739047.9665275,
-    "hash": "3f9b20ed995d13e88207d0c25f3792c7"
   },
   "D:\\The App\\android\\app\\src\\main\\res\\drawable-hdpi\\notification_icon.png": {
     "mtime": 1776686130.2448807,

@@ -12,10 +12,13 @@ const BUNNY_API_BASE = "https://video.bunnycdn.com";
 
 const parseArgs = () => {
   const [command = "sync", ...rawArgs] = process.argv.slice(2);
-  const options = { command, tags: [] };
+  const options = { command, tags: [], positional: [] };
 
   rawArgs.forEach((arg) => {
-    if (!arg.startsWith("--")) return;
+    if (!arg.startsWith("--")) {
+      options.positional.push(arg);
+      return;
+    }
     const [key, ...valueParts] = arg.slice(2).split("=");
     const value = valueParts.join("=");
     options[key] = value || true;
@@ -166,6 +169,7 @@ const toVideoDoc = (config, video, options = {}, existing = {}) => {
   const now = new Date();
   const title = options.title || video.title || existing.title || "Untitled video";
   const category = options.category || existing.category || "lectures";
+  const categoryLabel = options.categoryLabel || options["category-label"] || existing.categoryLabel || "Lectures";
 
   const publishedDate =
     parseFirestoreDate(existing.publishedAt) ||
@@ -182,7 +186,7 @@ const toVideoDoc = (config, video, options = {}, existing = {}) => {
     title,
     description: options.description || existing.description || "",
     category,
-    categoryLabel: options.categoryLabel || existing.categoryLabel || "Lectures",
+    categoryLabel,
     tags: options.tags || existing.tags || [],
     duration: Number(video.length || video.duration || existing.duration || 0),
     status: String(video.status ?? existing.status ?? "processing"),
@@ -204,7 +208,7 @@ const upsertVideoDoc = async (db, config, video, options = {}) => {
   const thumbnailUrl = await resolveThumbnailUrl(config, video, existing);
   const payload = toVideoDoc(config, video, { ...options, thumbnailUrl }, existing);
 
-  console.log(`Upserting video ${video.guid}:`, JSON.stringify(payload, null, 2));
+  console.log(`Upserting video ${video.guid} (${payload.title}) in category ${payload.category}...`);
   await docRef.set(payload, { merge: true });
 
   return {
@@ -236,15 +240,17 @@ const getExpoPushTokens = async (db) => {
   return [...new Set(tokens)];
 };
 
-const sendVideoPushNotification = async (db, video) => {
+const sendVideoPushNotification = async (db, video, customBody) => {
   const tokens = await getExpoPushTokens(db);
   if (tokens.length === 0) return 0;
+
+  const body = customBody || (video.description ? `${video.title} - ${video.description}` : video.title);
 
   const messages = tokens.map((token) => ({
     to: token,
     sound: "default",
     title: "New Video Available",
-    body: video.description ? `${video.title} - ${video.description}` : video.title,
+    body,
     data: { screen: "Videos", type: "video", videoId: video.bunnyVideoId },
   }));
 
@@ -300,11 +306,12 @@ const uploadVideo = async (db, config, options) => {
     title,
     description: options.description || "",
     category: options.category || "lectures",
-    categoryLabel: options["category-label"] || "Lectures",
+    categoryLabel: options.categoryLabel || options["category-label"] || "Lectures",
     tags: options.tags || [],
   });
 
-  const notifiedCount = await sendVideoPushNotification(db, result.payload);
+  const customMessage = options.positional?.[0];
+  const notifiedCount = await sendVideoPushNotification(db, result.payload, customMessage);
   await markNotified(db, result.id);
 
   console.log(`Uploaded ${title} to Bunny Stream.`);
@@ -314,6 +321,7 @@ const uploadVideo = async (db, config, options) => {
 
 const syncVideos = async (db, config, options) => {
   const notifyNew = options["notify-new"] === true || options["notify-new"] === "true";
+  const customMessage = options.positional?.[0];
   let page = 1;
   let syncedCount = 0;
   let notifiedCount = 0;
@@ -331,7 +339,7 @@ const syncVideos = async (db, config, options) => {
       syncedCount += 1;
 
       if (notifyNew && result.isNew && !result.wasNotified) {
-        notifiedCount += await sendVideoPushNotification(db, result.payload);
+        notifiedCount += await sendVideoPushNotification(db, result.payload, customMessage);
         await markNotified(db, result.id);
       }
     }
@@ -344,6 +352,28 @@ const syncVideos = async (db, config, options) => {
   if (notifyNew) {
     console.log(`Sent ${notifiedCount} Expo push notification(s).`);
   }
+};
+
+const notifyVideo = async (db, options) => {
+  const videoId = options.id || options.positional?.[0];
+  const customMessage = options.message || options.positional?.[1] || options.positional?.[0];
+
+  if (!videoId) {
+    throw new Error("Notify requires a video ID (use --id=ID or positional).");
+  }
+
+  const docRef = db.collection("videos").doc(videoId);
+  const snapshot = await docRef.get();
+
+  if (!snapshot.exists) {
+    throw new Error(`Video ${videoId} not found in Firestore.`);
+  }
+
+  const video = snapshot.data();
+  const notifiedCount = await sendVideoPushNotification(db, video, customMessage);
+  await markNotified(db, videoId);
+
+  console.log(`Sent ${notifiedCount} Expo push notification(s) for video ${video.title}.`);
 };
 
 async function main() {
@@ -362,7 +392,12 @@ async function main() {
     return;
   }
 
-  throw new Error("Unknown command. Use `upload` or `sync`.");
+  if (options.command === "notify") {
+    await notifyVideo(db, options);
+    return;
+  }
+
+  throw new Error("Unknown command. Use `upload`, `sync`, or `notify`.");
 }
 
 main().catch((error) => {
