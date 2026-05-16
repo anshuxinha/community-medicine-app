@@ -403,7 +403,7 @@ export const MUSEUM_ITEMS = [
     category: "Contraceptives",
     title: "Male condoms",
     emoji: "🛡️",
-    image: `${BASE}/fig_15_1.png`,
+    image: `${BASE}/fig_15_1.png?v=2`,
     description:
       "Advantages\nProtection from STIs, easily available, inexpensive, safe to use\nDisadvantages\nReduced sensation, may slip off due to incorrect use, latex allergy\nFailure rate: Variable 2-14, >14 HWY (in a few cases)\nTypes available under the national program:\n   Plain Nirodh (dry)\n   Deluxe Nirodh (lubricated)\n   Super deluxe Nirodh (ultrafine and\n   lubricated)\n   Rakshak condoms (with spermicidal\n   coating)",
     keyFact:
