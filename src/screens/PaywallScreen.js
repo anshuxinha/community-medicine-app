@@ -154,7 +154,7 @@ const PaywallScreen = ({ navigation }) => {
     } catch (err) {
       console.warn("Failed to fetch offerings:", err.message);
       setLoadError(
-        "Failed to load subscription plans. Check your connection.",
+        `Failed to load subscription plans: ${err.message}. Check your connection.`,
       );
     }
   };
@@ -504,8 +504,25 @@ const PaywallScreen = ({ navigation }) => {
                   Linking.openURL("https://community-med-app.web.app/privacy")
                 }
               >
-                <Text style={styles.footerLinkText}>Terms & Privacy</Text>
+                <Text style={styles.footerLinkText}>Privacy Policy</Text>
               </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() =>
+                  Linking.openURL("https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")
+                }
+              >
+                <Text style={styles.footerLinkText}>Terms of Use (EULA)</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.legalDisclaimer}>
+              <Text style={styles.legalText}>
+                Subscription Title: STROMA Premium. Length of subscription: Monthly, Yearly, or Lifetime as selected. 
+                Payment will be charged to your Apple ID account at the confirmation of purchase. 
+                Subscription automatically renews unless it is canceled at least 24 hours before the end of the current period. 
+                Your account will be charged for renewal within 24 hours prior to the end of the current period. 
+                You can manage and cancel your subscriptions by going to your account settings on the App Store after purchase.
+              </Text>
             </View>
           </View>
         )}
@@ -720,7 +737,18 @@ const styles = StyleSheet.create({
   },
   footerLinkText: {
     color: theme.colors.textTertiary,
-    fontSize: 12,
+    fontSize: 11,
+  },
+  legalDisclaimer: {
+    paddingHorizontal: 16,
+    marginTop: 8,
+    marginBottom: 20,
+  },
+  legalText: {
+    color: theme.colors.textPlaceholder,
+    fontSize: 9,
+    textAlign: "center",
+    lineHeight: 12,
   },
   strikethroughPrice: {
     textDecorationLine: 'line-through',
