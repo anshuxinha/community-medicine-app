@@ -282,13 +282,13 @@ const VirtualMuseumScreen = () => {
 };
 
 // Renders description lines with highlighted labels
-const LABEL_REGEX = /^([^:\n]{1,40}):\s*/;
+const LABEL_REGEX = /^([^:\n]{1,60}):\s*/;
 const KNOWN_HEADERS = [
   "Advantages", "Disadvantages", "Disadvantages/Side Effects", "Disadvantages/Side effects",
   "Adverse Effects", "Adverse effects", "Failure Rate", "Failure rate", "Dosage", "Dosage (Adults)",
   "Contraindications", "Action", "Composition", "Composition, strain of vaccine",
   "Types of IUCD and Composition", "Malaria Types Detected", "Confirmatory Test",
-  "Formulation", "Route", "Dosage and Schedule"
+  "Formulation", "Route", "Dosage and Schedule", "Types available under the national program"
 ];
 
 const DescriptionBlock = ({ text }) => {
@@ -300,10 +300,12 @@ const DescriptionBlock = ({ text }) => {
         const match = line.match(LABEL_REGEX);
         let label = null;
         let value = "";
+        let hasColon = false;
 
         if (match) {
           label = match[1];
           value = line.slice(match[0].length);
+          hasColon = true;
         } else {
           // Check if the entire line is a known header
           const trimmed = line.trim();
@@ -311,13 +313,14 @@ const DescriptionBlock = ({ text }) => {
           if (isKnownHeader) {
             label = trimmed;
             value = "";
+            hasColon = line.includes(":");
           }
         }
 
         if (label) {
           return (
             <Text key={idx} style={styles.descriptionRowText}>
-              <Text style={styles.descriptionLabel}>{label}{value ? ": " : ""}</Text>
+              <Text style={styles.descriptionLabel}>{label}{hasColon ? ":" : ""}{value ? " " : ""}</Text>
               <Text style={styles.descriptionValue}>{value}</Text>
             </Text>
           );

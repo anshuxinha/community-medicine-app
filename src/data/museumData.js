@@ -405,7 +405,7 @@ export const MUSEUM_ITEMS = [
     emoji: "🛡️",
     image: `${BASE}/fig_15_1.png`,
     description:
-      "Advantages\nProtection from STIs, easily available, inexpensive, safe to use\nDisadvantages\nReduced sensation, may slip off due to incorrect use, latex allergy\nFailure rate: Variable 2-14, >14 HWY (in a few cases)",
+      "Advantages\nProtection from STIs, easily available, inexpensive, safe to use\nDisadvantages\nReduced sensation, may slip off due to incorrect use, latex allergy\nFailure rate: Variable 2-14, >14 HWY (in a few cases)\nTypes available under the national program:\n   Plain Nirodh (dry)\n   Deluxe Nirodh (lubricated)\n   Super deluxe Nirodh (ultrafine and\n   lubricated)\n   Rakshak condoms (with spermicidal\n   coating)",
     keyFact:
       "Classify each method as temporary or permanent and mention indications, advantages, and limitations.",
   },
