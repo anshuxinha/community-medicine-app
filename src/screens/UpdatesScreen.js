@@ -30,7 +30,7 @@ const UpdatesScreen = ({ navigation }) => {
   const currentYear = new Date().getFullYear();
   const currentMonthIndex = new Date().getMonth(); // 0-based
 
-  const [expandedMonth, setExpandedMonth] = useState(currentMonthIndex);
+  const [selectedMonth, setSelectedMonth] = useState(currentMonthIndex);
   const [selectedUpdate, setSelectedUpdate] = useState(null);
   const [dialogVisible, setDialogVisible] = useState(false);
   const { isTablet, horizontalPadding, contentMaxWidth } = useResponsive();
