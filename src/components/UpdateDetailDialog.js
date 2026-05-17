@@ -56,7 +56,7 @@ const UpdateDetailDialog = ({ visible, update, onDismiss }) => {
       } else {
         // Fallback to text share
         await Share.share({
-          message: `${update.title}\n\n${update.summary}\n\nStay updated with Community Medicine guidelines.\nDownload Stroma: ${PLAY_STORE_URL}`,
+          message: `${update.title}\n\n${update.summary}\n\nDownload the STROMA app to stay updated with the latest public health news and guidelines.\n${PLAY_STORE_URL}`,
         });
       }
     } catch (error) {
@@ -64,7 +64,7 @@ const UpdateDetailDialog = ({ visible, update, onDismiss }) => {
       if (error?.message !== "User did not share") {
         try {
           await Share.share({
-            message: `${update.title}\n\n${update.summary}\n\nStay updated with Community Medicine guidelines.\nDownload Stroma: ${PLAY_STORE_URL}`,
+            message: `${update.title}\n\n${update.summary}\n\nDownload the STROMA app to stay updated with the latest public health news and guidelines.\n${PLAY_STORE_URL}`,
           });
         } catch (_) {
           // silently ignore
@@ -133,8 +133,8 @@ const UpdateDetailDialog = ({ visible, update, onDismiss }) => {
                 </View>
               </View>
               <Text style={styles.shareCTA}>
-                Stay updated with the latest public health guidelines.{"\n"}
-                Download now: {PLAY_STORE_URL}
+                Download the STROMA app to stay updated with the latest public health news and guidelines.{"\n"}
+                {PLAY_STORE_URL}
               </Text>
             </View>
           </View>
