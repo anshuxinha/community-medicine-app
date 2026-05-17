@@ -21,9 +21,6 @@ import ViewShot from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
 import { theme } from "../styles/theme";
 
-const PLAY_STORE_URL =
-  "https://play.google.com/store/apps/details?id=com.communitymed.app";
-
 const appIcon = require("../../assets/icon.png");
 
 /**
@@ -56,7 +53,7 @@ const UpdateDetailDialog = ({ visible, update, onDismiss }) => {
       } else {
         // Fallback to text share
         await Share.share({
-          message: `${update.title}\n\n${update.summary}\n\nDownload the STROMA app to stay updated with the latest public health news and guidelines.\n${PLAY_STORE_URL}`,
+          message: `${update.title}\n\n${update.summary}\n\nDownload the STROMA app to stay updated with the latest public health news and guidelines.`,
         });
       }
     } catch (error) {
@@ -64,7 +61,7 @@ const UpdateDetailDialog = ({ visible, update, onDismiss }) => {
       if (error?.message !== "User did not share") {
         try {
           await Share.share({
-            message: `${update.title}\n\n${update.summary}\n\nDownload the STROMA app to stay updated with the latest public health news and guidelines.\n${PLAY_STORE_URL}`,
+            message: `${update.title}\n\n${update.summary}\n\nDownload the STROMA app to stay updated with the latest public health news and guidelines.`,
           });
         } catch (_) {
           // silently ignore
@@ -133,8 +130,7 @@ const UpdateDetailDialog = ({ visible, update, onDismiss }) => {
                 </View>
               </View>
               <Text style={styles.shareCTA}>
-                Download the STROMA app to stay updated with the latest public health news and guidelines.{"\n"}
-                {PLAY_STORE_URL}
+                Download the STROMA app to stay updated with the latest public health news and guidelines.
               </Text>
             </View>
           </View>
