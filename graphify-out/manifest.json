@@ -212,8 +212,8 @@
     "hash": "3da4cd0fc30e74dc4ef35813e2634863"
   },
   "D:\\The App\\scripts\\push_notifications.py": {
-    "mtime": 1773332175.836584,
-    "hash": "f2c0caa8600f2a7b598b8ab0fdb7422f"
+    "mtime": 1779027255.8557568,
+    "hash": "17d7fec7cd4e1643bad7bad507ba74ec"
   },
   "D:\\The App\\scripts\\refactor_colors.js": {
     "mtime": 1772547910.835821,
@@ -288,12 +288,12 @@
     "hash": "582cd4aaeb9a0f37d53c8b0feeaca983"
   },
   "D:\\The App\\src\\components\\UpdateBottomSheet.js": {
-    "mtime": 1778818198.1002393,
-    "hash": "08922dc3ccd5d314d4ac0f6cb08fdd31"
+    "mtime": 1778850625.507952,
+    "hash": "13106e55f96bd3b046211846b2b775f5"
   },
   "D:\\The App\\src\\components\\UpdateDetailDialog.js": {
-    "mtime": 1777203329.2302506,
-    "hash": "fe73d807b895c27263593e0a3d11725e"
+    "mtime": 1779028594.687714,
+    "hash": "7a110ce073d281320d16848b4c5cf649"
   },
   "D:\\The App\\src\\config\\firebase.js": {
     "mtime": 1772355531.2110212,
@@ -308,16 +308,16 @@
     "hash": "6d7efe5eaf665c93daf1b4265c4c2234"
   },
   "D:\\The App\\src\\data\\museumData.js": {
-    "mtime": 1777956926.1768365,
-    "hash": "d5305855ff24b13ac6432cc141e8dd4f"
+    "mtime": 1778910985.3578393,
+    "hash": "2c36be0c5e2bcc8d4982b70792a0a081"
   },
   "D:\\The App\\src\\hooks\\useSessionEnforcer.js": {
     "mtime": 1776915623.531863,
     "hash": "f486f262d18f04ca01c8458ba191645d"
   },
   "D:\\The App\\src\\navigation\\AppNavigator.js": {
-    "mtime": 1778570823.6228328,
-    "hash": "8c1b3fa3e680a7cb5f14f5c3a7d98904"
+    "mtime": 1779027229.2926843,
+    "hash": "222cb8a112c398308ac5099ef54f117b"
   },
   "D:\\The App\\src\\screens\\AdminLibraryReviewScreen.js": {
     "mtime": 1777561970.1780882,
@@ -364,8 +364,8 @@
     "hash": "a5c4606f94a696d570286b0c63951ff5"
   },
   "D:\\The App\\src\\screens\\PaywallScreen.js": {
-    "mtime": 1778777242.2924058,
-    "hash": "7922c400b5e2717368b4d8e595e18198"
+    "mtime": 1779028581.7493465,
+    "hash": "80c10e18129cdb1da480a6bd385a39d1"
   },
   "D:\\The App\\src\\screens\\ProfileScreen.js": {
     "mtime": 1777644143.6820407,
@@ -392,16 +392,16 @@
     "hash": "a59c3a2904c65b5b99817a8437cb969c"
   },
   "D:\\The App\\src\\screens\\UpdatesScreen.js": {
-    "mtime": 1777605775.571606,
-    "hash": "9d6b13f69d293e04eaa0bf6b8ada3b3b"
+    "mtime": 1779028581.750345,
+    "hash": "7300070699a04a1916f368c713bb1c90"
   },
   "D:\\The App\\src\\screens\\VideosScreen.js": {
     "mtime": 1778657038.9464805,
     "hash": "ae6c0be8c0c12f9bfc97f1e749119e35"
   },
   "D:\\The App\\src\\screens\\VirtualMuseumScreen.js": {
-    "mtime": 1777955992.852251,
-    "hash": "0ab62ed1ad4b0afd5e24d4cca8b258d9"
+    "mtime": 1778910368.6008153,
+    "hash": "39e92aa14807d04b3a8c0ef992c374a1"
   },
   "D:\\The App\\src\\screens\\__tests__\\PaywallScreen.analytics.test.js": {
     "mtime": 1778770086.9739556,
@@ -420,8 +420,8 @@
     "hash": "2e97f9fae198d3f94ab87018343b085b"
   },
   "D:\\The App\\src\\services\\notificationService.js": {
-    "mtime": 1777714709.3918688,
-    "hash": "d5996fbf6d919d49215aabd38760d86b"
+    "mtime": 1779027213.9663637,
+    "hash": "ed8d78d0ad5ae7fb14fa2237b3d29539"
   },
   "D:\\The App\\src\\services\\topicIllustrations.js": {
     "mtime": 1778664278.3496735,
