@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useContext, useEffect } from "react";
 import {
   View,
   ScrollView,
@@ -8,6 +8,7 @@ import {
 import { Text, Card, Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
+import { AppContext } from "../context/AppContext";
 import { theme, useResponsive } from "../styles/theme";
 import UpdateDetailDialog from "../components/UpdateDetailDialog";
 import currentUpdates from "../data/updates.json";
