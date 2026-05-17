@@ -159,6 +159,50 @@ export async function scheduleAllNotifications() {
       },
     });
   }
+
+  // ── 3. Immediate Check for Today ────────
+  // If the app is opened on a health day/week start, ensure a notification is fired
+  // even if it's past 8:00 AM and was just scheduled.
+  await triggerTodayNotifications();
+}
+
+/**
+ * Check if today is a public health day or week start, and fire an immediate
+ * notification if it hasn't been sent yet today.
+ */
+async function triggerTodayNotifications() {
+  const today = new Date();
+  const m = today.getMonth() + 1;
+  const d = today.getDate();
+
+  const todayKey = getTodayNotificationKey();
+  const storageKey = `immediate_notif_sent_${todayKey}`;
+
+  try {
+    const alreadySent = await AsyncStorage.getItem(storageKey);
+    if (alreadySent === "true") return;
+
+    // Check Public Health Day / Week Start
+    const healthDay = publicHealthDays.find((hd) => hd.month === m && hd.day === d);
+    if (healthDay) {
+      const isWeek = healthDay.dateLabel.includes("-");
+      const emoji = isWeek ? "📅" : "🏥";
+      const label = isWeek ? "Week begins today" : "Today";
+
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: `${emoji} ${healthDay.name}`,
+          body: `${label}! ${healthDay.description.split(".")[0]}.`,
+          sound: true,
+          data: { screen: "Dashboard" },
+        },
+        trigger: null,
+      });
+      await AsyncStorage.setItem(storageKey, "true");
+    }
+  } catch (e) {
+    console.warn("Failed to check today's notifications:", e);
+  }
 }
 
 /**

@@ -110,17 +110,21 @@ const PaywallScreen = ({ navigation }) => {
     }
 
     try {
+      console.log("[RevenueCat] Fetching offerings for platform:", Platform.OS);
       const result = await Purchases.getOfferings();
-      console.log("[RevenueCat] Offerings fetched:", JSON.stringify(result, null, 2));
+      console.log("[RevenueCat] Offerings fetched successfully:", Object.keys(result.all).join(", "));
       
       // Support immediate offering switching via coupon IDs
       const targetId = (forcedOfferingId !== undefined ? forcedOfferingId : appliedCoupon?.code)?.toLowerCase();
       let current = result.current;
+
+      console.log("[RevenueCat] Current offering ID:", current?.identifier);
       
       if (targetId) {
         // Find matching offering ID case-insensitively
         const matchingId = Object.keys(result.all).find(id => id.toLowerCase() === targetId);
         if (matchingId) {
+          console.log("[RevenueCat] Switching to targeted offering:", matchingId);
           current = result.all[matchingId];
         } else if (!current) {
           current = Object.values(result.all)[0];
@@ -130,8 +134,10 @@ const PaywallScreen = ({ navigation }) => {
       }
 
       if (!current || !current.availablePackages) {
+        const errorMsg = !current ? "No offering found." : "No available packages in current offering.";
+        console.warn("[RevenueCat]", errorMsg, "All offerings:", Object.keys(result.all));
         setLoadError(
-          "No subscription packages available. Please try again later.",
+          `No subscription packages available (${errorMsg}). Please try again later.`,
         );
         return;
       }

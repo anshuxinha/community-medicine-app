@@ -24,14 +24,26 @@ const MONTH_SHORT = [
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ];
 
-const UpdatesScreen = () => {
+const UpdatesScreen = ({ navigation }) => {
+  const { isPremium } = useContext(AppContext);
   const currentYear = new Date().getFullYear();
   const currentMonthIndex = new Date().getMonth(); // 0-based
 
-  const [selectedMonth, setSelectedMonth] = useState(currentMonthIndex);
+  const [expandedMonth, setExpandedMonth] = useState(currentMonthIndex);
   const [selectedUpdate, setSelectedUpdate] = useState(null);
   const [dialogVisible, setDialogVisible] = useState(false);
   const { isTablet, horizontalPadding, contentMaxWidth } = useResponsive();
+
+  useEffect(() => {
+    if (!isPremium) {
+      navigation.getParent()?.navigate("Paywall");
+    }
+  }, [isPremium, navigation]);
+
+  if (!isPremium) {
+    return null;
+  }
+
 
   // Build a map: monthIndex -> updates[]
   const monthData = useMemo(() => {

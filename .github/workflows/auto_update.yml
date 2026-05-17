@@ -86,3 +86,14 @@ jobs:
           EXPO_PUBLIC_RC_API_KEY_IOS: ${{ secrets.EXPO_PUBLIC_RC_API_KEY_IOS }}
           EXPO_PUBLIC_RC_API_KEY_ANDROID: ${{ secrets.EXPO_PUBLIC_RC_API_KEY_ANDROID }}
         run: npx eas-cli update --channel production --message "Weekly dashboard guideline updates" --non-interactive
+
+      - name: Send Notifications
+        if: steps.commit_changes.outputs.has_changes == 'true'
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+          GOOGLE_CLOUD_PROJECT: community-med-app
+        run: |
+          python scripts/push_notifications.py \
+            --title "New Health Updates" \
+            --body "New national health guidelines and updates have been added. Tap to see what is new." \
+            --screen "Updates"

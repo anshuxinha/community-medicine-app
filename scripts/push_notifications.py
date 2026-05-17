@@ -1,6 +1,7 @@
 import json
 import os
 import time
+import argparse
 from typing import Any, Dict, List, Optional, Set
 
 import requests  # type: ignore
@@ -112,7 +113,7 @@ def fetch_push_tokens() -> List[str]:
     return sorted(tokens)
 
 
-def send_push_notifications(tokens: List[str]) -> None:
+def send_push_notifications(tokens: List[str], title: str, body: str, screen: str) -> None:
     if not tokens:
         print("No valid push tokens found. Skipping notifications.")
         return
@@ -125,9 +126,9 @@ def send_push_notifications(tokens: List[str]) -> None:
             {
                 "to": token,
                 "sound": "default",
-                "title": "Library Updated",
-                "body": "The Community Medicine textbook was verified and updated. Tap to see what is new.",
-                "data": {"screen": "Dashboard"},
+                "title": title,
+                "body": body,
+                "data": {"screen": screen},
             }
         )
 
@@ -155,8 +156,14 @@ def send_push_notifications(tokens: List[str]) -> None:
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Send broadcast push notifications via Expo.")
+    parser.add_argument("--title", default="Library Updated", help="Notification title")
+    parser.add_argument("--body", default="The Community Medicine textbook was verified and updated. Tap to see what is new.", help="Notification body")
+    parser.add_argument("--screen", default="Dashboard", help="Screen to navigate to when tapped")
+    args = parser.parse_args()
+
     print("Collecting push notification tokens...")
     tokens = fetch_push_tokens()
     print(f"Found {len(tokens)} tokens.")
-    send_push_notifications(tokens)
+    send_push_notifications(tokens, args.title, args.body, args.screen)
     print("Notification broadcast complete.")

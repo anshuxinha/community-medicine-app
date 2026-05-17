@@ -87,7 +87,18 @@ const TabNavigator = () => {
           },
         })}
       />
-      <Tab.Screen name="Updates" component={UpdatesScreen} />
+      <Tab.Screen
+        name="Updates"
+        component={UpdatesScreen}
+        listeners={({ navigation }) => ({
+          tabPress: (event) => {
+            if (isPremium) return;
+
+            event.preventDefault();
+            navigation.getParent()?.navigate("Paywall");
+          },
+        })}
+      />
     </Tab.Navigator>
   );
 };
