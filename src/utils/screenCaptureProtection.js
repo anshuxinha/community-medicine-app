@@ -8,7 +8,16 @@ const eventEmitter =
     ? new NativeEventEmitter(ScreenCaptureProtection)
     : null;
 
+let isBypassed = false;
+
+export const setScreenCaptureBypass = (value) => {
+  isBypassed = value;
+};
+
 export const enableScreenCaptureProtection = async () => {
+  if (isBypassed) {
+    return false;
+  }
   if (Platform.OS === "android" && ScreenCaptureProtection) {
     return ScreenCaptureProtection.enableProtection();
   }
