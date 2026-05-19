@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Platform } from 'react-native';
+import { View, StyleSheet, ScrollView, Platform, Linking } from 'react-native';
 import { TextInput, Button, Card, Text, SegmentedButtons } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DropdownPicker from '../components/DropdownPicker';
@@ -118,12 +118,18 @@ const SESCalculatorScreen = () => {
     };
 
     return (
-        <SafeAreaView style={styles.safeArea}>
+        <SafeAreaView style={styles.safeArea} edges={['left', 'right', 'bottom']}>
             <ScrollView contentContainerStyle={styles.container}>
                 
                 <View style={styles.hintContainer}>
                     <Text style={styles.hintText}>
-                        Tip: You can get the latest CPI-IW data from the Labour Bureau website: <Text style={styles.linkText}>labourbureau.gov.in</Text>
+                        Tip: You can get the latest CPI-IW data from the Labour Bureau website:{" "}
+                        <Text 
+                            style={styles.linkText} 
+                            onPress={() => Linking.openURL('https://labourbureau.gov.in')}
+                        >
+                            labourbureau.gov.in
+                        </Text>
                     </Text>
                 </View>
 
