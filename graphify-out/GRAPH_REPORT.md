@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `1054eabb`
+- Built from commit: `869b2cdd`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -219,32 +219,32 @@ Cohesion: 0.09
 Nodes (28): AppProvider(), applyOverrideToTheory(), buildSections(), cloneDeep(), findItemById(), getCurrentContentEntry(), getCurrentContentItem(), getEffectiveReadCount() (+20 more)
 
 ### Community 5 - "Community 5"
+Cohesion: 0.11
+Nodes (23): emitVideoSubscriptionChange(), emitWebinarSubscriptionChange(), ensureNotificationHandler(), getTodayNotificationKey(), isSubscribedToVideoNotifications(), markStreakMilestoneSentToday(), persistVideoNotificationPreference(), requestPermissions() (+15 more)
+
+### Community 6 - "Community 6"
 Cohesion: 0.12
 Nodes (24): apply_proposal(), find_item_by_id(), load_json(), main(), save_json(), select_approved_proposals(), apply_proposal(), find_item_by_id() (+16 more)
 
-### Community 6 - "Community 6"
+### Community 7 - "Community 7"
 Cohesion: 0.13
 Nodes (24): buildContactSheet(), clampCrop(), CONTACT_SHEET_PATH, { createCanvas, loadImage }, CROP_SPECS, cropRegion(), ensureDir(), fs (+16 more)
 
-### Community 7 - "Community 7"
+### Community 8 - "Community 8"
 Cohesion: 0.13
 Nodes (22): buildContactSheet(), buildPngCanvas(), downloadFile(), ensureDir(), isNearWhite(), main(), trimCanvas(), buildContactSheet() (+14 more)
 
-### Community 8 - "Community 8"
-Cohesion: 0.13
-Nodes (16): emitWebinarSubscriptionChange(), subscribeToWebinarNotifications(), unsubscribeFromWebinarNotifications(), emitWebinarSubscriptionChange(), ensureNotificationHandler(), getTodayNotificationKey(), markStreakMilestoneSentToday(), scheduleAllNotifications() (+8 more)
-
 ### Community 9 - "Community 9"
-Cohesion: 0.11
-Nodes (9): styles, styles, styles, EDUCATION_OPTIONS, OCCUPATION_OPTIONS, styles, appColors, paperTheme (+1 more)
-
-### Community 10 - "Community 10"
 Cohesion: 0.12
 Nodes (16): appIcon, styles, DashboardScreen(), LibraryScreen(), DashboardScreen(), styles, GemsScreen(), styles (+8 more)
 
-### Community 11 - "Community 11"
+### Community 10 - "Community 10"
 Cohesion: 0.13
 Nodes (14): PLAN_METADATA, styles, applyDiscount(), incrementCouponUsage(), validateCoupon(), coupon, mockDate, mockTransaction (+6 more)
+
+### Community 11 - "Community 11"
+Cohesion: 0.12
+Nodes (9): styles, flex1, { height: WINDOW_HEIGHT }, styles, styles, styles, appColors, paperTheme (+1 more)
 
 ### Community 12 - "Community 12"
 Cohesion: 0.1
@@ -264,115 +264,115 @@ Nodes (11): ssSingleProp(), ssTwoMeans(), ssTwoProps(), zForCI(), PRESET_PROBLEM
 
 ### Community 16 - "Community 16"
 Cohesion: 0.13
-Nodes (11): BASE_MENU_ITEMS, styles, { width }, flex1, { height: WINDOW_HEIGHT }, styles, app, auth (+3 more)
-
-### Community 17 - "Community 17"
-Cohesion: 0.13
 Nodes (16): getContrastRatio(), getRelativeLuminance(), hexToRgb(), colorFreq, colorLocations, content, files, fs (+8 more)
 
-### Community 18 - "Community 18"
-Cohesion: 0.14
-Nodes (10): AppNavigator(), AppContext, useSessionEnforcer(), AppNavigator(), navigationRef, Stack, Tab, styles (+2 more)
-
-### Community 19 - "Community 19"
+### Community 17 - "Community 17"
 Cohesion: 0.16
 Nodes (11): resolveBookmarkContentKey(), buildReadingParams(), buildReadingParams(), buildReadingParams(), styles, TOPIC_ID_ICON_MAP, getContentKey(), getContentSignature() (+3 more)
 
-### Community 20 - "Community 20"
+### Community 18 - "Community 18"
 Cohesion: 0.11
 Nodes (18): NHP Logo Staging Contact Sheet, Stage7-10 NP-NCD Illustration, Stage7-11 N-MHP Illustration, Stage7-12 IDSP Illustration, Stage7-13 PM-JAY Illustration, Stage7-2 INAP Illustration, Stage7-2 Laqshya Illustration, Stage7-2 MAA Illustration (+10 more)
 
-### Community 21 - "Community 21"
+### Community 19 - "Community 19"
 Cohesion: 0.12
 Nodes (16): 1. Root Cause Identified, 1. UI Reveal & Hide, 2. Custom Coupon Validation (Firestore), 2. Fixes Implemented (v1.0.3), 3. Dynamic Pricing & UI Updates, 3. Required User Action, 4. RevenueCat Synchronization, 5. Network Resiliency (+8 more)
 
-### Community 22 - "Community 22"
+### Community 20 - "Community 20"
 Cohesion: 0.12
 Nodes (16): Canonical References, Claude's Discretion, Coupon Analytics, Deferred Ideas, Established Patterns, Existing Code Insights, Gem Image Reliability (High Priority), Implementation Decisions (+8 more)
 
-### Community 23 - "Community 23"
+### Community 21 - "Community 21"
 Cohesion: 0.18
 Nodes (14): call_ollama(), _extract_candidate_text(), _extract_json_payload(), fetch_health_updates(), Fetches real updates from the Government of India PIB feed for MoHFW., Extract text from Ollama /api/chat response shape., _strip_code_fence(), call_ollama() (+6 more)
 
-### Community 24 - "Community 24"
+### Community 22 - "Community 22"
 Cohesion: 0.17
 Nodes (9): getDefaultDeviceName(), getDeviceId(), getDeviceInfo(), isFirstDeviceLogin(), styles, getDefaultDeviceName(), getDeviceId(), getDeviceInfo() (+1 more)
 
-### Community 25 - "Community 25"
+### Community 23 - "Community 23"
+Cohesion: 0.17
+Nodes (9): BASE_MENU_ITEMS, styles, { width }, app, auth, db, firebaseConfig, AppContext (+1 more)
+
+### Community 24 - "Community 24"
 Cohesion: 0.12
 Nodes (3): ErrorBoundary, BMI_CATEGORIES_ASIAN, styles
 
-### Community 26 - "Community 26"
+### Community 25 - "Community 25"
 Cohesion: 0.16
 Nodes (6): styles, REFERENCE_VALUES, styles, disableScreenCaptureProtection(), enableScreenCaptureProtection(), subscribeToScreenCaptureChange()
 
-### Community 27 - "Community 27"
+### Community 26 - "Community 26"
 Cohesion: 0.12
 Nodes (15): 1. Always Check Channel Configuration First, 2. Update Channel if Needed, 3. Publish Update to Correct Branch, 4. Verify Update is Live, 5. Clear Cache for Critical Updates, code:bash (eas channel:list --non-interactive), code:bash (eas channel:edit production --branch main --non-interactive), code:bash (eas update --branch main --message "Your update message" --c) (+7 more)
 
-### Community 28 - "Community 28"
+### Community 27 - "Community 27"
 Cohesion: 0.17
 Nodes (9): normalizeBookmarks(), sanitizeCloudState(), sanitizeReadItemVersions(), AppProvider(), normalizeBookmarks(), sanitizeCloudState(), sanitizeReadItemVersions(), getEffectiveReadCount() (+1 more)
 
-### Community 29 - "Community 29"
+### Community 28 - "Community 28"
 Cohesion: 0.17
 Nodes (11): getSortValue(), formatDuration(), formatPublishedDate(), getTimestamp(), getVideoCategories(), subscribeToVideos(), toDate(), VIDEO_CATEGORIES (+3 more)
 
-### Community 30 - "Community 30"
+### Community 29 - "Community 29"
 Cohesion: 0.19
 Nodes (11): getCacheKey(), loadHighlights(), saveHighlights(), styles, getCacheKey(), loadHighlights(), saveHighlights(), subscribeHighlights() (+3 more)
 
-### Community 31 - "Community 31"
+### Community 30 - "Community 30"
 Cohesion: 0.23
 Nodes (8): DEFAULT_TOPIC_ILLUSTRATION_MAP, buildIllustrationDocId(), getTopicIllustrations(), mergeIllustrations(), remoteIllustrationCache, buildIllustrationDocId(), getTopicIllustrations(), mergeIllustrations()
 
-### Community 32 - "Community 32"
-Cohesion: 0.21
-Nodes (10): styles, addVideoSubscriptionListener(), emitVideoSubscriptionChange(), isSubscribedToVideoNotifications(), persistVideoNotificationPreference(), requestPermissions(), sendVideoNotification(), sendWebinarNotification() (+2 more)
-
-### Community 33 - "Community 33"
+### Community 31 - "Community 31"
 Cohesion: 0.18
 Nodes (6): playerHtml(), styles, VideosScreen(), { width }, playerHtml(), VideosScreen()
 
-### Community 34 - "Community 34"
+### Community 32 - "Community 32"
 Cohesion: 0.17
 Nodes (6): styles, CONTENT_SECTIONS, getItemStatus(), getReadVersionForItem(), isItemPendingUpdate(), isItemReadCurrent()
 
-### Community 35 - "Community 35"
+### Community 33 - "Community 33"
 Cohesion: 0.23
 Nodes (10): buildSpeechChunks(), buildSpeechText(), cleanSpeechText(), collectSpeechFragments(), buildSpeechChunks(), buildSpeechText(), cleanSpeechText(), collectSpeechFragments() (+2 more)
 
-### Community 36 - "Community 36"
+### Community 34 - "Community 34"
 Cohesion: 0.15
 Nodes (12): Approval and apply, Best overall: Firebase-backed admin queue, code:bash (python scripts/apply_staged_library_updates.py --proposal-id), code:bash (python scripts/apply_staged_library_updates.py --approve-all), Good lightweight review surface: GitHub Pages, In-app admin review, Library Update Review Workflow, Most seamless for your workflow: in-app admin screen (+4 more)
 
-### Community 37 - "Community 37"
+### Community 35 - "Community 35"
+Cohesion: 0.18
+Nodes (8): AppNavigator(), useSessionEnforcer(), AppNavigator(), navigationRef, Stack, Tab, setupNotificationTapHandler(), useSessionEnforcer()
+
+### Community 36 - "Community 36"
 Cohesion: 0.23
 Nodes (10): markAsShown(), maybePromptReview(), openStoreReviewPage(), requestNativeReview(), showPrePrompt(), markAsShown(), maybePromptReview(), openStoreReviewPage() (+2 more)
 
-### Community 38 - "Community 38"
+### Community 37 - "Community 37"
 Cohesion: 0.2
 Nodes (9): processFile(), walkDir(), CM_TO_THEME, fs, lower, normalizedCTM, path, processFile() (+1 more)
 
-### Community 39 - "Community 39"
+### Community 38 - "Community 38"
 Cohesion: 0.2
 Nodes (4): CATEGORIES, MUSEUM_ITEMS, KNOWN_HEADERS, styles
 
-### Community 40 - "Community 40"
+### Community 39 - "Community 39"
 Cohesion: 0.2
 Nodes (7): getExcerptAroundMatch(), SearchExcerpt(), excerptStyles, getExcerptAroundMatch(), SearchExcerpt(), SECTION_ID_ICON_MAP, styles
 
-### Community 41 - "Community 41"
+### Community 40 - "Community 40"
 Cohesion: 0.17
 Nodes (11): 1. Think Before Coding, 2. Simplicity First, 3. Surgical Changes, 4. Goal-Driven Execution, Background Watcher, Graph-First Protocol (graphify), graphify, Guidelines (+3 more)
 
-### Community 42 - "Community 42"
+### Community 41 - "Community 41"
 Cohesion: 0.29
 Nodes (8): _extract_push_token(), fetch_push_tokens(), _get_firestore_access_token(), _load_service_account_info(), _extract_push_token(), fetch_push_tokens(), _get_firestore_access_token(), _load_service_account_info()
 
-### Community 43 - "Community 43"
+### Community 42 - "Community 42"
 Cohesion: 0.25
 Nodes (8): getCacheKey(), loadAnnotations(), saveAnnotations(), getCacheKey(), loadAnnotations(), saveAnnotations(), subscribeAnnotations(), syncAllAnnotations()
+
+### Community 43 - "Community 43"
+Cohesion: 0.24
+Nodes (8): styles, addVideoSubscriptionListener(), emitVideoSubscriptionChange(), isSubscribedToVideoNotifications(), persistVideoNotificationPreference(), sendVideoNotification(), subscribeToVideoNotifications(), unsubscribeFromVideoNotifications()
 
 ### Community 44 - "Community 44"
 Cohesion: 0.33
@@ -387,20 +387,20 @@ Cohesion: 0.2
 Nodes (7): admin, FILE_TO_ID, fs, MUSEUM_DATA_PATH, MUSEUM_FOLDER, path, SERVICE_ACCOUNT_PATH
 
 ### Community 48 - "Community 48"
-Cohesion: 0.22
-Nodes (10): ensureNotificationHandler(), getTodayNotificationKey(), isSubscribedToVideoNotifications(), markStreakMilestoneSentToday(), requestPermissions(), scheduleAllNotifications(), sendVideoNotification(), sendWebinarNotification() (+2 more)
-
-### Community 49 - "Community 49"
 Cohesion: 0.2
 Nodes (9): 1. Coupon Logic Strategy, 2. UI/UX Changes (`PaywallScreen.js`), 3. Native Support, 4. Data Persistence (`AppContext.js`), Decisions & Implementation Detail, Goals, Locked Choices, Next Steps (+1 more)
 
-### Community 50 - "Community 50"
+### Community 49 - "Community 49"
 Cohesion: 0.2
 Nodes (9): 1. Identifier Alignment, 2. Firebase iOS Registration, 3. RevenueCat Multi-Platform Support, Canonical References, Final API Configuration, Implementation Decisions, Phase 3 Context: Apple Sign-In Fix & iOS Hardening, Phase Boundary (+1 more)
 
-### Community 51 - "Community 51"
+### Community 50 - "Community 50"
 Cohesion: 0.22
 Nodes (9): Active Phases, Current Status, Known Issues / Technical Debt, Phase 1: Coupon Integration (2026-05-12), Phase 2: Deferred Ideas (2026-05-13), Phase 3: Apple Sign-In Fix (2026-05-14), Project State: STROMA, Shipped Phases (+1 more)
+
+### Community 51 - "Community 51"
+Cohesion: 0.2
+Nodes (4): styles, EDUCATION_OPTIONS, OCCUPATION_OPTIONS, styles
 
 ### Community 52 - "Community 52"
 Cohesion: 0.29
@@ -415,40 +415,40 @@ Cohesion: 0.25
 Nodes (7): admin, fs, IMAGES_TO_UPLOAD, main(), path, SERVICE_ACCOUNT_PATH, main()
 
 ### Community 55 - "Community 55"
+Cohesion: 0.28
+Nodes (9): ensureNotificationHandler(), getTodayNotificationKey(), markStreakMilestoneSentToday(), requestPermissions(), scheduleAllNotifications(), sendWebinarNotification(), triggerStreakMilestone(), triggerTodayNotifications() (+1 more)
+
+### Community 56 - "Community 56"
 Cohesion: 0.22
 Nodes (8): Deferred Ideas, ✅ Milestone 1: Foundation & Monetization (COMPLETED), 🔜 Milestone 2: Analytics & Engagement, Phase 1: Coupon Integration, Phase 2: Analytics & Referrals, Phase 2: Deferred Ideas, Phase 3: Apple Sign-In Fix, Roadmap
 
-### Community 56 - "Community 56"
+### Community 57 - "Community 57"
 Cohesion: 0.25
 Nodes (3): { createCanvas }, fs, path
 
-### Community 58 - "Community 58"
+### Community 59 - "Community 59"
 Cohesion: 0.38
 Nodes (6): extract_text_from_pdf(), main(), Extracts text from a PDF file.     This is a placeholder function. In a real ap, extract_text_from_pdf(), main(), Extracts text from a PDF file.     This is a placeholder function. In a real ap
 
-### Community 59 - "Community 59"
+### Community 60 - "Community 60"
 Cohesion: 0.29
 Nodes (4): admin, db, path, serviceAccount
 
-### Community 60 - "Community 60"
+### Community 61 - "Community 61"
 Cohesion: 0.29
 Nodes (6): Framework used, Full-content findings, Good next candidates, Initial batch added now, Purposeful Placement Audit, Why Firebase was chosen
 
-### Community 61 - "Community 61"
+### Community 62 - "Community 62"
 Cohesion: 0.33
 Nodes (5): content, fs, registerEnd, registerEndAlt, registerStart
 
-### Community 62 - "Community 62"
+### Community 63 - "Community 63"
 Cohesion: 0.33
 Nodes (5): content, data, fs, jsonPart, jsonStart
 
-### Community 63 - "Community 63"
-Cohesion: 0.33
-Nodes (4): admin, fs, path, SERVICE_ACCOUNT_PATH
-
 ### Community 64 - "Community 64"
 Cohesion: 0.33
-Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
+Nodes (4): admin, fs, path, SERVICE_ACCOUNT_PATH
 
 ### Community 65 - "Community 65"
 Cohesion: 0.33
@@ -468,7 +468,7 @@ Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
 ### Community 69 - "Community 69"
 Cohesion: 0.33
-Nodes (4): admin, fs, path, SERVICE_ACCOUNT_PATH
+Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
 ### Community 70 - "Community 70"
 Cohesion: 0.33
@@ -476,47 +476,47 @@ Nodes (4): admin, fs, path, SERVICE_ACCOUNT_PATH
 
 ### Community 71 - "Community 71"
 Cohesion: 0.33
-Nodes (5): code:json ({), Coupon Firestore Setup, Document Structure, Example Document (`PROMO20`):, Script for Bulk Upload
+Nodes (4): admin, fs, path, SERVICE_ACCOUNT_PATH
 
 ### Community 72 - "Community 72"
 Cohesion: 0.33
-Nodes (5): code:bash (# 1. Commit & push), Common Pitfall Avoidance, Custom Instruction for EAS Updates, Quick Command Sequence, Rule: Always Verify Channel-Branch Mapping Before EAS Update
+Nodes (5): code:json ({), Coupon Firestore Setup, Document Structure, Example Document (`PROMO20`):, Script for Bulk Upload
 
 ### Community 73 - "Community 73"
+Cohesion: 0.33
+Nodes (5): code:bash (# 1. Commit & push), Common Pitfall Avoidance, Custom Instruction for EAS Updates, Quick Command Sequence, Rule: Always Verify Channel-Branch Mapping Before EAS Update
+
+### Community 74 - "Community 74"
 Cohesion: 0.4
 Nodes (4): data, fs, match, pos
 
-### Community 78 - "Community 78"
+### Community 79 - "Community 79"
 Cohesion: 0.4
 Nodes (4): data, fs, mockDataPath, path
 
-### Community 80 - "Community 80"
+### Community 81 - "Community 81"
 Cohesion: 0.4
 Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
-### Community 81 - "Community 81"
+### Community 82 - "Community 82"
 Cohesion: 0.4
 Nodes (4): Architecture, Goals, Overview, Project: STROMA (Community Medicine)
 
-### Community 83 - "Community 83"
+### Community 84 - "Community 84"
 Cohesion: 0.4
 Nodes (4): extract_topic_content(), format_content(), Extract content for a topic from the text, Format content according to rules
 
-### Community 84 - "Community 84"
+### Community 85 - "Community 85"
 Cohesion: 0.4
 Nodes (4): extract_topic_content(), format_content(), Format content according to rules, Extract content for a topic from the text
 
-### Community 85 - "Community 85"
+### Community 86 - "Community 86"
 Cohesion: 0.7
 Nodes (4): clean_text(), is_heading(), process_tables(), rebuild_pyq_data()
 
-### Community 86 - "Community 86"
+### Community 87 - "Community 87"
 Cohesion: 0.4
 Nodes (4): clean_content(), extract_frequency_and_grade(), Clean and format content according to rules, Extract frequency and grade from topic text
-
-### Community 91 - "Community 91"
-Cohesion: 0.67
-Nodes (4): emitVideoSubscriptionChange(), persistVideoNotificationPreference(), subscribeToVideoNotifications(), unsubscribeFromVideoNotifications()
 
 ### Community 92 - "Community 92"
 Cohesion: 0.67
@@ -566,11 +566,11 @@ Nodes (3): Privacy Policy URL, STROMA App, STROMA Privacy Policy
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `App()` connect `Community 14` to `Community 9`?**
+- **Why does `App()` connect `Community 14` to `Community 11`?**
   _High betweenness centrality (0.037) - this node is a cross-community bridge._
 - **Why does `ensureFirebaseApp()` connect `Community 14` to `Community 2`?**
   _High betweenness centrality (0.024) - this node is a cross-community bridge._
-- **Why does `theme` connect `Community 9` to `Community 32`, `Community 1`, `Community 34`, `Community 33`, `Community 39`, `Community 40`, `Community 10`, `Community 11`, `Community 15`, `Community 16`, `Community 18`, `Community 19`, `Community 30`, `Community 24`, `Community 57`, `Community 26`, `Community 28`, `Community 25`?**
+- **Why does `theme` connect `Community 11` to `Community 1`, `Community 9`, `Community 10`, `Community 15`, `Community 17`, `Community 22`, `Community 23`, `Community 24`, `Community 25`, `Community 27`, `Community 29`, `Community 31`, `Community 32`, `Community 35`, `Community 38`, `Community 39`, `Community 43`, `Community 51`, `Community 58`?**
   _High betweenness centrality (0.019) - this node is a cross-community bridge._
 - **Are the 17 inferred relationships involving `NHP Logo Staging Contact Sheet` (e.g. with `Stage7-10 NP-NCD Illustration` and `Stage7-11 N-MHP Illustration`) actually correct?**
   _`NHP Logo Staging Contact Sheet` has 17 INFERRED edges - model-reasoned connections that need verification._

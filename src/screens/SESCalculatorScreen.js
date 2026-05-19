@@ -35,27 +35,37 @@ const SESCalculatorScreen = () => {
 
     // BG Prasad State
     const [perCapitaIncome, setPerCapitaIncome] = useState('');
-    const [cpi, setCpi] = useState('400'); // CPI only needed for BG Prasad
+    const [cpi, setCpi] = useState('148.6'); // CPI for BG Prasad (Base 2016 = 100)
+    const [kCpi, setKCpi] = useState('148.6'); // CPI for Kuppuswamy (Base 2016 = 100)
 
     // Result
     const [result, setResult] = useState(null);
 
     const calculateKuppuswamy = () => {
-        if (!familyIncome || isNaN(Number(familyIncome))) {
-            setResult({ error: 'Please enter a valid number for Monthly Family Income' });
+        if (!familyIncome || isNaN(Number(familyIncome)) || !kCpi || isNaN(Number(kCpi))) {
+            setResult({ error: 'Please enter valid numbers for Income and CPI' });
             return;
         }
 
         const income = Number(familyIncome);
+        const currentCPI = Number(kCpi);
+        const conversionFactor = currentCPI / 100;
 
-        // Kuppuswamy income scoring uses fixed 2001-base thresholds (no CPI adjustment)
+        // Thresholds for Base 2016 (CPI = 100)
+        const t12 = 51646 * conversionFactor;
+        const t10 = 25811 * conversionFactor;
+        const t6 = 19351 * conversionFactor;
+        const t4 = 12890 * conversionFactor;
+        const t3 = 7725 * conversionFactor;
+        const t2 = 2586 * conversionFactor;
+
         let incomeScore = 1;
-        if (income >= 2000) incomeScore = 12;
-        else if (income >= 1000) incomeScore = 10;
-        else if (income >= 750) incomeScore = 6;
-        else if (income >= 500) incomeScore = 4;
-        else if (income >= 300) incomeScore = 3;
-        else if (income >= 100) incomeScore = 2;
+        if (income >= t12) incomeScore = 12;
+        else if (income >= t10) incomeScore = 10;
+        else if (income >= t6) incomeScore = 6;
+        else if (income >= t4) incomeScore = 4;
+        else if (income >= t3) incomeScore = 3;
+        else if (income >= t2) incomeScore = 2;
         else incomeScore = 1;
 
         const totalScore = education + occupation + incomeScore;
@@ -70,7 +80,7 @@ const SESCalculatorScreen = () => {
         setResult({
             score: totalScore,
             class: sesClass,
-            details: `Education: ${education} | Occupation: ${occupation} | Income Score: ${incomeScore}`
+            details: `Education: ${education} | Occupation: ${occupation} | Income Score: ${incomeScore} (Threshold Class I: ₹${t12.toFixed(0)})`
         });
     };
 
@@ -81,19 +91,24 @@ const SESCalculatorScreen = () => {
         }
 
         const currentCPI = Number(cpi);
-        const conversionFactor = currentCPI / 100; // Base 2001 = 100
-        const baseIncome = Number(perCapitaIncome) / conversionFactor;
+        // Multiplication Factor from 1961 to 2016 = 2.88 * 4.63 * 4.93 = 65.731392
+        const linkingFactor = 65.731392;
+        const conversionFactor = (currentCPI / 100) * linkingFactor;
+        
+        const income = Number(perCapitaIncome);
 
         let sesClass = '';
-        if (baseIncome >= 1000) sesClass = 'Upper (Class I)';
-        else if (baseIncome >= 500) sesClass = 'Upper Middle (Class II)';
-        else if (baseIncome >= 300) sesClass = 'Middle (Class III)';
-        else if (baseIncome >= 150) sesClass = 'Lower Middle (Class IV)';
+        if (income >= 100 * conversionFactor) sesClass = 'Upper (Class I)';
+        else if (income >= 50 * conversionFactor) sesClass = 'Upper Middle (Class II)';
+        else if (income >= 30 * conversionFactor) sesClass = 'Middle (Class III)';
+        else if (income >= 15 * conversionFactor) sesClass = 'Lower Middle (Class IV)';
         else sesClass = 'Lower (Class V)';
+
+        const classIThreshold = 100 * conversionFactor;
 
         setResult({
             class: sesClass,
-            details: `Base Adjusted Per Capita Income: ₹${baseIncome.toFixed(2)}`
+            details: `Threshold for Class I: ₹${classIThreshold.toFixed(0)}`
         });
     };
 
@@ -105,6 +120,12 @@ const SESCalculatorScreen = () => {
     return (
         <SafeAreaView style={styles.safeArea}>
             <ScrollView contentContainerStyle={styles.container}>
+                
+                <View style={styles.hintContainer}>
+                    <Text style={styles.hintText}>
+                        Tip: You can get the latest CPI-IW data from the Labour Bureau website: <Text style={styles.linkText}>labourbureau.gov.in</Text>
+                    </Text>
+                </View>
 
                 {/* Scale Selector */}
                 <Card style={styles.card}>
@@ -124,6 +145,16 @@ const SESCalculatorScreen = () => {
                     <Card style={styles.card}>
                         <Card.Content>
                             <Text style={styles.sectionTitle}>Modified Kuppuswamy Scale</Text>
+
+                            <TextInput
+                                label="Current CPI-IW (Base 2016 = 100)"
+                                value={kCpi}
+                                onChangeText={setKCpi}
+                                keyboardType="numeric"
+                                mode="outlined"
+                                style={styles.input}
+                                textColor={theme.colors.textTitle}
+                            />
 
                             <Text style={styles.label}>Education of Head of Family</Text>
                             <DropdownPicker
@@ -158,7 +189,7 @@ const SESCalculatorScreen = () => {
                             <Text style={styles.sectionTitle}>BG Prasad Scale</Text>
 
                             <TextInput
-                                label="Current CPI (Base 2001 = 100)"
+                                label="Current CPI-IW (Base 2016 = 100)"
                                 value={cpi}
                                 onChangeText={setCpi}
                                 keyboardType="numeric"
@@ -215,6 +246,23 @@ const styles = StyleSheet.create({
     },
     container: {
         padding: 16,
+    },
+    hintContainer: {
+        backgroundColor: theme.colors.warningBackground,
+        padding: 12,
+        borderRadius: 8,
+        marginBottom: 16,
+        borderWidth: 1,
+        borderColor: theme.colors.warning,
+    },
+    hintText: {
+        color: theme.colors.warningText,
+        fontSize: 14,
+        lineHeight: 20,
+    },
+    linkText: {
+        fontWeight: 'bold',
+        textDecorationLine: 'underline',
     },
     card: {
         marginBottom: 16,
