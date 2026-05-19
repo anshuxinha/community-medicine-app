@@ -116,24 +116,28 @@ const SESCalculatorScreen = () => {
         if (scaleType === 'kuppuswamy') calculateKuppuswamy();
         else calculateBGPrasad();
     };
+return (
+    <SafeAreaView style={styles.safeArea} edges={['left', 'right', 'bottom']}>
+        <ScrollView contentContainerStyle={styles.container}>
 
-    return (
-        <SafeAreaView style={styles.safeArea} edges={['left', 'right', 'bottom']}>
-            <ScrollView contentContainerStyle={styles.container}>
-                
-                <View style={styles.hintContainer}>
-                    <Text style={styles.hintText}>
-                        Tip: You can get the latest CPI-IW data from the Labour Bureau website:{" "}
-                        <Text 
-                            style={styles.linkText} 
-                            onPress={() => Linking.openURL('https://labourbureau.gov.in')}
-                        >
-                            labourbureau.gov.in
-                        </Text>
+            <View style={styles.hintContainer}>
+                <Text style={styles.hintText}>
+                    Tip: You can get the latest CPI-IW data from the Labour Bureau website:{" "}
+                    <Text 
+                        style={styles.linkText} 
+                        onPress={() => Linking.openURL('https://labourbureau.gov.in')}
+                    >
+                        labourbureau.gov.in
                     </Text>
-                </View>
+                </Text>
+            </View>
+...
+container: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    paddingTop: 16,
+},
 
-                {/* Scale Selector */}
                 <Card style={styles.card}>
                     <Card.Content>
                         <SegmentedButtons
