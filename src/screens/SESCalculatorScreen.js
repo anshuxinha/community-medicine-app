@@ -116,28 +116,24 @@ const SESCalculatorScreen = () => {
         if (scaleType === 'kuppuswamy') calculateKuppuswamy();
         else calculateBGPrasad();
     };
-return (
-    <SafeAreaView style={styles.safeArea} edges={['left', 'right', 'bottom']}>
-        <ScrollView contentContainerStyle={styles.container}>
 
-            <View style={styles.hintContainer}>
-                <Text style={styles.hintText}>
-                    Tip: You can get the latest CPI-IW data from the Labour Bureau website:{" "}
-                    <Text 
-                        style={styles.linkText} 
-                        onPress={() => Linking.openURL('https://labourbureau.gov.in')}
-                    >
-                        labourbureau.gov.in
+    return (
+        <SafeAreaView style={styles.safeArea} edges={['left', 'right', 'bottom']}>
+            <ScrollView contentContainerStyle={styles.container}>
+                
+                <View style={styles.hintContainer}>
+                    <Text style={styles.hintText}>
+                        Tip: You can get the latest CPI-IW data from the Labour Bureau website:{" "}
+                        <Text 
+                            style={styles.linkText} 
+                            onPress={() => Linking.openURL('https://labourbureau.gov.in')}
+                        >
+                            labourbureau.gov.in
+                        </Text>
                     </Text>
-                </Text>
-            </View>
-...
-container: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-    paddingTop: 16,
-},
+                </View>
 
+                {/* Scale Selector */}
                 <Card style={styles.card}>
                     <Card.Content>
                         <SegmentedButtons
@@ -255,7 +251,9 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.backgroundMain,
     },
     container: {
-        padding: 16,
+        paddingHorizontal: 16,
+        paddingBottom: 16,
+        paddingTop: 16,
     },
     hintContainer: {
         backgroundColor: theme.colors.warningBackground,
@@ -312,4 +310,3 @@ const styles = StyleSheet.create({
 });
 
 export default SESCalculatorScreen;
-
