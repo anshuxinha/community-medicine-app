@@ -300,8 +300,8 @@
     "hash": "b6d28a52efa63c1ccfa616dabffb7bd9"
   },
   "D:\\The App\\src\\context\\AppContext.js": {
-    "mtime": 1778777235.3834925,
-    "hash": "4b680f231ec24eb368a5603494fa09eb"
+    "mtime": 1779163149.5464041,
+    "hash": "ebc9c3c0e55eada33e9c6a65e77103cb"
   },
   "D:\\The App\\src\\data\\defaultTopicIllustrations.js": {
     "mtime": 1775143847.0992994,
@@ -352,8 +352,8 @@
     "hash": "668cf8653c020a16c182c7edf4fa0621"
   },
   "D:\\The App\\src\\screens\\LibraryScreen.js": {
-    "mtime": 1778395627.2983596,
-    "hash": "033963dc913e703b1aaa054f80db2c54"
+    "mtime": 1779344614.5154421,
+    "hash": "05d2cf266bc361b847fe47f0e05cd0aa"
   },
   "D:\\The App\\src\\screens\\LoginScreen.js": {
     "mtime": 1778737102.0081568,
@@ -384,8 +384,8 @@
     "hash": "b53afd189f11f368790fe5d6e084a0a4"
   },
   "D:\\The App\\src\\screens\\SESCalculatorScreen.js": {
-    "mtime": 1779161557.8681047,
-    "hash": "a906588d2c8862a88a9324011929c618"
+    "mtime": 1779162824.2184966,
+    "hash": "657400363fc07532009927d07f17c80b"
   },
   "D:\\The App\\src\\screens\\SubTopicsScreen.js": {
     "mtime": 1776677237.0528798,
@@ -456,8 +456,8 @@
     "hash": "bd619f447007710e25ee5b530d182902"
   },
   "D:\\The App\\src\\utils\\screenCaptureProtection.js": {
-    "mtime": 1776675749.994553,
-    "hash": "46b405486a3e84834aec07dbf3892129"
+    "mtime": 1779163110.8297544,
+    "hash": "59296da3a20f4abfb6a275f92eae574e"
   },
   "D:\\The App\\src\\utils\\tts.js": {
     "mtime": 1773723664.9753537,
@@ -466,6 +466,10 @@
   "D:\\The App\\AGENTS.md": {
     "mtime": 1778215878.445492,
     "hash": "04f5cc21fb908cfe9aa492bd9b36433c"
+  },
+  "D:\\The App\\CLAUDE.md": {
+    "mtime": 1779248298.714767,
+    "hash": "b283ae631e97e2a34fd0f044f04bfa82"
   },
   "D:\\The App\\COUPON_SETUP.md": {
     "mtime": 1778570823.4695475,
@@ -478,6 +482,10 @@
   "D:\\The App\\EAS_UPDATE_GUIDELINES.md": {
     "mtime": 1775129820.4595375,
     "hash": "2f501b9056ffaccc0b27d9b30ad02133"
+  },
+  "D:\\The App\\EXAMPLES.md": {
+    "mtime": 1779247812.5566843,
+    "hash": "c5e57cca1dae1226208a229ec595ca83"
   },
   "D:\\The App\\paper1_extracted.txt": {
     "mtime": 1778502162.3317487,
@@ -662,6 +670,26 @@
   "D:\\The App\\reading-illustrations\\nhp-logo-staging-contact-sheet.png": {
     "mtime": 1775300411.9803963,
     "hash": "01cfafbcebd43026a52905b0dec6ffc7"
+  },
+  "D:\\The App\\reading-illustrations\\practical_2-1_fig_12-1.png": {
+    "mtime": 1779346684.0822504,
+    "hash": "cb8244f897ebb4907ebe8f329953e0e6"
+  },
+  "D:\\The App\\reading-illustrations\\practical_2-3_fig_13-1.png": {
+    "mtime": 1779346684.3069105,
+    "hash": "9445d1db3981831164c24d7d68ff3622"
+  },
+  "D:\\The App\\reading-illustrations\\practical_2-3_fig_13-2.png": {
+    "mtime": 1779346684.3908532,
+    "hash": "46a3eff547a1ce39ee944f088170d74b"
+  },
+  "D:\\The App\\reading-illustrations\\practical_5-5_fig_22-1.png": {
+    "mtime": 1779345556.896011,
+    "hash": "e8aa4dc21923e536af8b508579c881c5"
+  },
+  "D:\\The App\\reading-illustrations\\practical_5-5_fig_22-2.png": {
+    "mtime": 1779345557.1603732,
+    "hash": "26cc14e490281c6eb38063ce2738f0bd"
   },
   "D:\\The App\\reading-illustrations\\stage_7-10_npncd.png": {
     "mtime": 1775298704.9441788,

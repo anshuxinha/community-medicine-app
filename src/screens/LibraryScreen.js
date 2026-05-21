@@ -31,9 +31,10 @@ import {
 
 const SECTION_ID_ICON_MAP = {
   "theory:27": "clipboard-text-search-outline",
-  "practical:29": "clipboard-text-search-outline",
-  "practical:30": "map-marker-path",
-  "practical:31": "calendar-heart",
+  "practical:2": "home-heart",
+  "practical:3": "clipboard-text-search-outline",
+  "practical:4": "map-marker-path",
+  "practical:5": "calculator",
 };
 
 const StatusMark = ({ status }) => {

@@ -827,52 +827,6 @@
     ]
   },
   {
-    "contentKey": "practical:2-1",
-    "section": "practical",
-    "topicId": "2-1",
-    "topicTitle": "Definitions and Explanations",
-    "images": [
-      {
-        "id": "practical-2-1-fig-12-1",
-        "fileName": "practical_2-1_fig_12-1.png",
-        "alt": "Figure 12.1: Mosquito larvae and pupae in stagnant water",
-        "caption": "Figure 12.1: Mosquito larvae and pupae in stagnant water",
-        "purpose": "Enables physical identification of vector larvae and pupae in stagnant water during household surveys.",
-        "anchorText": "Classification: Report as \"mosquito breeding site\" if larvae/pupae are visible. Report as \"potential breeding site\" if water is stagnant but no larvae are detected.",
-        "placement": "after",
-        "aspectRatio": 1.87
-      }
-    ]
-  },
-  {
-    "contentKey": "practical:2-3",
-    "section": "practical",
-    "topicId": "2-3",
-    "topicTitle": "Family Health Study (Part B - Dietary Survey & Rural SES)",
-    "images": [
-      {
-        "id": "practical-2-3-fig-13-1",
-        "fileName": "practical_2-3_fig_13-1.png",
-        "alt": "Figure 13.1: Food category intake per CU as percent of RDA/EAR",
-        "caption": "Figure 13.1: Food category intake per CU as percent of RDA/EAR",
-        "purpose": "Provides a visual example of a bar chart comparing household food group intake against standard recommendations, highlighting macroscopic imbalances.",
-        "anchorText": "These are also plotted on a bar graph for better visual comparison with the EAR.",
-        "placement": "after",
-        "aspectRatio": 1.71
-      },
-      {
-        "id": "practical-2-3-fig-13-2",
-        "fileName": "practical_2-3_fig_13-2.png",
-        "alt": "Figure 13.2: Nutrient intake per capita as percent of RDA/EAR",
-        "caption": "Figure 13.2: Nutrient intake per capita as percent of RDA/EAR",
-        "purpose": "Displays a visual nutrient adequacy profile, allowing immediate identification of micro- or macronutrient malnutrition (e.g., excessive fat vs. deficient vitamin A).",
-        "anchorText": "These are also plotted on a bar graph for better visual comparison with the EAR.",
-        "placement": "after",
-        "aspectRatio": 1.98
-      }
-    ]
-  },
-  {
     "contentKey": "practical:5-5",
     "section": "practical",
     "topicId": "5-5",
