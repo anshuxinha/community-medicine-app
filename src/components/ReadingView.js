@@ -24,6 +24,8 @@ const stripBold = (text) => text.replace(/\*\*(.+?)\*\*/g, "$1");
 const normalizeAnchorText = (text = "") =>
   stripBold(String(text)).replace(/\s+/g, " ").trim().toLowerCase();
 
+
+
 // Matches: "Grade A ★★★★★ | Asked 20x | NTRUHS SPM Paper I" style headings
 const isNtruHsHeading = (text) =>
   /Grade [A-C].*Asked.*x/i.test(text) || /NTRUHS/i.test(text);
@@ -225,7 +227,7 @@ const parseMarkdown = (content, { isGem = false } = {}) => {
 
   const flushTable = () => {
     if (tableLines.length < 2) {
-      tableLines.forEach((l) => rawBlocks.push({ type: "body", text: stripBold(l) }));
+      tableLines.forEach((l) => rawBlocks.push({ type: "body", text: l }));
       tableLines = [];
       return;
     }
@@ -248,7 +250,7 @@ const parseMarkdown = (content, { isGem = false } = {}) => {
     // Check if it's a question-wrapper table
     const questionText = extractQuestionTable(headers, rows);
     if (questionText !== null) {
-      rawBlocks.push({ type: "question", text: stripBold(questionText) });
+      rawBlocks.push({ type: "question", text: questionText });
       tableLines = [];
       return;
     }
@@ -350,22 +352,23 @@ const parseMarkdown = (content, { isGem = false } = {}) => {
     if (line.startsWith("# ")) {
       flushBullets();
       flushNested();
-      rawBlocks.push({ type: "h1", text: stripBold(line.replace(/^# /, "")) });
+      rawBlocks.push({ type: "h1", text: line.replace(/^# /, "") });
     } else if (line.startsWith("## ")) {
       flushBullets();
       flushNested();
-      const h2Text = stripBold(line.replace(/^## /, ""));
+      const rawH2 = line.replace(/^## /, "");
+      const h2Text = stripBold(rawH2);
       // Skip NTRUHS/grade headings entirely
       if (!isNtruHsHeading(h2Text)) {
-        rawBlocks.push({ type: "h2", text: h2Text });
+        rawBlocks.push({ type: "h2", text: rawH2 });
       }
     } else if (/^  - /.test(line)) {
       flushBullets();
-      const bText = stripBold(line.replace(/^  - /, "")).trim();
+      const bText = line.replace(/^  - /, "").trim();
       if (bText) nestedGroup.push(bText);
     } else if (/^[*\u2022-] /.test(line)) {
       flushNested();
-      const bText = stripBold(line.replace(/^[*\u2022-] /, "")).trim();
+      const bText = line.replace(/^[*\u2022-] /, "").trim();
       if (bText) bulletGroup.push(bText);
     } else if (line.match(/^!\[(.*?)\]\((.*?)\)$/)) {
       flushBullets();
@@ -384,7 +387,7 @@ const parseMarkdown = (content, { isGem = false } = {}) => {
     } else if (refMatch) {
       flushBullets();
       flushNested();
-      rawBlocks.push({ type: "reference", text: stripBold(refMatch[1].trim()) });
+      rawBlocks.push({ type: "reference", text: refMatch[1].trim() });
     } else if (line.trim() === "") {
       flushBullets();
       flushNested();
@@ -392,19 +395,19 @@ const parseMarkdown = (content, { isGem = false } = {}) => {
     } else if (line.startsWith("> ")) {
       flushBullets();
       flushNested();
-      rawBlocks.push({ type: "blockquote", text: stripBold(line.replace(/^>\s*/, "")) });
+      rawBlocks.push({ type: "blockquote", text: line.replace(/^>\s*/, "") });
     } else {
-      const bodyText = stripBold(line);
-      const trimmedBody = bodyText.trim();
+      const bodyText = line;
+      const strippedBody = stripBold(bodyText).trim();
       // Continuation of a bullet: non-empty, starts with lowercase, currently accumulating bullets
-      if (bulletGroup.length > 0 && trimmedBody && /^[a-z]/.test(trimmedBody)) {
-        bulletGroup[bulletGroup.length - 1] += " " + trimmedBody;
-      } else if (nestedGroup.length > 0 && trimmedBody && /^[a-z]/.test(trimmedBody)) {
-        nestedGroup[nestedGroup.length - 1] += " " + trimmedBody;
+      if (bulletGroup.length > 0 && strippedBody && /^[a-z]/.test(strippedBody)) {
+        bulletGroup[bulletGroup.length - 1] += " " + bodyText.trim();
+      } else if (nestedGroup.length > 0 && strippedBody && /^[a-z]/.test(strippedBody)) {
+        nestedGroup[nestedGroup.length - 1] += " " + bodyText.trim();
       } else {
         flushBullets();
         flushNested();
-        if (!isNtruHsMetaLine(bodyText)) {
+        if (!isNtruHsMetaLine(stripBold(bodyText))) {
           rawBlocks.push({ type: "body", text: bodyText });
         }
       }
@@ -940,35 +943,93 @@ const ReadingView = ({
     return text.toLowerCase().includes(normalizedSearchTerm);
   };
 
-  // Splits text around the search term and renders static purple spans for matches
-  const renderSearchSpans = (text, baseStyle, blockIndex) => {
-    if (!normalizedSearchTerm || !text) {
-      return <Text style={baseStyle} selectable={false}>{text}</Text>;
-    }
-    const lowerText = text.toLowerCase();
-    const parts = [];
-    let lastIdx = 0;
-    let idx = lowerText.indexOf(normalizedSearchTerm);
-    while (idx !== -1) {
-      if (idx > lastIdx) parts.push({ text: text.slice(lastIdx, idx), match: false });
-      parts.push({ text: text.slice(idx, idx + normalizedSearchTerm.length), match: true });
-      lastIdx = idx + normalizedSearchTerm.length;
-      idx = lowerText.indexOf(normalizedSearchTerm, lastIdx);
-    }
-    if (lastIdx < text.length) parts.push({ text: text.slice(lastIdx), match: false });
-    if (parts.length === 0) return <Text style={baseStyle} selectable={false}>{text}</Text>;
+  const renderFormattedText = (text, baseStyle = null, highlightSearch = true) => {
+    if (!text) return null;
+    const parts = String(text).split(/\*\*/);
+    const elements = [];
 
-    return (
-      <Text style={baseStyle} selectable={false}>
-        {parts.map((p, i) =>
-          p.match ? (
-            <Text key={i} style={styles.searchTermMatch}>{p.text}</Text>
-          ) : (
-            <Text key={i}>{p.text}</Text>
-          )
-        )}
-      </Text>
-    );
+    const activeSearchTerm = highlightSearch ? normalizedSearchTerm : "";
+
+    // Optimization: if no bolding and no search term, return plain text or simple wrapper
+    if (parts.length === 1 && !activeSearchTerm) {
+      if (baseStyle) {
+        return (
+          <Text style={baseStyle} selectable={false}>
+            {text}
+          </Text>
+        );
+      }
+      return text;
+    }
+
+    parts.forEach((part, idx) => {
+      if (!part) return;
+      const isBold = idx % 2 === 1;
+
+      if (activeSearchTerm) {
+        const lowerPart = part.toLowerCase();
+        let lastIdx = 0;
+        let sTermIdx = lowerPart.indexOf(activeSearchTerm);
+        let subIndex = 0;
+
+        while (sTermIdx !== -1) {
+          if (sTermIdx > lastIdx) {
+            const subText = part.slice(lastIdx, sTermIdx);
+            elements.push(
+              <Text key={`${idx}-${subIndex++}`} style={isBold ? { fontWeight: "bold" } : undefined}>
+                {subText}
+              </Text>
+            );
+          }
+          const matchText = part.slice(sTermIdx, sTermIdx + activeSearchTerm.length);
+          elements.push(
+            <Text
+              key={`${idx}-${subIndex++}`}
+              style={[
+                styles.searchTermMatch,
+                isBold && { fontWeight: "bold" }
+              ]}
+            >
+              {matchText}
+            </Text>
+          );
+          lastIdx = sTermIdx + activeSearchTerm.length;
+          sTermIdx = lowerPart.indexOf(activeSearchTerm, lastIdx);
+        }
+
+        if (lastIdx < part.length) {
+          const subText = part.slice(lastIdx);
+          elements.push(
+            <Text key={`${idx}-${subIndex++}`} style={isBold ? { fontWeight: "bold" } : undefined}>
+              {subText}
+            </Text>
+          );
+        }
+      } else {
+        if (isBold) {
+          elements.push(
+            <Text key={idx} style={{ fontWeight: "bold" }}>
+              {part}
+            </Text>
+          );
+        } else {
+          elements.push(
+            <Text key={idx}>
+              {part}
+            </Text>
+          );
+        }
+      }
+    });
+
+    if (baseStyle) {
+      return (
+        <Text style={baseStyle} selectable={false}>
+          {elements}
+        </Text>
+      );
+    }
+    return elements;
   };
 
   const renderBlock = (block, index) => {
@@ -977,16 +1038,13 @@ const ReadingView = ({
         const highlighted = shouldHighlightText(block.text);
         const hlKey = `${index}`;
         const userHighlighted = userHighlights[hlKey];
-        const hasSearchMatch = blockContainsSearch(block.text);
         const inner = (
           <View
             key={index}
             style={[highlighted ? styles.highlightBlock : null, userHighlighted ? styles.userHighlightBlock : null]}
             onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
           >
-            {hasSearchMatch
-              ? renderSearchSpans(block.text, styles.h1, index)
-              : <Text style={styles.h1} selectable={false}>{block.text}</Text>}
+            {renderFormattedText(block.text, styles.h1)}
           </View>
         );
         return (
@@ -999,16 +1057,13 @@ const ReadingView = ({
         const highlighted = shouldHighlightText(block.text);
         const hlKey = `${index}`;
         const userHighlighted = userHighlights[hlKey];
-        const hasSearchMatch = blockContainsSearch(block.text);
         const inner = (
           <View
             key={index}
             style={[highlighted ? styles.highlightBlock : null, userHighlighted ? styles.userHighlightBlock : null]}
             onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
           >
-            {hasSearchMatch
-              ? renderSearchSpans(block.text, styles.h2, index)
-              : <Text style={styles.h2} selectable={false}>{block.text}</Text>}
+            {renderFormattedText(block.text, styles.h2)}
           </View>
         );
         return (
@@ -1024,7 +1079,7 @@ const ReadingView = ({
             style={styles.tableTitleBlock}
             onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
           >
-            <Text style={styles.tableTitleText} selectable={false}>{block.text}</Text>
+            {renderFormattedText(block.text, styles.tableTitleText)}
           </View>
         );
       case "reference":
@@ -1034,7 +1089,7 @@ const ReadingView = ({
             style={styles.referenceBlock}
             onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
           >
-            <Text style={styles.referenceText} selectable={false}>{block.text}</Text>
+            {renderFormattedText(block.text, styles.referenceText)}
           </View>
         );
       case "blockquote": {
@@ -1050,7 +1105,7 @@ const ReadingView = ({
             onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
           >
             {hasSearchMatch && !isHighlightMode ? (
-              renderSearchSpans(block.text, styles.blockquoteText, index)
+              renderFormattedText(block.text, styles.blockquoteText, true)
             ) : (
               <Text key={blockHighlightSig} style={styles.blockquoteText} selectable={false}>
                 {sentences.map((sentence, sIdx) => {
@@ -1064,7 +1119,7 @@ const ReadingView = ({
                       onPress={isHighlightMode ? () => onToggleHighlight(hlKey) : undefined}
                       suppressHighlighting={true}
                     >
-                      {sIdx > 0 ? " " : ""}{sentence}
+                      {sIdx > 0 ? " " : ""}{renderFormattedText(sentence, null, false)}
                     </Text>
                   );
                 })}
@@ -1088,7 +1143,7 @@ const ReadingView = ({
             onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
           >
             {hasSearchMatch && !isHighlightMode ? (
-              renderSearchSpans(block.text, baseStyle, index)
+              renderFormattedText(block.text, baseStyle, true)
             ) : (
               <Text key={blockHighlightSig} style={baseStyle} selectable={false}>
                 {sentences.map((sentence, sIdx) => {
@@ -1102,7 +1157,7 @@ const ReadingView = ({
                       onPress={isHighlightMode ? () => onToggleHighlight(hlKey) : undefined}
                       suppressHighlighting={true}
                     >
-                      {sIdx > 0 ? " " : ""}{sentence}
+                      {sIdx > 0 ? " " : ""}{renderFormattedText(sentence, null, false)}
                     </Text>
                   );
                 })}
@@ -1131,9 +1186,7 @@ const ReadingView = ({
                   <Text style={styles.bulletDot} selectable={false}>
                     {"\u2022"}
                   </Text>
-                  {hasSearchMatch && !isHighlightMode
-                    ? renderSearchSpans(item, styles.bulletText, index)
-                    : <Text style={styles.bulletText} selectable={false}>{item}</Text>}
+                  {renderFormattedText(item, styles.bulletText, hasSearchMatch && !isHighlightMode)}
                 </View>
               );
               return (
@@ -1164,9 +1217,7 @@ const ReadingView = ({
                   <Text style={styles.nestedBulletDot} selectable={false}>
                     -
                   </Text>
-                  {hasSearchMatch && !isHighlightMode
-                    ? renderSearchSpans(item, styles.nestedBulletText, index)
-                    : <Text style={styles.nestedBulletText} selectable={false}>{item}</Text>}
+                  {renderFormattedText(item, styles.nestedBulletText, hasSearchMatch && !isHighlightMode)}
                 </View>
               );
               return (
@@ -1247,7 +1298,7 @@ const ReadingView = ({
           <View key={index} style={styles.illustrationCard}>
             <View style={styles.inlineImageShell}>
               <TouchableOpacity
-                activeOpacity={0.95}
+                activeOpacity={0.955}
                 onPress={() =>
                   openFullscreenImage({
                     source,
@@ -1315,7 +1366,7 @@ const ReadingView = ({
             style={styles.questionBlock}
             onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
           >
-            <Text style={styles.questionText} selectable={false}>{cleanedQuestion}</Text>
+            {renderFormattedText(cleanedQuestion, styles.questionText)}
           </View>
         );
       }
@@ -1339,7 +1390,7 @@ const ReadingView = ({
                 <View style={styles.tableHeaderRow}>
                   {headers.map((h, hi) => (
                     <View key={hi} style={[styles.tableCell, styles.tableHeaderCell, hi < headers.length - 1 && styles.tableCellBorderRight]}>
-                      <Text style={styles.tableHeaderText} selectable={false}>{h}</Text>
+                      {renderFormattedText(h, styles.tableHeaderText)}
                     </View>
                   ))}
                 </View>
@@ -1351,7 +1402,7 @@ const ReadingView = ({
                   >
                     {headers.map((_, ci) => (
                       <View key={ci} style={[styles.tableCell, ci < headers.length - 1 && styles.tableCellBorderRight]}>
-                        <Text style={styles.tableCellText} selectable={false}>{row[ci] ?? ""}</Text>
+                        {renderFormattedText(row[ci] ?? "", styles.tableCellText)}
                       </View>
                     ))}
                   </View>
