@@ -307,7 +307,13 @@ const PaywallScreen = ({ navigation }) => {
         [{ text: "Start Learning", onPress: () => navigation.goBack() }],
       );
     } catch (error) {
-      if (!error.userCancelled) {
+      if (Purchases && error.code === Purchases.PURCHASES_ERROR_CODE.PAYMENT_PENDING_ERROR) {
+        Alert.alert(
+          "Purchase Pending",
+          "Your transaction is pending approval or verification (such as Ask to Buy or bank authentication). Your access will be automatically unlocked once the transaction is completed.",
+          [{ text: "OK" }]
+        );
+      } else if (!error.userCancelled) {
         Alert.alert("Purchase Failed", error.message);
       }
     } finally {
