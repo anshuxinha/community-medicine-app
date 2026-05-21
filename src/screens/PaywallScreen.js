@@ -24,7 +24,11 @@ import {
   enableScreenCaptureProtection,
   disableScreenCaptureProtection,
 } from "../utils/screenCaptureProtection";
-import { validateCoupon, applyDiscount, incrementCouponUsage } from "../services/couponService";
+import {
+  validateCoupon,
+  applyDiscount,
+  incrementCouponUsage,
+} from "../services/couponService";
 import { TextInput } from "react-native-paper";
 import { logEvent } from "firebase/analytics";
 import { analytics } from "../config/firebase";
@@ -96,9 +100,16 @@ const PaywallScreen = ({ navigation }) => {
 
   // Reset coupon when plan changes if it's not applicable
   useEffect(() => {
-    if (appliedCoupon && appliedCoupon.targetPlans && !appliedCoupon.targetPlans.includes(selectedPlan)) {
+    if (
+      appliedCoupon &&
+      appliedCoupon.targetPlans &&
+      !appliedCoupon.targetPlans.includes(selectedPlan)
+    ) {
       setAppliedCoupon(null);
-      Alert.alert("Coupon Removed", "This coupon is not applicable to the newly selected plan.");
+      Alert.alert(
+        "Coupon Removed",
+        "This coupon is not applicable to the newly selected plan.",
+      );
     }
   }, [selectedPlan]);
 
@@ -112,19 +123,29 @@ const PaywallScreen = ({ navigation }) => {
     try {
       console.log("[RevenueCat] Fetching offerings for platform:", Platform.OS);
       const result = await Purchases.getOfferings();
-      console.log("[RevenueCat] Offerings fetched successfully:", Object.keys(result.all).join(", "));
-      
+      console.log(
+        "[RevenueCat] Offerings fetched successfully:",
+        Object.keys(result.all).join(", "),
+      );
+
       // Support immediate offering switching via coupon IDs
-      const targetId = (forcedOfferingId !== undefined ? forcedOfferingId : appliedCoupon?.code)?.toLowerCase();
+      const targetId = (
+        forcedOfferingId !== undefined ? forcedOfferingId : appliedCoupon?.code
+      )?.toLowerCase();
       let current = result.current;
 
       console.log("[RevenueCat] Current offering ID:", current?.identifier);
-      
+
       if (targetId) {
         // Find matching offering ID case-insensitively
-        const matchingId = Object.keys(result.all).find(id => id.toLowerCase() === targetId);
+        const matchingId = Object.keys(result.all).find(
+          (id) => id.toLowerCase() === targetId,
+        );
         if (matchingId) {
-          console.log("[RevenueCat] Switching to targeted offering:", matchingId);
+          console.log(
+            "[RevenueCat] Switching to targeted offering:",
+            matchingId,
+          );
           current = result.all[matchingId];
         } else if (!current) {
           current = Object.values(result.all)[0];
@@ -134,8 +155,15 @@ const PaywallScreen = ({ navigation }) => {
       }
 
       if (!current || !current.availablePackages) {
-        const errorMsg = !current ? "No offering found." : "No available packages in current offering.";
-        console.warn("[RevenueCat]", errorMsg, "All offerings:", Object.keys(result.all));
+        const errorMsg = !current
+          ? "No offering found."
+          : "No available packages in current offering.";
+        console.warn(
+          "[RevenueCat]",
+          errorMsg,
+          "All offerings:",
+          Object.keys(result.all),
+        );
         setLoadError(
           `No subscription packages available (${errorMsg}). Please try again later.`,
         );
@@ -146,7 +174,7 @@ const PaywallScreen = ({ navigation }) => {
 
       // Map available packages by their type for easy lookup
       const pkgMap = {};
-      
+
       current.availablePackages.forEach((pkg) => {
         pkgMap[pkg.packageType] = pkg;
         // Also map by identifier as fallback
@@ -154,7 +182,7 @@ const PaywallScreen = ({ navigation }) => {
           pkgMap[pkg.identifier] = pkg;
         }
       });
-      
+
       setPackages(pkgMap);
       setLoadError(null);
     } catch (err) {
@@ -171,7 +199,7 @@ const PaywallScreen = ({ navigation }) => {
         try {
           // Clear any previous coupon targeting on mount to reset to default offering
           // This fixes the issue where YEARLY999 users see the discounted price by default even after reinstall
-          await Purchases.setAttributes({ "coupon_code": "" });
+          await Purchases.setAttributes({ coupon_code: "" });
           console.log("[RevenueCat] Attributes cleared on mount");
         } catch (err) {
           console.warn("[RevenueCat] Failed to clear attributes:", err);
@@ -195,12 +223,15 @@ const PaywallScreen = ({ navigation }) => {
       return;
     }
 
-    logCouponEvent('coupon_apply_attempt', { code: couponCode });
+    logCouponEvent("coupon_apply_attempt", { code: couponCode });
 
     // Check network status to prevent stale validation
     const state = await NetInfo.fetch();
     if (!state.isConnected) {
-      Alert.alert("Offline", "Please check your internet connection to apply a coupon.");
+      Alert.alert(
+        "Offline",
+        "Please check your internet connection to apply a coupon.",
+      );
       return;
     }
 
@@ -211,15 +242,15 @@ const PaywallScreen = ({ navigation }) => {
       setCouponCode("");
       setShowCouponInput(false);
 
-      logCouponEvent('coupon_apply_success', { 
-        code: coupon.code, 
+      logCouponEvent("coupon_apply_success", {
+        code: coupon.code,
         discount_type: coupon.discountType,
-        discount_value: coupon.discountValue
+        discount_value: coupon.discountValue,
       });
 
       // Sync with RevenueCat for Targeting Rules
       if (Purchases) {
-        await Purchases.setAttributes({ "coupon_code": coupon.code });
+        await Purchases.setAttributes({ coupon_code: coupon.code });
         // Re-fetch offerings so the native modal gets the discounted product
         // Pass code explicitly as state update might be async
         await fetchOfferings(coupon.code);
@@ -227,7 +258,10 @@ const PaywallScreen = ({ navigation }) => {
 
       Alert.alert("Success", "Coupon applied successfully!");
     } catch (error) {
-      logCouponEvent('coupon_apply_failure', { code: couponCode, reason: error.message });
+      logCouponEvent("coupon_apply_failure", {
+        code: couponCode,
+        reason: error.message,
+      });
       Alert.alert("Invalid Coupon", error.message);
     } finally {
       setIsValidatingCoupon(false);
@@ -238,7 +272,7 @@ const PaywallScreen = ({ navigation }) => {
     setAppliedCoupon(null);
     if (Purchases) {
       // Clear the attribute
-      await Purchases.setAttributes({ "coupon_code": "" });
+      await Purchases.setAttributes({ coupon_code: "" });
       // Re-fetch to restore original prices - pass null explicitly to clear the targeted offering
       await fetchOfferings(null);
     }
@@ -260,7 +294,7 @@ const PaywallScreen = ({ navigation }) => {
       // Find the package for the selected plan
       const metadata = PLAN_METADATA.find((p) => p.id === selectedPlan);
       let pkg = packages[metadata?.packageType] || packages[selectedPlan];
-      
+
       // Fallback: If only one package exists in the current offering, use it.
       if (!pkg && Object.keys(packages).length === 1) {
         pkg = Object.values(packages)[0];
@@ -295,10 +329,10 @@ const PaywallScreen = ({ navigation }) => {
         appliedCoupon: appliedCoupon?.code || null,
       });
 
-      logCouponEvent('purchase_success', { 
-        plan: selectedPlan, 
+      logCouponEvent("purchase_success", {
+        plan: selectedPlan,
         coupon: appliedCoupon?.code || null,
-        entitlement: 'Premium'
+        entitlement: "Premium",
       });
 
       Alert.alert(
@@ -307,11 +341,14 @@ const PaywallScreen = ({ navigation }) => {
         [{ text: "Start Learning", onPress: () => navigation.goBack() }],
       );
     } catch (error) {
-      if (Purchases && error.code === Purchases.PURCHASES_ERROR_CODE.PAYMENT_PENDING_ERROR) {
+      if (
+        Purchases &&
+        error.code === Purchases.PURCHASES_ERROR_CODE.PAYMENT_PENDING_ERROR
+      ) {
         Alert.alert(
           "Purchase Pending",
           "Your transaction is pending approval or verification (such as Ask to Buy or bank authentication). Your access will be automatically unlocked once the transaction is completed.",
-          [{ text: "OK" }]
+          [{ text: "OK" }],
         );
       } else if (!error.userCancelled) {
         Alert.alert("Purchase Failed", error.message);
@@ -331,7 +368,7 @@ const PaywallScreen = ({ navigation }) => {
         return;
       }
       const customerInfo = await Purchases.restorePurchases();
-      if (customerInfo?.entitlements?.active?.Premium != null) {
+      if (customerInfo?.entitlements?.active?.["Premium"] !== undefined) {
         await upgradeToPremium({ premiumSource: "restore" });
         Alert.alert("Success", "Your purchases were restored!");
       } else {
@@ -344,7 +381,7 @@ const PaywallScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
       >
@@ -400,12 +437,13 @@ const PaywallScreen = ({ navigation }) => {
                 const pkg = packages[plan.packageType] || packages[plan.id];
                 const rcPrice = pkg?.product?.priceString;
                 const showPrice = rcPrice || plan.basePrice;
-                
+
                 // Apply discount if this is the selected plan and a coupon is applied
                 const isSelected = selectedPlan === plan.id;
-                const finalPriceDisplay = (isSelected && appliedCoupon) 
-                  ? applyDiscount(showPrice, appliedCoupon) 
-                  : showPrice;
+                const finalPriceDisplay =
+                  isSelected && appliedCoupon
+                    ? applyDiscount(showPrice, appliedCoupon)
+                    : showPrice;
 
                 return (
                   <TouchableOpacity
@@ -428,16 +466,27 @@ const PaywallScreen = ({ navigation }) => {
                       )}
                       <Text style={styles.planName}>{plan.name}</Text>
                       <Text style={styles.planDuration}>{plan.duration}</Text>
-                      
+
                       {isSelected && appliedCoupon ? (
-                        <View style={{ alignItems: 'center' }}>
-                          <Text style={[styles.priceText, styles.strikethroughPrice]}>{showPrice}</Text>
-                          <Text style={[styles.priceText, styles.discountedPrice]}>{finalPriceDisplay}</Text>
+                        <View style={{ alignItems: "center" }}>
+                          <Text
+                            style={[
+                              styles.priceText,
+                              styles.strikethroughPrice,
+                            ]}
+                          >
+                            {showPrice}
+                          </Text>
+                          <Text
+                            style={[styles.priceText, styles.discountedPrice]}
+                          >
+                            {finalPriceDisplay}
+                          </Text>
                         </View>
                       ) : (
                         <Text style={styles.priceText}>{showPrice}</Text>
                       )}
-                      
+
                       <Text style={styles.planDesc}>{plan.desc}</Text>
                     </Card.Content>
                   </TouchableOpacity>
@@ -449,11 +498,14 @@ const PaywallScreen = ({ navigation }) => {
             <View style={styles.couponContainer}>
               {!appliedCoupon ? (
                 !showCouponInput ? (
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     onPress={() => setShowCouponInput(true)}
                     style={styles.couponTrigger}
                   >
-                    <Text style={styles.couponTriggerText}>Have a coupon code? <Text style={styles.applyNowText}>Apply now</Text></Text>
+                    <Text style={styles.couponTriggerText}>
+                      Have a coupon code?{" "}
+                      <Text style={styles.applyNowText}>Apply now</Text>
+                    </Text>
                   </TouchableOpacity>
                 ) : (
                   <View style={styles.couponInputWrapper}>
@@ -467,8 +519,8 @@ const PaywallScreen = ({ navigation }) => {
                       dense
                       outlineStyle={{ borderRadius: 8 }}
                     />
-                    <Button 
-                      mode="contained" 
+                    <Button
+                      mode="contained"
                       onPress={handleApplyCoupon}
                       loading={isValidatingCoupon}
                       disabled={isValidatingCoupon}
@@ -476,15 +528,26 @@ const PaywallScreen = ({ navigation }) => {
                     >
                       Apply
                     </Button>
-                    <TouchableOpacity onPress={() => setShowCouponInput(false)} style={styles.cancelCoupon}>
-                      <MaterialIcons name="close" size={20} color={theme.colors.textPlaceholder} />
+                    <TouchableOpacity
+                      onPress={() => setShowCouponInput(false)}
+                      style={styles.cancelCoupon}
+                    >
+                      <MaterialIcons
+                        name="close"
+                        size={20}
+                        color={theme.colors.textPlaceholder}
+                      />
                     </TouchableOpacity>
                   </View>
                 )
               ) : (
                 <View style={styles.appliedCouponWrapper}>
                   <View style={styles.appliedCouponTag}>
-                    <MaterialIcons name="local-offer" size={14} color="#A855F7" />
+                    <MaterialIcons
+                      name="local-offer"
+                      size={14}
+                      color="#A855F7"
+                    />
                     <Text style={styles.appliedCouponText}>
                       Code {appliedCoupon.code} applied!
                     </Text>
@@ -504,7 +567,7 @@ const PaywallScreen = ({ navigation }) => {
               disabled={isPurchasing}
               onPress={handlePurchase}
             >
-              {appliedCoupon ? 'Get Discounted Price' : 'Subscribe Now'}
+              {appliedCoupon ? "Get Discounted Price" : "Subscribe Now"}
             </Button>
 
             <View style={styles.footerLinks}>
@@ -520,7 +583,9 @@ const PaywallScreen = ({ navigation }) => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() =>
-                  Linking.openURL("https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")
+                  Linking.openURL(
+                    "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/",
+                  )
                 }
               >
                 <Text style={styles.footerLinkText}>Terms of Use (EULA)</Text>
@@ -529,11 +594,15 @@ const PaywallScreen = ({ navigation }) => {
 
             <View style={styles.legalDisclaimer}>
               <Text style={styles.legalText}>
-                Subscription Title: STROMA Premium. Length of subscription: Monthly, Yearly, or Lifetime as selected. 
-                Payment will be charged to your Apple ID account at the confirmation of purchase. 
-                Subscription automatically renews unless it is canceled at least 24 hours before the end of the current period. 
-                Your account will be charged for renewal within 24 hours prior to the end of the current period. 
-                You can manage and cancel your subscriptions by going to your account settings on the App Store after purchase.
+                Subscription Title: STROMA Premium. Length of subscription:
+                Monthly, Yearly, or Lifetime as selected. Payment will be
+                charged to your Apple ID account at the confirmation of
+                purchase. Subscription automatically renews unless it is
+                canceled at least 24 hours before the end of the current period.
+                Your account will be charged for renewal within 24 hours prior
+                to the end of the current period. You can manage and cancel your
+                subscriptions by going to your account settings on the App Store
+                after purchase.
               </Text>
             </View>
           </View>
@@ -636,7 +705,7 @@ const styles = StyleSheet.create({
   },
   featureIcon: {
     marginRight: 12,
-    backgroundColor: theme.colors.primaryLight, 
+    backgroundColor: theme.colors.primaryLight,
     borderRadius: 12,
   },
   featureText: {
@@ -668,7 +737,7 @@ const styles = StyleSheet.create({
   },
   pricingCardActive: {
     borderWidth: 2,
-    borderColor: "#A855F7", 
+    borderColor: "#A855F7",
     backgroundColor: theme.colors.surfaceTertiary,
     transform: [{ scale: 1.05 }],
     zIndex: 10,
@@ -723,10 +792,10 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontWeight: "bold",
     marginBottom: 4,
-    overflow: "hidden", 
+    overflow: "hidden",
   },
   subscribeButton: {
-    backgroundColor: theme.colors.secondary, 
+    backgroundColor: theme.colors.secondary,
     paddingVertical: 10,
     borderRadius: 30,
     marginBottom: 16, // Reduced from 24
@@ -739,7 +808,7 @@ const styles = StyleSheet.create({
   subscribeButtonText: {
     fontSize: 18,
     fontWeight: "bold",
-    color: theme.colors.buttonText, 
+    color: theme.colors.buttonText,
   },
   footerLinks: {
     flexDirection: "row",
@@ -763,13 +832,13 @@ const styles = StyleSheet.create({
     lineHeight: 12,
   },
   strikethroughPrice: {
-    textDecorationLine: 'line-through',
+    textDecorationLine: "line-through",
     color: theme.colors.textPlaceholder,
     fontSize: 10,
     marginBottom: 0,
   },
   discountedPrice: {
-    color: '#10B981', 
+    color: "#10B981",
     fontSize: 14,
   },
   couponContainer: {
@@ -777,7 +846,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   couponTrigger: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 8,
   },
   couponTriggerText: {
@@ -785,12 +854,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   applyNowText: {
-    color: '#A855F7',
-    fontWeight: 'bold',
+    color: "#A855F7",
+    fontWeight: "bold",
   },
   couponInputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   couponInput: {
     flex: 1,
@@ -801,37 +870,37 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     borderRadius: 8,
     height: 40,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   cancelCoupon: {
     marginLeft: 8,
     padding: 4,
   },
   appliedCouponWrapper: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     backgroundColor: theme.colors.surfaceTertiary,
     padding: 10,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#A855F7',
-    borderStyle: 'dashed',
+    borderColor: "#A855F7",
+    borderStyle: "dashed",
   },
   appliedCouponTag: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   appliedCouponText: {
     marginLeft: 6,
     color: theme.colors.textTitle,
-    fontWeight: '600',
+    fontWeight: "600",
     fontSize: 14,
   },
   removeCouponText: {
     color: theme.colors.error,
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 
