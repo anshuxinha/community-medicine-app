@@ -5,12 +5,12 @@
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 829 nodes · 1246 edges · 88 communities (70 shown, 18 thin omitted)
+- 829 nodes · 1246 edges · 87 communities (70 shown, 17 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 1 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `bfaa0641`
+- Built from commit: `ea5d2c7c`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -87,7 +87,6 @@
 - [[_COMMUNITY_Community 69|Community 69]]
 - [[_COMMUNITY_Community 70|Community 70]]
 - [[_COMMUNITY_Community 71|Community 71]]
-- [[_COMMUNITY_Community 72|Community 72]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `theme` - 30 edges
@@ -113,7 +112,7 @@
 - `LibraryScreen()` --calls--> `useResponsive()`  [EXTRACTED]
   src/screens/LibraryScreen.js → src/styles/theme.js
 
-## Communities (88 total, 18 thin omitted)
+## Communities (87 total, 17 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.05
@@ -149,19 +148,19 @@ Nodes (18): biomedicalWaste(), chainOfInfection(), coldChain(), { createCanvas }
 
 ### Community 8 - "Community 8"
 Cohesion: 0.14
-Nodes (14): PLAN_METADATA, styles, applyDiscount(), incrementCouponUsage(), validateCoupon(), coupon, mockDate, mockTransaction (+6 more)
+Nodes (11): BASE_MENU_ITEMS, styles, { width }, app, auth, db, firebaseConfig, AppContext (+3 more)
 
 ### Community 9 - "Community 9"
 Cohesion: 0.14
-Nodes (13): appIcon, styles, AppContext, DashboardScreen(), styles, GemsScreen(), styles, LibraryScreen() (+5 more)
+Nodes (14): PLAN_METADATA, styles, applyDiscount(), incrementCouponUsage(), validateCoupon(), coupon, mockDate, mockTransaction (+6 more)
 
 ### Community 10 - "Community 10"
-Cohesion: 0.17
-Nodes (16): buildContactSheet(), clampCrop(), CONTACT_SHEET_PATH, { createCanvas, loadImage }, CROP_SPECS, cropRegion(), ensureDir(), fs (+8 more)
+Cohesion: 0.14
+Nodes (12): appIcon, styles, DashboardScreen(), styles, GemsScreen(), styles, LibraryScreen(), MONTH_NAMES (+4 more)
 
 ### Community 11 - "Community 11"
-Cohesion: 0.16
-Nodes (8): styles, flex1, { height: WINDOW_HEIGHT }, styles, styles, appColors, paperTheme, theme
+Cohesion: 0.17
+Nodes (16): buildContactSheet(), clampCrop(), CONTACT_SHEET_PATH, { createCanvas, loadImage }, CROP_SPECS, cropRegion(), ensureDir(), fs (+8 more)
 
 ### Community 12 - "Community 12"
 Cohesion: 0.17
@@ -184,8 +183,8 @@ Cohesion: 0.21
 Nodes (11): admin, ensureFirebaseApp(), fs, loadSeed(), LOCAL_IMAGE_DIR, main(), parseArgs(), path (+3 more)
 
 ### Community 17 - "Community 17"
-Cohesion: 0.21
-Nodes (8): BASE_MENU_ITEMS, styles, { width }, app, auth, db, firebaseConfig, styles
+Cohesion: 0.19
+Nodes (6): styles, flex1, { height: WINDOW_HEIGHT }, styles, appColors, paperTheme
 
 ### Community 18 - "Community 18"
 Cohesion: 0.15
@@ -208,40 +207,40 @@ Cohesion: 0.29
 Nodes (3): ScreenCaptureProtectionModule, LifecycleEventObserver, ReactContextBaseJavaModule
 
 ### Community 23 - "Community 23"
+Cohesion: 0.2
+Nodes (6): useSessionEnforcer(), AppNavigator(), navigationRef, Stack, Tab, styles
+
+### Community 24 - "Community 24"
 Cohesion: 0.18
 Nodes (10): 1. App Details, 2. Graphics Assets Required for Play Console, 3. Link Resources, 🧮 Advanced Medical Calculators & Tools, 🤖 AI Tutor & Chat Support, 📚 Comprehensive Knowledge Library, Google Play Store Metadata, 📝 Interactive Quizzes & Mock Exams (+2 more)
 
-### Community 24 - "Community 24"
+### Community 25 - "Community 25"
 Cohesion: 0.22
 Nodes (7): admin, FILE_TO_ID, fs, MUSEUM_DATA_PATH, MUSEUM_FOLDER, path, SERVICE_ACCOUNT_PATH
 
-### Community 25 - "Community 25"
+### Community 26 - "Community 26"
 Cohesion: 0.33
 Nodes (7): call_ollama(), _extract_candidate_text(), _extract_json_payload(), fetch_health_updates(), Fetches real updates from the Government of India PIB feed for MoHFW., Extract text from Ollama /api/chat response shape., _strip_code_fence()
 
-### Community 26 - "Community 26"
+### Community 27 - "Community 27"
 Cohesion: 0.25
 Nodes (7): CM_TO_THEME, fs, lower, normalizedCTM, path, processFile(), walkDir()
 
-### Community 27 - "Community 27"
+### Community 28 - "Community 28"
 Cohesion: 0.28
 Nodes (4): CATEGORIES, MUSEUM_ITEMS, KNOWN_HEADERS, styles
 
-### Community 28 - "Community 28"
-Cohesion: 0.25
-Nodes (6): admin, db, fs, path, SERVICE_ACCOUNT_PATH, serviceAccount
-
 ### Community 29 - "Community 29"
 Cohesion: 0.25
-Nodes (6): admin, fs, IMAGES_TO_UPLOAD, main(), path, SERVICE_ACCOUNT_PATH
+Nodes (5): styles, EDUCATION_OPTIONS, OCCUPATION_OPTIONS, styles, theme
 
 ### Community 30 - "Community 30"
 Cohesion: 0.25
-Nodes (4): styles, EDUCATION_OPTIONS, OCCUPATION_OPTIONS, styles
+Nodes (6): admin, db, fs, path, SERVICE_ACCOUNT_PATH, serviceAccount
 
 ### Community 31 - "Community 31"
-Cohesion: 0.29
-Nodes (5): useSessionEnforcer(), AppNavigator(), navigationRef, Stack, Tab
+Cohesion: 0.25
+Nodes (6): admin, fs, IMAGES_TO_UPLOAD, main(), path, SERVICE_ACCOUNT_PATH
 
 ### Community 32 - "Community 32"
 Cohesion: 0.52
@@ -291,17 +290,21 @@ Nodes (4): admin, fs, path, SERVICE_ACCOUNT_PATH
 Cohesion: 0.33
 Nodes (4): admin, fs, path, SERVICE_ACCOUNT_PATH
 
-### Community 47 - "Community 47"
+### Community 46 - "Community 46"
 Cohesion: 0.33
 Nodes (5): code:json ({), Coupon Firestore Setup, Document Structure, Example Document (`PROMO20`):, Script for Bulk Upload
 
-### Community 48 - "Community 48"
+### Community 47 - "Community 47"
 Cohesion: 0.33
 Nodes (5): code:bash (# 1. Commit & push), Common Pitfall Avoidance, Custom Instruction for EAS Updates, Quick Command Sequence, Rule: Always Verify Channel-Branch Mapping Before EAS Update
 
-### Community 49 - "Community 49"
+### Community 48 - "Community 48"
 Cohesion: 0.4
 Nodes (4): data, fs, match, pos
+
+### Community 49 - "Community 49"
+Cohesion: 0.4
+Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
 ### Community 50 - "Community 50"
 Cohesion: 0.4
@@ -313,11 +316,11 @@ Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
 ### Community 52 - "Community 52"
 Cohesion: 0.4
-Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
+Nodes (4): data, fs, mockDataPath, path
 
 ### Community 53 - "Community 53"
 Cohesion: 0.4
-Nodes (4): data, fs, mockDataPath, path
+Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
 ### Community 54 - "Community 54"
 Cohesion: 0.4
@@ -327,27 +330,23 @@ Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 Cohesion: 0.4
 Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
-### Community 56 - "Community 56"
-Cohesion: 0.4
-Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
-
-### Community 62 - "Community 62"
+### Community 61 - "Community 61"
 Cohesion: 0.67
 Nodes (3): extract_text_from_pdf(), main(), Extracts text from a PDF file.     This is a placeholder function. In a real ap
 
 ## Knowledge Gaps
 - **297 isolated node(s):** `{ createCanvas }`, `fs`, `path`, `{ getDefaultConfig }`, `config` (+292 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **18 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **17 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `theme` connect `Community 11` to `Community 0`, `Community 33`, `Community 1`, `Community 4`, `Community 6`, `Community 8`, `Community 9`, `Community 46`, `Community 17`, `Community 20`, `Community 27`, `Community 30`, `Community 31`?**
+- **Why does `theme` connect `Community 29` to `Community 0`, `Community 33`, `Community 1`, `Community 4`, `Community 6`, `Community 8`, `Community 9`, `Community 10`, `Community 17`, `Community 20`, `Community 23`, `Community 28`?**
   _High betweenness centrality (0.022) - this node is a cross-community bridge._
-- **Why does `AppContext` connect `Community 9` to `Community 0`, `Community 1`, `Community 4`, `Community 8`, `Community 46`, `Community 17`, `Community 27`, `Community 31`?**
+- **Why does `AppContext` connect `Community 8` to `Community 0`, `Community 1`, `Community 4`, `Community 9`, `Community 10`, `Community 23`, `Community 28`?**
   _High betweenness centrality (0.005) - this node is a cross-community bridge._
-- **Why does `db` connect `Community 17` to `Community 0`, `Community 1`, `Community 4`, `Community 8`, `Community 11`, `Community 46`?**
+- **Why does `db` connect `Community 8` to `Community 0`, `Community 1`, `Community 4`, `Community 9`, `Community 17`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **What connects `{ createCanvas }`, `fs`, `path` to the rest of the system?**
   _297 weakly-connected nodes found - possible documentation gaps or missing edges._
