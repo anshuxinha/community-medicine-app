@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `6d0a182f`
+- Built from commit: `0c884d14`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -152,16 +152,16 @@ Cohesion: 0.14
 Nodes (14): PLAN_METADATA, styles, applyDiscount(), incrementCouponUsage(), validateCoupon(), coupon, mockDate, mockTransaction (+6 more)
 
 ### Community 9 - "Community 9"
+Cohesion: 0.13
+Nodes (10): BASE_MENU_ITEMS, styles, { width }, app, auth, db, firebaseConfig, STATUS_TONES (+2 more)
+
+### Community 10 - "Community 10"
 Cohesion: 0.15
 Nodes (12): appIcon, styles, AppContext, DashboardScreen(), styles, GemsScreen(), styles, MONTH_NAMES (+4 more)
 
-### Community 10 - "Community 10"
+### Community 11 - "Community 11"
 Cohesion: 0.17
 Nodes (16): buildContactSheet(), clampCrop(), CONTACT_SHEET_PATH, { createCanvas, loadImage }, CROP_SPECS, cropRegion(), ensureDir(), fs (+8 more)
-
-### Community 11 - "Community 11"
-Cohesion: 0.14
-Nodes (9): db, useSessionEnforcer(), AppNavigator(), navigationRef, Stack, Tab, STATUS_TONES, styles (+1 more)
 
 ### Community 12 - "Community 12"
 Cohesion: 0.16
@@ -200,8 +200,8 @@ Cohesion: 0.21
 Nodes (7): PRESET_PROBLEMS, SOLVER_OFFSETS, ssSingleProp(), ssTwoMeans(), ssTwoProps(), styles, zForCI()
 
 ### Community 21 - "Community 21"
-Cohesion: 0.2
-Nodes (7): BASE_MENU_ITEMS, styles, { width }, app, auth, firebaseConfig, styles
+Cohesion: 0.24
+Nodes (5): styles, getDefaultDeviceName(), getDeviceId(), getDeviceInfo(), isFirstDeviceLogin()
 
 ### Community 22 - "Community 22"
 Cohesion: 0.17
@@ -212,28 +212,28 @@ Cohesion: 0.29
 Nodes (3): ScreenCaptureProtectionModule, LifecycleEventObserver, ReactContextBaseJavaModule
 
 ### Community 24 - "Community 24"
-Cohesion: 0.25
-Nodes (5): styles, getDefaultDeviceName(), getDeviceId(), getDeviceInfo(), isFirstDeviceLogin()
-
-### Community 25 - "Community 25"
 Cohesion: 0.18
 Nodes (10): 1. App Details, 2. Graphics Assets Required for Play Console, 3. Link Resources, 🧮 Advanced Medical Calculators & Tools, 🤖 AI Tutor & Chat Support, 📚 Comprehensive Knowledge Library, Google Play Store Metadata, 📝 Interactive Quizzes & Mock Exams (+2 more)
 
-### Community 26 - "Community 26"
+### Community 25 - "Community 25"
 Cohesion: 0.22
 Nodes (7): admin, FILE_TO_ID, fs, MUSEUM_DATA_PATH, MUSEUM_FOLDER, path, SERVICE_ACCOUNT_PATH
 
-### Community 27 - "Community 27"
+### Community 26 - "Community 26"
 Cohesion: 0.33
 Nodes (7): call_ollama(), _extract_candidate_text(), _extract_json_payload(), fetch_health_updates(), Fetches real updates from the Government of India PIB feed for MoHFW., Extract text from Ollama /api/chat response shape., _strip_code_fence()
 
-### Community 28 - "Community 28"
+### Community 27 - "Community 27"
 Cohesion: 0.25
 Nodes (7): CM_TO_THEME, fs, lower, normalizedCTM, path, processFile(), walkDir()
 
-### Community 29 - "Community 29"
+### Community 28 - "Community 28"
 Cohesion: 0.28
 Nodes (4): CATEGORIES, MUSEUM_ITEMS, KNOWN_HEADERS, styles
+
+### Community 29 - "Community 29"
+Cohesion: 0.25
+Nodes (6): useSessionEnforcer(), AppNavigator(), navigationRef, Stack, Tab, setupNotificationTapHandler()
 
 ### Community 30 - "Community 30"
 Cohesion: 0.25
@@ -347,11 +347,11 @@ Nodes (3): extract_text_from_pdf(), main(), Extracts text from a PDF file.     T
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `theme` connect `Community 12` to `Community 32`, `Community 0`, `Community 34`, `Community 1`, `Community 4`, `Community 6`, `Community 8`, `Community 9`, `Community 11`, `Community 20`, `Community 21`, `Community 24`, `Community 29`?**
+- **Why does `theme` connect `Community 12` to `Community 32`, `Community 0`, `Community 34`, `Community 1`, `Community 4`, `Community 6`, `Community 8`, `Community 9`, `Community 10`, `Community 20`, `Community 21`, `Community 28`, `Community 29`?**
   _High betweenness centrality (0.022) - this node is a cross-community bridge._
-- **Why does `AppContext` connect `Community 9` to `Community 0`, `Community 1`, `Community 4`, `Community 8`, `Community 11`, `Community 21`, `Community 24`, `Community 29`?**
+- **Why does `AppContext` connect `Community 10` to `Community 0`, `Community 1`, `Community 4`, `Community 8`, `Community 9`, `Community 21`, `Community 28`, `Community 29`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
-- **Why does `db` connect `Community 11` to `Community 0`, `Community 1`, `Community 4`, `Community 8`, `Community 12`, `Community 21`, `Community 24`?**
+- **Why does `db` connect `Community 9` to `Community 0`, `Community 1`, `Community 4`, `Community 8`, `Community 12`, `Community 21`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **What connects `{ createCanvas }`, `fs`, `path` to the rest of the system?**
   _297 weakly-connected nodes found - possible documentation gaps or missing edges._
