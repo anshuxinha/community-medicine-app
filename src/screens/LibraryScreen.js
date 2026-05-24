@@ -96,15 +96,53 @@ const getExcerptAroundMatch = (text, query) => {
   return { prefix, match, suffix };
 };
 
+const findFirstMatchingItemOrSub = (item, query) => {
+  if (!item || !query) return null;
+  const normalizedQuery = query.toLowerCase();
+  if (
+    (item.title && item.title.toLowerCase().includes(normalizedQuery)) ||
+    (item.content && item.content.toLowerCase().includes(normalizedQuery))
+  ) {
+    return item;
+  }
+  if (Array.isArray(item.subsections) && item.subsections.length > 0) {
+    for (const sub of item.subsections) {
+      const matched = findFirstMatchingItemOrSub(sub, query);
+      if (matched) return matched;
+    }
+  }
+  return null;
+};
+
 const SearchExcerpt = ({ item, searchQuery }) => {
   if (!searchQuery) return null;
-  const bodyText = item.content || "";
+  const matchItem = findFirstMatchingItemOrSub(item, searchQuery);
+  if (!matchItem) return null;
+
+  const bodyText = matchItem.content || "";
   const bodyMatch = bodyText.toLowerCase().includes(searchQuery.toLowerCase());
-  if (!bodyMatch) return null;
+  if (!bodyMatch) {
+    if (matchItem !== item) {
+      return (
+        <Text style={excerptStyles.container} numberOfLines={2}>
+          <Text style={excerptStyles.plain}>Matches subtopic: </Text>
+          <Text style={excerptStyles.match}>{matchItem.title}</Text>
+        </Text>
+      );
+    }
+    return null;
+  }
+
   const excerpt = getExcerptAroundMatch(bodyText, searchQuery);
   if (!excerpt) return null;
+
   return (
     <Text style={excerptStyles.container} numberOfLines={2}>
+      {matchItem !== item && (
+        <Text style={{ ...excerptStyles.plain, fontStyle: "italic" }}>
+          In {matchItem.title}:{" "}
+        </Text>
+      )}
       <Text style={excerptStyles.plain}>{excerpt.prefix}</Text>
       <Text style={excerptStyles.match}>{excerpt.match}</Text>
       <Text style={excerptStyles.plain}>{excerpt.suffix}</Text>
@@ -149,9 +187,8 @@ const LibraryScreen = (props) => {
   );
   const filteredTopics = currentTopics.filter(
     (topic) =>
-      topic.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (topic.content &&
-        topic.content.toLowerCase().includes(searchQuery.toLowerCase())),
+      !searchQuery.trim() ||
+      findFirstMatchingItemOrSub(topic, searchQuery.trim()) !== null,
   );
 
   const getMenuKey = (item) => `${activeSection}:${item.id}`;
