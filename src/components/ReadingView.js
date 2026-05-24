@@ -464,6 +464,9 @@ const getBlockAnchorText = (block) => {
   if (block.type === "h1" || block.type === "h2" || block.type === "body" || block.type === "blockquote") {
     return normalizeAnchorText(block.text);
   }
+  if (block.type === "bullets" || block.type === "nested_bullets") {
+    return (block.items || []).map(item => normalizeAnchorText(item)).join(" ");
+  }
   return "";
 };
 

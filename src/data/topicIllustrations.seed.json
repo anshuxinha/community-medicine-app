@@ -881,20 +881,20 @@
       {
         "id": "practical-5-5-fig-22-1",
         "fileName": "practical_5-5_fig_22-1.png",
-        "alt": "Commonly used household measures for diet demonstration",
-        "caption": "Commonly used household measures for diet demonstration (glasses, bowls, cups, spoons)",
-        "purpose": "Visual guide showing typical household measures like tea cups, tumblers, and steel bowls calibrated in milliliters to help patients estimate food volumes.",
-        "anchorText": "Standard Household Measures",
+        "alt": "Some average sized household measures",
+        "caption": "Some average sized household measures",
+        "purpose": "Provides critical visual references of standard Indian household utensils to prevent volume estimation errors in dietary counseling.",
+        "anchorText": "- Standard Household Measures: Standardized utensils utilized to bridge the gap between clinical gram-based nutrient requirements and practical, home-based portion sizes.",
         "placement": "after",
-        "aspectRatio": 2.47
+        "aspectRatio": 2.38
       },
       {
         "id": "practical-5-5-fig-22-2",
         "fileName": "practical_5-5_fig_22-2.png",
-        "alt": "24-Hour meal demonstration layout for sedentary male (bank clerk)",
-        "caption": "24-Hour meal demonstration layout showing cooked dishes alongside raw ingredients",
-        "purpose": "Demonstrates the physical layout of the designed daily diet, highlighting the visual relationship between cooked portions and raw ingredients.",
-        "anchorText": "Designed 24-Hour Meal Menu:",
+        "alt": "A sample diet demonstration for a 26-year-old bank clerk",
+        "caption": "A sample diet demonstration for a 26-year-old bank clerk",
+        "purpose": "Displays real-world portion sizes and visual food plates to aid students in translating raw nutrient calculations into actionable dietary recommendations.",
+        "anchorText": "- Designed 24-Hour Meal Menu:",
         "placement": "after",
         "aspectRatio": 1.35
       }
