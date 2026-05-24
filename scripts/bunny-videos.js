@@ -325,6 +325,7 @@ const syncVideos = async (db, config, options) => {
   let page = 1;
   let syncedCount = 0;
   let notifiedCount = 0;
+  let isFirstVideo = true;
 
   while (true) {
     const response = await bunnyFetch(
@@ -335,7 +336,18 @@ const syncVideos = async (db, config, options) => {
     if (items.length === 0) break;
 
     for (const video of items) {
-      const result = await upsertVideoDoc(db, config, video, options);
+      const videoOptions = { ...options };
+
+      // If a category was provided via CLI, only apply it to the latest (first) video fetched.
+      // Applying it to all videos would overwrite every existing video's category.
+      if (!isFirstVideo) {
+        delete videoOptions.category;
+        delete videoOptions.categoryLabel;
+        delete videoOptions["category-label"];
+      }
+
+      const result = await upsertVideoDoc(db, config, video, videoOptions);
+      isFirstVideo = false;
       syncedCount += 1;
 
       if (notifyNew && result.isNew && !result.wasNotified) {

@@ -26,7 +26,7 @@ import { auth } from "../config/firebase";
 import { theme, useResponsive } from "../styles/theme";
 
 const DashboardScreen = ({ navigation }) => {
-  const { readingProgress, currentStreak, studyScore, user, refreshFromCloud } =
+  const { readingProgress, currentStreak, studyScore, user, refreshFromCloud, isPremium } =
     useContext(AppContext);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { isTablet, horizontalPadding, scaleFactor, contentMaxWidth } =
@@ -311,7 +311,13 @@ const DashboardScreen = ({ navigation }) => {
             <Card.Actions>
               <Button
                 textColor={theme.colors.secondary}
-                onPress={() => showDialog(update)}
+                onPress={() => {
+                  if (!isPremium) {
+                    navigation.navigate("Paywall");
+                  } else {
+                    showDialog(update);
+                  }
+                }}
                 mode="text"
                 compact
               >
