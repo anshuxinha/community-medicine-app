@@ -131,37 +131,95 @@ const VideosScreen = ({ navigation }) => {
   const [doubts, setDoubts] = useState([]);
   const [newDoubtText, setNewDoubtText] = useState("");
   const [replyingTo, setReplyingTo] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [isSubscribed, setIsSubscribed] = useState(true);
+  const [isLoadingVideos, setIsLoadingVideos] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isTogglingNotifications, setIsTogglingNotifications] =
+    useState(false);
+  const [visibleCount, setVisibleCount] = useState(10);
+
+  const userEmail = user?.email?.toLowerCase();
+  const isAdmin =
+    user?.isAdmin === true ||
+    userEmail === "anshuxinha@gmail.com" ||
+    userEmail === "kaushikeec@gmail.com";
 
   // Subscribe to doubts for selected video
   useEffect(() => {
-    if (!selectedVideo) {
+    if (!selectedVideo || !user?.uid) {
       setDoubts([]);
       setReplyingTo(null);
       setNewDoubtText("");
       return;
     }
 
-    const doubtsQuery = query(
-      collection(db, "videoDoubts"),
-      where("videoId", "==", selectedVideo.id)
-    );
-
-    const unsubscribe = onSnapshot(doubtsQuery, (snapshot) => {
-      const fetchedDoubts = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })).sort((a, b) => getDoubtTime(a.createdAt) - getDoubtTime(b.createdAt));
-      console.log(`[Doubts Debug] videoId: ${selectedVideo.id}, fetched count: ${fetchedDoubts.length}`);
+    const snapshotsBySource = new Map();
+    const publishDoubts = () => {
+      const doubtsById = new Map();
+      snapshotsBySource.forEach((items) => {
+        items.forEach((item) => doubtsById.set(item.id, item));
+      });
+      const fetchedDoubts = Array.from(doubtsById.values()).sort(
+        (a, b) => getDoubtTime(a.createdAt) - getDoubtTime(b.createdAt),
+      );
       setDoubts(fetchedDoubts);
-    }, (error) => {
-      console.warn("Failed to subscribe to doubts:", error?.message);
-    });
+    };
 
-    return unsubscribe;
-  }, [selectedVideo]);
+    const syncSnapshot = (source, snapshot) => {
+      snapshotsBySource.set(
+        source,
+        snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })),
+      );
+      publishDoubts();
+    };
 
-  const userEmail = user?.email?.toLowerCase();
-  const isAdmin = userEmail === "anshuxinha@gmail.com" || userEmail === "kaushikeec@gmail.com";
+    const subscribe = (source, doubtsQuery) =>
+      onSnapshot(
+        doubtsQuery,
+        (snapshot) => syncSnapshot(source, snapshot),
+        (error) => {
+          console.warn("Failed to subscribe to doubts:", error?.message);
+        },
+      );
+
+    const unsubscribes = isAdmin
+      ? [
+          subscribe(
+            "admin",
+            query(
+              collection(db, "videoDoubts"),
+              where("videoId", "==", selectedVideo.id),
+            ),
+          ),
+        ]
+      : [
+          subscribe(
+            "approved",
+            query(
+              collection(db, "videoDoubts"),
+              where("videoId", "==", selectedVideo.id),
+              where("status", "==", "approved"),
+            ),
+          ),
+          subscribe(
+            "mine",
+            query(
+              collection(db, "videoDoubts"),
+              where("videoId", "==", selectedVideo.id),
+              where("userId", "==", user.uid),
+            ),
+          ),
+        ];
+
+    return () => {
+      unsubscribes.forEach((unsubscribe) => unsubscribe?.());
+    };
+  }, [isAdmin, selectedVideo, user?.uid]);
 
   // Filter doubts: visible only to authors and admins if under review, else visible to everyone
   const visibleDoubts = useMemo(() => {
@@ -381,15 +439,6 @@ const VideosScreen = ({ navigation }) => {
       </View>
     );
   };
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedVideo, setSelectedVideo] = useState(null);
-  const [isSubscribed, setIsSubscribed] = useState(true);
-  const [isLoadingVideos, setIsLoadingVideos] = useState(true);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isTogglingNotifications, setIsTogglingNotifications] =
-    useState(false);
-  const [visibleCount, setVisibleCount] = useState(10);
-
   useEffect(() => {
     let mounted = true;
 
