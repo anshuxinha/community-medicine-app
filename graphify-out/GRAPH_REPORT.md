@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `946d1174`
+- Built from commit: `7a998f5b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -169,72 +169,72 @@ Cohesion: 0.15
 Nodes (13): colorFreq, colorLocations, content, files, fs, getContrastRatio(), getRelativeLuminance(), hex (+5 more)
 
 ### Community 13 - "Community 13"
-Cohesion: 0.21
-Nodes (12): admin, ensureFirebaseApp(), fs, GEM_IMAGE_ENTRIES, GEMS_DATA_PATH, getImageMetadata(), loadGemsData(), { loadImage } (+4 more)
+Cohesion: 0.18
+Nodes (11): AppContext, DashboardScreen(), styles, GemsScreen(), styles, LibraryScreen(), MONTH_NAMES, MONTH_SHORT (+3 more)
 
 ### Community 14 - "Community 14"
 Cohesion: 0.21
-Nodes (11): admin, ensureFirebaseApp(), fs, loadSeed(), LOCAL_IMAGE_DIR, main(), parseArgs(), path (+3 more)
+Nodes (12): admin, ensureFirebaseApp(), fs, GEM_IMAGE_ENTRIES, GEMS_DATA_PATH, getImageMetadata(), loadGemsData(), { loadImage } (+4 more)
 
 ### Community 15 - "Community 15"
+Cohesion: 0.21
+Nodes (11): admin, ensureFirebaseApp(), fs, loadSeed(), LOCAL_IMAGE_DIR, main(), parseArgs(), path (+3 more)
+
+### Community 16 - "Community 16"
 Cohesion: 0.19
 Nodes (6): styles, flex1, { height: WINDOW_HEIGHT }, styles, appColors, paperTheme
 
-### Community 16 - "Community 16"
+### Community 17 - "Community 17"
 Cohesion: 0.15
 Nodes (12): Approval and apply, Best overall: Firebase-backed admin queue, code:bash (python scripts/apply_staged_library_updates.py --proposal-id), code:bash (python scripts/apply_staged_library_updates.py --approve-all), Good lightweight review surface: GitHub Pages, In-app admin review, Library Update Review Workflow, Most seamless for your workflow: in-app admin screen (+4 more)
 
-### Community 17 - "Community 17"
+### Community 18 - "Community 18"
 Cohesion: 0.21
 Nodes (7): PRESET_PROBLEMS, SOLVER_OFFSETS, ssSingleProp(), ssTwoMeans(), ssTwoProps(), styles, zForCI()
 
-### Community 18 - "Community 18"
+### Community 19 - "Community 19"
 Cohesion: 0.18
 Nodes (4): getPackages(), MainApplication, ScreenCaptureProtectionPackage, ReactPackage
 
-### Community 19 - "Community 19"
-Cohesion: 0.2
-Nodes (9): DashboardScreen(), GemsScreen(), styles, LibraryScreen(), MONTH_NAMES, MONTH_SHORT, styles, UpdatesScreen() (+1 more)
-
 ### Community 20 - "Community 20"
-Cohesion: 0.21
-Nodes (7): BASE_MENU_ITEMS, styles, { width }, auth, AppContext, styles, styles
-
-### Community 21 - "Community 21"
 Cohesion: 0.17
 Nodes (11): 1. Think Before Coding, 2. Simplicity First, 3. Surgical Changes, 4. Goal-Driven Execution, Background Watcher, Graph-First Protocol (graphify), graphify, Guidelines (+3 more)
 
-### Community 22 - "Community 22"
+### Community 21 - "Community 21"
 Cohesion: 0.29
 Nodes (3): ScreenCaptureProtectionModule, LifecycleEventObserver, ReactContextBaseJavaModule
 
-### Community 23 - "Community 23"
+### Community 22 - "Community 22"
 Cohesion: 0.2
 Nodes (6): useSessionEnforcer(), AppNavigator(), navigationRef, Stack, Tab, styles
 
-### Community 24 - "Community 24"
+### Community 23 - "Community 23"
 Cohesion: 0.18
 Nodes (10): 1. App Details, 2. Graphics Assets Required for Play Console, 3. Link Resources, 🧮 Advanced Medical Calculators & Tools, 🤖 AI Tutor & Chat Support, 📚 Comprehensive Knowledge Library, Google Play Store Metadata, 📝 Interactive Quizzes & Mock Exams (+2 more)
 
-### Community 25 - "Community 25"
+### Community 24 - "Community 24"
 Cohesion: 0.22
 Nodes (7): admin, FILE_TO_ID, fs, MUSEUM_DATA_PATH, MUSEUM_FOLDER, path, SERVICE_ACCOUNT_PATH
 
-### Community 26 - "Community 26"
+### Community 25 - "Community 25"
 Cohesion: 0.33
 Nodes (7): call_ollama(), _extract_candidate_text(), _extract_json_payload(), fetch_health_updates(), Fetches real updates from the Government of India PIB feed for MoHFW., Extract text from Ollama /api/chat response shape., _strip_code_fence()
 
-### Community 27 - "Community 27"
+### Community 26 - "Community 26"
 Cohesion: 0.25
 Nodes (7): CM_TO_THEME, fs, lower, normalizedCTM, path, processFile(), walkDir()
 
-### Community 28 - "Community 28"
-Cohesion: 0.25
-Nodes (5): styles, EDUCATION_OPTIONS, OCCUPATION_OPTIONS, styles, theme
+### Community 27 - "Community 27"
+Cohesion: 0.22
+Nodes (5): BASE_MENU_ITEMS, styles, { width }, auth, styles
 
-### Community 29 - "Community 29"
+### Community 28 - "Community 28"
 Cohesion: 0.28
 Nodes (4): CATEGORIES, MUSEUM_ITEMS, KNOWN_HEADERS, styles
+
+### Community 29 - "Community 29"
+Cohesion: 0.25
+Nodes (5): styles, EDUCATION_OPTIONS, OCCUPATION_OPTIONS, styles, theme
 
 ### Community 30 - "Community 30"
 Cohesion: 0.25
@@ -344,11 +344,11 @@ Nodes (3): extract_text_from_pdf(), main(), Extracts text from a PDF file.     T
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `theme` connect `Community 28` to `Community 64`, `Community 0`, `Community 34`, `Community 1`, `Community 4`, `Community 6`, `Community 8`, `Community 46`, `Community 15`, `Community 17`, `Community 19`, `Community 20`, `Community 23`, `Community 29`?**
+- **Why does `theme` connect `Community 29` to `Community 64`, `Community 0`, `Community 34`, `Community 1`, `Community 4`, `Community 6`, `Community 8`, `Community 13`, `Community 46`, `Community 16`, `Community 18`, `Community 22`, `Community 27`, `Community 28`?**
   _High betweenness centrality (0.022) - this node is a cross-community bridge._
-- **Why does `AppContext` connect `Community 20` to `Community 0`, `Community 1`, `Community 4`, `Community 8`, `Community 46`, `Community 19`, `Community 23`, `Community 29`?**
+- **Why does `AppContext` connect `Community 13` to `Community 0`, `Community 1`, `Community 4`, `Community 8`, `Community 46`, `Community 22`, `Community 27`, `Community 28`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
-- **Why does `db` connect `Community 1` to `Community 0`, `Community 4`, `Community 8`, `Community 46`, `Community 15`, `Community 20`?**
+- **Why does `db` connect `Community 1` to `Community 0`, `Community 4`, `Community 8`, `Community 46`, `Community 16`, `Community 27`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **What connects `{ createCanvas }`, `fs`, `path` to the rest of the system?**
   _297 weakly-connected nodes found - possible documentation gaps or missing edges._
