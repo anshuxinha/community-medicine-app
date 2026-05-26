@@ -106,6 +106,23 @@ const EmptyState = ({ isFiltered }) => (
   </View>
 );
 
+const getDoubtTime = (createdAt) => {
+  if (!createdAt) return 0;
+  if (typeof createdAt.toDate === "function") {
+    try {
+      return createdAt.toDate().getTime();
+    } catch (e) {}
+  }
+  if (createdAt.seconds !== undefined) {
+    return createdAt.seconds * 1000;
+  }
+  if (createdAt._seconds !== undefined) {
+    return createdAt._seconds * 1000;
+  }
+  const t = new Date(createdAt).getTime();
+  return isNaN(t) ? 0 : t;
+};
+
 const VideosScreen = ({ navigation }) => {
   const { isPremium, user, studyScore, setStudyScore } = useContext(AppContext);
   const [videos, setVideos] = useState([]);
@@ -133,11 +150,8 @@ const VideosScreen = ({ navigation }) => {
       const fetchedDoubts = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      })).sort((a, b) => {
-        const timeA = a.createdAt ? (a.createdAt.toDate ? a.createdAt.toDate().getTime() : new Date(a.createdAt).getTime()) : 0;
-        const timeB = b.createdAt ? (b.createdAt.toDate ? b.createdAt.toDate().getTime() : new Date(b.createdAt).getTime()) : 0;
-        return timeA - timeB;
-      });
+      })).sort((a, b) => getDoubtTime(a.createdAt) - getDoubtTime(b.createdAt));
+      console.log(`[Doubts Debug] videoId: ${selectedVideo.id}, fetched count: ${fetchedDoubts.length}`);
       setDoubts(fetchedDoubts);
     }, (error) => {
       console.warn("Failed to subscribe to doubts:", error?.message);
@@ -151,11 +165,13 @@ const VideosScreen = ({ navigation }) => {
 
   // Filter doubts: visible only to authors and admins if under review, else visible to everyone
   const visibleDoubts = useMemo(() => {
-    return doubts.filter((doubt) => {
+    const filtered = doubts.filter((doubt) => {
       if (isAdmin) return true;
       if (doubt.status === "approved") return true;
       return doubt.userId === user?.uid;
     });
+    console.log(`[Doubts Debug] user: ${user?.email} (${user?.uid}), isAdmin: ${isAdmin}, visible count: ${filtered.length}`);
+    return filtered;
   }, [doubts, isAdmin, user?.uid]);
 
   const handleAddDoubt = async () => {
@@ -621,7 +637,7 @@ const VideosScreen = ({ navigation }) => {
           </View>
 
           <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
             style={{ flex: 1 }}
             keyboardVerticalOffset={Platform.OS === "ios" ? 44 : 0}
           >
