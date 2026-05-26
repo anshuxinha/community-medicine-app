@@ -168,11 +168,13 @@ const VideosScreen = ({ navigation }) => {
     const filtered = doubts.filter((doubt) => {
       if (isAdmin) return true;
       if (doubt.status === "approved") return true;
-      return doubt.userId === user?.uid;
+      // Match by uid primarily, fall back to email for robustness
+      if (user?.uid && doubt.userId === user.uid) return true;
+      if (userEmail && doubt.userEmail?.toLowerCase() === userEmail) return true;
+      return false;
     });
-    console.log(`[Doubts Debug] user: ${user?.email} (${user?.uid}), isAdmin: ${isAdmin}, visible count: ${filtered.length}`);
     return filtered;
-  }, [doubts, isAdmin, user?.uid]);
+  }, [doubts, isAdmin, user?.uid, userEmail]);
 
   const handleAddDoubt = async () => {
     if (!newDoubtText.trim() || !selectedVideo) return;
@@ -236,15 +238,11 @@ const VideosScreen = ({ navigation }) => {
       if (isUpvoted) {
         await updateDoc(doubtRef, {
           upvotedBy: arrayRemove(user.uid),
-          userStromaScore: (doubt.userStromaScore || 0) - 5,
         });
-        setStudyScore((prev) => Math.max(0, prev - 5));
       } else {
         await updateDoc(doubtRef, {
           upvotedBy: arrayUnion(user.uid),
-          userStromaScore: (doubt.userStromaScore || 0) + 5,
         });
-        setStudyScore((prev) => prev + 5);
       }
     } catch (error) {
       console.warn("Failed to toggle upvote:", error?.message);
@@ -261,14 +259,11 @@ const VideosScreen = ({ navigation }) => {
           const isUpvoted = (r.upvotedBy || []).includes(user.uid);
           const nextUpvotedBy = isUpvoted
             ? r.upvotedBy.filter((id) => id !== user.uid)
-            : [...r.upvotedBy, user.uid];
-          const scoreDiff = isUpvoted ? -5 : 5;
-          setStudyScore((prev) => Math.max(0, prev + scoreDiff));
+            : [...(r.upvotedBy || []), user.uid];
 
           return {
             ...r,
             upvotedBy: nextUpvotedBy,
-            userStromaScore: (r.userStromaScore || 0) + scoreDiff,
           };
         }
         return r;
@@ -287,6 +282,9 @@ const VideosScreen = ({ navigation }) => {
     const hasReplies = item.replies && item.replies.length > 0;
     const isPending = item.status === "under_review";
     const dateStr = item.createdAt ? new Date(item.createdAt.toDate ? item.createdAt.toDate() : item.createdAt).toLocaleDateString() : "Just now";
+    // Show live score for the current user's own doubts
+    const isOwnDoubt = user?.uid && item.userId === user.uid;
+    const displayScore = isOwnDoubt ? studyScore : (item.userStromaScore || 0);
 
     return (
       <View style={styles.doubtItemContainer}>
@@ -295,7 +293,7 @@ const VideosScreen = ({ navigation }) => {
             <View style={styles.doubtAuthorInfo}>
               <Text style={styles.doubtAuthorName}>{item.username}</Text>
               <View style={styles.stromaScoreBadge}>
-                <Text style={styles.stromaScoreText}>{item.userStromaScore || 0} pts</Text>
+                <Text style={styles.stromaScoreText}>{displayScore} pts</Text>
               </View>
               {isPending && (
                 <View style={styles.underReviewBadge}>
@@ -345,13 +343,16 @@ const VideosScreen = ({ navigation }) => {
             {item.replies.map((reply) => {
               const isReplyUpvoted = (reply.upvotedBy || []).includes(user?.uid);
               const replyDate = reply.createdAt ? new Date(reply.createdAt).toLocaleDateString() : "Just now";
+              // Show live score for current user's own replies
+              const isOwnReply = user?.uid && reply.userId === user.uid;
+              const replyDisplayScore = isOwnReply ? studyScore : (reply.userStromaScore || 0);
               return (
                 <View key={reply.id} style={styles.replyCard}>
                   <View style={styles.doubtHeader}>
                     <View style={styles.doubtAuthorInfo}>
                       <Text style={styles.replyAuthorName}>{reply.username}</Text>
                       <View style={styles.stromaScoreBadgeReply}>
-                        <Text style={styles.stromaScoreTextReply}>{reply.userStromaScore || 0} pts</Text>
+                        <Text style={styles.stromaScoreTextReply}>{replyDisplayScore} pts</Text>
                       </View>
                     </View>
                     <Text style={styles.doubtDate}>{replyDate}</Text>
