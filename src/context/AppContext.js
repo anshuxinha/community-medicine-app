@@ -18,6 +18,8 @@ import {
   setDoc,
   updateDoc,
   serverTimestamp,
+  query,
+  where,
 } from "firebase/firestore";
 import { getDeviceId } from "../utils/deviceUtils";
 import { onAuthStateChanged, getIdTokenResult, signOut } from "firebase/auth";
@@ -228,6 +230,41 @@ export const AppProvider = ({ children }) => {
     };
   };
 
+  const syncReceivedUpvotes = async (uid) => {
+    try {
+      const doubtsSnapshot = await getDocs(
+        query(collection(db, "videoDoubts"), where("userId", "==", uid))
+      );
+      let upvotesCount = 0;
+      doubtsSnapshot.forEach((doc) => {
+        const data = doc.data();
+        upvotesCount += (data.upvotedBy || []).length;
+      });
+
+      const allDoubtsSnapshot = await getDocs(collection(db, "videoDoubts"));
+      allDoubtsSnapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data.userId !== uid) {
+          const myReplies = (data.replies || []).filter(r => r.userId === uid);
+          myReplies.forEach(r => {
+            upvotesCount += (r.upvotedBy || []).length;
+          });
+        }
+      });
+
+      const storedUpvotesCountStr = await AsyncStorage.getItem("upvotesReceivedCount");
+      const storedUpvotesCount = storedUpvotesCountStr ? parseInt(storedUpvotesCountStr, 10) : 0;
+
+      if (upvotesCount !== storedUpvotesCount) {
+        const diff = upvotesCount - storedUpvotesCount;
+        setStudyScore((prev) => prev + diff * 5);
+        await AsyncStorage.setItem("upvotesReceivedCount", upvotesCount.toString());
+      }
+    } catch (e) {
+      console.warn("Failed to sync received upvotes:", e?.message);
+    }
+  };
+
   useEffect(() => {
     setIsPremium(accountPremium || revenueCatPremium);
   }, [accountPremium, revenueCatPremium]);
@@ -310,6 +347,7 @@ export const AppProvider = ({ children }) => {
 
             syncAllAnnotations(firebaseUser.uid);
             syncAllHighlights(firebaseUser.uid);
+            await syncReceivedUpvotes(firebaseUser.uid);
           } catch (err) {
             console.warn("Firestore fetch failed/timed out, using auth claims:", err?.message);
             const userData = {
@@ -398,6 +436,7 @@ export const AppProvider = ({ children }) => {
 
         syncAllAnnotations(user.uid);
         syncAllHighlights(user.uid);
+        await syncReceivedUpvotes(user.uid);
       }
     } catch (err) {
       console.warn("Cloud refresh failed:", err?.message);
@@ -1093,6 +1132,7 @@ export const AppProvider = ({ children }) => {
         currentStreak,
         lastReadDate,
         studyScore,
+        setStudyScore,
         dailyReadHistory,
         markAsRead,
         markAsUnread,

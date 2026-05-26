@@ -269,7 +269,7 @@ const ProfileScreen = () => {
                 color={theme.colors.secondary}
               />
               <Text style={styles.statValue}>{studyScore}</Text>
-              <Text style={styles.statLabel}>Study Score</Text>
+              <Text style={styles.statLabel}>Stroma Score</Text>
             </Card.Content>
           </Card>
 
