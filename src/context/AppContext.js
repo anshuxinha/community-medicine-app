@@ -324,6 +324,7 @@ export const AppProvider = ({ children }) => {
               username: firebaseUser.displayName || data.username || "User",
               isPremium: premiumStatus,
               isAdmin,
+              pushToken: data.pushToken || null,
             };
 
             const cloudState = hydrateStoredState(data);
@@ -356,6 +357,7 @@ export const AppProvider = ({ children }) => {
               username: firebaseUser.displayName || "User",
               isPremium: claimsPremium,
               isAdmin: claimsAdmin,
+              pushToken: null,
             };
 
             try {
@@ -673,6 +675,11 @@ export const AppProvider = ({ children }) => {
     if (user && user.uid) {
       registerForPushNotificationsAsync().then((token) => {
         if (token) {
+          setUser((currentUser) => {
+            if (!currentUser || currentUser.uid !== user.uid) return currentUser;
+            if (currentUser.pushToken === token) return currentUser;
+            return { ...currentUser, pushToken: token };
+          });
           setDoc(
             doc(db, "users", user.uid),
             {

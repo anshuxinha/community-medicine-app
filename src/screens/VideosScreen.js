@@ -26,11 +26,11 @@ import { MaterialIcons } from "@expo/vector-icons";
 import {
   collection,
   addDoc,
+  deleteDoc,
   updateDoc,
   doc,
   query,
   where,
-  orderBy,
   onSnapshot,
   serverTimestamp,
   arrayUnion,
@@ -50,6 +50,7 @@ import {
   addVideoSubscriptionListener,
   isSubscribedToVideoNotifications,
   requestPermissions,
+  sendReplyNotification,
   subscribeToVideoNotifications,
   unsubscribeFromVideoNotifications,
 } from "../services/notificationService";
@@ -234,6 +235,24 @@ const VideosScreen = ({ navigation }) => {
     return filtered;
   }, [doubts, isAdmin, user?.uid, userEmail]);
 
+  useEffect(() => {
+    if (!user?.uid || !user.pushToken) return;
+
+    doubts
+      .filter(
+        (doubt) =>
+          doubt.userId === user.uid &&
+          doubt.authorPushToken !== user.pushToken,
+      )
+      .forEach((doubt) => {
+        updateDoc(doc(db, "videoDoubts", doubt.id), {
+          authorPushToken: user.pushToken,
+        }).catch((error) => {
+          console.warn("Failed to update doubt notification token:", error?.message);
+        });
+      });
+  }, [doubts, user?.pushToken, user?.uid]);
+
   const handleAddDoubt = async () => {
     if (!newDoubtText.trim() || !selectedVideo) return;
 
@@ -256,6 +275,16 @@ const VideosScreen = ({ navigation }) => {
         await updateDoc(doubtRef, {
           replies: arrayUnion(replyItem),
         });
+
+        if (replyingTo.userId !== user.uid) {
+          sendReplyNotification(replyingTo.authorPushToken, {
+            replierName: replyItem.username,
+            videoTitle: selectedVideo.title,
+            videoId: selectedVideo.id,
+            doubtId: replyingTo.id,
+          });
+        }
+
         setReplyingTo(null);
       } else {
         await addDoc(collection(db, "videoDoubts"), {
@@ -263,6 +292,7 @@ const VideosScreen = ({ navigation }) => {
           userId: user.uid,
           userEmail: user.email,
           username: user.username || user.displayName || "User",
+          authorPushToken: user.pushToken || null,
           userStromaScore: studyScore,
           text: doubtText,
           status: "under_review",
@@ -277,6 +307,41 @@ const VideosScreen = ({ navigation }) => {
     }
   };
 
+  const confirmDeleteDoubt = (doubt) => {
+    if (!doubt?.id) return;
+
+    Alert.alert(
+      "Delete message?",
+      "This will permanently remove the message and its replies.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => handleDeleteDoubt(doubt.id),
+        },
+      ],
+    );
+  };
+
+  const handleDeleteDoubt = async (doubtId) => {
+    try {
+      await deleteDoc(doc(db, "videoDoubts", doubtId));
+    } catch (error) {
+      Alert.alert("Error", "Failed to delete message.");
+    }
+  };
+
+  const handleDisapproveDoubt = async (doubtId) => {
+    try {
+      await updateDoc(doc(db, "videoDoubts", doubtId), {
+        status: "under_review",
+      });
+    } catch (error) {
+      Alert.alert("Error", "Failed to disapprove message.");
+    }
+  };
+
   const handleApproveDoubt = async (doubtId) => {
     try {
       await updateDoc(doc(db, "videoDoubts", doubtId), {
@@ -284,6 +349,33 @@ const VideosScreen = ({ navigation }) => {
       });
     } catch (error) {
       Alert.alert("Error", "Failed to approve doubt.");
+    }
+  };
+
+  const confirmDeleteReply = (doubt, replyId) => {
+    if (!doubt?.id || !replyId) return;
+
+    Alert.alert("Delete reply?", "This will permanently remove the reply.", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () => handleDeleteReply(doubt, replyId),
+      },
+    ]);
+  };
+
+  const handleDeleteReply = async (doubt, replyId) => {
+    try {
+      const updatedReplies = (doubt.replies || []).filter(
+        (reply) => reply.id !== replyId,
+      );
+
+      await updateDoc(doc(db, "videoDoubts", doubt.id), {
+        replies: updatedReplies,
+      });
+    } catch (error) {
+      Alert.alert("Error", "Failed to delete reply.");
     }
   };
 
@@ -342,6 +434,7 @@ const VideosScreen = ({ navigation }) => {
     const dateStr = item.createdAt ? new Date(item.createdAt.toDate ? item.createdAt.toDate() : item.createdAt).toLocaleDateString() : "Just now";
     // Show live score for the current user's own doubts
     const isOwnDoubt = user?.uid && item.userId === user.uid;
+    const canDeleteDoubt = isAdmin || isOwnDoubt;
     const displayScore = isOwnDoubt ? studyScore : (item.userStromaScore || 0);
 
     return (
@@ -385,6 +478,15 @@ const VideosScreen = ({ navigation }) => {
                 <Text style={styles.actionButtonText}>Reply</Text>
               </Pressable>
             )}
+            {canDeleteDoubt && (
+              <Pressable
+                style={styles.deleteButton}
+                onPress={() => confirmDeleteDoubt(item)}
+              >
+                <MaterialIcons name="delete-outline" size={16} color={theme.colors.error} />
+                <Text style={styles.deleteButtonText}>Delete</Text>
+              </Pressable>
+            )}
             {isAdmin && isPending && (
               <Pressable
                 style={styles.approveButton}
@@ -392,6 +494,15 @@ const VideosScreen = ({ navigation }) => {
               >
                 <MaterialIcons name="check-circle" size={16} color={theme.colors.success} />
                 <Text style={styles.approveButtonText}>Approve</Text>
+              </Pressable>
+            )}
+            {isAdmin && item.status === "approved" && (
+              <Pressable
+                style={styles.disapproveButton}
+                onPress={() => handleDisapproveDoubt(item.id)}
+              >
+                <MaterialIcons name="visibility-off" size={16} color={theme.colors.warningText} />
+                <Text style={styles.disapproveButtonText}>Disapprove</Text>
               </Pressable>
             )}
           </View>
@@ -403,6 +514,7 @@ const VideosScreen = ({ navigation }) => {
               const replyDate = reply.createdAt ? new Date(reply.createdAt).toLocaleDateString() : "Just now";
               // Show live score for current user's own replies
               const isOwnReply = user?.uid && reply.userId === user.uid;
+              const canDeleteReply = isAdmin || isOwnReply;
               const replyDisplayScore = isOwnReply ? studyScore : (reply.userStromaScore || 0);
               return (
                 <View key={reply.id} style={styles.replyCard}>
@@ -430,6 +542,15 @@ const VideosScreen = ({ navigation }) => {
                         {reply.upvotedBy?.length || 0}
                       </Text>
                     </Pressable>
+                    {canDeleteReply && (
+                      <Pressable
+                        style={styles.deleteButton}
+                        onPress={() => confirmDeleteReply(item, reply.id)}
+                      >
+                        <MaterialIcons name="delete-outline" size={14} color={theme.colors.error} />
+                        <Text style={styles.deleteButtonText}>Delete</Text>
+                      </Pressable>
+                    )}
                   </View>
                 </View>
               );
@@ -687,7 +808,7 @@ const VideosScreen = ({ navigation }) => {
           </View>
 
           <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={{ flex: 1 }}
             keyboardVerticalOffset={Platform.OS === "ios" ? 44 : 0}
           >
@@ -1033,6 +1154,7 @@ const styles = StyleSheet.create({
   },
   doubtActions: {
     flexDirection: "row",
+    flexWrap: "wrap",
     gap: 12,
     marginTop: 8,
   },
@@ -1067,6 +1189,34 @@ const styles = StyleSheet.create({
   approveButtonText: {
     fontSize: 12,
     color: theme.colors.success,
+    fontWeight: "bold",
+  },
+  disapproveButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    backgroundColor: theme.colors.warningBackground,
+    borderRadius: 6,
+  },
+  disapproveButtonText: {
+    fontSize: 12,
+    color: theme.colors.warningText,
+    fontWeight: "bold",
+  },
+  deleteButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    backgroundColor: theme.colors.errorLight,
+    borderRadius: 6,
+  },
+  deleteButtonText: {
+    fontSize: 12,
+    color: theme.colors.error,
     fontWeight: "bold",
   },
   repliesContainer: {

@@ -38,6 +38,7 @@ const STREAK_MILESTONE_NOTIFICATION_KEY = "streakMilestoneLastNotified";
 const VIDEO_NOTIFICATION_STORAGE_KEY = "video_notification_subscribed";
 const LEGACY_WEBINAR_NOTIFICATION_STORAGE_KEY =
   "webinar_notification_subscribed";
+const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
 
 const getTodayNotificationKey = () => new Date().toISOString().split("T")[0];
 
@@ -434,6 +435,53 @@ export async function sendVideoNotification(videoTitle, videoDescription) {
     console.log("Video notification sent successfully");
   } catch (error) {
     console.error("Error sending video notification:", error);
+  }
+}
+
+export async function sendReplyNotification(pushToken, options = {}) {
+  if (
+    typeof pushToken !== "string" ||
+    (!pushToken.startsWith("ExponentPushToken[") &&
+      !pushToken.startsWith("ExpoPushToken["))
+  ) {
+    return false;
+  }
+
+  const replierName = options.replierName || "Someone";
+  const videoTitle = options.videoTitle || "your video doubt";
+
+  try {
+    const response = await fetch(EXPO_PUSH_URL, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        to: pushToken,
+        sound: "default",
+        title: "New reply to your doubt",
+        body: `${replierName} replied on ${videoTitle}.`,
+        data: {
+          screen: "Videos",
+          type: "video_doubt_reply",
+          videoId: options.videoId || null,
+          doubtId: options.doubtId || null,
+        },
+      }),
+    });
+
+    if (!response.ok) {
+      const body = await response.text();
+      console.warn(`Reply push notification failed: ${response.status}`, body);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.warn("Reply push notification failed:", error?.message);
+    return false;
   }
 }
 
