@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `292990ba`
+- Built from commit: `e5aaaf01`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -135,15 +135,15 @@ Nodes (34): 1. Think Before Coding, 2. Simplicity First, 3. Surgical Changes, 4.
 
 ### Community 4 - "Community 4"
 Cohesion: 0.11
-Nodes (17): BASE_MENU_ITEMS, styles, { width }, app, auth, db, firebaseConfig, AppContext (+9 more)
+Nodes (16): BASE_MENU_ITEMS, styles, { width }, app, auth, db, firebaseConfig, AppContext (+8 more)
 
 ### Community 5 - "Community 5"
-Cohesion: 0.09
-Nodes (14): styles, styles, flex1, { height: WINDOW_HEIGHT }, styles, appIcon, styles, styles (+6 more)
-
-### Community 6 - "Community 6"
 Cohesion: 0.16
 Nodes (24): admin, buildThumbnailUrl(), bunnyFetch(), discoverPullZoneHostname(), dotenv, ensureFirebaseApp(), fs, getExpoPushTokens() (+16 more)
+
+### Community 6 - "Community 6"
+Cohesion: 0.11
+Nodes (12): styles, styles, flex1, { height: WINDOW_HEIGHT }, styles, styles, EDUCATION_OPTIONS, OCCUPATION_OPTIONS (+4 more)
 
 ### Community 7 - "Community 7"
 Cohesion: 0.12
@@ -170,48 +170,48 @@ Cohesion: 0.14
 Nodes (14): PLAN_METADATA, styles, applyDiscount(), incrementCouponUsage(), validateCoupon(), coupon, mockDate, mockTransaction (+6 more)
 
 ### Community 13 - "Community 13"
-Cohesion: 0.17
-Nodes (16): buildContactSheet(), clampCrop(), CONTACT_SHEET_PATH, { createCanvas, loadImage }, CROP_SPECS, cropRegion(), ensureDir(), fs (+8 more)
+Cohesion: 0.14
+Nodes (12): appIcon, styles, DashboardScreen(), styles, GemsScreen(), styles, LibraryScreen(), MONTH_NAMES (+4 more)
 
 ### Community 14 - "Community 14"
 Cohesion: 0.17
-Nodes (15): buildContactSheet(), buildPngCanvas(), CONTACT_SHEET_PATH, { createCanvas, loadImage }, DOWNLOAD_SPECS, downloadFile(), ensureDir(), fs (+7 more)
+Nodes (16): buildContactSheet(), clampCrop(), CONTACT_SHEET_PATH, { createCanvas, loadImage }, CROP_SPECS, cropRegion(), ensureDir(), fs (+8 more)
 
 ### Community 15 - "Community 15"
+Cohesion: 0.17
+Nodes (15): buildContactSheet(), buildPngCanvas(), CONTACT_SHEET_PATH, { createCanvas, loadImage }, DOWNLOAD_SPECS, downloadFile(), ensureDir(), fs (+7 more)
+
+### Community 16 - "Community 16"
 Cohesion: 0.12
 Nodes (15): 1. Always Check Channel Configuration First, 2. Update Channel if Needed, 3. Publish Update to Correct Branch, 4. Verify Update is Live, 5. Clear Cache for Critical Updates, code:bash (eas channel:list --non-interactive), code:bash (eas channel:edit production --branch main --non-interactive), code:bash (eas update --branch main --message "Your update message" --c) (+7 more)
 
-### Community 16 - "Community 16"
+### Community 17 - "Community 17"
 Cohesion: 0.15
 Nodes (13): colorFreq, colorLocations, content, files, fs, getContrastRatio(), getRelativeLuminance(), hex (+5 more)
 
-### Community 17 - "Community 17"
+### Community 18 - "Community 18"
 Cohesion: 0.21
 Nodes (12): admin, ensureFirebaseApp(), fs, GEM_IMAGE_ENTRIES, GEMS_DATA_PATH, getImageMetadata(), loadGemsData(), { loadImage } (+4 more)
 
-### Community 18 - "Community 18"
+### Community 19 - "Community 19"
 Cohesion: 0.21
 Nodes (11): admin, ensureFirebaseApp(), fs, loadSeed(), LOCAL_IMAGE_DIR, main(), parseArgs(), path (+3 more)
 
-### Community 19 - "Community 19"
+### Community 20 - "Community 20"
 Cohesion: 0.21
 Nodes (7): REFERENCE_VALUES, styles, styles, disableScreenCaptureProtection(), enableScreenCaptureProtection(), setScreenCaptureBypass(), subscribeToScreenCaptureChange()
 
-### Community 20 - "Community 20"
+### Community 21 - "Community 21"
 Cohesion: 0.15
 Nodes (12): Approval and apply, Best overall: Firebase-backed admin queue, code:bash (python scripts/apply_staged_library_updates.py --proposal-id), code:bash (python scripts/apply_staged_library_updates.py --approve-all), Good lightweight review surface: GitHub Pages, In-app admin review, Library Update Review Workflow, Most seamless for your workflow: in-app admin screen (+4 more)
 
-### Community 21 - "Community 21"
+### Community 22 - "Community 22"
 Cohesion: 0.18
 Nodes (4): getPackages(), MainApplication, ScreenCaptureProtectionPackage, ReactPackage
 
-### Community 22 - "Community 22"
+### Community 23 - "Community 23"
 Cohesion: 0.21
 Nodes (7): PRESET_PROBLEMS, SOLVER_OFFSETS, ssSingleProp(), ssTwoMeans(), ssTwoProps(), styles, zForCI()
-
-### Community 23 - "Community 23"
-Cohesion: 0.2
-Nodes (9): DashboardScreen(), GemsScreen(), styles, LibraryScreen(), MONTH_NAMES, MONTH_SHORT, styles, UpdatesScreen() (+1 more)
 
 ### Community 24 - "Community 24"
 Cohesion: 0.17
@@ -365,11 +365,11 @@ Nodes (3): extract_text_from_pdf(), main(), Extracts text from a PDF file.     T
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `theme` connect `Community 5` to `Community 32`, `Community 0`, `Community 2`, `Community 4`, `Community 7`, `Community 8`, `Community 10`, `Community 12`, `Community 19`, `Community 22`, `Community 23`, `Community 26`?**
+- **Why does `theme` connect `Community 6` to `Community 32`, `Community 0`, `Community 2`, `Community 4`, `Community 7`, `Community 8`, `Community 10`, `Community 12`, `Community 13`, `Community 20`, `Community 23`, `Community 26`?**
   _High betweenness centrality (0.021) - this node is a cross-community bridge._
-- **Why does `AppContext` connect `Community 4` to `Community 32`, `Community 0`, `Community 2`, `Community 8`, `Community 10`, `Community 12`, `Community 19`, `Community 23`, `Community 26`?**
+- **Why does `AppContext` connect `Community 4` to `Community 32`, `Community 0`, `Community 2`, `Community 8`, `Community 10`, `Community 12`, `Community 13`, `Community 20`, `Community 26`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
-- **Why does `db` connect `Community 4` to `Community 0`, `Community 5`, `Community 8`, `Community 12`, `Community 26`, `Community 31`?**
+- **Why does `db` connect `Community 4` to `Community 0`, `Community 6`, `Community 8`, `Community 12`, `Community 26`, `Community 31`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **What connects `admin`, `path`, `SERVICE_ACCOUNT_PATH` to the rest of the system?**
   _303 weakly-connected nodes found - possible documentation gaps or missing edges._
