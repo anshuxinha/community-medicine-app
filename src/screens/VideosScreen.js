@@ -126,15 +126,18 @@ const VideosScreen = ({ navigation }) => {
 
     const doubtsQuery = query(
       collection(db, "videoDoubts"),
-      where("videoId", "==", selectedVideo.id),
-      orderBy("createdAt", "asc")
+      where("videoId", "==", selectedVideo.id)
     );
 
     const unsubscribe = onSnapshot(doubtsQuery, (snapshot) => {
       const fetchedDoubts = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      }));
+      })).sort((a, b) => {
+        const timeA = a.createdAt ? (a.createdAt.toDate ? a.createdAt.toDate().getTime() : new Date(a.createdAt).getTime()) : 0;
+        const timeB = b.createdAt ? (b.createdAt.toDate ? b.createdAt.toDate().getTime() : new Date(b.createdAt).getTime()) : 0;
+        return timeA - timeB;
+      });
       setDoubts(fetchedDoubts);
     }, (error) => {
       console.warn("Failed to subscribe to doubts:", error?.message);
