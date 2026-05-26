@@ -650,6 +650,7 @@ const VideosScreen = ({ navigation }) => {
             </View>
 
             <FlatList
+              style={styles.doubtsList}
               data={visibleDoubts}
               keyExtractor={(item) => item.id}
               renderItem={renderDoubtItem}
@@ -896,6 +897,9 @@ const styles = StyleSheet.create({
     width: "100%",
     height: width * (9 / 16),
     backgroundColor: "#000000",
+  },
+  doubtsList: {
+    flex: 1,
   },
   doubtsListContent: {
     paddingVertical: 16,
