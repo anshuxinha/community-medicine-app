@@ -174,6 +174,45 @@ const NotificationsScreen = () => {
           </Card.Content>
         </Card>
 
+        {/* Recent Notifications Section */}
+        <Text style={styles.sectionTitle}>Recent Notifications</Text>
+
+        <Card style={styles.updateCard}>
+          <Card.Content>
+            <View style={styles.updateHeader}>
+              <View style={styles.updateHeaderLeft}>
+                <MaterialIcons
+                  name="info-outline"
+                  size={20}
+                  color={theme.colors.accent}
+                  style={{ marginRight: 6 }}
+                />
+                <Chip
+                  mode="outlined"
+                  style={styles.dateChip}
+                  textStyle={styles.dateChipText}
+                  showSelectedOverlay={false}
+                >
+                  May 28, 2026
+                </Chip>
+              </View>
+              <Chip
+                mode="outlined"
+                style={styles.newChip}
+                icon="new-box"
+                textStyle={styles.newChipText}
+                showSelectedOverlay={false}
+              >
+                New
+              </Chip>
+            </View>
+            <Text style={styles.updateTitle}>Early Bird Price Migration Notice</Text>
+            <Text style={styles.updateSummary}>
+              If you purchased your monthly or yearly subscription during the Early Bird Offer period, please note that you will be automatically migrated to the new price on your next billing date.
+            </Text>
+          </Card.Content>
+        </Card>
+
         {/* System Notifications Info */}
         <Card style={styles.infoCard}>
           <Card.Content>
@@ -270,6 +309,9 @@ const styles = StyleSheet.create({
   updateCard: {
     backgroundColor: theme.colors.surfacePrimary,
     marginBottom: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: theme.colors.accent,
+    borderRadius: 12,
   },
   updateHeader: {
     flexDirection: "row",
@@ -277,12 +319,29 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 12,
   },
+  updateHeaderLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   dateChip: {
     backgroundColor: theme.colors.surfaceSecondary,
+    height: 28,
+    justifyContent: "center",
+  },
+  dateChipText: {
+    fontSize: 12,
+    color: theme.colors.textSecondary,
   },
   newChip: {
     backgroundColor: theme.colors.accent + "20",
     borderColor: theme.colors.accent,
+    height: 28,
+    justifyContent: "center",
+  },
+  newChipText: {
+    fontSize: 12,
+    color: theme.colors.accent,
+    fontWeight: "bold",
   },
   updateTitle: {
     fontSize: 16,
