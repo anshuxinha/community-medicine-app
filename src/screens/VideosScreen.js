@@ -835,30 +835,13 @@ const VideosScreen = ({ navigation }) => {
           </Text>
         </View>
 
-        <View style={styles.videoActionsRow}>
-          {item.hasPdf && (
-            <IconButton
-              icon="file-document-outline"
-              size={22}
-              iconColor={theme.colors.primary}
-              onPress={() => {
-                setSelectedVideo(item);
-                setActiveTab("document");
-                setFullscreenPdf(true);
-                setPdfOpenedFromList(true);
-              }}
-              style={styles.itemDocIcon}
-            />
-          )}
-
-          <IconButton
-            icon="dots-vertical"
-            size={20}
-            iconColor={theme.colors.textTertiary}
-            onPress={() => {}}
-            style={styles.itemOptions}
-          />
-        </View>
+        <IconButton
+          icon="dots-vertical"
+          size={20}
+          iconColor={theme.colors.textTertiary}
+          onPress={() => {}}
+          style={styles.itemOptions}
+        />
       </Pressable>
     );
   };
