@@ -199,7 +199,6 @@ const NotificationsScreen = () => {
               <Chip
                 mode="outlined"
                 style={styles.newChip}
-                icon="new-box"
                 textStyle={styles.newChipText}
                 showSelectedOverlay={false}
               >
@@ -325,23 +324,35 @@ const styles = StyleSheet.create({
   },
   dateChip: {
     backgroundColor: theme.colors.surfaceSecondary,
-    height: 28,
+    height: 24,
     justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 0,
   },
   dateChipText: {
-    fontSize: 12,
+    fontSize: 11,
     color: theme.colors.textSecondary,
+    lineHeight: 12,
+    textAlignVertical: "center",
+    marginVertical: 0,
+    paddingVertical: 0,
   },
   newChip: {
     backgroundColor: theme.colors.accent + "20",
     borderColor: theme.colors.accent,
-    height: 28,
+    height: 24,
     justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 0,
   },
   newChipText: {
-    fontSize: 12,
+    fontSize: 11,
     color: theme.colors.accent,
     fontWeight: "bold",
+    lineHeight: 12,
+    textAlignVertical: "center",
+    marginVertical: 0,
+    paddingVertical: 0,
   },
   updateTitle: {
     fontSize: 16,

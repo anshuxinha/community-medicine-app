@@ -31,7 +31,7 @@ const appColors = {
   primaryLight: "#EDE9FE",
   primaryDark: "#581C87",
   secondary: "#8A2BE2",
-  accent: "#D97706",
+  accent: "#581C87",
   buttonText: "#FFFFFF",
 
   // Backgrounds
