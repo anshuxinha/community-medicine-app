@@ -61,56 +61,122 @@ import {
 
 const { width } = Dimensions.get("window");
 
-const getPdfViewerUrl = (pdfUrl) => {
-  if (!pdfUrl) return "";
-  if (Platform.OS === "ios") {
-    return pdfUrl;
-  }
-  return `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(pdfUrl)}`;
-};
+const pdfViewerHtml = (pdfUrl) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PDF Viewer</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f3f4f6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    #viewer-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 10px;
+      padding-bottom: 30px;
+    }
+    .page-container {
+      width: 92%;
+      max-width: 800px;
+      margin: 8px 0;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+      background-color: #fff;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+      width: 100% !important;
+      height: auto !important;
+    }
+    #loading {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin-top: 60px;
+      color: #4b5563;
+      font-size: 15px;
+      font-weight: 500;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="loading">Loading document...</div>
+  <div id="viewer-container"></div>
 
-const hideDownloadJs = `
-  (function() {
-    const style = document.createElement('style');
-    style.type = 'text/css';
-    style.innerHTML = ' \
-      .ndfHFb-c4Zgoc-lhJHpb { display: none !important; } \
-      .ndfHFb-c4Zgoc-lhJHpb-n1oUBb { display: none !important; } \
-      .ndfHFb-c4Zgoc-q77wGc { display: none !important; } \
-      .ndfHFb-c4Zgoc-S375Ac { display: none !important; } \
-      .ndfHFb-c4Zgoc-T3meF { display: none !important; } \
-      div[role="button"][aria-label="Open in new window"] { display: none !important; } \
-      div[role="button"][aria-label="Print"] { display: none !important; } \
-      div[role="button"][aria-label="Download"] { display: none !important; } \
-      a[href*="drive.google.com"] { display: none !important; } \
-      .drive-viewer-toolbelt, .drive-viewer-popout { display: none !important; } \
-    ';
-    document.head.appendChild(style);
-  })();
-  true;
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+    const url = '${pdfUrl}';
+    const container = document.getElementById('viewer-container');
+    const loading = document.getElementById('loading');
+
+    pdfjsLib.getDocument(url).promise.then(pdf => {
+      loading.style.display = 'none';
+      
+      let renderPage = (pageNum) => {
+        if (pageNum > pdf.numPages) return;
+
+        const pageContainer = document.createElement('div');
+        pageContainer.className = 'page-container';
+        container.appendChild(pageContainer);
+
+        const canvas = document.createElement('canvas');
+        pageContainer.appendChild(canvas);
+        const ctx = canvas.getContext('2d');
+
+        pdf.getPage(pageNum).then(page => {
+          const viewport = page.getViewport({ scale: 2.0 });
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+
+          const renderContext = {
+            canvasContext: ctx,
+            viewport: viewport
+          };
+          page.render(renderContext).promise.then(() => {
+            renderPage(pageNum + 1);
+          });
+        });
+      };
+
+      renderPage(1);
+
+    }).catch(err => {
+      loading.innerText = 'Failed to load document. Please try again.';
+      console.error(err);
+    });
+  </script>
+</body>
+</html>
 `;
 
 const onShouldStartLoadWithRequest = (request) => {
   const url = request.url;
-  
-  // Allow about:blank and data/blob URIs
-  if (url === "about:blank" || url.startsWith("blob:") || url.startsWith("data:")) {
+  if (
+    url === "about:blank" || 
+    url.startsWith("blob:") || 
+    url.startsWith("data:") || 
+    url.includes("cdnjs.cloudflare.com") ||
+    url.includes("firebasestorage.googleapis.com") ||
+    url.includes("storage.googleapis.com")
+  ) {
     return true;
   }
-
-  // Allow storage/firebase loading
-  if (url.includes("firebasestorage.googleapis.com") || url.includes("storage.googleapis.com")) {
-    return true;
-  }
-
-  // Allow google docs viewer ONLY if embedded=true is present
-  if (url.includes("docs.google.com/gview") || url.includes("docs.google.com/viewer")) {
-    if (url.includes("embedded=true")) {
-      return true;
-    }
-  }
-
-  // Block everything else, including popouts
   return false;
 };
 
@@ -1075,9 +1141,8 @@ const VideosScreen = ({ navigation }) => {
                 <View style={styles.pdfPreviewContainer}>
                   <WebView
                     originWhitelist={["*"]}
-                    source={{ uri: getPdfViewerUrl(selectedVideo?.pdfUrl) }}
+                    source={{ html: pdfViewerHtml(selectedVideo?.pdfUrl) }}
                     style={styles.pdfWebView}
-                    injectedJavaScript={hideDownloadJs}
                     onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
                     javaScriptEnabled={true}
                     domStorageEnabled={true}
@@ -1118,9 +1183,8 @@ const VideosScreen = ({ navigation }) => {
 
           <WebView
             originWhitelist={["*"]}
-            source={{ uri: getPdfViewerUrl(selectedVideo?.pdfUrl) }}
+            source={{ html: pdfViewerHtml(selectedVideo?.pdfUrl) }}
             style={styles.pdfFullscreenWebView}
-            injectedJavaScript={hideDownloadJs}
             onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
             javaScriptEnabled={true}
             domStorageEnabled={true}
