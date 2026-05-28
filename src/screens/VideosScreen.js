@@ -54,8 +54,43 @@ import {
   subscribeToVideoNotifications,
   unsubscribeFromVideoNotifications,
 } from "../services/notificationService";
+import {
+  enableScreenCaptureProtection,
+  disableScreenCaptureProtection,
+} from "../utils/screenCaptureProtection";
 
 const { width } = Dimensions.get("window");
+
+const getPdfViewerUrl = (pdfUrl) => {
+  if (!pdfUrl) return "";
+  if (Platform.OS === "ios") {
+    return pdfUrl;
+  }
+  return `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(pdfUrl)}`;
+};
+
+const hideDownloadJs = `
+  (function() {
+    const style = document.createElement('style');
+    style.innerHTML = '.ndfHFb-c4Zgoc-lhJHpb { display: none !important; }';
+    document.head.appendChild(style);
+  })();
+  true;
+`;
+
+const onShouldStartLoadWithRequest = (request) => {
+  const url = request.url;
+  if (
+    url.includes("docs.google.com/gview") ||
+    url.includes("firebasestorage.googleapis.com") ||
+    url.includes("storage.googleapis.com") ||
+    url.startsWith("blob:") ||
+    url.startsWith("data:")
+  ) {
+    return true;
+  }
+  return false;
+};
 
 const playerHtml = (embedUrl) => `
 <!doctype html>
@@ -128,7 +163,6 @@ const VideosScreen = ({ navigation }) => {
   const { isPremium, user, studyScore, setStudyScore } = useContext(AppContext);
   const [videos, setVideos] = useState([]);
   
-  // Video Doubts state
   const [doubts, setDoubts] = useState([]);
   const [newDoubtText, setNewDoubtText] = useState("");
   const [replyingTo, setReplyingTo] = useState(null);
@@ -141,13 +175,41 @@ const VideosScreen = ({ navigation }) => {
     useState(false);
   const [visibleCount, setVisibleCount] = useState(10);
 
+  const [activeTab, setActiveTab] = useState("doubts");
+  const [fullscreenPdf, setFullscreenPdf] = useState(false);
+  const [pdfOpenedFromList, setPdfOpenedFromList] = useState(false);
+
+  useEffect(() => {
+    setActiveTab("doubts");
+    setFullscreenPdf(false);
+    setPdfOpenedFromList(false);
+  }, [selectedVideo]);
+
+  useEffect(() => {
+    if ((selectedVideo?.hasPdf && activeTab === "document") || fullscreenPdf) {
+      enableScreenCaptureProtection();
+    } else {
+      disableScreenCaptureProtection();
+    }
+    return () => {
+      disableScreenCaptureProtection();
+    };
+  }, [activeTab, fullscreenPdf, selectedVideo]);
+
+  const handleCloseFullscreenPdf = () => {
+    setFullscreenPdf(false);
+    if (pdfOpenedFromList) {
+      setSelectedVideo(null);
+      setPdfOpenedFromList(false);
+    }
+  };
+
   const userEmail = user?.email?.toLowerCase();
   const isAdmin =
     user?.isAdmin === true ||
     userEmail === "anshuxinha@gmail.com" ||
     userEmail === "kaushikeec@gmail.com";
 
-  // Subscribe to doubts for selected video
   useEffect(() => {
     if (!selectedVideo || !user?.uid) {
       setDoubts([]);
@@ -222,12 +284,10 @@ const VideosScreen = ({ navigation }) => {
     };
   }, [isAdmin, selectedVideo, user?.uid]);
 
-  // Filter doubts: visible only to authors and admins if under review, else visible to everyone
   const visibleDoubts = useMemo(() => {
     const filtered = doubts.filter((doubt) => {
       if (isAdmin) return true;
       if (doubt.status === "approved") return true;
-      // Match by uid primarily, fall back to email for robustness
       if (user?.uid && doubt.userId === user.uid) return true;
       if (userEmail && doubt.userEmail?.toLowerCase() === userEmail) return true;
       return false;
@@ -432,7 +492,6 @@ const VideosScreen = ({ navigation }) => {
     const hasReplies = item.replies && item.replies.length > 0;
     const isPending = item.status === "under_review";
     const dateStr = item.createdAt ? new Date(item.createdAt.toDate ? item.createdAt.toDate() : item.createdAt).toLocaleDateString() : "Just now";
-    // Show live score for the current user's own doubts
     const isOwnDoubt = user?.uid && item.userId === user.uid;
     const canDeleteDoubt = isAdmin || isOwnDoubt;
     const displayScore = isOwnDoubt ? studyScore : (item.userStromaScore || 0);
@@ -512,7 +571,6 @@ const VideosScreen = ({ navigation }) => {
             {item.replies.map((reply) => {
               const isReplyUpvoted = (reply.upvotedBy || []).includes(user?.uid);
               const replyDate = reply.createdAt ? new Date(reply.createdAt).toLocaleDateString() : "Just now";
-              // Show live score for current user's own replies
               const isOwnReply = user?.uid && reply.userId === user.uid;
               const canDeleteReply = isAdmin || isOwnReply;
               const replyDisplayScore = isOwnReply ? studyScore : (reply.userStromaScore || 0);
@@ -689,13 +747,30 @@ const VideosScreen = ({ navigation }) => {
           </Text>
         </View>
 
-        <IconButton
-          icon="dots-vertical"
-          size={20}
-          iconColor={theme.colors.textTertiary}
-          onPress={() => {}}
-          style={styles.itemOptions}
-        />
+        <View style={styles.videoActionsRow}>
+          {item.hasPdf && (
+            <IconButton
+              icon="file-document-outline"
+              size={22}
+              iconColor={theme.colors.primary}
+              onPress={() => {
+                setSelectedVideo(item);
+                setActiveTab("document");
+                setFullscreenPdf(true);
+                setPdfOpenedFromList(true);
+              }}
+              style={styles.itemDocIcon}
+            />
+          )}
+
+          <IconButton
+            icon="dots-vertical"
+            size={20}
+            iconColor={theme.colors.textTertiary}
+            onPress={() => {}}
+            style={styles.itemOptions}
+          />
+        </View>
       </Pressable>
     );
   };
@@ -836,55 +911,207 @@ const VideosScreen = ({ navigation }) => {
               )}
             </View>
 
-            <FlatList
-              style={styles.doubtsList}
-              data={visibleDoubts}
-              keyExtractor={(item) => item.id}
-              renderItem={renderDoubtItem}
-              contentContainerStyle={styles.doubtsListContent}
-              ListEmptyComponent={
-                <View style={styles.emptyDoubts}>
-                  <MaterialIcons name="forum" size={40} color={theme.colors.textPlaceholder} />
-                  <Text style={styles.emptyDoubtsTitle}>No doubts asked yet</Text>
-                  <Text style={styles.emptyDoubtsText}>Be the first to ask a doubt or query about this video!</Text>
-                </View>
-              }
-            />
-
-            {replyingTo && (
-              <View style={styles.replyBanner}>
-                <Text style={styles.replyBannerText} numberOfLines={1}>
-                  Replying to <Text style={{ fontWeight: "bold" }}>{replyingTo.username}</Text>
-                </Text>
-                <IconButton
-                  icon="close"
-                  size={16}
-                  iconColor={theme.colors.textSecondary}
-                  onPress={() => setReplyingTo(null)}
-                  style={{ margin: 0 }}
-                />
+            {selectedVideo?.hasPdf && (
+              <View style={styles.tabsContainer}>
+                <Pressable
+                  style={[
+                    styles.tabButton,
+                    activeTab === "doubts" && styles.activeTabButton,
+                  ]}
+                  onPress={() => setActiveTab("doubts")}
+                >
+                  <MaterialIcons
+                    name="forum"
+                    size={18}
+                    color={
+                      activeTab === "doubts"
+                        ? theme.colors.primary
+                        : theme.colors.textSecondary
+                    }
+                  />
+                  <Text
+                    style={[
+                      styles.tabButtonText,
+                      activeTab === "doubts" && styles.activeTabButtonText,
+                    ]}
+                  >
+                    Doubts
+                  </Text>
+                </Pressable>
+                <Pressable
+                  style={[
+                    styles.tabButton,
+                    activeTab === "document" && styles.activeTabButton,
+                  ]}
+                  onPress={() => setActiveTab("document")}
+                >
+                  <MaterialIcons
+                    name="description"
+                    size={18}
+                    color={
+                      activeTab === "document"
+                        ? theme.colors.primary
+                        : theme.colors.textSecondary
+                    }
+                  />
+                  <Text
+                    style={[
+                      styles.tabButtonText,
+                      activeTab === "document" && styles.activeTabButtonText,
+                    ]}
+                  >
+                    Document
+                  </Text>
+                </Pressable>
               </View>
             )}
 
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                value={newDoubtText}
-                onChangeText={setNewDoubtText}
-                placeholder={replyingTo ? "Type your reply..." : "Ask a doubt about this video..."}
-                placeholderTextColor={theme.colors.textPlaceholder}
-                multiline
-              />
-              <IconButton
-                icon="send"
-                iconColor={newDoubtText.trim() ? theme.colors.primary : theme.colors.textPlaceholder}
-                disabled={!newDoubtText.trim()}
-                onPress={handleAddDoubt}
-                size={24}
-                style={styles.sendButton}
-              />
-            </View>
+            {activeTab === "doubts" ? (
+              <>
+                <FlatList
+                  style={styles.doubtsList}
+                  data={visibleDoubts}
+                  keyExtractor={(item) => item.id}
+                  renderItem={renderDoubtItem}
+                  contentContainerStyle={styles.doubtsListContent}
+                  ListEmptyComponent={
+                    <View style={styles.emptyDoubts}>
+                      <MaterialIcons
+                        name="forum"
+                        size={40}
+                        color={theme.colors.textPlaceholder}
+                      />
+                      <Text style={styles.emptyDoubtsTitle}>
+                        No doubts asked yet
+                      </Text>
+                      <Text style={styles.emptyDoubtsText}>
+                        Be the first to ask a doubt or query about this video!
+                      </Text>
+                    </View>
+                  }
+                />
+
+                {replyingTo && (
+                  <View style={styles.replyBanner}>
+                    <Text style={styles.replyBannerText} numberOfLines={1}>
+                      Replying to{" "}
+                      <Text style={{ fontWeight: "bold" }}>
+                        {replyingTo.username}
+                      </Text>
+                    </Text>
+                    <IconButton
+                      icon="close"
+                      size={16}
+                      iconColor={theme.colors.textSecondary}
+                      onPress={() => setReplyingTo(null)}
+                      style={{ margin: 0 }}
+                    />
+                  </View>
+                )}
+
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    style={styles.input}
+                    value={newDoubtText}
+                    onChangeText={setNewDoubtText}
+                    placeholder={
+                      replyingTo
+                        ? "Type your reply..."
+                        : "Ask a doubt about this video..."
+                    }
+                    placeholderTextColor={theme.colors.textPlaceholder}
+                    multiline
+                  />
+                  <IconButton
+                    icon="send"
+                    iconColor={
+                      newDoubtText.trim()
+                        ? theme.colors.primary
+                        : theme.colors.textPlaceholder
+                    }
+                    disabled={!newDoubtText.trim()}
+                    onPress={handleAddDoubt}
+                    size={24}
+                    style={styles.sendButton}
+                  />
+                </View>
+              </>
+            ) : (
+              <View style={styles.docTabContent}>
+                <View style={styles.docTabHeader}>
+                  <Text style={styles.docTabTitle} numberOfLines={1}>
+                    {selectedVideo?.pdfName || "Reference Document"}
+                  </Text>
+                  <IconButton
+                    icon="fullscreen"
+                    size={24}
+                    iconColor={theme.colors.primary}
+                    onPress={() => setFullscreenPdf(true)}
+                    style={styles.fullscreenIcon}
+                  />
+                </View>
+                <View style={styles.pdfPreviewContainer}>
+                  <WebView
+                    originWhitelist={["*"]}
+                    source={{ uri: getPdfViewerUrl(selectedVideo?.pdfUrl) }}
+                    style={styles.pdfWebView}
+                    injectedJavaScript={hideDownloadJs}
+                    onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
+                    javaScriptEnabled={true}
+                    domStorageEnabled={true}
+                    startInLoadingState={true}
+                    renderLoading={() => (
+                      <View style={styles.pdfLoadingContainer}>
+                        <ActivityIndicator
+                          color={theme.colors.primary}
+                          size="large"
+                        />
+                      </View>
+                    )}
+                  />
+                </View>
+              </View>
+            )}
           </KeyboardAvoidingView>
+        </SafeAreaView>
+      </Modal>
+
+      <Modal
+        visible={fullscreenPdf}
+        animationType="slide"
+        onRequestClose={handleCloseFullscreenPdf}
+      >
+        <SafeAreaView style={styles.pdfFullscreenSafeArea}>
+          <View style={styles.pdfFullscreenHeader}>
+            <IconButton
+              icon="arrow-left"
+              iconColor={theme.colors.textTitle}
+              onPress={handleCloseFullscreenPdf}
+            />
+            <Text style={styles.pdfFullscreenTitle} numberOfLines={1}>
+              {selectedVideo?.pdfName || "Document"}
+            </Text>
+            <View style={styles.playerHeaderSpacer} />
+          </View>
+
+          <WebView
+            originWhitelist={["*"]}
+            source={{ uri: getPdfViewerUrl(selectedVideo?.pdfUrl) }}
+            style={styles.pdfFullscreenWebView}
+            injectedJavaScript={hideDownloadJs}
+            onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
+            startInLoadingState={true}
+            renderLoading={() => (
+              <View style={styles.pdfLoadingContainer}>
+                <ActivityIndicator
+                  color={theme.colors.primary}
+                  size="large"
+                />
+              </View>
+            )}
+          />
         </SafeAreaView>
       </Modal>
     </SafeAreaView>
@@ -950,7 +1177,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     marginTop: 10,
   },
-  // -- New List Item Style --
   videoItem: {
     flexDirection: "row",
     paddingHorizontal: 20,
@@ -1308,6 +1534,99 @@ const styles = StyleSheet.create({
   replyBannerText: {
     fontSize: 12,
     color: theme.colors.primary,
+  },
+  videoActionsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  itemDocIcon: {
+    margin: 0,
+    marginRight: -4,
+  },
+  tabsContainer: {
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+    backgroundColor: theme.colors.surfacePrimary,
+  },
+  tabButton: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    gap: 6,
+    borderBottomWidth: 2,
+    borderBottomColor: "transparent",
+  },
+  activeTabButton: {
+    borderBottomColor: theme.colors.primary,
+  },
+  tabButtonText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: theme.colors.textSecondary,
+  },
+  activeTabButtonText: {
+    color: theme.colors.primary,
+    fontWeight: "bold",
+  },
+  docTabContent: {
+    flex: 1,
+    backgroundColor: theme.colors.surfacePrimary,
+  },
+  docTabHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.surfaceSecondary,
+  },
+  docTabTitle: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: theme.colors.textTitle,
+    flex: 1,
+    marginRight: 8,
+  },
+  fullscreenIcon: {
+    margin: 0,
+  },
+  pdfPreviewContainer: {
+    flex: 1,
+    backgroundColor: "#F3F4F6",
+  },
+  pdfWebView: {
+    flex: 1,
+  },
+  pdfLoadingContainer: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+  },
+  pdfFullscreenSafeArea: {
+    flex: 1,
+    backgroundColor: theme.colors.surfacePrimary,
+  },
+  pdfFullscreenHeader: {
+    height: 56,
+    flexDirection: "row",
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.surfaceSecondary,
+  },
+  pdfFullscreenTitle: {
+    flex: 1,
+    textAlign: "center",
+    color: theme.colors.textTitle,
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  pdfFullscreenWebView: {
+    flex: 1,
   },
 });
 
