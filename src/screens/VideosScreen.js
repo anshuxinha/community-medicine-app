@@ -72,7 +72,19 @@ const getPdfViewerUrl = (pdfUrl) => {
 const hideDownloadJs = `
   (function() {
     const style = document.createElement('style');
-    style.innerHTML = '.ndfHFb-c4Zgoc-lhJHpb { display: none !important; }';
+    style.type = 'text/css';
+    style.innerHTML = ' \
+      .ndfHFb-c4Zgoc-lhJHpb { display: none !important; } \
+      .ndfHFb-c4Zgoc-lhJHpb-n1oUBb { display: none !important; } \
+      .ndfHFb-c4Zgoc-q77wGc { display: none !important; } \
+      .ndfHFb-c4Zgoc-S375Ac { display: none !important; } \
+      .ndfHFb-c4Zgoc-T3meF { display: none !important; } \
+      div[role="button"][aria-label="Open in new window"] { display: none !important; } \
+      div[role="button"][aria-label="Print"] { display: none !important; } \
+      div[role="button"][aria-label="Download"] { display: none !important; } \
+      a[href*="drive.google.com"] { display: none !important; } \
+      .drive-viewer-toolbelt, .drive-viewer-popout { display: none !important; } \
+    ';
     document.head.appendChild(style);
   })();
   true;
@@ -80,15 +92,25 @@ const hideDownloadJs = `
 
 const onShouldStartLoadWithRequest = (request) => {
   const url = request.url;
-  if (
-    url.includes("docs.google.com/gview") ||
-    url.includes("firebasestorage.googleapis.com") ||
-    url.includes("storage.googleapis.com") ||
-    url.startsWith("blob:") ||
-    url.startsWith("data:")
-  ) {
+  
+  // Allow about:blank and data/blob URIs
+  if (url === "about:blank" || url.startsWith("blob:") || url.startsWith("data:")) {
     return true;
   }
+
+  // Allow storage/firebase loading
+  if (url.includes("firebasestorage.googleapis.com") || url.includes("storage.googleapis.com")) {
+    return true;
+  }
+
+  // Allow google docs viewer ONLY if embedded=true is present
+  if (url.includes("docs.google.com/gview") || url.includes("docs.google.com/viewer")) {
+    if (url.includes("embedded=true")) {
+      return true;
+    }
+  }
+
+  // Block everything else, including popouts
   return false;
 };
 
