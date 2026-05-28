@@ -7,7 +7,7 @@ import { theme } from '../styles/theme';
 
 const FieldToolboxScreen = ({ navigation }) => {
     return (
-        <SafeAreaView style={styles.safeArea}>
+        <SafeAreaView style={styles.safeArea} edges={['left', 'right', 'bottom']}>
             <ScrollView contentContainerStyle={styles.container}>
                 <Text variant="headlineMedium" style={styles.title}>Field Toolbox</Text>
 
@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
     },
     container: {
         padding: 16,
+        paddingTop: 24,
     },
     title: {
         fontWeight: 'bold',

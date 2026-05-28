@@ -572,14 +572,14 @@ const styles = StyleSheet.create({
   searchBarContainer: {
     paddingHorizontal: 16,
     paddingTop: 16,
-    paddingBottom: 8,
+    paddingBottom: 12,
   },
   searchBar: {
     backgroundColor: "#F3F4F6",
     borderRadius: 12,
     elevation: 0,
     height: 48,
-    marginBottom: 8,
+    marginBottom: 0,
   },
   searchBarInput: {
     fontSize: 16,
@@ -592,7 +592,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#000000",
     paddingHorizontal: 16,
-    marginVertical: 12,
+    marginTop: 0,
+    marginBottom: 12,
   },
   segmentedButtonsContainer: {
     paddingHorizontal: 16,

@@ -117,7 +117,7 @@ const NotificationsScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={['left', 'right', 'bottom']}>
       <ScrollView
         contentContainerStyle={styles.container}
         refreshControl={
@@ -237,7 +237,7 @@ const NotificationsScreen = () => {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: theme.colors.backgroundMain },
-  container: { padding: 16, paddingBottom: 40 },
+  container: { padding: 16, paddingTop: 20, paddingBottom: 40 },
   header: {
     fontSize: 26,
     fontWeight: "bold",

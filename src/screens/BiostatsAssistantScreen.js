@@ -165,7 +165,7 @@ const BiostatsAssistantScreen = () => {
     };
 
     return (
-        <SafeAreaView style={styles.safeArea}>
+        <SafeAreaView style={styles.safeArea} edges={['left', 'right', 'bottom']}>
             <ScrollView ref={scrollRef} contentContainerStyle={styles.container}>
                 <Text style={styles.headerText}>📊 Biostats Assistant</Text>
 
