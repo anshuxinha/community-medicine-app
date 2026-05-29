@@ -1213,7 +1213,12 @@ const ReadingView = ({
                 </View>
               );
               return (
-                <Pressable key={itemIndex} disabled={!isHighlightMode} onPress={() => onToggleHighlight(hlKey)}>
+                <Pressable
+                  key={itemIndex}
+                  disabled={!isHighlightMode}
+                  onPress={() => onToggleHighlight(hlKey)}
+                  style={{ width: "100%" }}
+                >
                   {row}
                 </Pressable>
               );
@@ -1244,7 +1249,12 @@ const ReadingView = ({
                 </View>
               );
               return (
-                <Pressable key={itemIndex} disabled={!isHighlightMode} onPress={() => onToggleHighlight(hlKey)}>
+                <Pressable
+                  key={itemIndex}
+                  disabled={!isHighlightMode}
+                  onPress={() => onToggleHighlight(hlKey)}
+                  style={{ width: "100%" }}
+                >
                   {row}
                 </Pressable>
               );
@@ -2043,6 +2053,7 @@ const styles = StyleSheet.create({
   },
   bulletText: {
     flex: 1,
+    flexShrink: 1,
     color: theme.colors.textTitle,
     fontSize: 15.5,
     lineHeight: 24,
@@ -2065,6 +2076,7 @@ const styles = StyleSheet.create({
   },
   nestedBulletText: {
     flex: 1,
+    flexShrink: 1,
     color: theme.colors.textTitle,
     fontSize: 14.5,
     lineHeight: 22,
