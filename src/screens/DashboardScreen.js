@@ -303,6 +303,7 @@ const DashboardScreen = ({ navigation }) => {
             onPress={() => navigation.navigate("FieldToolbox")}
           >
             <Card.Content style={styles.quickCardContent}>
+              <Text style={styles.quickNewBadge}>NEW</Text>
               <MaterialIcons
                 name="build"
                 size={32}
@@ -318,6 +319,7 @@ const DashboardScreen = ({ navigation }) => {
             onPress={() => navigation.navigate("PremiumGuard", { destination: "Gems" })}
           >
             <Card.Content style={styles.quickCardContent}>
+              <Text style={styles.quickNewBadge}>NEW</Text>
               <MaterialIcons
                 name="diamond"
                 size={32}
@@ -624,10 +626,24 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
   },
   quickCardContent: {
+    position: "relative",
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 12,
     paddingHorizontal: 4,
+  },
+  quickNewBadge: {
+    position: "absolute",
+    top: 5,
+    right: 5,
+    backgroundColor: "#F3E8FF",
+    color: theme.colors.primaryDark,
+    borderRadius: 6,
+    overflow: "hidden",
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    fontSize: 9,
+    fontWeight: "900",
   },
   quickText: {
     marginTop: 8,

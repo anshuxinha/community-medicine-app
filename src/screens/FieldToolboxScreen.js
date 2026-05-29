@@ -45,7 +45,10 @@ const FieldToolboxScreen = ({ navigation }) => {
                     <Card.Content style={styles.cardContent}>
                         <MaterialIcons name="compare-arrows" size={40} color={theme.colors.secondary} />
                         <View style={styles.textContainer}>
-                            <Text style={styles.cardTitle}>NFHS-5 vs NFHS-6</Text>
+                            <View style={styles.titleRow}>
+                                <Text style={styles.cardTitle}>NFHS-5 vs NFHS-6</Text>
+                                <Text style={styles.newBadge}>NEW</Text>
+                            </View>
                             <Text style={styles.cardDesc}>Compare India key indicators with NFHS-6 rural and urban context</Text>
                         </View>
                     </Card.Content>
@@ -55,7 +58,10 @@ const FieldToolboxScreen = ({ navigation }) => {
                     <Card.Content style={styles.cardContent}>
                         <MaterialIcons name="location-city" size={40} color={theme.colors.secondary} />
                         <View style={styles.textContainer}>
-                            <Text style={styles.cardTitle}>NFHS-6 Rural vs Urban</Text>
+                            <View style={styles.titleRow}>
+                                <Text style={styles.cardTitle}>NFHS-6 Rural vs Urban</Text>
+                                <Text style={styles.newBadge}>NEW</Text>
+                            </View>
                             <Text style={styles.cardDesc}>Compare NFHS-6 India fact sheet indicators by residence</Text>
                         </View>
                     </Card.Content>
@@ -93,11 +99,27 @@ const styles = StyleSheet.create({
         marginLeft: 16,
         flex: 1,
     },
+    titleRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        marginBottom: 4,
+    },
     cardTitle: {
         fontWeight: 'bold',
         fontSize: 18,
         color: theme.colors.textTitle,
-        marginBottom: 4,
+        marginRight: 8,
+    },
+    newBadge: {
+        backgroundColor: '#F3E8FF',
+        color: theme.colors.primaryDark,
+        borderRadius: 6,
+        overflow: 'hidden',
+        paddingHorizontal: 6,
+        paddingVertical: 2,
+        fontSize: 10,
+        fontWeight: '900',
     },
     cardDesc: {
         fontSize: 14,
