@@ -1,5 +1,26 @@
 [
     {
+        "id": "3cb52305-531d-424a-89a4-3c42d04ca6df",
+        "date": "2026-05-29",
+        "title": "India Releases National Family Health Survey-6",
+        "summary": "The NFHS-6 (2023-24) reveals significant progress in maternal and child health. Institutional deliveries reached 90.6%, and antenatal care coverage rose to 95.9%. Full immunization coverage improved from 83.8% to 87.1%, while child nutrition indicators showed positive trends, with stunting reduced by 17% and severe wasting by 32%. The survey covered 6.79 lakh households across 715 Indian districts.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2266600"
+    },
+    {
+        "id": "dd92b465-91f6-4af0-996c-74f06c88a373",
+        "date": "2026-05-27",
+        "title": "National Health Accounts Estimates 2022-23 Released",
+        "summary": "India's Government Health Expenditure (GHE) grew threefold from \u20b91.30 lakh crores in 2013-14 to \u20b93.85 lakh crores in 2022-23. GHE as a share of GDP rose from 1.15% to 1.43%. Notably, out-of-pocket expenditure declined from 64.2% to 43.4% of total health spending, while government spending on primary healthcare more than doubled to \u20b91.4 lakh crores over the decade.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2265816"
+    },
+    {
+        "id": "38fcd119-ddcb-43e7-8f03-27f24ea5d775",
+        "date": "2026-05-25",
+        "title": "India Intensifies Ebola Preparedness Measures",
+        "summary": "Union Health Minister Shri J P Nadda reviewed Ebola preparedness following WHO's declaration of a Public Health Emergency of International Concern. While India reports zero cases of Bundibugyo Ebola, the government has intensified screening at international airports. The ICMR and NCDC are on high alert for tracking and testing, with updated SOPs shared across all States and Union Territories.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2265153"
+    },
+    {
         "id": "f23af3a0-b9d5-44a3-a8eb-6d825ffb785f",
         "date": "2026-05-24",
         "title": "India Advises Travel Caution Amid Ebola Outbreak",
@@ -47,26 +68,5 @@
         "title": "Launch of JANANI Digital Platform for Maternal and Child Healthcare",
         "summary": "The Ministry of Health and Family Welfare introduced JANANI, a digital platform for longitudinal health records of women of reproductive age. Upgrading the RCH portal, it has already achieved 1.34 crore beneficiary registrations, 30 lakh pregnant women registrations, and 30 lakh MCH cards. The system uses QR-enabled cards to track antenatal, postnatal, and newborn care, ensuring seamless continuity of care.",
         "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2258625"
-    },
-    {
-        "id": "dc653d9c-ea03-414e-8859-4d28d93e03a1",
-        "date": "2026-05-06",
-        "title": "Launch of Swasth Bharat Portal",
-        "summary": "Union Minister J.P. Nadda unveiled the Swasth Bharat Portal to unify fragmented health systems via an API-based aggregator platform. The ABDM-compliant portal integrates various national health programmes to eliminate duplicate data entry. It is projected to achieve a 20\u201330% reduction in infrastructure load and a 20\u201340% decrease in data entry and HR duplication, streamlining India's digital health architecture.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2258283"
-    },
-    {
-        "id": "b4bad629-c7cb-4c51-94e0-246edc77c524",
-        "date": "2026-05-03",
-        "title": "Ministry Releases RBSK 2.0 Guidelines for Enhanced Child Health",
-        "summary": "The Ministry of Health and Family Welfare released RBSK 2.0 Guidelines, expanding the flagship child health screening programme. The updated framework broadens the 4Ds approach\u2014Defects at Birth, Diseases, Deficiencies, and Developmental Delays\u2014to include mental health and non-communicable diseases. It provides a comprehensive continuum of care for children from birth to 18 years, emphasizing digitalization and holistic growth development.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2257617"
-    },
-    {
-        "id": "9fb5a2a2-4afb-45a4-9847-a7bb2ed440d8",
-        "date": "2026-05-01",
-        "title": "National Summit on Innovation and Inclusivity Concludes",
-        "summary": "The two-day National Summit concluded with a focus on the 17th Common Review Mission findings to drive evidence-based reforms under the National Health Mission. Key discussions highlighted progress in Ayushman Arogya Mandirs, digital health adoption, and primary healthcare expansion. The event emphasized optimizing human resources and improving drug availability to enhance healthcare outreach and inclusivity across India's underserved rural areas.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2257267"
     }
 ]
