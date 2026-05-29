@@ -40,6 +40,16 @@ const FieldToolboxScreen = ({ navigation }) => {
                         </View>
                     </Card.Content>
                 </Card>
+
+                <Card style={styles.card} onPress={() => navigation.navigate('NFHSComparison')}>
+                    <Card.Content style={styles.cardContent}>
+                        <MaterialIcons name="compare-arrows" size={40} color={theme.colors.secondary} />
+                        <View style={styles.textContainer}>
+                            <Text style={styles.cardTitle}>NFHS-5 vs NFHS-6</Text>
+                            <Text style={styles.cardDesc}>Compare India key indicators with NFHS-6 rural and urban context</Text>
+                        </View>
+                    </Card.Content>
+                </Card>
             </ScrollView>
         </SafeAreaView>
     );

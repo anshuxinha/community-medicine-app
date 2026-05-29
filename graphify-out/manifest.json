@@ -319,13 +319,17 @@
     "mtime": 1778910985.3578393,
     "hash": "2c36be0c5e2bcc8d4982b70792a0a081"
   },
+  "D:\\The App\\src\\data\\nfhsComparisonData.js": {
+    "mtime": 1780057420.3093245,
+    "hash": "60693c7eab519430fd4ef18c1d80c52d"
+  },
   "D:\\The App\\src\\hooks\\useSessionEnforcer.js": {
     "mtime": 1776915623.531863,
     "hash": "f486f262d18f04ca01c8458ba191645d"
   },
   "D:\\The App\\src\\navigation\\AppNavigator.js": {
-    "mtime": 1779027229.2926843,
-    "hash": "222cb8a112c398308ac5099ef54f117b"
+    "mtime": 1780057345.0970967,
+    "hash": "80645605f1da40880d2406a6b2074a94"
   },
   "D:\\The App\\src\\screens\\AdminLibraryReviewScreen.js": {
     "mtime": 1777561970.1780882,
@@ -352,8 +356,8 @@
     "hash": "36870779cc060d0a416e2f89b7108b5f"
   },
   "D:\\The App\\src\\screens\\FieldToolboxScreen.js": {
-    "mtime": 1779948963.6865914,
-    "hash": "25cd90f53666cb081dfc157bb8f198ee"
+    "mtime": 1780057331.0468397,
+    "hash": "fb61e1603be3663b229673d9944b5426"
   },
   "D:\\The App\\src\\screens\\GemsScreen.js": {
     "mtime": 1780055775.757557,
@@ -366,6 +370,10 @@
   "D:\\The App\\src\\screens\\LoginScreen.js": {
     "mtime": 1778737102.0081568,
     "hash": "5eb98866bbccdb37163fe16c85d6f69d"
+  },
+  "D:\\The App\\src\\screens\\NFHSComparisonScreen.js": {
+    "mtime": 1780057420.31133,
+    "hash": "f02df913decb28ef310fb9fce5ef329f"
   },
   "D:\\The App\\src\\screens\\NotificationsScreen.js": {
     "mtime": 1779948975.4328067,

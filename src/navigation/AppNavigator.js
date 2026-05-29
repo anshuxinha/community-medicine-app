@@ -31,6 +31,7 @@ import FieldToolboxScreen from "../screens/FieldToolboxScreen";
 import SESCalculatorScreen from "../screens/SESCalculatorScreen";
 import DietarySurveyScreen from "../screens/DietarySurveyScreen";
 import AnthropometryScreen from "../screens/AnthropometryScreen";
+import NFHSComparisonScreen from "../screens/NFHSComparisonScreen";
 import VirtualMuseumScreen from "../screens/VirtualMuseumScreen";
 import BiostatsAssistantScreen from "../screens/BiostatsAssistantScreen";
 import NotificationsScreen from "../screens/NotificationsScreen";
@@ -207,6 +208,11 @@ const AppNavigator = () => {
               name="Anthropometry"
               component={AnthropometryScreen}
               options={{ title: "Anthropometry" }}
+            />
+            <Stack.Screen
+              name="NFHSComparison"
+              component={NFHSComparisonScreen}
+              options={{ title: "NFHS-5 vs NFHS-6" }}
             />
 
             {/* ── Other Modules ── */}
