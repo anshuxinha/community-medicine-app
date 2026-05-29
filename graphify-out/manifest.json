@@ -159,10 +159,6 @@
     "mtime": 1780033181.032891,
     "hash": "ac7cc8809ce437a954c8714b441fcc24"
   },
-  "D:\\The App\\scratch\\read_debug_info.js": {
-    "mtime": 1780034556.9075818,
-    "hash": "ce8dd03229a354fe30f13e28afb619c9"
-  },
   "D:\\The App\\scripts\\apply_staged_library_updates.py": {
     "mtime": 1777265229.3049736,
     "hash": "54936b9b06f3ffedf69217c6f0accca5"
@@ -296,8 +292,8 @@
     "hash": "97abdb8fd522462f616d41d6c847c9b9"
   },
   "D:\\The App\\src\\components\\ReadingView.js": {
-    "mtime": 1780038815.5600357,
-    "hash": "0152b5d0b8cd304189c123084ffbfd60"
+    "mtime": 1780039343.1559227,
+    "hash": "5df65cfebb269b44f5764a03c74930c2"
   },
   "D:\\The App\\src\\components\\UpdateBottomSheet.js": {
     "mtime": 1778850625.507952,
@@ -388,8 +384,8 @@
     "hash": "3a967d076b1f6aee2312f5417a95bd3e"
   },
   "D:\\The App\\src\\screens\\ReadingScreen.js": {
-    "mtime": 1780033400.716255,
-    "hash": "54fb348bc910e312ae86b8ddc1420586"
+    "mtime": 1780039325.0765378,
+    "hash": "20dbb33b81978acf0c4c18130426ed1e"
   },
   "D:\\The App\\src\\screens\\SearchScreen.js": {
     "mtime": 1777266393.020213,
