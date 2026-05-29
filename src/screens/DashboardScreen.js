@@ -14,6 +14,7 @@ import {
   Dialog,
   Portal,
 } from "react-native-paper";
+import * as Updates from "expo-updates";
 import { SafeAreaView } from "react-native-safe-area-context";
 import recentUpdates from "../data/updates.json";
 import publicHealthDays from "../data/publicHealthDays.json";
@@ -24,6 +25,85 @@ import UpdateDetailDialog from "../components/UpdateDetailDialog";
 import { scheduleAllNotifications } from "../services/notificationService";
 import { auth } from "../config/firebase";
 import { theme, useResponsive } from "../styles/theme";
+
+const UpdateDownloadIndicator = () => {
+  const {
+    isDownloading,
+    isUpdatePending,
+    downloadProgress,
+  } = Updates.useUpdates();
+  const [status, setStatus] = useState("idle");
+  const checkedRef = React.useRef(false);
+
+  useEffect(() => {
+    if (__DEV__ || !Updates.isEnabled || checkedRef.current) return;
+
+    checkedRef.current = true;
+    let cancelled = false;
+
+    const checkAndDownloadUpdate = async () => {
+      try {
+        const update = await Updates.checkForUpdateAsync();
+        if (!cancelled && update.isAvailable) {
+          setStatus("downloading");
+          await Updates.fetchUpdateAsync();
+          if (!cancelled) setStatus("ready");
+        }
+      } catch (error) {
+        if (!cancelled) setStatus("idle");
+        console.warn("App update check failed:", error);
+      }
+    };
+
+    checkAndDownloadUpdate();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isDownloading) {
+      setStatus("downloading");
+    } else if (isUpdatePending) {
+      setStatus("ready");
+    }
+  }, [isDownloading, isUpdatePending]);
+
+  const showDownloading = status === "downloading" || isDownloading;
+  const showReady = status === "ready" || isUpdatePending;
+
+  if (!showDownloading && !showReady) return null;
+
+  return (
+    <View style={styles.updateDownloadIndicator}>
+      <View style={styles.updateDownloadIcon}>
+        <MaterialIcons
+          name={showReady ? "check-circle" : "downloading"}
+          size={20}
+          color={showReady ? "#047857" : theme.colors.secondary}
+        />
+      </View>
+      <View style={styles.updateDownloadTextColumn}>
+        <Text style={styles.updateDownloadTitle}>
+          {showReady ? "Update ready" : "Downloading update"}
+        </Text>
+        <Text style={styles.updateDownloadSubtitle}>
+          {showReady
+            ? "Reopen the app to finish updating."
+            : "Please keep the app open for a moment."}
+        </Text>
+        {showDownloading ? (
+          <ProgressBar
+            progress={downloadProgress || 0.12}
+            color={theme.colors.secondary}
+            style={styles.updateDownloadProgress}
+          />
+        ) : null}
+      </View>
+    </View>
+  );
+};
 
 const DashboardScreen = ({ navigation }) => {
   const { readingProgress, currentStreak, studyScore, user, refreshFromCloud, isPremium } =
@@ -147,6 +227,8 @@ const DashboardScreen = ({ navigation }) => {
             {getFormattedDate()}
           </Text>
         </View>
+
+        <UpdateDownloadIndicator />
 
         <Card style={styles.progressCard}>
           <Card.Title
@@ -423,6 +505,45 @@ const styles = StyleSheet.create({
   },
   subText: {
     color: theme.colors.textTertiary,
+    marginTop: 8,
+  },
+  updateDownloadIndicator: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F8FAFC",
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    padding: 12,
+    marginBottom: 16,
+  },
+  updateDownloadIcon: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#F3E8FF",
+    marginRight: 10,
+  },
+  updateDownloadTextColumn: {
+    flex: 1,
+  },
+  updateDownloadTitle: {
+    color: theme.colors.textTitle,
+    fontSize: 14,
+    fontWeight: "800",
+  },
+  updateDownloadSubtitle: {
+    color: theme.colors.textSecondary,
+    fontSize: 12,
+    lineHeight: 17,
+    marginTop: 2,
+  },
+  updateDownloadProgress: {
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: "#E5E7EB",
     marginTop: 8,
   },
   progressCard: {
