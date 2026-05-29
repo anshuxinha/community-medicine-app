@@ -33,16 +33,22 @@ const GemsScreen = ({ navigation }) => {
   const [searchQuery, setSearchbarQuery] = useState("");
   const { isBookmarked, toggleBookmark } = useContext(AppContext);
   
-  // Reorder data: Family Health & Nutrition first
-  const sortedGemsData = useMemo(() => {
-    const data = [...gemsData];
-    const familyHealthIdx = data.findIndex(s => s.title.includes("FAMILY HEALTH"));
-    if (familyHealthIdx > -1) {
-      const [familyHealth] = data.splice(familyHealthIdx, 1);
-      data.unshift(familyHealth);
-    }
-    return data;
-  }, []);
+    // Reorder data: Vital Indicators & Surveys first
+    const sortedGemsData = useMemo(() => {
+      const data = [...gemsData];
+      const section9Idx = data.findIndex((s) => s.id === "section_9");
+      if (section9Idx > -1) {
+        const [section9] = data.splice(section9Idx, 1);
+        data.unshift(section9);
+      } else {
+        const familyHealthIdx = data.findIndex((s) => s.title.includes("FAMILY HEALTH"));
+        if (familyHealthIdx > -1) {
+          const [familyHealth] = data.splice(familyHealthIdx, 1);
+          data.unshift(familyHealth);
+        }
+      }
+      return data;
+    }, []);
 
   const [selectedSection, setSelectedSection] = useState(ALL_SECTIONS_ID);
   const { isTablet, contentMaxWidth } = useResponsive();
