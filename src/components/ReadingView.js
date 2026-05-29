@@ -19,6 +19,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { theme } from "../styles/theme";
 import { normalizeUpdatedSnippet } from "../utils/contentRegistry";
+import { auth, db } from "../config/firebase";
+import { doc, updateDoc } from "firebase/firestore";
 
 const stripBold = (text) => text.replace(/\*\*(.+?)\*\*/g, "$1");
 const normalizeAnchorText = (text = "") =>
@@ -725,6 +727,13 @@ const ReadingView = ({
     const res = parseMarkdown(content || "", { isGem });
     if (title === "Fats and Essential Fatty Acids" || contentKey === "theory:11-3") {
       console.log("parsed blocks for 11-3:", JSON.stringify(res.slice(0, 5), null, 2));
+      if (auth.currentUser) {
+        const userDocRef = doc(db, "users", auth.currentUser.uid);
+        updateDoc(userDocRef, {
+          debug_11_3_blocks: JSON.stringify(res.slice(0, 5)),
+          debug_11_3_timestamp_blocks: new Date().toISOString(),
+        }).catch(err => console.warn("Failed to update debug blocks:", err));
+      }
     }
     return res;
   }, [content, isGem]);

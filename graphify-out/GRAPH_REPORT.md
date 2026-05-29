@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `4055a8e0`
+- Built from commit: `dd365afb`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -194,44 +194,44 @@ Cohesion: 0.15
 Nodes (12): Approval and apply, Best overall: Firebase-backed admin queue, code:bash (python scripts/apply_staged_library_updates.py --proposal-id), code:bash (python scripts/apply_staged_library_updates.py --approve-all), Good lightweight review surface: GitHub Pages, In-app admin review, Library Update Review Workflow, Most seamless for your workflow: in-app admin screen (+4 more)
 
 ### Community 18 - "Community 18"
-Cohesion: 0.24
-Nodes (5): styles, getDefaultDeviceName(), getDeviceId(), getDeviceInfo(), isFirstDeviceLogin()
-
-### Community 19 - "Community 19"
 Cohesion: 0.18
 Nodes (4): getPackages(), MainApplication, ScreenCaptureProtectionPackage, ReactPackage
 
-### Community 20 - "Community 20"
+### Community 19 - "Community 19"
 Cohesion: 0.21
 Nodes (7): PRESET_PROBLEMS, SOLVER_OFFSETS, ssSingleProp(), ssTwoMeans(), ssTwoProps(), styles, zForCI()
 
-### Community 21 - "Community 21"
+### Community 20 - "Community 20"
 Cohesion: 0.17
 Nodes (11): 1. Think Before Coding, 2. Simplicity First, 3. Surgical Changes, 4. Goal-Driven Execution, Background Watcher, Graph-First Protocol (graphify), graphify, Guidelines (+3 more)
 
+### Community 21 - "Community 21"
+Cohesion: 0.25
+Nodes (5): styles, getDefaultDeviceName(), getDeviceId(), getDeviceInfo(), isFirstDeviceLogin()
+
 ### Community 22 - "Community 22"
+Cohesion: 0.24
+Nodes (7): AppContext, useSessionEnforcer(), AppNavigator(), navigationRef, Stack, Tab, setupNotificationTapHandler()
+
+### Community 23 - "Community 23"
 Cohesion: 0.29
 Nodes (3): ScreenCaptureProtectionModule, LifecycleEventObserver, ReactContextBaseJavaModule
 
-### Community 23 - "Community 23"
+### Community 24 - "Community 24"
 Cohesion: 0.18
 Nodes (10): 1. App Details, 2. Graphics Assets Required for Play Console, 3. Link Resources, 🧮 Advanced Medical Calculators & Tools, 🤖 AI Tutor & Chat Support, 📚 Comprehensive Knowledge Library, Google Play Store Metadata, 📝 Interactive Quizzes & Mock Exams (+2 more)
 
-### Community 24 - "Community 24"
-Cohesion: 0.22
-Nodes (6): BASE_MENU_ITEMS, styles, { width }, auth, AppContext, styles
-
 ### Community 25 - "Community 25"
-Cohesion: 0.22
-Nodes (6): appIcon, styles, MONTH_NAMES, MONTH_SHORT, styles, UpdatesScreen()
-
-### Community 26 - "Community 26"
-Cohesion: 0.25
-Nodes (6): useSessionEnforcer(), AppNavigator(), navigationRef, Stack, Tab, setupNotificationTapHandler()
-
-### Community 27 - "Community 27"
 Cohesion: 0.28
 Nodes (6): DashboardScreen(), styles, GemsScreen(), styles, LibraryScreen(), useResponsive()
+
+### Community 26 - "Community 26"
+Cohesion: 0.22
+Nodes (5): BASE_MENU_ITEMS, styles, { width }, auth, styles
+
+### Community 27 - "Community 27"
+Cohesion: 0.22
+Nodes (6): appIcon, styles, MONTH_NAMES, MONTH_SHORT, styles, UpdatesScreen()
 
 ### Community 28 - "Community 28"
 Cohesion: 0.22
@@ -369,11 +369,11 @@ Nodes (3): extract_text_from_pdf(), main(), Extracts text from a PDF file.     T
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `theme` connect `Community 8` to `Community 0`, `Community 1`, `Community 34`, `Community 3`, `Community 6`, `Community 39`, `Community 9`, `Community 18`, `Community 20`, `Community 24`, `Community 25`, `Community 26`, `Community 27`, `Community 31`?**
+- **Why does `theme` connect `Community 8` to `Community 0`, `Community 1`, `Community 34`, `Community 3`, `Community 6`, `Community 39`, `Community 9`, `Community 19`, `Community 21`, `Community 22`, `Community 25`, `Community 26`, `Community 27`, `Community 31`?**
   _High betweenness centrality (0.020) - this node is a cross-community bridge._
-- **Why does `db` connect `Community 3` to `Community 0`, `Community 1`, `Community 39`, `Community 9`, `Community 18`, `Community 24`?**
+- **Why does `db` connect `Community 3` to `Community 0`, `Community 1`, `Community 39`, `Community 9`, `Community 21`, `Community 22`, `Community 26`?**
   _High betweenness centrality (0.005) - this node is a cross-community bridge._
-- **Why does `AppContext` connect `Community 24` to `Community 0`, `Community 1`, `Community 3`, `Community 39`, `Community 9`, `Community 18`, `Community 25`, `Community 26`, `Community 27`, `Community 31`?**
+- **Why does `AppContext` connect `Community 22` to `Community 0`, `Community 1`, `Community 3`, `Community 39`, `Community 9`, `Community 21`, `Community 25`, `Community 26`, `Community 27`, `Community 31`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **What connects `admin`, `path`, `SERVICE_ACCOUNT_PATH` to the rest of the system?**
   _315 weakly-connected nodes found - possible documentation gaps or missing edges._

@@ -738,7 +738,7 @@
       "source_file": "android/app/src/main/java/com/communitymed/app/MainApplication.kt",
       "source_location": "L1",
       "id": "android_app_src_main_java_com_communitymed_app_mainapplication_kt",
-      "community": 19,
+      "community": 18,
       "norm_label": "mainapplication.kt"
     },
     {
@@ -747,7 +747,7 @@
       "source_file": "android/app/src/main/java/com/communitymed/app/MainApplication.kt",
       "source_location": "L19",
       "id": "app_mainapplication_mainapplication",
-      "community": 19,
+      "community": 18,
       "norm_label": "mainapplication"
     },
     {
@@ -756,7 +756,7 @@
       "source_file": "android/app/src/main/java/com/communitymed/app/MainApplication.kt",
       "source_location": "L24",
       "id": "app_mainapplication_getpackages",
-      "community": 19,
+      "community": 18,
       "norm_label": "getpackages()"
     },
     {
@@ -765,7 +765,7 @@
       "source_file": "android/app/src/main/java/com/communitymed/app/MainApplication.kt",
       "source_location": "L31",
       "id": "app_mainapplication_getjsmainmodulename",
-      "community": 19,
+      "community": 18,
       "norm_label": "getjsmainmodulename()"
     },
     {
@@ -774,7 +774,7 @@
       "source_file": "android/app/src/main/java/com/communitymed/app/MainApplication.kt",
       "source_location": "L33",
       "id": "app_mainapplication_getusedevelopersupport",
-      "community": 19,
+      "community": 18,
       "norm_label": "getusedevelopersupport()"
     },
     {
@@ -783,7 +783,7 @@
       "source_file": "android/app/src/main/java/com/communitymed/app/MainApplication.kt",
       "source_location": "L42",
       "id": "app_mainapplication_mainapplication_oncreate",
-      "community": 19,
+      "community": 18,
       "norm_label": ".oncreate()"
     },
     {
@@ -792,7 +792,7 @@
       "source_file": "android/app/src/main/java/com/communitymed/app/MainApplication.kt",
       "source_location": "L53",
       "id": "app_mainapplication_mainapplication_onconfigurationchanged",
-      "community": 19,
+      "community": 18,
       "norm_label": ".onconfigurationchanged()"
     },
     {
@@ -801,7 +801,7 @@
       "source_file": "android/app/src/main/java/com/communitymed/app/ScreenCaptureProtectionModule.java",
       "source_location": "L1",
       "id": "android_app_src_main_java_com_communitymed_app_screencaptureprotectionmodule_java",
-      "community": 22,
+      "community": 23,
       "norm_label": "screencaptureprotectionmodule.java"
     },
     {
@@ -810,7 +810,7 @@
       "source_file": "android/app/src/main/java/com/communitymed/app/ScreenCaptureProtectionModule.java",
       "source_location": "L25",
       "id": "app_screencaptureprotectionmodule_screencaptureprotectionmodule",
-      "community": 22,
+      "community": 23,
       "norm_label": "screencaptureprotectionmodule"
     },
     {
@@ -819,7 +819,7 @@
       "source_file": "",
       "source_location": "",
       "id": "reactcontextbasejavamodule",
-      "community": 22,
+      "community": 23,
       "norm_label": "reactcontextbasejavamodule"
     },
     {
@@ -828,7 +828,7 @@
       "source_file": "",
       "source_location": "",
       "id": "lifecycleeventobserver",
-      "community": 22,
+      "community": 23,
       "norm_label": "lifecycleeventobserver"
     },
     {
@@ -837,7 +837,7 @@
       "source_file": "android/app/src/main/java/com/communitymed/app/ScreenCaptureProtectionModule.java",
       "source_location": "L31",
       "id": "app_screencaptureprotectionmodule_screencaptureprotectionmodule_screencaptureprotectionmodule",
-      "community": 22,
+      "community": 23,
       "norm_label": ".screencaptureprotectionmodule()"
     },
     {
@@ -846,7 +846,7 @@
       "source_file": "android/app/src/main/java/com/communitymed/app/ScreenCaptureProtectionModule.java",
       "source_location": "L38",
       "id": "app_screencaptureprotectionmodule_screencaptureprotectionmodule_getname",
-      "community": 22,
+      "community": 23,
       "norm_label": ".getname()"
     },
     {
@@ -855,7 +855,7 @@
       "source_file": "android/app/src/main/java/com/communitymed/app/ScreenCaptureProtectionModule.java",
       "source_location": "L43",
       "id": "app_screencaptureprotectionmodule_screencaptureprotectionmodule_enableprotection",
-      "community": 22,
+      "community": 23,
       "norm_label": ".enableprotection()"
     },
     {
@@ -864,7 +864,7 @@
       "source_file": "android/app/src/main/java/com/communitymed/app/ScreenCaptureProtectionModule.java",
       "source_location": "L72",
       "id": "app_screencaptureprotectionmodule_screencaptureprotectionmodule_disableprotection",
-      "community": 22,
+      "community": 23,
       "norm_label": ".disableprotection()"
     },
     {
@@ -873,7 +873,7 @@
       "source_file": "android/app/src/main/java/com/communitymed/app/ScreenCaptureProtectionModule.java",
       "source_location": "L100",
       "id": "app_screencaptureprotectionmodule_screencaptureprotectionmodule_applysecureflagtoactivity",
-      "community": 22,
+      "community": 23,
       "norm_label": ".applysecureflagtoactivity()"
     },
     {
@@ -882,7 +882,7 @@
       "source_file": "android/app/src/main/java/com/communitymed/app/ScreenCaptureProtectionModule.java",
       "source_location": "L157",
       "id": "app_screencaptureprotectionmodule_screencaptureprotectionmodule_removesecureflagfromactivity",
-      "community": 22,
+      "community": 23,
       "norm_label": ".removesecureflagfromactivity()"
     },
     {
@@ -891,7 +891,7 @@
       "source_file": "android/app/src/main/java/com/communitymed/app/ScreenCaptureProtectionModule.java",
       "source_location": "L183",
       "id": "app_screencaptureprotectionmodule_screencaptureprotectionmodule_onstatechanged",
-      "community": 22,
+      "community": 23,
       "norm_label": ".onstatechanged()"
     },
     {
@@ -900,7 +900,7 @@
       "source_file": "android/app/src/main/java/com/communitymed/app/ScreenCaptureProtectionPackage.java",
       "source_location": "L1",
       "id": "android_app_src_main_java_com_communitymed_app_screencaptureprotectionpackage_java",
-      "community": 19,
+      "community": 18,
       "norm_label": "screencaptureprotectionpackage.java"
     },
     {
@@ -909,7 +909,7 @@
       "source_file": "android/app/src/main/java/com/communitymed/app/ScreenCaptureProtectionPackage.java",
       "source_location": "L12",
       "id": "app_screencaptureprotectionpackage_screencaptureprotectionpackage",
-      "community": 19,
+      "community": 18,
       "norm_label": "screencaptureprotectionpackage"
     },
     {
@@ -918,7 +918,7 @@
       "source_file": "",
       "source_location": "",
       "id": "reactpackage",
-      "community": 19,
+      "community": 18,
       "norm_label": "reactpackage"
     },
     {
@@ -927,7 +927,7 @@
       "source_file": "android/app/src/main/java/com/communitymed/app/ScreenCaptureProtectionPackage.java",
       "source_location": "L13",
       "id": "app_screencaptureprotectionpackage_screencaptureprotectionpackage_createnativemodules",
-      "community": 19,
+      "community": 18,
       "norm_label": ".createnativemodules()"
     },
     {
@@ -936,7 +936,7 @@
       "source_file": "android/app/src/main/java/com/communitymed/app/ScreenCaptureProtectionPackage.java",
       "source_location": "L20",
       "id": "app_screencaptureprotectionpackage_screencaptureprotectionpackage_createviewmanagers",
-      "community": 19,
+      "community": 18,
       "norm_label": ".createviewmanagers()"
     },
     {
@@ -3699,7 +3699,7 @@
       "source_file": "src/components/DrawerMenu.js",
       "source_location": "L1",
       "id": "src_components_drawermenu_js",
-      "community": 24,
+      "community": 26,
       "norm_label": "drawermenu.js"
     },
     {
@@ -3708,7 +3708,7 @@
       "source_file": "src/components/DrawerMenu.js",
       "source_location": "L23",
       "id": "components_drawermenu_width",
-      "community": 24,
+      "community": 26,
       "norm_label": "{ width }"
     },
     {
@@ -3717,7 +3717,7 @@
       "source_file": "src/components/DrawerMenu.js",
       "source_location": "L27",
       "id": "components_drawermenu_base_menu_items",
-      "community": 24,
+      "community": 26,
       "norm_label": "base_menu_items"
     },
     {
@@ -3726,7 +3726,7 @@
       "source_file": "src/components/DrawerMenu.js",
       "source_location": "L69",
       "id": "components_drawermenu_drawermenu",
-      "community": 24,
+      "community": 26,
       "norm_label": "drawermenu()"
     },
     {
@@ -3735,7 +3735,7 @@
       "source_file": "src/components/DrawerMenu.js",
       "source_location": "L264",
       "id": "components_drawermenu_styles",
-      "community": 24,
+      "community": 26,
       "norm_label": "styles"
     },
     {
@@ -4077,7 +4077,7 @@
       "source_file": "src/components/UpdateDetailDialog.js",
       "source_location": "L1",
       "id": "src_components_updatedetaildialog_js",
-      "community": 25,
+      "community": 27,
       "norm_label": "updatedetaildialog.js"
     },
     {
@@ -4086,7 +4086,7 @@
       "source_file": "src/components/UpdateDetailDialog.js",
       "source_location": "L24",
       "id": "components_updatedetaildialog_appicon",
-      "community": 25,
+      "community": 27,
       "norm_label": "appicon"
     },
     {
@@ -4095,7 +4095,7 @@
       "source_file": "src/components/UpdateDetailDialog.js",
       "source_location": "L34",
       "id": "components_updatedetaildialog_updatedetaildialog",
-      "community": 25,
+      "community": 27,
       "norm_label": "updatedetaildialog()"
     },
     {
@@ -4104,7 +4104,7 @@
       "source_file": "src/components/UpdateDetailDialog.js",
       "source_location": "L243",
       "id": "components_updatedetaildialog_styles",
-      "community": 25,
+      "community": 27,
       "norm_label": "styles"
     },
     {
@@ -4140,7 +4140,7 @@
       "source_file": "src/config/firebase.js",
       "source_location": "L19",
       "id": "config_firebase_auth",
-      "community": 24,
+      "community": 26,
       "norm_label": "auth"
     },
     {
@@ -4230,7 +4230,7 @@
       "source_file": "src/context/AppContext.js",
       "source_location": "L143",
       "id": "context_appcontext_appcontext",
-      "community": 24,
+      "community": 22,
       "norm_label": "appcontext"
     },
     {
@@ -4293,7 +4293,7 @@
       "source_file": "src/hooks/useSessionEnforcer.js",
       "source_location": "L1",
       "id": "src_hooks_usesessionenforcer_js",
-      "community": 18,
+      "community": 22,
       "norm_label": "usesessionenforcer.js"
     },
     {
@@ -4302,7 +4302,7 @@
       "source_file": "src/hooks/useSessionEnforcer.js",
       "source_location": "L8",
       "id": "hooks_usesessionenforcer_usesessionenforcer",
-      "community": 26,
+      "community": 22,
       "norm_label": "usesessionenforcer()"
     },
     {
@@ -4311,7 +4311,7 @@
       "source_file": "src/navigation/AppNavigator.js",
       "source_location": "L1",
       "id": "src_navigation_appnavigator_js",
-      "community": 26,
+      "community": 22,
       "norm_label": "appnavigator.js"
     },
     {
@@ -4320,7 +4320,7 @@
       "source_file": "src/navigation/AppNavigator.js",
       "source_location": "L41",
       "id": "navigation_appnavigator_tab",
-      "community": 26,
+      "community": 22,
       "norm_label": "tab"
     },
     {
@@ -4329,7 +4329,7 @@
       "source_file": "src/navigation/AppNavigator.js",
       "source_location": "L42",
       "id": "navigation_appnavigator_stack",
-      "community": 26,
+      "community": 22,
       "norm_label": "stack"
     },
     {
@@ -4338,7 +4338,7 @@
       "source_file": "src/navigation/AppNavigator.js",
       "source_location": "L43",
       "id": "navigation_appnavigator_navigationref",
-      "community": 26,
+      "community": 22,
       "norm_label": "navigationref"
     },
     {
@@ -4347,7 +4347,7 @@
       "source_file": "src/navigation/AppNavigator.js",
       "source_location": "L45",
       "id": "navigation_appnavigator_tabnavigator",
-      "community": 26,
+      "community": 22,
       "norm_label": "tabnavigator()"
     },
     {
@@ -4356,7 +4356,7 @@
       "source_file": "src/navigation/AppNavigator.js",
       "source_location": "L107",
       "id": "navigation_appnavigator_premiumguard",
-      "community": 26,
+      "community": 22,
       "norm_label": "premiumguard()"
     },
     {
@@ -4365,7 +4365,7 @@
       "source_file": "src/navigation/AppNavigator.js",
       "source_location": "L130",
       "id": "navigation_appnavigator_appnavigator",
-      "community": 26,
+      "community": 22,
       "norm_label": "appnavigator()"
     },
     {
@@ -4491,7 +4491,7 @@
       "source_file": "src/screens/BiostatsAssistantScreen.js",
       "source_location": "L1",
       "id": "src_screens_biostatsassistantscreen_js",
-      "community": 20,
+      "community": 19,
       "norm_label": "biostatsassistantscreen.js"
     },
     {
@@ -4500,7 +4500,7 @@
       "source_file": "src/screens/BiostatsAssistantScreen.js",
       "source_location": "L8",
       "id": "screens_biostatsassistantscreen_calcchi2",
-      "community": 20,
+      "community": 19,
       "norm_label": "calcchi2()"
     },
     {
@@ -4509,7 +4509,7 @@
       "source_file": "src/screens/BiostatsAssistantScreen.js",
       "source_location": "L21",
       "id": "screens_biostatsassistantscreen_calcefficacy",
-      "community": 20,
+      "community": 19,
       "norm_label": "calcefficacy()"
     },
     {
@@ -4518,7 +4518,7 @@
       "source_file": "src/screens/BiostatsAssistantScreen.js",
       "source_location": "L22",
       "id": "screens_biostatsassistantscreen_calcimr",
-      "community": 20,
+      "community": 19,
       "norm_label": "calcimr()"
     },
     {
@@ -4527,7 +4527,7 @@
       "source_file": "src/screens/BiostatsAssistantScreen.js",
       "source_location": "L24",
       "id": "screens_biostatsassistantscreen_zforci",
-      "community": 20,
+      "community": 19,
       "norm_label": "zforci()"
     },
     {
@@ -4536,7 +4536,7 @@
       "source_file": "src/screens/BiostatsAssistantScreen.js",
       "source_location": "L30",
       "id": "screens_biostatsassistantscreen_sssingleprop",
-      "community": 20,
+      "community": 19,
       "norm_label": "sssingleprop()"
     },
     {
@@ -4545,7 +4545,7 @@
       "source_file": "src/screens/BiostatsAssistantScreen.js",
       "source_location": "L34",
       "id": "screens_biostatsassistantscreen_sstwoprops",
-      "community": 20,
+      "community": 19,
       "norm_label": "sstwoprops()"
     },
     {
@@ -4554,7 +4554,7 @@
       "source_file": "src/screens/BiostatsAssistantScreen.js",
       "source_location": "L43",
       "id": "screens_biostatsassistantscreen_sstwomeans",
-      "community": 20,
+      "community": 19,
       "norm_label": "sstwomeans()"
     },
     {
@@ -4563,7 +4563,7 @@
       "source_file": "src/screens/BiostatsAssistantScreen.js",
       "source_location": "L49",
       "id": "screens_biostatsassistantscreen_preset_problems",
-      "community": 20,
+      "community": 19,
       "norm_label": "preset_problems"
     },
     {
@@ -4572,7 +4572,7 @@
       "source_file": "src/screens/BiostatsAssistantScreen.js",
       "source_location": "L68",
       "id": "screens_biostatsassistantscreen_solver_offsets",
-      "community": 20,
+      "community": 19,
       "norm_label": "solver_offsets"
     },
     {
@@ -4581,7 +4581,7 @@
       "source_file": "src/screens/BiostatsAssistantScreen.js",
       "source_location": "L70",
       "id": "screens_biostatsassistantscreen_biostatsassistantscreen",
-      "community": 20,
+      "community": 19,
       "norm_label": "biostatsassistantscreen()"
     },
     {
@@ -4590,7 +4590,7 @@
       "source_file": "src/screens/BiostatsAssistantScreen.js",
       "source_location": "L397",
       "id": "screens_biostatsassistantscreen_styles",
-      "community": 20,
+      "community": 19,
       "norm_label": "styles"
     },
     {
@@ -4626,7 +4626,7 @@
       "source_file": "src/screens/DashboardScreen.js",
       "source_location": "L1",
       "id": "src_screens_dashboardscreen_js",
-      "community": 27,
+      "community": 25,
       "norm_label": "dashboardscreen.js"
     },
     {
@@ -4635,7 +4635,7 @@
       "source_file": "src/screens/DashboardScreen.js",
       "source_location": "L28",
       "id": "screens_dashboardscreen_dashboardscreen",
-      "community": 27,
+      "community": 25,
       "norm_label": "dashboardscreen()"
     },
     {
@@ -4644,7 +4644,7 @@
       "source_file": "src/screens/DashboardScreen.js",
       "source_location": "L381",
       "id": "screens_dashboardscreen_styles",
-      "community": 27,
+      "community": 25,
       "norm_label": "styles"
     },
     {
@@ -4716,7 +4716,7 @@
       "source_file": "src/screens/GemsScreen.js",
       "source_location": "L1",
       "id": "src_screens_gemsscreen_js",
-      "community": 27,
+      "community": 25,
       "norm_label": "gemsscreen.js"
     },
     {
@@ -4725,7 +4725,7 @@
       "source_file": "src/screens/GemsScreen.js",
       "source_location": "L23",
       "id": "screens_gemsscreen_stripgemmarkup",
-      "community": 27,
+      "community": 25,
       "norm_label": "stripgemmarkup()"
     },
     {
@@ -4734,7 +4734,7 @@
       "source_file": "src/screens/GemsScreen.js",
       "source_location": "L32",
       "id": "screens_gemsscreen_gemsscreen",
-      "community": 27,
+      "community": 25,
       "norm_label": "gemsscreen()"
     },
     {
@@ -4743,7 +4743,7 @@
       "source_file": "src/screens/GemsScreen.js",
       "source_location": "L209",
       "id": "screens_gemsscreen_styles",
-      "community": 27,
+      "community": 25,
       "norm_label": "styles"
     },
     {
@@ -4833,7 +4833,7 @@
       "source_file": "src/screens/LibraryScreen.js",
       "source_location": "L159",
       "id": "screens_libraryscreen_libraryscreen",
-      "community": 27,
+      "community": 25,
       "norm_label": "libraryscreen()"
     },
     {
@@ -4851,7 +4851,7 @@
       "source_file": "src/screens/LoginScreen.js",
       "source_location": "L1",
       "id": "src_screens_loginscreen_js",
-      "community": 18,
+      "community": 21,
       "norm_label": "loginscreen.js"
     },
     {
@@ -4860,7 +4860,7 @@
       "source_file": "src/screens/LoginScreen.js",
       "source_location": "L53",
       "id": "screens_loginscreen_timeoutpromise",
-      "community": 18,
+      "community": 21,
       "norm_label": "timeoutpromise()"
     },
     {
@@ -4869,7 +4869,7 @@
       "source_file": "src/screens/LoginScreen.js",
       "source_location": "L58",
       "id": "screens_loginscreen_randomnoncestring",
-      "community": 18,
+      "community": 21,
       "norm_label": "randomnoncestring()"
     },
     {
@@ -4878,7 +4878,7 @@
       "source_file": "src/screens/LoginScreen.js",
       "source_location": "L66",
       "id": "screens_loginscreen_formatapplename",
-      "community": 18,
+      "community": 21,
       "norm_label": "formatapplename()"
     },
     {
@@ -4887,7 +4887,7 @@
       "source_file": "src/screens/LoginScreen.js",
       "source_location": "L74",
       "id": "screens_loginscreen_loginscreen",
-      "community": 18,
+      "community": 21,
       "norm_label": "loginscreen()"
     },
     {
@@ -4896,7 +4896,7 @@
       "source_file": "src/screens/LoginScreen.js",
       "source_location": "L695",
       "id": "screens_loginscreen_styles",
-      "community": 18,
+      "community": 21,
       "norm_label": "styles"
     },
     {
@@ -4977,7 +4977,7 @@
       "source_file": "src/screens/ProfileScreen.js",
       "source_location": "L1",
       "id": "src_screens_profilescreen_js",
-      "community": 24,
+      "community": 26,
       "norm_label": "profilescreen.js"
     },
     {
@@ -4986,7 +4986,7 @@
       "source_file": "src/screens/ProfileScreen.js",
       "source_location": "L24",
       "id": "screens_profilescreen_profilescreen",
-      "community": 24,
+      "community": 26,
       "norm_label": "profilescreen()"
     },
     {
@@ -4995,7 +4995,7 @@
       "source_file": "src/screens/ProfileScreen.js",
       "source_location": "L440",
       "id": "screens_profilescreen_styles",
-      "community": 24,
+      "community": 26,
       "norm_label": "styles"
     },
     {
@@ -5220,7 +5220,7 @@
       "source_file": "src/screens/UpdatesScreen.js",
       "source_location": "L1",
       "id": "src_screens_updatesscreen_js",
-      "community": 25,
+      "community": 27,
       "norm_label": "updatesscreen.js"
     },
     {
@@ -5229,7 +5229,7 @@
       "source_file": "src/screens/UpdatesScreen.js",
       "source_location": "L17",
       "id": "screens_updatesscreen_month_names",
-      "community": 25,
+      "community": 27,
       "norm_label": "month_names"
     },
     {
@@ -5238,7 +5238,7 @@
       "source_file": "src/screens/UpdatesScreen.js",
       "source_location": "L23",
       "id": "screens_updatesscreen_month_short",
-      "community": 25,
+      "community": 27,
       "norm_label": "month_short"
     },
     {
@@ -5247,7 +5247,7 @@
       "source_file": "src/screens/UpdatesScreen.js",
       "source_location": "L28",
       "id": "screens_updatesscreen_updatesscreen",
-      "community": 25,
+      "community": 27,
       "norm_label": "updatesscreen()"
     },
     {
@@ -5256,7 +5256,7 @@
       "source_file": "src/screens/UpdatesScreen.js",
       "source_location": "L249",
       "id": "screens_updatesscreen_styles",
-      "community": 25,
+      "community": 27,
       "norm_label": "styles"
     },
     {
@@ -5769,7 +5769,7 @@
       "source_file": "src/services/notificationService.js",
       "source_location": "L385",
       "id": "services_notificationservice_setupnotificationtaphandler",
-      "community": 26,
+      "community": 22,
       "norm_label": "setupnotificationtaphandler()"
     },
     {
@@ -6039,7 +6039,7 @@
       "source_file": "src/styles/theme.js",
       "source_location": "L5",
       "id": "styles_theme_useresponsive",
-      "community": 27,
+      "community": 25,
       "norm_label": "useresponsive()"
     },
     {
@@ -6345,7 +6345,7 @@
       "source_file": "src/utils/deviceUtils.js",
       "source_location": "L1",
       "id": "src_utils_deviceutils_js",
-      "community": 18,
+      "community": 21,
       "norm_label": "deviceutils.js"
     },
     {
@@ -6354,7 +6354,7 @@
       "source_file": "src/utils/deviceUtils.js",
       "source_location": "L8",
       "id": "utils_deviceutils_getdeviceid",
-      "community": 18,
+      "community": 21,
       "norm_label": "getdeviceid()"
     },
     {
@@ -6363,7 +6363,7 @@
       "source_file": "src/utils/deviceUtils.js",
       "source_location": "L32",
       "id": "utils_deviceutils_getdeviceinfo",
-      "community": 18,
+      "community": 21,
       "norm_label": "getdeviceinfo()"
     },
     {
@@ -6372,7 +6372,7 @@
       "source_file": "src/utils/deviceUtils.js",
       "source_location": "L56",
       "id": "utils_deviceutils_getdefaultdevicename",
-      "community": 18,
+      "community": 21,
       "norm_label": "getdefaultdevicename()"
     },
     {
@@ -6381,7 +6381,7 @@
       "source_file": "src/utils/deviceUtils.js",
       "source_location": "L61",
       "id": "utils_deviceutils_isfirstdevicelogin",
-      "community": 18,
+      "community": 21,
       "norm_label": "isfirstdevicelogin()"
     },
     {
@@ -6579,7 +6579,7 @@
       "source_file": "AGENTS.md",
       "source_location": "L1",
       "id": "agents_md",
-      "community": 21,
+      "community": 20,
       "norm_label": "agents.md"
     },
     {
@@ -6588,7 +6588,7 @@
       "source_file": "AGENTS.md",
       "source_location": "L1",
       "id": "the_app_agents_graph_first_protocol_graphify",
-      "community": 21,
+      "community": 20,
       "norm_label": "graph-first protocol (graphify)"
     },
     {
@@ -6597,7 +6597,7 @@
       "source_file": "AGENTS.md",
       "source_location": "L6",
       "id": "the_app_agents_workflow",
-      "community": 21,
+      "community": 20,
       "norm_label": "workflow"
     },
     {
@@ -6606,7 +6606,7 @@
       "source_file": "AGENTS.md",
       "source_location": "L11",
       "id": "the_app_agents_background_watcher",
-      "community": 21,
+      "community": 20,
       "norm_label": "background watcher"
     },
     {
@@ -6615,7 +6615,7 @@
       "source_file": "AGENTS.md",
       "source_location": "L16",
       "id": "the_app_agents_primary_tools",
-      "community": 21,
+      "community": 20,
       "norm_label": "primary tools"
     },
     {
@@ -6624,7 +6624,7 @@
       "source_file": "AGENTS.md",
       "source_location": "L21",
       "id": "the_app_agents_guidelines",
-      "community": 21,
+      "community": 20,
       "norm_label": "guidelines"
     },
     {
@@ -6633,7 +6633,7 @@
       "source_file": "AGENTS.md",
       "source_location": "L26",
       "id": "the_app_agents_graphify",
-      "community": 21,
+      "community": 20,
       "norm_label": "graphify"
     },
     {
@@ -6642,7 +6642,7 @@
       "source_file": "AGENTS.md",
       "source_location": "L37",
       "id": "the_app_agents_karpathy_coding_guidelines",
-      "community": 21,
+      "community": 20,
       "norm_label": "karpathy coding guidelines"
     },
     {
@@ -6651,7 +6651,7 @@
       "source_file": "AGENTS.md",
       "source_location": "L43",
       "id": "the_app_agents_1_think_before_coding",
-      "community": 21,
+      "community": 20,
       "norm_label": "1. think before coding"
     },
     {
@@ -6660,7 +6660,7 @@
       "source_file": "AGENTS.md",
       "source_location": "L53",
       "id": "the_app_agents_2_simplicity_first",
-      "community": 21,
+      "community": 20,
       "norm_label": "2. simplicity first"
     },
     {
@@ -6669,7 +6669,7 @@
       "source_file": "AGENTS.md",
       "source_location": "L65",
       "id": "the_app_agents_3_surgical_changes",
-      "community": 21,
+      "community": 20,
       "norm_label": "3. surgical changes"
     },
     {
@@ -6678,7 +6678,7 @@
       "source_file": "AGENTS.md",
       "source_location": "L81",
       "id": "the_app_agents_4_goal_driven_execution",
-      "community": 21,
+      "community": 20,
       "norm_label": "4. goal-driven execution"
     },
     {
@@ -7434,7 +7434,7 @@
       "source_file": "docs/play_store_metadata.md",
       "source_location": "L1",
       "id": "docs_play_store_metadata_md",
-      "community": 23,
+      "community": 24,
       "norm_label": "play_store_metadata.md"
     },
     {
@@ -7443,7 +7443,7 @@
       "source_file": "docs/play_store_metadata.md",
       "source_location": "L1",
       "id": "docs_play_store_metadata_google_play_store_metadata",
-      "community": 23,
+      "community": 24,
       "norm_label": "google play store metadata"
     },
     {
@@ -7452,7 +7452,7 @@
       "source_file": "docs/play_store_metadata.md",
       "source_location": "L3",
       "id": "docs_play_store_metadata_1_app_details",
-      "community": 23,
+      "community": 24,
       "norm_label": "1. app details"
     },
     {
@@ -7461,7 +7461,7 @@
       "source_file": "docs/play_store_metadata.md",
       "source_location": "L9",
       "id": "docs_play_store_metadata_comprehensive_knowledge_library",
-      "community": 23,
+      "community": 24,
       "norm_label": "\ud83d\udcda comprehensive knowledge library"
     },
     {
@@ -7470,7 +7470,7 @@
       "source_file": "docs/play_store_metadata.md",
       "source_location": "L14",
       "id": "docs_play_store_metadata_ai_tutor_chat_support",
-      "community": 23,
+      "community": 24,
       "norm_label": "\ud83e\udd16 ai tutor & chat support"
     },
     {
@@ -7479,7 +7479,7 @@
       "source_file": "docs/play_store_metadata.md",
       "source_location": "L17",
       "id": "docs_play_store_metadata_advanced_medical_calculators_tools",
-      "community": 23,
+      "community": 24,
       "norm_label": "\ud83e\uddee advanced medical calculators & tools"
     },
     {
@@ -7488,7 +7488,7 @@
       "source_file": "docs/play_store_metadata.md",
       "source_location": "L24",
       "id": "docs_play_store_metadata_interactive_quizzes_mock_exams",
-      "community": 23,
+      "community": 24,
       "norm_label": "\ud83d\udcdd interactive quizzes & mock exams"
     },
     {
@@ -7497,7 +7497,7 @@
       "source_file": "docs/play_store_metadata.md",
       "source_location": "L27",
       "id": "docs_play_store_metadata_personal_study_statistics",
-      "community": 23,
+      "community": 24,
       "norm_label": "\ud83d\udcca personal study statistics"
     },
     {
@@ -7506,7 +7506,7 @@
       "source_file": "docs/play_store_metadata.md",
       "source_location": "L30",
       "id": "docs_play_store_metadata_why_choose_stroma",
-      "community": 23,
+      "community": 24,
       "norm_label": "\ud83c\udf1f why choose stroma?"
     },
     {
@@ -7515,7 +7515,7 @@
       "source_file": "docs/play_store_metadata.md",
       "source_location": "L37",
       "id": "docs_play_store_metadata_2_graphics_assets_required_for_play_console",
-      "community": 23,
+      "community": 24,
       "norm_label": "2. graphics assets required for play console"
     },
     {
@@ -7524,7 +7524,7 @@
       "source_file": "docs/play_store_metadata.md",
       "source_location": "L43",
       "id": "docs_play_store_metadata_3_link_resources",
-      "community": 23,
+      "community": 24,
       "norm_label": "3. link resources"
     },
     {
@@ -13776,9 +13776,9 @@
       "source_file": "src/screens/ReadingScreen.js",
       "source_location": "L29",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_readingscreen_js",
-      "target": "src_config_firebase_js",
-      "confidence_score": 1.0
+      "target": "src_config_firebase_js"
     },
     {
       "relation": "imports_from",
@@ -13974,9 +13974,9 @@
       "source_file": "src/screens/ReadingScreen.js",
       "source_location": "L29",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_readingscreen_js",
-      "target": "config_firebase_db",
-      "confidence_score": 1.0
+      "target": "config_firebase_db"
     },
     {
       "relation": "imports",
@@ -21283,5 +21283,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "4055a8e04027a8ab31d61b93f153d1fc5aa02e13"
+  "built_at_commit": "dd365afb0e4c775a17fddcec0291bec2c5127833"
 }
