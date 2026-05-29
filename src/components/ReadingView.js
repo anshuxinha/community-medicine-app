@@ -715,8 +715,19 @@ const ReadingView = ({
   contentKey,
 }) => {
   console.log("ReadingView: illustrations prop", illustrations);
+  if (title === "Fats and Essential Fatty Acids" || contentKey === "theory:11-3") {
+    console.log("ReadingView DEBUG for 11-3:");
+    console.log("contentKey:", contentKey);
+    console.log("content snippet:", content ? content.slice(0, 500) : "empty");
+  }
   const insets = useSafeAreaInsets();
-  const blocks = useMemo(() => parseMarkdown(content || "", { isGem }), [content, isGem]);
+  const blocks = useMemo(() => {
+    const res = parseMarkdown(content || "", { isGem });
+    if (title === "Fats and Essential Fatty Acids" || contentKey === "theory:11-3") {
+      console.log("parsed blocks for 11-3:", JSON.stringify(res.slice(0, 5), null, 2));
+    }
+    return res;
+  }, [content, isGem]);
   const mergedBlocks = useMemo(
     () => mergeBlocksWithIllustrations(blocks, illustrations),
     [blocks, illustrations],
