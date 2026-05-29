@@ -4075,7 +4075,7 @@
       "label": "styles",
       "file_type": "code",
       "source_file": "src/components/ReadingView.js",
-      "source_location": "L1839",
+      "source_location": "L1849",
       "id": "components_readingview_styles",
       "community": 7,
       "norm_label": "styles"
@@ -21420,5 +21420,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "cbfaeb1bdb3f98defcc766307d306ffdd6dc88ed"
+  "built_at_commit": "2bdd7a2b25afa221fc209ad3ac067e65e59e6504"
 }
