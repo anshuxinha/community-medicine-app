@@ -1201,7 +1201,6 @@ const ReadingView = ({
                   key={itemIndex}
                   disabled={!isHighlightMode}
                   onPress={() => onToggleHighlight(hlKey)}
-                  style={{ width: "100%" }}
                 >
                   {row}
                 </Pressable>
@@ -1239,7 +1238,6 @@ const ReadingView = ({
                   key={itemIndex}
                   disabled={!isHighlightMode}
                   onPress={() => onToggleHighlight(hlKey)}
-                  style={{ width: "100%" }}
                 >
                   {row}
                 </Pressable>
@@ -1565,7 +1563,7 @@ const ReadingView = ({
             {section ? section.toUpperCase() : ""}
           </Text>
           <Text style={styles.chapterTitle} selectable={false}>
-            {title || ""}
+            {(title || "") + " [V5]"}
           </Text>
           <View style={styles.chapterDivider} />
         </View>
