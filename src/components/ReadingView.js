@@ -2043,6 +2043,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     marginBottom: 4,
+    width: "100%",
   },
   bulletDot: {
     color: theme.colors.secondary,
@@ -2057,6 +2058,7 @@ const styles = StyleSheet.create({
     color: theme.colors.textTitle,
     fontSize: 15.5,
     lineHeight: 24,
+    paddingBottom: 4,
   },
   nestedBulletGroup: {
     marginVertical: 2,
@@ -2066,6 +2068,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     marginBottom: 4,
+    width: "100%",
   },
   nestedBulletDot: {
     color: theme.colors.secondary,
@@ -2080,6 +2083,7 @@ const styles = StyleSheet.create({
     color: theme.colors.textTitle,
     fontSize: 14.5,
     lineHeight: 22,
+    paddingBottom: 4,
   },
 
   // ── Highlights (gold left-border style) ──
