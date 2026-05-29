@@ -1559,7 +1559,7 @@ const ReadingView = ({
             {section ? section.toUpperCase() : ""}
           </Text>
           <Text style={styles.chapterTitle} selectable={false}>
-            {(title || "") + " [V6]"}
+            {title || ""}
           </Text>
           <View style={styles.chapterDivider} />
         </View>
