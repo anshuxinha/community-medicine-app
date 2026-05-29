@@ -25,6 +25,8 @@ import {
   subscribeHighlights,
   saveHighlights,
 } from "../services/highlightService";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../config/firebase";
 
 const ReadingScreen = ({ route, navigation }) => {
   const {
@@ -88,6 +90,19 @@ const ReadingScreen = ({ route, navigation }) => {
       "updated"
     );
   });
+
+  // ── Debug Logging to Firestore ──
+  useEffect(() => {
+    if (effectiveContentKey === "theory:11-3" && user?.uid) {
+      const userDocRef = doc(db, "users", user.uid);
+      updateDoc(userDocRef, {
+        debug_11_3_content: effectiveContent ? effectiveContent.slice(0, 1000) : "empty",
+        debug_11_3_timestamp: new Date().toISOString(),
+      }).catch((err) => {
+        console.warn("Failed to write debug info to Firestore:", err);
+      });
+    }
+  }, [effectiveContentKey, user?.uid, effectiveContent]);
 
   // ── Annotations ──
   useEffect(() => {
