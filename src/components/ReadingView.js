@@ -1206,12 +1206,12 @@ const ReadingView = ({
                     isHl ? styles.userHighlightSentence : null,
                   ]}
                 >
-                  <Text style={styles.bulletDot} selectable={false}>
-                    {"\u2022"}
+                  <Text style={styles.bulletText} selectable={false}>
+                    <Text style={styles.bulletDot} selectable={false}>
+                      {"\u2022   "}
+                    </Text>
+                    {renderFormattedText(item, null, hasSearchMatch && !isHighlightMode)}
                   </Text>
-                  <View style={{ flex: 1 }}>
-                    {renderFormattedText(item, styles.bulletText, hasSearchMatch && !isHighlightMode)}
-                  </View>
                 </View>
               );
               return (
@@ -1244,12 +1244,12 @@ const ReadingView = ({
                     isHl ? styles.userHighlightSentence : null,
                   ]}
                 >
-                  <Text style={styles.nestedBulletDot} selectable={false}>
-                    -
+                  <Text style={styles.nestedBulletText} selectable={false}>
+                    <Text style={styles.nestedBulletDot} selectable={false}>
+                      {"-   "}
+                    </Text>
+                    {renderFormattedText(item, null, hasSearchMatch && !isHighlightMode)}
                   </Text>
-                  <View style={{ flex: 1 }}>
-                    {renderFormattedText(item, styles.nestedBulletText, hasSearchMatch && !isHighlightMode)}
-                  </View>
                 </View>
               );
               return (
@@ -1583,7 +1583,7 @@ const ReadingView = ({
             {section ? section.toUpperCase() : ""}
           </Text>
           <Text style={styles.chapterTitle} selectable={false}>
-            {(title || "") + " [V2]"}
+            {(title || "") + " [V3]"}
           </Text>
           <View style={styles.chapterDivider} />
         </View>
@@ -2044,8 +2044,6 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   bulletRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
     marginBottom: 4,
     width: "100%",
   },
@@ -2053,8 +2051,6 @@ const styles = StyleSheet.create({
     color: theme.colors.secondary,
     fontSize: 16,
     lineHeight: 24,
-    marginRight: 8,
-    marginLeft: 4,
   },
   bulletText: {
     color: theme.colors.textTitle,
@@ -2067,8 +2063,6 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   nestedBulletRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
     marginBottom: 4,
     width: "100%",
   },
@@ -2076,8 +2070,6 @@ const styles = StyleSheet.create({
     color: theme.colors.secondary,
     fontSize: 14,
     lineHeight: 22,
-    marginRight: 8,
-    marginLeft: 4,
   },
   nestedBulletText: {
     color: theme.colors.textTitle,
