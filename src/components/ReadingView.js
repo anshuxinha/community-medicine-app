@@ -1188,10 +1188,8 @@ const ReadingView = ({
                     isHl ? styles.userHighlightSentence : null,
                   ]}
                 >
+                  <Text style={styles.bulletDot} selectable={false}>{"\u2022"}</Text>
                   <Text style={styles.bulletText} selectable={false}>
-                    <Text style={styles.bulletDot} selectable={false}>
-                      {"\u2022   "}
-                    </Text>
                     {renderFormattedText(item, null, hasSearchMatch && !isHighlightMode)}
                   </Text>
                 </View>
@@ -1225,10 +1223,8 @@ const ReadingView = ({
                     isHl ? styles.userHighlightSentence : null,
                   ]}
                 >
+                  <Text style={styles.nestedBulletDot} selectable={false}>{"\u2013"}</Text>
                   <Text style={styles.nestedBulletText} selectable={false}>
-                    <Text style={styles.nestedBulletDot} selectable={false}>
-                      {"-   "}
-                    </Text>
                     {renderFormattedText(item, null, hasSearchMatch && !isHighlightMode)}
                   </Text>
                 </View>
@@ -1563,7 +1559,7 @@ const ReadingView = ({
             {section ? section.toUpperCase() : ""}
           </Text>
           <Text style={styles.chapterTitle} selectable={false}>
-            {(title || "") + " [V5]"}
+            {(title || "") + " [V6]"}
           </Text>
           <View style={styles.chapterDivider} />
         </View>
@@ -2024,38 +2020,42 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   bulletRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
     marginBottom: 4,
-    width: "100%",
   },
   bulletDot: {
     color: theme.colors.secondary,
     fontSize: 16,
     lineHeight: 24,
+    width: 20,
   },
   bulletText: {
+    flex: 1,
     color: theme.colors.textTitle,
     fontSize: 15.5,
     lineHeight: 24,
-    paddingBottom: 4,
   },
   nestedBulletGroup: {
     marginVertical: 2,
     marginLeft: 20,
   },
   nestedBulletRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
     marginBottom: 4,
-    width: "100%",
   },
   nestedBulletDot: {
     color: theme.colors.secondary,
     fontSize: 14,
     lineHeight: 22,
+    width: 20,
   },
   nestedBulletText: {
+    flex: 1,
     color: theme.colors.textTitle,
     fontSize: 14.5,
     lineHeight: 22,
-    paddingBottom: 4,
   },
 
   // ── Highlights (gold left-border style) ──
