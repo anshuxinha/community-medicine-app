@@ -159,6 +159,10 @@
     "mtime": 1780033181.032891,
     "hash": "ac7cc8809ce437a954c8714b441fcc24"
   },
+  "D:\\The App\\scratch\\read_debug_info.js": {
+    "mtime": 1780033581.3808286,
+    "hash": "b931764ee93c48f7951f6b52e3c59751"
+  },
   "D:\\The App\\scripts\\apply_staged_library_updates.py": {
     "mtime": 1777265229.3049736,
     "hash": "54936b9b06f3ffedf69217c6f0accca5"
@@ -292,8 +296,8 @@
     "hash": "97abdb8fd522462f616d41d6c847c9b9"
   },
   "D:\\The App\\src\\components\\ReadingView.js": {
-    "mtime": 1780033163.88104,
-    "hash": "29c2be4079e0b15ebcac56b74e3a0131"
+    "mtime": 1780033782.711352,
+    "hash": "e8ba2b9856274d9d4bc24aaf4cfb34bd"
   },
   "D:\\The App\\src\\components\\UpdateBottomSheet.js": {
     "mtime": 1778850625.507952,
