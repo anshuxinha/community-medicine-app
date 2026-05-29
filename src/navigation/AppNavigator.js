@@ -32,6 +32,7 @@ import SESCalculatorScreen from "../screens/SESCalculatorScreen";
 import DietarySurveyScreen from "../screens/DietarySurveyScreen";
 import AnthropometryScreen from "../screens/AnthropometryScreen";
 import NFHSComparisonScreen from "../screens/NFHSComparisonScreen";
+import NFHSRuralUrbanScreen from "../screens/NFHSRuralUrbanScreen";
 import VirtualMuseumScreen from "../screens/VirtualMuseumScreen";
 import BiostatsAssistantScreen from "../screens/BiostatsAssistantScreen";
 import NotificationsScreen from "../screens/NotificationsScreen";
@@ -213,6 +214,11 @@ const AppNavigator = () => {
               name="NFHSComparison"
               component={NFHSComparisonScreen}
               options={{ title: "NFHS-5 vs NFHS-6" }}
+            />
+            <Stack.Screen
+              name="NFHSRuralUrban"
+              component={NFHSRuralUrbanScreen}
+              options={{ title: "NFHS-6 Rural vs Urban" }}
             />
 
             {/* ── Other Modules ── */}

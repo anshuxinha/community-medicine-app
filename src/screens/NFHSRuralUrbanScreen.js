@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Card, SegmentedButtons, Text } from "react-native-paper";
+import { Card, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { theme } from "../styles/theme";
@@ -10,12 +10,6 @@ import {
   NFHS_COMPARISON_SOURCES,
 } from "../data/nfhsComparisonData";
 
-const AREA_LABELS = {
-  total: "India",
-  urban: "Urban",
-  rural: "Rural",
-};
-
 const formatValue = (value, unit) => {
   if (value === null || value === undefined) return "NR";
   if (unit === "females/1000 males") return `${Math.round(value)}`;
@@ -23,69 +17,77 @@ const formatValue = (value, unit) => {
   return `${value.toFixed(1)}%`;
 };
 
-const getDeltaTone = (delta, lowerIsBetter) => {
-  if (delta === null || delta === undefined) return "neutral";
-  if (Math.abs(delta) < 0.05 || lowerIsBetter === null) return "neutral";
-  const isImprovement = lowerIsBetter ? delta < 0 : delta > 0;
-  return isImprovement ? "good" : "watch";
+const getGapTone = (gap, lowerIsBetter) => {
+  if (gap === null || lowerIsBetter === null) return "neutral";
+  if (Math.abs(gap) < 0.05) return "neutral";
+  const ruralBetter = lowerIsBetter ? gap < 0 : gap > 0;
+  return ruralBetter ? "rural" : "urban";
 };
 
-const IndicatorRow = ({ item, area }) => {
-  const nfhs6Value = item.nfhs6[area];
-  const hasComparison = nfhs6Value !== null && nfhs6Value !== undefined;
-  const delta = hasComparison ? nfhs6Value - item.nfhs5 : null;
-  const tone = getDeltaTone(delta, item.lowerIsBetter);
-  const maxValue = Math.max(item.nfhs5, hasComparison ? nfhs6Value : 0, 1);
-  const nfhs5Width = `${Math.max((item.nfhs5 / maxValue) * 100, 8)}%`;
-  const nfhs6Width = hasComparison ? `${Math.max((nfhs6Value / maxValue) * 100, 8)}%` : "0%";
+const RuralUrbanRow = ({ item }) => {
+  const rural = item.nfhs6.rural;
+  const urban = item.nfhs6.urban;
+  const hasComparison = rural !== null && urban !== null && rural !== undefined && urban !== undefined;
+  const gap = hasComparison ? rural - urban : null;
+  const tone = getGapTone(gap, item.lowerIsBetter);
+  const maxValue = Math.max(hasComparison ? rural : 0, hasComparison ? urban : 0, 1);
+  const ruralWidth = hasComparison ? `${Math.max((rural / maxValue) * 100, 8)}%` : "0%";
+  const urbanWidth = hasComparison ? `${Math.max((urban / maxValue) * 100, 8)}%` : "0%";
 
   return (
-    <View style={styles.indicatorRow}>
+    <View style={styles.row}>
       <View style={styles.rowHeader}>
         <Text style={styles.indicatorTitle}>{item.title}</Text>
-        <View style={[styles.deltaPill, styles[`${tone}Pill`]]}>
+        <View style={[styles.gapPill, styles[`${tone}Pill`]]}>
           <MaterialIcons
-            name={!hasComparison ? "remove" : delta < 0 ? "south" : delta > 0 ? "north" : "remove"}
-            size={14}
-            color={tone === "good" ? "#047857" : tone === "watch" ? "#B45309" : "#4B5563"}
+            name="swap-horiz"
+            size={15}
+            color={tone === "rural" ? "#047857" : tone === "urban" ? "#1D4ED8" : "#4B5563"}
           />
-          <Text style={[styles.deltaText, styles[`${tone}Text`]]}>
-            {hasComparison ? Math.abs(delta).toFixed(item.unit === "females/1000 males" ? 0 : 1) : "NR"}
+          <Text style={[styles.gapText, styles[`${tone}Text`]]}>
+            {hasComparison ? Math.abs(gap).toFixed(item.unit === "females/1000 males" ? 0 : 1) : "NR"}
           </Text>
         </View>
       </View>
 
-      <View style={styles.matrixRow}>
-        <View style={styles.yearCell}>
-          <Text style={styles.yearLabel}>NFHS-5</Text>
-          <Text style={styles.nfhs5Value}>{formatValue(item.nfhs5, item.unit)}</Text>
+      <View style={styles.valueRow}>
+        <View style={styles.valueCell}>
+          <Text style={styles.cellLabel}>Rural</Text>
+          <Text style={styles.ruralValue}>{formatValue(rural, item.unit)}</Text>
         </View>
-        <View style={styles.yearCell}>
-          <Text style={styles.yearLabel}>NFHS-6</Text>
-          <Text style={styles.nfhs6Value}>{formatValue(nfhs6Value, item.unit)}</Text>
+        <View style={styles.valueCell}>
+          <Text style={styles.cellLabel}>Urban</Text>
+          <Text style={styles.urbanValue}>{formatValue(urban, item.unit)}</Text>
         </View>
       </View>
 
       <View style={styles.barArea}>
         <View style={styles.barTrack}>
-          <View style={[styles.barFill, styles.nfhs5Bar, { width: nfhs5Width }]} />
+          {hasComparison ? <View style={[styles.barFill, styles.ruralBar, { width: ruralWidth }]} /> : null}
         </View>
         <View style={styles.barTrack}>
-          {hasComparison ? <View style={[styles.barFill, styles.nfhs6Bar, { width: nfhs6Width }]} /> : null}
+          {hasComparison ? <View style={[styles.barFill, styles.urbanBar, { width: urbanWidth }]} /> : null}
         </View>
       </View>
 
-      {item.note ? <Text style={styles.noteText}>{item.note}</Text> : null}
+      <Text style={styles.gapNote}>
+        {hasComparison
+          ? `${gap > 0 ? "Rural" : "Urban"} is higher by ${Math.abs(gap).toFixed(
+              item.unit === "females/1000 males" ? 0 : 1
+            )}${item.unit === "%" ? " percentage points" : ""}.`
+          : "Not reported in the attached NFHS-6 India fact sheet."}
+      </Text>
     </View>
   );
 };
 
-const NFHSComparisonScreen = () => {
-  const [area, setArea] = useState("total");
+const NFHSRuralUrbanScreen = () => {
   const [category, setCategory] = useState("headline");
-
   const filteredIndicators = useMemo(
-    () => NFHS_COMPARISON_INDICATORS.filter((item) => item.category === category),
+    () =>
+      NFHS_COMPARISON_INDICATORS.filter(
+        (item) => item.category === category && item.nfhs6.rural !== undefined && item.nfhs6.urban !== undefined
+      ),
     [category]
   );
 
@@ -93,44 +95,21 @@ const NFHSComparisonScreen = () => {
     <SafeAreaView style={styles.safeArea} edges={["left", "right", "bottom"]}>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.hero}>
-          <Text style={styles.kicker}>NFHS-5 vs NFHS-6</Text>
-          <Text style={styles.title}>Master Matrix</Text>
-          <Text style={styles.subtitle}>Side-by-side comparison of India key indicators</Text>
-
-          <View style={styles.yearCards}>
-            <View style={[styles.yearBadge, styles.nfhs5Badge]}>
-              <Text style={styles.badgeTitle}>NFHS-5</Text>
-              <Text style={styles.badgeSubtitle}>2019-21</Text>
+          <Text style={styles.kicker}>NFHS-6</Text>
+          <Text style={styles.title}>Rural vs Urban</Text>
+          <Text style={styles.subtitle}>2023-24 India fact sheet comparison</Text>
+          <View style={styles.heroBadges}>
+            <View style={[styles.heroBadge, styles.ruralBadge]}>
+              <Text style={styles.badgeTitle}>Rural</Text>
             </View>
             <View style={styles.vsCircle}>
               <Text style={styles.vsText}>VS</Text>
             </View>
-            <View style={[styles.yearBadge, styles.nfhs6Badge]}>
-              <Text style={styles.badgeTitle}>NFHS-6</Text>
-              <Text style={styles.badgeSubtitle}>2023-24</Text>
+            <View style={[styles.heroBadge, styles.urbanBadge]}>
+              <Text style={styles.badgeTitle}>Urban</Text>
             </View>
           </View>
         </View>
-
-        <Card style={styles.controlCard}>
-          <Card.Content>
-            <Text style={styles.controlLabel}>NFHS-6 area lens</Text>
-            <SegmentedButtons
-              value={area}
-              onValueChange={setArea}
-              buttons={[
-                { value: "total", label: "India" },
-                { value: "rural", label: "Rural" },
-                { value: "urban", label: "Urban" },
-              ]}
-              style={styles.segmented}
-            />
-            <Text style={styles.helperText}>
-              NFHS-5 column uses national totals. NFHS-6 can be viewed as {AREA_LABELS[area].toLowerCase()} values
-              from the attached fact sheet.
-            </Text>
-          </Card.Content>
-        </Card>
 
         <ScrollView
           horizontal
@@ -158,25 +137,21 @@ const NFHSComparisonScreen = () => {
                 <Text style={styles.matrixTitle}>
                   {NFHS_COMPARISON_CATEGORIES.find((item) => item.id === category)?.label} Indicators
                 </Text>
-                <Text style={styles.matrixSubtitle}>{AREA_LABELS[area]} lens</Text>
+                <Text style={styles.matrixSubtitle}>NFHS-6 rural and urban columns only</Text>
               </View>
-              <MaterialIcons name="compare-arrows" size={28} color={theme.colors.secondary} />
+              <MaterialIcons name="location-city" size={28} color={theme.colors.secondary} />
             </View>
             {filteredIndicators.map((item) => (
-              <IndicatorRow key={item.id} item={item} area={area} />
+              <RuralUrbanRow key={item.id} item={item} />
             ))}
           </Card.Content>
         </Card>
 
         <Card style={styles.sourceCard}>
           <Card.Content>
-            <Text style={styles.sourceTitle}>Sources</Text>
-            {NFHS_COMPARISON_SOURCES.map((source) => (
-              <View key={source.label} style={styles.sourceItem}>
-                <Text style={styles.sourceLabel}>{source.label}</Text>
-                <Text style={styles.sourceDetail}>{source.detail}</Text>
-              </View>
-            ))}
+            <Text style={styles.sourceTitle}>Source</Text>
+            <Text style={styles.sourceLabel}>{NFHS_COMPARISON_SOURCES[0].label}</Text>
+            <Text style={styles.sourceDetail}>{NFHS_COMPARISON_SOURCES[0].detail}</Text>
           </Card.Content>
         </Card>
       </ScrollView>
@@ -194,70 +169,58 @@ const styles = StyleSheet.create({
     paddingBottom: 32,
   },
   hero: {
-    backgroundColor: "#08111F",
+    backgroundColor: "#0F172A",
     borderRadius: 8,
     padding: 22,
     marginBottom: 16,
   },
   kicker: {
     color: "#F8FAFC",
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: "900",
     letterSpacing: 0,
     textAlign: "center",
   },
   title: {
-    color: "#A855F7",
-    fontSize: 34,
+    color: "#38BDF8",
+    fontSize: 33,
     fontWeight: "900",
     letterSpacing: 0,
     textAlign: "center",
     marginTop: 4,
   },
   subtitle: {
-    alignSelf: "center",
-    color: "#FACC15",
-    borderWidth: 1,
-    borderColor: "#FACC15",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 7,
+    color: "#F8FAFC",
     fontSize: 14,
     fontWeight: "800",
-    textTransform: "uppercase",
-    marginTop: 14,
+    textAlign: "center",
+    marginTop: 8,
   },
-  yearCards: {
+  heroBadges: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 24,
+    marginTop: 22,
   },
-  yearBadge: {
+  heroBadge: {
     flex: 1,
     borderRadius: 8,
     paddingVertical: 16,
     alignItems: "center",
     borderWidth: 1,
   },
-  nfhs5Badge: {
-    backgroundColor: "#3B1479",
-    borderColor: "#8B5CF6",
+  ruralBadge: {
+    backgroundColor: "#065F46",
+    borderColor: "#34D399",
   },
-  nfhs6Badge: {
-    backgroundColor: "#047A3D",
-    borderColor: "#22C55E",
+  urbanBadge: {
+    backgroundColor: "#1D4ED8",
+    borderColor: "#60A5FA",
   },
   badgeTitle: {
     color: "#FFFFFF",
-    fontSize: 28,
+    fontSize: 25,
     fontWeight: "900",
-  },
-  badgeSubtitle: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "700",
-    marginTop: 2,
   },
   vsCircle: {
     width: 54,
@@ -272,25 +235,6 @@ const styles = StyleSheet.create({
     color: "#111827",
     fontSize: 24,
     fontWeight: "900",
-  },
-  controlCard: {
-    backgroundColor: theme.colors.surfacePrimary,
-    borderRadius: 8,
-    marginBottom: 16,
-  },
-  controlLabel: {
-    color: theme.colors.textTitle,
-    fontSize: 16,
-    fontWeight: "800",
-    marginBottom: 10,
-  },
-  segmented: {
-    marginBottom: 10,
-  },
-  helperText: {
-    color: theme.colors.textSecondary,
-    fontSize: 13,
-    lineHeight: 18,
   },
   categoryTabs: {
     gap: 8,
@@ -332,7 +276,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     marginTop: 2,
   },
-  indicatorRow: {
+  row: {
     borderTopWidth: 1,
     borderTopColor: "#E5E7EB",
     paddingTop: 14,
@@ -351,7 +295,7 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     lineHeight: 20,
   },
-  deltaPill: {
+  gapPill: {
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 8,
@@ -359,53 +303,53 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     gap: 2,
   },
-  goodPill: {
+  ruralPill: {
     backgroundColor: "#DCFCE7",
   },
-  watchPill: {
-    backgroundColor: "#FEF3C7",
+  urbanPill: {
+    backgroundColor: "#DBEAFE",
   },
   neutralPill: {
     backgroundColor: "#E5E7EB",
   },
-  deltaText: {
+  gapText: {
     fontSize: 12,
     fontWeight: "900",
   },
-  goodText: {
+  ruralText: {
     color: "#047857",
   },
-  watchText: {
-    color: "#B45309",
+  urbanText: {
+    color: "#1D4ED8",
   },
   neutralText: {
     color: "#4B5563",
   },
-  matrixRow: {
+  valueRow: {
     flexDirection: "row",
     gap: 10,
     marginTop: 10,
   },
-  yearCell: {
+  valueCell: {
     flex: 1,
     backgroundColor: "#F8FAFC",
     borderRadius: 8,
     padding: 10,
   },
-  yearLabel: {
+  cellLabel: {
     color: "#64748B",
     fontSize: 11,
     fontWeight: "900",
     textTransform: "uppercase",
   },
-  nfhs5Value: {
-    color: "#5B21B6",
+  ruralValue: {
+    color: "#047857",
     fontSize: 22,
     fontWeight: "900",
     marginTop: 2,
   },
-  nfhs6Value: {
-    color: "#15803D",
+  urbanValue: {
+    color: "#1D4ED8",
     fontSize: 22,
     fontWeight: "900",
     marginTop: 2,
@@ -424,13 +368,13 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 8,
   },
-  nfhs5Bar: {
-    backgroundColor: "#7C3AED",
+  ruralBar: {
+    backgroundColor: "#10B981",
   },
-  nfhs6Bar: {
-    backgroundColor: "#16A34A",
+  urbanBar: {
+    backgroundColor: "#3B82F6",
   },
-  noteText: {
+  gapNote: {
     color: theme.colors.textSecondary,
     fontSize: 12,
     lineHeight: 17,
@@ -446,9 +390,6 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     marginBottom: 10,
   },
-  sourceItem: {
-    marginBottom: 10,
-  },
   sourceLabel: {
     color: theme.colors.textTitle,
     fontSize: 13,
@@ -462,4 +403,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NFHSComparisonScreen;
+export default NFHSRuralUrbanScreen;

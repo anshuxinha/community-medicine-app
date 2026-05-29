@@ -50,6 +50,16 @@ const FieldToolboxScreen = ({ navigation }) => {
                         </View>
                     </Card.Content>
                 </Card>
+
+                <Card style={styles.card} onPress={() => navigation.navigate('NFHSRuralUrban')}>
+                    <Card.Content style={styles.cardContent}>
+                        <MaterialIcons name="location-city" size={40} color={theme.colors.secondary} />
+                        <View style={styles.textContainer}>
+                            <Text style={styles.cardTitle}>NFHS-6 Rural vs Urban</Text>
+                            <Text style={styles.cardDesc}>Compare NFHS-6 India fact sheet indicators by residence</Text>
+                        </View>
+                    </Card.Content>
+                </Card>
             </ScrollView>
         </SafeAreaView>
     );
