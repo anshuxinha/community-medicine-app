@@ -136,28 +136,28 @@
     "hash": "d86677b7acb85461ac8aa6026ba52141"
   },
   "D:\\The App\\scratch\\format_data.js": {
-    "mtime": 1777954874.6410227,
-    "hash": "868d15fc1c9845259c75220ce86264d2"
+    "mtime": 1780033181.0255034,
+    "hash": "83cefe66460297929780f8265afc37e5"
   },
   "D:\\The App\\scratch\\inject_style.js": {
-    "mtime": 1777957155.4982417,
-    "hash": "401c7aab066e4a90bad68b9369008b0d"
+    "mtime": 1780033181.0265026,
+    "hash": "b1f4620b99c9ece75d6306cb2053d7d0"
   },
   "D:\\The App\\scratch\\list-bunny-libs.js": {
-    "mtime": 1777821658.160189,
-    "hash": "2e84af4d1f81cf2ca5d4c0a28a2098ed"
+    "mtime": 1780033181.0265026,
+    "hash": "a6a6a11b5b15246c443114a2c3dcea8e"
   },
   "D:\\The App\\scratch\\list-bunny-videos.js": {
-    "mtime": 1777821686.895701,
-    "hash": "a4ab0d677d5a53ad9caf94440a453980"
+    "mtime": 1780033181.0290318,
+    "hash": "cc6dfc83d1217c6a54eb0260b1b41c44"
   },
   "D:\\The App\\scratch\\list-videos.js": {
-    "mtime": 1777821602.7211404,
-    "hash": "5560095267a3577f773c6a201ab578ca"
+    "mtime": 1780033181.0323775,
+    "hash": "0040d014dc636d0a84420475618367c1"
   },
   "D:\\The App\\scratch\\parse-bunny-dump.js": {
-    "mtime": 1777821766.5411088,
-    "hash": "a5d973d1c0f46f980e159c9b5aee520c"
+    "mtime": 1780033181.032891,
+    "hash": "ac7cc8809ce437a954c8714b441fcc24"
   },
   "D:\\The App\\scripts\\apply_staged_library_updates.py": {
     "mtime": 1777265229.3049736,
@@ -235,10 +235,6 @@
     "mtime": 1776771290.9485075,
     "hash": "f024e7b721a3c582829bc7b05c03a814"
   },
-  "D:\\The App\\scripts\\search_db.js": {
-    "mtime": 1780030623.4093907,
-    "hash": "92685cb075cd14c43320b861f5fdedec"
-  },
   "D:\\The App\\scripts\\set_admin.js": {
     "mtime": 1777560719.6075256,
     "hash": "ac70e79e9a4b9bc3aedddbaf334b0080"
@@ -258,14 +254,6 @@
   "D:\\The App\\scripts\\test-notifications.js": {
     "mtime": 1778653376.1817062,
     "hash": "291c1f70fe7ea27f98e9c779ab8bd33e"
-  },
-  "D:\\The App\\scripts\\test_registry.js": {
-    "mtime": 1780032149.8457706,
-    "hash": "0f0ba121f68b80ec69366b70f29fa9b6"
-  },
-  "D:\\The App\\scripts\\test_render_output.js": {
-    "mtime": 1780032177.948441,
-    "hash": "b596847b466687a82649fd9498ab0f7a"
   },
   "D:\\The App\\scripts\\update-video-category.js": {
     "mtime": 1778652808.5589137,
@@ -304,8 +292,8 @@
     "hash": "97abdb8fd522462f616d41d6c847c9b9"
   },
   "D:\\The App\\src\\components\\ReadingView.js": {
-    "mtime": 1780032340.7535403,
-    "hash": "8077de53caa8d0a906ff9baef8102f11"
+    "mtime": 1780033163.88104,
+    "hash": "29c2be4079e0b15ebcac56b74e3a0131"
   },
   "D:\\The App\\src\\components\\UpdateBottomSheet.js": {
     "mtime": 1778850625.507952,
