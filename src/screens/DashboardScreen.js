@@ -15,6 +15,7 @@ import {
   Portal,
 } from "react-native-paper";
 import * as Updates from "expo-updates";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import recentUpdates from "../data/updates.json";
 import publicHealthDays from "../data/publicHealthDays.json";
@@ -25,6 +26,8 @@ import UpdateDetailDialog from "../components/UpdateDetailDialog";
 import { scheduleAllNotifications } from "../services/notificationService";
 import { auth } from "../config/firebase";
 import { theme, useResponsive } from "../styles/theme";
+
+const DASHBOARD_NEW_BADGES_STORAGE_KEY = "dashboardNewBadgesSeen:v1";
 
 const UpdateDownloadIndicator = () => {
   const {
@@ -109,6 +112,7 @@ const DashboardScreen = ({ navigation }) => {
   const { readingProgress, currentStreak, studyScore, user, refreshFromCloud, isPremium } =
     useContext(AppContext);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [seenNewBadges, setSeenNewBadges] = useState({});
   const { isTablet, horizontalPadding, scaleFactor, contentMaxWidth } =
     useResponsive();
 
@@ -116,6 +120,46 @@ const DashboardScreen = ({ navigation }) => {
   useEffect(() => {
     if (refreshFromCloud) refreshFromCloud();
   }, []);
+
+  useEffect(() => {
+    let mounted = true;
+
+    AsyncStorage.getItem(DASHBOARD_NEW_BADGES_STORAGE_KEY)
+      .then((storedBadges) => {
+        if (!mounted || !storedBadges) return;
+        const parsedBadges = JSON.parse(storedBadges);
+        if (parsedBadges && typeof parsedBadges === "object" && !Array.isArray(parsedBadges)) {
+          setSeenNewBadges(parsedBadges);
+        }
+      })
+      .catch((error) => {
+        console.warn("Failed to load dashboard NEW badges:", error?.message);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const markDashboardBadgeSeen = (badgeKey) => {
+    setSeenNewBadges((previousBadges) => {
+      if (previousBadges[badgeKey]) return previousBadges;
+
+      const nextBadges = {
+        ...previousBadges,
+        [badgeKey]: true,
+      };
+
+      AsyncStorage.setItem(
+        DASHBOARD_NEW_BADGES_STORAGE_KEY,
+        JSON.stringify(nextBadges),
+      ).catch((error) => {
+        console.warn("Failed to save dashboard NEW badge:", error?.message);
+      });
+
+      return nextBadges;
+    });
+  };
 
   const [visible, setVisible] = React.useState(false);
   const [healthDaysVisible, setHealthDaysVisible] = useState(false);
@@ -300,10 +344,15 @@ const DashboardScreen = ({ navigation }) => {
         <View style={styles.quickAccessRow}>
           <Card
             style={styles.quickCard}
-            onPress={() => navigation.navigate("FieldToolbox")}
+            onPress={() => {
+              markDashboardBadgeSeen("toolbox");
+              navigation.navigate("FieldToolbox");
+            }}
           >
             <Card.Content style={styles.quickCardContent}>
-              <Text style={styles.quickNewBadge}>NEW</Text>
+              {!seenNewBadges.toolbox ? (
+                <Text style={styles.quickNewBadge}>NEW</Text>
+              ) : null}
               <MaterialIcons
                 name="build"
                 size={32}
@@ -316,10 +365,15 @@ const DashboardScreen = ({ navigation }) => {
           </Card>
           <Card
             style={[styles.quickCard, { marginLeft: 8 }]}
-            onPress={() => navigation.navigate("PremiumGuard", { destination: "Gems" })}
+            onPress={() => {
+              markDashboardBadgeSeen("gems");
+              navigation.navigate("PremiumGuard", { destination: "Gems" });
+            }}
           >
             <Card.Content style={styles.quickCardContent}>
-              <Text style={styles.quickNewBadge}>NEW</Text>
+              {!seenNewBadges.gems ? (
+                <Text style={styles.quickNewBadge}>NEW</Text>
+              ) : null}
               <MaterialIcons
                 name="diamond"
                 size={32}

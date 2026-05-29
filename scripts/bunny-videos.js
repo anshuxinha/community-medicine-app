@@ -207,13 +207,18 @@ const upsertVideoDoc = async (db, config, video, options = {}) => {
   const existing = snapshot.exists ? snapshot.data() : {};
   const thumbnailUrl = await resolveThumbnailUrl(config, video, existing);
   const payload = toVideoDoc(config, video, { ...options, thumbnailUrl }, existing);
+  const isNew = !snapshot.exists;
+
+  if (isNew) {
+    payload.isNew = true;
+  }
 
   console.log(`Upserting video ${video.guid} (${payload.title}) in category ${payload.category}...`);
   await docRef.set(payload, { merge: true });
 
   return {
     id: video.guid,
-    isNew: !snapshot.exists,
+    isNew,
     wasNotified: Boolean(existing.notifiedAt),
     payload,
   };

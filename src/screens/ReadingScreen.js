@@ -53,6 +53,7 @@ const ReadingScreen = ({ route, navigation }) => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const speechSessionRef = useRef(0);
   const speechQueueRef = useRef([]);
+  const openedUpdateRef = useRef(false);
   const [annotations, setAnnotations] = useState([]);
   const [userHighlights, setUserHighlights] = useState({});
 
@@ -269,6 +270,28 @@ const ReadingScreen = ({ route, navigation }) => {
   };
 
   const bookmarked = isBookmarked(bookmarkPayload);
+
+  useEffect(() => {
+    if (
+      !openedUpdateRef.current &&
+      sessionHighlightUpdates &&
+      effectiveTitle &&
+      effectiveContentKey &&
+      effectiveContentSignature
+    ) {
+      openedUpdateRef.current = true;
+      markAsRead({
+        itemTitle: effectiveTitle,
+        contentKey: effectiveContentKey,
+        contentSignature: effectiveContentSignature,
+      });
+    }
+  }, [
+    effectiveContentKey,
+    effectiveContentSignature,
+    effectiveTitle,
+    sessionHighlightUpdates,
+  ]);
 
   const handleReachEnd = () => {
     if (effectiveTitle && effectiveContentKey && effectiveContentSignature) {

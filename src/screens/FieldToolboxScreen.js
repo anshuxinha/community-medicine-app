@@ -1,11 +1,56 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { Text, Card } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { theme } from '../styles/theme';
 
+const TOOLBOX_NEW_BADGES_STORAGE_KEY = 'toolboxNewBadgesSeen:v1';
+
 const FieldToolboxScreen = ({ navigation }) => {
+    const [seenNewBadges, setSeenNewBadges] = useState({});
+
+    useEffect(() => {
+        let mounted = true;
+
+        AsyncStorage.getItem(TOOLBOX_NEW_BADGES_STORAGE_KEY)
+            .then((storedBadges) => {
+                if (!mounted || !storedBadges) return;
+                const parsedBadges = JSON.parse(storedBadges);
+                if (parsedBadges && typeof parsedBadges === 'object' && !Array.isArray(parsedBadges)) {
+                    setSeenNewBadges(parsedBadges);
+                }
+            })
+            .catch((error) => {
+                console.warn('Failed to load toolbox NEW badges:', error?.message);
+            });
+
+        return () => {
+            mounted = false;
+        };
+    }, []);
+
+    const markToolboxBadgeSeen = (badgeKey) => {
+        setSeenNewBadges((previousBadges) => {
+            if (previousBadges[badgeKey]) return previousBadges;
+
+            const nextBadges = {
+                ...previousBadges,
+                [badgeKey]: true,
+            };
+
+            AsyncStorage.setItem(
+                TOOLBOX_NEW_BADGES_STORAGE_KEY,
+                JSON.stringify(nextBadges),
+            ).catch((error) => {
+                console.warn('Failed to save toolbox NEW badge:', error?.message);
+            });
+
+            return nextBadges;
+        });
+    };
+
     return (
         <SafeAreaView style={styles.safeArea} edges={['left', 'right', 'bottom']}>
             <ScrollView contentContainerStyle={styles.container}>
@@ -41,26 +86,42 @@ const FieldToolboxScreen = ({ navigation }) => {
                     </Card.Content>
                 </Card>
 
-                <Card style={styles.card} onPress={() => navigation.navigate('NFHSComparison')}>
+                <Card
+                    style={styles.card}
+                    onPress={() => {
+                        markToolboxBadgeSeen('nfhsComparison');
+                        navigation.navigate('NFHSComparison');
+                    }}
+                >
                     <Card.Content style={styles.cardContent}>
                         <MaterialIcons name="compare-arrows" size={40} color={theme.colors.secondary} />
                         <View style={styles.textContainer}>
                             <View style={styles.titleRow}>
                                 <Text style={styles.cardTitle}>NFHS-5 vs NFHS-6</Text>
-                                <Text style={styles.newBadge}>NEW</Text>
+                                {!seenNewBadges.nfhsComparison ? (
+                                    <Text style={styles.newBadge}>NEW</Text>
+                                ) : null}
                             </View>
                             <Text style={styles.cardDesc}>Compare India key indicators with NFHS-6 rural and urban context</Text>
                         </View>
                     </Card.Content>
                 </Card>
 
-                <Card style={styles.card} onPress={() => navigation.navigate('NFHSRuralUrban')}>
+                <Card
+                    style={styles.card}
+                    onPress={() => {
+                        markToolboxBadgeSeen('nfhsRuralUrban');
+                        navigation.navigate('NFHSRuralUrban');
+                    }}
+                >
                     <Card.Content style={styles.cardContent}>
                         <MaterialIcons name="location-city" size={40} color={theme.colors.secondary} />
                         <View style={styles.textContainer}>
                             <View style={styles.titleRow}>
                                 <Text style={styles.cardTitle}>NFHS-6 Rural vs Urban</Text>
-                                <Text style={styles.newBadge}>NEW</Text>
+                                {!seenNewBadges.nfhsRuralUrban ? (
+                                    <Text style={styles.newBadge}>NEW</Text>
+                                ) : null}
                             </View>
                             <Text style={styles.cardDesc}>Compare NFHS-6 India fact sheet indicators by residence</Text>
                         </View>

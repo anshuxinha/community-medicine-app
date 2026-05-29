@@ -261,9 +261,10 @@ const styles = StyleSheet.create({
     borderColor: "#DDD6FE",
   },
   newBadge: {
-    backgroundColor: theme.colors.warning,
-    color: "#FFFFFF",
-    fontWeight: "700",
+    backgroundColor: "#F3E8FF",
+    color: theme.colors.primaryDark,
+    fontSize: 10,
+    fontWeight: "900",
   },
 });
 

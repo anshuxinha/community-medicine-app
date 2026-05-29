@@ -23,6 +23,7 @@ import {
 } from "react-native-paper";
 import { WebView } from "react-native-webview";
 import { MaterialIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   collection,
   addDoc,
@@ -60,6 +61,7 @@ import {
 } from "../utils/screenCaptureProtection";
 
 const { width } = Dimensions.get("window");
+const SEEN_VIDEO_IDS_STORAGE_KEY = "seenVideoIds:v1";
 
 const pdfViewerHtml = (pdfUrl) => `
 <!DOCTYPE html>
@@ -266,6 +268,48 @@ const VideosScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState("doubts");
   const [fullscreenPdf, setFullscreenPdf] = useState(false);
   const [pdfOpenedFromList, setPdfOpenedFromList] = useState(false);
+  const [seenVideoIds, setSeenVideoIds] = useState({});
+
+  useEffect(() => {
+    let mounted = true;
+
+    AsyncStorage.getItem(SEEN_VIDEO_IDS_STORAGE_KEY)
+      .then((storedIds) => {
+        if (!mounted || !storedIds) return;
+        const parsedIds = JSON.parse(storedIds);
+        if (parsedIds && typeof parsedIds === "object" && !Array.isArray(parsedIds)) {
+          setSeenVideoIds(parsedIds);
+        }
+      })
+      .catch((error) => {
+        console.warn("Failed to load seen video IDs:", error?.message);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const markVideoSeen = (videoId) => {
+    if (!videoId) return;
+
+    setSeenVideoIds((previousIds) => {
+      if (previousIds[videoId]) return previousIds;
+
+      const nextIds = {
+        ...previousIds,
+        [videoId]: true,
+      };
+
+      AsyncStorage.setItem(SEEN_VIDEO_IDS_STORAGE_KEY, JSON.stringify(nextIds)).catch(
+        (error) => {
+          console.warn("Failed to save seen video ID:", error?.message);
+        },
+      );
+
+      return nextIds;
+    });
+  };
 
   useEffect(() => {
     setActiveTab("doubts");
@@ -806,9 +850,16 @@ const VideosScreen = ({ navigation }) => {
     const duration = formatDuration(item.duration);
     const publishedAt = formatPublishedDate(item.publishedAt || item.createdAt);
     const thumbnailSource = getThumbnailSource(item.thumbnailUrl);
+    const showNewBadge = item.isNew === true && !seenVideoIds[item.id];
 
     return (
-      <Pressable style={styles.videoItem} onPress={() => setSelectedVideo(item)}>
+      <Pressable
+        style={styles.videoItem}
+        onPress={() => {
+          markVideoSeen(item.id);
+          setSelectedVideo(item);
+        }}
+      >
         <View style={styles.videoLeft}>
           <ImageBackground
             source={thumbnailSource}
@@ -827,9 +878,10 @@ const VideosScreen = ({ navigation }) => {
         </View>
         
         <View style={styles.videoRight}>
-          <Text style={styles.itemTitle} numberOfLines={2}>
-            {item.title || "Untitled video"}
-          </Text>
+          <View style={styles.itemTitleRow}>
+            <Text style={styles.itemTitle}>{item.title || "Untitled video"}</Text>
+            {showNewBadge ? <Text style={styles.videoNewBadge}>NEW</Text> : null}
+          </View>
           <Text style={styles.itemMeta}>
             {publishedAt}  •  {item.categoryLabel || "Lecture"}
           </Text>
@@ -1295,11 +1347,28 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 4,
   },
+  itemTitleRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    flexWrap: "wrap",
+    gap: 6,
+  },
   itemTitle: {
     color: theme.colors.textTitle,
     fontSize: 15,
     fontWeight: "800",
     lineHeight: 20,
+    flexShrink: 1,
+  },
+  videoNewBadge: {
+    backgroundColor: "#F3E8FF",
+    color: theme.colors.primaryDark,
+    borderRadius: 6,
+    overflow: "hidden",
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    fontSize: 10,
+    fontWeight: "900",
   },
   itemMeta: {
     color: theme.colors.textTertiary,
