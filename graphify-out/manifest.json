@@ -235,6 +235,10 @@
     "mtime": 1776771290.9485075,
     "hash": "f024e7b721a3c582829bc7b05c03a814"
   },
+  "D:\\The App\\scripts\\search_db.js": {
+    "mtime": 1780030623.4093907,
+    "hash": "92685cb075cd14c43320b861f5fdedec"
+  },
   "D:\\The App\\scripts\\set_admin.js": {
     "mtime": 1777560719.6075256,
     "hash": "ac70e79e9a4b9bc3aedddbaf334b0080"
@@ -254,6 +258,14 @@
   "D:\\The App\\scripts\\test-notifications.js": {
     "mtime": 1778653376.1817062,
     "hash": "291c1f70fe7ea27f98e9c779ab8bd33e"
+  },
+  "D:\\The App\\scripts\\test_registry.js": {
+    "mtime": 1780032149.8457706,
+    "hash": "0f0ba121f68b80ec69366b70f29fa9b6"
+  },
+  "D:\\The App\\scripts\\test_render_output.js": {
+    "mtime": 1780032177.948441,
+    "hash": "b596847b466687a82649fd9498ab0f7a"
   },
   "D:\\The App\\scripts\\update-video-category.js": {
     "mtime": 1778652808.5589137,
@@ -292,7 +304,7 @@
     "hash": "97abdb8fd522462f616d41d6c847c9b9"
   },
   "D:\\The App\\src\\components\\ReadingView.js": {
-    "mtime": 1779626550.5357962,
+    "mtime": 1780032340.7535403,
     "hash": "8077de53caa8d0a906ff9baef8102f11"
   },
   "D:\\The App\\src\\components\\UpdateBottomSheet.js": {
