@@ -1209,7 +1209,9 @@ const ReadingView = ({
                   <Text style={styles.bulletDot} selectable={false}>
                     {"\u2022"}
                   </Text>
-                  {renderFormattedText(item, styles.bulletText, hasSearchMatch && !isHighlightMode)}
+                  <View style={{ flex: 1 }}>
+                    {renderFormattedText(item, styles.bulletText, hasSearchMatch && !isHighlightMode)}
+                  </View>
                 </View>
               );
               return (
@@ -1245,7 +1247,9 @@ const ReadingView = ({
                   <Text style={styles.nestedBulletDot} selectable={false}>
                     -
                   </Text>
-                  {renderFormattedText(item, styles.nestedBulletText, hasSearchMatch && !isHighlightMode)}
+                  <View style={{ flex: 1 }}>
+                    {renderFormattedText(item, styles.nestedBulletText, hasSearchMatch && !isHighlightMode)}
+                  </View>
                 </View>
               );
               return (
@@ -2053,8 +2057,6 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   bulletText: {
-    flex: 1,
-    flexShrink: 1,
     color: theme.colors.textTitle,
     fontSize: 15.5,
     lineHeight: 24,
@@ -2078,8 +2080,6 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   nestedBulletText: {
-    flex: 1,
-    flexShrink: 1,
     color: theme.colors.textTitle,
     fontSize: 14.5,
     lineHeight: 22,
