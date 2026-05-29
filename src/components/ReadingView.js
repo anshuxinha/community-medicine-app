@@ -19,8 +19,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { theme } from "../styles/theme";
 import { normalizeUpdatedSnippet } from "../utils/contentRegistry";
-import { auth, db } from "../config/firebase";
-import { doc, updateDoc } from "firebase/firestore";
 
 const stripBold = (text) => text.replace(/\*\*(.+?)\*\*/g, "$1");
 const normalizeAnchorText = (text = "") =>
@@ -717,25 +715,9 @@ const ReadingView = ({
   contentKey,
 }) => {
   console.log("ReadingView: illustrations prop", illustrations);
-  if (title === "Fats and Essential Fatty Acids" || contentKey === "theory:11-3") {
-    console.log("ReadingView DEBUG for 11-3:");
-    console.log("contentKey:", contentKey);
-    console.log("content snippet:", content ? content.slice(0, 500) : "empty");
-  }
   const insets = useSafeAreaInsets();
   const blocks = useMemo(() => {
-    const res = parseMarkdown(content || "", { isGem });
-    if (title === "Fats and Essential Fatty Acids" || contentKey === "theory:11-3") {
-      console.log("parsed blocks for 11-3:", JSON.stringify(res.slice(0, 5), null, 2));
-      if (auth.currentUser) {
-        const userDocRef = doc(db, "users", auth.currentUser.uid);
-        updateDoc(userDocRef, {
-          debug_11_3_blocks: JSON.stringify(res.slice(0, 5)),
-          debug_11_3_timestamp_blocks: new Date().toISOString(),
-        }).catch(err => console.warn("Failed to update debug blocks:", err));
-      }
-    }
-    return res;
+    return parseMarkdown(content || "", { isGem });
   }, [content, isGem]);
   const mergedBlocks = useMemo(
     () => mergeBlocksWithIllustrations(blocks, illustrations),
@@ -1197,8 +1179,6 @@ const ReadingView = ({
               const hlKey = `${index}:b${itemIndex}`;
               const isHl = userHighlights[hlKey];
               const hasSearchMatch = blockContainsSearch(item);
-              const isFirstBullet = itemIndex === 0;
-              const displayText = isFirstBullet ? item + " [Test]" : item;
               const row = (
                 <View
                   key={itemIndex}
@@ -1212,7 +1192,7 @@ const ReadingView = ({
                     <Text style={styles.bulletDot} selectable={false}>
                       {"\u2022   "}
                     </Text>
-                    {renderFormattedText(displayText, null, hasSearchMatch && !isHighlightMode)}
+                    {renderFormattedText(item, null, hasSearchMatch && !isHighlightMode)}
                   </Text>
                 </View>
               );
@@ -1585,7 +1565,7 @@ const ReadingView = ({
             {section ? section.toUpperCase() : ""}
           </Text>
           <Text style={styles.chapterTitle} selectable={false}>
-            {(title || "") + " [V4]"}
+            {title || ""}
           </Text>
           <View style={styles.chapterDivider} />
         </View>
