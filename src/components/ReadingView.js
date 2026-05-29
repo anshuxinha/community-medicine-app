@@ -1197,6 +1197,8 @@ const ReadingView = ({
               const hlKey = `${index}:b${itemIndex}`;
               const isHl = userHighlights[hlKey];
               const hasSearchMatch = blockContainsSearch(item);
+              const isFirstBullet = itemIndex === 0;
+              const displayText = isFirstBullet ? item + " [Test]" : item;
               const row = (
                 <View
                   key={itemIndex}
@@ -1210,7 +1212,7 @@ const ReadingView = ({
                     <Text style={styles.bulletDot} selectable={false}>
                       {"\u2022   "}
                     </Text>
-                    {renderFormattedText(item, null, hasSearchMatch && !isHighlightMode)}
+                    {renderFormattedText(displayText, null, hasSearchMatch && !isHighlightMode)}
                   </Text>
                 </View>
               );
@@ -1583,7 +1585,7 @@ const ReadingView = ({
             {section ? section.toUpperCase() : ""}
           </Text>
           <Text style={styles.chapterTitle} selectable={false}>
-            {(title || "") + " [V3]"}
+            {(title || "") + " [V4]"}
           </Text>
           <View style={styles.chapterDivider} />
         </View>
