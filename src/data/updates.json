@@ -1,10 +1,24 @@
 [
     {
+        "id": "df02bbb0-83af-4937-b488-a45f2e7cd98b",
+        "date": "2026-05-30",
+        "title": "Ayushman Bharat Digital Mission Surpasses 90 Crore ABHA Accounts",
+        "summary": "The Ayushman Bharat Digital Mission has achieved a major milestone, crossing 90 crore Ayushman Bharat Health Accounts (ABHAs) in 2026. Growth surged from 14.7 crore in 2021 to 90 crore, with Uttar Pradesh leading at 15.3 crore. These 14-digit digital identities enable secure, consent-based health record sharing, with women accounting for nearly half of all registered ABHA holders.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2266979"
+    },
+    {
         "id": "3cb52305-531d-424a-89a4-3c42d04ca6df",
         "date": "2026-05-29",
         "title": "India Releases National Family Health Survey-6",
         "summary": "The NFHS-6 (2023-24) reveals significant progress in maternal and child health. Institutional deliveries reached 90.6%, and antenatal care coverage rose to 95.9%. Full immunization coverage improved from 83.8% to 87.1%, while child nutrition indicators showed positive trends, with stunting reduced by 17% and severe wasting by 32%. The survey covered 6.79 lakh households across 715 Indian districts.",
         "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2266600"
+    },
+    {
+        "id": "e26432c0-5500-4f3e-af55-20cffb24b741",
+        "date": "2026-05-29",
+        "title": "India Launches Tobacco-Free Educational Institutions (ToFEI) Application",
+        "summary": "To mark World No Tobacco Day 2026, Union Health Secretary Punya Salila Srivastava launched the Tobacco-Free Educational Institutions (ToFEI) pilot application. The digital tool monitors tobacco-free norms and prohibits sales within 100 yards of campuses. Initially piloting in Rajasthan, Meghalaya, and Maharashtra, the app facilitates self-assessment and reporting to protect students from nicotine addiction and ensure healthier learning environments.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2266568"
     },
     {
         "id": "dd92b465-91f6-4af0-996c-74f06c88a373",
@@ -54,19 +68,5 @@
         "title": "NHA Concludes AB PM-JAY AI Hackathon",
         "summary": "The National Health Authority, IndiaAI Mission, and IISc Bengaluru concluded the AB PM-JAY Auto-Adjudication Hackathon Showcase 2026. Over 3,500 participants competed to develop AI-driven solutions for health claims adjudication to enhance transparency and speed. Winning teams received cash awards up to \u20b95 lakh, with the NHA focusing on scaling these innovations to prevent fraud and improve programme integrity.",
         "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2259366"
-    },
-    {
-        "id": "5d01c5e7-7180-4449-b01b-25844a5802c5",
-        "date": "2026-05-08",
-        "title": "Union Health Ministry Launches Integrated Training for Primary Healthcare Teams",
-        "summary": "Union Minister Jagat Prakash Nadda launched a competency-driven Integrated Training framework for primary healthcare teams. This initiative shifts from fragmented capacity building to a structured model, empowering the frontline workforce. Notably, it supports women who comprise over 70% of the workforce, including ASHAs, ANMs, and CHOs, to ensure high-quality, people-centered care and last-mile delivery for Viksit Bharat @2047.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2258965"
-    },
-    {
-        "id": "c6ed39fe-2fa5-4779-9b02-0f1c06d355a5",
-        "date": "2026-05-07",
-        "title": "Launch of JANANI Digital Platform for Maternal and Child Healthcare",
-        "summary": "The Ministry of Health and Family Welfare introduced JANANI, a digital platform for longitudinal health records of women of reproductive age. Upgrading the RCH portal, it has already achieved 1.34 crore beneficiary registrations, 30 lakh pregnant women registrations, and 30 lakh MCH cards. The system uses QR-enabled cards to track antenatal, postnatal, and newborn care, ensuring seamless continuity of care.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2258625"
     }
 ]
