@@ -1,16 +1,16 @@
 # Graph Report - The App  (2026-06-01)
 
 ## Corpus Check
-- 130 files · ~946,192 words
+- 130 files · ~946,210 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 891 nodes · 1333 edges · 97 communities (78 shown, 19 thin omitted)
+- 891 nodes · 1333 edges · 98 communities (79 shown, 19 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 1 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `1b717870`
+- Built from commit: `a639ff7a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -97,6 +97,7 @@
 - [[_COMMUNITY_Community 79|Community 79]]
 - [[_COMMUNITY_Community 80|Community 80]]
 - [[_COMMUNITY_Community 81|Community 81]]
+- [[_COMMUNITY_Community 82|Community 82]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `theme` - 32 edges
@@ -122,7 +123,7 @@
 - `LibraryScreen()` --calls--> `useResponsive()`  [EXTRACTED]
   src/screens/LibraryScreen.js → src/styles/theme.js
 
-## Communities (97 total, 19 thin omitted)
+## Communities (98 total, 19 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.07
@@ -141,8 +142,8 @@ Cohesion: 0.06
 Nodes (34): 1. Think Before Coding, 2. Simplicity First, 3. Surgical Changes, 4. Goal-Driven Execution, Anti-Patterns Summary, code:python (def export_users(format='json'):), code:diff (def validate_user(user_data):), code:diff (- def upload_file(file_path, destination):) (+26 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.11
-Nodes (16): auth, AppProvider(), normalizeBookmarks(), sanitizeCloudState(), sanitizeReadItemVersions(), styles, PLAN_METADATA, styles (+8 more)
+Cohesion: 0.12
+Nodes (16): auth, AppContext, AppProvider(), normalizeBookmarks(), sanitizeCloudState(), sanitizeReadItemVersions(), styles, PLAN_METADATA (+8 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.1
@@ -153,28 +154,28 @@ Cohesion: 0.16
 Nodes (24): admin, buildThumbnailUrl(), bunnyFetch(), discoverPullZoneHostname(), dotenv, ensureFirebaseApp(), fs, getExpoPushTokens() (+16 more)
 
 ### Community 7 - "Community 7"
-Cohesion: 0.1
-Nodes (16): BASE_MENU_ITEMS, styles, { width }, appIcon, styles, AppContext, DashboardScreen(), styles (+8 more)
-
-### Community 8 - "Community 8"
 Cohesion: 0.12
 Nodes (14): buildTableCellSet(), clamp(), getBlockAnchorText(), isNtruHsHeading(), isNtruHsMetaLine(), normalizeAnchorText(), parseMarkdown(), parseTextTable() (+6 more)
 
-### Community 9 - "Community 9"
+### Community 8 - "Community 8"
 Cohesion: 0.2
 Nodes (18): biomedicalWaste(), chainOfInfection(), coldChain(), { createCanvas }, disasterCycle(), drawArrow(), drawCard(), drawTitle() (+10 more)
 
+### Community 9 - "Community 9"
+Cohesion: 0.13
+Nodes (12): appIcon, styles, DashboardScreen(), styles, GemsScreen(), styles, LibraryScreen(), MONTH_NAMES (+4 more)
+
 ### Community 10 - "Community 10"
+Cohesion: 0.2
+Nodes (14): app, db, firebaseConfig, styles, getCacheKey(), loadAnnotations(), saveAnnotations(), subscribeAnnotations() (+6 more)
+
+### Community 11 - "Community 11"
 Cohesion: 0.17
 Nodes (16): buildContactSheet(), clampCrop(), CONTACT_SHEET_PATH, { createCanvas, loadImage }, CROP_SPECS, cropRegion(), ensureDir(), fs (+8 more)
 
-### Community 11 - "Community 11"
+### Community 12 - "Community 12"
 Cohesion: 0.19
 Nodes (12): NFHS_COMPARISON_CATEGORIES, NFHS_COMPARISON_INDICATORS, NFHS_COMPARISON_SOURCES, AREA_LABELS, formatValue(), getDeltaTone(), IndicatorRow(), styles (+4 more)
-
-### Community 12 - "Community 12"
-Cohesion: 0.21
-Nodes (13): app, db, firebaseConfig, styles, getCacheKey(), loadAnnotations(), saveAnnotations(), subscribeAnnotations() (+5 more)
 
 ### Community 13 - "Community 13"
 Cohesion: 0.17
@@ -370,9 +371,13 @@ Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
 ### Community 65 - "Community 65"
 Cohesion: 0.4
+Nodes (3): BASE_MENU_ITEMS, styles, { width }
+
+### Community 66 - "Community 66"
+Cohesion: 0.4
 Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
-### Community 70 - "Community 70"
+### Community 71 - "Community 71"
 Cohesion: 0.67
 Nodes (3): extract_text_from_pdf(), main(), Extracts text from a PDF file.     This is a placeholder function. In a real ap
 
@@ -384,11 +389,11 @@ Nodes (3): extract_text_from_pdf(), main(), Extracts text from a PDF file.     T
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `theme` connect `Community 5` to `Community 0`, `Community 1`, `Community 34`, `Community 4`, `Community 37`, `Community 7`, `Community 8`, `Community 11`, `Community 12`, `Community 50`, `Community 22`, `Community 23`, `Community 31`?**
+- **Why does `theme` connect `Community 5` to `Community 0`, `Community 65`, `Community 34`, `Community 1`, `Community 4`, `Community 37`, `Community 7`, `Community 9`, `Community 10`, `Community 12`, `Community 50`, `Community 22`, `Community 23`, `Community 31`?**
   _High betweenness centrality (0.022) - this node is a cross-community bridge._
-- **Why does `db` connect `Community 12` to `Community 1`, `Community 4`, `Community 5`, `Community 7`, `Community 8`, `Community 16`, `Community 50`, `Community 23`, `Community 30`?**
+- **Why does `db` connect `Community 10` to `Community 65`, `Community 1`, `Community 4`, `Community 5`, `Community 7`, `Community 16`, `Community 50`, `Community 23`, `Community 30`?**
   _High betweenness centrality (0.006) - this node is a cross-community bridge._
-- **Why does `AppContext` connect `Community 7` to `Community 0`, `Community 1`, `Community 34`, `Community 4`, `Community 12`, `Community 16`, `Community 50`, `Community 23`, `Community 31`?**
+- **Why does `AppContext` connect `Community 4` to `Community 0`, `Community 65`, `Community 34`, `Community 1`, `Community 9`, `Community 10`, `Community 16`, `Community 50`, `Community 23`, `Community 31`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **What connects `admin`, `path`, `SERVICE_ACCOUNT_PATH` to the rest of the system?**
   _322 weakly-connected nodes found - possible documentation gaps or missing edges._

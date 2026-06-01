@@ -19,8 +19,13 @@ export const enableScreenCaptureProtection = async () => {
   if (isBypassed) {
     return false;
   }
-  if (Platform.OS === "android" && ScreenCaptureProtection) {
-    return ScreenCaptureProtection.enableProtection();
+  if (Platform.OS === "android") {
+    if (ScreenCaptureProtection) {
+      return ScreenCaptureProtection.enableProtection();
+    } else {
+      await ScreenCapture.preventScreenCaptureAsync();
+      return true;
+    }
   } else if (Platform.OS === "ios") {
     await ScreenCapture.preventScreenCaptureAsync();
     return true;
@@ -30,8 +35,13 @@ export const enableScreenCaptureProtection = async () => {
 
 export const disableScreenCaptureProtection = async () => {
   if (isBypassed) {
-    if (Platform.OS === "android" && ScreenCaptureProtection) {
-      return ScreenCaptureProtection.disableProtection();
+    if (Platform.OS === "android") {
+      if (ScreenCaptureProtection) {
+        return ScreenCaptureProtection.disableProtection();
+      } else {
+        await ScreenCapture.allowScreenCaptureAsync();
+        return true;
+      }
     } else if (Platform.OS === "ios") {
       await ScreenCapture.allowScreenCaptureAsync();
       return true;
