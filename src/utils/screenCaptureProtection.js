@@ -1,4 +1,5 @@
 import { NativeModules, Platform, NativeEventEmitter } from "react-native";
+import * as ScreenCapture from "expo-screen-capture";
 
 const { ScreenCaptureProtection } = NativeModules;
 
@@ -20,13 +21,21 @@ export const enableScreenCaptureProtection = async () => {
   }
   if (Platform.OS === "android" && ScreenCaptureProtection) {
     return ScreenCaptureProtection.enableProtection();
+  } else if (Platform.OS === "ios") {
+    await ScreenCapture.preventScreenCaptureAsync();
+    return true;
   }
   return false;
 };
 
 export const disableScreenCaptureProtection = async () => {
-  if (Platform.OS === "android" && ScreenCaptureProtection) {
-    return ScreenCaptureProtection.disableProtection();
+  if (isBypassed) {
+    if (Platform.OS === "android" && ScreenCaptureProtection) {
+      return ScreenCaptureProtection.disableProtection();
+    } else if (Platform.OS === "ios") {
+      await ScreenCapture.allowScreenCaptureAsync();
+      return true;
+    }
   }
   return false;
 };

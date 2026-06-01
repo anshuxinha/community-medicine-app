@@ -476,15 +476,15 @@ export const AppProvider = ({ children }) => {
       disableScreenCaptureProtection();
     } else {
       setScreenCaptureBypass(false);
+      enableScreenCaptureProtection();
     }
   }, [user]);
 
   // Initialize screen capture protection on app start
   useEffect(() => {
     const initScreenCaptureProtection = async () => {
-      if (Platform.OS === "android") {
-        await enableScreenCaptureProtection();
-      } else if (Platform.OS === "ios") {
+      await enableScreenCaptureProtection();
+      if (Platform.OS === "ios") {
         const unsubscribe = subscribeToScreenCaptureChange((isCaptured) => {
           setIsScreenCapturePrevented(isCaptured);
         });
