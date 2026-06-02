@@ -58,6 +58,16 @@ export const isScreenBeingCaptured = async () => {
 };
 
 export const subscribeToScreenCaptureChange = (callback) => {
+  if (Platform.OS === "ios") {
+    const subscription = ScreenCapture.addScreenshotListener(() => {
+      callback(true);
+      setTimeout(() => {
+        callback(false);
+      }, 3000);
+    });
+    return () => subscription.remove();
+  }
+
   if (eventEmitter) {
     const subscription = eventEmitter.addListener(
       "onScreenCaptureChange",

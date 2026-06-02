@@ -471,7 +471,13 @@ export const AppProvider = ({ children }) => {
       isLoggingOutRef.current = false;
     }
 
-    if (user?.email?.toLowerCase() === "anshuxinha@gmail.com") {
+    const userEmail = user?.email?.toLowerCase();
+    const isAdmin =
+      user?.isAdmin === true ||
+      userEmail === "anshuxinha@gmail.com" ||
+      userEmail === "kaushikeec@gmail.com";
+
+    if (isAdmin) {
       setScreenCaptureBypass(true);
       disableScreenCaptureProtection();
     } else {
