@@ -226,14 +226,27 @@ const NFHSTrendsScreen = () => {
     };
 
     // Render definitions
-    const definitionRows = Object.entries(definitionsByRound)
-        .filter(([round, def]) => def)
-        .map(([round, def]) => (
+    const definitionRows = ROUND_ORDER.map(round => {
+        const def = definitionsByRound[round];
+        const hasData = chartParams.traces.some(t => t.y[ROUND_ORDER.indexOf(round)] !== null);
+        
+        return (
             <View key={round} style={styles.defRow}>
                 <Text style={styles.defRound}>{round} ({YEARS[round]}):</Text>
-                <Text style={styles.defText}>{def}</Text>
+                <Text style={styles.defText}>
+                    {def ? def : (hasData ? "Indicator was measured in this round; definition details are not available in the database." : "This indicator was not measured or is not comparable in this round.")}
+                </Text>
             </View>
-        ));
+        );
+    });
+
+    const nfhs12Unavailable = useMemo(() => {
+        const nfhs1Idx = ROUND_ORDER.indexOf("NFHS-1");
+        const nfhs2Idx = ROUND_ORDER.indexOf("NFHS-2");
+        const has1 = chartParams.traces.some(t => t.y[nfhs1Idx] !== null);
+        const has2 = chartParams.traces.some(t => t.y[nfhs2Idx] !== null);
+        return !has1 && !has2;
+    }, [chartParams.traces]);
 
     // WebView HTML content with CDN Plotly
     const webViewHtml = useMemo(() => `
@@ -456,6 +469,14 @@ const NFHSTrendsScreen = () => {
                     >
                         <View style={styles.definitionsContent}>
                             {definitionRows}
+                            {nfhs12Unavailable && (
+                                <View style={styles.nfhs12NoteContainer}>
+                                    <MaterialIcons name="info-outline" size={16} color={theme.colors.textSecondary} style={styles.nfhs12NoteIcon} />
+                                    <Text style={styles.nfhs12NoteText}>
+                                        Note: NFHS-1 (1992-93) and NFHS-2 (1998-99) data/definitions are not available for this indicator. Systematic tracking for this metric commenced in subsequent rounds.
+                                    </Text>
+                                </View>
+                            )}
                         </View>
                     </List.Accordion>
                 )}
@@ -692,6 +713,25 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: theme.colors.textPrimary,
         lineHeight: 16,
+    },
+    nfhs12NoteContainer: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        marginTop: 12,
+        paddingTop: 10,
+        borderTopWidth: 1,
+        borderTopColor: '#E5E7EB',
+    },
+    nfhs12NoteIcon: {
+        marginRight: 6,
+        marginTop: 2,
+    },
+    nfhs12NoteText: {
+        flex: 1,
+        fontSize: 11,
+        fontStyle: 'italic',
+        color: theme.colors.textSecondary,
+        lineHeight: 15,
     },
     disclaimerContainer: {
         marginTop: 16,
