@@ -320,16 +320,20 @@
     "hash": "2c36be0c5e2bcc8d4982b70792a0a081"
   },
   "D:\\The App\\src\\data\\nfhsComparisonData.js": {
-    "mtime": 1780057420.3093245,
-    "hash": "60693c7eab519430fd4ef18c1d80c52d"
+    "mtime": 1780386221.573995,
+    "hash": "71bb456e2edbfc8d8a0e4373219118fe"
+  },
+  "D:\\The App\\src\\data\\nfhsTrendsData.js": {
+    "mtime": 1780385934.422887,
+    "hash": "78413cb8bfc6dc65bd2c4882921806c6"
   },
   "D:\\The App\\src\\hooks\\useSessionEnforcer.js": {
     "mtime": 1776915623.531863,
     "hash": "f486f262d18f04ca01c8458ba191645d"
   },
   "D:\\The App\\src\\navigation\\AppNavigator.js": {
-    "mtime": 1780058471.5713606,
-    "hash": "4c9f53c98866cb4bae7cf505c3ff680f"
+    "mtime": 1780385969.4403036,
+    "hash": "b8c8f5a2334d4f2168f4f016edb8a7e6"
   },
   "D:\\The App\\src\\screens\\AdminLibraryReviewScreen.js": {
     "mtime": 1777561970.1780882,
@@ -356,8 +360,8 @@
     "hash": "36870779cc060d0a416e2f89b7108b5f"
   },
   "D:\\The App\\src\\screens\\FieldToolboxScreen.js": {
-    "mtime": 1780061583.8047905,
-    "hash": "a010b9acd1e0663dff759d556af022e6"
+    "mtime": 1780385975.2080007,
+    "hash": "d10df184274cf49d1b999de30e8cea7c"
   },
   "D:\\The App\\src\\screens\\GemsScreen.js": {
     "mtime": 1780055775.757557,
@@ -378,6 +382,10 @@
   "D:\\The App\\src\\screens\\NFHSRuralUrbanScreen.js": {
     "mtime": 1780058471.5683656,
     "hash": "96438fc52e4501d6b6fa78a2110d5267"
+  },
+  "D:\\The App\\src\\screens\\NFHSTrendsScreen.js": {
+    "mtime": 1780385960.074524,
+    "hash": "ee3bbed942470b94321476ac504691df"
   },
   "D:\\The App\\src\\screens\\NotificationsScreen.js": {
     "mtime": 1779948975.4328067,
@@ -422,6 +430,10 @@
   "D:\\The App\\src\\screens\\VirtualMuseumScreen.js": {
     "mtime": 1779948966.284421,
     "hash": "472b27b78a7c8b11f849cb1a11a0cd42"
+  },
+  "D:\\The App\\src\\screens\\__tests__\\NFHSTrendsScreen.test.js": {
+    "mtime": 1780386057.1180468,
+    "hash": "c600a7fab5af0e53db4449a6cd16890c"
   },
   "D:\\The App\\src\\screens\\__tests__\\PaywallScreen.analytics.test.js": {
     "mtime": 1778770086.9739556,

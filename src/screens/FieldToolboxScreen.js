@@ -127,6 +127,27 @@ const FieldToolboxScreen = ({ navigation }) => {
                         </View>
                     </Card.Content>
                 </Card>
+
+                <Card
+                    style={styles.card}
+                    onPress={() => {
+                        markToolboxBadgeSeen('nfhsTrends');
+                        navigation.navigate('NFHSTrends');
+                    }}
+                >
+                    <Card.Content style={styles.cardContent}>
+                        <MaterialIcons name="trending-up" size={40} color={theme.colors.secondary} />
+                        <View style={styles.textContainer}>
+                            <View style={styles.titleRow}>
+                                <Text style={styles.cardTitle}>NFHS Trends</Text>
+                                {!seenNewBadges.nfhsTrends ? (
+                                    <Text style={styles.newBadge}>NEW</Text>
+                                ) : null}
+                            </View>
+                            <Text style={styles.cardDesc}>Visualize harmonized indicators across NFHS rounds 1 to 6</Text>
+                        </View>
+                    </Card.Content>
+                </Card>
             </ScrollView>
         </SafeAreaView>
     );
