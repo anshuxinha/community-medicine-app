@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `5ba7ca8e`
+- Built from commit: `fb570c25`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -142,28 +142,28 @@ Cohesion: 0.06
 Nodes (34): 1. Think Before Coding, 2. Simplicity First, 3. Surgical Changes, 4. Goal-Driven Execution, Anti-Patterns Summary, code:python (def export_users(format='json'):), code:diff (def validate_user(user_data):), code:diff (- def upload_file(file_path, destination):) (+26 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.09
-Nodes (14): styles, styles, flex1, { height: WINDOW_HEIGHT }, styles, appIcon, styles, styles (+6 more)
+Cohesion: 0.11
+Nodes (16): AppContext, AppProvider(), normalizeBookmarks(), sanitizeCloudState(), sanitizeReadItemVersions(), styles, REFERENCE_VALUES, styles (+8 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.16
 Nodes (24): admin, buildThumbnailUrl(), bunnyFetch(), discoverPullZoneHostname(), dotenv, ensureFirebaseApp(), fs, getExpoPushTokens() (+16 more)
 
 ### Community 6 - "Community 6"
-Cohesion: 0.12
-Nodes (11): styles, REFERENCE_VALUES, styles, PLAN_METADATA, styles, styles, styles, disableScreenCaptureProtection() (+3 more)
+Cohesion: 0.11
+Nodes (12): styles, styles, flex1, { height: WINDOW_HEIGHT }, styles, styles, EDUCATION_OPTIONS, OCCUPATION_OPTIONS (+4 more)
 
 ### Community 7 - "Community 7"
 Cohesion: 0.12
 Nodes (14): buildTableCellSet(), clamp(), getBlockAnchorText(), isNtruHsHeading(), isNtruHsMetaLine(), normalizeAnchorText(), parseMarkdown(), parseTextTable() (+6 more)
 
 ### Community 8 - "Community 8"
-Cohesion: 0.12
-Nodes (15): BASE_MENU_ITEMS, styles, { width }, auth, AppContext, DashboardScreen(), styles, GemsScreen() (+7 more)
-
-### Community 9 - "Community 9"
 Cohesion: 0.2
 Nodes (18): biomedicalWaste(), chainOfInfection(), coldChain(), { createCanvas }, disasterCycle(), drawArrow(), drawCard(), drawTitle() (+10 more)
+
+### Community 9 - "Community 9"
+Cohesion: 0.13
+Nodes (12): appIcon, styles, DashboardScreen(), styles, GemsScreen(), styles, LibraryScreen(), MONTH_NAMES (+4 more)
 
 ### Community 10 - "Community 10"
 Cohesion: 0.17
@@ -174,24 +174,24 @@ Cohesion: 0.19
 Nodes (12): NFHS_COMPARISON_CATEGORIES, NFHS_COMPARISON_INDICATORS, NFHS_COMPARISON_SOURCES, AREA_LABELS, formatValue(), getDeltaTone(), IndicatorRow(), styles (+4 more)
 
 ### Community 12 - "Community 12"
-Cohesion: 0.21
-Nodes (13): app, db, firebaseConfig, styles, getCacheKey(), loadAnnotations(), saveAnnotations(), subscribeAnnotations() (+5 more)
-
-### Community 13 - "Community 13"
 Cohesion: 0.17
 Nodes (15): buildContactSheet(), buildPngCanvas(), CONTACT_SHEET_PATH, { createCanvas, loadImage }, DOWNLOAD_SPECS, downloadFile(), ensureDir(), fs (+7 more)
 
-### Community 14 - "Community 14"
+### Community 13 - "Community 13"
 Cohesion: 0.12
 Nodes (15): 1. Always Check Channel Configuration First, 2. Update Channel if Needed, 3. Publish Update to Correct Branch, 4. Verify Update is Live, 5. Clear Cache for Critical Updates, code:bash (eas channel:list --non-interactive), code:bash (eas channel:edit production --branch main --non-interactive), code:bash (eas update --branch main --message "Your update message" --c) (+7 more)
 
-### Community 15 - "Community 15"
+### Community 14 - "Community 14"
 Cohesion: 0.15
 Nodes (13): colorFreq, colorLocations, content, files, fs, getContrastRatio(), getRelativeLuminance(), hex (+5 more)
 
-### Community 16 - "Community 16"
+### Community 15 - "Community 15"
 Cohesion: 0.17
 Nodes (12): applyDiscount(), incrementCouponUsage(), validateCoupon(), coupon, mockDate, mockTransaction, { getByText, getByPlaceholderText }, input (+4 more)
+
+### Community 16 - "Community 16"
+Cohesion: 0.23
+Nodes (12): db, styles, getCacheKey(), loadAnnotations(), saveAnnotations(), subscribeAnnotations(), syncAllAnnotations(), getCacheKey() (+4 more)
 
 ### Community 17 - "Community 17"
 Cohesion: 0.18
@@ -222,20 +222,20 @@ Cohesion: 0.24
 Nodes (5): styles, getDefaultDeviceName(), getDeviceId(), getDeviceInfo(), isFirstDeviceLogin()
 
 ### Community 24 - "Community 24"
+Cohesion: 0.2
+Nodes (7): BASE_MENU_ITEMS, styles, { width }, app, auth, firebaseConfig, styles
+
+### Community 25 - "Community 25"
 Cohesion: 0.17
 Nodes (11): 1. Think Before Coding, 2. Simplicity First, 3. Surgical Changes, 4. Goal-Driven Execution, Background Watcher, Graph-First Protocol (graphify), graphify, Guidelines (+3 more)
 
-### Community 25 - "Community 25"
+### Community 26 - "Community 26"
 Cohesion: 0.29
 Nodes (3): ScreenCaptureProtectionModule, LifecycleEventObserver, ReactContextBaseJavaModule
 
-### Community 26 - "Community 26"
+### Community 27 - "Community 27"
 Cohesion: 0.18
 Nodes (10): 1. App Details, 2. Graphics Assets Required for Play Console, 3. Link Resources, 🧮 Advanced Medical Calculators & Tools, 🤖 AI Tutor & Chat Support, 📚 Comprehensive Knowledge Library, Google Play Store Metadata, 📝 Interactive Quizzes & Mock Exams (+2 more)
-
-### Community 27 - "Community 27"
-Cohesion: 0.27
-Nodes (6): AppProvider(), normalizeBookmarks(), sanitizeCloudState(), sanitizeReadItemVersions(), syncAllHighlights(), getEffectiveReadCount()
 
 ### Community 28 - "Community 28"
 Cohesion: 0.22
@@ -389,11 +389,11 @@ Nodes (3): extract_text_from_pdf(), main(), Extracts text from a PDF file.     T
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `theme` connect `Community 4` to `Community 0`, `Community 1`, `Community 32`, `Community 35`, `Community 38`, `Community 7`, `Community 8`, `Community 6`, `Community 11`, `Community 12`, `Community 51`, `Community 22`, `Community 23`, `Community 27`?**
+- **Why does `theme` connect `Community 6` to `Community 0`, `Community 1`, `Community 32`, `Community 35`, `Community 4`, `Community 38`, `Community 7`, `Community 9`, `Community 11`, `Community 16`, `Community 51`, `Community 22`, `Community 23`, `Community 24`?**
   _High betweenness centrality (0.022) - this node is a cross-community bridge._
-- **Why does `db` connect `Community 12` to `Community 1`, `Community 4`, `Community 6`, `Community 7`, `Community 8`, `Community 16`, `Community 51`, `Community 23`, `Community 27`, `Community 31`?**
+- **Why does `db` connect `Community 16` to `Community 1`, `Community 4`, `Community 6`, `Community 7`, `Community 15`, `Community 51`, `Community 23`, `Community 24`, `Community 31`?**
   _High betweenness centrality (0.006) - this node is a cross-community bridge._
-- **Why does `AppContext` connect `Community 8` to `Community 0`, `Community 1`, `Community 32`, `Community 35`, `Community 6`, `Community 12`, `Community 16`, `Community 51`, `Community 23`, `Community 27`?**
+- **Why does `AppContext` connect `Community 4` to `Community 0`, `Community 1`, `Community 32`, `Community 35`, `Community 9`, `Community 15`, `Community 16`, `Community 51`, `Community 23`, `Community 24`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **What connects `admin`, `path`, `SERVICE_ACCOUNT_PATH` to the rest of the system?**
   _322 weakly-connected nodes found - possible documentation gaps or missing edges._
