@@ -31,7 +31,7 @@ const stripGemMarkup = (value = "") =>
 
 const GemsScreen = ({ navigation }) => {
   const [searchQuery, setSearchbarQuery] = useState("");
-  const { isBookmarked, toggleBookmark } = useContext(AppContext);
+  const { isBookmarked, toggleBookmark, isPremium } = useContext(AppContext);
   
     // Reorder data: Vital Indicators & Surveys first
     const sortedGemsData = useMemo(() => {
@@ -81,6 +81,10 @@ const GemsScreen = ({ navigation }) => {
   }, [filteredSections, selectedSection]);
 
   const handleGemPress = (gem, sectionId, sectionTitle) => {
+    if (!isPremium) {
+      navigation.navigate("Paywall");
+      return;
+    }
     navigation.navigate("Reading", {
       id: gem.id,
       content: gem.content,
@@ -92,6 +96,10 @@ const GemsScreen = ({ navigation }) => {
   };
 
   const handleToggleBookmark = (gem, sectionTitle) => {
+    if (!isPremium) {
+      navigation.navigate("Paywall");
+      return;
+    }
     toggleBookmark({
       id: gem.id,
       title: gem.title,

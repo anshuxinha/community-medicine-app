@@ -18,6 +18,7 @@ import * as Updates from "expo-updates";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import recentUpdates from "../data/updates.json";
+import archiveData from "../data/updates_archive.json";
 import publicHealthDays from "../data/publicHealthDays.json";
 import { AppContext } from "../context/AppContext";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -212,9 +213,52 @@ const DashboardScreen = ({ navigation }) => {
     return new Date().toLocaleDateString(undefined, options);
   };
 
-  const visibleUpdates = recentUpdates.filter(
-    (update) => update.category !== "Academic Content Update",
-  );
+  const visibleUpdates = React.useMemo(() => {
+    const getYearMonthString = (date) => {
+      const yyyy = date.getFullYear();
+      const mm = String(date.getMonth() + 1).padStart(2, "0");
+      return `${yyyy}-${mm}`;
+    };
+
+    const getPreviousYearMonthString = (date) => {
+      const prevDate = new Date(date.getFullYear(), date.getMonth() - 1, 1);
+      const yyyy = prevDate.getFullYear();
+      const mm = String(prevDate.getMonth() + 1).padStart(2, "0");
+      return `${yyyy}-${mm}`;
+    };
+
+    const getUpdatesForMonth = (monthKey) => {
+      // 1. Check recentUpdates (updates.json)
+      const recent = recentUpdates.filter(
+        (u) =>
+          u.category !== "Academic Content Update" &&
+          u.date &&
+          u.date.startsWith(monthKey)
+      );
+      if (recent.length > 0) {
+        return recent;
+      }
+      // 2. Check updates_archive.json
+      const archived = archiveData[monthKey] || [];
+      return archived.filter((u) => u.category !== "Academic Content Update");
+    };
+
+    const now = new Date();
+    const currentMonthKey = getYearMonthString(now);
+    const previousMonthKey = getPreviousYearMonthString(now);
+
+    let updates = getUpdatesForMonth(currentMonthKey);
+    if (updates.length === 0) {
+      updates = getUpdatesForMonth(previousMonthKey);
+    }
+    if (updates.length === 0) {
+      // Fallback: if both are empty, show all non-academic updates from recentUpdates
+      updates = recentUpdates.filter(
+        (u) => u.category !== "Academic Content Update"
+      );
+    }
+    return updates;
+  }, []);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -367,7 +411,7 @@ const DashboardScreen = ({ navigation }) => {
             style={[styles.quickCard, { marginLeft: 8 }]}
             onPress={() => {
               markDashboardBadgeSeen("gems");
-              navigation.navigate("PremiumGuard", { destination: "Gems" });
+              navigation.navigate("Gems");
             }}
           >
             <Card.Content style={styles.quickCardContent}>
