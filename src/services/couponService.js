@@ -26,14 +26,13 @@ export const validateCoupon = async (code, selectedPlanId, currentUid) => {
     const couponSnap = await getDoc(couponRef);
 
     if (!couponSnap.exists()) {
-      // Check if it is a valid referralCode in users
-      const usersRef = collection(db, "users");
-      const q = query(usersRef, where("referralCode", "==", upperCode));
-      const querySnapshot = await getDocs(q);
+      // Check the referralCodes registry instead of querying the users collection
+      const referralRef = doc(db, "referralCodes", upperCode);
+      const referralSnap = await getDoc(referralRef);
 
-      if (!querySnapshot.empty) {
-        const referrerDoc = querySnapshot.docs[0];
-        const referrerUid = referrerDoc.id;
+      if (referralSnap.exists()) {
+        const refData = referralSnap.data();
+        const referrerUid = refData.ownerUid;
 
         if (currentUid && referrerUid === currentUid) {
           throw new Error("You cannot use your own referral code.");

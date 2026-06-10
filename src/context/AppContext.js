@@ -328,12 +328,25 @@ export const AppProvider = ({ children }) => {
 
             // Automatically generate a referral code if missing
             let referralCode = data.referralCode;
+            const username = firebaseUser.displayName || data.username || "User";
             if (!referralCode) {
-              const username = firebaseUser.displayName || data.username || "User";
               referralCode = generateReferralCode(username);
-              updateDoc(doc(db, "users", firebaseUser.uid), { referralCode }).catch((err) => {
+              const batch = [
+                updateDoc(doc(db, "users", firebaseUser.uid), { referralCode }),
+                setDoc(doc(db, "referralCodes", referralCode), {
+                  ownerUid: firebaseUser.uid,
+                  ownerName: username,
+                })
+              ];
+              Promise.all(batch).catch((err) => {
                 console.warn("Failed to generate and save referralCode:", err.message);
               });
+            } else {
+              // Self-healing: ensure referralCodes mapping registry exists
+              setDoc(doc(db, "referralCodes", referralCode), {
+                ownerUid: firebaseUser.uid,
+                ownerName: username,
+              }, { merge: true }).catch(() => {});
             }
 
             const userData = {
