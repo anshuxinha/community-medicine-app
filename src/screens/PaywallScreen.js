@@ -130,9 +130,15 @@ const PaywallScreen = ({ navigation }) => {
       );
 
       // Support immediate offering switching via coupon IDs
-      const targetId = (
-        forcedOfferingId !== undefined ? forcedOfferingId : appliedCoupon?.code
+      let targetId = (
+        forcedOfferingId !== undefined ? forcedOfferingId : (appliedCoupon?.isReferral ? "yearly999" : appliedCoupon?.code)
       )?.toLowerCase();
+
+      // If targetId is matching the raw referral coupon code (case-insensitively), override it to the yearly999 offering
+      if (targetId && appliedCoupon?.isReferral && targetId === appliedCoupon.code.toLowerCase()) {
+        targetId = "yearly999";
+      }
+
       let current = result.current;
 
       console.log("[RevenueCat] Current offering ID:", current?.identifier);
@@ -253,8 +259,9 @@ const PaywallScreen = ({ navigation }) => {
       if (Purchases) {
         await Purchases.setAttributes({ coupon_code: coupon.code });
         // Re-fetch offerings so the native modal gets the discounted product
-        // Pass code explicitly as state update might be async
-        await fetchOfferings(coupon.code);
+        // Pass code explicitly (mapping referral coupons to the static "yearly999" offering)
+        const offeringIdToFetch = coupon.isReferral ? "yearly999" : coupon.code;
+        await fetchOfferings(offeringIdToFetch);
       }
 
       Alert.alert("Success", "Coupon applied successfully!");
