@@ -40,6 +40,7 @@ import {
 import { syncAllAnnotations } from "../services/annotationService";
 import { syncAllHighlights } from "../services/highlightService";
 import { generateReferralCode } from "../utils/referralUtils";
+import { claimReferralRewards } from "../services/couponService";
 
 let Purchases;
 let GoogleSignin;
@@ -349,11 +350,32 @@ export const AppProvider = ({ children }) => {
               }, { merge: true }).catch(() => {});
             }
 
+            // Claim pending referral rewards for this user before setting up userData
+            let finalPremiumStatus = premiumStatus;
+            let finalPremiumExpiryDate = data.premiumExpiryDate || null;
+            let finalTotalReferrals = data.totalReferrals || 0;
+            
+            try {
+              const claimed = await claimReferralRewards(firebaseUser.uid, finalPremiumExpiryDate, finalTotalReferrals);
+              if (claimed) {
+                finalPremiumStatus = true;
+                finalPremiumExpiryDate = claimed.newExpiryDate;
+                finalTotalReferrals = claimed.newTotalReferrals;
+              }
+            } catch (err) {
+              console.warn("[Referrals] Failed to check/claim rewards on login:", err.message);
+            }
+
+            // Set subscription expiry in state so ProfileScreen displays it
+            if (finalPremiumExpiryDate) {
+              setSubscriptionExpiry(finalPremiumExpiryDate);
+            }
+
             const userData = {
               uid: firebaseUser.uid,
               email: firebaseUser.email,
               username: firebaseUser.displayName || data.username || "User",
-              isPremium: premiumStatus,
+              isPremium: finalPremiumStatus,
               isAdmin,
               pushToken: data.pushToken || null,
               referralCode,
@@ -369,7 +391,7 @@ export const AppProvider = ({ children }) => {
             }
 
             setUser(userData);
-            setAccountPremium(Boolean(premiumStatus));
+            setAccountPremium(Boolean(finalPremiumStatus));
             cloudHydratedRef.current = true;
 
             await AsyncStorage.setItem("user", JSON.stringify(userData));

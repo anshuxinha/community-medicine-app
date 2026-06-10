@@ -202,13 +202,13 @@ export const processReferralReward = async (referralCode, referrerUid, refereeUi
       return;
     }
 
-    // 1. Create a referral tracking doc in Firestore
+    // 1. Create a referral tracking doc in Firestore (initially rewardGranted: false)
     await setDoc(referralRef, {
       referrerUid,
       refereeUid,
       status: "completed",
       purchaseCompletedAt: new Date().toISOString(),
-      rewardGranted: true,
+      rewardGranted: false,
       referralCode,
     });
 
@@ -217,32 +217,75 @@ export const processReferralReward = async (referralCode, referrerUid, refereeUi
       referredByCode: referralCode,
       referredByUid: referrerUid,
     });
+  } catch (error) {
+    console.warn("Failed to process referral reward:", error.message);
+  }
+};
 
-    // 3. Reward Referrer: grant +30 days of premium
-    const referrerRef = doc(db, "users", referrerUid);
-    const referrerSnap = await getDoc(referrerRef);
+/**
+ * Checks for any pending referral rewards (where rewardGranted is false)
+ * for the current user, grants +30 days of premium for each, and updates
+ * the referral status. Returns the new premium details if updated.
+ */
+export const claimReferralRewards = async (currentUid, currentExpiryStr, currentTotalReferrals) => {
+  if (!currentUid) return null;
+  try {
+    const q = query(
+      collection(db, "referrals"),
+      where("referrerUid", "==", currentUid),
+      where("rewardGranted", "==", false)
+    );
+    const querySnap = await getDocs(q);
+    if (querySnap.empty) return null;
 
-    if (referrerSnap.exists()) {
-      const referrerData = referrerSnap.data();
+    let totalDaysToGrant = 0;
+    const referralsToUpdate = [];
+
+    querySnap.forEach((docSnap) => {
+      referralsToUpdate.push(docSnap.ref);
+      totalDaysToGrant += 30;
+    });
+
+    if (totalDaysToGrant > 0) {
       let currentExpiry = Date.now();
-      if (referrerData.premiumExpiryDate) {
-        const currentExpiryDate = new Date(referrerData.premiumExpiryDate);
+      if (currentExpiryStr) {
+        const currentExpiryDate = new Date(currentExpiryStr);
         if (!isNaN(currentExpiryDate.getTime())) {
           currentExpiry = Math.max(Date.now(), currentExpiryDate.getTime());
         }
       }
 
-      // Grant 30 days of premium
-      const newExpiryMs = currentExpiry + 30 * 24 * 60 * 60 * 1000;
-      const newExpiryDate = new Date(newExpiryMs).toISOString();
+      const newExpiryMs = currentExpiry + totalDaysToGrant * 24 * 60 * 60 * 1000;
+      const newExpiryStrUpdated = new Date(newExpiryMs).toISOString();
+      const newTotalReferrals = (currentTotalReferrals || 0) + referralsToUpdate.length;
 
-      await updateDoc(referrerRef, {
-        isPremium: true,
-        premiumExpiryDate: newExpiryDate,
-        totalReferrals: increment(1),
+      const referrerRef = doc(db, "users", currentUid);
+      
+      await runTransaction(db, async (transaction) => {
+        // Update referrer's user document
+        transaction.update(referrerRef, {
+          isPremium: true,
+          premiumExpiryDate: newExpiryStrUpdated,
+          totalReferrals: newTotalReferrals,
+        });
+
+        // Mark all processed referrals as rewardGranted = true
+        for (const ref of referralsToUpdate) {
+          transaction.update(ref, {
+            rewardGranted: true,
+            status: "completed",
+          });
+        }
       });
+
+      console.log(`[Referrals] Claimed ${totalDaysToGrant} days premium for ${referralsToUpdate.length} referrals.`);
+      return {
+        newExpiryDate: newExpiryStrUpdated,
+        newTotalReferrals,
+      };
     }
   } catch (error) {
-    console.warn("Failed to process referral reward:", error.message);
+    console.warn("Failed to claim referral rewards:", error.message);
   }
+  return null;
 };
