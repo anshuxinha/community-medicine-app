@@ -50,15 +50,14 @@ export const validateCoupon = async (code, selectedPlanId, currentUid) => {
           }
         }
 
-        // Check referrer account existence and circular referral
-        const referrerRef = doc(db, "users", referrerUid);
-        const referrerSnap = await getDoc(referrerRef);
-        if (!referrerSnap.exists()) {
-          throw new Error("Referral code owner account not found.");
-        }
-        const referrerData = referrerSnap.data();
-        if (currentUid && referrerData.referredByUid === currentUid) {
-          throw new Error("You cannot use a referral code from someone you referred.");
+        // Check for circular referral using the referrals collection (authorized for the current user)
+        if (currentUid) {
+          const circularId = `${currentUid}_${referrerUid}`;
+          const circularRef = doc(db, "referrals", circularId);
+          const circularSnap = await getDoc(circularRef);
+          if (circularSnap.exists()) {
+            throw new Error("You cannot use a referral code from someone you referred.");
+          }
         }
 
         return {
