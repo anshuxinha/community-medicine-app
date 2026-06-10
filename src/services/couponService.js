@@ -38,6 +38,29 @@ export const validateCoupon = async (code, selectedPlanId, currentUid) => {
           throw new Error("You cannot use your own referral code.");
         }
 
+        // Check if referee has already used a referral code before
+        if (currentUid) {
+          const refereeRef = doc(db, "users", currentUid);
+          const refereeSnap = await getDoc(refereeRef);
+          if (refereeSnap.exists()) {
+            const refereeData = refereeSnap.data();
+            if (refereeData.referredByCode || refereeData.referredByUid) {
+              throw new Error("You have already used a referral code.");
+            }
+          }
+        }
+
+        // Check referrer account existence and circular referral
+        const referrerRef = doc(db, "users", referrerUid);
+        const referrerSnap = await getDoc(referrerRef);
+        if (!referrerSnap.exists()) {
+          throw new Error("Referral code owner account not found.");
+        }
+        const referrerData = referrerSnap.data();
+        if (currentUid && referrerData.referredByUid === currentUid) {
+          throw new Error("You cannot use a referral code from someone you referred.");
+        }
+
         return {
           code: upperCode,
           active: true,
@@ -170,9 +193,17 @@ export const incrementCouponUsage = async (code) => {
  */
 export const processReferralReward = async (referralCode, referrerUid, refereeUid) => {
   try {
-    // 1. Create a referral tracking doc in Firestore
     const referralId = `${referrerUid}_${refereeUid}`;
     const referralRef = doc(db, "referrals", referralId);
+
+    // Check if reward was already processed to prevent double-rewards
+    const referralSnap = await getDoc(referralRef);
+    if (referralSnap.exists() && referralSnap.data().rewardGranted === true) {
+      console.log("Referral reward already processed for this referral.");
+      return;
+    }
+
+    // 1. Create a referral tracking doc in Firestore
     await setDoc(referralRef, {
       referrerUid,
       refereeUid,

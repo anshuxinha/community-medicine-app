@@ -75,6 +75,7 @@ const PaywallScreen = ({ navigation }) => {
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
+  const [defaultPrices, setDefaultPrices] = useState({});
 
   // Helper for consistent analytics logging
   const logCouponEvent = (eventName, params = {}) => {
@@ -191,6 +192,19 @@ const PaywallScreen = ({ navigation }) => {
       });
 
       setPackages(pkgMap);
+      
+      // Store default prices on initial load or reset when no coupon is active
+      if (!appliedCoupon && (forcedOfferingId === undefined || forcedOfferingId === null)) {
+        const prices = {};
+        current.availablePackages.forEach((pkg) => {
+          prices[pkg.packageType] = pkg.product.priceString;
+          if (pkg.identifier) {
+            prices[pkg.identifier] = pkg.product.priceString;
+          }
+        });
+        setDefaultPrices(prices);
+      }
+
       setLoadError(null);
     } catch (err) {
       console.warn("Failed to fetch offerings:", err.message);
@@ -452,10 +466,21 @@ const PaywallScreen = ({ navigation }) => {
 
                 // Apply discount if this is the selected plan and a coupon is applied
                 const isSelected = selectedPlan === plan.id;
+
+                // Check if the current offering loaded is the discounted offering for the coupon
+                const isDiscountedOfferingLoaded = appliedCoupon && offerings && (
+                  (appliedCoupon.isReferral && offerings.identifier.toLowerCase() === "yearly999") ||
+                  (offerings.identifier.toLowerCase() === appliedCoupon.code.toLowerCase())
+                );
+
                 const finalPriceDisplay =
                   isSelected && appliedCoupon
-                    ? applyDiscount(showPrice, appliedCoupon)
+                    ? (isDiscountedOfferingLoaded ? showPrice : applyDiscount(showPrice, appliedCoupon))
                     : showPrice;
+
+                const originalPriceDisplay = isDiscountedOfferingLoaded
+                  ? (defaultPrices[plan.packageType] || defaultPrices[plan.id] || plan.basePrice || showPrice)
+                  : showPrice;
 
                 return (
                   <TouchableOpacity
@@ -479,7 +504,7 @@ const PaywallScreen = ({ navigation }) => {
                       <Text style={styles.planName}>{plan.name}</Text>
                       <Text style={styles.planDuration}>{plan.duration}</Text>
 
-                      {isSelected && appliedCoupon ? (
+                      {isSelected && appliedCoupon && originalPriceDisplay !== finalPriceDisplay ? (
                         <View style={{ alignItems: "center" }}>
                           <Text
                             style={[
@@ -487,7 +512,7 @@ const PaywallScreen = ({ navigation }) => {
                               styles.strikethroughPrice,
                             ]}
                           >
-                            {showPrice}
+                            {originalPriceDisplay}
                           </Text>
                           <Text
                             style={[styles.priceText, styles.discountedPrice]}
