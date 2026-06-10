@@ -1,5 +1,5 @@
 import { db } from "../config/firebase";
-import { doc, getDoc, updateDoc, increment, runTransaction } from "firebase/firestore";
+import { doc, getDoc, updateDoc, increment, runTransaction, collection, query, where, getDocs, setDoc } from "firebase/firestore";
 
 /**
  * Validates a coupon code against the Firestore 'coupons' collection.
@@ -16,14 +16,39 @@ import { doc, getDoc, updateDoc, increment, runTransaction } from "firebase/fire
  *   targetPlans: string[] (optional, e.g., ['yearly', 'lifetime'])
  * }
  */
-export const validateCoupon = async (code, selectedPlanId) => {
+export const validateCoupon = async (code, selectedPlanId, currentUid) => {
   if (!code) throw new Error("Please enter a coupon code.");
 
+  const upperCode = code.trim().toUpperCase();
+
   try {
-    const couponRef = doc(db, "coupons", code.trim().toUpperCase());
+    const couponRef = doc(db, "coupons", upperCode);
     const couponSnap = await getDoc(couponRef);
 
     if (!couponSnap.exists()) {
+      // Check if it is a valid referralCode in users
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("referralCode", "==", upperCode));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        const referrerDoc = querySnapshot.docs[0];
+        const referrerUid = referrerDoc.id;
+
+        if (currentUid && referrerUid === currentUid) {
+          throw new Error("You cannot use your own referral code.");
+        }
+
+        return {
+          code: upperCode,
+          active: true,
+          type: "percentage",
+          value: 15, // 15% off for referee
+          isReferral: true,
+          referrerUid,
+        };
+      }
+
       throw new Error("Invalid coupon code.");
     }
 
@@ -137,5 +162,58 @@ export const incrementCouponUsage = async (code) => {
   } catch (error) {
     console.warn("Failed to increment coupon usage:", error.message);
     throw error;
+  }
+};
+
+/**
+ * Processes the referral reward when a referee completes a premium purchase.
+ * Creates a completed referral document and adds 30 days of premium to the referrer.
+ */
+export const processReferralReward = async (referralCode, referrerUid, refereeUid) => {
+  try {
+    // 1. Create a referral tracking doc in Firestore
+    const referralId = `${referrerUid}_${refereeUid}`;
+    const referralRef = doc(db, "referrals", referralId);
+    await setDoc(referralRef, {
+      referrerUid,
+      refereeUid,
+      status: "completed",
+      purchaseCompletedAt: new Date().toISOString(),
+      rewardGranted: true,
+      referralCode,
+    });
+
+    // 2. Update referee's user doc to associate the referral
+    await updateDoc(doc(db, "users", refereeUid), {
+      referredByCode: referralCode,
+      referredByUid: referrerUid,
+    });
+
+    // 3. Reward Referrer: grant +30 days of premium
+    const referrerRef = doc(db, "users", referrerUid);
+    const referrerSnap = await getDoc(referrerRef);
+
+    if (referrerSnap.exists()) {
+      const referrerData = referrerSnap.data();
+      let currentExpiry = Date.now();
+      if (referrerData.premiumExpiryDate) {
+        const currentExpiryDate = new Date(referrerData.premiumExpiryDate);
+        if (!isNaN(currentExpiryDate.getTime())) {
+          currentExpiry = Math.max(Date.now(), currentExpiryDate.getTime());
+        }
+      }
+
+      // Grant 30 days of premium
+      const newExpiryMs = currentExpiry + 30 * 24 * 60 * 60 * 1000;
+      const newExpiryDate = new Date(newExpiryMs).toISOString();
+
+      await updateDoc(referrerRef, {
+        isPremium: true,
+        premiumExpiryDate: newExpiryDate,
+        totalReferrals: increment(1),
+      });
+    }
+  } catch (error) {
+    console.warn("Failed to process referral reward:", error.message);
   }
 };

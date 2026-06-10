@@ -308,8 +308,8 @@
     "hash": "b6d28a52efa63c1ccfa616dabffb7bd9"
   },
   "D:\\The App\\src\\context\\AppContext.js": {
-    "mtime": 1780371723.1468225,
-    "hash": "e9b53d337f586aaf29cd07b880043f51"
+    "mtime": 1781108081.6583543,
+    "hash": "4ae9efc39b30b2c2a6387c3704d7d5f2"
   },
   "D:\\The App\\src\\data\\defaultTopicIllustrations.js": {
     "mtime": 1775143847.0992994,
@@ -392,12 +392,12 @@
     "hash": "a6875052b15d80622198683a2c516ccd"
   },
   "D:\\The App\\src\\screens\\PaywallScreen.js": {
-    "mtime": 1779371098.018274,
-    "hash": "11ac5bb760adc2539c4e18d2b2747d1d"
+    "mtime": 1781108089.13678,
+    "hash": "a8d8f8458c1fbcec497b06f3ec138a8d"
   },
   "D:\\The App\\src\\screens\\ProfileScreen.js": {
-    "mtime": 1779774385.8146284,
-    "hash": "950b839c06f4e9de07945ecca43e15ea"
+    "mtime": 1781108109.6312675,
+    "hash": "12826a8aaff7c343f2372750be0f5b7a"
   },
   "D:\\The App\\src\\screens\\QuizScreen.js": {
     "mtime": 1776677579.0425787,
@@ -444,8 +444,8 @@
     "hash": "fa8a9d7557e57fb61e4688fea1702d7b"
   },
   "D:\\The App\\src\\services\\couponService.js": {
-    "mtime": 1778570823.6428018,
-    "hash": "036f9c8c3c419dcf234303a7d733b05e"
+    "mtime": 1781108070.6833467,
+    "hash": "bac5af526419225d85b4a94fd7ec4215"
   },
   "D:\\The App\\src\\services\\highlightService.js": {
     "mtime": 1777659005.6232884,
@@ -482,6 +482,10 @@
   "D:\\The App\\src\\utils\\deviceUtils.js": {
     "mtime": 1776915497.5873566,
     "hash": "3173bec75bf9e2ad87bedbd9cf0360eb"
+  },
+  "D:\\The App\\src\\utils\\referralUtils.js": {
+    "mtime": 1781108061.3430338,
+    "hash": "ef7349ebd62efad7fab7b42ce9a2bb76"
   },
   "D:\\The App\\src\\utils\\reviewPrompt.js": {
     "mtime": 1777871530.6764872,

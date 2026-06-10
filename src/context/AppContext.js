@@ -39,6 +39,7 @@ import {
 } from "../utils/contentRegistry";
 import { syncAllAnnotations } from "../services/annotationService";
 import { syncAllHighlights } from "../services/highlightService";
+import { generateReferralCode } from "../utils/referralUtils";
 
 let Purchases;
 let GoogleSignin;
@@ -313,10 +314,27 @@ export const AppProvider = ({ children }) => {
               return;
             }
 
-            const premiumStatus = data.isPremium === true || claimsPremium;
+            let isPremiumExpired = false;
+            if (data.premiumExpiryDate) {
+              const expiryDate = new Date(data.premiumExpiryDate);
+              if (!isNaN(expiryDate.getTime()) && expiryDate < new Date()) {
+                isPremiumExpired = true;
+              }
+            }
+            const premiumStatus = (data.isPremium === true && !isPremiumExpired) || claimsPremium;
             const isAdmin = data.isAdmin === true || claimsAdmin;
             const fetchedPremiumType = data.premiumType || null;
             setPremiumType(fetchedPremiumType);
+
+            // Automatically generate a referral code if missing
+            let referralCode = data.referralCode;
+            if (!referralCode) {
+              const username = firebaseUser.displayName || data.username || "User";
+              referralCode = generateReferralCode(username);
+              updateDoc(doc(db, "users", firebaseUser.uid), { referralCode }).catch((err) => {
+                console.warn("Failed to generate and save referralCode:", err.message);
+              });
+            }
 
             const userData = {
               uid: firebaseUser.uid,
@@ -325,6 +343,7 @@ export const AppProvider = ({ children }) => {
               isPremium: premiumStatus,
               isAdmin,
               pushToken: data.pushToken || null,
+              referralCode,
             };
 
             const cloudState = hydrateStoredState(data);

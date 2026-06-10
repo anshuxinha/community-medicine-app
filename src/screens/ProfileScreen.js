@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Linking,
   Alert,
+  Share,
 } from "react-native";
 import { Text, Avatar, Card, Divider } from "react-native-paper";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
@@ -76,6 +77,21 @@ const ProfileScreen = () => {
 
     // Not premium
     return "—";
+  };
+
+  const handleShareReferral = async () => {
+    if (!user?.referralCode) {
+      Alert.alert("Error", "Your referral code is not ready yet. Please try again.");
+      return;
+    }
+
+    try {
+      await Share.share({
+        message: `Hey! I'm using STROMA to prep for Community Medicine. Join me using my referral code ${user.referralCode} to get 15% off Premium! 📚✨\nDownload now: https://stroma.app`,
+      });
+    } catch (error) {
+      console.warn("Failed to share referral code:", error.message);
+    }
   };
 
   const displayName = user?.username || user?.displayName || "STROMA User";
@@ -300,6 +316,31 @@ const ProfileScreen = () => {
                 <Text style={styles.activityValue}>{bookmarksCount}</Text>
                 <Text style={styles.activityLabel}>Bookmarks</Text>
               </View>
+            </View>
+          </Card.Content>
+        </Card>
+
+        {/* Refer & Earn */}
+        <Text style={styles.sectionTitle}>🎁 Refer & Earn</Text>
+        <Card style={styles.referralCard}>
+          <Card.Content>
+            <Text style={styles.referralSubtitle}>
+              Give friends 15% off premium and get 30 days of premium free when they subscribe!
+            </Text>
+            
+            <View style={styles.referralCodeBox}>
+              <View style={styles.codeContainer}>
+                <Text style={styles.codeLabel}>YOUR REFERRAL CODE</Text>
+                <Text style={styles.codeText}>{user?.referralCode || "—"}</Text>
+              </View>
+              
+              <TouchableOpacity
+                style={styles.shareButton}
+                onPress={handleShareReferral}
+              >
+                <MaterialIcons name="share" size={20} color={theme.colors.surfacePrimary} />
+                <Text style={styles.shareButtonText}>Share</Text>
+              </TouchableOpacity>
             </View>
           </Card.Content>
         </Card>
@@ -693,6 +734,60 @@ const styles = StyleSheet.create({
   },
   bottomPadding: {
     height: 40,
+  },
+  referralCard: {
+    marginHorizontal: 16,
+    marginVertical: 8,
+    borderRadius: 12,
+    backgroundColor: theme.colors.surfacePrimary,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+  },
+  referralSubtitle: {
+    fontSize: 14,
+    color: theme.colors.textSecondary,
+    marginBottom: 16,
+    lineHeight: 20,
+  },
+  referralCodeBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: theme.colors.surfaceSecondary,
+    padding: 12,
+    borderRadius: 10,
+  },
+  codeContainer: {
+    flex: 1,
+  },
+  codeLabel: {
+    fontSize: 10,
+    color: theme.colors.textPlaceholder,
+    fontWeight: "600",
+    marginBottom: 4,
+  },
+  codeText: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: theme.colors.textTitle,
+    letterSpacing: 1,
+  },
+  shareButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: theme.colors.primary,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    gap: 6,
+  },
+  shareButtonText: {
+    color: theme.colors.surfacePrimary,
+    fontWeight: "600",
+    fontSize: 14,
   },
 });
 

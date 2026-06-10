@@ -28,6 +28,7 @@ import {
   validateCoupon,
   applyDiscount,
   incrementCouponUsage,
+  processReferralReward,
 } from "../services/couponService";
 import { TextInput } from "react-native-paper";
 import { logEvent } from "firebase/analytics";
@@ -96,7 +97,7 @@ const PaywallScreen = ({ navigation }) => {
   const [offerings, setOfferings] = useState(null);
   const [packages, setPackages] = useState({});
   const [loadError, setLoadError] = useState(null);
-  const { upgradeToPremium, isPremium } = useContext(AppContext);
+  const { upgradeToPremium, isPremium, user } = useContext(AppContext);
 
   // Reset coupon when plan changes if it's not applicable
   useEffect(() => {
@@ -237,7 +238,7 @@ const PaywallScreen = ({ navigation }) => {
 
     setIsValidatingCoupon(true);
     try {
-      const coupon = await validateCoupon(couponCode, selectedPlan);
+      const coupon = await validateCoupon(couponCode, selectedPlan, user?.uid);
       setAppliedCoupon(coupon);
       setCouponCode("");
       setShowCouponInput(false);
@@ -318,9 +319,13 @@ const PaywallScreen = ({ navigation }) => {
         );
       }
 
-      // If a custom app coupon was applied, increment its usage
+      // If a custom app coupon was applied, increment its usage or process referral
       if (appliedCoupon) {
-        await incrementCouponUsage(appliedCoupon.code);
+        if (appliedCoupon.isReferral === true) {
+          await processReferralReward(appliedCoupon.code, appliedCoupon.referrerUid, user?.uid);
+        } else {
+          await incrementCouponUsage(appliedCoupon.code);
+        }
       }
 
       await upgradeToPremium({
