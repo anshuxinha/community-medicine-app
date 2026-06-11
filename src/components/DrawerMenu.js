@@ -10,7 +10,7 @@ import {
   Linking,
   Alert,
 } from "react-native";
-import { Text, Avatar, Divider } from "react-native-paper";
+import { Text, Avatar, Divider, ActivityIndicator } from "react-native-paper";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { signOut } from "firebase/auth";
@@ -72,6 +72,7 @@ const DrawerMenu = ({ visible, onClose, user }) => {
   const navigation = useNavigation();
   const { currentStreak, studyScore, readingProgress, logout } =
     React.useContext(AppContext);
+  const [isLoggingOut, setIsLoggingOut] = React.useState(false);
 
   // Define displayName early so it's available in handleItem
   const displayName = user?.username || user?.displayName || "STROMA User";
@@ -158,18 +159,26 @@ const DrawerMenu = ({ visible, onClose, user }) => {
               text: "Log Out",
               style: "destructive",
               onPress: async () => {
+                setIsLoggingOut(true);
                 const uid = auth.currentUser?.uid;
                 if (uid) {
                   try {
                     await updateDoc(doc(db, "users", uid), { currentDeviceId: null });
                   } catch (_) {}
                 }
-                await signOut(auth);
-                logout();
-                navigation.reset({
-                  index: 0,
-                  routes: [{ name: "Login" }],
-                });
+                try {
+                  await signOut(auth);
+                  logout();
+                  setIsLoggingOut(false);
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: "Login" }],
+                  });
+                } catch (error) {
+                  setIsLoggingOut(false);
+                  console.error("Sign out error:", error);
+                  Alert.alert("Error", "Failed to log out. Please try again.");
+                }
               },
             },
           ]);
@@ -257,6 +266,12 @@ const DrawerMenu = ({ visible, onClose, user }) => {
           STROMA v{Constants.expoConfig?.version || "1.0.0"}
         </Text>
       </Animated.View>
+      {isLoggingOut && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color="#FFFFFF" />
+          <Text style={styles.loadingText}>Logging out...</Text>
+        </View>
+      )}
     </Modal>
   );
 };
@@ -349,6 +364,19 @@ const styles = StyleSheet.create({
     color: theme.colors.textPlaceholder,
     fontSize: 12,
     paddingVertical: 16,
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 9999,
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#FFFFFF",
   },
 });
 

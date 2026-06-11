@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -8,7 +8,7 @@ import {
   Alert,
   Share,
 } from "react-native";
-import { Text, Avatar, Card, Divider } from "react-native-paper";
+import { Text, Avatar, Card, Divider, ActivityIndicator } from "react-native-paper";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { signOut, deleteUser } from "firebase/auth";
@@ -24,6 +24,7 @@ import {
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const {
     user,
     isPremium,
@@ -111,18 +112,26 @@ const ProfileScreen = () => {
         text: "Log Out",
         style: "destructive",
         onPress: async () => {
+          setIsLoggingOut(true);
           const uid = auth.currentUser?.uid;
           if (uid) {
             try {
               await updateDoc(doc(db, "users", uid), { currentDeviceId: null });
             } catch (_) {}
           }
-          await signOut(auth);
-          logout();
-          navigation.reset({
-            index: 0,
-            routes: [{ name: "Login" }],
-          });
+          try {
+            await signOut(auth);
+            logout();
+            setIsLoggingOut(false);
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "Login" }],
+            });
+          } catch (error) {
+            setIsLoggingOut(false);
+            console.error("Sign out error:", error);
+            Alert.alert("Error", "Failed to log out. Please try again.");
+          }
         },
       },
     ]);
@@ -474,6 +483,12 @@ const ProfileScreen = () => {
 
         <View style={styles.bottomPadding} />
       </ScrollView>
+      {isLoggingOut && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <Text style={styles.loadingText}>Logging out...</Text>
+        </View>
+      )}
     </View>
   );
 };
@@ -788,6 +803,19 @@ const styles = StyleSheet.create({
     color: theme.colors.surfacePrimary,
     fontWeight: "600",
     fontSize: 14,
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(251, 252, 254, 0.85)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1000,
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    fontWeight: "600",
+    color: theme.colors.primary,
   },
 });
 

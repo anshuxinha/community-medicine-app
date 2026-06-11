@@ -8,6 +8,7 @@ import {
   Linking,
   Image,
   ScrollView,
+  KeyboardAvoidingView,
 } from "react-native";
 import { Text, Button, Card } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -407,10 +408,15 @@ const PaywallScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView
-        contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={false}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
       >
+        <ScrollView
+          contentContainerStyle={styles.container}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
         <View style={styles.header}>
           <TouchableOpacity
             onPress={() => navigation.goBack()}
@@ -644,7 +650,8 @@ const PaywallScreen = ({ navigation }) => {
             </View>
           </View>
         )}
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };

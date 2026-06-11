@@ -13,6 +13,7 @@ import {
   Platform,
   TextInput,
   ScrollView,
+  Linking,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -114,11 +115,46 @@ const pdfViewerHtml = (pdfUrl) => `
       font-weight: 500;
       text-align: center;
     }
+    .fab {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background-color: #6B21A8;
+      color: white;
+      border: none;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2), 0 2px 4px -1px rgba(0,0,0,0.1);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      transition: background-color 0.2s, transform 0.1s;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .fab:active {
+      background-color: #581C87;
+      transform: scale(0.95);
+    }
+    .fab-icon {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
   </style>
 </head>
 <body>
   <div id="loading">Loading document...</div>
   <div id="viewer-container"></div>
+  
+  <button id="download-fab" class="fab" onclick="downloadPdf()">
+    <svg class="fab-icon" viewBox="0 0 24 24">
+      <path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
+    </svg>
+  </button>
 
   <script>
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
@@ -126,6 +162,14 @@ const pdfViewerHtml = (pdfUrl) => `
     const url = '${pdfUrl}';
     const container = document.getElementById('viewer-container');
     const loading = document.getElementById('loading');
+
+    function downloadPdf() {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'download', url: url }));
+      } else {
+        window.open(url, '_blank');
+      }
+    }
 
     pdfjsLib.getDocument(url).promise.then(pdf => {
       loading.style.display = 'none';
@@ -333,6 +377,35 @@ const VideosScreen = ({ navigation }) => {
     if (pdfOpenedFromList) {
       setSelectedVideo(null);
       setPdfOpenedFromList(false);
+    }
+  };
+
+  const handleDownloadPdf = async () => {
+    if (selectedVideo?.pdfUrl) {
+      try {
+        const supported = await Linking.canOpenURL(selectedVideo.pdfUrl);
+        if (supported) {
+          await Linking.openURL(selectedVideo.pdfUrl);
+        } else {
+          Alert.alert("Error", "Cannot open download link on this device.");
+        }
+      } catch (error) {
+        console.error("Failed to download PDF:", error);
+        Alert.alert("Error", "Failed to open download link.");
+      }
+    } else {
+      Alert.alert("Error", "No PDF file available for download.");
+    }
+  };
+
+  const handleWebViewMessage = (event) => {
+    try {
+      const data = JSON.parse(event.nativeEvent.data);
+      if (data.type === "download" && data.url) {
+        Linking.openURL(data.url);
+      }
+    } catch (err) {
+      console.error("WebView message error:", err);
     }
   };
 
@@ -1166,6 +1239,13 @@ const VideosScreen = ({ navigation }) => {
                     {selectedVideo?.pdfName || "Reference Document"}
                   </Text>
                   <IconButton
+                    icon="download"
+                    size={24}
+                    iconColor={theme.colors.primary}
+                    onPress={handleDownloadPdf}
+                    style={{ marginRight: 8 }}
+                  />
+                  <IconButton
                     icon="fullscreen"
                     size={24}
                     iconColor={theme.colors.primary}
@@ -1182,6 +1262,7 @@ const VideosScreen = ({ navigation }) => {
                     javaScriptEnabled={true}
                     domStorageEnabled={true}
                     startInLoadingState={true}
+                    onMessage={handleWebViewMessage}
                     renderLoading={() => (
                       <View style={styles.pdfLoadingContainer}>
                         <ActivityIndicator
@@ -1213,7 +1294,11 @@ const VideosScreen = ({ navigation }) => {
             <Text style={styles.pdfFullscreenTitle} numberOfLines={1}>
               {selectedVideo?.pdfName || "Document"}
             </Text>
-            <View style={styles.playerHeaderSpacer} />
+            <IconButton
+              icon="download"
+              iconColor={theme.colors.primary}
+              onPress={handleDownloadPdf}
+            />
           </View>
 
           <WebView
@@ -1224,6 +1309,7 @@ const VideosScreen = ({ navigation }) => {
             javaScriptEnabled={true}
             domStorageEnabled={true}
             startInLoadingState={true}
+            onMessage={handleWebViewMessage}
             renderLoading={() => (
               <View style={styles.pdfLoadingContainer}>
                 <ActivityIndicator

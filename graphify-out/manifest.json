@@ -280,8 +280,8 @@
     "hash": "12690b096f69a1b922321f9f33e019b1"
   },
   "D:\\The App\\src\\components\\DrawerMenu.js": {
-    "mtime": 1777266264.8196857,
-    "hash": "63b417c58d6ed8841ecb02eda98383fb"
+    "mtime": 1781153613.5525205,
+    "hash": "4d4b27f20230071490af60559d1f2c18"
   },
   "D:\\The App\\src\\components\\DropdownPicker.js": {
     "mtime": 1777467083.0792534,
@@ -308,8 +308,8 @@
     "hash": "b6d28a52efa63c1ccfa616dabffb7bd9"
   },
   "D:\\The App\\src\\context\\AppContext.js": {
-    "mtime": 1781111009.8229399,
-    "hash": "7d7017b3ba077fbdb9a16b4e9d76aac2"
+    "mtime": 1781113477.9120035,
+    "hash": "57406d281dcc4bb17803047ba61197f8"
   },
   "D:\\The App\\src\\data\\defaultTopicIllustrations.js": {
     "mtime": 1775143847.0992994,
@@ -392,12 +392,12 @@
     "hash": "a6875052b15d80622198683a2c516ccd"
   },
   "D:\\The App\\src\\screens\\PaywallScreen.js": {
-    "mtime": 1781112244.5296726,
-    "hash": "9277c72c8e3cd741d28b94d97aa3db7c"
+    "mtime": 1781155521.080483,
+    "hash": "3d43d257c16c868999678e43bf4003f1"
   },
   "D:\\The App\\src\\screens\\ProfileScreen.js": {
-    "mtime": 1781112250.7221434,
-    "hash": "ce9f203c57e8d7674d1c9e1fa1f6be35"
+    "mtime": 1781153613.5506568,
+    "hash": "138c5ac3284540cc97f92b1567676ede"
   },
   "D:\\The App\\src\\screens\\QuizScreen.js": {
     "mtime": 1776677579.0425787,
@@ -424,8 +424,8 @@
     "hash": "7300070699a04a1916f368c713bb1c90"
   },
   "D:\\The App\\src\\screens\\VideosScreen.js": {
-    "mtime": 1780061514.2023656,
-    "hash": "06248c95d7538e71ed030dd8152c04e8"
+    "mtime": 1781153388.98018,
+    "hash": "a43b54ba07f8a374a3ebe6d509ccf563"
   },
   "D:\\The App\\src\\screens\\VirtualMuseumScreen.js": {
     "mtime": 1779948966.284421,
@@ -444,8 +444,8 @@
     "hash": "fa8a9d7557e57fb61e4688fea1702d7b"
   },
   "D:\\The App\\src\\services\\couponService.js": {
-    "mtime": 1781112726.7583854,
-    "hash": "d5db187062b6faa4aaf4c54622a8a7aa"
+    "mtime": 1781113444.0410633,
+    "hash": "c28598e82ecfac5b2dbd51f5ad724698"
   },
   "D:\\The App\\src\\services\\highlightService.js": {
     "mtime": 1777659005.6232884,
