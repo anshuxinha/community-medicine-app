@@ -24,11 +24,13 @@ import { AppContext } from "../context/AppContext";
 import { MaterialIcons } from "@expo/vector-icons";
 import DrawerMenu from "../components/DrawerMenu";
 import UpdateDetailDialog from "../components/UpdateDetailDialog";
+import ReferralAnnouncementDialog from "../components/ReferralAnnouncementDialog";
 import { scheduleAllNotifications } from "../services/notificationService";
 import { auth } from "../config/firebase";
 import { theme, useResponsive } from "../styles/theme";
 
 const DASHBOARD_NEW_BADGES_STORAGE_KEY = "dashboardNewBadgesSeen:v1";
+const REFERRAL_ANNOUNCEMENT_STORAGE_KEY = "referralAnnouncementSeen:v1";
 
 const UpdateDownloadIndicator = () => {
   const {
@@ -114,6 +116,7 @@ const DashboardScreen = ({ navigation }) => {
     useContext(AppContext);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [seenNewBadges, setSeenNewBadges] = useState({});
+  const [referralAnnouncementVisible, setReferralAnnouncementVisible] = useState(false);
   const { isTablet, horizontalPadding, scaleFactor, contentMaxWidth } =
     useResponsive();
 
@@ -121,6 +124,47 @@ const DashboardScreen = ({ navigation }) => {
   useEffect(() => {
     if (refreshFromCloud) refreshFromCloud();
   }, []);
+
+  // Check and show referral system announcement modal
+  useEffect(() => {
+    let mounted = true;
+
+    const checkReferralAnnouncement = async () => {
+      try {
+        const seen = await AsyncStorage.getItem(REFERRAL_ANNOUNCEMENT_STORAGE_KEY);
+        if (mounted && !seen) {
+          // Add a 1.2 second delay so the app mounts and resolves first
+          setTimeout(() => {
+            if (mounted) {
+              setReferralAnnouncementVisible(true);
+            }
+          }, 1200);
+        }
+      } catch (error) {
+        console.warn("Failed to check referral announcement status:", error?.message);
+      }
+    };
+
+    checkReferralAnnouncement();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const dismissReferralAnnouncement = async () => {
+    setReferralAnnouncementVisible(false);
+    try {
+      await AsyncStorage.setItem(REFERRAL_ANNOUNCEMENT_STORAGE_KEY, "true");
+    } catch (error) {
+      console.warn("Failed to save referral announcement status:", error?.message);
+    }
+  };
+
+  const handleGoToReferrals = async () => {
+    await dismissReferralAnnouncement();
+    navigation.navigate("Profile");
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -514,6 +558,12 @@ const DashboardScreen = ({ navigation }) => {
         visible={visible}
         update={selectedUpdate}
         onDismiss={hideDialog}
+      />
+
+      <ReferralAnnouncementDialog
+        visible={referralAnnouncementVisible}
+        onDismiss={dismissReferralAnnouncement}
+        onAction={handleGoToReferrals}
       />
 
       <Portal>
