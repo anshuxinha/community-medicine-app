@@ -1185,6 +1185,29 @@ export const AppProvider = ({ children }) => {
     await persistPremiumAccess(metadata);
   };
 
+  const updateUsername = async (newUsername) => {
+    if (!user || !user.uid) return;
+    const userRef = doc(db, "users", user.uid);
+    await updateDoc(userRef, { username: newUsername });
+    setUser((prevUser) => {
+      if (!prevUser) return prevUser;
+      return {
+        ...prevUser,
+        username: newUsername,
+      };
+    });
+    try {
+      const storedUser = await AsyncStorage.getItem("user");
+      if (storedUser) {
+        const parsed = JSON.parse(storedUser);
+        parsed.username = newUsername;
+        await AsyncStorage.setItem("user", JSON.stringify(parsed));
+      }
+    } catch (err) {
+      console.warn("Failed to update cached user in AsyncStorage:", err);
+    }
+  };
+
   
 
   return (
@@ -1217,6 +1240,7 @@ export const AppProvider = ({ children }) => {
         login,
         logout,
         upgradeToPremium,
+        updateUsername,
         isScreenCapturePrevented,
       }}
     >

@@ -7,8 +7,9 @@ import {
   Linking,
   Alert,
   Share,
+  Modal,
 } from "react-native";
-import { Text, Avatar, Card, Divider, ActivityIndicator } from "react-native-paper";
+import { Text, Avatar, Card, Divider, ActivityIndicator, TextInput, Button } from "react-native-paper";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { signOut, deleteUser } from "firebase/auth";
@@ -36,7 +37,34 @@ const ProfileScreen = () => {
     bookmarks,
     readItems,
     logout,
+    updateUsername,
   } = React.useContext(AppContext);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [isSavingName, setIsSavingName] = useState(false);
+
+  const handleStartEditName = () => {
+    setNewName(displayName);
+    setIsEditingName(true);
+  };
+
+  const handleSaveName = async () => {
+    if (!newName.trim()) {
+      Alert.alert("Error", "Name cannot be empty.");
+      return;
+    }
+    setIsSavingName(true);
+    try {
+      await updateUsername(newName.trim());
+      setIsEditingName(false);
+      Alert.alert("Success", "Name updated successfully!");
+    } catch (error) {
+      console.error("Failed to update name:", error);
+      Alert.alert("Error", "Failed to update name. Please try again.");
+    } finally {
+      setIsSavingName(false);
+    }
+  };
 
   useEffect(() => {
     enableScreenCaptureProtection();
@@ -224,7 +252,12 @@ const ProfileScreen = () => {
             style={styles.avatar}
             labelStyle={styles.avatarLabel}
           />
-          <Text style={styles.userName}>{displayName}</Text>
+          <View style={styles.nameRow}>
+            <Text style={styles.userName}>{displayName}</Text>
+            <TouchableOpacity onPress={handleStartEditName} style={styles.editButton}>
+              <MaterialIcons name="edit" size={16} color="#FFFFFF" style={styles.editIcon} />
+            </TouchableOpacity>
+          </View>
           <Text style={styles.userEmail}>{user?.email || ""}</Text>
         </View>
       </View>
@@ -483,6 +516,47 @@ const ProfileScreen = () => {
 
         <View style={styles.bottomPadding} />
       </ScrollView>
+      <Modal
+        visible={isEditingName}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setIsEditingName(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Edit Name</Text>
+            <TextInput
+              mode="outlined"
+              label="Name"
+              value={newName}
+              onChangeText={setNewName}
+              style={styles.modalInput}
+              outlineStyle={{ borderRadius: 10 }}
+              activeOutlineColor={theme.colors.primary}
+            />
+            <View style={styles.modalButtons}>
+              <Button
+                mode="outlined"
+                onPress={() => setIsEditingName(false)}
+                style={styles.modalButton}
+                textColor={theme.colors.textSecondary}
+              >
+                Cancel
+              </Button>
+              <Button
+                mode="contained"
+                onPress={handleSaveName}
+                style={[styles.modalButton, { backgroundColor: theme.colors.primary }]}
+                loading={isSavingName}
+                disabled={isSavingName || !newName.trim()}
+              >
+                Save
+              </Button>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
       {isLoggingOut && (
         <View style={styles.loadingOverlay}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -816,6 +890,60 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: theme.colors.primary,
+  },
+  nameRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    marginTop: 4,
+  },
+  editButton: {
+    padding: 4,
+    borderRadius: 4,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+  },
+  editIcon: {
+    opacity: 0.9,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
+  },
+  modalContent: {
+    width: "100%",
+    maxWidth: 340,
+    backgroundColor: theme.colors.surfacePrimary,
+    borderRadius: 16,
+    padding: 24,
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: theme.colors.textTitle,
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  modalInput: {
+    marginBottom: 20,
+    backgroundColor: theme.colors.surfacePrimary,
+  },
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  modalButton: {
+    flex: 1,
+    borderRadius: 10,
   },
 });
 
