@@ -49,3 +49,15 @@ topic*_current.txt
 topic2_*.txt
 layout_*.txt
 table_test.txt
+
+# Python and virtual environments
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# local package caches
+.npm-cache/
+npmcache/
+.npm/
+
