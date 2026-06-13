@@ -6,25 +6,41 @@
     "build": {
         "development": {
             "developmentClient": true,
-            "distribution": "internal"
+            "distribution": "internal",
+            "env": {
+                "EXPO_PUBLIC_RC_API_KEY_IOS": "appl_bIbghsScVIeHGfrXogcChLzXKsS",
+                "EXPO_PUBLIC_RC_API_KEY_ANDROID": "goog_mfyywPtYwjSUQhFJoHeVysbUole"
+            }
         },
         "preview": {
             "distribution": "internal",
             "channel": "preview",
             "android": {
                 "buildType": "apk"
+            },
+            "env": {
+                "EXPO_PUBLIC_RC_API_KEY_IOS": "appl_bIbghsScVIeHGfrXogcChLzXKsS",
+                "EXPO_PUBLIC_RC_API_KEY_ANDROID": "goog_mfyywPtYwjSUQhFJoHeVysbUole"
             }
         },
         "production": {
             "channel": "production",
             "android": {
                 "buildType": "app-bundle"
+            },
+            "env": {
+                "EXPO_PUBLIC_RC_API_KEY_IOS": "appl_bIbghsScVIeHGfrXogcChLzXKsS",
+                "EXPO_PUBLIC_RC_API_KEY_ANDROID": "goog_mfyywPtYwjSUQhFJoHeVysbUole"
             }
         },
         "production-apk": {
             "channel": "production",
             "android": {
                 "buildType": "apk"
+            },
+            "env": {
+                "EXPO_PUBLIC_RC_API_KEY_IOS": "appl_bIbghsScVIeHGfrXogcChLzXKsS",
+                "EXPO_PUBLIC_RC_API_KEY_ANDROID": "goog_mfyywPtYwjSUQhFJoHeVysbUole"
             }
         }
     },

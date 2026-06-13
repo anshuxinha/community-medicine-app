@@ -987,6 +987,23 @@ export const AppProvider = ({ children }) => {
       return;
     }
 
+    // Ensure API key matches the current platform to avoid cross-platform configuration errors
+    const isIosKey = typeof rcApiKey === "string" && rcApiKey.startsWith("appl_");
+    const isAndroidKey = typeof rcApiKey === "string" && rcApiKey.startsWith("goog_");
+
+    if (Platform.OS === "ios" && !isIosKey) {
+      console.warn(
+        `[RevenueCat] Skipped configuration: iOS requires an API key starting with 'appl_'. Found: ${rcApiKey?.substring(0, 8)}...`
+      );
+      return;
+    }
+    if (Platform.OS === "android" && !isAndroidKey) {
+      console.warn(
+        `[RevenueCat] Skipped configuration: Android requires an API key starting with 'goog_'. Found: ${rcApiKey?.substring(0, 8)}...`
+      );
+      return;
+    }
+
     Purchases.configure({ apiKey: rcApiKey });
 
     Purchases.addCustomerInfoUpdateListener((info) => {

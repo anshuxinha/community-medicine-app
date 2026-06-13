@@ -120,6 +120,7 @@ jest.mock('react-native-safe-area-context', () => {
 jest.mock('react-native-purchases', () => ({
   __esModule: true,
   default: {
+    isConfigured: jest.fn().mockResolvedValue(true),
     getOfferings: jest.fn().mockResolvedValue({
       current: {
         availablePackages: [

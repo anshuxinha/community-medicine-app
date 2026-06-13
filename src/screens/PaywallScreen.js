@@ -117,13 +117,27 @@ const PaywallScreen = ({ navigation }) => {
   }, [selectedPlan]);
 
   // Fetch offerings from RevenueCat on mount
-  const fetchOfferings = async (forcedOfferingId = undefined) => {
+  const fetchOfferings = async (forcedOfferingId = undefined, retryCount = 0) => {
     if (Constants.appOwnership === "expo" || !Purchases) {
       setLoadError("Purchases are not supported in Expo Go.");
       return;
     }
 
     try {
+      // Check if Purchases has been configured. If not, wait and retry to handle potential race condition on app cold start.
+      const configured = await Purchases.isConfigured();
+      if (!configured) {
+        if (retryCount < 5) {
+          console.log(`[RevenueCat] Not configured yet. Retrying in 500ms... (Attempt ${retryCount + 1}/5)`);
+          setTimeout(() => {
+            fetchOfferings(forcedOfferingId, retryCount + 1);
+          }, 500);
+          return;
+        } else {
+          throw new Error("RevenueCat SDK is not configured. Please check your API keys.");
+        }
+      }
+
       console.log("[RevenueCat] Fetching offerings for platform:", Platform.OS);
       const result = await Purchases.getOfferings();
       console.log(
