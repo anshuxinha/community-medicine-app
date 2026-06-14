@@ -1,1 +1,23 @@
-[]
+[
+    {
+        "id": "9961129b-29b1-4ce5-8927-029124250d2f",
+        "date": "2026-06-12",
+        "title": "India Strengthens Strategies for Leprosy-Free Vision",
+        "summary": "The Ministry of Health and Family Welfare convened a regional workshop in Chhattisgarh to achieve zero leprosy transmission. While India attained national elimination as a public health problem in 2005, transmission persists in endemic hotspots. Officials emphasized early diagnosis, periodic case detection campaigns, and expanding Single-Dose Rifampicin coverage for eligible healthy contacts to interrupt the disease's transmission cycle effectively.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2272194"
+    },
+    {
+        "id": "b9190012-ddd7-4fe5-8c5d-66efb63854b2",
+        "date": "2026-06-09",
+        "title": "PMSMA Marks Decade of Care with Major Health Gains",
+        "summary": "Union Health Minister J.P. Nadda launched celebrations for 10 years of Pradhan Mantri Surakshit Matritva Abhiyaan. India achieved a significant 86% reduction in maternal mortality, outpacing the global average. Key health indicators show institutional deliveries have risen to 90.6%, while antenatal care coverage has reached 95.9%, reflecting the government's commitment to ensuring safe motherhood and healthy newborns.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2270828"
+    },
+    {
+        "id": "7cf45561-bc5c-4a2d-82ce-2e94187d3f89",
+        "date": "2026-06-08",
+        "title": "West Bengal Joins Ayushman Bharat PM-JAY Scheme",
+        "summary": "West Bengal has become the 36th State or Union Territory to implement the Ayushman Bharat PM-JAY scheme. Following a Memorandum of Understanding signed between the National Health Authority and the state government, health assurance benefits will now extend to approximately 1.43 crore families. This landmark inclusion marks a major step toward achieving universal health coverage and financial protection for citizens.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2270375"
+    }
+]
