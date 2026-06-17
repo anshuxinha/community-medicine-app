@@ -67,7 +67,11 @@ const SEEN_VIDEO_IDS_STORAGE_KEY = "seenVideoIds:v1";
 
 const isVideoFree = (video) => {
   if (!video) return false;
-  return video.title === "Nutrition: Overview" || video.title === "Protein";
+  return (
+    video.title === "Nutrition: Overview and Protein" ||
+    video.title === "Nutrition: Overview" ||
+    video.title === "Protein"
+  );
 };
 
 const FreeLabel = () => {
