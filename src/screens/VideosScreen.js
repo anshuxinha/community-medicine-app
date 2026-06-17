@@ -18,6 +18,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   ActivityIndicator,
+  Badge,
   Chip,
   IconButton,
   Text,
@@ -63,6 +64,15 @@ import {
 
 const { width } = Dimensions.get("window");
 const SEEN_VIDEO_IDS_STORAGE_KEY = "seenVideoIds:v1";
+
+const isVideoFree = (video) => {
+  if (!video) return false;
+  return video.title === "Nutrition: Overview" || video.title === "Protein";
+};
+
+const FreeLabel = () => {
+  return <Badge style={styles.freeBadge}>FREE</Badge>;
+};
 
 const pdfViewerHtml = (pdfUrl) => `
 <!DOCTYPE html>
@@ -826,14 +836,6 @@ const VideosScreen = ({ navigation }) => {
   useEffect(() => {
     let mounted = true;
 
-    if (!isPremium) {
-      navigation.getParent()?.navigate("Paywall");
-      setIsLoadingVideos(false);
-      return () => {
-        mounted = false;
-      };
-    }
-
     isSubscribedToVideoNotifications().then((subscribed) => {
       if (mounted) setIsSubscribed(subscribed);
     });
@@ -862,7 +864,7 @@ const VideosScreen = ({ navigation }) => {
       unsubscribeVideos?.();
       unsubscribeNotifications?.();
     };
-  }, [isPremium, navigation]);
+  }, [navigation]);
 
   const categories = useMemo(() => getVideoCategories(videos), [videos]);
 
@@ -924,11 +926,16 @@ const VideosScreen = ({ navigation }) => {
     const publishedAt = formatPublishedDate(item.publishedAt || item.createdAt);
     const thumbnailSource = getThumbnailSource(item.thumbnailUrl);
     const showNewBadge = item.isNew === true && !seenVideoIds[item.id];
+    const showFreeBadge = !isPremium && isVideoFree(item);
 
     return (
       <Pressable
         style={styles.videoItem}
         onPress={() => {
+          if (!isPremium && !isVideoFree(item)) {
+            navigation.getParent()?.navigate("Paywall");
+            return;
+          }
           markVideoSeen(item.id);
           setSelectedVideo(item);
         }}
@@ -954,6 +961,7 @@ const VideosScreen = ({ navigation }) => {
           <View style={styles.itemTitleRow}>
             <Text style={styles.itemTitle}>{item.title || "Untitled video"}</Text>
             {showNewBadge ? <Text style={styles.videoNewBadge}>NEW</Text> : null}
+            {showFreeBadge ? <FreeLabel /> : null}
           </View>
           <Text style={styles.itemMeta}>
             {publishedAt}  •  {item.categoryLabel || "Lecture"}
@@ -970,10 +978,6 @@ const VideosScreen = ({ navigation }) => {
       </Pressable>
     );
   };
-
-  if (!isPremium) {
-    return null;
-  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -1851,6 +1855,13 @@ const styles = StyleSheet.create({
   },
   pdfFullscreenWebView: {
     flex: 1,
+  },
+  freeBadge: {
+    backgroundColor: theme.colors.success,
+    color: "#FFFFFF",
+    fontWeight: "700",
+    marginRight: 6,
+    alignSelf: "center",
   },
 });
 

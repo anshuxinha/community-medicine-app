@@ -81,14 +81,6 @@ const TabNavigator = () => {
       <Tab.Screen
         name="Videos"
         component={VideosScreen}
-        listeners={({ navigation }) => ({
-          tabPress: (event) => {
-            if (isPremium) return;
-
-            event.preventDefault();
-            navigation.getParent()?.navigate("Paywall");
-          },
-        })}
       />
       <Tab.Screen
         name="Updates"
