@@ -34,7 +34,7 @@ eas channel:edit production --branch main --non-interactive
 Always specify the branch explicitly:
 
 ```bash
-eas update --branch main --message "Your update message" --clear-cache
+eas update --branch main --message "Your update message" --clear-cache --environment production
 ```
 
 ### 4. Verify Update is Live
@@ -60,7 +60,7 @@ Use `--clear-cache` flag when:
 # Complete update workflow:
 git add . && git commit -m "Your message" && git push origin main
 eas channel:edit production --branch main --non-interactive
-eas update --branch main --message "Your message" --clear-cache
+eas update --branch main --message "Your message" --clear-cache --environment production
 ```
 
 ## Key Insight

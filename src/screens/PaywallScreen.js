@@ -364,9 +364,14 @@ const PaywallScreen = ({ navigation }) => {
         }
       }
 
+      const premiumEntitlement = customerInfo?.entitlements?.active?.Premium;
+      const expiresDate = premiumEntitlement?.expirationDate;
+
       await upgradeToPremium({
         premiumSource: "purchase",
         premiumPlan: selectedPlan,
+        premiumType: selectedPlan,
+        premiumExpiryDate: expiresDate || null,
         appliedCoupon: appliedCoupon?.code || null,
       });
 

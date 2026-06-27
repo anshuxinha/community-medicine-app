@@ -61,6 +61,15 @@ const getAccountStateKey = (uid) => `accountState:${uid}`;
 const hasRevenueCatPremiumEntitlement = (customerInfo) =>
   customerInfo?.entitlements?.active?.Premium != null;
 
+const getPremiumTypeFromEntitlement = (entitlement) => {
+  if (!entitlement) return null;
+  const productId = entitlement.productIdentifier?.toLowerCase() || "";
+  if (productId.includes("lifetime")) return "lifetime";
+  if (productId.includes("yearly") || productId.includes("annual")) return "yearly";
+  if (productId.includes("monthly")) return "monthly";
+  return "yearly"; // fallback
+};
+
 const sanitizeReadItemVersions = (value) => {
   if (!value || typeof value !== "object") return {};
 
@@ -170,6 +179,11 @@ export const AppProvider = ({ children }) => {
   const currentDeviceIdRef = useRef(null);
   const lastRefreshRef = useRef(0);
   const prevStreakRef = useRef(0);
+  const userRef = useRef(user);
+
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
 
   const totalItems =
     TOTAL_LEAF_CONTENT_ITEMS > 0 ? TOTAL_LEAF_CONTENT_ITEMS : 1;
@@ -947,11 +961,12 @@ export const AppProvider = ({ children }) => {
   };
 
   const persistPremiumAccess = async (metadata = {}) => {
-    if (!user?.uid) return;
+    const currentUser = userRef.current;
+    if (!currentUser?.uid) return;
 
     try {
       await setDoc(
-        doc(db, "users", user.uid),
+        doc(db, "users", currentUser.uid),
         {
           isPremium: true,
           premiumUpdatedAt: serverTimestamp(),
@@ -1009,10 +1024,19 @@ export const AppProvider = ({ children }) => {
     Purchases.addCustomerInfoUpdateListener((info) => {
       const hasPremium = hasRevenueCatPremiumEntitlement(info);
       setRevenueCatPremium(hasPremium);
-      const expiresDate = info?.subscriptions?.Premium?.expiresDate;
+      const premiumEntitlement = info?.entitlements?.active?.Premium;
+      const expiresDate = premiumEntitlement?.expirationDate;
+      const pType = getPremiumTypeFromEntitlement(premiumEntitlement);
       setSubscriptionExpiry(expiresDate || null);
+      if (pType) {
+        setPremiumType(pType);
+      }
       if (hasPremium) {
-        persistPremiumAccess({ premiumSource: "revenuecat_listener" });
+        persistPremiumAccess({ 
+          premiumSource: "revenuecat_listener",
+          premiumType: pType || "monthly",
+          premiumExpiryDate: expiresDate || null,
+        });
       }
     });
 
@@ -1020,10 +1044,19 @@ export const AppProvider = ({ children }) => {
       .then((info) => {
         const hasPremium = hasRevenueCatPremiumEntitlement(info);
         setRevenueCatPremium(hasPremium);
-        const expiresDate = info?.subscriptions?.Premium?.expiresDate;
+        const premiumEntitlement = info?.entitlements?.active?.Premium;
+        const expiresDate = premiumEntitlement?.expirationDate;
+        const pType = getPremiumTypeFromEntitlement(premiumEntitlement);
         setSubscriptionExpiry(expiresDate || null);
+        if (pType) {
+          setPremiumType(pType);
+        }
         if (hasPremium) {
-          persistPremiumAccess({ premiumSource: "revenuecat_initial_check" });
+          persistPremiumAccess({ 
+            premiumSource: "revenuecat_initial_check",
+            premiumType: pType || "monthly",
+            premiumExpiryDate: expiresDate || null,
+          });
         }
       })
       .catch((err) => {
@@ -1041,10 +1074,19 @@ export const AppProvider = ({ children }) => {
       .then(({ customerInfo }) => {
         const hasPremium = hasRevenueCatPremiumEntitlement(customerInfo);
         setRevenueCatPremium(hasPremium);
-        const expiresDate = customerInfo?.subscriptions?.Premium?.expiresDate;
+        const premiumEntitlement = customerInfo?.entitlements?.active?.Premium;
+        const expiresDate = premiumEntitlement?.expirationDate;
+        const pType = getPremiumTypeFromEntitlement(premiumEntitlement);
         setSubscriptionExpiry(expiresDate || null);
+        if (pType) {
+          setPremiumType(pType);
+        }
         if (hasPremium) {
-          persistPremiumAccess({ premiumSource: "revenuecat_login" });
+          persistPremiumAccess({ 
+            premiumSource: "revenuecat_login",
+            premiumType: pType || "monthly",
+            premiumExpiryDate: expiresDate || null,
+          });
         }
       })
       .catch((err) => {
@@ -1086,10 +1128,19 @@ export const AppProvider = ({ children }) => {
         .then(({ customerInfo }) => {
           const hasPremium = hasRevenueCatPremiumEntitlement(customerInfo);
           setRevenueCatPremium(hasPremium);
-          const expiresDate = customerInfo?.subscriptions?.Premium?.expiresDate;
+          const premiumEntitlement = customerInfo?.entitlements?.active?.Premium;
+          const expiresDate = premiumEntitlement?.expirationDate;
+          const pType = getPremiumTypeFromEntitlement(premiumEntitlement);
           setSubscriptionExpiry(expiresDate || null);
+          if (pType) {
+            setPremiumType(pType);
+          }
           if (hasPremium) {
-            persistPremiumAccess({ premiumSource: "revenuecat_login" });
+            persistPremiumAccess({ 
+              premiumSource: "revenuecat_login",
+              premiumType: pType || "monthly",
+              premiumExpiryDate: expiresDate || null,
+            });
           }
         })
         .catch((err) => {

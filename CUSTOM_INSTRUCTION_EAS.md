@@ -28,7 +28,7 @@ eas channel:list --non-interactive
 eas channel:edit production --branch main --non-interactive
 
 # 3. Publish with cache clearing
-eas update --branch main --message "message" --clear-cache
+eas update --branch main --message "message" --clear-cache --environment production
 
 # 4. Verify
 eas channel:view production --non-interactive
