@@ -303,7 +303,7 @@ const uploadVideo = async (db, config, options) => {
   const title = options.title || path.basename(filePath, path.extname(filePath));
   const createdVideo = await bunnyFetch(config, `/library/${config.libraryId}/videos`, {
     method: "POST",
-    body: JSON.stringify({ title, thumbnailTime: 1000 }),
+    body: JSON.stringify({ title, thumbnailTime: 10000 }),
   });
 
   await uploadBinaryToBunny(config, createdVideo.guid, filePath);

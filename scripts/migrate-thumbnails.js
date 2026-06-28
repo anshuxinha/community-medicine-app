@@ -50,7 +50,7 @@ const discoverPullZoneHostname = async (config, videoId) => {
 
     const html = await response.text();
     const match = html.match(
-      new RegExp(`https://([^/"'\\s<>]+)/${videoId}/thumbnail.jpg`),
+      new RegExp(`https://([^/"'\\s<>]+)/${videoId}/(?:thumbnail(?:_[a-zA-Z0-9]+)?\\.jpg|playlist\\.m3u8)`),
     );
     return match?.[1] || "";
   } catch (error) {
@@ -88,13 +88,13 @@ async function main() {
     const tempOutPath = path.join(__dirname, `temp_${videoId}.jpg`);
 
     console.log(`Playlist URL: ${playlistUrl}`);
-    console.log(`Extracting frame at 1s...`);
+    console.log(`Extracting frame at 10s...`);
 
     try {
       await new Promise((resolve, reject) => {
         ffmpeg(playlistUrl)
           .inputOptions("-headers", "Referer: https://player.mediadelivery.net/\r\n")
-          .seekInput(1.0) // Seek to 1 second
+          .seekInput(10.0) // Seek to 10 seconds
           .frames(1)
           .output(tempOutPath)
           .on("end", () => {
