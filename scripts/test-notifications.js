@@ -28,6 +28,7 @@ const main = async () => {
     sound: "default",
     title: "Test Notification",
     body: "If you see this, notifications are working!",
+    channelId: "default",
     data: { screen: "Videos" }
   }));
 

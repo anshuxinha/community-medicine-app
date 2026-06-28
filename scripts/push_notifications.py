@@ -128,6 +128,7 @@ def send_push_notifications(tokens: List[str], title: str, body: str, screen: st
                 "sound": "default",
                 "title": title,
                 "body": body,
+                "channelId": "default",
                 "data": {"screen": screen},
             }
         )

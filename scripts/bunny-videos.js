@@ -256,6 +256,7 @@ const sendVideoPushNotification = async (db, video, customBody) => {
     sound: "default",
     title: "New Video Available",
     body,
+    channelId: "default",
     data: { screen: "Videos", type: "video", videoId: video.bunnyVideoId },
   }));
 
@@ -302,7 +303,7 @@ const uploadVideo = async (db, config, options) => {
   const title = options.title || path.basename(filePath, path.extname(filePath));
   const createdVideo = await bunnyFetch(config, `/library/${config.libraryId}/videos`, {
     method: "POST",
-    body: JSON.stringify({ title }),
+    body: JSON.stringify({ title, thumbnailTime: 1000 }),
   });
 
   await uploadBinaryToBunny(config, createdVideo.guid, filePath);

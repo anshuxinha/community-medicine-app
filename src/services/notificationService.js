@@ -463,6 +463,7 @@ export async function sendReplyNotification(pushToken, options = {}) {
         sound: "default",
         title: "New reply to your doubt",
         body: `${replierName} replied on ${videoTitle}.`,
+        channelId: "default",
         data: {
           screen: "Videos",
           type: "video_doubt_reply",

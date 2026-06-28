@@ -164,8 +164,8 @@
     "hash": "54936b9b06f3ffedf69217c6f0accca5"
   },
   "D:\\The App\\scripts\\attach-pdf-to-video.js": {
-    "mtime": 1782454502.0677993,
-    "hash": "9693792bf96d7c9c7899e9bee60c4bec"
+    "mtime": 1782548982.624477,
+    "hash": "d2e0f2975a1ce72b612304f9345a2403"
   },
   "D:\\The App\\scripts\\audit_colors.js": {
     "mtime": 1772547735.8824155,
@@ -176,8 +176,8 @@
     "hash": "d2356a6192520e31f73a149eeed2931b"
   },
   "D:\\The App\\scripts\\bunny-videos.js": {
-    "mtime": 1780061532.7284477,
-    "hash": "1e82324e79642fe9fe9f81980536cd75"
+    "mtime": 1782652963.6063766,
+    "hash": "ce711b515e5255c50c12cd256df6eb19"
   },
   "D:\\The App\\scripts\\check-firestore-gem.js": {
     "mtime": 1778661542.9656944,
@@ -216,8 +216,12 @@
     "hash": "039ef18442ec3977c1ae32fc965da703"
   },
   "D:\\The App\\scripts\\grant_yearly_premium.js": {
-    "mtime": 1782458440.3819728,
-    "hash": "a595825c3478a0b1ab187cdb88a3e5be"
+    "mtime": 1782548982.6255007,
+    "hash": "bb3369280587f52bb8f02ceeddce9d1c"
+  },
+  "D:\\The App\\scripts\\migrate-thumbnails.js": {
+    "mtime": 1782652754.4447727,
+    "hash": "f72e9dd383b55d32864bae1f97dbf270"
   },
   "D:\\The App\\scripts\\patch-mockData.js": {
     "mtime": 1772355533.3797212,
@@ -228,8 +232,8 @@
     "hash": "3da4cd0fc30e74dc4ef35813e2634863"
   },
   "D:\\The App\\scripts\\push_notifications.py": {
-    "mtime": 1779027255.8557568,
-    "hash": "17d7fec7cd4e1643bad7bad507ba74ec"
+    "mtime": 1782652970.3337114,
+    "hash": "983991e12aff389d344eb8ac64227ae8"
   },
   "D:\\The App\\scripts\\refactor_colors.js": {
     "mtime": 1772547910.835821,
@@ -260,8 +264,8 @@
     "hash": "fad85bbe9647a11753c0e33d597086ee"
   },
   "D:\\The App\\scripts\\test-notifications.js": {
-    "mtime": 1778653376.1817062,
-    "hash": "291c1f70fe7ea27f98e9c779ab8bd33e"
+    "mtime": 1782652974.80204,
+    "hash": "b7f26e74474363b10bd358784273cc51"
   },
   "D:\\The App\\scripts\\update-video-category.js": {
     "mtime": 1778652808.5589137,
@@ -324,7 +328,7 @@
     "hash": "b6d28a52efa63c1ccfa616dabffb7bd9"
   },
   "D:\\The App\\src\\context\\AppContext.js": {
-    "mtime": 1782548543.646822,
+    "mtime": 1782548982.6264944,
     "hash": "8c9e032ba65ac5eb6943a0190030435a"
   },
   "D:\\The App\\src\\data\\defaultTopicIllustrations.js": {
@@ -408,7 +412,7 @@
     "hash": "a6875052b15d80622198683a2c516ccd"
   },
   "D:\\The App\\src\\screens\\PaywallScreen.js": {
-    "mtime": 1782548548.2134435,
+    "mtime": 1782548982.6311624,
     "hash": "afa0edefe44f15b13a7fbdc6aae4d3f5"
   },
   "D:\\The App\\src\\screens\\ProfileScreen.js": {
@@ -468,8 +472,8 @@
     "hash": "2e97f9fae198d3f94ab87018343b085b"
   },
   "D:\\The App\\src\\services\\notificationService.js": {
-    "mtime": 1779782128.3543482,
-    "hash": "7d4ecf7edd79d23cca10092438c05df7"
+    "mtime": 1782652967.8831112,
+    "hash": "862e90c9bdb176e488df88a9e3a2dcca"
   },
   "D:\\The App\\src\\services\\topicIllustrations.js": {
     "mtime": 1778664278.3496735,
@@ -528,11 +532,11 @@
     "hash": "3cf53682ca29a79ec4d6899d2c41c273"
   },
   "D:\\The App\\CUSTOM_INSTRUCTION_EAS.md": {
-    "mtime": 1782458476.4898956,
+    "mtime": 1782548982.6080215,
     "hash": "aa088cb5613dd1532ded305ced87c07b"
   },
   "D:\\The App\\EAS_UPDATE_GUIDELINES.md": {
-    "mtime": 1782458480.0639765,
+    "mtime": 1782548982.6085422,
     "hash": "a1efa656ed91462c26769775dfda3eee"
   },
   "D:\\The App\\EXAMPLES.md": {
