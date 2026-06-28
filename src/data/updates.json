@@ -1,5 +1,19 @@
 [
     {
+        "id": "1b5db6eb-ef19-4f70-b4b5-2ed8e8c7c78f",
+        "date": "2026-06-25",
+        "title": "India Expands QR Code Drug Traceability Framework",
+        "summary": "The Ministry of Health and Family Welfare amended the Drugs Rules, 1945, expanding Schedule H2 to include vaccines, antimicrobials, anti-cancer drugs, and NDPS substances. Manufacturers must now affix QR codes to packaging. These codes store nine key data elements, including batch numbers and expiry dates, to enhance the safety, quality, and authentication of the pharmaceutical supply chain across India.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2277691"
+    },
+    {
+        "id": "fe5412eb-b16a-43a4-8da8-6766adf2b56a",
+        "date": "2026-06-25",
+        "title": "Launch of AIR SUVIDHA 2.0 for Ebola Screening",
+        "summary": "The Ministry of Civil Aviation and DIAL launched AIR SUVIDHA 2.0 to monitor Ebola health risks at Indian entry points. Following the WHO's May 17, 2026, emergency declaration, the portal requires international travelers to submit a health self-declaration 24 hours before arrival. It tracks 21-day travel history and symptoms, enabling real-time coordination between health and immigration agencies.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2277648"
+    },
+    {
         "id": "039816ad-5843-4dd4-9f39-1dff56d73678",
         "date": "2026-06-19",
         "title": "Union Health Minister Reviews TB Mukt Bharat Abhiyan Progress",
@@ -40,5 +54,12 @@
         "title": "India Celebrates Decade of Pradhan Mantri Surakshit Matritva Abhiyan",
         "summary": "The Ministry of Health and Family Welfare launched nationwide celebrations on June 9, 2026, marking ten years of the Pradhan Mantri Surakshit Matritva Abhiyan. To commemorate a decade of safe motherhood, Union Minister J.P. Nadda released a \u20b975 commemorative coin and a \u20b95 postal stamp. The initiative continues promoting nine assured free antenatal care services to ensure healthy pregnancies.",
         "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2270246"
+    },
+    {
+        "id": "d764f60c-a192-42d3-97c9-2db7fbc65853",
+        "date": "2026-06-07",
+        "title": "West Bengal Joins Ayushman Bharat PM-JAY Scheme",
+        "summary": "West Bengal is set to become the 36th State or Union Territory to implement the Ayushman Bharat Pradhan Mantri Jan Arogya Yojana. A Memorandum of Understanding will be signed between the National Health Authority and the West Bengal government. This expansion of the world's largest publicly funded health assurance scheme aims to provide equitable and accessible healthcare for all citizens.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2270056"
     }
 ]
