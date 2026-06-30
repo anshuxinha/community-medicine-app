@@ -14,6 +14,7 @@ import {
 import { Button, Surface, IconButton } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import Constants from "expo-constants";
+import * as Application from "expo-application";
 import { db } from "../config/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { theme } from "../styles/theme";
@@ -99,10 +100,10 @@ const UpdateBottomSheet = () => {
           ? parseInt(data.latest_ios_build || "0", 10)
           : parseInt(data.latest_android_build || "0", 10);
 
-        const currentVersion = Constants.nativeAppVersion || Constants.expoConfig?.version || "1.0.0";
+        const currentVersion = Application.nativeApplicationVersion || Constants.nativeAppVersion || Constants.expoConfig?.version || "1.0.0";
         const currentBuild = Platform.OS === "ios"
-          ? parseInt(Constants.expoConfig?.ios?.buildNumber || Constants.nativeBuildVersion || "0", 10)
-          : parseInt(Constants.expoConfig?.android?.versionCode || Constants.nativeBuildVersion || "0", 10);
+          ? parseInt(Application.nativeBuildVersion || Constants.expoConfig?.ios?.buildNumber || Constants.nativeBuildVersion || "0", 10)
+          : parseInt(Application.nativeBuildVersion || Constants.expoConfig?.android?.versionCode || Constants.nativeBuildVersion || "0", 10);
 
         // Show popup if version is lower OR same version but lower build number
         const needsUpdate = isVersionLower(currentVersion, latestVersion) ||

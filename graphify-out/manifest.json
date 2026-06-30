@@ -159,6 +159,10 @@
     "mtime": 1780033181.032891,
     "hash": "ac7cc8809ce437a954c8714b441fcc24"
   },
+  "D:\\The App\\scratch\\read_firestore_config.js": {
+    "mtime": 1782840076.95,
+    "hash": "aa89b5753c9f7c88e0b4ef1f6f2516f0"
+  },
   "D:\\The App\\scripts\\apply_staged_library_updates.py": {
     "mtime": 1777265229.3049736,
     "hash": "54936b9b06f3ffedf69217c6f0accca5"
@@ -316,8 +320,8 @@
     "hash": "993d62075e5e931a99de91380d01239e"
   },
   "D:\\The App\\src\\components\\UpdateBottomSheet.js": {
-    "mtime": 1782837952.9233532,
-    "hash": "84eb71e8b36df4b32515787176915e62"
+    "mtime": 1782842763.1896503,
+    "hash": "b75c6486bacf5f185a21d9b7e8d2ba24"
   },
   "D:\\The App\\src\\components\\UpdateDetailDialog.js": {
     "mtime": 1779029057.2971344,
@@ -376,8 +380,8 @@
     "hash": "22c1711fde70e060b0908dfa4bf5f069"
   },
   "D:\\The App\\src\\screens\\DashboardScreen.js": {
-    "mtime": 1781158168.5941727,
-    "hash": "e96447c1f3971ceb9c97af5efc802256"
+    "mtime": 1782842767.6407318,
+    "hash": "17d3c6381382aadccb78cd39b91753ee"
   },
   "D:\\The App\\src\\screens\\DietarySurveyScreen.js": {
     "mtime": 1777467165.6328642,
