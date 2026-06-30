@@ -29,7 +29,7 @@ const UpdateBottomSheet = () => {
   const [visible, setVisible] = useState(false);
   const [updateInfo, setUpdateInfo] = useState({
     version: "",
-    notes: "Important performance and security updates.",
+    notes: "Minor bug fixes and app stabilization.",
     size: "Optimized Download",
   });
   const bottomPadding = Math.max(insets.bottom, 24);
@@ -111,7 +111,7 @@ const UpdateBottomSheet = () => {
         if (needsUpdate) {
           setUpdateInfo({
             version: latestVersion || "New Version",
-            notes: data.update_notes || "Important performance and security updates.",
+            notes: "Minor bug fixes and app stabilization.",
             size: data.update_size || "Optimized Download",
           });
           show();
