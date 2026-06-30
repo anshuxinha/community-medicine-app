@@ -984,9 +984,12 @@ export const AppProvider = ({ children }) => {
     if (Constants.appOwnership === "expo") return;
     if (!Purchases) return;
 
+    const iosKey = process.env.EXPO_PUBLIC_RC_API_KEY_IOS;
+    const androidKey = process.env.EXPO_PUBLIC_RC_API_KEY_ANDROID;
+
     const rcApiKey = Platform.select({
-      ios: process.env.EXPO_PUBLIC_RC_API_KEY_IOS,
-      android: process.env.EXPO_PUBLIC_RC_API_KEY_ANDROID,
+      ios: (iosKey && iosKey !== "undefined" && iosKey !== "null") ? iosKey : "appl_bIbghsScVIeHGfrXogcChLzXKsS",
+      android: (androidKey && androidKey !== "undefined" && androidKey !== "null") ? androidKey : "goog_mfyywPtYwjSUQhFJoHeVysbUole",
     }) || process.env.EXPO_PUBLIC_RC_API_KEY;
 
     console.log(`[RevenueCat] Initializing on ${Platform.OS} with key: ${rcApiKey?.substring(0, 8)}...`);
