@@ -11,6 +11,7 @@
     "videos:sync:notify": "node scripts/bunny-videos.js sync --notify-new",
     "videos:upload": "node scripts/bunny-videos.js upload",
     "gems:sync": "node scripts/sync-gem-images.js",
+    "version:sync": "node scripts/update-firestore-version.js",
     "test": "jest"
   },
   "dependencies": {
