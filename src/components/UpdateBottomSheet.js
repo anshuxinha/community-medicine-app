@@ -20,16 +20,19 @@ import Constants from "expo-constants";
 import { db } from "../config/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { theme } from "../styles/theme";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { height: WINDOW_HEIGHT } = Dimensions.get("window");
 
 const UpdateBottomSheet = () => {
+  const insets = useSafeAreaInsets();
   const [visible, setVisible] = useState(false);
   const [updateInfo, setUpdateInfo] = useState({
     version: "",
     notes: "Security improvements and bug fixes.",
     size: "Optimized Download",
   });
+  const bottomPadding = Math.max(insets.bottom, 24);
   const slideAnim = useState(new Animated.Value(WINDOW_HEIGHT))[0];
   const opacityAnim = useState(new Animated.Value(0))[0];
 
@@ -135,7 +138,7 @@ const UpdateBottomSheet = () => {
   const storeIcon = Platform.OS === "ios" ? "apple" : "play-arrow";
 
   return (
-    <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
+    <View style={[StyleSheet.absoluteFill, styles.container]} pointerEvents="box-none">
       {/* Backdrop */}
       <Animated.View 
         style={[styles.backdrop, { opacity: opacityAnim }]} 
@@ -151,7 +154,7 @@ const UpdateBottomSheet = () => {
           { transform: [{ translateY: slideAnim }] }
         ]}
       >
-        <Surface style={styles.surface} elevation={5}>
+        <Surface style={[styles.surface, { paddingBottom: bottomPadding }]} elevation={5}>
           <View style={styles.header}>
             <View style={styles.storeHeader}>
               <MaterialIcons 
@@ -228,6 +231,10 @@ const UpdateBottomSheet = () => {
 const flex1 = { flex: 1 };
 
 const styles = StyleSheet.create({
+  container: {
+    zIndex: 9999,
+    elevation: 9999,
+  },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.5)",

@@ -15,7 +15,17 @@ const getArgValue = (flag) => {
   return null;
 };
 
-const notes = getArgValue("--notes") || getArgValue("-n");
+const { execSync } = require("child_process");
+
+const getCommitMessage = () => {
+  try {
+    return execSync("git log -1 --pretty=%B", { encoding: "utf8" }).trim();
+  } catch {
+    return null;
+  }
+};
+
+const notes = getArgValue("--notes") || getArgValue("-n") || getCommitMessage();
 const size = getArgValue("--size") || getArgValue("-s");
 const isDryRun = args.includes("--dry-run");
 
