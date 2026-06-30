@@ -55,3 +55,9 @@ topic*_current.txt
 topic2_*.txt
 layout_*.txt
 table_test.txt
+
+# Python virtual env
+.venv/
+
+# Scratch files
+scratch/
