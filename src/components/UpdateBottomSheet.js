@@ -18,9 +18,6 @@ import { db } from "../config/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { theme } from "../styles/theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import SpInAppUpdates, {
-  IAUUpdateKind,
-} from "sp-react-native-in-app-updates";
 
 const { height: WINDOW_HEIGHT } = Dimensions.get("window");
 
@@ -40,18 +37,26 @@ const UpdateBottomSheet = () => {
     // Only run update check in production builds
     if (__DEV__) return;
 
-    // Check if the native update module is compiled into the binary
+    // Check if the native update module is compiled into the binary.
+    // IMPORTANT: Do NOT use a static top-level import for sp-react-native-in-app-updates.
+    // That package transitively imports react-native-device-info, which throws a fatal
+    // error at module-evaluation time if its native module (RNDeviceInfo) is missing.
+    // On binaries older than 1.0.6, those native modules were never compiled in,
+    // so a static import crashes the entire JS bundle before React mounts.
     const isNativeUpdateAvailable = !!NativeModules.SpInAppUpdates;
 
     if (isNativeUpdateAvailable) {
       try {
+        // Dynamic require — only evaluated when the native module exists
+        const SpInAppUpdates = require("sp-react-native-in-app-updates").default;
+        const { AndroidUpdateType } = require("sp-react-native-in-app-updates");
         const inAppUpdates = new SpInAppUpdates(false);
         inAppUpdates
           .checkNeedsUpdate()
           .then((result) => {
             if (result.shouldUpdate) {
               inAppUpdates.startUpdate({
-                updateType: IAUUpdateKind.IMMEDIATE,
+                updateType: AndroidUpdateType.IMMEDIATE,
               });
             }
           })
