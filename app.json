@@ -19,7 +19,8 @@
       "bundleIdentifier": "com.communitymed.app",
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "LSApplicationQueriesSchemes": ["itms-apps"]
       }
     },
     "android": {
