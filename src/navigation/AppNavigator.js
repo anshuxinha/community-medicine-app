@@ -39,6 +39,8 @@ import BiostatsAssistantScreen from "../screens/BiostatsAssistantScreen";
 import NotificationsScreen from "../screens/NotificationsScreen";
 import AdminLibraryReviewScreen from "../screens/AdminLibraryReviewScreen";
 import GemsScreen from "../screens/GemsScreen";
+import PYQCreateScreen from "../screens/PYQCreateScreen";
+import PYQPracticeScreen from "../screens/PYQPracticeScreen";
 import { theme } from "../styles/theme";
 
 const Tab = createBottomTabNavigator();
@@ -57,6 +59,7 @@ const TabNavigator = () => {
           let iconName;
           if (route.name === "Dashboard") iconName = "dashboard";
           else if (route.name === "Library") iconName = "book";
+          else if (route.name === "QBank") iconName = "assignment";
           else if (route.name === "Updates") iconName = "update";
           else if (route.name === "Videos") iconName = "ondemand-video";
           return <MaterialIcons name={iconName} color={color} size={size} />;
@@ -78,6 +81,7 @@ const TabNavigator = () => {
     >
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen name="Library" component={LibraryScreen} />
+      <Tab.Screen name="QBank" component={PYQCreateScreen} />
       <Tab.Screen
         name="Videos"
         component={VideosScreen}
@@ -180,6 +184,11 @@ const AppNavigator = () => {
               name="Quiz"
               component={QuizScreen}
               options={({ route }) => ({ title: `${route.params.title} Quiz` })}
+            />
+            <Stack.Screen
+              name="PYQPractice"
+              component={PYQPracticeScreen}
+              options={{ headerShown: false }}
             />
 
             {/* ── Field Toolbox ── */}

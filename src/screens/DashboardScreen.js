@@ -21,7 +21,7 @@ import recentUpdates from "../data/updates.json";
 import archiveData from "../data/updates_archive.json";
 import publicHealthDays from "../data/publicHealthDays.json";
 import { AppContext } from "../context/AppContext";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import DrawerMenu from "../components/DrawerMenu";
 import UpdateDetailDialog from "../components/UpdateDetailDialog";
 import ReferralAnnouncementDialog from "../components/ReferralAnnouncementDialog";
@@ -424,6 +424,24 @@ const DashboardScreen = ({ navigation }) => {
             </Card.Content>
           </Card>
         </View>
+        
+        {/* PYQ QBank Section Banner */}
+        <Card style={styles.qbankBanner} onPress={() => navigation.navigate("QBank")}>
+          <Card.Content style={styles.qbankBannerContent}>
+            <View style={styles.qbankBannerIconWrap}>
+              <MaterialCommunityIcons name="database-check" size={28} color={theme.colors.primary} />
+            </View>
+            <View style={styles.qbankBannerTextColumn}>
+              <Text variant="titleMedium" style={styles.qbankBannerTitle}>
+                Practice QBank (PYQs)
+              </Text>
+              <Text variant="bodySmall" style={styles.qbankBannerDesc}>
+                Customize exam and study modules from 330+ prev years questions.
+              </Text>
+            </View>
+            <MaterialIcons name="chevron-right" size={24} color={theme.colors.textSecondary} />
+          </Card.Content>
+        </Card>
 
         {/* Step 3.5: UI Layout - Quick Access Modules */}
         <Text variant="titleLarge" style={styles.sectionTitle}>
@@ -871,6 +889,47 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     includeFontPadding: false,
+  },
+  qbankBanner: {
+    backgroundColor: theme.colors.surfacePrimary,
+    borderRadius: 20,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+  },
+  qbankBannerContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+  },
+  qbankBannerIconWrap: {
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    backgroundColor: theme.colors.primaryLight,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 14,
+  },
+  qbankBannerTextColumn: {
+    flex: 1,
+    marginRight: 8,
+  },
+  qbankBannerTitle: {
+    fontWeight: "bold",
+    color: theme.colors.textTitle,
+    fontSize: 16,
+  },
+  qbankBannerDesc: {
+    color: theme.colors.textSecondary,
+    fontSize: 12,
+    marginTop: 2,
+    lineHeight: 16,
   },
 });
 

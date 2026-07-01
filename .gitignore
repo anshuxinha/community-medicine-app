@@ -61,3 +61,7 @@ table_test.txt
 
 # Scratch files
 scratch/
+
+# Graphify caches
+graphify-out/cache/
+.graphify*
