@@ -39,7 +39,7 @@
     "options": [
       "Alpha error",
       "Beta error",
-      "1 – α 2366",
+      "1 – α",
       "1 – β"
     ],
     "page": 2,
@@ -120,7 +120,7 @@
       "600 kcal/day",
       "520 kcal/day",
       "450 kcal/day",
-      "350 kcal/day 2368"
+      "350 kcal/day"
     ],
     "page": 4,
     "correctAnswer": "d",
@@ -184,7 +184,7 @@
       "Incidence increases and prevalence reduces",
       "Incidence reduces and prevalence remains the same",
       "Incidence remains the same and prevalence increases",
-      "Incidence reduces and prevalence increases 2370"
+      "Incidence reduces and prevalence increases"
     ],
     "page": 6,
     "correctAnswer": "c",
@@ -280,7 +280,7 @@
       "Panchayat Health Committee",
       "Village Health Planning and Management Committee",
       "Rogi Kalyan Samiti",
-      "Village Health Sanitation and Nutrition Committee 2384"
+      "Village Health Sanitation and Nutrition Committee"
     ],
     "page": 20,
     "correctAnswer": "d",
@@ -371,7 +371,7 @@
     "id": "aiims_2018_q13",
     "exam": "AIIMS 2018",
     "q_num": 13,
-    "question": "Phase 1 of a clinical trial is done to test: 2386",
+    "question": "Phase 1 of a clinical trial is done to test:",
     "options": [
       "Safety",
       "Efficacy",
@@ -439,7 +439,7 @@
     "options": [
       "Call the infection control team of the hospital",
       "Mop it",
-      "Cover it with 1% sodium hypochlorite 2388",
+      "Cover it with 1% sodium hypochlorite",
       "Clean with absorbable material"
     ],
     "page": 24,
@@ -485,7 +485,7 @@
     "q_num": 26,
     "question": "Maternal mortality ratio (MMR) for a country is best given as __________",
     "options": [
-      "Maternal deaths per 100 live births 2391",
+      "Maternal deaths per 100 live births",
       "Maternal deaths per 10,000 live births",
       "Maternal deaths per 100,000 live births",
       "Maternal deaths per 1,000 live births"
@@ -547,7 +547,7 @@
     "id": "aiims_2018_q30",
     "exam": "AIIMS 2018",
     "q_num": 30,
-    "question": "The POCSO Act is related to which of the following? 2392",
+    "question": "The POCSO Act is related to which of the following?",
     "options": [
       "Women empowerment",
       "Human trafficking",
@@ -662,7 +662,7 @@
     "question": "In a study, group A received placebo while group B received a new drug. In group A, 36 d eaths were reported out of a sample of 120. In group B, 26 deaths were reported out of a sample size of 130. How many patients should be treated to avert 1 death?",
     "options": [
       "100",
-      "10 2407",
+      "10",
       "250",
       "160"
     ],
@@ -707,7 +707,7 @@
     "id": "aiims_2019_q10",
     "exam": "AIIMS 2019",
     "q_num": 10,
-    "question": "Mass vaccination is most effective in which of■ the following outbreaks? 2408",
+    "question": "Mass vaccination is most effective in which of■ the following outbreaks?",
     "options": [
       "Cholera",
       "Typhoid",
@@ -824,7 +824,7 @@
       "Meningitis prophylaxis in exposed contacts/relatives",
       "Hand washing",
       "Vaccination",
-      "Adding iron to wheat flour 2412"
+      "Adding iron to wheat flour"
     ],
     "page": 48,
     "correctAnswer": "b",
@@ -854,7 +854,7 @@
     "question": "The numerator of perinatal mortality rate includes ___________",
     "options": [
       "Post-neonatal period death",
-      "Early neonatal death of fetus > 1000 g 2413",
+      "Early neonatal death of fetus > 1000 g",
       "Stillbirth of fetus < 500 g",
       "Abortion after 16 weeks"
     ],
@@ -949,7 +949,7 @@
     "q_num": 4,
     "question": "What is the dosage of iron and folic acid for adult women under the Anemia Mukth Bharath i nitiative?",
     "options": [
-      "60 mg elemental iron + 500 mcg folic acid daily 2428",
+      "60 mg elemental iron + 500 mcg folic acid daily",
       "60 mg elemental iron + 500 mcg folic acid weekly",
       "100 mg elemental iron + 500 mcg folic acid weekly",
       "100 mg elemental iron + 500 mcg folic acid daily"
@@ -1014,7 +1014,7 @@
     "question": "The serum level of tetanus antitoxin that gives clinical protection is?",
     "options": [
       ">0.1 IU/ml",
-      ">0.01 IU/ml 2429",
+      ">0.01 IU/ml",
       ">0.001 IU/ml",
       ">0.0001 IU/ml"
     ],
@@ -1077,7 +1077,7 @@
     "q_num": 12,
     "question": "In which of the following bags are latex gloves disposed of after use?",
     "options": [
-      "Yellow 2430",
+      "Yellow",
       "Red",
       "Blue",
       "Transparent"
@@ -1139,7 +1139,7 @@
     "id": "aiims_2020_q16",
     "exam": "AIIMS 2020",
     "q_num": 16,
-    "question": "The HIV sentinel surveillance includes all of the following populations except _ _____________ 2431",
+    "question": "The HIV sentinel surveillance includes all of the following populations except _ _____________",
     "options": [
       "Single male migrants",
       "Truck drivers",
@@ -1203,7 +1203,7 @@
     "id": "aiims_2020_q20",
     "exam": "AIIMS 2020",
     "q_num": 20,
-    "question": "The data which best explains the difference between the highest and the lowest values is: 2432",
+    "question": "The data which best explains the difference between the highest and the lowest values is:",
     "options": [
       "Variance",
       "Coefficient of variation",
@@ -1286,7 +1286,7 @@
     "question": "The dose of iodine for lactating women in India according to the recommended dietary a llowance is:",
     "options": [
       "200 µg/day",
-      "220 µg/day 2442",
+      "220 µg/day",
       "250 µg/day",
       "280 µg/day"
     ],
@@ -1349,7 +1349,7 @@
     "q_num": 8,
     "question": "In a well-designed cancer study, similar remission rates were obtained for a new treatment ( 33.2%) and the usual treatment (32.2%), with the p-value being 0.04. Which of the following statements is true regarding the study?",
     "options": [
-      "Both the treatments are equally effective 2443",
+      "Both the treatments are equally effective",
       "Neither of the treatments is effective",
       "The new treatment is more effective than the usual treatment",
       "The information given is not adequate to compare the efficacy of the treatments"
@@ -1413,7 +1413,7 @@
     "q_num": 12,
     "question": "What is the ratio of the incidence of the disease in the exposed to that of the non-exposed?",
     "options": [
-      "Attributable risk 2444",
+      "Attributable risk",
       "Odds ratio",
       "Relative risk",
       "Population attributable risk"
@@ -1475,7 +1475,7 @@
     "id": "neet_2018_q16",
     "exam": "NEET 2018",
     "q_num": 16,
-    "question": "In a screening test for DM out of 1000 population, 90 were positive. However, a gold s tandard test for DM was done of which 100 were positive. Calculate the sensitivity of the screening test? 2445",
+    "question": "In a screening test for DM out of 1000 population, 90 were positive. However, a gold s tandard test for DM was done of which 100 were positive. Calculate the sensitivity of the screening test?",
     "options": [
       "90/100",
       "100/110",
@@ -1539,7 +1539,7 @@
     "id": "neet_2018_q20",
     "exam": "NEET 2018",
     "q_num": 20,
-    "question": "Which of the following is not a method of direct transmission of communicable diseases? 2446",
+    "question": "Which of the following is not a method of direct transmission of communicable diseases?",
     "options": [
       "Vertical transmission",
       "Contact with soil",
@@ -1608,7 +1608,7 @@
       "Annual Parasite Index",
       "Annual Blood Examination Rate",
       "Slide positivity rate",
-      "Slide falciparum rate 2456"
+      "Slide falciparum rate"
     ],
     "page": 92,
     "correctAnswer": "b",
@@ -1768,7 +1768,7 @@
       "Sensitivity",
       "Specificity",
       "Positive predictive value",
-      "Negative predictive value 2459"
+      "Negative predictive value"
     ],
     "page": 95,
     "correctAnswer": "c",
@@ -1800,7 +1800,7 @@
       "1-2%",
       "4-8%",
       "8-10%",
-      "12-14% 2461"
+      "12-14%"
     ],
     "page": 97,
     "correctAnswer": "b",
@@ -1942,7 +1942,7 @@
     "question": "Which of the following is an example of prospective screening?",
     "options": [
       "Cervical Pap smear in a 40 year old patient",
-      "Neonatal screening of a new-born baby for hypothyroidism 2472",
+      "Neonatal screening of a new-born baby for hypothyroidism",
       "Screening of immigrants to a country",
       "Urine for sugar screening in a 40 year old man"
     ],
@@ -2005,7 +2005,7 @@
     "q_num": 8,
     "question": "Chemical waste is disposed in _____ bags.",
     "options": [
-      "Yellow 2473",
+      "Yellow",
       "White",
       "Red",
       "Green"
@@ -2067,7 +2067,7 @@
     "id": "neet_2020_q12",
     "exam": "NEET 2020",
     "q_num": 12,
-    "question": "In a population study, the value of the mean is 200. If the standard deviation is 20, 68% of t he population will lie between? 2474",
+    "question": "In a population study, the value of the mean is 200. If the standard deviation is 20, 68% of t he population will lie between?",
     "options": [
       "180- 220",
       "160- 240",
@@ -2131,7 +2131,7 @@
     "id": "neet_2020_q16",
     "exam": "NEET 2020",
     "q_num": 16,
-    "question": "A person wants to study about the relationship between smoking and lung cancer, so he c ollects data about people diseased with lung cancer from government hospitals and the number of cigarette packets sold at the same time period. Which type of study is this? 2475",
+    "question": "A person wants to study about the relationship between smoking and lung cancer, so he c ollects data about people diseased with lung cancer from government hospitals and the number of cigarette packets sold at the same time period. Which type of study is this?",
     "options": [
       "Cross sectional",
       "Ecological",
@@ -2248,7 +2248,7 @@
       "H1N1",
       "H5N1",
       "H5N7",
-      "H3N2 2477"
+      "H3N2"
     ],
     "page": 113,
     "correctAnswer": "a",
@@ -2486,7 +2486,7 @@
     "question": "Arrange the following causes of neonatal mortality from maximum to the least (according to t he verbal autopsy report 2010-2013 data).",
     "options": [
       "1>2>4>3",
-      "1>4>2>3 2494",
+      "1>4>2>3",
       "4>1>2>3",
       "1>2>3>4"
     ],
@@ -2579,7 +2579,7 @@
     "id": "neet_2021_q4",
     "exam": "NEET 2021",
     "q_num": 4,
-    "question": "Following admission of a road traffic accident case, there is spillage of blood on the hospital f loor. Which disinfectant will you use to clean the floor? 2514",
+    "question": "Following admission of a road traffic accident case, there is spillage of blood on the hospital f loor. Which disinfectant will you use to clean the floor?",
     "options": [
       "Ethyl alcohol",
       "Chlorhexidine",
@@ -2696,7 +2696,7 @@
       "CRP has no association with risk of MI/stroke",
       "Increase in CRP increases the risk of MI/stroke",
       "Increase in CRP decreases the risk of MI/stroke",
-      "In quintile 1, there is no risk of MI/stroke 2516"
+      "In quintile 1, there is no risk of MI/stroke"
     ],
     "page": 152,
     "correctAnswer": "b",
@@ -2759,7 +2759,7 @@
     "options": [
       "Primary health center",
       "District hospital",
-      "Sub-centre 2517",
+      "Sub-centre",
       "Sub-divisional hospital"
     ],
     "page": 153,
@@ -2904,7 +2904,7 @@
       "If replacement feeding, the neonate should be tested for HIV, if negative, ART is not required.",
       "In exclusive breastfeeding, give nevirapine for 6 months only when baby is positive",
       "If replacement feeding, the neonate need not receive nevirapine if HIV negative",
-      "If exclusive replacement feeding, give nevirapine for 6 weeks, even if the baby is negative 2534"
+      "If exclusive replacement feeding, give nevirapine for 6 weeks, even if the baby is negative"
     ],
     "page": 170,
     "correctAnswer": "d",
@@ -2966,7 +2966,7 @@
     "question": "A point-of-care diagnostic test with a sensitivity of 98% shows a negative test result in a p atient. What does this imply?",
     "options": [
       "The patient would need another point-of-care diagnostic test for the same clinical condition.",
-      "Prevalance of the disease is 2%. 2536",
+      "Prevalance of the disease is 2%.",
       "Patient is less likely to have the disease.",
       "Patient has been wrongly ruled out due to false negativity."
     ],
@@ -3013,7 +3013,7 @@
     "q_num": 23,
     "question": "Which of the following criteria should be satisfied to start MDT?",
     "options": [
-      "1,4 2539",
+      "1,4",
       "1,3",
       "1,3,4",
       "1,2,3,4"
@@ -3127,7 +3127,7 @@
     "options": [
       "Retrospective cohort study",
       "Prospective cohort study",
-      "Case-control study 2578",
+      "Case-control study",
       "Intervention and response"
     ],
     "page": 214,
@@ -3240,7 +3240,7 @@
       "Aflatoxin",
       "Beta-oxalyl-amino-alanine",
       "Ergot alkaloids",
-      "Fusarium toxin 2580"
+      "Fusarium toxin"
     ],
     "page": 216,
     "correctAnswer": "b",
@@ -3302,7 +3302,7 @@
     "question": "A boys' hostel has an outbreak of fever cases with headache, followed by the development of p leomorphic rashes sparing palms and soles. What is the next best step in the management of suspected cases?",
     "options": [
       "Isolate for 6 days after giving acyclovir, followed by VZIG within 72 hours of exposure",
-      "Isolate for 12 days after giving acyclovir, followed by VZIG within 48 hours of exposure 2581",
+      "Isolate for 12 days after giving acyclovir, followed by VZIG within 48 hours of exposure",
       "Isolate for 6 days",
       "Only give VZIG"
     ],
@@ -3368,7 +3368,7 @@
       "Observation",
       "Amoxiclav",
       "Metronidazole",
-      "Ciprofloxacin 2595"
+      "Ciprofloxacin"
     ],
     "page": 231,
     "correctAnswer": "b",
@@ -3432,7 +3432,7 @@
       "0.4",
       "0.6",
       "0.8",
-      "0.5 2596"
+      "0.5"
     ],
     "page": 232,
     "correctAnswer": "a",
@@ -3496,7 +3496,7 @@
       "Age, sex, falls",
       "Age, cough, chronic diarrhoea",
       "Age, fall, confusion",
-      "Age, sex, cough, chronic diarrhea 2597"
+      "Age, sex, cough, chronic diarrhea"
     ],
     "page": 233,
     "correctAnswer": "c",
@@ -3559,7 +3559,7 @@
     "options": [
       "Considering their ideas",
       "Felt needs of community considered",
-      "Contribution of resources 2598",
+      "Contribution of resources",
       "Involving in planning of health related campaigns"
     ],
     "page": 234,
@@ -3622,7 +3622,7 @@
     "question": "Which of the following is an example of a longitudinal observational and analytical study?",
     "options": [
       "Case control Study",
-      "Cohort Study 2599",
+      "Cohort Study",
       "Randomized Controlled Trial",
       "Ecological Study"
     ],
@@ -3687,7 +3687,7 @@
     "options": [
       "C - B - A - D",
       "C - A - B - D",
-      "A - B - C - D 2619",
+      "A - B - C - D",
       "D - C - B - A"
     ],
     "page": 255,
@@ -3750,7 +3750,7 @@
     "question": "Which of the following is the best study design as per the hierarchy of evidence?",
     "options": [
       "Meta analysis",
-      "Case control study 2620",
+      "Case control study",
       "Cohort study",
       "Large RCT"
     ],
@@ -3811,7 +3811,7 @@
     "id": "ini-cet_2024_q12",
     "exam": "INI-CET 2024",
     "q_num": 12,
-    "question": "All are live vaccines except 2621",
+    "question": "All are live vaccines except",
     "options": [
       "Rota virus",
       "Hepatitis B",
@@ -3864,7 +3864,7 @@
       "6 beneficiaries",
       "6 interventions",
       "6 institutional mechanisms",
-      "6 health functionaries 2622"
+      "6 health functionaries"
     ],
     "page": 258,
     "correctAnswer": "d",
@@ -3875,7 +3875,7 @@
     "id": "neet_2024_q2",
     "exam": "NEET 2024",
     "q_num": 2,
-    "question": "What is calculated with the following information? 2633",
+    "question": "What is calculated with the following information?",
     "options": [
       "Maternal Mortality Rate",
       "Maternal Mortality Ratio",
@@ -3893,7 +3893,7 @@
     "q_num": 3,
     "question": "Every pregnant woman receives a free antenatal check-up on the 9th of each month, along w ith free medicines and delivery services, including cesarean sections, under the JSSK program. What does JSSK stand for?",
     "options": [
-      "Janani Shishu Swasthya Karyakram 2634",
+      "Janani Shishu Swasthya Karyakram",
       "Janani Shishu Suraksha Kendra",
       "Janani Shishu Suraksha Karyakram",
       "Janani Shishu Swasthya kendra"
@@ -3990,7 +3990,7 @@
     "question": "A mother delivers a baby in a rural area with the assistance of a skilled birth attendant. The a ttendant cuts the umbilical cord cleanly, ties the ends with new threads, bathes the baby with warm water, wipes the baby’s eyes with a sterile wet cloth from the medial to lateral corner, and then hands the baby to the mother for skin-to-skin contact. Which of these steps is incorrect?",
     "options": [
       "Using new threads to tie the ends of the umbilical cord",
-      "Wiping the baby’s eyes from medial to lateral corner 2638",
+      "Wiping the baby’s eyes from medial to lateral corner",
       "Skin-to-skin contact with the mother",
       "Bathing the child with warm water"
     ],
@@ -4067,7 +4067,7 @@
     "id": "neet_2024_q20",
     "exam": "NEET 2024",
     "q_num": 20,
-    "question": "A study is investigating the relationship between diet and the incidence of a particular d isease. Among 100 vegetarians, 30 individuals are found to have the disease, while among 100 non-vegetarians, 50 individuals are affected. Which biostatistical method is most appropriate to determine if there is no significant association between diet and disease incidence? 2640",
+    "question": "A study is investigating the relationship between diet and the incidence of a particular d isease. Among 100 vegetarians, 30 individuals are found to have the disease, while among 100 non-vegetarians, 50 individuals are affected. Which biostatistical method is most appropriate to determine if there is no significant association between diet and disease incidence?",
     "options": [
       "Mann-Whitney test",
       "Correlation coefficient",
@@ -4101,7 +4101,7 @@
     "q_num": 27,
     "question": "Which of the following is true about longevity dividend?",
     "options": [
-      "The intervention can delay the onset of the disease 2642",
+      "The intervention can delay the onset of the disease",
       "Small amounts of damage is accumulated over time",
       "The older you are the more prone you are to disease",
       "Economic and health benefit for the society"
@@ -4152,7 +4152,7 @@
       "1,3 and 5",
       "2 and 5",
       "1,2 and 4",
-      "1,3 and 4 2644"
+      "1,3 and 4"
     ],
     "page": 280,
     "correctAnswer": "d",

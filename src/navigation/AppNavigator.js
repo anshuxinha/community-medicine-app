@@ -81,7 +81,6 @@ const TabNavigator = () => {
     >
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen name="Library" component={LibraryScreen} />
-      <Tab.Screen name="QBank" component={PYQCreateScreen} />
       <Tab.Screen
         name="Videos"
         component={VideosScreen}
@@ -97,6 +96,11 @@ const TabNavigator = () => {
             navigation.getParent()?.navigate("Paywall");
           },
         })}
+      />
+      <Tab.Screen
+        name="QBank"
+        component={PYQCreateScreen}
+        options={{ tabBarBadge: "NEW" }}
       />
     </Tab.Navigator>
   );

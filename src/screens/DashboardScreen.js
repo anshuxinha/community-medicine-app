@@ -424,24 +424,6 @@ const DashboardScreen = ({ navigation }) => {
             </Card.Content>
           </Card>
         </View>
-        
-        {/* PYQ QBank Section Banner */}
-        <Card style={styles.qbankBanner} onPress={() => navigation.navigate("QBank")}>
-          <Card.Content style={styles.qbankBannerContent}>
-            <View style={styles.qbankBannerIconWrap}>
-              <MaterialCommunityIcons name="database-check" size={28} color={theme.colors.primary} />
-            </View>
-            <View style={styles.qbankBannerTextColumn}>
-              <Text variant="titleMedium" style={styles.qbankBannerTitle}>
-                Practice QBank (PYQs)
-              </Text>
-              <Text variant="bodySmall" style={styles.qbankBannerDesc}>
-                Customize exam and study modules from 330+ prev years questions.
-              </Text>
-            </View>
-            <MaterialIcons name="chevron-right" size={24} color={theme.colors.textSecondary} />
-          </Card.Content>
-        </Card>
 
         {/* Step 3.5: UI Layout - Quick Access Modules */}
         <Text variant="titleLarge" style={styles.sectionTitle}>

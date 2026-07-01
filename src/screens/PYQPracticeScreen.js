@@ -374,7 +374,7 @@ const PYQPracticeScreen = ({ route, navigation }) => {
                     })}
                   </View>
 
-                  <Divider style={{ my: 16, backgroundColor: "#E5E7EB" }} />
+                  <View style={{ marginVertical: 16, borderBottomWidth: 1, borderBottomColor: "#E5E7EB" }} />
 
                   <View style={styles.explanationSection}>
                     <Text style={styles.explanationHeader}>Detailed Explanation</Text>
@@ -534,46 +534,59 @@ const PYQPracticeScreen = ({ route, navigation }) => {
       </ScrollView>
 
       {/* Navigation Footer */}
-      <View style={styles.footer}>
-        <Button
-          mode="outlined"
-          onPress={handlePrev}
-          disabled={currentIdx === 0}
-          style={styles.navButton}
-          labelStyle={{ color: currentIdx === 0 ? "#9CA3AF" : theme.colors.primary }}
-        >
-          Previous
-        </Button>
+      <View style={styles.footerContainer}>
+        <View style={styles.navRow}>
+          <Button
+            mode="outlined"
+            onPress={handlePrev}
+            disabled={currentIdx === 0}
+            style={styles.navButton}
+            labelStyle={{ color: currentIdx === 0 ? "#9CA3AF" : theme.colors.primary }}
+          >
+            Previous
+          </Button>
 
-        {mode === "exam" && currentIdx === questions.length - 1 ? (
+          {currentIdx === questions.length - 1 ? (
+            mode === "study" ? (
+              <Button
+                mode="contained"
+                onPress={() => handleSubmitTest(false)}
+                style={styles.submitButton}
+              >
+                Submit Module
+              </Button>
+            ) : (
+              <Button
+                mode="contained"
+                onPress={handleNext}
+                disabled={true}
+                style={styles.navButton}
+              >
+                Next
+              </Button>
+            )
+          ) : (
+            <Button
+              mode="contained"
+              onPress={handleNext}
+              style={styles.navButton}
+            >
+              Next
+            </Button>
+          )}
+        </View>
+
+        {mode === "exam" && (
           <Button
             mode="contained"
             onPress={() => setConfirmSubmitVisible(true)}
-            style={styles.submitButton}
+            style={styles.examSubmitBelowButton}
+            contentStyle={{ paddingVertical: 4 }}
           >
             Submit Test
           </Button>
-        ) : (
-          <Button
-            mode="contained"
-            onPress={handleNext}
-            disabled={currentIdx === questions.length - 1}
-            style={styles.navButton}
-          >
-            Next
-          </Button>
         )}
       </View>
-
-      {/* Exit test button for Exam Mode */}
-      {mode === "exam" && (
-        <TouchableOpacity
-          style={styles.examSubmitFloating}
-          onPress={() => setConfirmSubmitVisible(true)}
-        >
-          <Text style={styles.examSubmitFloatingText}>Submit</Text>
-        </TouchableOpacity>
-      )}
 
       {/* Confirm Submit Dialog */}
       <Portal>
@@ -778,13 +791,15 @@ const styles = StyleSheet.create({
     color: theme.colors.textSecondary,
     lineHeight: 21,
   },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+  footerContainer: {
     padding: 16,
     backgroundColor: theme.colors.surfacePrimary,
     borderTopWidth: 1,
     borderTopColor: "#E5E7EB",
+  },
+  navRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   navButton: {
     flex: 1,
@@ -797,24 +812,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: theme.colors.primary,
   },
-  examSubmitFloating: {
-    position: "absolute",
-    right: 16,
-    bottom: 80,
+  examSubmitBelowButton: {
+    marginTop: 12,
+    borderRadius: 10,
     backgroundColor: theme.colors.primary,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 24,
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    shadowOffset: { width: 0, height: 2 },
-  },
-  examSubmitFloatingText: {
-    color: "#FFFFFF",
-    fontWeight: "bold",
-    fontSize: 14,
+    marginHorizontal: 6,
   },
 
   // Results Screen Styles
