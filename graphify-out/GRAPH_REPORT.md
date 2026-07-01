@@ -1,16 +1,16 @@
 # Graph Report - The App  (2026-07-01)
 
 ## Corpus Check
-- 144 files · ~1,090,789 words
+- 144 files · ~969,363 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 937 nodes · 1396 edges · 101 communities (84 shown, 17 thin omitted)
+- 937 nodes · 1396 edges · 100 communities (83 shown, 17 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 1 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `ca22fa80`
+- Built from commit: `6faf71c3`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -100,7 +100,6 @@
 - [[_COMMUNITY_Community 82|Community 82]]
 - [[_COMMUNITY_Community 83|Community 83]]
 - [[_COMMUNITY_Community 84|Community 84]]
-- [[_COMMUNITY_Community 85|Community 85]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `theme` - 36 edges
@@ -126,7 +125,7 @@
 - `LibraryScreen()` --calls--> `useResponsive()`  [EXTRACTED]
   src/screens/LibraryScreen.js → src/styles/theme.js
 
-## Communities (101 total, 17 thin omitted)
+## Communities (100 total, 17 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.05
@@ -161,40 +160,40 @@ Cohesion: 0.2
 Nodes (18): biomedicalWaste(), chainOfInfection(), coldChain(), { createCanvas }, disasterCycle(), drawArrow(), drawCard(), drawTitle() (+10 more)
 
 ### Community 8 - "Community 8"
+Cohesion: 0.13
+Nodes (14): AppProvider(), normalizeBookmarks(), resolveBookmarkContentKey(), sanitizeCloudState(), sanitizeReadItemVersions(), getCacheKey(), loadHighlights(), saveHighlights() (+6 more)
+
+### Community 9 - "Community 9"
 Cohesion: 0.1
 Nodes (13): styles, NFHS, NFHS_META, ROUND_ORDER, styles, YEARS, EDUCATION_OPTIONS, OCCUPATION_OPTIONS (+5 more)
 
-### Community 9 - "Community 9"
+### Community 10 - "Community 10"
 Cohesion: 0.14
 Nodes (14): AppContext, PYQ_IMAGES, GemsScreen(), styles, LibraryScreen(), PYQCreateScreen(), styles, PYQPracticeScreen() (+6 more)
 
-### Community 10 - "Community 10"
+### Community 11 - "Community 11"
 Cohesion: 0.13
 Nodes (10): BASE_MENU_ITEMS, styles, { width }, app, auth, db, firebaseConfig, STATUS_TONES (+2 more)
 
-### Community 11 - "Community 11"
+### Community 12 - "Community 12"
 Cohesion: 0.17
 Nodes (16): buildContactSheet(), clampCrop(), CONTACT_SHEET_PATH, { createCanvas, loadImage }, CROP_SPECS, cropRegion(), ensureDir(), fs (+8 more)
 
-### Community 12 - "Community 12"
+### Community 13 - "Community 13"
 Cohesion: 0.19
 Nodes (12): NFHS_COMPARISON_CATEGORIES, NFHS_COMPARISON_INDICATORS, NFHS_COMPARISON_SOURCES, AREA_LABELS, formatValue(), getDeltaTone(), IndicatorRow(), styles (+4 more)
 
-### Community 13 - "Community 13"
+### Community 14 - "Community 14"
 Cohesion: 0.17
 Nodes (15): buildContactSheet(), buildPngCanvas(), CONTACT_SHEET_PATH, { createCanvas, loadImage }, DOWNLOAD_SPECS, downloadFile(), ensureDir(), fs (+7 more)
 
-### Community 14 - "Community 14"
+### Community 15 - "Community 15"
 Cohesion: 0.12
 Nodes (15): 1. Always Check Channel Configuration First, 2. Update Channel if Needed, 3. Publish Update to Correct Branch, 4. Verify Update is Live, 5. Clear Cache for Critical Updates, code:bash (eas channel:list --non-interactive), code:bash (eas channel:edit production --branch main --non-interactive), code:bash (eas update --branch main --message "Your update message" --c) (+7 more)
 
-### Community 15 - "Community 15"
+### Community 16 - "Community 16"
 Cohesion: 0.15
 Nodes (13): colorFreq, colorLocations, content, files, fs, getContrastRatio(), getRelativeLuminance(), hex (+5 more)
-
-### Community 16 - "Community 16"
-Cohesion: 0.17
-Nodes (9): AppProvider(), normalizeBookmarks(), resolveBookmarkContentKey(), sanitizeCloudState(), sanitizeReadItemVersions(), getEffectiveReadCount(), generateReferralCode(), setScreenCaptureBypass() (+1 more)
 
 ### Community 17 - "Community 17"
 Cohesion: 0.21
@@ -341,16 +340,16 @@ Cohesion: 0.47
 Nodes (5): getCacheKey(), loadAnnotations(), saveAnnotations(), subscribeAnnotations(), syncAllAnnotations()
 
 ### Community 55 - "Community 55"
-Cohesion: 0.47
-Nodes (5): getCacheKey(), loadHighlights(), saveHighlights(), subscribeHighlights(), syncAllHighlights()
-
-### Community 56 - "Community 56"
 Cohesion: 0.33
 Nodes (5): code:json ({), Coupon Firestore Setup, Document Structure, Example Document (`PROMO20`):, Script for Bulk Upload
 
-### Community 57 - "Community 57"
+### Community 56 - "Community 56"
 Cohesion: 0.33
 Nodes (5): code:bash (# 1. Commit & push), Common Pitfall Avoidance, Custom Instruction for EAS Updates, Quick Command Sequence, Rule: Always Verify Channel-Branch Mapping Before EAS Update
+
+### Community 58 - "Community 58"
+Cohesion: 0.4
+Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
 ### Community 59 - "Community 59"
 Cohesion: 0.4
@@ -358,11 +357,11 @@ Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
 ### Community 60 - "Community 60"
 Cohesion: 0.4
-Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
+Nodes (4): data, fs, match, pos
 
 ### Community 61 - "Community 61"
 Cohesion: 0.4
-Nodes (4): data, fs, match, pos
+Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
 ### Community 62 - "Community 62"
 Cohesion: 0.4
@@ -382,11 +381,11 @@ Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
 ### Community 66 - "Community 66"
 Cohesion: 0.4
-Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
+Nodes (4): data, fs, mockDataPath, path
 
 ### Community 67 - "Community 67"
 Cohesion: 0.4
-Nodes (4): data, fs, mockDataPath, path
+Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
 ### Community 68 - "Community 68"
 Cohesion: 0.4
@@ -396,11 +395,7 @@ Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 Cohesion: 0.4
 Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
-### Community 70 - "Community 70"
-Cohesion: 0.4
-Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
-
-### Community 75 - "Community 75"
+### Community 74 - "Community 74"
 Cohesion: 0.67
 Nodes (3): extract_text_from_pdf(), main(), Extracts text from a PDF file.     This is a placeholder function. In a real ap
 
@@ -412,11 +407,11 @@ Nodes (3): extract_text_from_pdf(), main(), Extracts text from a PDF file.     T
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `theme` connect `Community 0` to `Community 33`, `Community 1`, `Community 5`, `Community 37`, `Community 6`, `Community 8`, `Community 40`, `Community 10`, `Community 9`, `Community 12`, `Community 16`, `Community 19`, `Community 23`, `Community 24`, `Community 25`?**
+- **Why does `theme` connect `Community 0` to `Community 33`, `Community 1`, `Community 5`, `Community 37`, `Community 6`, `Community 8`, `Community 9`, `Community 40`, `Community 11`, `Community 10`, `Community 13`, `Community 19`, `Community 23`, `Community 24`, `Community 25`?**
   _High betweenness centrality (0.029) - this node is a cross-community bridge._
-- **Why does `AppContext` connect `Community 9` to `Community 0`, `Community 1`, `Community 37`, `Community 6`, `Community 10`, `Community 16`, `Community 23`, `Community 24`?**
+- **Why does `AppContext` connect `Community 10` to `Community 0`, `Community 1`, `Community 37`, `Community 6`, `Community 8`, `Community 11`, `Community 23`, `Community 24`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
-- **Why does `ErrorBoundary` connect `Community 58` to `Community 19`?**
+- **Why does `ErrorBoundary` connect `Community 57` to `Community 19`?**
   _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **What connects `admin`, `path`, `SERVICE_ACCOUNT_PATH` to the rest of the system?**
   _345 weakly-connected nodes found - possible documentation gaps or missing edges._
