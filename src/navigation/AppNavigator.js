@@ -100,7 +100,21 @@ const TabNavigator = () => {
       <Tab.Screen
         name="QBank"
         component={PYQCreateScreen}
-        options={{ tabBarBadge: "NEW" }}
+        options={{
+          tabBarBadge: "NEW",
+          tabBarBadgeStyle: {
+            backgroundColor: "#F3E8FF",
+            color: "#581C87",
+            fontSize: 9,
+            fontWeight: "bold",
+            borderRadius: 6,
+            minWidth: 32,
+            height: 16,
+            lineHeight: 14,
+            paddingHorizontal: 4,
+            alignSelf: "center",
+          },
+        }}
       />
     </Tab.Navigator>
   );

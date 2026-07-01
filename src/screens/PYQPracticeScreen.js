@@ -552,6 +552,7 @@ const PYQPracticeScreen = ({ route, navigation }) => {
                 mode="contained"
                 onPress={() => handleSubmitTest(false)}
                 style={styles.submitButton}
+                buttonColor="#000000"
               >
                 Submit Module
               </Button>
@@ -582,6 +583,7 @@ const PYQPracticeScreen = ({ route, navigation }) => {
             onPress={() => setConfirmSubmitVisible(true)}
             style={styles.examSubmitBelowButton}
             contentStyle={{ paddingVertical: 4 }}
+            buttonColor="#000000"
           >
             Submit Test
           </Button>
@@ -810,12 +812,12 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 6,
     borderRadius: 10,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: "#000000",
   },
   examSubmitBelowButton: {
     marginTop: 12,
     borderRadius: 10,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: "#000000",
     marginHorizontal: 6,
   },
 
