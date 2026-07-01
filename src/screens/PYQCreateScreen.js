@@ -36,9 +36,9 @@ const PYQCreateScreen = ({ navigation }) => {
   const [bookmarks, setBookmarks] = useState([]);
 
   // Selections
-  const [selectedExams, setSelectedExams] = useState(["AIIMS", "NEET", "INI-CET"]);
+  const [selectedExams, setSelectedExams] = useState(isPremium ? ["AIIMS", "NEET", "INI-CET"] : ["AIIMS"]);
   const [selectedStatus, setSelectedStatus] = useState("all"); // all, unattempted, correct, incorrect, bookmarked
-  const [questionCount, setQuestionCount] = useState(10); // 5, 10, 15, 20, 30, 50
+  const [questionCount, setQuestionCount] = useState(isPremium ? 10 : 5); // 5, 10, 15, 20, 30, 50
   const [mode, setMode] = useState("study"); // study, exam
 
   useEffect(() => {
@@ -209,23 +209,24 @@ const PYQCreateScreen = ({ navigation }) => {
               {["AIIMS", "NEET", "INI-CET"].map((group) => {
                 const isSelected = selectedExams.includes(group);
                 const isLocked = !isPremium && group !== "AIIMS";
+                const isVisuallySelected = isSelected && !isLocked;
                 return (
                   <Chip
                     key={group}
-                    selected={isSelected}
+                    selected={isVisuallySelected}
                     onPress={() => toggleExamSelection(group)}
                     style={[
                       styles.chip,
-                      isSelected && styles.selectedChip,
+                      isVisuallySelected && styles.selectedChip,
                       isLocked && styles.lockedChip,
                     ]}
-                    selectedColor={isSelected ? "#FFFFFF" : theme.colors.textSecondary}
+                    selectedColor={isVisuallySelected ? "#FFFFFF" : (isLocked ? "#9CA3AF" : theme.colors.textSecondary)}
                     showSelectedOverlay={false}
                     icon={() => (
                       <MaterialCommunityIcons
-                        name={isLocked ? "lock" : (isSelected ? "check" : "school-outline")}
+                        name={isLocked ? "lock" : (isVisuallySelected ? "check" : "school-outline")}
                         size={16}
-                        color={isSelected ? "#FFFFFF" : (isLocked ? "#9CA3AF" : theme.colors.textSecondary)}
+                        color={isVisuallySelected ? "#FFFFFF" : (isLocked ? "#9CA3AF" : theme.colors.textSecondary)}
                       />
                     )}
                   >
@@ -259,23 +260,24 @@ const PYQCreateScreen = ({ navigation }) => {
               ].map((status) => {
                 const isSelected = selectedStatus === status.value;
                 const isLocked = !isPremium && status.value !== "all";
+                const isVisuallySelected = isSelected && !isLocked;
                 return (
                   <Chip
                     key={status.value}
-                    selected={isSelected}
+                    selected={isVisuallySelected}
                     onPress={() => handleSelectStatus(status.value)}
                     style={[
                       styles.chip,
-                      isSelected && styles.selectedChip,
+                      isVisuallySelected && styles.selectedChip,
                       isLocked && styles.lockedChip,
                     ]}
-                    selectedColor={isSelected ? "#FFFFFF" : theme.colors.textSecondary}
+                    selectedColor={isVisuallySelected ? "#FFFFFF" : (isLocked ? "#9CA3AF" : theme.colors.textSecondary)}
                     showSelectedOverlay={false}
                     icon={() => (
                       <MaterialCommunityIcons
                         name={isLocked ? "lock" : status.icon}
                         size={16}
-                        color={isSelected ? "#FFFFFF" : (isLocked ? "#9CA3AF" : theme.colors.textSecondary)}
+                        color={isVisuallySelected ? "#FFFFFF" : (isLocked ? "#9CA3AF" : theme.colors.textSecondary)}
                       />
                     )}
                   >
@@ -300,17 +302,18 @@ const PYQCreateScreen = ({ navigation }) => {
               {[5, 10, 15, 20, 30, 50].map((count) => {
                 const isSelected = questionCount === count;
                 const isLocked = !isPremium && count > 5;
+                const isVisuallySelected = isSelected && !isLocked;
                 return (
                   <Chip
                     key={count}
-                    selected={isSelected}
+                    selected={isVisuallySelected}
                     onPress={() => handleSelectCount(count)}
                     style={[
                       styles.chipSmall,
-                      isSelected && styles.selectedChip,
+                      isVisuallySelected && styles.selectedChip,
                       isLocked && styles.lockedChip,
                     ]}
-                    selectedColor={isSelected ? "#FFFFFF" : theme.colors.textSecondary}
+                    selectedColor={isVisuallySelected ? "#FFFFFF" : (isLocked ? "#9CA3AF" : theme.colors.textSecondary)}
                     showSelectedOverlay={false}
                     icon={() =>
                       isLocked ? (
