@@ -133,41 +133,50 @@ def generate_gemini_image(title: str, summary: str, update_id: str) -> Optional[
     success = False
     img_bytes = None
 
-    # Try Gemini first if key is available
+    # Try Gemini models first if key is available
     if gemini_api_key:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent?key={gemini_api_key}"
-        headers = {"Content-Type": "application/json"}
-        payload = {
-            "contents": [{"parts": [{"text": prompt}]}],
-            "generationConfig": {
-                "responseModalities": ["TEXT", "IMAGE"],
-                "imageConfig": {"aspectRatio": "1:1"}
+        models_to_try = [
+            "gemini-3.1-flash-lite-image",
+            "gemini-3.1-flash-image",
+            "gemini-2.5-flash-image"
+        ]
+        
+        for model_name in models_to_try:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_api_key}"
+            headers = {"Content-Type": "application/json"}
+            payload = {
+                "contents": [{"parts": [{"text": prompt}]}],
+                "generationConfig": {
+                    "responseModalities": ["TEXT", "IMAGE"],
+                    "imageConfig": {"aspectRatio": "1:1"}
+                }
             }
-        }
-        try:
-            print(f"Attempting to generate image via Gemini 3.1 Flash for update {update_id}...")
-            response = requests.post(url, json=payload, headers=headers, timeout=60)
-            if response.status_code == 200:
-                res_data = response.json()
-                candidates = res_data.get("candidates", [])
-                if candidates:
-                    parts = candidates[0].get("content", {}).get("parts", [])
-                    for part in parts:
-                        inline_data = part.get("inlineData")
-                        if inline_data:
-                            base64_data = inline_data.get("data")
-                            if base64_data:
-                                import base64
-                                img_bytes = base64.b64decode(base64_data)
-                                success = True
-                                print("Gemini generation succeeded.")
-                                break
-                if not success:
-                    print("Gemini response did not contain inlineData image.")
-            else:
-                print(f"Gemini API failed with status {response.status_code}: {response.text}")
-        except Exception as e:
-            print(f"Gemini generation raised an exception: {e}")
+            try:
+                print(f"Attempting to generate image via Gemini API ({model_name}) for update {update_id}...")
+                response = requests.post(url, json=payload, headers=headers, timeout=60)
+                if response.status_code == 200:
+                    res_data = response.json()
+                    candidates = res_data.get("candidates", [])
+                    if candidates:
+                        parts = candidates[0].get("content", {}).get("parts", [])
+                        for part in parts:
+                            inline_data = part.get("inlineData")
+                            if inline_data:
+                                base64_data = inline_data.get("data")
+                                if base64_data:
+                                    import base64
+                                    img_bytes = base64.b64decode(base64_data)
+                                    success = True
+                                    print(f"Gemini API ({model_name}) generation succeeded.")
+                                    break
+                    if success:
+                        break
+                    else:
+                        print(f"Gemini API ({model_name}) response did not contain inlineData image.")
+                else:
+                    print(f"Gemini API ({model_name}) failed with status {response.status_code}: {response.text}")
+            except Exception as e:
+                print(f"Gemini API ({model_name}) generation raised an exception: {e}")
 
     # Fallback to Pollinations.ai if Gemini failed or key not set
     if not success:
