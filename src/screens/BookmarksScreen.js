@@ -76,7 +76,7 @@ const BookmarksScreen = ({ navigation }) => {
             <Text variant="bodyLarge" style={styles.emptyText}>
               No bookmarks yet.
             </Text>
-            <Button mode="text" onPress={() => navigation.navigate("Library")}>
+            <Button mode="text" onPress={() => navigation.navigate("MainTabs", { screen: "Library" })}>
               Browse Library
             </Button>
           </View>

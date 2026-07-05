@@ -338,11 +338,11 @@ const DashboardScreen = ({ navigation }) => {
           </TouchableOpacity>
           <Text style={styles.appName}>STROMA</Text>
           <TouchableOpacity
-            onPress={() => navigation.navigate("Notifications")}
+            onPress={() => navigation.navigate("Bookmarks")}
             style={styles.iconBtn}
           >
             <MaterialIcons
-              name="notifications-none"
+              name="bookmark-border"
               size={26}
               color={theme.colors.textTitle}
             />

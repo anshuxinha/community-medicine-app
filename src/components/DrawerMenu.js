@@ -32,9 +32,9 @@ const BASE_MENU_ITEMS = [
     iconLib: "material",
   },
   {
-    icon: "bookmark",
-    label: "Bookmarks",
-    screen: "Bookmarks",
+    icon: "settings",
+    label: "Settings",
+    screen: "Notifications",
     iconLib: "material",
   },
   { divider: true },
