@@ -312,6 +312,9 @@ def fetch_health_updates():
     # Create a mapping of link -> update for deduplication
     existing_links = {u['link'] for u in existing_updates if 'link' in u}
     
+    class SkipPIB(Exception):
+        pass
+
     updates: List[Dict[str, Any]] = []
             
     try:
@@ -405,8 +408,7 @@ def fetch_health_updates():
         feed_items = feed_items[:50]  # type: ignore
         
         if not feed_items:
-            print("No new links found on PIB page for MoHFW this month.")
-            return
+            raise SkipPIB("No new links found on PIB page for MoHFW this month.")
             
         filter_prompt = f"""
         You are an expert in Community Medicine, Public Health, and Epidemiology in India.
@@ -438,14 +440,12 @@ def fetch_health_updates():
         selected_ids_response = call_ollama(filter_prompt)
         
         if selected_ids_response is None:
-            print("Failed to filter articles.")
-            return
+            raise SkipPIB("Failed to filter articles with Ollama.")
             
         selected_ids = [item['id'] for item in selected_ids_response if 'id' in item]
         selected_items = [item for item in feed_items if item['id'] in selected_ids]
         if not selected_items:
-            print("No relevant public-health updates selected this run. Leaving updates feed unchanged.")
-            return
+            raise SkipPIB("No relevant public-health updates selected by Ollama this run.")
         
         today_date = datetime.now().strftime('%Y-%m-%d')
         
@@ -468,8 +468,7 @@ def fetch_health_updates():
                 # Skip this article; continue with others
         
         if not articles:
-            print("No articles could be fetched.")
-            return
+            raise SkipPIB("No articles could be fetched.")
         
         # Build batch prompt
         articles_json = json.dumps([
@@ -497,8 +496,7 @@ def fetch_health_updates():
         batch_summaries = call_ollama(batch_prompt)
         
         if not isinstance(batch_summaries, list):
-            print("Batch summarization failed or returned invalid format.")
-            return
+            raise SkipPIB("Batch summarization failed or returned invalid format.")
         
         # Map summaries by id
         summary_by_id = {s["id"]: s for s in batch_summaries if "id" in s and "title" in s and "summary" in s}
@@ -536,12 +534,12 @@ def fetch_health_updates():
                 })
                 added_links_in_run.add(article["link"])
                 
+    except SkipPIB as e:
+        print(f"PIB update check completed: {e}")
     except requests.exceptions.RequestException as e:
         print(f"Error fetching PIB feed: {e}")
-        return
     except Exception as e:
-         print(f"An unexpected error occurred: {e}")
-         return
+         print(f"An unexpected error occurred during PIB fetch: {e}")
 
     # Combine existing updates with new updates, deduplicate by link
     combined = []
