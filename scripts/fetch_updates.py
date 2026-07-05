@@ -426,6 +426,7 @@ def fetch_health_updates():
         - Public Health infrastructure, epidemiology, or vital statistics
         
         STRICT EXCLUSION CRITERIA (IGNORE THESE COMPLETELY):
+        - Routine administrative reviews, meetings, or preparedness assessments: Exclude articles where the main focus is a minister, politician, or official chairing a review meeting, visiting a facility, reviewing progress of an ongoing abhiyaan/program, or assessing preparedness (e.g., 'Minister reviews Dengue preparedness', 'Review of TB Mukt Bharat', etc.). We ONLY want updates that announce new guidelines, clinical directives, policy changes, outbreak alerts, or statistical data.
         - Telecom, TRAI, IT, 5G, or generic technology (unless strictly health-tech eSanjeevani)
         - Defense, Military, or routine political visits
         - Any other topic unrelated to public health or community medicine
