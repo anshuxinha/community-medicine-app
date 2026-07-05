@@ -115,9 +115,6 @@ def call_ollama(prompt: str) -> Optional[Any]:
 
 def generate_gemini_image(title: str, summary: str, update_id: str) -> Optional[str]:
     gemini_api_key = os.environ.get("GEMINI_API_KEY")
-    if not gemini_api_key:
-        print("GEMINI_API_KEY environment variable is not set. Skipping Gemini image generation.")
-        return None
 
     # Carefully designed prompt using best practices for high conversion and premium branding
     prompt = (
@@ -133,58 +130,75 @@ def generate_gemini_image(title: str, summary: str, update_id: str) -> Optional[
         f"- Aesthetic: Minimalist, clean, premium, authoritative, scientific."
     )
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent?key={gemini_api_key}"
-    headers = {
-        "Content-Type": "application/json"
-    }
-    payload = {
-        "contents": [
-            {
-                "parts": [
-                    {
-                        "text": prompt
-                    }
-                ]
-            }
-        ],
-        "generationConfig": {
-            "responseModalities": ["TEXT", "IMAGE"],
-            "imageConfig": {
-                "aspectRatio": "1:1"
+    success = False
+    img_bytes = None
+
+    # Try Gemini first if key is available
+    if gemini_api_key:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent?key={gemini_api_key}"
+        headers = {"Content-Type": "application/json"}
+        payload = {
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {
+                "responseModalities": ["TEXT", "IMAGE"],
+                "imageConfig": {"aspectRatio": "1:1"}
             }
         }
-    }
+        try:
+            print(f"Attempting to generate image via Gemini 3.1 Flash for update {update_id}...")
+            response = requests.post(url, json=payload, headers=headers, timeout=60)
+            if response.status_code == 200:
+                res_data = response.json()
+                candidates = res_data.get("candidates", [])
+                if candidates:
+                    parts = candidates[0].get("content", {}).get("parts", [])
+                    for part in parts:
+                        inline_data = part.get("inlineData")
+                        if inline_data:
+                            base64_data = inline_data.get("data")
+                            if base64_data:
+                                import base64
+                                img_bytes = base64.b64decode(base64_data)
+                                success = True
+                                print("Gemini generation succeeded.")
+                                break
+                if not success:
+                    print("Gemini response did not contain inlineData image.")
+            else:
+                print(f"Gemini API failed with status {response.status_code}: {response.text}")
+        except Exception as e:
+            print(f"Gemini generation raised an exception: {e}")
 
-    try:
-        print(f"Requesting Gemini 3.1 Flash Image for update: {update_id}...")
-        response = requests.post(url, json=payload, headers=headers, timeout=90)
-        if response.status_code == 200:
-            res_data = response.json()
-            candidates = res_data.get("candidates", [])
-            if candidates:
-                parts = candidates[0].get("content", {}).get("parts", [])
-                for part in parts:
-                    inline_data = part.get("inlineData")
-                    if inline_data:
-                        base64_data = inline_data.get("data")
-                        if base64_data:
-                            import base64
-                            img_bytes = base64.b64decode(base64_data)
-                            
-                            output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'assets', 'updates')
-                            os.makedirs(output_dir, exist_ok=True)
-                            file_path = os.path.join(output_dir, f"{update_id}.png")
-                            with open(file_path, 'wb') as f:
-                                f.write(img_bytes)
-                            print(f"Saved generated image to {file_path}")
-                            return file_path
-            print("Failed to find generated image (inlineData) in Gemini response. Response body:")
-            print(json.dumps(res_data, indent=2)[:500])
-        else:
-            print(f"Gemini Image API failed (HTTP {response.status_code}): {response.text}")
-    except Exception as e:
-        print(f"Error generating Gemini image: {e}")
-    
+    # Fallback to Pollinations.ai if Gemini failed or key not set
+    if not success:
+        print("Falling back to Pollinations.ai for keyless free image generation...")
+        import urllib.parse
+        encoded_prompt = urllib.parse.quote(prompt)
+        pollinations_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1024&height=1024&nologo=true&private=true"
+        try:
+            poll_res = requests.get(pollinations_url, timeout=60)
+            if poll_res.status_code == 200:
+                img_bytes = poll_res.content
+                success = True
+                print("Pollinations.ai generation succeeded.")
+            else:
+                print(f"Pollinations.ai API failed with status {poll_res.status_code}")
+        except Exception as e:
+            print(f"Pollinations.ai generation raised an exception: {e}")
+
+    # Save the image if we got the bytes
+    if success and img_bytes:
+        try:
+            output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'assets', 'updates')
+            os.makedirs(output_dir, exist_ok=True)
+            file_path = os.path.join(output_dir, f"{update_id}.png")
+            with open(file_path, 'wb') as f:
+                f.write(img_bytes)
+            print(f"Successfully saved image to {file_path}")
+            return file_path
+        except Exception as e:
+            print(f"Error saving image file: {e}")
+
     return None
 
 
@@ -549,22 +563,40 @@ def fetch_health_updates():
     # Keep only the most recent MAX_UPDATES_TO_KEEP
     final_combined = combined[:MAX_UPDATES_TO_KEEP]
     
-    if final_combined == existing_updates:
-        print("No new updates detected. updates.json unchanged.")
+    # Load mapped image IDs from updates_images_map.js
+    mapped_image_ids = set()
+    map_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'src', 'data', 'updates_images_map.js')
+    if os.path.exists(map_path):
+        try:
+            with open(map_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            pattern = re.compile(r'"([^"]+)"\s*:\s*require\("([^"]+)"\)')
+            mapped_image_ids = {key for key, val in pattern.findall(content)}
+        except Exception as e:
+            print(f"Error reading mapped image IDs: {e}")
+
+    # Determine updates that are either new or missing their explainer image
+    existing_ids = {u['id'] for u in existing_updates if 'id' in u}
+    updates_to_image = [
+        u for u in final_combined
+        if u.get('id') not in existing_ids or u.get('id') not in mapped_image_ids
+    ]
+
+    if final_combined == existing_updates and not updates_to_image:
+        print("No new updates detected and all active updates have explainer images. Exiting.")
         return
 
-    # Identify new updates to generate explainer images for
-    existing_ids = {u['id'] for u in existing_updates if 'id' in u}
-    new_updates = [u for u in final_combined if u.get('id') not in existing_ids]
-
     new_mappings = {}
-    for u in new_updates:
+    for u in updates_to_image:
         update_id = u["id"]
         title = u["title"]
         summary = u["summary"]
-        print(f"New update detected: {title} (ID: {update_id})")
+        if u.get('id') not in existing_ids:
+            print(f"New update detected: {title} (ID: {update_id})")
+        else:
+            print(f"Existing update is missing an explainer image. Generating: {title} (ID: {update_id})")
         
-        # Generate and save Gemini image
+        # Generate and save image
         img_path = generate_gemini_image(title, summary, update_id)
         if img_path:
             new_mappings[update_id] = img_path
