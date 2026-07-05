@@ -256,8 +256,8 @@
     "hash": "113e41920f0703cdd6ac12124ca636c4"
   },
   "D:\\The App\\scripts\\fetch_updates.py": {
-    "mtime": 1777643989.0439153,
-    "hash": "14c421e12c1afdc51e2027ef01abdfbc"
+    "mtime": 1783237113.7675178,
+    "hash": "3429fc841c7286c2c5e186fee936ce35"
   },
   "D:\\The App\\scripts\\generate-reading-illustrations.js": {
     "mtime": 1774758104.8590746,
@@ -372,8 +372,8 @@
     "hash": "cd7d5e29e223a069a2263f3b97ca85e6"
   },
   "D:\\The App\\src\\components\\UpdateDetailDialog.js": {
-    "mtime": 1779029057.2971344,
-    "hash": "50ac09466a7eb17cb9666bff3acadf06"
+    "mtime": 1783237097.5835173,
+    "hash": "1a48f51197d67a6b4271bb75c8cf87ce"
   },
   "D:\\The App\\src\\components\\__tests__\\ReferralAnnouncementDialog.test.js": {
     "mtime": 1781158199.0258079,
@@ -406,6 +406,10 @@
   "D:\\The App\\src\\data\\pyq_images_map.js": {
     "mtime": 1783146206.0782347,
     "hash": "9e05274fdadb4f26b4684b6738a33e0b"
+  },
+  "D:\\The App\\src\\data\\updates_images_map.js": {
+    "mtime": 1783237085.9385746,
+    "hash": "e80494686a9255b7df4845d221dd99f4"
   },
   "D:\\The App\\src\\hooks\\useSessionEnforcer.js": {
     "mtime": 1776915623.531863,
@@ -746,6 +750,10 @@
   "D:\\The App\\assets\\icon.png": {
     "mtime": 1772355533.2122355,
     "hash": "87389e6edec2fb2fdf10a7a15f3887cb"
+  },
+  "D:\\The App\\assets\\logo-single-bg.png": {
+    "mtime": 1783188973.0292091,
+    "hash": "3c598a11e68d99496011f215b666b81c"
   },
   "D:\\The App\\assets\\notification-icon.png": {
     "mtime": 1772355532.9760008,

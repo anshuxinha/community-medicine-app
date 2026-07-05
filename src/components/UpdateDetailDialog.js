@@ -20,6 +20,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import ViewShot from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
 import { theme } from "../styles/theme";
+import { UPDATES_IMAGES } from "../data/updates_images_map";
 
 const appIcon = require("../../assets/icon.png");
 
@@ -94,46 +95,53 @@ const UpdateDetailDialog = ({ visible, update, onDismiss }) => {
           ref={viewShotRef}
           options={{ format: "png", quality: 1 }}
         >
-          <View style={styles.shareCard}>
-            {/* Top accent bar */}
-            <View style={styles.shareAccentBar} />
+          {UPDATES_IMAGES[update.id] ? (
+            <Image
+              source={UPDATES_IMAGES[update.id]}
+              style={styles.customShareImage}
+            />
+          ) : (
+            <View style={styles.shareCard}>
+              {/* Top accent bar */}
+              <View style={styles.shareAccentBar} />
 
-            {/* Content */}
-            <View style={styles.shareContent}>
-              {update.category && (
-                <Text style={styles.shareCategory}>
-                  {update.category}
-                </Text>
-              )}
-              <Text style={styles.shareTitle}>{update.title}</Text>
-              <Text style={styles.shareDate}>
-                {formatDate(update.date)}
-              </Text>
-              <View style={styles.shareDivider} />
-              <Text style={styles.shareSummary}>{update.summary}</Text>
-              {update.source && (
-                <Text style={styles.shareSource}>
-                  Source: {update.source}
-                </Text>
-              )}
-            </View>
-
-            {/* Branded footer */}
-            <View style={styles.shareFooter}>
-              <View style={styles.shareFooterTop}>
-                <Image source={appIcon} style={styles.shareAppIcon} />
-                <View style={styles.shareFooterTextCol}>
-                  <Text style={styles.shareAppName}>STROMA</Text>
-                  <Text style={styles.shareAppTagline}>
-                    Community Medicine Learning App
+              {/* Content */}
+              <View style={styles.shareContent}>
+                {update.category && (
+                  <Text style={styles.shareCategory}>
+                    {update.category}
                   </Text>
-                </View>
+                )}
+                <Text style={styles.shareTitle}>{update.title}</Text>
+                <Text style={styles.shareDate}>
+                  {formatDate(update.date)}
+                </Text>
+                <View style={styles.shareDivider} />
+                <Text style={styles.shareSummary}>{update.summary}</Text>
+                {update.source && (
+                  <Text style={styles.shareSource}>
+                    Source: {update.source}
+                  </Text>
+                )}
               </View>
-              <Text style={styles.shareCTA}>
-                Download the STROMA app to stay updated with the latest public health news and guidelines.
-              </Text>
+
+              {/* Branded footer */}
+              <View style={styles.shareFooter}>
+                <View style={styles.shareFooterTop}>
+                  <Image source={appIcon} style={styles.shareAppIcon} />
+                  <View style={styles.shareFooterTextCol}>
+                    <Text style={styles.shareAppName}>STROMA</Text>
+                    <Text style={styles.shareAppTagline}>
+                      Community Medicine Learning App
+                    </Text>
+                  </View>
+                </View>
+                <Text style={styles.shareCTA}>
+                  Download the STROMA app to stay updated with the latest public health news and guidelines.
+                </Text>
+              </View>
             </View>
-          </View>
+          )}
         </ViewShot>
       </View>
 
@@ -452,6 +460,12 @@ const styles = StyleSheet.create({
   shareBtnLabel: {
     color: "#FFFFFF",
     fontWeight: "700",
+  },
+  customShareImage: {
+    width: 380,
+    height: 380,
+    resizeMode: "cover",
+    borderRadius: 16,
   },
 });
 

@@ -30,6 +30,7 @@ jobs:
       - name: Run Fetch Script
         env:
           OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API }}
         run: python scripts/fetch_updates.py
 
       - name: Run Library Verification Review
@@ -44,14 +45,17 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add src/data/updates.json src/data/updates_archive.json
+          git add src/data/updates.json src/data/updates_archive.json src/data/updates_images_map.js
+          if [ -d "assets/updates" ]; then
+            git add assets/updates/
+          fi
 
           # Check if there are any changes to commit
           if git diff --staged --quiet; then
             echo "has_changes=false" >> "$GITHUB_OUTPUT"
             echo "No changes to commit"
           else
-            git commit -m "Auto-update national health guidelines"
+            git commit -m "Auto-update national health guidelines and explainer images"
             git push
             echo "has_changes=true" >> "$GITHUB_OUTPUT"
           fi
