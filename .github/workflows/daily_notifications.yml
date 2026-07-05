@@ -1,0 +1,30 @@
+name: Daily Notifications
+
+on:
+  schedule:
+    # 8:00 AM IST is 02:30 UTC
+    - cron: "30 2 * * *"
+  workflow_dispatch: # Allows manual triggering from GitHub Actions UI
+
+jobs:
+  send-daily-notifications:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install requests google-auth
+
+      - name: Run Notifications Script
+        run: python scripts/push_notifications.py --daily-checks
+        env:
+          GOOGLE_CLOUD_PROJECT: community-med-app
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}

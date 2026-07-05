@@ -2,7 +2,7 @@ name: Auto Update Health Guidelines
 
 on:
   schedule:
-    - cron: "30 4 * * 0" # Runs every Sunday at 10:00 AM IST (04:30 UTC)
+    - cron: "30 4 * * *" # Runs daily at 10:00 AM IST (04:30 UTC)
   workflow_dispatch: # Allows manual triggering from GitHub Actions UI
 
 jobs:
@@ -85,7 +85,7 @@ jobs:
           EXPO_PUBLIC_RC_API_KEY: ${{ secrets.EXPO_PUBLIC_RC_API_KEY }}
           EXPO_PUBLIC_RC_API_KEY_IOS: ${{ secrets.EXPO_PUBLIC_RC_API_KEY_IOS }}
           EXPO_PUBLIC_RC_API_KEY_ANDROID: ${{ secrets.EXPO_PUBLIC_RC_API_KEY_ANDROID }}
-        run: npx eas-cli update --channel production --message "Weekly dashboard guideline updates" --non-interactive
+        run: npx eas-cli update --channel production --message "Daily dashboard guideline updates" --non-interactive
 
       - name: Send Notifications
         if: steps.commit_changes.outputs.has_changes == 'true'

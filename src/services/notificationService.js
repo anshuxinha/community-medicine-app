@@ -2,13 +2,15 @@
  * notificationService.js
  * Manages all local push notifications for STROMA.
  *
- * Notification schedule:
- *  - Weekly digest: Every Sunday at 10:00 AM
- *  - Streak milestones: Fired immediately on 3, 7, 14, 30 day streaks
- *  - Video notifications: When new videos are added
+ * All notifications fire immediately on app open (no fixed-time triggers)
+ * to work reliably across iOS and Android, even when offline:
+ *  - Day-before reminder: Fires when tomorrow is a public health day
+ *  - Weekly preview: Lists upcoming health days on first app open each week
+ *  - Today alert: Fires when today is a public health day
+ *  - Streak milestones: Fired on 3, 7, 14, 30 day streaks
+ *  - Video notifications: When new videos are added (local + server push)
  *
- * Note: Daily study reminder and rotating study tips have been removed
- * to reduce notification frequency.
+ * Each check uses an AsyncStorage key to avoid duplicate delivery.
  */
 
 import * as Notifications from "expo-notifications";
@@ -107,71 +109,165 @@ export async function requestPermissions() {
 }
 
 /**
- * Schedule all recurring notifications.
- * Call once on app startup (safe to call multiple times — cancels old ones first).
+ * Check notification conditions on app open and fire any due notifications.
+ * Safe to call multiple times — uses AsyncStorage keys for deduplication.
  */
 export async function scheduleAllNotifications() {
   ensureNotificationHandler();
   const granted = await requestPermissions();
   if (!granted) return;
 
-  // Cancel existing scheduled notifications before rescheduling
-  await Notifications.cancelAllScheduledNotificationsAsync();
-
-  // ── 1. Weekly Progress Digest @ Sunday 10:00 AM ────────
-  await Notifications.scheduleNotificationAsync({
-    identifier: "weekly-digest",
-    content: {
-      title: "📊 Your Weekly Progress",
-      body: "Check your study stats and see how far you've come this week!",
-      sound: true,
-      data: { screen: "Dashboard" },
-    },
-    trigger: {
-      weekday: 1, // Sunday (expo-notifications uses 1=Sunday)
-      hour: 10,
-      minute: 0,
-      repeats: true,
-    },
-  });
-
-  // ── 2. Public Health Day / Week Notifications @ 8:00 AM ────────
-  // For weeks (dateLabel contains "-"), the notification fires on the first day
-  // which is already represented by the `day` field in the data.
-  for (const healthDay of publicHealthDays) {
-    const isWeek = healthDay.dateLabel.includes("-");
-    const emoji = isWeek ? "📅" : "🏥";
-    const label = isWeek ? "Week begins today" : "Today";
-
-    await Notifications.scheduleNotificationAsync({
-      identifier: `health-day-${healthDay.month}-${healthDay.day}`,
-      content: {
-        title: `${emoji} ${healthDay.name}`,
-        body: `${label}! ${healthDay.description.split(".")[0]}.`,
-        sound: true,
-        data: { screen: "Dashboard" },
-      },
-      trigger: {
-        month: healthDay.month,
-        day: healthDay.day,
-        hour: 8,
-        minute: 0,
-        repeats: true,
-      },
+  // Ensure Android notification channel exists before firing any notification.
+  // This fixes a race condition where notifications were dropped because the
+  // channel had not yet been created by AppContext.
+  if (Platform.OS === "android") {
+    await Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#6C3AE0",
     });
   }
 
-  // ── 3. Immediate Check for Today ────────
-  // If the app is opened on a health day/week start, ensure a notification is fired
-  // even if it's past 8:00 AM and was just scheduled.
-  await triggerTodayNotifications();
+  // Cancel any leftover scheduled notifications from previous app versions.
+  // All notifications now fire immediately on app open, so nothing needs to
+  // remain in the scheduler.
+  await Notifications.cancelAllScheduledNotificationsAsync();
+
+  // Fire immediate notifications for any unacknowledged conditions.
+  // Each check uses an AsyncStorage key to avoid duplicate delivery.
+  await checkDayBeforeHealthDay();
+  await checkWeeklyHealthDayPreview();
+  await checkTodayHealthDay();
 }
 
 /**
- * Check if today is a public health day or week start, and fire an immediate
- * notification if it hasn't been sent yet today.
+ * Compute a week-of-year key for deduplication (YYYY_WNN).
  */
-async function triggerTodayNotifications() {
+function getWeekKey() {
+  const now = new Date();
+  const startOfYear = new Date(now.getFullYear(), 0, 1);
+  const days = Math.floor((now - startOfYear) / (24 * 60 * 60 * 1000));
+  const weekNum = Math.ceil((days + startOfYear.getDay() + 1) / 7);
+  return `${now.getFullYear()}_W${weekNum}`;
+}
+
+/**
+ * If tomorrow is a public health day or week start, fire a day-before
+ * reminder (once per calendar day, deduplicated via AsyncStorage).
+ */
+async function checkDayBeforeHealthDay() {
+  try {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const m = tomorrow.getMonth() + 1;
+    const d = tomorrow.getDate();
+
+    const tomorrowKey = `${tomorrow.getFullYear()}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    const storageKey = `health_day_eve_${tomorrowKey}`;
+
+    const alreadySent = await AsyncStorage.getItem(storageKey);
+    if (alreadySent === "true") return;
+
+    const healthDay = publicHealthDays.find(
+      (hd) => hd.month === m && hd.day === d,
+    );
+    if (!healthDay) return;
+
+    const isWeek = healthDay.dateLabel.includes("-");
+    const emoji = isWeek ? "📅" : "🏥";
+    const label = isWeek ? "starts tomorrow" : "is tomorrow";
+
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: `${emoji} Reminder: ${healthDay.name}`,
+        body: `${healthDay.name} ${label}! ${healthDay.description.split(".")[0]}.`,
+        sound: true,
+        channelId: "default",
+        data: { screen: "Dashboard" },
+      },
+      trigger: null,
+    });
+
+    await AsyncStorage.setItem(storageKey, "true");
+  } catch (e) {
+    console.warn("Failed to check day-before health day:", e);
+  }
+}
+
+/**
+ * On the first app open of each week, fire a notification previewing any
+ * public health days in the next 7 days. Falls back to a generic weekly
+ * digest when no health days are upcoming.
+ */
+async function checkWeeklyHealthDayPreview() {
+  try {
+    const weekKey = getWeekKey();
+    const storageKey = `week_preview_${weekKey}`;
+
+    const alreadySent = await AsyncStorage.getItem(storageKey);
+    if (alreadySent === "true") return;
+
+    const today = new Date();
+    const upcoming = [];
+
+    for (let i = 0; i <= 6; i++) {
+      const checkDate = new Date(today);
+      checkDate.setDate(today.getDate() + i);
+      const m = checkDate.getMonth() + 1;
+      const d = checkDate.getDate();
+
+      const match = publicHealthDays.find(
+        (hd) => hd.month === m && hd.day === d,
+      );
+      if (match) {
+        upcoming.push(match);
+      }
+    }
+
+    if (upcoming.length === 0) {
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "📊 Your Weekly Progress",
+          body: "Check your study stats and see how far you've come this week!",
+          sound: true,
+          channelId: "default",
+          data: { screen: "Dashboard" },
+        },
+        trigger: null,
+      });
+    } else {
+      const daysList = upcoming
+        .map((hd) => `• ${hd.dateLabel}: ${hd.name}`)
+        .join("\n");
+      const body =
+        upcoming.length === 1
+          ? `${upcoming[0].name} is coming up this week (${upcoming[0].dateLabel}).`
+          : `${upcoming.length} health days this week:\n${daysList}`;
+
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "📅 This Week in Public Health",
+          body,
+          sound: true,
+          channelId: "default",
+          data: { screen: "Dashboard" },
+        },
+        trigger: null,
+      });
+    }
+
+    await AsyncStorage.setItem(storageKey, "true");
+  } catch (e) {
+    console.warn("Failed to check weekly health day preview:", e);
+  }
+}
+
+/**
+ * If today is a public health day or week start, fire an immediate
+ * notification (once per calendar day, deduplicated via AsyncStorage).
+ */
+async function checkTodayHealthDay() {
   const today = new Date();
   const m = today.getMonth() + 1;
   const d = today.getDate();
@@ -183,26 +279,28 @@ async function triggerTodayNotifications() {
     const alreadySent = await AsyncStorage.getItem(storageKey);
     if (alreadySent === "true") return;
 
-    // Check Public Health Day / Week Start
-    const healthDay = publicHealthDays.find((hd) => hd.month === m && hd.day === d);
-    if (healthDay) {
-      const isWeek = healthDay.dateLabel.includes("-");
-      const emoji = isWeek ? "📅" : "🏥";
-      const label = isWeek ? "Week begins today" : "Today";
+    const healthDay = publicHealthDays.find(
+      (hd) => hd.month === m && hd.day === d,
+    );
+    if (!healthDay) return;
 
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: `${emoji} ${healthDay.name}`,
-          body: `${label}! ${healthDay.description.split(".")[0]}.`,
-          sound: true,
-          data: { screen: "Dashboard" },
-        },
-        trigger: null,
-      });
-      await AsyncStorage.setItem(storageKey, "true");
-    }
+    const isWeek = healthDay.dateLabel.includes("-");
+    const emoji = isWeek ? "📅" : "🏥";
+    const label = isWeek ? "Week begins today" : "Today";
+
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: `${emoji} ${healthDay.name}`,
+        body: `${label}! ${healthDay.description.split(".")[0]}.`,
+        sound: true,
+        channelId: "default",
+        data: { screen: "Dashboard" },
+      },
+      trigger: null,
+    });
+    await AsyncStorage.setItem(storageKey, "true");
   } catch (e) {
-    console.warn("Failed to check today's notifications:", e);
+    console.warn("Failed to check today's health day:", e);
   }
 }
 
@@ -242,6 +340,7 @@ export async function triggerStreakMilestone(streak) {
       title: `${emoji} Streak Milestone!`,
       body: msg,
       sound: true,
+      channelId: "default",
       data: { screen: "Dashboard" },
     },
     trigger: null, // Fire immediately
@@ -289,6 +388,7 @@ export async function sendWebinarNotification(
         title: "🎥 New Webinar Available!",
         body: `${webinarTitle} - ${webinarDescription}`,
         sound: true,
+        channelId: "default",
         data: {
           screen: "Videos",
           type: "video",
@@ -422,6 +522,7 @@ export async function sendVideoNotification(videoTitle, videoDescription) {
           ? `${videoTitle} - ${videoDescription}`
           : videoTitle,
         sound: true,
+        channelId: "default",
         data: {
           screen: "Videos",
           type: "video",

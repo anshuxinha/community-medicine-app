@@ -2,6 +2,7 @@ import json
 import os
 import time
 import argparse
+from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional, Set
 
 import requests  # type: ignore
@@ -161,10 +162,88 @@ if __name__ == "__main__":
     parser.add_argument("--title", default="Library Updated", help="Notification title")
     parser.add_argument("--body", default="The Community Medicine textbook was verified and updated. Tap to see what is new.", help="Notification body")
     parser.add_argument("--screen", default="Dashboard", help="Screen to navigate to when tapped")
+    parser.add_argument("--daily-checks", action="store_true", help="Evaluate and send daily scheduled notifications")
     args = parser.parse_args()
 
     print("Collecting push notification tokens...")
     tokens = fetch_push_tokens()
     print(f"Found {len(tokens)} tokens.")
-    send_push_notifications(tokens, args.title, args.body, args.screen)
+
+    if args.daily_checks:
+        print("Running daily notifications check...")
+        
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        json_path = os.path.join(os.path.dirname(script_dir), "src", "data", "publicHealthDays.json")
+        
+        try:
+            with open(json_path, "r", encoding="utf-8") as file:
+                public_health_days = json.load(file)
+        except Exception as exc:
+            print(f"Could not load publicHealthDays.json: {exc}")
+            exit(1)
+
+        # Indian Standard Time (IST) is UTC+5:30
+        utc_now = datetime.utcnow()
+        ist_now = utc_now + timedelta(hours=5, minutes=30)
+        
+        today_month = ist_now.month
+        today_day = ist_now.day
+        
+        tomorrow = ist_now + timedelta(days=1)
+        tomorrow_month = tomorrow.month
+        tomorrow_day = tomorrow.day
+
+        # 1. Day-Before reminder (runs at 8:00 AM IST)
+        tomorrow_matches = [hd for hd in public_health_days if hd.get("month") == tomorrow_month and hd.get("day") == tomorrow_day]
+        for hd in tomorrow_matches:
+            is_week = "-" in hd.get("dateLabel", "")
+            emoji = "📅" if is_week else "🏥"
+            label = "starts tomorrow" if is_week else "is tomorrow"
+            desc = hd.get("description", "").split(".")[0]
+            title = f"{emoji} Reminder: {hd.get('name')}"
+            body = f"{hd.get('name')} {label}! {desc}."
+            print(f"Sending day-before reminder for: {hd.get('name')}")
+            send_push_notifications(tokens, title, body, "Dashboard")
+
+        # 2. Today notification (runs at 8:00 AM IST)
+        today_matches = [hd for hd in public_health_days if hd.get("month") == today_month and hd.get("day") == today_day]
+        for hd in today_matches:
+            is_week = "-" in hd.get("dateLabel", "")
+            emoji = "📅" if is_week else "🏥"
+            label = "Week begins today" if is_week else "Today"
+            desc = hd.get("description", "").split(".")[0]
+            title = f"{emoji} {hd.get('name')}"
+            body = f"{label}! {desc}."
+            print(f"Sending today reminder for: {hd.get('name')}")
+            send_push_notifications(tokens, title, body, "Dashboard")
+
+        # 3. Weekly digest / preview (Only on Sundays)
+        # Sunday in Python weekday() is 6
+        if ist_now.weekday() == 6:
+            upcoming = []
+            for i in range(7):
+                check_date = ist_now + timedelta(days=i)
+                m = check_date.month
+                d = check_date.day
+                match = next((hd for hd in public_health_days if hd.get("month") == m and hd.get("day") == d), None)
+                if match:
+                    upcoming.append(match)
+            
+            if not upcoming:
+                title = "📊 Your Weekly Progress"
+                body = "Check your study stats and see how far you've come this week!"
+                print("Sending generic weekly progress digest")
+                send_push_notifications(tokens, title, body, "Dashboard")
+            else:
+                days_list = "\n".join([f"• {hd.get('dateLabel')}: {hd.get('name')}" for hd in upcoming])
+                if len(upcoming) == 1:
+                    body = f"{upcoming[0].get('name')} is coming up this week ({upcoming[0].get('dateLabel')})."
+                else:
+                    body = f"{len(upcoming)} health days this week:\n{days_list}"
+                title = "📅 This Week in Public Health"
+                print("Sending weekly public health days preview")
+                send_push_notifications(tokens, title, body, "Dashboard")
+    else:
+        send_push_notifications(tokens, args.title, args.body, args.screen)
+        
     print("Notification broadcast complete.")
