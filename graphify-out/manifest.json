@@ -256,8 +256,8 @@
     "hash": "113e41920f0703cdd6ac12124ca636c4"
   },
   "D:\\The App\\scripts\\fetch_updates.py": {
-    "mtime": 1783246014.6549067,
-    "hash": "8f08ccfdbecb5d86d5b2468f6d161e54"
+    "mtime": 1783246583.4484346,
+    "hash": "4817244c23318de5f04849ada8cc0325"
   },
   "D:\\The App\\scripts\\generate-reading-illustrations.js": {
     "mtime": 1774758104.8590746,
@@ -372,8 +372,8 @@
     "hash": "cd7d5e29e223a069a2263f3b97ca85e6"
   },
   "D:\\The App\\src\\components\\UpdateDetailDialog.js": {
-    "mtime": 1783239569.5670056,
-    "hash": "dd58df0c8980e6ee1c15a8844430eae9"
+    "mtime": 1783246546.5907612,
+    "hash": "316f158149c86c1eb19eccd8de86fcaa"
   },
   "D:\\The App\\src\\components\\__tests__\\ReferralAnnouncementDialog.test.js": {
     "mtime": 1781158199.0258079,
@@ -406,10 +406,6 @@
   "D:\\The App\\src\\data\\pyq_images_map.js": {
     "mtime": 1783146206.0782347,
     "hash": "9e05274fdadb4f26b4684b6738a33e0b"
-  },
-  "D:\\The App\\src\\data\\updates_images_map.js": {
-    "mtime": 1783244682.6509464,
-    "hash": "282bbc50e68e8c73c2d8bd258404525e"
   },
   "D:\\The App\\src\\hooks\\useSessionEnforcer.js": {
     "mtime": 1776915623.531863,
@@ -914,22 +910,6 @@
   "D:\\The App\\assets\\pyq_images\\image_p97_Im0.jpg": {
     "mtime": 1783100848.4688509,
     "hash": "dce33f5b98288a24751b3090f999f225"
-  },
-  "D:\\The App\\assets\\updates\\0af865f9-3f6f-4384-a373-22a4faf960dd.png": {
-    "mtime": 1783244682.6415482,
-    "hash": "5347a1762f5e23623d39c42f3d9deefd"
-  },
-  "D:\\The App\\assets\\updates\\2aa0f12f-e3be-42be-9f8d-980c87deb95e.png": {
-    "mtime": 1783244682.6457133,
-    "hash": "70c29cdc90d74e0bc0a3974b1fdda3c7"
-  },
-  "D:\\The App\\assets\\updates\\2c70706f-c322-4f73-ae5f-149a00c4210d.png": {
-    "mtime": 1783244682.6479828,
-    "hash": "48bcfe0d041cf37b6f6552caac58e828"
-  },
-  "D:\\The App\\assets\\updates\\e7c5e79b-f6c9-433f-815b-a3a470e7e5e3.png": {
-    "mtime": 1783244682.6499312,
-    "hash": "c640fc8f2bd2af28633e55bbe6a6575f"
   },
   "D:\\The App\\errors_from_user\\screencapture-appstoreconnect-apple-apps-6767763106-distribution-iaps-6769271717-2026-05-18-10_13_15.png": {
     "mtime": 1779079406.6582549,
