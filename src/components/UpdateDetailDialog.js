@@ -95,53 +95,54 @@ const UpdateDetailDialog = ({ visible, update, onDismiss }) => {
           ref={viewShotRef}
           options={{ format: "png", quality: 1 }}
         >
-          {UPDATES_IMAGES[update.id] ? (
-            <Image
-              source={UPDATES_IMAGES[update.id]}
-              style={styles.customShareImage}
-            />
-          ) : (
-            <View style={styles.shareCard}>
-              {/* Top accent bar */}
-              <View style={styles.shareAccentBar} />
+          <View style={styles.shareCard}>
+            {/* Top accent bar */}
+            <View style={styles.shareAccentBar} />
 
-              {/* Content */}
-              <View style={styles.shareContent}>
-                {update.category && (
-                  <Text style={styles.shareCategory}>
-                    {update.category}
-                  </Text>
-                )}
-                <Text style={styles.shareTitle}>{update.title}</Text>
-                <Text style={styles.shareDate}>
-                  {formatDate(update.date)}
-                </Text>
-                <View style={styles.shareDivider} />
-                <Text style={styles.shareSummary}>{update.summary}</Text>
-                {update.source && (
-                  <Text style={styles.shareSource}>
-                    Source: {update.source}
-                  </Text>
-                )}
-              </View>
+            {/* Custom generated header image (if available) */}
+            {UPDATES_IMAGES[update.id] && (
+              <Image
+                source={UPDATES_IMAGES[update.id]}
+                style={styles.shareCardImage}
+              />
+            )}
 
-              {/* Branded footer */}
-              <View style={styles.shareFooter}>
-                <View style={styles.shareFooterTop}>
-                  <Image source={appIcon} style={styles.shareAppIcon} />
-                  <View style={styles.shareFooterTextCol}>
-                    <Text style={styles.shareAppName}>STROMA</Text>
-                    <Text style={styles.shareAppTagline}>
-                      Community Medicine Learning App
-                    </Text>
-                  </View>
-                </View>
-                <Text style={styles.shareCTA}>
-                  Download the STROMA app to stay updated with the latest public health news and guidelines.
+            {/* Content */}
+            <View style={styles.shareContent}>
+              {update.category && (
+                <Text style={styles.shareCategory}>
+                  {update.category}
                 </Text>
-              </View>
+              )}
+              <Text style={styles.shareTitle}>{update.title}</Text>
+              <Text style={styles.shareDate}>
+                {formatDate(update.date)}
+              </Text>
+              <View style={styles.shareDivider} />
+              <Text style={styles.shareSummary}>{update.summary}</Text>
+              {update.source && (
+                <Text style={styles.shareSource}>
+                  Source: {update.source}
+                </Text>
+              )}
             </View>
-          )}
+
+            {/* Branded footer */}
+            <View style={styles.shareFooter}>
+              <View style={styles.shareFooterTop}>
+                <Image source={appIcon} style={styles.shareAppIcon} />
+                <View style={styles.shareFooterTextCol}>
+                  <Text style={styles.shareAppName}>STROMA</Text>
+                  <Text style={styles.shareAppTagline}>
+                    Community Medicine Learning App
+                  </Text>
+                </View>
+              </View>
+              <Text style={styles.shareCTA}>
+                Download the STROMA app to stay updated with the latest public health news and guidelines.
+              </Text>
+            </View>
+          </View>
         </ViewShot>
       </View>
 
@@ -461,11 +462,10 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontWeight: "700",
   },
-  customShareImage: {
+  shareCardImage: {
     width: 380,
-    height: 380,
+    height: 220,
     resizeMode: "cover",
-    borderRadius: 16,
   },
 });
 

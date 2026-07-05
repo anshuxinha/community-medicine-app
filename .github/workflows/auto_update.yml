@@ -30,7 +30,7 @@ jobs:
       - name: Run Fetch Script
         env:
           OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API }}
+          GEMINI_API_KEY: ${{ secrets.GOOGLE_GEMINI_KEY }}
         run: python scripts/fetch_updates.py
 
       - name: Run Library Verification Review

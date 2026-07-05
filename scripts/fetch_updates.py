@@ -113,63 +113,77 @@ def call_ollama(prompt: str) -> Optional[Any]:
     return None
 
 
-def generate_openai_image(title: str, summary: str, update_id: str) -> Optional[str]:
-    openai_api_key = os.environ.get("OPENAI_API_KEY")
-    if not openai_api_key:
-        print("OPENAI_API_KEY environment variable is not set. Skipping DALL-E image generation.")
+def generate_gemini_image(title: str, summary: str, update_id: str) -> Optional[str]:
+    gemini_api_key = os.environ.get("GEMINI_API_KEY")
+    if not gemini_api_key:
+        print("GEMINI_API_KEY environment variable is not set. Skipping Gemini image generation.")
         return None
 
     # Carefully designed prompt using best practices for high conversion and premium branding
     prompt = (
-        f"Create a premium, professional 1:1 aspect ratio square infographic/explainer graphic "
-        f"for a community medicine mobile app, designed for social media sharing (high-conversion layout).\n\n"
+        f"Generate a professional, high-quality 1:1 aspect ratio square featured image "
+        f"for a community medicine/public health learning app update.\n\n"
         f"Topic: {title}\n"
         f"Summary: {summary}\n\n"
-        f"Visual Guidelines:\n"
-        f"- Focus: Design a striking, clean central illustration representing the health topic (e.g., medical data trends, scientific diagrams, public health programs, or stylized epidemiology concepts). Avoid generic clip art.\n"
-        f"- Color Palette: Predominantly use deep professional blues/grays for a trustworthy look, and integrate Stroma's brand accent color #9333ea (vibrant violet/purple) in highlights, key illustrations, and lines to make elements pop.\n"
-        f"- Typography & Text: Render a bold, extremely clean title at the top: '{title}'. Keep any text elements in the graphic highly legible, minimal, and modern. Avoid clutter and spelling errors.\n"
-        f"- Branding & Logo: At the bottom, integrate Stroma's official logo branding (referencing 'D:\\Stroma Files\\Logos and Banners\\Logo single bg colour.png'). The logo should be a sleek, minimalist icon with the text 'STROMA - Community Medicine Learning App' styled cleanly using the accent color #9333ea.\n"
-        f"- Style: Sleek vector graphic, modern design system aesthetic, clean borders, high-conversion visual design that looks professional and authoritative."
+        f"Requirements:\n"
+        f"- Visual Content: The image should serve as a relevant, engaging visual thumbnail or attention-grabber (like a featured header photo or vector graphic for an article in Inshorts). Illustrate the topic metaphorically or literally (e.g., vaccine vial, medical data graph, disease cell structure, or clinical setting) using a premium, clean design.\n"
+        f"- NO Text / Summaries in Image: DO NOT write any news titles, bullet points, summaries, or explanatory copy in the main body of the image. It must be a textless, pure visual asset.\n"
+        f"- Brand Colors: Use a clean modern palette with Stroma's primary accent color #9333ea (vibrant purple) integrated in highlights, key lines, or graphic accents.\n"
+        f"- Logo Integration: In a clean corner of the image, integrate Stroma's minimalist brand logo and the text 'STROMA' styled in the brand accent color #9333ea (refer to path 'D:\\Stroma Files\\Logos and Banners\\Logo single bg colour.png' for context).\n"
+        f"- Aesthetic: Minimalist, clean, premium, authoritative, scientific."
     )
 
-    url = "https://api.openai.com/v1/images/generations"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent?key={gemini_api_key}"
     headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {openai_api_key}"
+        "Content-Type": "application/json"
     }
     payload = {
-        "model": "dall-e-3",
-        "prompt": prompt,
-        "n": 1,
-        "size": "1024x1024",
-        "response_format": "url"
+        "contents": [
+            {
+                "parts": [
+                    {
+                        "text": prompt
+                    }
+                ]
+            }
+        ],
+        "generationConfig": {
+            "responseModalities": ["TEXT", "IMAGE"],
+            "imageConfig": {
+                "aspectRatio": "1:1"
+            }
+        }
     }
 
     try:
-        print(f"Requesting OpenAI DALL-E 3 image for update: {update_id}...")
+        print(f"Requesting Gemini 3.1 Flash Image for update: {update_id}...")
         response = requests.post(url, json=payload, headers=headers, timeout=90)
         if response.status_code == 200:
             res_data = response.json()
-            image_url = res_data["data"][0]["url"]
-            print(f"Image generated successfully by DALL-E: {image_url}")
-            
-            # Download the image
-            img_res = requests.get(image_url, timeout=30)
-            if img_res.status_code == 200:
-                output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'assets', 'updates')
-                os.makedirs(output_dir, exist_ok=True)
-                file_path = os.path.join(output_dir, f"{update_id}.png")
-                with open(file_path, 'wb') as f:
-                    f.write(img_res.content)
-                print(f"Saved generated image to {file_path}")
-                return file_path
-            else:
-                print(f"Failed to download generated image: HTTP {img_res.status_code}")
+            candidates = res_data.get("candidates", [])
+            if candidates:
+                parts = candidates[0].get("content", {}).get("parts", [])
+                for part in parts:
+                    inline_data = part.get("inlineData")
+                    if inline_data:
+                        base64_data = inline_data.get("data")
+                        if base64_data:
+                            import base64
+                            img_bytes = base64.b64decode(base64_data)
+                            
+                            output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'assets', 'updates')
+                            os.makedirs(output_dir, exist_ok=True)
+                            file_path = os.path.join(output_dir, f"{update_id}.png")
+                            with open(file_path, 'wb') as f:
+                                f.write(img_bytes)
+                            print(f"Saved generated image to {file_path}")
+                            return file_path
+            print("Failed to find generated image (inlineData) in Gemini response. Response body:")
+            print(json.dumps(res_data, indent=2)[:500])
         else:
-            print(f"OpenAI Image API failed (HTTP {response.status_code}): {response.text}")
+            print(f"Gemini Image API failed (HTTP {response.status_code}): {response.text}")
     except Exception as e:
-        print(f"Error generating OpenAI image: {e}")
+        print(f"Error generating Gemini image: {e}")
     
     return None
 
@@ -550,8 +564,8 @@ def fetch_health_updates():
         summary = u["summary"]
         print(f"New update detected: {title} (ID: {update_id})")
         
-        # Generate and save DALL-E image
-        img_path = generate_openai_image(title, summary, update_id)
+        # Generate and save Gemini image
+        img_path = generate_gemini_image(title, summary, update_id)
         if img_path:
             new_mappings[update_id] = img_path
 
