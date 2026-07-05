@@ -1,9 +1,6 @@
 name: Auto Update Health Guidelines
 
 on:
-  push:
-    branches:
-      - main
   schedule:
     - cron: "30 4 * * *" # Runs daily at 10:00 AM IST (04:30 UTC)
   workflow_dispatch: # Allows manual triggering from GitHub Actions UI
