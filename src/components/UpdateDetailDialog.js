@@ -20,7 +20,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import ViewShot from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
 import { theme } from "../styles/theme";
-import { UPDATES_IMAGES } from "../data/updates_images_map";
+
 
 const appIcon = require("../../assets/icon.png");
 
@@ -99,13 +99,7 @@ const UpdateDetailDialog = ({ visible, update, onDismiss }) => {
             {/* Top accent bar */}
             <View style={styles.shareAccentBar} />
 
-            {/* Custom generated header image (if available) */}
-            {UPDATES_IMAGES[update.id] && (
-              <Image
-                source={UPDATES_IMAGES[update.id]}
-                style={styles.shareCardImage}
-              />
-            )}
+
 
             {/* Content */}
             <View style={styles.shareContent}>
@@ -462,11 +456,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontWeight: "700",
   },
-  shareCardImage: {
-    width: 380,
-    height: 220,
-    resizeMode: "cover",
-  },
+
 });
 
 export default UpdateDetailDialog;
