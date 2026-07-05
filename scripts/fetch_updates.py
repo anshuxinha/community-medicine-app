@@ -175,7 +175,7 @@ def generate_gemini_image(title: str, summary: str, update_id: str) -> Optional[
         import urllib.parse
         short_prompt = f"Professional clean medical graphic, theme: {title}. Brand colors: purple and white. Minimalist, scientific, attention grabber featured image, Stroma."
         encoded_prompt = urllib.parse.quote(short_prompt)
-        pollinations_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1024&height=1024&nologo=true&private=true"
+        pollinations_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1024&height=1024&nologo=true&private=true&model=flux"
         try:
             print(f"Requesting image from Pollinations.ai for update {update_id}...")
             poll_res = requests.get(pollinations_url, timeout=60)
