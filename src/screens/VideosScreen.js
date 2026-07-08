@@ -161,7 +161,7 @@ const pdfViewerHtml = (pdfUrl) => `
   </style>
 </head>
 <body>
-  <div id="loading">Loading document...</div>
+  <div id="loading">Loading notes...</div>
   <div id="viewer-container"></div>
   
   <button id="download-fab" class="fab" onclick="downloadPdf()">
@@ -217,7 +217,7 @@ const pdfViewerHtml = (pdfUrl) => `
       renderPage(1);
 
     }).catch(err => {
-      loading.innerText = 'Failed to load document. Please try again.';
+      loading.innerText = 'Failed to load notes. Please try again.';
       console.error(err);
     });
   </script>
@@ -376,7 +376,7 @@ const VideosScreen = ({ navigation }) => {
   }, [selectedVideo]);
 
   useEffect(() => {
-    if ((selectedVideo?.hasPdf && activeTab === "document") || fullscreenPdf) {
+    if ((selectedVideo?.hasPdf && activeTab === "notes") || fullscreenPdf) {
       enableScreenCaptureProtection();
     } else {
       disableScreenCaptureProtection();
@@ -1145,15 +1145,15 @@ const VideosScreen = ({ navigation }) => {
                 <Pressable
                   style={[
                     styles.tabButton,
-                    activeTab === "document" && styles.activeTabButton,
+                    activeTab === "notes" && styles.activeTabButton,
                   ]}
-                  onPress={() => setActiveTab("document")}
+                  onPress={() => setActiveTab("notes")}
                 >
                   <MaterialIcons
                     name="description"
                     size={18}
                     color={
-                      activeTab === "document"
+                      activeTab === "notes"
                         ? theme.colors.primary
                         : theme.colors.textSecondary
                     }
@@ -1161,10 +1161,10 @@ const VideosScreen = ({ navigation }) => {
                   <Text
                     style={[
                       styles.tabButtonText,
-                      activeTab === "document" && styles.activeTabButtonText,
+                      activeTab === "notes" && styles.activeTabButtonText,
                     ]}
                   >
-                    Document
+                    Notes
                   </Text>
                 </Pressable>
               </View>
@@ -1241,10 +1241,10 @@ const VideosScreen = ({ navigation }) => {
                 </View>
               </>
             ) : (
-              <View style={styles.docTabContent}>
-                <View style={styles.docTabHeader}>
-                  <Text style={styles.docTabTitle} numberOfLines={1}>
-                    {selectedVideo?.pdfName || "Reference Document"}
+              <View style={styles.notesTabContent}>
+                <View style={styles.notesTabHeader}>
+                  <Text style={styles.notesTabTitle} numberOfLines={1}>
+                    {selectedVideo?.pdfName || "Reference Notes"}
                   </Text>
                   <IconButton
                     icon="download"
@@ -1300,7 +1300,7 @@ const VideosScreen = ({ navigation }) => {
               onPress={handleCloseFullscreenPdf}
             />
             <Text style={styles.pdfFullscreenTitle} numberOfLines={1}>
-              {selectedVideo?.pdfName || "Document"}
+              {selectedVideo?.pdfName || "Notes"}
             </Text>
             <IconButton
               icon="download"
@@ -1803,11 +1803,11 @@ const styles = StyleSheet.create({
     color: theme.colors.primary,
     fontWeight: "bold",
   },
-  docTabContent: {
+  notesTabContent: {
     flex: 1,
     backgroundColor: theme.colors.surfacePrimary,
   },
-  docTabHeader: {
+  notesTabHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -1816,7 +1816,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.surfaceSecondary,
   },
-  docTabTitle: {
+  notesTabTitle: {
     fontSize: 14,
     fontWeight: "bold",
     color: theme.colors.textTitle,

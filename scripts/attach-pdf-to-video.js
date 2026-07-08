@@ -27,7 +27,7 @@ const main = async () => {
     .get();
 
   if (snapshot.empty) {
-    throw new Error("No videos found in Firestore. Cannot attach document.");
+    throw new Error("No videos found in Firestore. Cannot attach notes.");
   }
 
   const latestVideoDoc = snapshot.docs[0];
@@ -37,7 +37,7 @@ const main = async () => {
 
   // Clean remote path (avoid spaces in URL)
   const cleanFilename = path.basename(LOCAL_PDF_PATH).replace(/\s+/g, "_");
-  const remotePath = `videos/documents/${cleanFilename}`;
+  const remotePath = `videos/notes/${cleanFilename}`;
   console.log(`Uploading PDF to Firebase Storage path: ${remotePath}...`);
 
   const bucket = admin.storage().bucket();
@@ -64,7 +64,7 @@ const main = async () => {
     updatedAt: admin.firestore.FieldValue.serverTimestamp(),
   });
 
-  console.log("Update successful. Attached PDF to the latest video.");
+  console.log("Update successful. Attached PDF as Notes to the latest video.");
 };
 
 main().catch((error) => {
