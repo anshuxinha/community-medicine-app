@@ -4662,7 +4662,7 @@
       "source_file": "src/components/UpdateDetailDialog.js",
       "source_location": "L1",
       "id": "src_components_updatedetaildialog_js",
-      "community": 53,
+      "community": 54,
       "norm_label": "updatedetaildialog.js"
     },
     {
@@ -4671,7 +4671,7 @@
       "source_file": "src/components/UpdateDetailDialog.js",
       "source_location": "L25",
       "id": "components_updatedetaildialog_appicon",
-      "community": 53,
+      "community": 54,
       "norm_label": "appicon"
     },
     {
@@ -4680,7 +4680,7 @@
       "source_file": "src/components/UpdateDetailDialog.js",
       "source_location": "L35",
       "id": "components_updatedetaildialog_updatedetaildialog",
-      "community": 53,
+      "community": 54,
       "norm_label": "updatedetaildialog()"
     },
     {
@@ -4689,7 +4689,7 @@
       "source_file": "src/components/UpdateDetailDialog.js",
       "source_location": "L246",
       "id": "components_updatedetaildialog_styles",
-      "community": 53,
+      "community": 54,
       "norm_label": "styles"
     },
     {
@@ -5103,7 +5103,7 @@
       "source_file": "src/screens/AdminLibraryReviewScreen.js",
       "source_location": "L1",
       "id": "src_screens_adminlibraryreviewscreen_js",
-      "community": 54,
+      "community": 53,
       "norm_label": "adminlibraryreviewscreen.js"
     },
     {
@@ -5112,7 +5112,7 @@
       "source_file": "src/screens/AdminLibraryReviewScreen.js",
       "source_location": "L37",
       "id": "screens_adminlibraryreviewscreen_getsortvalue",
-      "community": 54,
+      "community": 53,
       "norm_label": "getsortvalue()"
     },
     {
@@ -5121,7 +5121,7 @@
       "source_file": "src/screens/AdminLibraryReviewScreen.js",
       "source_location": "L49",
       "id": "screens_adminlibraryreviewscreen_status_tones",
-      "community": 54,
+      "community": 53,
       "norm_label": "status_tones"
     },
     {
@@ -5130,7 +5130,7 @@
       "source_file": "src/screens/AdminLibraryReviewScreen.js",
       "source_location": "L59",
       "id": "screens_adminlibraryreviewscreen_sendlibraryupdatenotification",
-      "community": 54,
+      "community": 53,
       "norm_label": "sendlibraryupdatenotification()"
     },
     {
@@ -5139,7 +5139,7 @@
       "source_file": "src/screens/AdminLibraryReviewScreen.js",
       "source_location": "L103",
       "id": "screens_adminlibraryreviewscreen_adminlibraryreviewscreen",
-      "community": 54,
+      "community": 53,
       "norm_label": "adminlibraryreviewscreen()"
     },
     {
@@ -5148,7 +5148,7 @@
       "source_file": "src/screens/AdminLibraryReviewScreen.js",
       "source_location": "L507",
       "id": "screens_adminlibraryreviewscreen_styles",
-      "community": 54,
+      "community": 53,
       "norm_label": "styles"
     },
     {
@@ -8702,7 +8702,7 @@
       "file_type": "code",
       "source_file": "src/data/updates_images_map.js",
       "source_location": "L1",
-      "community": 53,
+      "community": 54,
       "norm_label": "updates_images_map.js",
       "id": "src_data_updates_images_map_js"
     },
@@ -8711,7 +8711,7 @@
       "file_type": "code",
       "source_file": "src/data/updates_images_map.js",
       "source_location": "L1",
-      "community": 53,
+      "community": 54,
       "norm_label": "updates_images",
       "id": "data_updates_images_map_updates_images"
     },
@@ -11554,9 +11554,9 @@
       "source_file": "scripts/fetch_updates.py",
       "source_location": "L119",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_fetch_updates_rationale_119",
-      "target": "scripts_fetch_updates_fetch_health_updates",
-      "confidence_score": 1.0
+      "target": "scripts_fetch_updates_fetch_health_updates"
     },
     {
       "relation": "calls",
@@ -23813,5 +23813,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "d8a3de3cb37426bf733124600100262dcc23bc50"
+  "built_at_commit": "f129fc68c65be37a9c7ea7ec006098380c19efce"
 }

@@ -1,7 +1,7 @@
-# Graph Report - The App  (2026-07-05)
+# Graph Report - The App  (2026-07-08)
 
 ## Corpus Check
-- 156 files · ~1,416,316 words
+- 156 files · ~1,416,320 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d8a3de3c`
+- Built from commit: `f129fc68`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -333,7 +333,7 @@ Nodes (4): admin, fs, path, SERVICE_ACCOUNT_PATH
 Cohesion: 0.33
 Nodes (5): { getByText }, mockAction, mockDismiss, React, { View }
 
-### Community 53 - "Community 53"
+### Community 54 - "Community 54"
 Cohesion: 0.4
 Nodes (3): appIcon, styles, UPDATES_IMAGES
 
@@ -411,7 +411,7 @@ _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `theme` connect `Community 13` to `Community 0`, `Community 1`, `Community 35`, `Community 3`, `Community 6`, `Community 38`, `Community 7`, `Community 70`, `Community 11`, `Community 16`, `Community 19`, `Community 53`, `Community 54`, `Community 23`, `Community 24`, `Community 31`?**
   _High betweenness centrality (0.028) - this node is a cross-community bridge._
-- **Why does `AppContext` connect `Community 0` to `Community 1`, `Community 3`, `Community 70`, `Community 7`, `Community 16`, `Community 54`, `Community 24`, `Community 31`?**
+- **Why does `AppContext` connect `Community 0` to `Community 1`, `Community 3`, `Community 70`, `Community 7`, `Community 16`, `Community 53`, `Community 24`, `Community 31`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **Why does `ErrorBoundary` connect `Community 69` to `Community 35`?**
   _High betweenness centrality (0.003) - this node is a cross-community bridge._
