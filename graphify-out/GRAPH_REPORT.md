@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d576b066`
+- Built from commit: `e84f6af8`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -182,16 +182,16 @@ Cohesion: 0.17
 Nodes (15): buildContactSheet(), buildPngCanvas(), CONTACT_SHEET_PATH, { createCanvas, loadImage }, DOWNLOAD_SPECS, downloadFile(), ensureDir(), fs (+7 more)
 
 ### Community 13 - "Community 13"
+Cohesion: 0.14
+Nodes (8): styles, styles, REFERENCE_VALUES, styles, EDUCATION_OPTIONS, OCCUPATION_OPTIONS, styles, theme
+
+### Community 14 - "Community 14"
 Cohesion: 0.12
 Nodes (15): 1. Always Check Channel Configuration First, 2. Update Channel if Needed, 3. Publish Update to Correct Branch, 4. Verify Update is Live, 5. Clear Cache for Critical Updates, code:bash (eas channel:list --non-interactive), code:bash (eas channel:edit production --branch main --non-interactive), code:bash (eas update --branch main --message "Your update message" --c) (+7 more)
 
-### Community 14 - "Community 14"
+### Community 15 - "Community 15"
 Cohesion: 0.15
 Nodes (13): colorFreq, colorLocations, content, files, fs, getContrastRatio(), getRelativeLuminance(), hex (+5 more)
-
-### Community 15 - "Community 15"
-Cohesion: 0.18
-Nodes (6): styles, styles, styles, appColors, paperTheme, theme
 
 ### Community 16 - "Community 16"
 Cohesion: 0.18
@@ -226,8 +226,8 @@ Cohesion: 0.21
 Nodes (7): PRESET_PROBLEMS, SOLVER_OFFSETS, ssSingleProp(), ssTwoMeans(), ssTwoProps(), styles, zForCI()
 
 ### Community 24 - "Community 24"
-Cohesion: 0.17
-Nodes (6): styles, REFERENCE_VALUES, styles, EDUCATION_OPTIONS, OCCUPATION_OPTIONS, styles
+Cohesion: 0.18
+Nodes (7): useSessionEnforcer(), AppNavigator(), navigationRef, Stack, Tab, styles, setupNotificationTapHandler()
 
 ### Community 25 - "Community 25"
 Cohesion: 0.17
@@ -254,24 +254,24 @@ Cohesion: 0.25
 Nodes (7): CM_TO_THEME, fs, lower, normalizedCTM, path, processFile(), walkDir()
 
 ### Community 31 - "Community 31"
-Cohesion: 0.25
-Nodes (6): useSessionEnforcer(), AppNavigator(), navigationRef, Stack, Tab, setupNotificationTapHandler()
-
-### Community 32 - "Community 32"
 Cohesion: 0.28
 Nodes (4): CATEGORIES, MUSEUM_ITEMS, KNOWN_HEADERS, styles
 
-### Community 33 - "Community 33"
+### Community 32 - "Community 32"
 Cohesion: 0.54
 Nodes (6): get_diff(), main(), update_gems(), update_mock(), update_pyq(), test()
 
-### Community 34 - "Community 34"
+### Community 33 - "Community 33"
 Cohesion: 0.25
 Nodes (6): admin, db, fs, path, SERVICE_ACCOUNT_PATH, serviceAccount
 
-### Community 35 - "Community 35"
+### Community 34 - "Community 34"
 Cohesion: 0.25
 Nodes (6): admin, fs, IMAGES_TO_UPLOAD, main(), path, SERVICE_ACCOUNT_PATH
+
+### Community 35 - "Community 35"
+Cohesion: 0.32
+Nodes (3): styles, appColors, paperTheme
 
 ### Community 36 - "Community 36"
 Cohesion: 0.36
@@ -409,11 +409,11 @@ Nodes (3): extract_text_from_pdf(), main(), Extracts text from a PDF file.     T
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `theme` connect `Community 15` to `Community 0`, `Community 1`, `Community 32`, `Community 3`, `Community 69`, `Community 6`, `Community 38`, `Community 7`, `Community 11`, `Community 16`, `Community 19`, `Community 53`, `Community 54`, `Community 23`, `Community 24`, `Community 31`?**
+- **Why does `theme` connect `Community 13` to `Community 0`, `Community 1`, `Community 35`, `Community 3`, `Community 69`, `Community 6`, `Community 38`, `Community 7`, `Community 11`, `Community 16`, `Community 19`, `Community 53`, `Community 54`, `Community 23`, `Community 24`, `Community 31`?**
   _High betweenness centrality (0.028) - this node is a cross-community bridge._
-- **Why does `AppContext` connect `Community 0` to `Community 32`, `Community 1`, `Community 3`, `Community 69`, `Community 7`, `Community 16`, `Community 53`, `Community 31`?**
+- **Why does `AppContext` connect `Community 0` to `Community 1`, `Community 3`, `Community 69`, `Community 7`, `Community 16`, `Community 53`, `Community 24`, `Community 31`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
-- **Why does `ErrorBoundary` connect `Community 70` to `Community 15`?**
+- **Why does `ErrorBoundary` connect `Community 70` to `Community 35`?**
   _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **What connects `admin`, `path`, `SERVICE_ACCOUNT_PATH` to the rest of the system?**
   _351 weakly-connected nodes found - possible documentation gaps or missing edges._
