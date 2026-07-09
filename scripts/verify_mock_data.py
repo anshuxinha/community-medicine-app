@@ -225,7 +225,8 @@ def _strip_code_fence(text: str) -> str:
 
 
 def _extract_json_payload(text: str) -> Optional[Any]:
-    candidate = _strip_code_fence(text)
+    clean_text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL)
+    candidate = _strip_code_fence(clean_text)
     try:
         return json.loads(candidate)
     except json.JSONDecodeError:
@@ -251,7 +252,10 @@ def call_ollama(prompt: str) -> Optional[Any]:
                 },
                 json={
                     "model": OLLAMA_MODEL,
-                    "messages": [{"role": "user", "content": prompt}],
+                    "messages": [
+                        {"role": "system", "content": "<|think|>"},
+                        {"role": "user", "content": prompt}
+                    ],
                     "stream": False,
                     "options": {"temperature": 0.1},
                 },
