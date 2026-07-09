@@ -5,12 +5,12 @@
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 975 nodes · 1441 edges · 111 communities (92 shown, 19 thin omitted)
+- 975 nodes · 1441 edges · 111 communities (91 shown, 20 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 4 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `e84f6af8`
+- Built from commit: `906135d4`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -120,14 +120,14 @@
   android/app/src/main/java/com/communitymed/app/MainApplication.kt → android/app/src/main/java/com/communitymed/app/ScreenCaptureProtectionPackage.java
 - `DashboardScreen()` --calls--> `useResponsive()`  [EXTRACTED]
   src/screens/DashboardScreen.js → src/styles/theme.js
-- `PYQPracticeScreen()` --calls--> `useResponsive()`  [EXTRACTED]
-  src/screens/PYQPracticeScreen.js → src/styles/theme.js
 - `test()` --calls--> `update_gems()`  [INFERRED]
   scratch/test_updates.py → scratch/apply_changes.py
 - `test()` --calls--> `update_mock()`  [INFERRED]
   scratch/test_updates.py → scratch/apply_changes.py
+- `test()` --calls--> `update_pyq()`  [INFERRED]
+  scratch/test_updates.py → scratch/apply_changes.py
 
-## Communities (111 total, 19 thin omitted)
+## Communities (111 total, 20 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.05
@@ -182,20 +182,20 @@ Cohesion: 0.17
 Nodes (15): buildContactSheet(), buildPngCanvas(), CONTACT_SHEET_PATH, { createCanvas, loadImage }, DOWNLOAD_SPECS, downloadFile(), ensureDir(), fs (+7 more)
 
 ### Community 13 - "Community 13"
-Cohesion: 0.14
-Nodes (8): styles, styles, REFERENCE_VALUES, styles, EDUCATION_OPTIONS, OCCUPATION_OPTIONS, styles, theme
-
-### Community 14 - "Community 14"
 Cohesion: 0.12
 Nodes (15): 1. Always Check Channel Configuration First, 2. Update Channel if Needed, 3. Publish Update to Correct Branch, 4. Verify Update is Live, 5. Clear Cache for Critical Updates, code:bash (eas channel:list --non-interactive), code:bash (eas channel:edit production --branch main --non-interactive), code:bash (eas update --branch main --message "Your update message" --c) (+7 more)
 
-### Community 15 - "Community 15"
+### Community 14 - "Community 14"
 Cohesion: 0.15
 Nodes (13): colorFreq, colorLocations, content, files, fs, getContrastRatio(), getRelativeLuminance(), hex (+5 more)
 
+### Community 15 - "Community 15"
+Cohesion: 0.16
+Nodes (11): GemsScreen(), styles, LibraryScreen(), PYQCreateScreen(), styles, PYQPracticeScreen(), MONTH_NAMES, MONTH_SHORT (+3 more)
+
 ### Community 16 - "Community 16"
 Cohesion: 0.18
-Nodes (10): GemsScreen(), styles, LibraryScreen(), PYQCreateScreen(), styles, MONTH_NAMES, MONTH_SHORT, styles (+2 more)
+Nodes (6): styles, styles, styles, appColors, paperTheme, theme
 
 ### Community 17 - "Community 17"
 Cohesion: 0.21
@@ -226,8 +226,8 @@ Cohesion: 0.21
 Nodes (7): PRESET_PROBLEMS, SOLVER_OFFSETS, ssSingleProp(), ssTwoMeans(), ssTwoProps(), styles, zForCI()
 
 ### Community 24 - "Community 24"
-Cohesion: 0.18
-Nodes (7): useSessionEnforcer(), AppNavigator(), navigationRef, Stack, Tab, styles, setupNotificationTapHandler()
+Cohesion: 0.17
+Nodes (6): styles, REFERENCE_VALUES, styles, EDUCATION_OPTIONS, OCCUPATION_OPTIONS, styles
 
 ### Community 25 - "Community 25"
 Cohesion: 0.17
@@ -254,24 +254,24 @@ Cohesion: 0.25
 Nodes (7): CM_TO_THEME, fs, lower, normalizedCTM, path, processFile(), walkDir()
 
 ### Community 31 - "Community 31"
+Cohesion: 0.25
+Nodes (6): useSessionEnforcer(), AppNavigator(), navigationRef, Stack, Tab, setupNotificationTapHandler()
+
+### Community 32 - "Community 32"
 Cohesion: 0.28
 Nodes (4): CATEGORIES, MUSEUM_ITEMS, KNOWN_HEADERS, styles
 
-### Community 32 - "Community 32"
+### Community 33 - "Community 33"
 Cohesion: 0.54
 Nodes (6): get_diff(), main(), update_gems(), update_mock(), update_pyq(), test()
 
-### Community 33 - "Community 33"
+### Community 34 - "Community 34"
 Cohesion: 0.25
 Nodes (6): admin, db, fs, path, SERVICE_ACCOUNT_PATH, serviceAccount
 
-### Community 34 - "Community 34"
+### Community 35 - "Community 35"
 Cohesion: 0.25
 Nodes (6): admin, fs, IMAGES_TO_UPLOAD, main(), path, SERVICE_ACCOUNT_PATH
-
-### Community 35 - "Community 35"
-Cohesion: 0.32
-Nodes (3): styles, appColors, paperTheme
 
 ### Community 36 - "Community 36"
 Cohesion: 0.36
@@ -393,27 +393,23 @@ Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 Cohesion: 0.4
 Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
-### Community 69 - "Community 69"
-Cohesion: 0.5
-Nodes (3): PYQ_IMAGES, PYQPracticeScreen(), styles
-
-### Community 75 - "Community 75"
+### Community 74 - "Community 74"
 Cohesion: 0.67
 Nodes (3): extract_text_from_pdf(), main(), Extracts text from a PDF file.     This is a placeholder function. In a real ap
 
 ## Knowledge Gaps
 - **351 isolated node(s):** `admin`, `path`, `SERVICE_ACCOUNT_PATH`, `admin`, `path` (+346 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **19 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **20 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `theme` connect `Community 13` to `Community 0`, `Community 1`, `Community 35`, `Community 3`, `Community 69`, `Community 6`, `Community 38`, `Community 7`, `Community 11`, `Community 16`, `Community 19`, `Community 53`, `Community 54`, `Community 23`, `Community 24`, `Community 31`?**
+- **Why does `theme` connect `Community 16` to `Community 0`, `Community 1`, `Community 32`, `Community 3`, `Community 6`, `Community 38`, `Community 7`, `Community 11`, `Community 76`, `Community 15`, `Community 19`, `Community 53`, `Community 54`, `Community 23`, `Community 24`, `Community 31`?**
   _High betweenness centrality (0.028) - this node is a cross-community bridge._
-- **Why does `AppContext` connect `Community 0` to `Community 1`, `Community 3`, `Community 69`, `Community 7`, `Community 16`, `Community 53`, `Community 24`, `Community 31`?**
+- **Why does `AppContext` connect `Community 0` to `Community 32`, `Community 1`, `Community 3`, `Community 7`, `Community 76`, `Community 15`, `Community 53`, `Community 31`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
-- **Why does `ErrorBoundary` connect `Community 70` to `Community 35`?**
+- **Why does `ErrorBoundary` connect `Community 69` to `Community 16`?**
   _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **What connects `admin`, `path`, `SERVICE_ACCOUNT_PATH` to the rest of the system?**
   _351 weakly-connected nodes found - possible documentation gaps or missing edges._

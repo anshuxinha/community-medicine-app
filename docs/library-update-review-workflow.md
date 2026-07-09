@@ -3,7 +3,7 @@
 ## What the verifier does now
 
 - `python scripts/verify_mock_data.py`
-  - Uses the Ollama chat API with `glm-5.2:cloud`
+  - Uses the Ollama chat API with `gemma4:31b-cloud`
   - Reads recent PIB-derived updates from `src/data/updates.json`
   - Scores likely affected Library topics in `src/data/mockData.json`
   - Stages proposed edits instead of changing the app Library live

@@ -55,7 +55,7 @@ if not OLLAMA_API_KEY:
     raise ValueError("OLLAMA_API_KEY environment variable is not set")
 
 OLLAMA_API_URL = os.environ.get("OLLAMA_API_URL", "https://ollama.com/api/chat")
-OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "glm-5.2:cloud")
+OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "gemma4:31b-cloud")
 REQUEST_TIMEOUT_SECONDS = int(os.environ.get("VERIFY_REQUEST_TIMEOUT_SECONDS", "120"))
 MAX_RETRIES = int(os.environ.get("VERIFY_MAX_RETRIES", "2"))
 RETRY_DELAY_SECONDS = int(os.environ.get("VERIFY_RETRY_DELAY_SECONDS", "5"))
