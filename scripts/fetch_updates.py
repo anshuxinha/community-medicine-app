@@ -13,7 +13,7 @@ if not OLLAMA_API_KEY:
     raise ValueError("OLLAMA_API_KEY environment variable is not set")
 
 OLLAMA_API_URL = "https://ollama.com/api/chat"
-OLLAMA_MODEL = "gemma4:31b-cloud"
+OLLAMA_MODEL = "glm-5.2:cloud"
 
 MAX_RETRIES = 2
 RETRY_DELAY_SECONDS = 5
@@ -154,6 +154,10 @@ def fetch_health_updates():
     current_year = str(now.year)
     archive_changed = False
 
+    override_month = os.environ.get("OVERRIDE_MONTH")
+    override_year = os.environ.get("OVERRIDE_YEAR")
+    override_day = os.environ.get("OVERRIDE_DAY", "0")
+
     # Move any updates from previous months into the archive
     still_current = []
     for u in existing_updates:
@@ -246,9 +250,11 @@ def fetch_health_updates():
             mohfw_id = MOHFW_FALLBACK_ID
 
         # Use current dates (now/current_year already set above)
-        current_month = str(now.month)
+        current_month = override_month if override_month else str(now.month)
+        current_year_to_fetch = override_year if override_year else current_year
+        current_day = override_day
 
-        print(f"Querying MoHFW (ID: {mohfw_id}) updates for Month: {current_month}, Year: {current_year}...")
+        print(f"Querying MoHFW (ID: {mohfw_id}) updates for Day: {current_day}, Month: {current_month}, Year: {current_year_to_fetch}...")
         # Step 2: POST request to filter by MoHFW and current month
         payload = {
             "__EVENTTARGET": min_name,
@@ -258,9 +264,9 @@ def fetch_health_updates():
             "__EVENTVALIDATION": eventvalidation_val,
             "__VIEWSTATEENCRYPTED": "",
             min_name: mohfw_id,
-            day_name: "0",      # 0 pulls all days in the selected month
+            day_name: current_day,
             month_name: current_month,
-            year_name: current_year,
+            year_name: current_year_to_fetch,
             # Hidden region/language state fields required by PIB ASP.NET form
             "ctl00$ContentPlaceHolder1$hydregionid": "3",   # Delhi
             "ctl00$ContentPlaceHolder1$hydLangid": "1",     # English
@@ -426,7 +432,7 @@ def fetch_health_updates():
     # Combine existing updates with new updates, deduplicate by link
     combined = []
     seen_links = set()
-    # First add existing updates (preserve order? we'll sort later)
+    # First add existing updates
     for u in existing_updates:
         if u.get('link') not in seen_links:
             seen_links.add(u['link'])
@@ -440,20 +446,41 @@ def fetch_health_updates():
     # Sort combined list by date descending (most recent first)
     combined.sort(key=lambda x: x.get('date', ''), reverse=True)
     
-    # Keep only the most recent MAX_UPDATES_TO_KEEP
-    final_combined = combined[:MAX_UPDATES_TO_KEEP]
+    # Post-fetch rotation to archive (ensuring previous months go to archive)
+    final_current = []
+    for u in combined:
+        u_date = u.get("date", "")
+        u_month_key = u_date[:7] if len(u_date) >= 7 else ""
+        if u_month_key and u_month_key != current_month_key:
+            archive.setdefault(u_month_key, [])
+            archive_links = {a.get("link") for a in archive[u_month_key]}
+            if u.get("link") not in archive_links:
+                archive[u_month_key].append(u)
+                archive[u_month_key].sort(key=lambda x: x.get('date', ''), reverse=True)
+                archive_changed = True
+        else:
+            final_current.append(u)
+
+    # Keep only the most recent MAX_UPDATES_TO_KEEP for current month
+    final_current = final_current[:MAX_UPDATES_TO_KEEP]
     
-    if final_combined == existing_updates:
+    # Check if anything changed
+    if final_current == existing_updates and not archive_changed:
         print("No new updates detected. Exiting.")
         return
 
     # Output to File
     os.makedirs(output_dir, exist_ok=True)
     
+    if archive_changed:
+        with open(archive_path, 'w', encoding='utf-8') as f:
+            json.dump(archive, f, indent=4)
+        print(f"Successfully updated archive at {archive_path}")
+
     with open(output_path, 'w', encoding='utf-8') as f:
-        json.dump(final_combined, f, indent=4)
+        json.dump(final_current, f, indent=4)
         
-    print(f"Successfully saved {len(final_combined)} updates to {output_path}")
+    print(f"Successfully saved {len(final_current)} current updates to {output_path}")
 
 if __name__ == "__main__":
     fetch_health_updates()

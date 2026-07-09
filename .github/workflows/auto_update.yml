@@ -1,6 +1,9 @@
 name: Auto Update Health Guidelines
 
 on:
+  push:
+    branches:
+      - main
   schedule:
     - cron: "30 4 * * *" # Runs daily at 10:00 AM IST (04:30 UTC)
   workflow_dispatch: # Allows manual triggering from GitHub Actions UI
@@ -31,6 +34,9 @@ jobs:
         env:
           OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GOOGLE_GEMINI_KEY }}
+          OVERRIDE_MONTH: "6"
+          OVERRIDE_YEAR: "2026"
+          OVERRIDE_DAY: "29"
         run: python scripts/fetch_updates.py
 
       - name: Run Library Verification Review
