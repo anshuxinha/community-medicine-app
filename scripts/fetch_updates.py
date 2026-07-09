@@ -371,7 +371,7 @@ def fetch_health_updates():
         Return ONLY a valid JSON array of objects, each containing:
         - "id": the same id as provided (integer)
         - "title": a short English headline
-        - "summary": an English summary of the update, constrained to EXACTLY 100 words (try to include all the important information from Community Medicine perspective).
+        - "summary": an English summary of the update, constrained to UNDER 150 words (try to be succint and include all the important information for a MD Community Medicine resident, especially changes, facts, figures, app names, etc.).
         - "date": the exact date of the release in YYYY-MM-DD format based on the text (default to today if unseen)
         
         Ensure the array length matches the number of articles provided.
