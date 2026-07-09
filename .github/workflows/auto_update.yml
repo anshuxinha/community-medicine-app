@@ -1,9 +1,6 @@
 name: Auto Update Health Guidelines
 
 on:
-  push:
-    branches:
-      - main
   schedule:
     - cron: "30 4 * * *" # Runs daily at 10:00 AM IST (04:30 UTC)
   workflow_dispatch: # Allows manual triggering from GitHub Actions UI
@@ -34,28 +31,32 @@ jobs:
         env:
           OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GOOGLE_GEMINI_KEY }}
-          OVERRIDE_MONTH: "6"
-          OVERRIDE_YEAR: "2026"
-          OVERRIDE_DAY: "29"
-        run: python scripts/fetch_updates.py > scripts/run.log 2>&1
+        run: python scripts/fetch_updates.py
 
       - name: Run Library Verification Review
         env:
           OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
           FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
           GOOGLE_CLOUD_PROJECT: community-med-app
-        run: python scripts/verify_mock_data.py >> scripts/run.log 2>&1
+        run: python scripts/verify_mock_data.py
 
       - name: Commit and Push Changes
         id: commit_changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add src/data/updates.json src/data/updates_archive.json scripts/run.log
-          git commit -m "Auto-update national health guidelines and explainer images [skip ci]" || echo "No changes"
-          git pull --rebase origin main
-          git push origin main
-          echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          git add src/data/updates.json src/data/updates_archive.json
+
+          # Check if there are any changes to commit
+          if git diff --staged --quiet; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            echo "No changes to commit"
+          else
+            git commit -m "Auto-update national health guidelines and explainer images"
+            git pull --rebase origin main
+            git push origin main
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Check Expo Token
         id: expo_token_check
