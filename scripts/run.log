@@ -1,101 +1,33 @@
 Fetching initial ViewState tokens from PIB...
 Querying MoHFW (ID: 31) updates for Day: 29, Month: 6, Year: 2026...
 Filtering relevant Community Medicine articles with Ollama...
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 4bc6c0cd-a2dd-4916-9fc2-b64e65afb398)"}
-
-PIB update check completed: Failed to filter articles with Ollama.
-No new updates detected. Exiting.
+Fetching: https://pib.gov.in/PressReleasePage.aspx?PRID=2279077
+Fetching: https://pib.gov.in/PressReleasePage.aspx?PRID=2279075
+Fetching: https://pib.gov.in/PressReleasePage.aspx?PRID=2279050
+Generating batch summaries with Ollama...
+Successfully updated archive at /home/runner/work/community-medicine-app/community-medicine-app/src/data/updates_archive.json
+Successfully saved 6 current updates to /home/runner/work/community-medicine-app/community-medicine-app/src/data/updates.json
 Starting weekly Library verification review...
-Using Ollama model: glm-5.2:cloud
+Using Ollama model: gemma4:31b-cloud
 Review window: 2026-07-03 to 2026-07-09
 Scoped root chapters: auto-discovered across the full Library
 Reviewing Library ID 7-10 (National Programme for Prevention & Control of Non-Communicable Diseases (NP-NCD)) against 1 recent update(s)...
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 5901f0ad-0dc4-4be3-b9f5-bfbda0badc85)"}
-
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 5eb94da6-9cdb-420e-9f60-1c3eece2ac42)"}
-
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 2b889e57-93ac-4e7c-beb3-4545bef3d633)"}
-
 Reviewing Library ID 7-7 (National Programme for Control of Blindness and Visual Impairment (NPCB&VI)) against 1 recent update(s)...
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 6df209ad-c06b-49bf-aee5-87c59be62e56)"}
-
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: f8ddfa7f-9773-42fb-bc49-a88224b04312)"}
-
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: b5c4b74d-c101-4239-ac0d-1a0363517eca)"}
-
 Reviewing Library ID 10-2 (Health Resources, Health Care Systems, and Village Level Workers) against 1 recent update(s)...
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: dd623d28-8bed-4827-8b4d-7e8e93591e89)"}
-
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: a3c126b6-f936-4892-85e9-76f3f69a8118)"}
-
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 9db30364-9ec1-420d-90e4-c8e7c9088663)"}
-
 Reviewing Library ID 27-11 (Medical Ethics and Research in Public Health Management) against 1 recent update(s)...
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: ee72486d-c7cb-4879-b512-111639ee0516)"}
-
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 9b391236-b380-41c4-bf56-33cd9f996fdd)"}
-
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 55eed340-3805-4561-98ab-aa951f3afc53)"}
-
 Reviewing Library ID 27-9 (Disaster Preparedness and Management (Public Health Emergency)) against 1 recent update(s)...
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 519444d1-9906-49d9-93d6-625b877feeec)"}
-
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 07e52008-f191-44c0-ad0a-27020ddb8c50)"}
-
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 3ac4e365-1b67-40b3-8d7f-7d9d9db21a8a)"}
-
 Reviewing Library ID 10-3 (Indian Public Health Standards (IPHS) 2022 and Service Delivery Framework) against 1 recent update(s)...
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 24a8373b-46e9-4965-8ecc-b24bafd0bbb5)"}
-
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 3b92e40d-7b22-4434-bb1a-04539e7e1297)"}
-
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 9ff45f51-0a35-4ef0-bd06-b3c6fcdebc1b)"}
-
 Reviewing Library ID 27-2 (Evolution of Health Reforms and Health Policy Development in India) against 1 recent update(s)...
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: f1fd5e07-a893-4e8b-bb7d-f59ef935aa96)"}
-
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: f3f7a303-5e69-4aac-95d4-1273d3b9fc4f)"}
-
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 6e077125-5d97-46c9-bd82-48811cbf25d9)"}
-
+Ollama API failed after retries. Last error: empty or unparseable response body
 Reviewing Library ID 7-12 (Integrated Disease Surveillance Programme (IDSP)) against 1 recent update(s)...
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 7067fe83-a7db-4191-ae74-5e759ba038ba)"}
-
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 6cb8b9a3-861d-4bb9-97cf-00d40462eae3)"}
-
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: d8db5d76-2d58-4e3d-954b-e7c156870e58)"}
-
 Reviewing Library ID 27-3 (Public Health Management Sciences, Organization of Health Services, Health Management Functions and Resources in Health) against 1 recent update(s)...
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 7d418699-6926-42d1-ad40-3e81e2c13aa8)"}
-
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 2cacd093-33ea-4275-a342-cb0fd44100d7)"}
-
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 5580cdf4-34e1-4e3e-bae0-3a3f90bc9d77)"}
-
 Reviewing Library ID 27-12 (International Health Agencies and International Health Regulations) against 1 recent update(s)...
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 9a9f5ffa-54d7-4cbe-819b-69c7e86d72da)"}
-
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 572b3f46-6d4f-4a03-b173-22cd9ac0abea)"}
-
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 7a8cd1ae-4abe-449b-88c1-3a272dbee6a4)"}
-
 Reviewing Library ID 27-7 (Health Care Delivery Systems in India and Sustainable Development Goals) against 1 recent update(s)...
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: c2b3ec4e-c1d9-4fa5-bbab-54d75f436139)"}
-
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 66edf1a3-fe68-427b-b4fc-4fd913fef00d)"}
-
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 0873d3ca-3d4f-4e49-a466-60dfce8ccdb4)"}
-
+Ollama API failed after retries. Last error: empty or unparseable response body
 Reviewing Library ID 27-8 (Application of Principles of Epidemiology in Health Management and Management of National Health Programmes) against 1 recent update(s)...
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: bad6aa9f-831d-48f4-a258-8d35afc39145)"}
-
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: f9154d18-5284-4010-8460-812d5d8b302a)"}
-
-Ollama API Error 403: {"error":"this model requires a subscription, upgrade for access: https://ollama.com/upgrade (ref: 1337ce8d-f27c-4c14-8a0a-440d9182fd3b)"}
-
-Synced 0 review proposal(s) to Firestore collection libraryReviewSuggestions.
+Synced 5 review proposal(s) to Firestore collection libraryReviewSuggestions.
 
 Review complete. Source updates checked: 2
-Staged Library proposals: 0
+Staged Library proposals: 5
 Review JSON: /home/runner/work/community-medicine-app/community-medicine-app/dist/library_update_reviews/2026-07-09/pending_changes.json
 Review Markdown: /home/runner/work/community-medicine-app/community-medicine-app/dist/library_update_reviews/2026-07-09/pending_changes.md
