@@ -220,7 +220,7 @@ export const NFHS_COMPARISON_INDICATORS = [
     title: "Women with a bank or savings account they use",
     unit: "%",
     nfhs5: 78.6,
-    nfhs6: { urban: 89.3, rural: 88.3, total: 89.0 },
+    nfhs6: { urban: 88.3, rural: 89.3, total: 89.0 },
     lowerIsBetter: false,
   },
   {
