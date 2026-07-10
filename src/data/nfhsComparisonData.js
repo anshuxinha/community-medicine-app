@@ -30,16 +30,6 @@ export const NFHS_COMPARISON_INDICATORS = [
     note: "Demographic base narrowed by 1.0 percentage point nationally.",
   },
   {
-    id: "sexratio",
-    category: "headline",
-    title: "Sex ratio of the total population",
-    unit: "females/1000 males",
-    nfhs5: 1018,
-    nfhs6: { urban: null, rural: null, total: null },
-    lowerIsBetter: false,
-    note: "Not reported in the NFHS-6 India fact sheet; dropped from this round.",
-  },
-  {
     id: "tfr",
     category: "headline",
     title: "Total fertility rate",
@@ -111,16 +101,6 @@ export const NFHS_COMPARISON_INDICATORS = [
     nfhs5: 76.6,
     nfhs6: { urban: 81.0, rural: 83.1, total: 82.6 },
     lowerIsBetter: false,
-  },
-  {
-    id: "ors",
-    category: "child",
-    title: "Diarrhoea cases receiving ORS",
-    unit: "%",
-    nfhs5: 69.0,
-    nfhs6: { urban: null, rural: null, total: null },
-    lowerIsBetter: false,
-    note: "Not reported in the NFHS-6 India fact sheet; omitted from this round.",
   },
   {
     id: "exclusiveBreastfeeding",
