@@ -35,8 +35,9 @@ export const NFHS_COMPARISON_INDICATORS = [
     title: "Sex ratio of the total population",
     unit: "females/1000 males",
     nfhs5: 1018,
-    nfhs6: { urban: 1027, rural: 1030, total: 1029 },
+    nfhs6: { urban: null, rural: null, total: null },
     lowerIsBetter: false,
+    note: "Not reported in the NFHS-6 India fact sheet; dropped from this round.",
   },
   {
     id: "tfr",
@@ -44,7 +45,7 @@ export const NFHS_COMPARISON_INDICATORS = [
     title: "Total fertility rate",
     unit: "children/woman",
     nfhs5: 2.0,
-    nfhs6: { urban: 1.7, rural: 2.1, total: 1.9 },
+    nfhs6: { urban: 1.6, rural: 2.1, total: 2.0 },
     lowerIsBetter: true,
   },
   {
@@ -89,8 +90,8 @@ export const NFHS_COMPARISON_INDICATORS = [
     category: "maternal",
     title: "Mothers consuming IFA for 180 days or more",
     unit: "%",
-    nfhs5: 42.1,
-    nfhs6: { urban: 64.7, rural: 59.3, total: 60.8 },
+    nfhs5: 26.0,
+    nfhs6: { urban: 49.2, rural: 33.7, total: 37.8 },
     lowerIsBetter: false,
   },
   {
@@ -99,7 +100,7 @@ export const NFHS_COMPARISON_INDICATORS = [
     title: "Births delivered by caesarean section",
     unit: "%",
     nfhs5: 21.5,
-    nfhs6: { urban: 47.4, rural: 22.8, total: 27.2 },
+    nfhs6: { urban: 40.5, rural: 22.8, total: 27.2 },
     lowerIsBetter: null,
   },
   {
@@ -117,8 +118,9 @@ export const NFHS_COMPARISON_INDICATORS = [
     title: "Diarrhoea cases receiving ORS",
     unit: "%",
     nfhs5: 69.0,
-    nfhs6: { urban: 74.8, rural: 67.3, total: 68.8 },
+    nfhs6: { urban: null, rural: null, total: null },
     lowerIsBetter: false,
+    note: "Not reported in the NFHS-6 India fact sheet; omitted from this round.",
   },
   {
     id: "exclusiveBreastfeeding",
@@ -134,8 +136,8 @@ export const NFHS_COMPARISON_INDICATORS = [
     category: "child",
     title: "Children age 6-23 months with adequate diet",
     unit: "%",
-    nfhs5: 12.3,
-    nfhs6: { urban: 12.8, rural: 16.0, total: 15.3 },
+    nfhs5: 11.3,
+    nfhs6: { urban: 16.2, rural: 15.0, total: 15.3 },
     lowerIsBetter: false,
   },
   {
@@ -173,7 +175,7 @@ export const NFHS_COMPARISON_INDICATORS = [
     title: "Children under 5 years severely wasted",
     unit: "%",
     nfhs5: 7.7,
-    nfhs6: { urban: 4.6, rural: 6.4, total: 5.2 },
+    nfhs6: { urban: 4.6, rural: 5.4, total: 5.2 },
     lowerIsBetter: true,
   },
   {
@@ -217,8 +219,8 @@ export const NFHS_COMPARISON_INDICATORS = [
     category: "gender",
     title: "Women with a bank or savings account they use",
     unit: "%",
-    nfhs5: 77.6,
-    nfhs6: { urban: 90.7, rural: 75.0, total: 79.2 },
+    nfhs5: 78.6,
+    nfhs6: { urban: 89.3, rural: 88.3, total: 89.0 },
     lowerIsBetter: false,
   },
   {
@@ -227,7 +229,7 @@ export const NFHS_COMPARISON_INDICATORS = [
     title: "Women with a mobile phone they themselves use",
     unit: "%",
     nfhs5: 53.9,
-    nfhs6: { urban: 77.8, rural: 57.4, total: 63.6 },
+    nfhs6: { urban: 77.6, rural: 57.4, total: 63.6 },
     lowerIsBetter: false,
   },
   {
@@ -272,7 +274,7 @@ export const NFHS_COMPARISON_INDICATORS = [
     title: "Mothers who received an MCP card",
     unit: "%",
     nfhs5: 95.8,
-    nfhs6: { urban: 96.6, rural: 96.4, total: 96.5 },
+    nfhs6: { urban: 94.9, rural: 95.9, total: 95.6 },
     lowerIsBetter: false,
   },
   {
