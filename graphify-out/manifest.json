@@ -135,9 +135,29 @@
     "mtime": 1776437152.4591136,
     "hash": "d86677b7acb85461ac8aa6026ba52141"
   },
+  "D:\\The App\\scratch\\analyze_trends.py": {
+    "mtime": 1783704747.112139,
+    "hash": "04e4e5b8ed3b52ccb53a2ecd1026c8e7"
+  },
   "D:\\The App\\scratch\\apply_changes.py": {
     "mtime": 1783227825.509572,
     "hash": "328e676f2e3381f945616c45d9779117"
+  },
+  "D:\\The App\\scratch\\check_pdf.py": {
+    "mtime": 1783704672.3351908,
+    "hash": "27affdfd439ee131f10a470822620042"
+  },
+  "D:\\The App\\scratch\\compare_all_data.py": {
+    "mtime": 1783704845.674785,
+    "hash": "4d1db8e754adffb86690f629da00daad"
+  },
+  "D:\\The App\\scratch\\debug_file.py": {
+    "mtime": 1783704724.677261,
+    "hash": "fd3feaaf30e488cfe25f5f8a078596ee"
+  },
+  "D:\\The App\\scratch\\debug_json_str.py": {
+    "mtime": 1783704731.6385713,
+    "hash": "5bc3e3080f3e6cd4c53ffede042c3027"
   },
   "D:\\The App\\scratch\\dump_amb_sub10_txt.py": {
     "mtime": 1783227806.657181,
@@ -147,6 +167,14 @@
     "mtime": 1783227800.956293,
     "hash": "457ffd2e0eb8918aa2a0b80fd52baf73"
   },
+  "D:\\The App\\scratch\\extract_all_text.py": {
+    "mtime": 1783704688.2888372,
+    "hash": "fade36154f892f7e586ac3413a6fc26d"
+  },
+  "D:\\The App\\scratch\\find_trends_discrepancies.py": {
+    "mtime": 1783704869.1593685,
+    "hash": "8797f45959da94124272e6eb32a01e8f"
+  },
   "D:\\The App\\scratch\\format_data.js": {
     "mtime": 1780033181.0255034,
     "hash": "83cefe66460297929780f8265afc37e5"
@@ -154,6 +182,10 @@
   "D:\\The App\\scratch\\inject_style.js": {
     "mtime": 1780033181.0265026,
     "hash": "b1f4620b99c9ece75d6306cb2053d7d0"
+  },
+  "D:\\The App\\scratch\\inspect_file_exports.py": {
+    "mtime": 1783704737.9665325,
+    "hash": "0250b769b1f4495ed7a59da79f93ff6b"
   },
   "D:\\The App\\scratch\\inspect_gems_anemia.py": {
     "mtime": 1783227788.201878,
@@ -187,6 +219,22 @@
     "mtime": 1780033181.032891,
     "hash": "ac7cc8809ce437a954c8714b441fcc24"
   },
+  "D:\\The App\\scratch\\parse_pdf_indicators.py": {
+    "mtime": 1783704762.5112593,
+    "hash": "7836210459e2d4ee3f7caa14d5f80d62"
+  },
+  "D:\\The App\\scratch\\parse_pdf_properly.py": {
+    "mtime": 1783704811.199155,
+    "hash": "07f98639991e3faccd6fe17c9fbfd63d"
+  },
+  "D:\\The App\\scratch\\print_gems_structure.py": {
+    "mtime": 1783704897.8537793,
+    "hash": "87e0736fed1ba1ccb9313ce488f7e43b"
+  },
+  "D:\\The App\\scratch\\print_lines.py": {
+    "mtime": 1783704785.3933618,
+    "hash": "af9d05fe5b0e3d6d386d42999008af20"
+  },
   "D:\\The App\\scratch\\read_firestore_config.js": {
     "mtime": 1782840076.95,
     "hash": "aa89b5753c9f7c88e0b4ef1f6f2516f0"
@@ -203,6 +251,10 @@
     "mtime": 1783227752.712741,
     "hash": "1bdea35485b2d8485067f4c16c143f98"
   },
+  "D:\\The App\\scratch\\test_match.py": {
+    "mtime": 1783704772.1103761,
+    "hash": "5889d4f2b1f7d7d6534e92c071f72d06"
+  },
   "D:\\The App\\scratch\\test_updates.py": {
     "mtime": 1783227834.0932412,
     "hash": "6b078177738685e112571ed85c5213d8"
@@ -210,6 +262,14 @@
   "D:\\The App\\scratch\\upload_overrides.py": {
     "mtime": 1783228203.343647,
     "hash": "38e97ac0d4dd9dce1c8cf06d5768377d"
+  },
+  "D:\\The App\\scratch\\verify_comparison_manual.py": {
+    "mtime": 1783704856.5376534,
+    "hash": "01540f7b9772be2e25b6b498d6393c1f"
+  },
+  "D:\\The App\\scratch\\verify_gems_data.py": {
+    "mtime": 1783704905.6948457,
+    "hash": "61b90c6108687551f626bade0ff54880"
   },
   "D:\\The App\\scripts\\apply_staged_library_updates.py": {
     "mtime": 1777265229.3049736,
@@ -396,8 +456,8 @@
     "hash": "2c36be0c5e2bcc8d4982b70792a0a081"
   },
   "D:\\The App\\src\\data\\nfhsComparisonData.js": {
-    "mtime": 1783703846.3005548,
-    "hash": "d98c955ee2dfabd0f67fd94a2370cbd5"
+    "mtime": 1783704947.214938,
+    "hash": "bcb5f111e2f0e5f8ce3b4b2121c4609b"
   },
   "D:\\The App\\src\\data\\nfhsTrendsData.js": {
     "mtime": 1783703853.1712928,
@@ -634,6 +694,10 @@
   "D:\\The App\\scratch\\amb_sub10_content.txt": {
     "mtime": 1783227809.9990656,
     "hash": "2033e85f693bb157483d39b3d73e58cf"
+  },
+  "D:\\The App\\scratch\\pdf_text.txt": {
+    "mtime": 1783704693.1305602,
+    "hash": "672a0cf539ab4e08e7bed3918e01201e"
   },
   "D:\\The App\\android\\app\\src\\main\\res\\drawable-hdpi\\notification_icon.png": {
     "mtime": 1776686130.2448807,
