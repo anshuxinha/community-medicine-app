@@ -240,24 +240,396 @@ const onShouldStartLoadWithRequest = (request) => {
   return false;
 };
 
-const playerHtml = (embedUrl) => `
-<!doctype html>
+/**
+ * Bunny Stream embed shell with modern outer-shell gestures (Player.js).
+ * Fail-open: if Player.js fails to load/init, the iframe still plays with default controls.
+ *
+ * Gestures (left/right zones only; center + bottom control strip pass through to Bunny UI):
+ * - Double-tap left/right → seek −10s / +10s
+ * - Long-press left/right → continuous skip (Bunny Player.js has no setPlaybackRate)
+ * - Vertical drag on right zone → volume
+ */
+const playerHtml = (embedUrl) => {
+  const safeUrl = String(embedUrl || "")
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  return `<!doctype html>
 <html>
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <style>
-      html, body { margin: 0; padding: 0; height: 100%; background: #000; }
-      iframe { border: 0; width: 100%; height: 100%; }
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        overflow: hidden;
+        touch-action: manipulation;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+      .shell {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: #000;
+      }
+      iframe {
+        border: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+        background: #000;
+      }
+      /* Gesture zones sit above the iframe but leave the center and bottom strip free
+         so Bunny's play/pause, scrubber, and fullscreen remain tappable. */
+      .zones {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        pointer-events: none;
+      }
+      .zone {
+        position: absolute;
+        top: 0;
+        bottom: 56px;
+        width: 32%;
+        pointer-events: auto;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .zone-left { left: 0; }
+      .zone-right { right: 0; }
+      .flash {
+        position: absolute;
+        top: 0;
+        bottom: 56px;
+        width: 32%;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        z-index: 3;
+        background: rgba(0,0,0,0.28);
+      }
+      .flash-left { left: 0; border-radius: 0 12px 12px 0; }
+      .flash-right { right: 0; border-radius: 12px 0 0 12px; }
+      .flash.show { display: flex; }
+      .flash-inner {
+        color: #fff;
+        font: 600 15px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        text-align: center;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.55);
+      }
+      .flash-icon {
+        font-size: 28px;
+        line-height: 1;
+        margin-bottom: 4px;
+      }
+      .toast {
+        position: absolute;
+        left: 50%;
+        top: 18%;
+        transform: translateX(-50%);
+        z-index: 4;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.15s ease;
+        background: rgba(0,0,0,0.62);
+        color: #fff;
+        font: 600 14px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        padding: 8px 14px;
+        border-radius: 999px;
+        white-space: nowrap;
+      }
+      .toast.show { opacity: 1; }
     </style>
+    <!-- Player.js must load before the iframe per Bunny docs -->
+    <script src="https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js"></script>
   </head>
   <body>
-    <iframe
-      src="${embedUrl}"
-      allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
-      allowfullscreen="true"
-    ></iframe>
-</body>
+    <div class="shell">
+      <iframe
+        id="bunny-player"
+        src="${safeUrl}"
+        allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen"
+        allowfullscreen="true"
+        playsinline
+      ></iframe>
+      <div class="zones">
+        <div class="zone zone-left" id="zone-left" data-side="left"></div>
+        <div class="zone zone-right" id="zone-right" data-side="right"></div>
+      </div>
+      <div class="flash flash-left" id="flash-left">
+        <div class="flash-inner">
+          <div class="flash-icon">&#9194;</div>
+          <div id="flash-left-label">-10s</div>
+        </div>
+      </div>
+      <div class="flash flash-right" id="flash-right">
+        <div class="flash-inner">
+          <div class="flash-icon">&#9193;</div>
+          <div id="flash-right-label">+10s</div>
+        </div>
+      </div>
+      <div class="toast" id="toast"></div>
+    </div>
+    <script>
+      (function () {
+        var SEEK_STEP = 10;
+        var DOUBLE_TAP_MS = 280;
+        var LONG_PRESS_MS = 420;
+        var HOLD_TICK_MS = 220;
+        var HOLD_STEP = 2;
+        var MOVE_SLOP = 12;
+
+        var player = null;
+        var ready = false;
+        var lastTap = { t: 0, side: null };
+        var longPressTimer = null;
+        var holdInterval = null;
+        var toastTimer = null;
+        var flashTimer = null;
+        var volumeGesture = null;
+        var touchStart = null;
+        var didGesture = false;
+
+        function showToast(text) {
+          var el = document.getElementById("toast");
+          if (!el) return;
+          el.textContent = text;
+          el.classList.add("show");
+          clearTimeout(toastTimer);
+          toastTimer = setTimeout(function () {
+            el.classList.remove("show");
+          }, 700);
+        }
+
+        function showFlash(side, label) {
+          var el = document.getElementById(side === "left" ? "flash-left" : "flash-right");
+          var labelEl = document.getElementById(side === "left" ? "flash-left-label" : "flash-right-label");
+          if (!el) return;
+          if (labelEl && label) labelEl.textContent = label;
+          el.classList.add("show");
+          clearTimeout(flashTimer);
+          flashTimer = setTimeout(function () {
+            el.classList.remove("show");
+          }, 450);
+        }
+
+        function withTime(cb) {
+          if (!player || !ready) return;
+          try {
+            player.getCurrentTime(function (t) {
+              player.getDuration(function (d) {
+                cb(Number(t) || 0, Number(d) || 0);
+              });
+            });
+          } catch (e) {
+            /* fail-open */
+          }
+        }
+
+        function seekBy(delta, side) {
+          if (!player || !ready) return;
+          withTime(function (t, d) {
+            var max = d > 0 ? d : t + Math.abs(delta) + 1;
+            var next = Math.max(0, Math.min(max, t + delta));
+            try {
+              player.setCurrentTime(next);
+            } catch (e) {
+              return;
+            }
+            var label = (delta >= 0 ? "+" : "") + Math.round(delta) + "s";
+            showFlash(side || (delta < 0 ? "left" : "right"), label);
+          });
+        }
+
+        function setVolumeFromDelta(startVol, dy, zoneHeight) {
+          if (!player || !ready) return;
+          var range = Math.max(zoneHeight || 200, 120);
+          // Drag up = louder
+          var next = Math.round(startVol - (dy / range) * 100);
+          next = Math.max(0, Math.min(100, next));
+          try {
+            player.setVolume(next);
+            showToast("Vol " + next + "%");
+          } catch (e) {
+            /* fail-open */
+          }
+        }
+
+        function clearLongPress() {
+          if (longPressTimer) {
+            clearTimeout(longPressTimer);
+            longPressTimer = null;
+          }
+          if (holdInterval) {
+            clearInterval(holdInterval);
+            holdInterval = null;
+          }
+        }
+
+        function startHoldSkip(side) {
+          didGesture = true;
+          var delta = side === "left" ? -HOLD_STEP : HOLD_STEP;
+          showToast(side === "left" ? "<<" : ">>");
+          seekBy(delta, side);
+          holdInterval = setInterval(function () {
+            seekBy(delta, side);
+          }, HOLD_TICK_MS);
+        }
+
+        function onDoubleTap(side) {
+          didGesture = true;
+          seekBy(side === "left" ? -SEEK_STEP : SEEK_STEP, side);
+        }
+
+        function bindZone(el) {
+          if (!el) return;
+          var side = el.getAttribute("data-side");
+
+          el.addEventListener(
+            "touchstart",
+            function (e) {
+              if (!e.changedTouches || !e.changedTouches[0]) return;
+              var touch = e.changedTouches[0];
+              touchStart = {
+                x: touch.clientX,
+                y: touch.clientY,
+                time: Date.now(),
+                side: side,
+              };
+              didGesture = false;
+              volumeGesture = null;
+              clearLongPress();
+
+              longPressTimer = setTimeout(function () {
+                // Prefer continuous skip on long-press (no playback-rate API on Bunny Player.js)
+                startHoldSkip(side);
+              }, LONG_PRESS_MS);
+            },
+            { passive: true }
+          );
+
+          el.addEventListener(
+            "touchmove",
+            function (e) {
+              if (!touchStart || !e.changedTouches || !e.changedTouches[0]) return;
+              var touch = e.changedTouches[0];
+              var dx = touch.clientX - touchStart.x;
+              var dy = touch.clientY - touchStart.y;
+
+              if (!volumeGesture && side === "right" && Math.abs(dy) > MOVE_SLOP && Math.abs(dy) > Math.abs(dx)) {
+                clearLongPress();
+                volumeGesture = { startY: touch.clientY, startVol: 50, height: el.clientHeight || 240 };
+                if (player && ready) {
+                  try {
+                    player.getVolume(function (v) {
+                      if (volumeGesture) volumeGesture.startVol = Number(v);
+                      if (isNaN(volumeGesture.startVol)) volumeGesture.startVol = 50;
+                    });
+                  } catch (err) {
+                    /* fail-open */
+                  }
+                }
+                didGesture = true;
+              }
+
+              if (volumeGesture) {
+                e.preventDefault();
+                setVolumeFromDelta(
+                  volumeGesture.startVol,
+                  touch.clientY - volumeGesture.startY,
+                  volumeGesture.height
+                );
+              } else if (Math.abs(dx) > MOVE_SLOP || Math.abs(dy) > MOVE_SLOP) {
+                // Finger moved: cancel long-press skip so accidental drags don't seek
+                clearLongPress();
+              }
+            },
+            { passive: false }
+          );
+
+          el.addEventListener(
+            "touchend",
+            function (e) {
+              clearLongPress();
+              if (!touchStart) return;
+
+              var now = Date.now();
+              var touch = e.changedTouches && e.changedTouches[0];
+              var moved = false;
+              if (touch) {
+                var mdx = touch.clientX - touchStart.x;
+                var mdy = touch.clientY - touchStart.y;
+                moved = Math.abs(mdx) > MOVE_SLOP || Math.abs(mdy) > MOVE_SLOP;
+              }
+
+              var wasVolume = Boolean(volumeGesture);
+              volumeGesture = null;
+
+              if (wasVolume || didGesture || moved) {
+                touchStart = null;
+                lastTap = { t: 0, side: null };
+                return;
+              }
+
+              // Double-tap detection (same side, quick succession)
+              if (lastTap.side === side && now - lastTap.t <= DOUBLE_TAP_MS) {
+                onDoubleTap(side);
+                lastTap = { t: 0, side: null };
+              } else {
+                lastTap = { t: now, side: side };
+              }
+              touchStart = null;
+            },
+            { passive: true }
+          );
+
+          el.addEventListener(
+            "touchcancel",
+            function () {
+              clearLongPress();
+              volumeGesture = null;
+              touchStart = null;
+            },
+            { passive: true }
+          );
+        }
+
+        function initPlayer() {
+          if (typeof playerjs === "undefined" || !playerjs.Player) {
+            // Fail-open: gestures no-op; Bunny default controls still work via center/bottom.
+            return;
+          }
+          try {
+            player = new playerjs.Player("bunny-player");
+            player.on("ready", function () {
+              ready = true;
+            });
+          } catch (e) {
+            player = null;
+            ready = false;
+          }
+        }
+
+        bindZone(document.getElementById("zone-left"));
+        bindZone(document.getElementById("zone-right"));
+
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", initPlayer);
+        } else {
+          initPlayer();
+        }
+      })();
+    </script>
+  </body>
 </html>`;
+};
 
 const getThumbnailSource = (thumbnailUrl) => {
   if (!thumbnailUrl) return null;
@@ -1095,9 +1467,22 @@ const VideosScreen = ({ navigation }) => {
               {selectedVideo?.embedUrl ? (
                 <WebView
                   originWhitelist={["*"]}
-                  source={{ html: playerHtml(selectedVideo.embedUrl) }}
+                  source={{
+                    html: playerHtml(selectedVideo.embedUrl),
+                    // Base URL helps absolute CDN scripts (Player.js) resolve cleanly in the WebView.
+                    baseUrl: "https://iframe.mediadelivery.net/",
+                  }}
                   allowsFullscreenVideo
+                  allowsInlineMediaPlayback
                   mediaPlaybackRequiresUserAction={false}
+                  javaScriptEnabled
+                  domStorageEnabled
+                  // Keep scroll/gestures inside the player shell; comments list is outside this WebView.
+                  scrollEnabled={false}
+                  bounces={false}
+                  setSupportMultipleWindows={false}
+                  allowsProtectedMedia
+                  mixedContentMode="always"
                   style={styles.player}
                 />
               ) : (
