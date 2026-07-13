@@ -26,6 +26,7 @@ const main = async () => {
   const messages = tokens.map(token => ({
     to: token,
     sound: "default",
+    priority: "high",
     title: "Test Notification",
     body: "If you see this, notifications are working!",
     channelId: "default",
@@ -35,6 +36,8 @@ const main = async () => {
   const response = await fetch(EXPO_PUSH_URL, {
     method: "POST",
     headers: {
+      Accept: "application/json",
+      "Accept-encoding": "gzip, deflate",
       "Content-Type": "application/json",
     },
     body: JSON.stringify(messages.slice(0, 100)), // Limit to first 100 for test

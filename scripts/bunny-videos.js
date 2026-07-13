@@ -254,6 +254,7 @@ const sendVideoPushNotification = async (db, video, customBody) => {
   const messages = tokens.map((token) => ({
     to: token,
     sound: "default",
+    priority: "high",
     title: "New Video Available",
     body,
     channelId: "default",

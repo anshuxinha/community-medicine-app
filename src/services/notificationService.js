@@ -129,10 +129,15 @@ export async function scheduleAllNotifications() {
     });
   }
 
-  // Cancel any leftover scheduled notifications from previous app versions.
-  // All notifications now fire immediately on app open, so nothing needs to
-  // remain in the scheduler.
-  await Notifications.cancelAllScheduledNotificationsAsync();
+  // One-time cleanup of leftover scheduled notifications from previous app
+  // versions. Gated so it doesn't wipe incoming push notifications on every
+  // app open (Android can drop them in the race window).
+  const LEGACY_CLEANUP_KEY = "notifications_legacy_cleanup_done";
+  const alreadyCleaned = await AsyncStorage.getItem(LEGACY_CLEANUP_KEY);
+  if (!alreadyCleaned) {
+    await Notifications.cancelAllScheduledNotificationsAsync();
+    await AsyncStorage.setItem(LEGACY_CLEANUP_KEY, "true");
+  }
 
   // Fire immediate notifications for any unacknowledged conditions.
   // Each check uses an AsyncStorage key to avoid duplicate delivery.
@@ -562,6 +567,7 @@ export async function sendReplyNotification(pushToken, options = {}) {
       body: JSON.stringify({
         to: pushToken,
         sound: "default",
+        priority: "high",
         title: "New reply to your doubt",
         body: `${replierName} replied on ${videoTitle}.`,
         channelId: "default",
