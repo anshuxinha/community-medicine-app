@@ -1139,7 +1139,7 @@ const VideosScreen = ({ navigation }) => {
                       activeTab === "doubts" && styles.activeTabButtonText,
                     ]}
                   >
-                    Doubts
+                    Comments
                   </Text>
                 </Pressable>
                 <Pressable
@@ -1186,10 +1186,10 @@ const VideosScreen = ({ navigation }) => {
                         color={theme.colors.textPlaceholder}
                       />
                       <Text style={styles.emptyDoubtsTitle}>
-                        No doubts asked yet
+                        No comments yet
                       </Text>
                       <Text style={styles.emptyDoubtsText}>
-                        Be the first to ask a doubt or query about this video!
+                        Be the first to add a comment or query about this video!
                       </Text>
                     </View>
                   }
@@ -1221,7 +1221,7 @@ const VideosScreen = ({ navigation }) => {
                     placeholder={
                       replyingTo
                         ? "Type your reply..."
-                        : "Ask a doubt about this video..."
+                        : "Add a comment about this video..."
                     }
                     placeholderTextColor={theme.colors.textPlaceholder}
                     multiline
