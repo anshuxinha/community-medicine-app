@@ -3,6 +3,7 @@ import { Platform } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider as PaperProvider } from "react-native-paper";
 import * as Notifications from "expo-notifications";
+import * as ScreenOrientation from "expo-screen-orientation";
 import AppNavigator from "./src/navigation/AppNavigator";
 import { AppProvider } from "./src/context/AppContext";
 import { paperTheme } from "./src/styles/theme";
@@ -23,6 +24,13 @@ if (Platform.OS === "android") {
 
 export default function App() {
   useEffect(() => {
+    // Keep the app portrait by default; Videos unlocks landscape while playing.
+    ScreenOrientation.lockAsync(
+      ScreenOrientation.OrientationLock.PORTRAIT_UP,
+    ).catch((err) =>
+      console.warn("Failed to lock portrait orientation:", err?.message),
+    );
+
     // Schedule recurring notifications (Public Health Days, Weekly Digest)
     // on app startup. This ensures they pop up even when the app is closed.
     scheduleAllNotifications().catch((err) =>

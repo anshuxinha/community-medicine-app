@@ -41,6 +41,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../config/firebase";
 import * as Device from "expo-device";
+import * as ScreenOrientation from "expo-screen-orientation";
 import { AppContext } from "../context/AppContext";
 import { theme } from "../styles/theme";
 import {
@@ -936,6 +937,52 @@ const VideosScreen = ({ navigation }) => {
   const [pdfOpenedFromList, setPdfOpenedFromList] = useState(false);
   const [playerFullscreen, setPlayerFullscreen] = useState(false);
   const [seenVideoIds, setSeenVideoIds] = useState({});
+  const [windowSize, setWindowSize] = useState(() => Dimensions.get("window"));
+
+  const isLandscape = windowSize.width > windowSize.height;
+  // Device landscape always expands the player so rotation feels natural.
+  const effectivePlayerFullscreen = playerFullscreen || isLandscape;
+
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener("change", ({ window }) => {
+      setWindowSize(window);
+    });
+    return () => subscription?.remove?.();
+  }, []);
+
+  // Allow free rotation only while a video is open; re-lock portrait afterward.
+  // Requires a native build with app.json orientation "default" (not OTA-only).
+  useEffect(() => {
+    let cancelled = false;
+
+    const applyOrientation = async () => {
+      try {
+        if (selectedVideo) {
+          await ScreenOrientation.unlockAsync();
+        } else {
+          await ScreenOrientation.lockAsync(
+            ScreenOrientation.OrientationLock.PORTRAIT_UP,
+          );
+        }
+      } catch (error) {
+        if (!cancelled) {
+          console.warn(
+            "Failed to update screen orientation:",
+            error?.message,
+          );
+        }
+      }
+    };
+
+    applyOrientation();
+
+    return () => {
+      cancelled = true;
+      ScreenOrientation.lockAsync(
+        ScreenOrientation.OrientationLock.PORTRAIT_UP,
+      ).catch(() => {});
+    };
+  }, [selectedVideo]);
 
   useEffect(() => {
     let mounted = true;
@@ -1691,8 +1738,16 @@ const VideosScreen = ({ navigation }) => {
       <Modal
         visible={Boolean(selectedVideo)}
         animationType="slide"
+        // iOS Modal defaults to portrait-only; allow landscape while video is open.
+        supportedOrientations={[
+          "portrait",
+          "portrait-upside-down",
+          "landscape",
+          "landscape-left",
+          "landscape-right",
+        ]}
         onRequestClose={() => {
-          if (playerFullscreen) {
+          if (playerFullscreen && !isLandscape) {
             setPlayerFullscreen(false);
             return;
           }
@@ -1702,10 +1757,15 @@ const VideosScreen = ({ navigation }) => {
         <SafeAreaView
           style={[
             styles.playerSafeArea,
-            playerFullscreen && styles.playerSafeAreaFullscreen,
+            effectivePlayerFullscreen && styles.playerSafeAreaFullscreen,
           ]}
+          edges={
+            effectivePlayerFullscreen
+              ? ["left", "right"]
+              : ["top", "right", "bottom", "left"]
+          }
         >
-          {!playerFullscreen && (
+          {!effectivePlayerFullscreen && (
             <View style={styles.playerHeader}>
               <IconButton
                 icon="close"
@@ -1731,7 +1791,8 @@ const VideosScreen = ({ navigation }) => {
             <View
               style={[
                 styles.videoPlayerContainer,
-                playerFullscreen && styles.videoPlayerContainerFullscreen,
+                effectivePlayerFullscreen &&
+                  styles.videoPlayerContainerFullscreen,
               ]}
             >
               {selectedVideo?.embedUrl ? (
@@ -1769,19 +1830,36 @@ const VideosScreen = ({ navigation }) => {
                   </Text>
                 </View>
               )}
-              {playerFullscreen && (
+              {effectivePlayerFullscreen && (
                 <View style={styles.playerFullscreenControls} pointerEvents="box-none">
                   <IconButton
                     icon="fullscreen-exit"
                     iconColor="#FFFFFF"
                     containerColor="rgba(0,0,0,0.45)"
-                    onPress={() => setPlayerFullscreen(false)}
+                    onPress={() => {
+                      setPlayerFullscreen(false);
+                      // Landscape keeps effective fullscreen true; briefly lock
+                      // portrait so the UI can shrink, then unlock for auto-rotate.
+                      if (isLandscape) {
+                        ScreenOrientation.lockAsync(
+                          ScreenOrientation.OrientationLock.PORTRAIT_UP,
+                        )
+                          .catch(() => {})
+                          .finally(() => {
+                            setTimeout(() => {
+                              if (selectedVideo) {
+                                ScreenOrientation.unlockAsync().catch(() => {});
+                              }
+                            }, 700);
+                          });
+                      }
+                    }}
                   />
                 </View>
               )}
             </View>
 
-            {!playerFullscreen && selectedVideo?.hasPdf && (
+            {!effectivePlayerFullscreen && selectedVideo?.hasPdf && (
               <View style={styles.tabsContainer}>
                 <Pressable
                   style={[
@@ -1836,7 +1914,7 @@ const VideosScreen = ({ navigation }) => {
               </View>
             )}
 
-            {!playerFullscreen &&
+            {!effectivePlayerFullscreen &&
               (activeTab === "doubts" ? (
                 <>
                   <FlatList
