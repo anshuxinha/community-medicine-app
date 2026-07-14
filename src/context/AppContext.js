@@ -64,6 +64,9 @@ if (Constants.appOwnership !== "expo") {
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const getAccountStateKey = (uid) => `accountState:${uid}`;
+// Cached approved library overrides so content signatures match on cold start
+// (otherwise progress under-counts until Firestore overrides load).
+const LIBRARY_OVERRIDES_CACHE_KEY = "libraryContentOverridesCache";
 const hasRevenueCatPremiumEntitlement = (customerInfo) =>
   customerInfo?.entitlements?.active?.Premium != null;
 
@@ -408,6 +411,21 @@ export const AppProvider = ({ children }) => {
       ),
     );
 
+  const applyCachedLibraryOverrides = async () => {
+    try {
+      const raw = await AsyncStorage.getItem(LIBRARY_OVERRIDES_CACHE_KEY);
+      if (!raw) return false;
+      const overrides = JSON.parse(raw);
+      if (!Array.isArray(overrides) || overrides.length === 0) return false;
+      hydrateContentRegistry(overrides);
+      setContentRegistryVersion((current) => current + 1);
+      return true;
+    } catch (err) {
+      console.warn("Failed to apply cached library overrides:", err?.message);
+      return false;
+    }
+  };
+
   const refreshLibraryContent = async () => {
     try {
       const snapshot = await Promise.race([
@@ -427,6 +445,21 @@ export const AppProvider = ({ children }) => {
         );
 
       hydrateContentRegistry(approvedOverrides);
+      try {
+        if (approvedOverrides.length > 0) {
+          await AsyncStorage.setItem(
+            LIBRARY_OVERRIDES_CACHE_KEY,
+            JSON.stringify(approvedOverrides),
+          );
+        } else {
+          await AsyncStorage.removeItem(LIBRARY_OVERRIDES_CACHE_KEY);
+        }
+      } catch (cacheErr) {
+        console.warn(
+          "Failed to cache library overrides:",
+          cacheErr?.message,
+        );
+      }
       setContentRegistryVersion((current) => current + 1);
     } catch (err) {
       console.warn("Library override refresh failed:", err?.message);
@@ -617,6 +650,20 @@ export const AppProvider = ({ children }) => {
           let cachedUsername = null;
           if (isInitialLoad) {
             try {
+              // Apply last-known library overrides BEFORE progress paint so
+              // content signatures match what was stored at mark-as-read.
+              // Without this, base content is used first and % under-counts
+              // until Firestore overrides arrive (e.g. 25% → 26%).
+              // Admin anshuxinha@gmail.com and others with active overrides hit this.
+              const hadOverrideCache = await applyCachedLibraryOverrides();
+              if (!hadOverrideCache) {
+                // First run / empty cache: wait for network so first paint is correct
+                await refreshLibraryContent();
+              } else {
+                // Background refresh keeps cache current for next cold start
+                void refreshLibraryContent();
+              }
+
               const cachedUserStr = await AsyncStorage.getItem("user");
               if (cachedUserStr) {
                 const cachedUser = JSON.parse(cachedUserStr);
@@ -640,10 +687,9 @@ export const AppProvider = ({ children }) => {
             } catch (_) {
               // ignore cache paint failures
             }
+          } else {
+            void refreshLibraryContent();
           }
-
-          // Non-critical for first frame — run without blocking setUser
-          void refreshLibraryContent();
 
           let claimsPremium = false;
           let claimsAdmin = false;
