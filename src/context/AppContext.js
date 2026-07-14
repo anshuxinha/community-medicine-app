@@ -149,6 +149,132 @@ const dayDiffFromToday = (dateString) => {
   return Math.round((startToday - startParsed) / MS_PER_DAY);
 };
 
+// Never let a sparse cloud doc wipe richer local/device progress (cold-start race).
+const mergeDailyReadHistory = (...histories) => {
+  const merged = {};
+  histories.forEach((history) => {
+    if (!history || typeof history !== "object") return;
+    Object.entries(history).forEach(([day, count]) => {
+      const n = typeof count === "number" ? count : 0;
+      merged[day] = Math.max(merged[day] || 0, n);
+    });
+  });
+  return merged;
+};
+
+const mergeBookmarksLists = (...lists) => {
+  const map = new Map();
+  lists.flat().forEach((item) => {
+    if (!item || typeof item.title !== "string") return;
+    const key =
+      (typeof item.contentKey === "string" && item.contentKey) || item.title;
+    if (!map.has(key)) map.set(key, item);
+  });
+  return normalizeBookmarks([...map.values()]);
+};
+
+const mergeLearningStates = (...rawStates) => {
+  const states = rawStates
+    .filter((state) => state && typeof state === "object")
+    .map((state) => sanitizeCloudState(state));
+  if (states.length === 0) return sanitizeCloudState({});
+  if (states.length === 1) return states[0];
+
+  const readItemVersions = {};
+  states.forEach((state) => {
+    Object.entries(state.readItemVersions || {}).forEach(([key, version]) => {
+      if (!readItemVersions[key]) {
+        readItemVersions[key] = version;
+      }
+    });
+  });
+
+  const bookmarks = mergeBookmarksLists(...states.map((state) => state.bookmarks));
+  const dailyReadHistory = mergeDailyReadHistory(
+    ...states.map((state) => state.dailyReadHistory),
+  );
+  const studyScore = Math.max(0, ...states.map((state) => state.studyScore || 0));
+
+  let lastReadDate = null;
+  let bestLastReadTime = -Infinity;
+  states.forEach((state) => {
+    if (!state.lastReadDate) return;
+    const time = new Date(state.lastReadDate).getTime();
+    if (!Number.isNaN(time) && time >= bestLastReadTime) {
+      bestLastReadTime = time;
+      lastReadDate = state.lastReadDate;
+    }
+  });
+
+  let currentStreak = 0;
+  if (lastReadDate) {
+    currentStreak = Math.max(
+      0,
+      ...states
+        .filter((state) => state.lastReadDate === lastReadDate)
+        .map((state) => state.currentStreak || 0),
+    );
+  } else {
+    currentStreak = Math.max(
+      0,
+      ...states.map((state) => state.currentStreak || 0),
+    );
+  }
+
+  if (lastReadDate) {
+    const diffDays = dayDiffFromToday(lastReadDate);
+    if (diffDays !== null && diffDays > 1) {
+      currentStreak = 0;
+    }
+  }
+
+  const titlesFromVersions = getReadTitles(readItemVersions);
+  const longestReadItems = states.reduce(
+    (best, state) =>
+      state.readItems.length > best.length ? state.readItems : best,
+    [],
+  );
+  const readItems =
+    titlesFromVersions.length >= longestReadItems.length
+      ? titlesFromVersions
+      : longestReadItems;
+
+  return {
+    readItems,
+    readItemVersions,
+    bookmarks,
+    currentStreak,
+    lastReadDate,
+    studyScore,
+    dailyReadHistory,
+  };
+};
+
+const collectLearningStateCandidates = (
+  userDocData = {},
+  deviceId,
+  cachedRaw,
+) => {
+  const candidates = [userDocData];
+  if (cachedRaw && typeof cachedRaw === "object") {
+    candidates.push(cachedRaw);
+  }
+
+  const deviceStates = userDocData.deviceStates;
+  if (deviceStates && typeof deviceStates === "object") {
+    if (deviceId && deviceStates[deviceId]) {
+      candidates.push(deviceStates[deviceId]);
+    }
+    Object.values(deviceStates).forEach((deviceState) => {
+      if (deviceState && typeof deviceState === "object") {
+        candidates.push(deviceState);
+      }
+    });
+  }
+
+  return mergeLearningStates(...candidates);
+};
+
 const SafeNotifications = Notifications;
 
 export const AppContext = createContext();
@@ -295,6 +421,7 @@ export const AppProvider = ({ children }) => {
           // Cold start only: paint from local cache so the spinner is not held
           // by network. Skip on fresh login so device-conflict handling in
           // LoginScreen still sees user === undefined until checks finish.
+          let cachedAccountRaw = null;
           if (isInitialLoad) {
             try {
               const [cachedUserStr, cachedAccountState] = await Promise.all([
@@ -305,9 +432,8 @@ export const AppProvider = ({ children }) => {
                 const cachedUser = JSON.parse(cachedUserStr);
                 if (cachedUser?.uid === firebaseUser.uid) {
                   if (cachedAccountState) {
-                    const cachedState = hydrateStoredState(
-                      JSON.parse(cachedAccountState),
-                    );
+                    cachedAccountRaw = JSON.parse(cachedAccountState);
+                    const cachedState = hydrateStoredState(cachedAccountRaw);
                     if (cachedState.lastReadDate) {
                       const diffDays = dayDiffFromToday(
                         cachedState.lastReadDate,
@@ -421,14 +547,22 @@ export const AppProvider = ({ children }) => {
               premiumType: fetchedPremiumType,
             };
 
-            const cloudState = hydrateStoredState(data);
-
-            if (cloudState.lastReadDate) {
-              const diffDays = dayDiffFromToday(cloudState.lastReadDate);
-              if (diffDays !== null && diffDays > 1) {
-                setCurrentStreak(0);
-              }
+            // Merge top-level cloud + deviceStates + local cache so a sparse
+            // cloud doc cannot wipe richer progress after cache paint.
+            if (!cachedAccountRaw) {
+              try {
+                const cachedStr = await AsyncStorage.getItem(
+                  getAccountStateKey(firebaseUser.uid),
+                );
+                if (cachedStr) cachedAccountRaw = JSON.parse(cachedStr);
+              } catch (_) {}
             }
+            const mergedLearningState = collectLearningStateCandidates(
+              data,
+              deviceId,
+              cachedAccountRaw,
+            );
+            const cloudState = hydrateStoredState(mergedLearningState);
 
             setUser(userData);
             setAccountPremium(Boolean(finalPremiumStatus));
@@ -538,15 +672,20 @@ export const AppProvider = ({ children }) => {
         const data = userDoc.data();
         await refreshLibraryContent();
 
-        const cloudState = hydrateStoredState(data);
+        let cachedAccountRaw = null;
+        try {
+          const cachedStr = await AsyncStorage.getItem(
+            getAccountStateKey(user.uid),
+          );
+          if (cachedStr) cachedAccountRaw = JSON.parse(cachedStr);
+        } catch (_) {}
 
-        // Reset streak if user hasn't read in over a day
-        if (cloudState.lastReadDate) {
-          const diffDays = dayDiffFromToday(cloudState.lastReadDate);
-          if (diffDays !== null && diffDays > 1) {
-            setCurrentStreak(0);
-          }
-        }
+        const mergedLearningState = collectLearningStateCandidates(
+          data,
+          currentDeviceIdRef.current,
+          cachedAccountRaw,
+        );
+        const cloudState = hydrateStoredState(mergedLearningState);
 
         await AsyncStorage.setItem(
           getAccountStateKey(user.uid),
@@ -1217,13 +1356,22 @@ export const AppProvider = ({ children }) => {
         ]);
         if (userDoc.exists()) {
           const data = userDoc.data();
-          const cloudState = hydrateStoredState(data);
-          if (cloudState.lastReadDate) {
-            const diffDays = dayDiffFromToday(cloudState.lastReadDate);
-            if (diffDays !== null && diffDays > 1) {
-              setCurrentStreak(0);
-            }
-          }
+          let cachedAccountRaw = null;
+          try {
+            const cachedStr = await AsyncStorage.getItem(
+              getAccountStateKey(userData.uid),
+            );
+            if (cachedStr) cachedAccountRaw = JSON.parse(cachedStr);
+          } catch (_) {}
+          const deviceId =
+            currentDeviceIdRef.current || (await getDeviceId());
+          currentDeviceIdRef.current = deviceId;
+          const mergedLearningState = collectLearningStateCandidates(
+            data,
+            deviceId,
+            cachedAccountRaw,
+          );
+          const cloudState = hydrateStoredState(mergedLearningState);
           await AsyncStorage.setItem(
             getAccountStateKey(userData.uid),
             JSON.stringify(cloudState),
