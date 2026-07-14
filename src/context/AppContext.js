@@ -22,7 +22,12 @@ import {
   where,
 } from "firebase/firestore";
 import { getDeviceId } from "../utils/deviceUtils";
-import { onAuthStateChanged, getIdTokenResult, signOut } from "firebase/auth";
+import {
+  onAuthStateChanged,
+  getIdTokenResult,
+  signOut,
+  updateProfile,
+} from "firebase/auth";
 import * as Notifications from "expo-notifications";
 import { theme } from "../styles/theme";
 import { triggerStreakMilestone } from "../services/notificationService";
@@ -30,6 +35,7 @@ import { maybePromptReview } from "../utils/reviewPrompt";
 import {
   VALID_MASTER_TITLES,
   VALID_CONTENT_KEYS,
+  CONTENT_ENTRY_BY_KEY,
   TOTAL_LEAF_CONTENT_ITEMS,
   getEffectiveReadCount,
   getContentKey,
@@ -173,6 +179,36 @@ const mergeBookmarksLists = (...lists) => {
   return normalizeBookmarks([...map.values()]);
 };
 
+// Prefer a version that matches current content signature so merge cannot
+// demote an item from "read" by keeping a stale signature from an old device.
+const mergeReadItemVersions = (states) => {
+  const keys = new Set();
+  states.forEach((state) => {
+    Object.keys(state.readItemVersions || {}).forEach((key) => keys.add(key));
+  });
+
+  const merged = {};
+  keys.forEach((key) => {
+    // states are ordered highest-priority first
+    const versions = states
+      .map((state) => state.readItemVersions?.[key])
+      .filter((version) => typeof version === "string");
+    if (versions.length === 0) return;
+
+    const currentSignature = CONTENT_ENTRY_BY_KEY.get(key)?.signature;
+    if (currentSignature) {
+      const matching = versions.find((version) => version === currentSignature);
+      if (matching) {
+        merged[key] = matching;
+        return;
+      }
+    }
+
+    merged[key] = versions[0];
+  });
+  return merged;
+};
+
 const mergeLearningStates = (...rawStates) => {
   const states = rawStates
     .filter((state) => state && typeof state === "object")
@@ -180,14 +216,7 @@ const mergeLearningStates = (...rawStates) => {
   if (states.length === 0) return sanitizeCloudState({});
   if (states.length === 1) return states[0];
 
-  const readItemVersions = {};
-  states.forEach((state) => {
-    Object.entries(state.readItemVersions || {}).forEach(([key, version]) => {
-      if (!readItemVersions[key]) {
-        readItemVersions[key] = version;
-      }
-    });
-  });
+  const readItemVersions = mergeReadItemVersions(states);
 
   const bookmarks = mergeBookmarksLists(...states.map((state) => state.bookmarks));
   const dailyReadHistory = mergeDailyReadHistory(
@@ -228,16 +257,8 @@ const mergeLearningStates = (...rawStates) => {
     }
   }
 
-  const titlesFromVersions = getReadTitles(readItemVersions);
-  const longestReadItems = states.reduce(
-    (best, state) =>
-      state.readItems.length > best.length ? state.readItems : best,
-    [],
-  );
-  const readItems =
-    titlesFromVersions.length >= longestReadItems.length
-      ? titlesFromVersions
-      : longestReadItems;
+  // Effective progress is signature-based; keep titles aligned to that.
+  const readItems = getReadTitles(readItemVersions);
 
   return {
     readItems,
@@ -254,8 +275,14 @@ const collectLearningStateCandidates = (
   userDocData = {},
   deviceId,
   cachedRaw,
+  liveRaw,
 ) => {
-  const candidates = [userDocData];
+  // Highest priority first: live memory → local cache → this device →
+  // top-level cloud → other devices (recovery only).
+  const candidates = [];
+  if (liveRaw && typeof liveRaw === "object") {
+    candidates.push(liveRaw);
+  }
   if (cachedRaw && typeof cachedRaw === "object") {
     candidates.push(cachedRaw);
   }
@@ -265,7 +292,21 @@ const collectLearningStateCandidates = (
     if (deviceId && deviceStates[deviceId]) {
       candidates.push(deviceStates[deviceId]);
     }
-    Object.values(deviceStates).forEach((deviceState) => {
+  }
+
+  candidates.push({
+    readItems: userDocData.readItems,
+    readItemVersions: userDocData.readItemVersions,
+    bookmarks: userDocData.bookmarks,
+    currentStreak: userDocData.currentStreak,
+    lastReadDate: userDocData.lastReadDate,
+    studyScore: userDocData.studyScore,
+    dailyReadHistory: userDocData.dailyReadHistory,
+  });
+
+  if (deviceStates && typeof deviceStates === "object") {
+    Object.entries(deviceStates).forEach(([id, deviceState]) => {
+      if (id === deviceId) return;
       if (deviceState && typeof deviceState === "object") {
         candidates.push(deviceState);
       }
@@ -273,6 +314,19 @@ const collectLearningStateCandidates = (
   }
 
   return mergeLearningStates(...candidates);
+};
+
+const resolveDisplayUsername = (firestoreUsername, authDisplayName, fallback) => {
+  if (typeof firestoreUsername === "string" && firestoreUsername.trim()) {
+    return firestoreUsername.trim();
+  }
+  if (typeof authDisplayName === "string" && authDisplayName.trim()) {
+    return authDisplayName.trim();
+  }
+  if (typeof fallback === "string" && fallback.trim()) {
+    return fallback.trim();
+  }
+  return "User";
 };
 
 const SafeNotifications = Notifications;
@@ -306,10 +360,39 @@ export const AppProvider = ({ children }) => {
   const lastRefreshRef = useRef(0);
   const prevStreakRef = useRef(0);
   const userRef = useRef(user);
+  const learningStateRef = useRef({
+    readItems: [],
+    readItemVersions: {},
+    bookmarks: [],
+    currentStreak: 0,
+    lastReadDate: null,
+    studyScore: 0,
+    dailyReadHistory: {},
+  });
 
   useEffect(() => {
     userRef.current = user;
   }, [user]);
+
+  useEffect(() => {
+    learningStateRef.current = {
+      readItems,
+      readItemVersions,
+      bookmarks,
+      currentStreak,
+      lastReadDate,
+      studyScore,
+      dailyReadHistory,
+    };
+  }, [
+    readItems,
+    readItemVersions,
+    bookmarks,
+    currentStreak,
+    lastReadDate,
+    studyScore,
+    dailyReadHistory,
+  ]);
 
   const totalItems =
     TOTAL_LEAF_CONTENT_ITEMS > 0 ? TOTAL_LEAF_CONTENT_ITEMS : 1;
@@ -422,6 +505,7 @@ export const AppProvider = ({ children }) => {
           // by network. Skip on fresh login so device-conflict handling in
           // LoginScreen still sees user === undefined until checks finish.
           let cachedAccountRaw = null;
+          let cachedUsername = null;
           if (isInitialLoad) {
             try {
               const [cachedUserStr, cachedAccountState] = await Promise.all([
@@ -431,6 +515,7 @@ export const AppProvider = ({ children }) => {
               if (cachedUserStr) {
                 const cachedUser = JSON.parse(cachedUserStr);
                 if (cachedUser?.uid === firebaseUser.uid) {
+                  cachedUsername = cachedUser.username || null;
                   if (cachedAccountState) {
                     cachedAccountRaw = JSON.parse(cachedAccountState);
                     const cachedState = hydrateStoredState(cachedAccountRaw);
@@ -505,9 +590,16 @@ export const AppProvider = ({ children }) => {
             const fetchedPremiumType = data.premiumType || null;
             setPremiumType(fetchedPremiumType);
 
+            // Prefer Firestore / cached profile name over Auth displayName
+            // (Google/Apple name would otherwise overwrite profile edits).
+            const username = resolveDisplayUsername(
+              data.username || cachedUsername,
+              firebaseUser.displayName,
+              "User",
+            );
+
             // Automatically generate a referral code if missing
             let referralCode = data.referralCode;
-            const username = firebaseUser.displayName || data.username || "User";
             if (!referralCode) {
               referralCode = generateReferralCode(username);
               const batch = [
@@ -539,7 +631,7 @@ export const AppProvider = ({ children }) => {
             const userData = {
               uid: firebaseUser.uid,
               email: firebaseUser.email,
-              username: firebaseUser.displayName || data.username || "User",
+              username,
               isPremium: finalPremiumStatus,
               isAdmin,
               pushToken: data.pushToken || null,
@@ -561,6 +653,7 @@ export const AppProvider = ({ children }) => {
               data,
               deviceId,
               cachedAccountRaw,
+              learningStateRef.current,
             );
             const cloudState = hydrateStoredState(mergedLearningState);
 
@@ -602,19 +695,22 @@ export const AppProvider = ({ children }) => {
             void syncReceivedUpvotes(firebaseUser.uid);
           } catch (err) {
             console.warn("Firestore fetch failed/timed out, using auth claims:", err?.message);
-            const userData = {
-              uid: firebaseUser.uid,
-              email: firebaseUser.email,
-              username: firebaseUser.displayName || "User",
-              isPremium: claimsPremium,
-              isAdmin: claimsAdmin,
-              pushToken: null,
-            };
-
+            let cachedUsername = null;
             try {
-              const cachedAccountState = await AsyncStorage.getItem(getAccountStateKey(firebaseUser.uid));
+              const cachedUserStr = await AsyncStorage.getItem("user");
+              if (cachedUserStr) {
+                const cachedUser = JSON.parse(cachedUserStr);
+                if (cachedUser?.uid === firebaseUser.uid) {
+                  cachedUsername = cachedUser.username;
+                }
+              }
+              const cachedAccountState = await AsyncStorage.getItem(
+                getAccountStateKey(firebaseUser.uid),
+              );
               if (cachedAccountState) {
-                const cachedState = hydrateStoredState(JSON.parse(cachedAccountState));
+                const cachedState = hydrateStoredState(
+                  JSON.parse(cachedAccountState),
+                );
                 if (cachedState.lastReadDate) {
                   const diffDays = dayDiffFromToday(cachedState.lastReadDate);
                   if (diffDays !== null && diffDays > 1) {
@@ -622,7 +718,20 @@ export const AppProvider = ({ children }) => {
                   }
                 }
               }
-            } catch (_) { }
+            } catch (_) {}
+
+            const userData = {
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              username: resolveDisplayUsername(
+                cachedUsername,
+                firebaseUser.displayName,
+                "User",
+              ),
+              isPremium: claimsPremium,
+              isAdmin: claimsAdmin,
+              pushToken: null,
+            };
 
             setUser(userData);
             setAccountPremium(Boolean(claimsPremium));
@@ -684,6 +793,7 @@ export const AppProvider = ({ children }) => {
           data,
           currentDeviceIdRef.current,
           cachedAccountRaw,
+          learningStateRef.current,
         );
         const cloudState = hydrateStoredState(mergedLearningState);
 
@@ -1370,6 +1480,7 @@ export const AppProvider = ({ children }) => {
             data,
             deviceId,
             cachedAccountRaw,
+            learningStateRef.current,
           );
           const cloudState = hydrateStoredState(mergedLearningState);
           await AsyncStorage.setItem(
@@ -1455,21 +1566,39 @@ export const AppProvider = ({ children }) => {
 
   const updateUsername = async (newUsername) => {
     if (!user || !user.uid) return;
-    const userRef = doc(db, "users", user.uid);
-    await updateDoc(userRef, { username: newUsername });
+    const trimmed = newUsername.trim();
+    if (!trimmed) return;
+
+    const userDocRef = doc(db, "users", user.uid);
+    await updateDoc(userDocRef, { username: trimmed });
+
+    // Keep Auth displayName aligned so nothing reverts to Google/Apple name.
+    if (auth.currentUser) {
+      try {
+        await updateProfile(auth.currentUser, { displayName: trimmed });
+      } catch (err) {
+        console.warn("Failed to sync Auth displayName:", err?.message);
+      }
+    }
+
     setUser((prevUser) => {
       if (!prevUser) return prevUser;
       return {
         ...prevUser,
-        username: newUsername,
+        username: trimmed,
       };
     });
     try {
       const storedUser = await AsyncStorage.getItem("user");
       if (storedUser) {
         const parsed = JSON.parse(storedUser);
-        parsed.username = newUsername;
+        parsed.username = trimmed;
         await AsyncStorage.setItem("user", JSON.stringify(parsed));
+      } else {
+        await AsyncStorage.setItem(
+          "user",
+          JSON.stringify({ ...user, username: trimmed }),
+        );
       }
     } catch (err) {
       console.warn("Failed to update cached user in AsyncStorage:", err);
