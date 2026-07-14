@@ -90,3 +90,23 @@ Transform tasks into verifiable goals:
 For multi-step tasks, state a brief plan and verify each step.
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+
+# EAS Update Protocol
+
+**MANDATORY: If an `eas update` is related to local code or config changes, commit and push those changes first.**
+
+Do not publish an OTA from a dirty or unpushed tree when the update depends on that work.
+
+## Required order
+1. **Commit** related changes with a clear message (include only files that belong to the change).
+2. **Push** to the remote branch that production tracks (usually `origin/main`).
+3. **Then** run `eas update` (see `CUSTOM_INSTRUCTION_EAS.md` / `EAS_UPDATE_GUIDELINES.md` for channel checks, `--branch main`, `--clear-cache`, verify).
+
+## Why
+- EAS Update records the git commit; dirty publishes show a `*` commit and drift from GitHub.
+- Teammates and future deploys must see the same code that production OTA ships.
+- Channel/branch mapping assumes the remote branch is the source of truth.
+
+## Exceptions
+- Pure channel/config inspection (`eas channel:list`, etc.) needs no commit.
+- If the user explicitly asks to OTA uncommitted work, note the risk and still prefer committing first.

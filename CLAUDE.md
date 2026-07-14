@@ -8,6 +8,8 @@ Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-s
 
 - **graphify** ([SKILL.md](file:///C:/Users/Anshuman%20Sinha/.gemini/skills/graphify/SKILL.md)) - any input to knowledge graph. Trigger: `/graphify`
 
+**EAS Update Protocol**: If `eas update` is related to local code/config changes, **commit and push first**, then publish the OTA. See `Agents.md` (EAS Update Protocol) and `CUSTOM_INSTRUCTION_EAS.md`.
+
 ## 1. Think Before Coding
 
 **Don't assume. Don't hide confusion. Surface tradeoffs.**
