@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Platform, View, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   NavigationContainer,
@@ -12,36 +12,37 @@ import { AppContext } from "../context/AppContext";
 import { useSessionEnforcer } from "../hooks/useSessionEnforcer";
 import { setupNotificationTapHandler } from "../services/notificationService";
 
-// Tab screens
+// Eager: first-paint surfaces only
 import DashboardScreen from "../screens/DashboardScreen";
 import LibraryScreen from "../screens/LibraryScreen";
 import VideosScreen from "../screens/VideosScreen";
-import UpdatesScreen from "../screens/UpdatesScreen";
-import BookmarksScreen from "../screens/BookmarksScreen";
-import ProfileScreen from "../screens/ProfileScreen";
-
-// Stack screens
-import ReadingScreen from "../screens/ReadingScreen";
-import SubTopicsScreen from "../screens/SubTopicsScreen";
-import QuizScreen from "../screens/QuizScreen";
 import LoginScreen from "../screens/LoginScreen";
 import PaywallScreen from "../screens/PaywallScreen";
-
-import FieldToolboxScreen from "../screens/FieldToolboxScreen";
-import SESCalculatorScreen from "../screens/SESCalculatorScreen";
-import DietarySurveyScreen from "../screens/DietarySurveyScreen";
-import AnthropometryScreen from "../screens/AnthropometryScreen";
-import NFHSComparisonScreen from "../screens/NFHSComparisonScreen";
-import NFHSRuralUrbanScreen from "../screens/NFHSRuralUrbanScreen";
-import NFHSTrendsScreen from "../screens/NFHSTrendsScreen";
-import VirtualMuseumScreen from "../screens/VirtualMuseumScreen";
-import BiostatsAssistantScreen from "../screens/BiostatsAssistantScreen";
-import NotificationsScreen from "../screens/NotificationsScreen";
-import AdminLibraryReviewScreen from "../screens/AdminLibraryReviewScreen";
-import GemsScreen from "../screens/GemsScreen";
-import PYQCreateScreen from "../screens/PYQCreateScreen";
-import PYQPracticeScreen from "../screens/PYQPracticeScreen";
 import { theme } from "../styles/theme";
+
+// Deferred screens: loaded on first navigation via getComponent (not parsed at cold start)
+const getUpdatesScreen = () => require("../screens/UpdatesScreen").default;
+const getPYQCreateScreen = () => require("../screens/PYQCreateScreen").default;
+const getReadingScreen = () => require("../screens/ReadingScreen").default;
+const getSubTopicsScreen = () => require("../screens/SubTopicsScreen").default;
+const getQuizScreen = () => require("../screens/QuizScreen").default;
+const getPYQPracticeScreen = () => require("../screens/PYQPracticeScreen").default;
+const getFieldToolboxScreen = () => require("../screens/FieldToolboxScreen").default;
+const getSESCalculatorScreen = () => require("../screens/SESCalculatorScreen").default;
+const getDietarySurveyScreen = () => require("../screens/DietarySurveyScreen").default;
+const getAnthropometryScreen = () => require("../screens/AnthropometryScreen").default;
+const getNFHSComparisonScreen = () => require("../screens/NFHSComparisonScreen").default;
+const getNFHSRuralUrbanScreen = () => require("../screens/NFHSRuralUrbanScreen").default;
+const getNFHSTrendsScreen = () => require("../screens/NFHSTrendsScreen").default;
+const getVirtualMuseumScreen = () => require("../screens/VirtualMuseumScreen").default;
+const getBiostatsAssistantScreen = () =>
+  require("../screens/BiostatsAssistantScreen").default;
+const getGemsScreen = () => require("../screens/GemsScreen").default;
+const getNotificationsScreen = () => require("../screens/NotificationsScreen").default;
+const getProfileScreen = () => require("../screens/ProfileScreen").default;
+const getBookmarksScreen = () => require("../screens/BookmarksScreen").default;
+const getAdminLibraryReviewScreen = () =>
+  require("../screens/AdminLibraryReviewScreen").default;
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -81,13 +82,10 @@ const TabNavigator = () => {
     >
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen name="Library" component={LibraryScreen} />
-      <Tab.Screen
-        name="Videos"
-        component={VideosScreen}
-      />
+      <Tab.Screen name="Videos" component={VideosScreen} />
       <Tab.Screen
         name="Updates"
-        component={UpdatesScreen}
+        getComponent={getUpdatesScreen}
         listeners={({ navigation }) => ({
           tabPress: (event) => {
             if (isPremium) return;
@@ -97,10 +95,7 @@ const TabNavigator = () => {
           },
         })}
       />
-      <Tab.Screen
-        name="QBank"
-        component={PYQCreateScreen}
-      />
+      <Tab.Screen name="QBank" getComponent={getPYQCreateScreen} />
     </Tab.Navigator>
   );
 };
@@ -122,8 +117,7 @@ const PremiumGuard = ({ navigation, route }) => {
         navigation.replace("Reading", route.params?.readingParams);
       else if (dest === "SubTopics")
         navigation.replace("SubTopics", route.params?.subTopicsParams);
-      else if (dest === "Gems")
-        navigation.replace("Gems");
+      else if (dest === "Gems") navigation.replace("Gems");
     }
   }, [user, isPremium, navigation, route.params]);
   return null;
@@ -175,76 +169,76 @@ const AppNavigator = () => {
             {/* ── Library sub-screens ── */}
             <Stack.Screen
               name="Reading"
-              component={ReadingScreen}
+              getComponent={getReadingScreen}
               options={{ headerShown: false }}
             />
             <Stack.Screen
               name="SubTopics"
-              component={SubTopicsScreen}
+              getComponent={getSubTopicsScreen}
               options={({ route }) => ({ title: route.params.title })}
             />
             <Stack.Screen
               name="Quiz"
-              component={QuizScreen}
+              getComponent={getQuizScreen}
               options={({ route }) => ({ title: `${route.params.title} Quiz` })}
             />
             <Stack.Screen
               name="PYQPractice"
-              component={PYQPracticeScreen}
+              getComponent={getPYQPracticeScreen}
               options={{ headerShown: false }}
             />
 
             {/* ── Field Toolbox ── */}
             <Stack.Screen
               name="FieldToolbox"
-              component={FieldToolboxScreen}
+              getComponent={getFieldToolboxScreen}
               options={{ title: "🧰 Field Toolbox" }}
             />
             <Stack.Screen
               name="SESCalculator"
-              component={SESCalculatorScreen}
+              getComponent={getSESCalculatorScreen}
               options={{ title: "SES Calculator" }}
             />
             <Stack.Screen
               name="DietarySurvey"
-              component={DietarySurveyScreen}
+              getComponent={getDietarySurveyScreen}
               options={{ title: "Dietary Survey" }}
             />
             <Stack.Screen
               name="Anthropometry"
-              component={AnthropometryScreen}
+              getComponent={getAnthropometryScreen}
               options={{ title: "Anthropometry" }}
             />
             <Stack.Screen
               name="NFHSComparison"
-              component={NFHSComparisonScreen}
+              getComponent={getNFHSComparisonScreen}
               options={{ title: "NFHS-5 vs NFHS-6" }}
             />
             <Stack.Screen
               name="NFHSRuralUrban"
-              component={NFHSRuralUrbanScreen}
+              getComponent={getNFHSRuralUrbanScreen}
               options={{ title: "NFHS-6 Rural vs Urban" }}
             />
             <Stack.Screen
               name="NFHSTrends"
-              component={NFHSTrendsScreen}
+              getComponent={getNFHSTrendsScreen}
               options={{ title: "NFHS Trends" }}
             />
 
             {/* ── Other Modules ── */}
             <Stack.Screen
               name="VirtualMuseum"
-              component={VirtualMuseumScreen}
+              getComponent={getVirtualMuseumScreen}
               options={{ title: "🏛️ Virtual Museum" }}
             />
             <Stack.Screen
               name="BiostatsAssistant"
-              component={BiostatsAssistantScreen}
+              getComponent={getBiostatsAssistantScreen}
               options={{ title: "📊 Biostats Assistant" }}
             />
             <Stack.Screen
               name="Gems"
-              component={GemsScreen}
+              getComponent={getGemsScreen}
               options={{ title: "💎 Study Gems" }}
             />
 
@@ -263,22 +257,22 @@ const AppNavigator = () => {
             {/* ── Drawer-linked screens ── */}
             <Stack.Screen
               name="Notifications"
-              component={NotificationsScreen}
+              getComponent={getNotificationsScreen}
               options={{ title: "Notifications" }}
             />
             <Stack.Screen
               name="Profile"
-              component={ProfileScreen}
+              getComponent={getProfileScreen}
               options={{ title: "My Profile" }}
             />
             <Stack.Screen
               name="Bookmarks"
-              component={BookmarksScreen}
+              getComponent={getBookmarksScreen}
               options={{ title: "Bookmarks" }}
             />
             <Stack.Screen
               name="AdminLibraryReview"
-              component={AdminLibraryReviewScreen}
+              getComponent={getAdminLibraryReviewScreen}
               options={{ title: "Library Review Queue" }}
             />
           </>

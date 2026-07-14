@@ -106,20 +106,27 @@ const applyOverrideToTheory = (theoryItems, override) => {
   };
 };
 
+const getActiveOverrides = (approvedOverrides = []) =>
+  approvedOverrides.filter(
+    (override) =>
+      override &&
+      (override.status === "active" || override.status === "approved") &&
+      typeof override.proposedContent === "string",
+  );
+
+// Practical content is never patched by overrides — always share the base array.
+// Theory is shared by reference when there are no overrides (cold start), and
+// deep-cloned only when overrides must be applied so baseMockData stays pure.
 const buildSections = (approvedOverrides = []) => {
+  const activeOverrides = getActiveOverrides(approvedOverrides);
+
+  if (activeOverrides.length === 0) {
+    return { theory: baseMockData, practical: basePracticalData, cloned: false };
+  }
+
   const theory = cloneDeep(baseMockData);
-  const practical = cloneDeep(basePracticalData);
-
-  approvedOverrides
-    .filter(
-      (override) =>
-        override &&
-        (override.status === "active" || override.status === "approved") &&
-        typeof override.proposedContent === "string",
-    )
-    .forEach((override) => applyOverrideToTheory(theory, override));
-
-  return { theory, practical };
+  activeOverrides.forEach((override) => applyOverrideToTheory(theory, override));
+  return { theory, practical: basePracticalData, cloned: true };
 };
 
 const rebuildDerivedIndexes = () => {
@@ -159,11 +166,26 @@ const rebuildDerivedIndexes = () => {
   TOTAL_LEAF_CONTENT_ITEMS = LEAF_CONTENT_ENTRIES.length;
 };
 
+let lastHydrateOverrideCount = -1;
+
 export const hydrateContentRegistry = (approvedOverrides = []) => {
+  const activeCount = getActiveOverrides(approvedOverrides).length;
+
+  // Skip rebuild when already on the base (no-override) tree — common on
+  // cold start followed by a refresh that finds zero active overrides.
+  if (
+    activeCount === 0 &&
+    lastHydrateOverrideCount === 0 &&
+    TOTAL_LEAF_CONTENT_ITEMS > 0
+  ) {
+    return;
+  }
+
   const nextSections = buildSections(approvedOverrides);
   replaceArrayContents(CONTENT_SECTIONS.theory, nextSections.theory);
   replaceArrayContents(CONTENT_SECTIONS.practical, nextSections.practical);
   rebuildDerivedIndexes();
+  lastHydrateOverrideCount = activeCount;
 };
 
 hydrateContentRegistry();

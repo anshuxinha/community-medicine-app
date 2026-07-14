@@ -289,29 +289,67 @@ export const AppProvider = ({ children }) => {
       const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
         if (firebaseUser) {
           cloudHydratedRef.current = false;
-          await refreshLibraryContent();
-          let claimsPremium = false;
-          let claimsAdmin = false;
-          try {
-            const tokenResult = await getIdTokenResult(firebaseUser, true);
-            claimsPremium = tokenResult.claims.isPremium === true;
-            claimsAdmin = tokenResult.claims.isAdmin === true;
-          } catch {
-            // ignore
+          const isInitialLoad = initialLoadRef.current;
+          initialLoadRef.current = false;
+
+          // Cold start only: paint from local cache so the spinner is not held
+          // by network. Skip on fresh login so device-conflict handling in
+          // LoginScreen still sees user === undefined until checks finish.
+          if (isInitialLoad) {
+            try {
+              const [cachedUserStr, cachedAccountState] = await Promise.all([
+                AsyncStorage.getItem("user"),
+                AsyncStorage.getItem(getAccountStateKey(firebaseUser.uid)),
+              ]);
+              if (cachedUserStr) {
+                const cachedUser = JSON.parse(cachedUserStr);
+                if (cachedUser?.uid === firebaseUser.uid) {
+                  if (cachedAccountState) {
+                    const cachedState = hydrateStoredState(
+                      JSON.parse(cachedAccountState),
+                    );
+                    if (cachedState.lastReadDate) {
+                      const diffDays = dayDiffFromToday(
+                        cachedState.lastReadDate,
+                      );
+                      if (diffDays !== null && diffDays > 1) {
+                        setCurrentStreak(0);
+                      }
+                    }
+                  }
+                  setUser(cachedUser);
+                  setAccountPremium(Boolean(cachedUser.isPremium));
+                  if (cachedUser.premiumType) {
+                    setPremiumType(cachedUser.premiumType);
+                  }
+                }
+              }
+            } catch (_) {
+              // ignore cache paint failures
+            }
           }
 
-          try {
-            const deviceId = await getDeviceId();
-            currentDeviceIdRef.current = deviceId;
-            const userDocRef = doc(db, "users", firebaseUser.uid);
-            const userDoc = await Promise.race([
-              getDoc(userDocRef),
-              timeoutPromise(8000),
-            ]);
-            const data = userDoc.exists() ? userDoc.data() : {};
+          // Non-critical for first frame — run without blocking setUser
+          void refreshLibraryContent();
 
-            const isInitialLoad = initialLoadRef.current;
-            initialLoadRef.current = false;
+          let claimsPremium = false;
+          let claimsAdmin = false;
+
+          try {
+            const userDocRef = doc(db, "users", firebaseUser.uid);
+            const [deviceId, tokenResult, userDoc] = await Promise.all([
+              getDeviceId(),
+              getIdTokenResult(firebaseUser, true).catch(() => null),
+              Promise.race([getDoc(userDocRef), timeoutPromise(8000)]),
+            ]);
+
+            currentDeviceIdRef.current = deviceId;
+            if (tokenResult) {
+              claimsPremium = tokenResult.claims.isPremium === true;
+              claimsAdmin = tokenResult.claims.isAdmin === true;
+            }
+
+            const data = userDoc.exists() ? userDoc.data() : {};
 
             // Safety net: ONLY on cold restart with a stale Firebase auth
             // session. Fresh logins are handled by the LoginScreen modal.
@@ -364,23 +402,10 @@ export const AppProvider = ({ children }) => {
               }, { merge: true }).catch(() => {});
             }
 
-            // Claim pending referral rewards for this user before setting up userData
             let finalPremiumStatus = premiumStatus;
             let finalPremiumExpiryDate = data.premiumExpiryDate || null;
             let finalTotalReferrals = data.totalReferrals || 0;
-            
-            try {
-              const claimed = await claimReferralRewards(firebaseUser.uid, finalPremiumExpiryDate, finalTotalReferrals);
-              if (claimed) {
-                finalPremiumStatus = true;
-                finalPremiumExpiryDate = claimed.newExpiryDate;
-                finalTotalReferrals = claimed.newTotalReferrals;
-              }
-            } catch (err) {
-              console.warn("[Referrals] Failed to check/claim rewards on login:", err.message);
-            }
 
-            // Set subscription expiry in state so ProfileScreen displays it
             if (finalPremiumExpiryDate) {
               setSubscriptionExpiry(finalPremiumExpiryDate);
             }
@@ -393,6 +418,7 @@ export const AppProvider = ({ children }) => {
               isAdmin,
               pushToken: data.pushToken || null,
               referralCode,
+              premiumType: fetchedPremiumType,
             };
 
             const cloudState = hydrateStoredState(data);
@@ -408,15 +434,38 @@ export const AppProvider = ({ children }) => {
             setAccountPremium(Boolean(finalPremiumStatus));
             cloudHydratedRef.current = true;
 
-            await AsyncStorage.setItem("user", JSON.stringify(userData));
-            await AsyncStorage.setItem(
+            void AsyncStorage.setItem("user", JSON.stringify(userData));
+            void AsyncStorage.setItem(
               getAccountStateKey(firebaseUser.uid),
               JSON.stringify(cloudState),
             );
 
+            // Background: referrals may grant premium after first paint
+            void claimReferralRewards(
+              firebaseUser.uid,
+              finalPremiumExpiryDate,
+              finalTotalReferrals,
+            )
+              .then((claimed) => {
+                if (!claimed) return;
+                setAccountPremium(true);
+                setSubscriptionExpiry(claimed.newExpiryDate);
+                setUser((current) =>
+                  current && current.uid === firebaseUser.uid
+                    ? { ...current, isPremium: true }
+                    : current,
+                );
+              })
+              .catch((err) => {
+                console.warn(
+                  "[Referrals] Failed to check/claim rewards on login:",
+                  err.message,
+                );
+              });
+
             syncAllAnnotations(firebaseUser.uid);
             syncAllHighlights(firebaseUser.uid);
-            await syncReceivedUpvotes(firebaseUser.uid);
+            void syncReceivedUpvotes(firebaseUser.uid);
           } catch (err) {
             console.warn("Firestore fetch failed/timed out, using auth claims:", err?.message);
             const userData = {
@@ -444,7 +493,7 @@ export const AppProvider = ({ children }) => {
             setUser(userData);
             setAccountPremium(Boolean(claimsPremium));
             cloudHydratedRef.current = true;
-            await AsyncStorage.setItem("user", JSON.stringify(userData));
+            void AsyncStorage.setItem("user", JSON.stringify(userData));
           }
         } else {
           cloudHydratedRef.current = false;
