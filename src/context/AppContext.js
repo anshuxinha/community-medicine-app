@@ -433,6 +433,101 @@ export const AppProvider = ({ children }) => {
     }
   };
 
+  const persistLearningLocally = async (uid, snapshot) => {
+    if (!uid || !snapshot) return;
+    try {
+      const pairs = [
+        ["readItems", JSON.stringify(snapshot.readItems || [])],
+        [
+          "readItemVersions",
+          JSON.stringify(snapshot.readItemVersions || {}),
+        ],
+        ["bookmarks", JSON.stringify(snapshot.bookmarks || [])],
+        [
+          "currentStreak",
+          String(
+            typeof snapshot.currentStreak === "number"
+              ? snapshot.currentStreak
+              : 0,
+          ),
+        ],
+        [
+          "studyScore",
+          String(
+            typeof snapshot.studyScore === "number" ? snapshot.studyScore : 0,
+          ),
+        ],
+        [
+          "dailyReadHistory",
+          JSON.stringify(snapshot.dailyReadHistory || {}),
+        ],
+        [getAccountStateKey(uid), JSON.stringify(snapshot)],
+      ];
+      if (snapshot.lastReadDate) {
+        pairs.push(["lastReadDate", snapshot.lastReadDate]);
+      } else {
+        await AsyncStorage.removeItem("lastReadDate");
+      }
+      await AsyncStorage.multiSet(pairs);
+    } catch (err) {
+      console.warn("Failed to persist learning state locally:", err?.message);
+    }
+  };
+
+  const loadLocalLearningSnapshot = async (uid) => {
+    try {
+      const keys = [
+        getAccountStateKey(uid),
+        "readItems",
+        "readItemVersions",
+        "bookmarks",
+        "currentStreak",
+        "lastReadDate",
+        "studyScore",
+        "dailyReadHistory",
+      ];
+      const entries = await AsyncStorage.multiGet(keys);
+      const map = Object.fromEntries(entries);
+
+      const candidates = [];
+      if (map[getAccountStateKey(uid)]) {
+        try {
+          candidates.push(JSON.parse(map[getAccountStateKey(uid)]));
+        } catch (_) {}
+      }
+
+      // Individual keys may be newer if a previous save was interrupted
+      // before accountState was written (accountState used to be last).
+      let legacy = null;
+      try {
+        legacy = {
+          readItems: map.readItems ? JSON.parse(map.readItems) : [],
+          readItemVersions: map.readItemVersions
+            ? JSON.parse(map.readItemVersions)
+            : {},
+          bookmarks: map.bookmarks ? JSON.parse(map.bookmarks) : [],
+          currentStreak: map.currentStreak
+            ? parseInt(map.currentStreak, 10) || 0
+            : 0,
+          lastReadDate: map.lastReadDate || null,
+          studyScore: map.studyScore ? parseInt(map.studyScore, 10) || 0 : 0,
+          dailyReadHistory: map.dailyReadHistory
+            ? JSON.parse(map.dailyReadHistory)
+            : {},
+        };
+      } catch (_) {
+        legacy = null;
+      }
+      if (legacy) candidates.push(legacy);
+
+      if (candidates.length === 0) return null;
+      return mergeLearningStates(...candidates);
+    } catch (err) {
+      console.warn("Failed to load local learning snapshot:", err?.message);
+      return null;
+    }
+  };
+
   const hydrateStoredState = (rawState = {}) => {
     const parsedState = sanitizeCloudState(rawState);
     const migratedReadItemVersions = migrateLegacyReadItems(
@@ -440,19 +535,33 @@ export const AppProvider = ({ children }) => {
       parsedState.readItemVersions,
     );
 
-    prevStreakRef.current = parsedState.currentStreak;
-    setReadItems(parsedState.readItems);
-    setReadItemVersions(migratedReadItemVersions);
-    setBookmarks(parsedState.bookmarks);
-    setCurrentStreak(parsedState.currentStreak);
-    setLastReadDate(parsedState.lastReadDate);
-    setStudyScore(parsedState.studyScore);
-    setDailyReadHistory(parsedState.dailyReadHistory);
-
-    return {
+    const nextState = {
       ...parsedState,
       readItemVersions: migratedReadItemVersions,
     };
+
+    // Keep ref in sync immediately so cold-start merge sees painted cache,
+    // not the empty initial ref, and so markAsRead can persist correctly.
+    learningStateRef.current = {
+      readItems: nextState.readItems,
+      readItemVersions: nextState.readItemVersions,
+      bookmarks: nextState.bookmarks,
+      currentStreak: nextState.currentStreak,
+      lastReadDate: nextState.lastReadDate,
+      studyScore: nextState.studyScore,
+      dailyReadHistory: nextState.dailyReadHistory,
+    };
+
+    prevStreakRef.current = nextState.currentStreak;
+    setReadItems(nextState.readItems);
+    setReadItemVersions(migratedReadItemVersions);
+    setBookmarks(nextState.bookmarks);
+    setCurrentStreak(nextState.currentStreak);
+    setLastReadDate(nextState.lastReadDate);
+    setStudyScore(nextState.studyScore);
+    setDailyReadHistory(nextState.dailyReadHistory);
+
+    return nextState;
   };
 
   const syncReceivedUpvotes = async (uid) => {
@@ -508,25 +617,18 @@ export const AppProvider = ({ children }) => {
           let cachedUsername = null;
           if (isInitialLoad) {
             try {
-              const [cachedUserStr, cachedAccountState] = await Promise.all([
-                AsyncStorage.getItem("user"),
-                AsyncStorage.getItem(getAccountStateKey(firebaseUser.uid)),
-              ]);
+              const cachedUserStr = await AsyncStorage.getItem("user");
               if (cachedUserStr) {
                 const cachedUser = JSON.parse(cachedUserStr);
                 if (cachedUser?.uid === firebaseUser.uid) {
                   cachedUsername = cachedUser.username || null;
-                  if (cachedAccountState) {
-                    cachedAccountRaw = JSON.parse(cachedAccountState);
-                    const cachedState = hydrateStoredState(cachedAccountRaw);
-                    if (cachedState.lastReadDate) {
-                      const diffDays = dayDiffFromToday(
-                        cachedState.lastReadDate,
-                      );
-                      if (diffDays !== null && diffDays > 1) {
-                        setCurrentStreak(0);
-                      }
-                    }
+                  // Merge accountState + individual keys so a partial prior
+                  // save cannot paint one-read-behind progress.
+                  cachedAccountRaw = await loadLocalLearningSnapshot(
+                    firebaseUser.uid,
+                  );
+                  if (cachedAccountRaw) {
+                    hydrateStoredState(cachedAccountRaw);
                   }
                   setUser(cachedUser);
                   setAccountPremium(Boolean(cachedUser.isPremium));
@@ -642,12 +744,9 @@ export const AppProvider = ({ children }) => {
             // Merge top-level cloud + deviceStates + local cache so a sparse
             // cloud doc cannot wipe richer progress after cache paint.
             if (!cachedAccountRaw) {
-              try {
-                const cachedStr = await AsyncStorage.getItem(
-                  getAccountStateKey(firebaseUser.uid),
-                );
-                if (cachedStr) cachedAccountRaw = JSON.parse(cachedStr);
-              } catch (_) {}
+              cachedAccountRaw = await loadLocalLearningSnapshot(
+                firebaseUser.uid,
+              );
             }
             const mergedLearningState = collectLearningStateCandidates(
               data,
@@ -662,10 +761,7 @@ export const AppProvider = ({ children }) => {
             cloudHydratedRef.current = true;
 
             void AsyncStorage.setItem("user", JSON.stringify(userData));
-            void AsyncStorage.setItem(
-              getAccountStateKey(firebaseUser.uid),
-              JSON.stringify(cloudState),
-            );
+            void persistLearningLocally(firebaseUser.uid, cloudState);
 
             // Background: referrals may grant premium after first paint
             void claimReferralRewards(
@@ -781,13 +877,7 @@ export const AppProvider = ({ children }) => {
         const data = userDoc.data();
         await refreshLibraryContent();
 
-        let cachedAccountRaw = null;
-        try {
-          const cachedStr = await AsyncStorage.getItem(
-            getAccountStateKey(user.uid),
-          );
-          if (cachedStr) cachedAccountRaw = JSON.parse(cachedStr);
-        } catch (_) {}
+        const cachedAccountRaw = await loadLocalLearningSnapshot(user.uid);
 
         const mergedLearningState = collectLearningStateCandidates(
           data,
@@ -797,10 +887,7 @@ export const AppProvider = ({ children }) => {
         );
         const cloudState = hydrateStoredState(mergedLearningState);
 
-        await AsyncStorage.setItem(
-          getAccountStateKey(user.uid),
-          JSON.stringify(cloudState),
-        );
+        await persistLearningLocally(user.uid, cloudState);
 
         syncAllAnnotations(user.uid);
         syncAllHighlights(user.uid);
@@ -811,11 +898,20 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  // Sync from cloud and check streak when app comes to foreground
+  // Flush local learning state when backgrounding; refresh from cloud on resume
   useEffect(() => {
     let prevState = AppState.currentState;
 
     const handleAppStateChange = (nextAppState) => {
+      if (
+        prevState === "active" &&
+        nextAppState.match(/inactive|background/)
+      ) {
+        const uid = userRef.current?.uid;
+        if (uid && cloudHydratedRef.current && !isLoggingOutRef.current) {
+          void persistLearningLocally(uid, learningStateRef.current);
+        }
+      }
       if (
         prevState.match(/inactive|background/) &&
         nextAppState === "active"
@@ -960,24 +1056,6 @@ export const AppProvider = ({ children }) => {
       }
 
       try {
-        // Save to local AsyncStorage
-        await AsyncStorage.setItem("readItems", JSON.stringify(readItems));
-        await AsyncStorage.setItem(
-          "readItemVersions",
-          JSON.stringify(readItemVersions),
-        );
-        await AsyncStorage.setItem("bookmarks", JSON.stringify(bookmarks));
-        await AsyncStorage.setItem("highlights", JSON.stringify(highlights));
-        await AsyncStorage.setItem("currentStreak", currentStreak.toString());
-        if (lastReadDate)
-          await AsyncStorage.setItem("lastReadDate", lastReadDate);
-        else await AsyncStorage.removeItem("lastReadDate");
-        await AsyncStorage.setItem("studyScore", studyScore.toString());
-        await AsyncStorage.setItem(
-          "dailyReadHistory",
-          JSON.stringify(dailyReadHistory),
-        );
-
         const accountStateSnapshot = {
           readItems,
           readItemVersions,
@@ -988,40 +1066,32 @@ export const AppProvider = ({ children }) => {
           studyScore,
         };
 
-        // Save to user's cached state in AsyncStorage
-        await AsyncStorage.setItem(
-          getAccountStateKey(user.uid),
-          JSON.stringify(accountStateSnapshot),
-        );
-
+        // Local first (batch) so kill-after-read keeps progress for cold start
+        await persistLearningLocally(user.uid, accountStateSnapshot);
+        await AsyncStorage.setItem("highlights", JSON.stringify(highlights));
         await AsyncStorage.setItem("user", JSON.stringify(user));
         await AsyncStorage.setItem("isPremium", JSON.stringify(isPremium));
 
-        // Save to Firebase - both global (for initial load) and device-specific (for device limit)
-        if (user.uid && cloudHydratedRef.current) {
-          try {
-            const deviceId =
-              currentDeviceIdRef.current || (await getDeviceId());
+        // Firestore second — network may lag; local cache is source for first paint
+        try {
+          const deviceId =
+            currentDeviceIdRef.current || (await getDeviceId());
 
-            const updateData = {
-              // Global learning progress (latest state)
-              readItems,
-              readItemVersions,
-              bookmarks,
-              currentStreak,
-              lastReadDate: lastReadDate || null,
-              dailyReadHistory,
-              studyScore,
-              // Device-specific learning progress (for device switching)
-              [`deviceStates.${deviceId}`]: accountStateSnapshot,
-              syncedAt: serverTimestamp(),
-            };
+          const updateData = {
+            readItems,
+            readItemVersions,
+            bookmarks,
+            currentStreak,
+            lastReadDate: lastReadDate || null,
+            dailyReadHistory,
+            studyScore,
+            [`deviceStates.${deviceId}`]: accountStateSnapshot,
+            syncedAt: serverTimestamp(),
+          };
 
-            await updateDoc(doc(db, "users", user.uid), updateData);
-          } catch (e) {
-            // silently handle if they are offline
-            console.warn("Failed to sync to Firebase:", e?.message);
-          }
+          await updateDoc(doc(db, "users", user.uid), updateData);
+        } catch (e) {
+          console.warn("Failed to sync to Firebase:", e?.message);
         }
       } catch (error) {
         console.error("Failed to save state to AsyncStorage:", error);
@@ -1040,7 +1110,6 @@ export const AppProvider = ({ children }) => {
     dailyReadHistory,
     user,
     isPremium,
-    
   ]);
 
   useEffect(() => {
@@ -1118,45 +1187,68 @@ export const AppProvider = ({ children }) => {
       return;
     }
 
-    setReadItemVersions((previousVersions) => {
-      if (previousVersions[contentKey] === contentSignature) {
-        return previousVersions;
-      }
+    const prev = learningStateRef.current;
+    if (prev.readItemVersions?.[contentKey] === contentSignature) {
+      return;
+    }
 
-      const todayStr = new Date().toDateString();
-      if (lastReadDate !== todayStr) {
-        if (!lastReadDate) {
-          setCurrentStreak(1);
-        } else {
-          const diffDays = dayDiffFromToday(lastReadDate);
+    const todayStr = new Date().toDateString();
+    let nextStreak = prev.currentStreak || 0;
+    let nextLastRead = prev.lastReadDate || null;
+    let nextScore = prev.studyScore || 0;
+    let nextHistory = { ...(prev.dailyReadHistory || {}) };
 
-          if (diffDays === 1) {
-            setCurrentStreak((previousStreak) => previousStreak + 1);
-          } else if (diffDays === null || diffDays > 1) {
-            setCurrentStreak(1);
-          }
+    if (prev.lastReadDate !== todayStr) {
+      if (!prev.lastReadDate) {
+        nextStreak = 1;
+      } else {
+        const diffDays = dayDiffFromToday(prev.lastReadDate);
+        if (diffDays === 1) {
+          nextStreak = (prev.currentStreak || 0) + 1;
+        } else if (diffDays === null || diffDays > 1) {
+          nextStreak = 1;
         }
-        setLastReadDate(todayStr);
-        setStudyScore((previousScore) => previousScore + 10);
       }
+      nextLastRead = todayStr;
+      nextScore = (prev.studyScore || 0) + 10;
+    }
 
-      const dateKey = new Date().toISOString().split("T")[0];
-      setDailyReadHistory((previousHistory) => ({
-        ...previousHistory,
-        [dateKey]: (previousHistory[dateKey] || 0) + 1,
-      }));
+    const dateKey = new Date().toISOString().split("T")[0];
+    nextHistory = {
+      ...nextHistory,
+      [dateKey]: (nextHistory[dateKey] || 0) + 1,
+    };
 
-      setReadItems((previousTitles) =>
-        previousTitles.includes(itemTitle)
-          ? previousTitles
-          : [...previousTitles, itemTitle],
-      );
+    const nextVersions = {
+      ...(prev.readItemVersions || {}),
+      [contentKey]: contentSignature,
+    };
+    const nextReadItems = (prev.readItems || []).includes(itemTitle)
+      ? prev.readItems
+      : [...(prev.readItems || []), itemTitle];
 
-      return {
-        ...previousVersions,
-        [contentKey]: contentSignature,
-      };
-    });
+    const snapshot = {
+      readItems: nextReadItems,
+      readItemVersions: nextVersions,
+      bookmarks: prev.bookmarks || [],
+      currentStreak: nextStreak,
+      lastReadDate: nextLastRead,
+      dailyReadHistory: nextHistory,
+      studyScore: nextScore,
+    };
+
+    learningStateRef.current = snapshot;
+    setReadItemVersions(nextVersions);
+    setReadItems(nextReadItems);
+    setCurrentStreak(nextStreak);
+    setLastReadDate(nextLastRead);
+    setStudyScore(nextScore);
+    setDailyReadHistory(nextHistory);
+
+    const uid = userRef.current?.uid;
+    if (uid) {
+      void persistLearningLocally(uid, snapshot);
+    }
   };
 
   // Trigger streak milestone notifications when streak changes
@@ -1186,24 +1278,31 @@ export const AppProvider = ({ children }) => {
       return;
     }
 
-    setReadItemVersions((previousVersions) => {
-      let changed = false;
-      const nextVersions = { ...previousVersions };
-
-      refsToClear.forEach(({ contentKey }) => {
-        if (nextVersions[contentKey]) {
-          delete nextVersions[contentKey];
-          changed = true;
-        }
-      });
-
-      if (!changed) {
-        return previousVersions;
+    const prev = learningStateRef.current;
+    const nextVersions = { ...(prev.readItemVersions || {}) };
+    let changed = false;
+    refsToClear.forEach(({ contentKey }) => {
+      if (nextVersions[contentKey]) {
+        delete nextVersions[contentKey];
+        changed = true;
       }
-
-      setReadItems(getReadTitles(nextVersions));
-      return nextVersions;
     });
+    if (!changed) return;
+
+    const nextReadItems = getReadTitles(nextVersions);
+    const snapshot = {
+      ...prev,
+      readItems: nextReadItems,
+      readItemVersions: nextVersions,
+    };
+    learningStateRef.current = snapshot;
+    setReadItemVersions(nextVersions);
+    setReadItems(nextReadItems);
+
+    const uid = userRef.current?.uid;
+    if (uid) {
+      void persistLearningLocally(uid, snapshot);
+    }
   };
 
   const getBookmarkIdentity = (itemOrTitle) => {
@@ -1229,26 +1328,36 @@ export const AppProvider = ({ children }) => {
     const targetIdentity = getBookmarkIdentity(item);
     if (!targetIdentity) return;
 
-    setBookmarks((previousBookmarks) => {
-      const alreadyBookmarked = previousBookmarks.some(
-        (bookmark) => getBookmarkIdentity(bookmark) === targetIdentity,
-      );
+    const prev = learningStateRef.current;
+    const previousBookmarks = prev.bookmarks || [];
+    const alreadyBookmarked = previousBookmarks.some(
+      (bookmark) => getBookmarkIdentity(bookmark) === targetIdentity,
+    );
 
-      if (alreadyBookmarked) {
-        return previousBookmarks.filter(
+    const nextBookmarks = alreadyBookmarked
+      ? previousBookmarks.filter(
           (bookmark) => getBookmarkIdentity(bookmark) !== targetIdentity,
-        );
-      }
+        )
+      : [
+          ...previousBookmarks,
+          {
+            ...item,
+            contentKey:
+              resolveBookmarkContentKey(item) || item.contentKey || null,
+          },
+        ];
 
-      return [
-        ...previousBookmarks,
-        {
-          ...item,
-          contentKey:
-            resolveBookmarkContentKey(item) || item.contentKey || null,
-        },
-      ];
-    });
+    const snapshot = {
+      ...prev,
+      bookmarks: nextBookmarks,
+    };
+    learningStateRef.current = snapshot;
+    setBookmarks(nextBookmarks);
+
+    const uid = userRef.current?.uid;
+    if (uid) {
+      void persistLearningLocally(uid, snapshot);
+    }
   };
 
   const saveHighlight = (id, htmlContent) => {
@@ -1466,13 +1575,9 @@ export const AppProvider = ({ children }) => {
         ]);
         if (userDoc.exists()) {
           const data = userDoc.data();
-          let cachedAccountRaw = null;
-          try {
-            const cachedStr = await AsyncStorage.getItem(
-              getAccountStateKey(userData.uid),
-            );
-            if (cachedStr) cachedAccountRaw = JSON.parse(cachedStr);
-          } catch (_) {}
+          const cachedAccountRaw = await loadLocalLearningSnapshot(
+            userData.uid,
+          );
           const deviceId =
             currentDeviceIdRef.current || (await getDeviceId());
           currentDeviceIdRef.current = deviceId;
@@ -1483,10 +1588,7 @@ export const AppProvider = ({ children }) => {
             learningStateRef.current,
           );
           const cloudState = hydrateStoredState(mergedLearningState);
-          await AsyncStorage.setItem(
-            getAccountStateKey(userData.uid),
-            JSON.stringify(cloudState),
-          );
+          await persistLearningLocally(userData.uid, cloudState);
         }
         cloudHydratedRef.current = true;
         syncAllAnnotations(userData.uid);
