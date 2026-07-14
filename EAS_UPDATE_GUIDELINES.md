@@ -10,6 +10,18 @@ When running `eas update`, changes weren't visible in the production app because
 
 ## Solution Workflow for Future Updates
 
+### 0. Always Commit and Push Related Changes First (MANDATORY)
+
+If this OTA is for code/config you changed locally:
+
+```bash
+git add <related-files>
+git commit -m "Your message"
+git push origin main
+```
+
+Do **not** publish related updates from a dirty or unpushed tree. EAS records the git commit; uncommitted publishes show `commit*` and diverge from GitHub.
+
 ### 1. Always Check Channel Configuration First
 
 ```bash
@@ -57,12 +69,12 @@ Use `--clear-cache` flag when:
 ## Quick Reference Command
 
 ```bash
-# Complete update workflow:
-git add . && git commit -m "Your message" && git push origin main
+# Complete update workflow (commit/push first when related):
+git add <related-files> && git commit -m "Your message" && git push origin main
 eas channel:edit production --branch main --non-interactive
 eas update --branch main --message "Your message" --clear-cache --environment production
 ```
 
 ## Key Insight
 
-The `--auto` flag uses current git branch but doesn't guarantee the update reaches the right channel. Always verify channel mappings after major changes.
+The `--auto` flag uses current git branch but doesn't guarantee the update reaches the right channel. Always verify channel mappings after major changes. Always commit and push related work before publishing an OTA.

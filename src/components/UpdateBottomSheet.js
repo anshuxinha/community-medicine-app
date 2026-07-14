@@ -45,32 +45,42 @@ const UpdateBottomSheet = () => {
     // so a static import crashes the entire JS bundle before React mounts.
     const isNativeUpdateAvailable = !!NativeModules.SpInAppUpdates;
 
-    if (isNativeUpdateAvailable) {
-      try {
-        // Dynamic require — only evaluated when the native module exists
-        const SpInAppUpdates = require("sp-react-native-in-app-updates").default;
-        const { AndroidUpdateType } = require("sp-react-native-in-app-updates");
-        const inAppUpdates = new SpInAppUpdates(false);
-        inAppUpdates
-          .checkNeedsUpdate()
-          .then((result) => {
-            if (result.shouldUpdate) {
-              inAppUpdates.startUpdate({
-                updateType: AndroidUpdateType.IMMEDIATE,
+    if (!isNativeUpdateAvailable) {
+      // Older binaries (<1.0.6) without the native SDK
+      checkStoreUpdates();
+      return;
+    }
+
+    try {
+      // Dynamic require — only evaluated when the native module exists
+      const SpInAppUpdates = require("sp-react-native-in-app-updates").default;
+      // Public export is IAUUpdateKind (not AndroidUpdateType)
+      const { IAUUpdateKind } = require("sp-react-native-in-app-updates");
+      const inAppUpdates = new SpInAppUpdates(false);
+
+      inAppUpdates
+        .checkNeedsUpdate()
+        .then((result) => {
+          if (result.shouldUpdate) {
+            return inAppUpdates
+              .startUpdate({
+                updateType: IAUUpdateKind.IMMEDIATE,
+              })
+              .catch((err) => {
+                console.warn("Native startUpdate failed, falling back:", err);
+                return checkStoreUpdates();
               });
-            }
-          })
-          .catch((err) => {
-            console.warn("Native in-app update check failed:", err);
-            // Fallback to custom sheet if check failed
-            checkStoreUpdates();
-          });
-      } catch (e) {
-        console.warn("SpInAppUpdates initialization failed, falling back:", e);
-        checkStoreUpdates();
-      }
-    } else {
-      // Fallback for older versions below 1.0.6 that don't have the native SDK
+          }
+          // Play says no update (rollout/cache/track) — still check Firestore
+          // so users on 1.0.6+ see the custom sheet when config/app is newer.
+          return checkStoreUpdates();
+        })
+        .catch((err) => {
+          console.warn("Native in-app update check failed:", err);
+          checkStoreUpdates();
+        });
+    } catch (e) {
+      console.warn("SpInAppUpdates initialization failed, falling back:", e);
       checkStoreUpdates();
     }
   }, []);
@@ -104,10 +114,17 @@ const UpdateBottomSheet = () => {
           ? parseInt(data.latest_ios_build || "0", 10)
           : parseInt(data.latest_android_build || "0", 10);
 
-        const currentVersion = Constants.nativeAppVersion || Constants.expoConfig?.version || "1.0.0";
-        const currentBuild = Platform.OS === "ios"
-          ? parseInt(Constants.expoConfig?.ios?.buildNumber || Constants.nativeBuildVersion || "0", 10)
-          : parseInt(Constants.expoConfig?.android?.versionCode || Constants.nativeBuildVersion || "0", 10);
+        // Prefer native binary version over expoConfig (OTA can rewrite expoConfig)
+        const currentVersion =
+          Constants.nativeAppVersion || Constants.expoConfig?.version || "1.0.0";
+        const currentBuild = parseInt(
+          Constants.nativeBuildVersion ||
+            (Platform.OS === "ios"
+              ? Constants.expoConfig?.ios?.buildNumber
+              : Constants.expoConfig?.android?.versionCode) ||
+            "0",
+          10,
+        );
 
         // Show popup if version is lower OR same version but lower build number
         const needsUpdate = isVersionLower(currentVersion, latestVersion) ||
