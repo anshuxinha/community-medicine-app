@@ -242,15 +242,28 @@ const onShouldStartLoadWithRequest = (request) => {
 
 /**
  * Bunny Stream embed shell with modern outer-shell gestures (Player.js).
- * Fail-open: if Player.js fails to load/init, the iframe still plays with default controls.
+ * Fail-open: if Player.js fails, the iframe still plays with default controls.
  *
- * Gestures (left/right zones only; center + bottom control strip pass through to Bunny UI):
+ * Gestures (bottom scrubber strip left free except fullscreen catch):
+ * - Tap center → play / pause
  * - Double-tap left/right → seek −10s / +10s
- * - Long-press left/right → continuous skip (Bunny Player.js has no setPlaybackRate)
- * - Vertical drag on right zone → volume
+ * - Long-press left/right → continuous skip (no setPlaybackRate in Player.js)
+ * - Vertical drag right → volume
+ * - Fullscreen catch (bottom-right) → app/shell fullscreen so gesture zones stay active
  */
 const playerHtml = (embedUrl) => {
-  const safeUrl = String(embedUrl || "")
+  let resolvedUrl = String(embedUrl || "");
+  try {
+    const parsed = new URL(resolvedUrl);
+    // Keep playback in the web player so our shell (and gestures) remain on top.
+    parsed.searchParams.set("playsinline", "true");
+    parsed.searchParams.set("disableIosPlayer", "true");
+    resolvedUrl = parsed.toString();
+  } catch (_err) {
+    /* use raw url */
+  }
+
+  const safeUrl = resolvedUrl
     .replace(/&/g, "&amp;")
     .replace(/"/g, "&quot;")
     .replace(/</g, "&lt;")
@@ -285,8 +298,6 @@ const playerHtml = (embedUrl) => {
         display: block;
         background: #000;
       }
-      /* Gesture zones sit above the iframe but leave the center and bottom strip free
-         so Bunny's play/pause, scrubber, and fullscreen remain tappable. */
       .zones {
         position: absolute;
         inset: 0;
@@ -296,62 +307,138 @@ const playerHtml = (embedUrl) => {
       .zone {
         position: absolute;
         top: 0;
-        bottom: 56px;
-        width: 32%;
+        bottom: 52px;
         pointer-events: auto;
         -webkit-tap-highlight-color: transparent;
       }
-      .zone-left { left: 0; }
-      .zone-right { right: 0; }
-      .flash {
+      .zone-left { left: 0; width: 30%; }
+      .zone-center { left: 30%; width: 40%; }
+      .zone-right { right: 0; width: 30%; }
+      /* Cover Bunny's native fullscreen control so we expand the shell/app instead.
+         Native iframe fullscreen drops our gesture layer. */
+      .fs-catch {
         position: absolute;
-        top: 0;
-        bottom: 56px;
-        width: 32%;
-        display: none;
+        right: 0;
+        bottom: 0;
+        width: 56px;
+        height: 52px;
+        z-index: 5;
+        pointer-events: auto;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .feedback {
+        position: absolute;
+        z-index: 4;
+        pointer-events: none;
+        opacity: 0;
+        transform: scale(0.92);
+        transition: opacity 0.18s ease, transform 0.18s ease;
+      }
+      .feedback.show {
+        opacity: 1;
+        transform: scale(1);
+      }
+      .feedback-side {
+        top: 50%;
+        width: 30%;
+        display: flex;
         align-items: center;
         justify-content: center;
-        pointer-events: none;
-        z-index: 3;
-        background: rgba(0,0,0,0.28);
+        transform: translateY(-50%) scale(0.92);
       }
-      .flash-left { left: 0; border-radius: 0 12px 12px 0; }
-      .flash-right { right: 0; border-radius: 12px 0 0 12px; }
-      .flash.show { display: flex; }
-      .flash-inner {
-        color: #fff;
-        font: 600 15px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        text-align: center;
-        text-shadow: 0 1px 3px rgba(0,0,0,0.55);
+      .feedback-side.show {
+        transform: translateY(-50%) scale(1);
       }
-      .flash-icon {
-        font-size: 28px;
-        line-height: 1;
-        margin-bottom: 4px;
+      .feedback-left { left: 0; }
+      .feedback-right { right: 0; }
+      .feedback-center {
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%) scale(0.92);
+      }
+      .feedback-center.show {
+        transform: translate(-50%, -50%) scale(1);
+      }
+      .pill {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        min-width: 64px;
+        padding: 12px 14px;
+        border-radius: 16px;
+        background: rgba(12, 12, 14, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        color: rgba(255, 255, 255, 0.92);
+        font: 500 12px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        letter-spacing: 0.02em;
+      }
+      .pill.center {
+        width: 56px;
+        height: 56px;
+        min-width: 56px;
+        padding: 0;
+        border-radius: 999px;
+      }
+      .pill svg {
+        display: block;
+        width: 22px;
+        height: 22px;
+        stroke: rgba(255, 255, 255, 0.92);
+        fill: none;
+        stroke-width: 1.6;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .pill.center svg {
+        width: 24px;
+        height: 24px;
+        fill: rgba(255, 255, 255, 0.92);
+        stroke: none;
+      }
+      .pill .label {
+        font-variant-numeric: tabular-nums;
+        opacity: 0.9;
       }
       .toast {
         position: absolute;
         left: 50%;
-        top: 18%;
+        top: 14%;
         transform: translateX(-50%);
-        z-index: 4;
+        z-index: 6;
         pointer-events: none;
         opacity: 0;
-        transition: opacity 0.15s ease;
-        background: rgba(0,0,0,0.62);
-        color: #fff;
-        font: 600 14px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        padding: 8px 14px;
+        transition: opacity 0.16s ease;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 12px;
         border-radius: 999px;
-        white-space: nowrap;
+        background: rgba(12, 12, 14, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.9);
+        font: 500 12px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
       }
       .toast.show { opacity: 1; }
+      .toast svg {
+        width: 14px;
+        height: 14px;
+        stroke: rgba(255, 255, 255, 0.9);
+        fill: none;
+        stroke-width: 1.6;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
     </style>
-    <!-- Player.js must load before the iframe per Bunny docs -->
     <script src="https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js"></script>
   </head>
   <body>
-    <div class="shell">
+    <div class="shell" id="shell">
       <iframe
         id="bunny-player"
         src="${safeUrl}"
@@ -361,21 +448,44 @@ const playerHtml = (embedUrl) => {
       ></iframe>
       <div class="zones">
         <div class="zone zone-left" id="zone-left" data-side="left"></div>
+        <div class="zone zone-center" id="zone-center" data-side="center"></div>
         <div class="zone zone-right" id="zone-right" data-side="right"></div>
       </div>
-      <div class="flash flash-left" id="flash-left">
-        <div class="flash-inner">
-          <div class="flash-icon">&#9194;</div>
-          <div id="flash-left-label">-10s</div>
+      <div class="fs-catch" id="fs-catch" aria-label="Fullscreen"></div>
+
+      <div class="feedback feedback-side feedback-left" id="flash-left">
+        <div class="pill">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <polyline points="11 6 5 12 11 18"></polyline>
+            <polyline points="18 6 12 12 18 18"></polyline>
+          </svg>
+          <span class="label" id="flash-left-label">10s</span>
         </div>
       </div>
-      <div class="flash flash-right" id="flash-right">
-        <div class="flash-inner">
-          <div class="flash-icon">&#9193;</div>
-          <div id="flash-right-label">+10s</div>
+      <div class="feedback feedback-side feedback-right" id="flash-right">
+        <div class="pill">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <polyline points="13 6 19 12 13 18"></polyline>
+            <polyline points="6 6 12 12 6 18"></polyline>
+          </svg>
+          <span class="label" id="flash-right-label">10s</span>
         </div>
       </div>
-      <div class="toast" id="toast"></div>
+      <div class="feedback feedback-center" id="flash-center">
+        <div class="pill center" id="center-pill">
+          <svg id="center-icon-play" viewBox="0 0 24 24" aria-hidden="true" style="display:none">
+            <polygon points="9 6 19 12 9 18 9 6"></polygon>
+          </svg>
+          <svg id="center-icon-pause" viewBox="0 0 24 24" aria-hidden="true" style="display:none">
+            <rect x="7" y="6" width="3.5" height="12" rx="1"></rect>
+            <rect x="13.5" y="6" width="3.5" height="12" rx="1"></rect>
+          </svg>
+        </div>
+      </div>
+      <div class="toast" id="toast">
+        <svg id="toast-icon" viewBox="0 0 24 24" aria-hidden="true"></svg>
+        <span id="toast-text"></span>
+      </div>
     </div>
     <script>
       (function () {
@@ -396,19 +506,36 @@ const playerHtml = (embedUrl) => {
         var volumeGesture = null;
         var touchStart = null;
         var didGesture = false;
+        var isPaused = true;
 
-        function showToast(text) {
+        function postToNative(payload) {
+          try {
+            if (window.ReactNativeWebView && window.ReactNativeWebView.postMessage) {
+              window.ReactNativeWebView.postMessage(JSON.stringify(payload));
+            }
+          } catch (e) {
+            /* ignore */
+          }
+        }
+
+        function showToast(text, iconSvg) {
           var el = document.getElementById("toast");
-          if (!el) return;
-          el.textContent = text;
+          var textEl = document.getElementById("toast-text");
+          var iconEl = document.getElementById("toast-icon");
+          if (!el || !textEl) return;
+          textEl.textContent = text || "";
+          if (iconEl) {
+            iconEl.innerHTML = iconSvg || "";
+            iconEl.style.display = iconSvg ? "block" : "none";
+          }
           el.classList.add("show");
           clearTimeout(toastTimer);
           toastTimer = setTimeout(function () {
             el.classList.remove("show");
-          }, 700);
+          }, 650);
         }
 
-        function showFlash(side, label) {
+        function showSideFlash(side, label) {
           var el = document.getElementById(side === "left" ? "flash-left" : "flash-right");
           var labelEl = document.getElementById(side === "left" ? "flash-left-label" : "flash-right-label");
           if (!el) return;
@@ -417,7 +544,24 @@ const playerHtml = (embedUrl) => {
           clearTimeout(flashTimer);
           flashTimer = setTimeout(function () {
             el.classList.remove("show");
-          }, 450);
+          }, 420);
+        }
+
+        function showCenterFlash(pausedAfterToggle) {
+          var el = document.getElementById("flash-center");
+          var playIcon = document.getElementById("center-icon-play");
+          var pauseIcon = document.getElementById("center-icon-pause");
+          if (!el) return;
+          // Show the action that will result: if now paused, show play glyph (to resume), etc.
+          if (playIcon && pauseIcon) {
+            playIcon.style.display = pausedAfterToggle ? "block" : "none";
+            pauseIcon.style.display = pausedAfterToggle ? "none" : "block";
+          }
+          el.classList.add("show");
+          clearTimeout(flashTimer);
+          flashTimer = setTimeout(function () {
+            el.classList.remove("show");
+          }, 380);
         }
 
         function withTime(cb) {
@@ -433,7 +577,7 @@ const playerHtml = (embedUrl) => {
           }
         }
 
-        function seekBy(delta, side) {
+        function seekBy(delta, side, showFeedback) {
           if (!player || !ready) return;
           withTime(function (t, d) {
             var max = d > 0 ? d : t + Math.abs(delta) + 1;
@@ -443,20 +587,20 @@ const playerHtml = (embedUrl) => {
             } catch (e) {
               return;
             }
-            var label = (delta >= 0 ? "+" : "") + Math.round(delta) + "s";
-            showFlash(side || (delta < 0 ? "left" : "right"), label);
+            if (showFeedback !== false) {
+              showSideFlash(side || (delta < 0 ? "left" : "right"), Math.abs(Math.round(delta)) + "s");
+            }
           });
         }
 
         function setVolumeFromDelta(startVol, dy, zoneHeight) {
           if (!player || !ready) return;
           var range = Math.max(zoneHeight || 200, 120);
-          // Drag up = louder
           var next = Math.round(startVol - (dy / range) * 100);
           next = Math.max(0, Math.min(100, next));
           try {
             player.setVolume(next);
-            showToast("Vol " + next + "%");
+            showToast(next + "%", '<path d="M4 10v4h3l4 3V7L7 10H4z"></path><path d="M16 9a4 4 0 0 1 0 6"></path>');
           } catch (e) {
             /* fail-open */
           }
@@ -476,16 +620,62 @@ const playerHtml = (embedUrl) => {
         function startHoldSkip(side) {
           didGesture = true;
           var delta = side === "left" ? -HOLD_STEP : HOLD_STEP;
-          showToast(side === "left" ? "<<" : ">>");
-          seekBy(delta, side);
+          var chevron =
+            side === "left"
+              ? '<polyline points="15 6 9 12 15 18"></polyline>'
+              : '<polyline points="9 6 15 12 9 18"></polyline>';
+          showToast("Seek", chevron);
+          seekBy(delta, side, true);
           holdInterval = setInterval(function () {
-            seekBy(delta, side);
+            seekBy(delta, side, false);
           }, HOLD_TICK_MS);
         }
 
-        function onDoubleTap(side) {
-          didGesture = true;
-          seekBy(side === "left" ? -SEEK_STEP : SEEK_STEP, side);
+        function togglePlayPause() {
+          if (!player || !ready) {
+            showToast("Loading…", "");
+            return;
+          }
+          // Call play/pause synchronously in the touch handler so mobile
+          // browsers treat it as a user gesture (async getPaused breaks that).
+          try {
+            if (isPaused) {
+              player.play();
+              isPaused = false;
+              showCenterFlash(false);
+            } else {
+              player.pause();
+              isPaused = true;
+              showCenterFlash(true);
+            }
+          } catch (e) {
+            /* fail-open */
+          }
+        }
+
+        function requestAppFullscreen() {
+          // Prefer keeping gestures: expand shell in-page + ask RN to grow the WebView.
+          postToNative({ type: "toggleFullscreen" });
+          try {
+            var shell = document.getElementById("shell");
+            if (!shell) return;
+            var doc = document;
+            var isFs = !!(
+              doc.fullscreenElement ||
+              doc.webkitFullscreenElement ||
+              doc.fullscreen ||
+              doc.webkitIsFullScreen
+            );
+            if (isFs) {
+              if (doc.exitFullscreen) doc.exitFullscreen();
+              else if (doc.webkitExitFullscreen) doc.webkitExitFullscreen();
+              return;
+            }
+            if (shell.requestFullscreen) shell.requestFullscreen();
+            else if (shell.webkitRequestFullscreen) shell.webkitRequestFullscreen();
+          } catch (e) {
+            /* RN expand is enough */
+          }
         }
 
         function bindZone(el) {
@@ -507,10 +697,11 @@ const playerHtml = (embedUrl) => {
               volumeGesture = null;
               clearLongPress();
 
-              longPressTimer = setTimeout(function () {
-                // Prefer continuous skip on long-press (no playback-rate API on Bunny Player.js)
-                startHoldSkip(side);
-              }, LONG_PRESS_MS);
+              if (side === "left" || side === "right") {
+                longPressTimer = setTimeout(function () {
+                  startHoldSkip(side);
+                }, LONG_PRESS_MS);
+              }
             },
             { passive: true }
           );
@@ -523,14 +714,25 @@ const playerHtml = (embedUrl) => {
               var dx = touch.clientX - touchStart.x;
               var dy = touch.clientY - touchStart.y;
 
-              if (!volumeGesture && side === "right" && Math.abs(dy) > MOVE_SLOP && Math.abs(dy) > Math.abs(dx)) {
+              if (
+                !volumeGesture &&
+                side === "right" &&
+                Math.abs(dy) > MOVE_SLOP &&
+                Math.abs(dy) > Math.abs(dx)
+              ) {
                 clearLongPress();
-                volumeGesture = { startY: touch.clientY, startVol: 50, height: el.clientHeight || 240 };
+                volumeGesture = {
+                  startY: touch.clientY,
+                  startVol: 50,
+                  height: el.clientHeight || 240,
+                };
                 if (player && ready) {
                   try {
                     player.getVolume(function (v) {
-                      if (volumeGesture) volumeGesture.startVol = Number(v);
-                      if (isNaN(volumeGesture.startVol)) volumeGesture.startVol = 50;
+                      if (volumeGesture) {
+                        volumeGesture.startVol = Number(v);
+                        if (isNaN(volumeGesture.startVol)) volumeGesture.startVol = 50;
+                      }
                     });
                   } catch (err) {
                     /* fail-open */
@@ -547,7 +749,6 @@ const playerHtml = (embedUrl) => {
                   volumeGesture.height
                 );
               } else if (Math.abs(dx) > MOVE_SLOP || Math.abs(dy) > MOVE_SLOP) {
-                // Finger moved: cancel long-press skip so accidental drags don't seek
                 clearLongPress();
               }
             },
@@ -578,9 +779,16 @@ const playerHtml = (embedUrl) => {
                 return;
               }
 
-              // Double-tap detection (same side, quick succession)
+              if (side === "center") {
+                togglePlayPause();
+                lastTap = { t: 0, side: null };
+                touchStart = null;
+                return;
+              }
+
               if (lastTap.side === side && now - lastTap.t <= DOUBLE_TAP_MS) {
-                onDoubleTap(side);
+                didGesture = true;
+                seekBy(side === "left" ? -SEEK_STEP : SEEK_STEP, side, true);
                 lastTap = { t: 0, side: null };
               } else {
                 lastTap = { t: now, side: side };
@@ -601,15 +809,41 @@ const playerHtml = (embedUrl) => {
           );
         }
 
+        function bindFullscreenCatch() {
+          var el = document.getElementById("fs-catch");
+          if (!el) return;
+          var onActivate = function (e) {
+            if (e) {
+              e.preventDefault();
+              e.stopPropagation();
+            }
+            requestAppFullscreen();
+          };
+          el.addEventListener("touchend", onActivate, { passive: false });
+          el.addEventListener("click", onActivate, { passive: false });
+        }
+
         function initPlayer() {
           if (typeof playerjs === "undefined" || !playerjs.Player) {
-            // Fail-open: gestures no-op; Bunny default controls still work via center/bottom.
             return;
           }
           try {
             player = new playerjs.Player("bunny-player");
             player.on("ready", function () {
               ready = true;
+              try {
+                player.getPaused(function (paused) {
+                  isPaused = Boolean(paused);
+                });
+              } catch (e) {
+                /* ignore */
+              }
+            });
+            player.on("play", function () {
+              isPaused = false;
+            });
+            player.on("pause", function () {
+              isPaused = true;
             });
           } catch (e) {
             player = null;
@@ -618,7 +852,9 @@ const playerHtml = (embedUrl) => {
         }
 
         bindZone(document.getElementById("zone-left"));
+        bindZone(document.getElementById("zone-center"));
         bindZone(document.getElementById("zone-right"));
+        bindFullscreenCatch();
 
         if (document.readyState === "loading") {
           document.addEventListener("DOMContentLoaded", initPlayer);
@@ -698,6 +934,7 @@ const VideosScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState("doubts");
   const [fullscreenPdf, setFullscreenPdf] = useState(false);
   const [pdfOpenedFromList, setPdfOpenedFromList] = useState(false);
+  const [playerFullscreen, setPlayerFullscreen] = useState(false);
   const [seenVideoIds, setSeenVideoIds] = useState({});
 
   useEffect(() => {
@@ -745,6 +982,7 @@ const VideosScreen = ({ navigation }) => {
     setActiveTab("doubts");
     setFullscreenPdf(false);
     setPdfOpenedFromList(false);
+    setPlayerFullscreen(false);
   }, [selectedVideo]);
 
   useEffect(() => {
@@ -789,10 +1027,20 @@ const VideosScreen = ({ navigation }) => {
       const data = JSON.parse(event.nativeEvent.data);
       if (data.type === "download" && data.url) {
         Linking.openURL(data.url);
+        return;
+      }
+      if (data.type === "toggleFullscreen") {
+        // App-level expand keeps the gesture shell active (native Bunny FS does not).
+        setPlayerFullscreen((previous) => !previous);
       }
     } catch (err) {
       console.error("WebView message error:", err);
     }
+  };
+
+  const closePlayerModal = () => {
+    setPlayerFullscreen(false);
+    setSelectedVideo(null);
   };
 
   const userEmail = user?.email?.toLowerCase();
@@ -1443,27 +1691,49 @@ const VideosScreen = ({ navigation }) => {
       <Modal
         visible={Boolean(selectedVideo)}
         animationType="slide"
-        onRequestClose={() => setSelectedVideo(null)}
+        onRequestClose={() => {
+          if (playerFullscreen) {
+            setPlayerFullscreen(false);
+            return;
+          }
+          closePlayerModal();
+        }}
       >
-        <SafeAreaView style={styles.playerSafeArea}>
-          <View style={styles.playerHeader}>
-            <IconButton
-              icon="close"
-              iconColor={theme.colors.textTitle}
-              onPress={() => setSelectedVideo(null)}
-            />
-            <Text style={styles.playerTitle} numberOfLines={1}>
-              {selectedVideo?.title || "Video"}
-            </Text>
-            <View style={styles.playerHeaderSpacer} />
-          </View>
+        <SafeAreaView
+          style={[
+            styles.playerSafeArea,
+            playerFullscreen && styles.playerSafeAreaFullscreen,
+          ]}
+        >
+          {!playerFullscreen && (
+            <View style={styles.playerHeader}>
+              <IconButton
+                icon="close"
+                iconColor={theme.colors.textTitle}
+                onPress={closePlayerModal}
+              />
+              <Text style={styles.playerTitle} numberOfLines={1}>
+                {selectedVideo?.title || "Video"}
+              </Text>
+              <IconButton
+                icon="fullscreen"
+                iconColor={theme.colors.textTitle}
+                onPress={() => setPlayerFullscreen(true)}
+              />
+            </View>
+          )}
 
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={{ flex: 1 }}
             keyboardVerticalOffset={Platform.OS === "ios" ? 44 : 0}
           >
-            <View style={styles.videoPlayerContainer}>
+            <View
+              style={[
+                styles.videoPlayerContainer,
+                playerFullscreen && styles.videoPlayerContainerFullscreen,
+              ]}
+            >
               {selectedVideo?.embedUrl ? (
                 <WebView
                   originWhitelist={["*"]}
@@ -1472,17 +1742,18 @@ const VideosScreen = ({ navigation }) => {
                     // Base URL helps absolute CDN scripts (Player.js) resolve cleanly in the WebView.
                     baseUrl: "https://iframe.mediadelivery.net/",
                   }}
-                  allowsFullscreenVideo
+                  // Keep media inline; app-level expand preserves gesture overlays.
+                  allowsFullscreenVideo={false}
                   allowsInlineMediaPlayback
                   mediaPlaybackRequiresUserAction={false}
                   javaScriptEnabled
                   domStorageEnabled
-                  // Keep scroll/gestures inside the player shell; comments list is outside this WebView.
                   scrollEnabled={false}
                   bounces={false}
                   setSupportMultipleWindows={false}
                   allowsProtectedMedia
                   mixedContentMode="always"
+                  onMessage={handleWebViewMessage}
                   style={styles.player}
                 />
               ) : (
@@ -1498,9 +1769,19 @@ const VideosScreen = ({ navigation }) => {
                   </Text>
                 </View>
               )}
+              {playerFullscreen && (
+                <View style={styles.playerFullscreenControls} pointerEvents="box-none">
+                  <IconButton
+                    icon="fullscreen-exit"
+                    iconColor="#FFFFFF"
+                    containerColor="rgba(0,0,0,0.45)"
+                    onPress={() => setPlayerFullscreen(false)}
+                  />
+                </View>
+              )}
             </View>
 
-            {selectedVideo?.hasPdf && (
+            {!playerFullscreen && selectedVideo?.hasPdf && (
               <View style={styles.tabsContainer}>
                 <Pressable
                   style={[
@@ -1555,119 +1836,123 @@ const VideosScreen = ({ navigation }) => {
               </View>
             )}
 
-            {activeTab === "doubts" ? (
-              <>
-                <FlatList
-                  style={styles.doubtsList}
-                  data={visibleDoubts}
-                  keyExtractor={(item) => item.id}
-                  renderItem={renderDoubtItem}
-                  contentContainerStyle={styles.doubtsListContent}
-                  ListEmptyComponent={
-                    <View style={styles.emptyDoubts}>
-                      <MaterialIcons
-                        name="forum"
-                        size={40}
-                        color={theme.colors.textPlaceholder}
-                      />
-                      <Text style={styles.emptyDoubtsTitle}>
-                        No comments yet
-                      </Text>
-                      <Text style={styles.emptyDoubtsText}>
-                        Be the first to add a comment or query about this video!
-                      </Text>
-                    </View>
-                  }
-                />
+            {!playerFullscreen &&
+              (activeTab === "doubts" ? (
+                <>
+                  <FlatList
+                    style={styles.doubtsList}
+                    data={visibleDoubts}
+                    keyExtractor={(item) => item.id}
+                    renderItem={renderDoubtItem}
+                    contentContainerStyle={styles.doubtsListContent}
+                    ListEmptyComponent={
+                      <View style={styles.emptyDoubts}>
+                        <MaterialIcons
+                          name="forum"
+                          size={40}
+                          color={theme.colors.textPlaceholder}
+                        />
+                        <Text style={styles.emptyDoubtsTitle}>
+                          No comments yet
+                        </Text>
+                        <Text style={styles.emptyDoubtsText}>
+                          Be the first to add a comment or query about this
+                          video!
+                        </Text>
+                      </View>
+                    }
+                  />
 
-                {replyingTo && (
-                  <View style={styles.replyBanner}>
-                    <Text style={styles.replyBannerText} numberOfLines={1}>
-                      Replying to{" "}
-                      <Text style={{ fontWeight: "bold" }}>
-                        {replyingTo.username}
+                  {replyingTo && (
+                    <View style={styles.replyBanner}>
+                      <Text style={styles.replyBannerText} numberOfLines={1}>
+                        Replying to{" "}
+                        <Text style={{ fontWeight: "bold" }}>
+                          {replyingTo.username}
+                        </Text>
                       </Text>
-                    </Text>
+                      <IconButton
+                        icon="close"
+                        size={16}
+                        iconColor={theme.colors.textSecondary}
+                        onPress={() => setReplyingTo(null)}
+                        style={{ margin: 0 }}
+                      />
+                    </View>
+                  )}
+
+                  <View style={styles.inputContainer}>
+                    <TextInput
+                      style={styles.input}
+                      value={newDoubtText}
+                      onChangeText={setNewDoubtText}
+                      placeholder={
+                        replyingTo
+                          ? "Type your reply..."
+                          : "Add a comment about this video..."
+                      }
+                      placeholderTextColor={theme.colors.textPlaceholder}
+                      multiline
+                    />
                     <IconButton
-                      icon="close"
-                      size={16}
-                      iconColor={theme.colors.textSecondary}
-                      onPress={() => setReplyingTo(null)}
-                      style={{ margin: 0 }}
+                      icon="send"
+                      iconColor={
+                        newDoubtText.trim()
+                          ? theme.colors.primary
+                          : theme.colors.textPlaceholder
+                      }
+                      disabled={!newDoubtText.trim()}
+                      onPress={handleAddDoubt}
+                      size={24}
+                      style={styles.sendButton}
                     />
                   </View>
-                )}
-
-                <View style={styles.inputContainer}>
-                  <TextInput
-                    style={styles.input}
-                    value={newDoubtText}
-                    onChangeText={setNewDoubtText}
-                    placeholder={
-                      replyingTo
-                        ? "Type your reply..."
-                        : "Add a comment about this video..."
-                    }
-                    placeholderTextColor={theme.colors.textPlaceholder}
-                    multiline
-                  />
-                  <IconButton
-                    icon="send"
-                    iconColor={
-                      newDoubtText.trim()
-                        ? theme.colors.primary
-                        : theme.colors.textPlaceholder
-                    }
-                    disabled={!newDoubtText.trim()}
-                    onPress={handleAddDoubt}
-                    size={24}
-                    style={styles.sendButton}
-                  />
+                </>
+              ) : (
+                <View style={styles.notesTabContent}>
+                  <View style={styles.notesTabHeader}>
+                    <Text style={styles.notesTabTitle} numberOfLines={1}>
+                      {selectedVideo?.pdfName || "Reference Notes"}
+                    </Text>
+                    <IconButton
+                      icon="download"
+                      size={24}
+                      iconColor={theme.colors.primary}
+                      onPress={handleDownloadPdf}
+                      style={{ marginRight: 8 }}
+                    />
+                    <IconButton
+                      icon="fullscreen"
+                      size={24}
+                      iconColor={theme.colors.primary}
+                      onPress={() => setFullscreenPdf(true)}
+                      style={styles.fullscreenIcon}
+                    />
+                  </View>
+                  <View style={styles.pdfPreviewContainer}>
+                    <WebView
+                      originWhitelist={["*"]}
+                      source={{ html: pdfViewerHtml(selectedVideo?.pdfUrl) }}
+                      style={styles.pdfWebView}
+                      onShouldStartLoadWithRequest={
+                        onShouldStartLoadWithRequest
+                      }
+                      javaScriptEnabled={true}
+                      domStorageEnabled={true}
+                      startInLoadingState={true}
+                      onMessage={handleWebViewMessage}
+                      renderLoading={() => (
+                        <View style={styles.pdfLoadingContainer}>
+                          <ActivityIndicator
+                            color={theme.colors.primary}
+                            size="large"
+                          />
+                        </View>
+                      )}
+                    />
+                  </View>
                 </View>
-              </>
-            ) : (
-              <View style={styles.notesTabContent}>
-                <View style={styles.notesTabHeader}>
-                  <Text style={styles.notesTabTitle} numberOfLines={1}>
-                    {selectedVideo?.pdfName || "Reference Notes"}
-                  </Text>
-                  <IconButton
-                    icon="download"
-                    size={24}
-                    iconColor={theme.colors.primary}
-                    onPress={handleDownloadPdf}
-                    style={{ marginRight: 8 }}
-                  />
-                  <IconButton
-                    icon="fullscreen"
-                    size={24}
-                    iconColor={theme.colors.primary}
-                    onPress={() => setFullscreenPdf(true)}
-                    style={styles.fullscreenIcon}
-                  />
-                </View>
-                <View style={styles.pdfPreviewContainer}>
-                  <WebView
-                    originWhitelist={["*"]}
-                    source={{ html: pdfViewerHtml(selectedVideo?.pdfUrl) }}
-                    style={styles.pdfWebView}
-                    onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
-                    javaScriptEnabled={true}
-                    domStorageEnabled={true}
-                    startInLoadingState={true}
-                    onMessage={handleWebViewMessage}
-                    renderLoading={() => (
-                      <View style={styles.pdfLoadingContainer}>
-                        <ActivityIndicator
-                          color={theme.colors.primary}
-                          size="large"
-                        />
-                      </View>
-                    )}
-                  />
-                </View>
-              </View>
-            )}
+              ))}
           </KeyboardAvoidingView>
         </SafeAreaView>
       </Modal>
@@ -1902,6 +2187,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.surfacePrimary,
   },
+  playerSafeAreaFullscreen: {
+    backgroundColor: "#000000",
+  },
   playerHeader: {
     height: 58,
     flexDirection: "row",
@@ -1927,6 +2215,17 @@ const styles = StyleSheet.create({
     width: "100%",
     height: width * (9 / 16),
     backgroundColor: "#000000",
+  },
+  videoPlayerContainerFullscreen: {
+    flex: 1,
+    height: "100%",
+    width: "100%",
+  },
+  playerFullscreenControls: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    zIndex: 10,
   },
   doubtsList: {
     flex: 1,
