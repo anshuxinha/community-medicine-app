@@ -348,6 +348,9 @@ const parseMarkdown = (content, { isGem = false } = {}) => {
     const trimmedLine = line.trim();
     const tableTitleMatch = trimmedLine.match(/^\*\*Table\s+\d+(?:\.\d+)?\s*(.*?)\*\*$/i);
     const refMatch = trimmedLine.match(/^\[REF\](.*?)\[\/REF\]$/i);
+    // Fixed exam tags — colours documented in .grok/skills/library-chapter-review/references/tag-format.md
+    const snTagMatch = trimmedLine.match(/^\[SN\](.*?)\[\/SN\]$/i);
+    const laqTagMatch = trimmedLine.match(/^\[LAQ\](.*?)\[\/LAQ\]$/i);
 
     if (line.startsWith("# ")) {
       flushBullets();
@@ -388,6 +391,14 @@ const parseMarkdown = (content, { isGem = false } = {}) => {
       flushBullets();
       flushNested();
       rawBlocks.push({ type: "reference", text: refMatch[1].trim() });
+    } else if (snTagMatch) {
+      flushBullets();
+      flushNested();
+      rawBlocks.push({ type: "exam_sn", text: snTagMatch[1].trim() });
+    } else if (laqTagMatch) {
+      flushBullets();
+      flushNested();
+      rawBlocks.push({ type: "exam_laq", text: laqTagMatch[1].trim() });
     } else if (line.trim() === "") {
       flushBullets();
       flushNested();
@@ -1095,6 +1106,32 @@ const ReadingView = ({
             onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
           >
             {renderFormattedText(block.text, styles.referenceText)}
+          </View>
+        );
+      case "exam_sn":
+        return (
+          <View
+            key={index}
+            style={styles.examSnBlock}
+            onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
+          >
+            <Text style={styles.examSnBadge} selectable={false}>
+              SN
+            </Text>
+            {renderFormattedText(block.text, styles.examSnText)}
+          </View>
+        );
+      case "exam_laq":
+        return (
+          <View
+            key={index}
+            style={styles.examLaqBlock}
+            onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
+          >
+            <Text style={styles.examLaqBadge} selectable={false}>
+              LAQ
+            </Text>
+            {renderFormattedText(block.text, styles.examLaqText)}
           </View>
         );
       case "blockquote": {
@@ -2015,6 +2052,71 @@ const styles = StyleSheet.create({
     fontSize: 12.5,
     fontStyle: "italic",
     lineHeight: 18,
+  },
+  // Fixed SN / LAQ exam tags (library-chapter-review skill) — do not change colours casually
+  examSnBlock: {
+    marginTop: 12,
+    marginBottom: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: "#0F766E",
+    backgroundColor: "#CCFBF1",
+    borderRadius: 4,
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  examSnBadge: {
+    color: "#115E59",
+    fontSize: 11,
+    fontWeight: "800",
+    letterSpacing: 0.6,
+    backgroundColor: "#99F6E4",
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+    overflow: "hidden",
+  },
+  examSnText: {
+    color: "#115E59",
+    fontSize: 14,
+    fontWeight: "700",
+    lineHeight: 20,
+    flexShrink: 1,
+  },
+  examLaqBlock: {
+    marginTop: 12,
+    marginBottom: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: "#B45309",
+    backgroundColor: "#FEF3C7",
+    borderRadius: 4,
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  examLaqBadge: {
+    color: "#92400E",
+    fontSize: 11,
+    fontWeight: "800",
+    letterSpacing: 0.6,
+    backgroundColor: "#FDE68A",
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+    overflow: "hidden",
+  },
+  examLaqText: {
+    color: "#92400E",
+    fontSize: 14,
+    fontWeight: "700",
+    lineHeight: 20,
+    flexShrink: 1,
   },
   bulletGroup: {
     marginVertical: 4,

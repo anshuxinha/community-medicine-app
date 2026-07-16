@@ -1,7 +1,7 @@
 {
   "D:\\The App\\App.js": {
-    "mtime": 1780304143.3788455,
-    "hash": "58013194075938b5927af3ab40b9a9a6"
+    "mtime": 1784006207.1823194,
+    "hash": "6d872697b50ed19759f1fd3655ebce6c"
   },
   "D:\\The App\\ast_extract.py": {
     "mtime": 1778159580.4395475,
@@ -292,8 +292,8 @@
     "hash": "d2356a6192520e31f73a149eeed2931b"
   },
   "D:\\The App\\scripts\\bunny-videos.js": {
-    "mtime": 1782655531.0970132,
-    "hash": "28a5bae49089c86675732a3eda80f77a"
+    "mtime": 1783958325.049384,
+    "hash": "015090ee192dd51e7089b656a8a20312"
   },
   "D:\\The App\\scripts\\check-firestore-gem.js": {
     "mtime": 1778661542.9656944,
@@ -380,8 +380,8 @@
     "hash": "fad85bbe9647a11753c0e33d597086ee"
   },
   "D:\\The App\\scripts\\test-notifications.js": {
-    "mtime": 1782654424.8889372,
-    "hash": "b7f26e74474363b10bd358784273cc51"
+    "mtime": 1783958333.7269132,
+    "hash": "1759eb6ce7b752fb1b617af7e298b46f"
   },
   "D:\\The App\\scripts\\update-firestore-version.js": {
     "mtime": 1782823208.4439752,
@@ -424,16 +424,16 @@
     "hash": "97abdb8fd522462f616d41d6c847c9b9"
   },
   "D:\\The App\\src\\components\\ReadingView.js": {
-    "mtime": 1780041616.1362271,
-    "hash": "ba995f5dade14516934b73ba3fe7eef5"
+    "mtime": 1784187542.198083,
+    "hash": "100dbf8038720387d4438e7591b30b9a"
   },
   "D:\\The App\\src\\components\\ReferralAnnouncementDialog.js": {
     "mtime": 1781158146.2401958,
     "hash": "993d62075e5e931a99de91380d01239e"
   },
   "D:\\The App\\src\\components\\UpdateBottomSheet.js": {
-    "mtime": 1782845921.512947,
-    "hash": "cd7d5e29e223a069a2263f3b97ca85e6"
+    "mtime": 1784013351.4946716,
+    "hash": "16c09bbf4817f4ef4b34160c9587ac00"
   },
   "D:\\The App\\src\\components\\UpdateDetailDialog.js": {
     "mtime": 1783246546.5907612,
@@ -448,8 +448,8 @@
     "hash": "b6d28a52efa63c1ccfa616dabffb7bd9"
   },
   "D:\\The App\\src\\context\\AppContext.js": {
-    "mtime": 1782813375.2718256,
-    "hash": "bb409b6a5f885917efd965c81fd92388"
+    "mtime": 1784055232.001086,
+    "hash": "f4a4f96bd1a45711fec6c9ce621e8cfd"
   },
   "D:\\The App\\src\\data\\defaultTopicIllustrations.js": {
     "mtime": 1775143847.0992994,
@@ -476,8 +476,8 @@
     "hash": "f486f262d18f04ca01c8458ba191645d"
   },
   "D:\\The App\\src\\navigation\\AppNavigator.js": {
-    "mtime": 1783235659.7295163,
-    "hash": "12e493fc43c54deabea9a76914fea0e9"
+    "mtime": 1784050128.650149,
+    "hash": "24c5bca1b03d9bbbc9619e8f89e6bbbc"
   },
   "D:\\The App\\src\\screens\\AdminLibraryReviewScreen.js": {
     "mtime": 1777561970.1780882,
@@ -576,8 +576,8 @@
     "hash": "7300070699a04a1916f368c713bb1c90"
   },
   "D:\\The App\\src\\screens\\VideosScreen.js": {
-    "mtime": 1783957169.226954,
-    "hash": "66975ccac2ffebf145ddfc9ae80d36fd"
+    "mtime": 1784006238.13946,
+    "hash": "b89ee184bcca4d7e21c4d2d500387d5d"
   },
   "D:\\The App\\src\\screens\\VirtualMuseumScreen.js": {
     "mtime": 1779948966.284421,
@@ -604,8 +604,8 @@
     "hash": "2e97f9fae198d3f94ab87018343b085b"
   },
   "D:\\The App\\src\\services\\notificationService.js": {
-    "mtime": 1783232105.2510326,
-    "hash": "f28e9960893b8f10c1cb7dc5ca1bcc73"
+    "mtime": 1783958341.276609,
+    "hash": "7a02dc76cf70bebb1b4cfbd44c420c68"
   },
   "D:\\The App\\src\\services\\topicIllustrations.js": {
     "mtime": 1778664278.3496735,
@@ -628,8 +628,8 @@
     "hash": "6b7b48e5d0bdd75f6ee5bc6379175d41"
   },
   "D:\\The App\\src\\utils\\contentRegistry.js": {
-    "mtime": 1777266111.568834,
-    "hash": "ad58d777d50b67587b5169e0c6194aa1"
+    "mtime": 1784050128.6511462,
+    "hash": "cadc2e347fb723bbb9e06269b67be225"
   },
   "D:\\The App\\src\\utils\\deviceUtils.js": {
     "mtime": 1776915497.5873566,
@@ -652,24 +652,24 @@
     "hash": "522bf0a626c6273ef0c931297aab724e"
   },
   "D:\\The App\\AGENTS.md": {
-    "mtime": 1778215878.445492,
-    "hash": "04f5cc21fb908cfe9aa492bd9b36433c"
+    "mtime": 1784014047.6686404,
+    "hash": "e61521036afc4512ed28c9255b8a61a9"
   },
   "D:\\The App\\CLAUDE.md": {
-    "mtime": 1779248298.714767,
-    "hash": "b283ae631e97e2a34fd0f044f04bfa82"
+    "mtime": 1784014047.6696413,
+    "hash": "99bb89fd195fcae1666729f0a86c5d0d"
   },
   "D:\\The App\\COUPON_SETUP.md": {
     "mtime": 1778570823.4695475,
     "hash": "3cf53682ca29a79ec4d6899d2c41c273"
   },
   "D:\\The App\\CUSTOM_INSTRUCTION_EAS.md": {
-    "mtime": 1782548982.6080215,
-    "hash": "aa088cb5613dd1532ded305ced87c07b"
+    "mtime": 1784014047.6696413,
+    "hash": "572449c2c769359c83566bb44e172c3d"
   },
   "D:\\The App\\EAS_UPDATE_GUIDELINES.md": {
-    "mtime": 1782548982.6085422,
-    "hash": "a1efa656ed91462c26769775dfda3eee"
+    "mtime": 1784014047.6686404,
+    "hash": "7c0319314d243c70bff1771d7d94f581"
   },
   "D:\\The App\\EXAMPLES.md": {
     "mtime": 1779247812.5566843,
