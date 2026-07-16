@@ -16,12 +16,15 @@ import { MaterialIcons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import { db } from "../config/firebase";
 import { doc, getDoc } from "firebase/firestore";
-import { theme } from "../styles/theme";
+import { theme } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { height: WINDOW_HEIGHT } = Dimensions.get("window");
 
 const UpdateBottomSheet = () => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   const insets = useSafeAreaInsets();
   const [visible, setVisible] = useState(false);
   const [updateInfo, setUpdateInfo] = useState({
@@ -279,7 +282,7 @@ const UpdateBottomSheet = () => {
 
 const flex1 = { flex: 1 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     zIndex: 9999,
     elevation: 9999,

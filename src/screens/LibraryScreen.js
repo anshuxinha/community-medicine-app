@@ -23,7 +23,8 @@ import {
   getLeafContentRefsForItem,
   getUpdatedSegmentsForItem,
 } from "../utils/contentRegistry";
-import { theme, useResponsive } from "../styles/theme";
+import { theme, useResponsive } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 import {
   enableScreenCaptureProtection,
   disableScreenCaptureProtection,
@@ -38,6 +39,8 @@ const SECTION_ID_ICON_MAP = {
 };
 
 const StatusMark = ({ status }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   if (status === "updated") {
     return <Badge style={styles.newBadge}>NEW</Badge>;
   }
@@ -60,6 +63,8 @@ const StatusMark = ({ status }) => {
 };
 
 const FreeLabel = () => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   return <Badge style={styles.freeBadge}>FREE</Badge>;
 };
 
@@ -157,6 +162,8 @@ const excerptStyles = {
 };
 
 const LibraryScreen = (props) => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   const { navigation } = props;
   const {
     readItemVersions,
@@ -548,7 +555,7 @@ const LibraryScreen = (props) => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: "#FFFFFF",
@@ -565,7 +572,7 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   captureProtectedText: {
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontSize: 14,
     fontWeight: "600",
   },
@@ -617,7 +624,7 @@ const styles = StyleSheet.create({
   },
   freeDescText: {
     fontSize: 12,
-    color: theme.colors.success,
+    color: colors.success,
     fontWeight: "600",
     marginTop: 2,
   },
@@ -635,18 +642,18 @@ const styles = StyleSheet.create({
     borderRadius: 11,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.primaryLight,
+    backgroundColor: colors.primaryLight,
     borderWidth: 1,
     borderColor: "#DDD6FE",
   },
   newBadge: {
     backgroundColor: "#F3E8FF",
-    color: theme.colors.primaryDark,
+    color: colors.primaryDark,
     fontSize: 10,
     fontWeight: "900",
   },
   freeBadge: {
-    backgroundColor: theme.colors.success,
+    backgroundColor: colors.success,
     color: "#FFFFFF",
     fontWeight: "700",
     marginRight: 6,

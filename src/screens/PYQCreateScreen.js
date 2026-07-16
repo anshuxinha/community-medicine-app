@@ -20,7 +20,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { theme, useResponsive } from "../styles/theme";
+import { theme, useResponsive } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 import { AppContext } from "../context/AppContext";
 import pyqData from "../data/pyq_data.json";
 
@@ -28,6 +29,8 @@ const STORAGE_ATTEMPTS_KEY = "pyq_attempts_v1";
 const STORAGE_BOOKMARKS_KEY = "pyq_bookmarks_v1";
 
 const PYQCreateScreen = ({ navigation }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   const { isPremium } = useContext(AppContext);
   const { isTablet, horizontalPadding, contentMaxWidth } = useResponsive();
 
@@ -411,10 +414,10 @@ const PYQCreateScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: theme.colors.backgroundMain,
+    backgroundColor: colors.backgroundMain,
   },
   container: {
     flex: 1,
@@ -427,17 +430,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: theme.colors.backgroundMain,
+    backgroundColor: colors.backgroundMain,
   },
   header: {
     marginBottom: 20,
   },
   title: {
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   subtitle: {
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 6,
     lineHeight: 20,
   },
@@ -469,7 +472,7 @@ const styles = StyleSheet.create({
     lineHeight: 16,
   },
   sectionCard: {
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 16,
     marginBottom: 16,
     elevation: 2,
@@ -485,11 +488,11 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     marginLeft: 8,
   },
   sectionDesc: {
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     marginBottom: 12,
   },
   chipsContainer: {
@@ -513,7 +516,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   selectedChip: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
   },
   lockedChip: {
     opacity: 0.6,
@@ -525,7 +528,7 @@ const styles = StyleSheet.create({
   },
   modeOption: {
     flex: 1,
-    backgroundColor: theme.colors.surfaceTertiary,
+    backgroundColor: colors.surfaceTertiary,
     borderColor: "#E5E7EB",
     borderWidth: 1,
     borderRadius: 12,
@@ -533,17 +536,17 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
   },
   selectedModeOption: {
-    borderColor: theme.colors.primary,
-    backgroundColor: theme.colors.primaryLight,
+    borderColor: colors.primary,
+    backgroundColor: colors.primaryLight,
   },
   modeTitle: {
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     marginTop: 8,
     fontSize: 14,
   },
   selectedModeText: {
-    color: theme.colors.primaryDark,
+    color: colors.primaryDark,
   },
   modeOptionContainer: {
     flexDirection: "row",
@@ -551,13 +554,13 @@ const styles = StyleSheet.create({
   },
   modeDesc: {
     fontSize: 11,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 4,
     lineHeight: 15,
   },
   summaryContainer: {
     marginTop: 10,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
@@ -569,16 +572,16 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   matchingText: {
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontSize: 13,
   },
   matchingBold: {
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   createButton: {
     borderRadius: 12,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
   },
 });
 

@@ -19,7 +19,8 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import ViewShot from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
-import { theme } from "../styles/theme";
+import { theme } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 
 
 const appIcon = require("../../assets/icon.png");
@@ -33,6 +34,8 @@ const appIcon = require("../../assets/icon.png");
  *  - onDismiss: () => void
  */
 const UpdateDetailDialog = ({ visible, update, onDismiss }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   const viewShotRef = useRef(null);
 
   const handleShare = useCallback(async () => {
@@ -243,7 +246,7 @@ const UpdateDetailDialog = ({ visible, update, onDismiss }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   /* ── Hidden capture area ── */
   hiddenCapture: {
     position: "absolute",
@@ -259,7 +262,7 @@ const styles = StyleSheet.create({
   },
   shareAccentBar: {
     height: 6,
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: colors.secondary,
   },
   shareContent: {
     padding: 24,
@@ -268,7 +271,7 @@ const styles = StyleSheet.create({
   shareCategory: {
     fontSize: 11,
     fontWeight: "800",
-    color: theme.colors.secondary,
+    color: colors.secondary,
     textTransform: "uppercase",
     letterSpacing: 1,
     marginBottom: 8,
@@ -337,7 +340,7 @@ const styles = StyleSheet.create({
 
   /* ── Dialog ── */
   dialog: {
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 20,
     maxHeight: "85%",
     overflow: "hidden",
@@ -349,7 +352,7 @@ const styles = StyleSheet.create({
   },
   accentBar: {
     height: 4,
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: colors.secondary,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },
@@ -370,13 +373,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   dateChip: {
-    backgroundColor: theme.colors.primaryLight,
+    backgroundColor: colors.primaryLight,
     height: 30,
   },
   dateChipText: {
     fontSize: 12,
     fontWeight: "700",
-    color: theme.colors.primary,
+    color: colors.primary,
   },
   categoryChip: {
     alignSelf: "flex-start",
@@ -387,14 +390,14 @@ const styles = StyleSheet.create({
   categoryChipText: {
     fontSize: 11,
     fontWeight: "700",
-    color: theme.colors.secondary,
+    color: colors.secondary,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   title: {
     fontSize: 22,
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     lineHeight: 30,
     marginBottom: 12,
   },
@@ -404,12 +407,12 @@ const styles = StyleSheet.create({
   },
   body: {
     fontSize: 15,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 24,
     marginBottom: 16,
   },
   updatedItemsBox: {
-    backgroundColor: theme.colors.primaryLight,
+    backgroundColor: colors.primaryLight,
     borderRadius: 12,
     padding: 14,
     marginBottom: 16,
@@ -417,30 +420,30 @@ const styles = StyleSheet.create({
   updatedItemsLabel: {
     fontSize: 12,
     fontWeight: "700",
-    color: theme.colors.primary,
+    color: colors.primary,
     marginBottom: 4,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   updatedItemsText: {
     fontSize: 13,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 20,
   },
   sourceText: {
     fontSize: 12,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     marginBottom: 8,
   },
   sourceBtn: {
     alignSelf: "flex-start",
-    borderColor: theme.colors.secondary,
+    borderColor: colors.secondary,
     borderRadius: 10,
     marginBottom: 4,
   },
   sourceBtnLabel: {
     fontSize: 13,
-    color: theme.colors.secondary,
+    color: colors.secondary,
   },
   actions: {
     paddingHorizontal: 16,
@@ -448,7 +451,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   shareBtn: {
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: colors.secondary,
     borderRadius: 10,
     elevation: 2,
   },

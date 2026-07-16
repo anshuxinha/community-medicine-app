@@ -5,10 +5,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { theme } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 
 const TOOLBOX_NEW_BADGES_STORAGE_KEY = 'toolboxNewBadgesSeen:v1';
 
 const FieldToolboxScreen = ({ navigation }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
     const [seenNewBadges, setSeenNewBadges] = useState({});
 
     useEffect(() => {
@@ -153,10 +156,10 @@ const FieldToolboxScreen = ({ navigation }) => {
     );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: theme.colors.backgroundMain,
+        backgroundColor: colors.backgroundMain,
     },
     container: {
         padding: 16,
@@ -165,11 +168,11 @@ const styles = StyleSheet.create({
     title: {
         fontWeight: 'bold',
         marginBottom: 24,
-        color: theme.colors.textTitle,
+        color: colors.textTitle,
     },
     card: {
         marginBottom: 16,
-        backgroundColor: theme.colors.surfacePrimary,
+        backgroundColor: colors.surfacePrimary,
         borderRadius: 16,
         elevation: 2,
     },
@@ -190,12 +193,12 @@ const styles = StyleSheet.create({
     cardTitle: {
         fontWeight: 'bold',
         fontSize: 18,
-        color: theme.colors.textTitle,
+        color: colors.textTitle,
         marginRight: 8,
     },
     newBadge: {
         backgroundColor: '#F3E8FF',
-        color: theme.colors.primaryDark,
+        color: colors.primaryDark,
         borderRadius: 6,
         overflow: 'hidden',
         paddingHorizontal: 6,

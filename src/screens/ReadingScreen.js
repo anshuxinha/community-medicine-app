@@ -3,7 +3,8 @@ import { View, StyleSheet } from "react-native";
 import * as Speech from "expo-speech";
 import ReadingView from "../components/ReadingView";
 import { AppContext } from "../context/AppContext";
-import { theme } from "../styles/theme";
+import { theme } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 import { buildSpeechChunks, buildSpeechText } from "../utils/tts";
 import {
   getContentKey,
@@ -27,6 +28,8 @@ import {
 } from "../services/highlightService";
 
 const ReadingScreen = ({ route, navigation }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   const {
     id,
     title,
@@ -359,10 +362,10 @@ const ReadingScreen = ({ route, navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.backgroundMain,
+    backgroundColor: colors.backgroundMain,
   },
 });
 

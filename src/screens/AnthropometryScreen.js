@@ -3,6 +3,7 @@ import { View, StyleSheet, ScrollView, Platform } from 'react-native';
 import { Text, TextInput, Button, Card, Divider, SegmentedButtons } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { theme } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 
 /* ─── BMI cut-offs (Asian Indian) ──────────────────────────────────────── */
 const BMI_CATEGORIES_ASIAN = [
@@ -41,6 +42,8 @@ const muacAdultStatus = (muac) => {
 };
 
 const AnthropometryScreen = () => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
     /* ── BMI state ─────────────────────────────────────────────────────── */
     const [height, setHeight] = useState('');
     const [weight, setWeight] = useState('');
@@ -418,24 +421,24 @@ const AnthropometryScreen = () => {
     );
 };
 
-const styles = StyleSheet.create({
-    safeArea: { flex: 1, backgroundColor: theme.colors.backgroundMain },
+const createStyles = (colors) => StyleSheet.create({
+    safeArea: { flex: 1, backgroundColor: colors.backgroundMain },
     container: { padding: 16, paddingBottom: 48 },
-    card: { marginBottom: 16, backgroundColor: theme.colors.surfacePrimary },
-    sectionTitle: { fontSize: 18, fontWeight: 'bold', color: theme.colors.textTitle, marginBottom: 4 },
-    subtitle: { color: theme.colors.textTertiary, marginBottom: 8 },
-    input: { marginTop: 8, marginBottom: 4, backgroundColor: theme.colors.surfacePrimary },
+    card: { marginBottom: 16, backgroundColor: colors.surfacePrimary },
+    sectionTitle: { fontSize: 18, fontWeight: 'bold', color: colors.textTitle, marginBottom: 4 },
+    subtitle: { color: colors.textTertiary, marginBottom: 8 },
+    input: { marginTop: 8, marginBottom: 4, backgroundColor: colors.surfacePrimary },
     segmented: { marginTop: 8, marginBottom: 4 },
-    calcButton: { marginTop: 12, paddingVertical: 6, backgroundColor: theme.colors.secondary },
+    calcButton: { marginTop: 12, paddingVertical: 6, backgroundColor: colors.secondary },
     resultBox: {
         marginTop: 16,
         padding: 16,
-        backgroundColor: theme.colors.primaryLight,
+        backgroundColor: colors.primaryLight,
         borderRadius: 12,
         borderLeftWidth: 4,
     },
     errorText: { color: '#B91C1C', marginTop: 8 },
-    noteText: { color: theme.colors.textTertiary, lineHeight: 18 },
+    noteText: { color: colors.textTertiary, lineHeight: 18 },
     /* MUAC band chips */
     muacBandRow: {
         flexDirection: 'row',

@@ -3,7 +3,8 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import { Card, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
-import { theme } from "../styles/theme";
+import { theme } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 import {
   NFHS_COMPARISON_CATEGORIES,
   NFHS_COMPARISON_INDICATORS,
@@ -82,6 +83,8 @@ const RuralUrbanRow = ({ item }) => {
 };
 
 const NFHSRuralUrbanScreen = () => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   const [category, setCategory] = useState("headline");
   const filteredIndicators = useMemo(
     () =>
@@ -159,10 +162,10 @@ const NFHSRuralUrbanScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: theme.colors.backgroundMain,
+    backgroundColor: colors.backgroundMain,
   },
   container: {
     padding: 16,
@@ -251,7 +254,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   categoryTabActive: {
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: colors.secondary,
     color: "#FFFFFF",
   },
   matrixCard: {
@@ -266,12 +269,12 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   matrixTitle: {
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontSize: 20,
     fontWeight: "900",
   },
   matrixSubtitle: {
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontSize: 13,
     fontWeight: "700",
     marginTop: 2,
@@ -290,7 +293,7 @@ const styles = StyleSheet.create({
   },
   indicatorTitle: {
     flex: 1,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontSize: 15,
     fontWeight: "800",
     lineHeight: 20,
@@ -375,7 +378,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#3B82F6",
   },
   gapNote: {
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontSize: 12,
     lineHeight: 17,
     marginTop: 8,
@@ -385,18 +388,18 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   sourceTitle: {
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontSize: 16,
     fontWeight: "900",
     marginBottom: 10,
   },
   sourceLabel: {
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontSize: 13,
     fontWeight: "800",
   },
   sourceDetail: {
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontSize: 12,
     lineHeight: 17,
     marginTop: 2,

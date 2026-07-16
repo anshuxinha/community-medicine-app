@@ -3,8 +3,11 @@ import { View, StyleSheet, TouchableOpacity, Modal, FlatList } from 'react-nativ
 import { Text, Divider } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 
 const DropdownPicker = ({ selectedValue, onValueChange, items, labelExtractor, valueExtractor, style }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
     const [visible, setVisible] = useState(false);
 
     const handleSelect = (item) => {
@@ -67,7 +70,7 @@ const DropdownPicker = ({ selectedValue, onValueChange, items, labelExtractor, v
     );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
     dropdownButton: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -77,12 +80,12 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#D1D5DB',
         borderRadius: 4,
-        backgroundColor: theme.colors.surfacePrimary,
+        backgroundColor: colors.surfacePrimary,
         marginTop: 8,
     },
     dropdownText: {
         fontSize: 14,
-        color: theme.colors.textTitle,
+        color: colors.textTitle,
         flex: 1,
     },
     modalOverlay: {
@@ -93,7 +96,7 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     modalContent: {
-        backgroundColor: theme.colors.surfacePrimary,
+        backgroundColor: colors.surfacePrimary,
         borderRadius: 12,
         width: '100%',
         maxHeight: '80%',
@@ -113,7 +116,7 @@ const styles = StyleSheet.create({
     modalTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: theme.colors.textTitle,
+        color: colors.textTitle,
     },
     optionItem: {
         flexDirection: 'row',
@@ -121,18 +124,18 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 16,
         borderBottomWidth: 1,
-        borderBottomColor: theme.colors.surfaceSecondary,
+        borderBottomColor: colors.surfaceSecondary,
     },
     optionItemSelected: {
-        backgroundColor: theme.colors.primaryLight,
+        backgroundColor: colors.primaryLight,
     },
     optionText: {
         fontSize: 16,
-        color: theme.colors.textTitle,
+        color: colors.textTitle,
         flex: 1,
     },
     optionTextSelected: {
-        color: theme.colors.primary,
+        color: colors.primary,
         fontWeight: 'bold',
     },
 });

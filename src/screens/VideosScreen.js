@@ -43,7 +43,8 @@ import { db } from "../config/firebase";
 import * as Device from "expo-device";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { AppContext } from "../context/AppContext";
-import { theme } from "../styles/theme";
+import { theme } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 import {
   formatDuration,
   formatPublishedDate,
@@ -76,6 +77,8 @@ const isVideoFree = (video) => {
 };
 
 const FreeLabel = () => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   return <Badge style={styles.freeBadge}>FREE</Badge>;
 };
 
@@ -881,23 +884,26 @@ const getThumbnailSource = (thumbnailUrl) => {
   return { uri: thumbnailUrl };
 };
 
-const EmptyState = ({ isFiltered }) => (
-  <View style={styles.emptyState}>
-    <MaterialIcons
-      name="video-library"
-      size={48}
-      color={theme.colors.textPlaceholder}
-    />
-    <Text style={styles.emptyTitle}>
-      {isFiltered ? "No videos in this category" : "No videos yet"}
-    </Text>
-    <Text style={styles.emptyText}>
-      {isFiltered
-        ? "Choose another category or pull to refresh."
-        : "New teaching videos will appear here as soon as they are synced."}
-    </Text>
-  </View>
-);
+const EmptyState = ({ isFiltered }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
+  return (
+    <View style={styles.emptyState}>
+      <MaterialIcons
+        name="video-library"
+        size={48}
+        color={colors.textPlaceholder}
+      />
+      <Text style={styles.emptyTitle}>
+        {isFiltered ? "No videos in this category" : "No videos yet"}
+      </Text>
+      <Text style={styles.emptyText}>
+        {isFiltered
+          ? "Choose another category or pull to refresh."
+          : "New teaching videos will appear here as soon as they are synced."}
+      </Text>
+    </View>
+  );
+};
 
 const getDoubtTime = (createdAt) => {
   if (!createdAt) return 0;
@@ -917,6 +923,8 @@ const getDoubtTime = (createdAt) => {
 };
 
 const VideosScreen = ({ navigation }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   const { isPremium, user, studyScore, setStudyScore } = useContext(AppContext);
   const [videos, setVideos] = useState([]);
   
@@ -2081,10 +2089,10 @@ const VideosScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
   },
   listContent: {
     paddingBottom: 32,
@@ -2101,11 +2109,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 30,
     fontWeight: "800",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   subtitle: {
     marginTop: 6,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontSize: 14,
     lineHeight: 20,
     maxWidth: 260,
@@ -2115,13 +2123,13 @@ const styles = StyleSheet.create({
     paddingRight: 20,
   },
   filterChip: {
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderColor: "#E5E7EB",
     borderRadius: 20,
   },
   filterChipSelected: {
     backgroundColor: "#EDE9FE", // Light purple background
-    borderColor: theme.colors.primary,
+    borderColor: colors.primary,
     borderWidth: 1,
   },
   filterChipText: {
@@ -2130,13 +2138,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   filterChipTextSelected: {
-    color: theme.colors.primary,
+    color: colors.primary,
     fontWeight: "bold",
   },
   sectionHeading: {
     fontSize: 12,
     fontWeight: "800",
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     letterSpacing: 1,
     marginTop: 10,
   },
@@ -2196,7 +2204,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   itemTitle: {
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontSize: 15,
     fontWeight: "800",
     lineHeight: 20,
@@ -2204,7 +2212,7 @@ const styles = StyleSheet.create({
   },
   videoNewBadge: {
     backgroundColor: "#F3E8FF",
-    color: theme.colors.primaryDark,
+    color: colors.primaryDark,
     borderRadius: 6,
     overflow: "hidden",
     paddingHorizontal: 6,
@@ -2213,7 +2221,7 @@ const styles = StyleSheet.create({
     fontWeight: "900",
   },
   itemMeta: {
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     fontSize: 12,
     fontWeight: "500",
   },
@@ -2229,7 +2237,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   loadMoreText: {
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     fontSize: 15,
     fontWeight: "800",
   },
@@ -2240,7 +2248,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 10,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   emptyState: {
     alignItems: "center",
@@ -2250,20 +2258,20 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     marginTop: 12,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontWeight: "800",
     fontSize: 18,
     textAlign: "center",
   },
   emptyText: {
     marginTop: 8,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     textAlign: "center",
     lineHeight: 20,
   },
   playerSafeArea: {
     flex: 1,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
   },
   playerSafeAreaFullscreen: {
     backgroundColor: "#000000",
@@ -2272,14 +2280,14 @@ const styles = StyleSheet.create({
     height: 58,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.surfaceSecondary,
+    borderBottomColor: colors.surfaceSecondary,
   },
   playerTitle: {
     flex: 1,
     textAlign: "center",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontWeight: "800",
   },
   playerHeaderSpacer: {
@@ -2317,11 +2325,11 @@ const styles = StyleSheet.create({
     marginVertical: 6,
   },
   doubtCard: {
-    backgroundColor: theme.colors.surfaceTertiary,
+    backgroundColor: colors.surfaceTertiary,
     borderRadius: 12,
     padding: 12,
     borderWidth: 1,
-    borderColor: theme.colors.surfaceSecondary,
+    borderColor: colors.surfaceSecondary,
   },
   doubtHeader: {
     flexDirection: "row",
@@ -2337,39 +2345,39 @@ const styles = StyleSheet.create({
   doubtAuthorName: {
     fontWeight: "bold",
     fontSize: 14,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   stromaScoreBadge: {
-    backgroundColor: theme.colors.primaryLight,
+    backgroundColor: colors.primaryLight,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 6,
   },
   stromaScoreText: {
-    color: theme.colors.primary,
+    color: colors.primary,
     fontSize: 11,
     fontWeight: "600",
   },
   underReviewBadge: {
-    backgroundColor: theme.colors.warningBackground,
+    backgroundColor: colors.warningBackground,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 6,
     borderWidth: 0.5,
-    borderColor: theme.colors.warning,
+    borderColor: colors.warning,
   },
   underReviewText: {
-    color: theme.colors.warningText,
+    color: colors.warningText,
     fontSize: 11,
     fontWeight: "bold",
   },
   doubtDate: {
     fontSize: 11,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
   },
   doubtText: {
     fontSize: 14,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     lineHeight: 18,
   },
   doubtActions: {
@@ -2387,14 +2395,14 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   actionActive: {
-    backgroundColor: theme.colors.primaryLight,
+    backgroundColor: colors.primaryLight,
   },
   actionButtonText: {
     fontSize: 12,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   actionActiveText: {
-    color: theme.colors.primary,
+    color: colors.primary,
     fontWeight: "bold",
   },
   approveButton: {
@@ -2408,7 +2416,7 @@ const styles = StyleSheet.create({
   },
   approveButtonText: {
     fontSize: 12,
-    color: theme.colors.success,
+    color: colors.success,
     fontWeight: "bold",
   },
   disapproveButton: {
@@ -2417,12 +2425,12 @@ const styles = StyleSheet.create({
     gap: 4,
     paddingVertical: 4,
     paddingHorizontal: 8,
-    backgroundColor: theme.colors.warningBackground,
+    backgroundColor: colors.warningBackground,
     borderRadius: 6,
   },
   disapproveButtonText: {
     fontSize: 12,
-    color: theme.colors.warningText,
+    color: colors.warningText,
     fontWeight: "bold",
   },
   deleteButton: {
@@ -2431,33 +2439,33 @@ const styles = StyleSheet.create({
     gap: 4,
     paddingVertical: 4,
     paddingHorizontal: 8,
-    backgroundColor: theme.colors.errorLight,
+    backgroundColor: colors.errorLight,
     borderRadius: 6,
   },
   deleteButtonText: {
     fontSize: 12,
-    color: theme.colors.error,
+    color: colors.error,
     fontWeight: "bold",
   },
   repliesContainer: {
     marginLeft: 20,
     marginTop: 4,
     borderLeftWidth: 1.5,
-    borderLeftColor: theme.colors.surfaceSecondary,
+    borderLeftColor: colors.surfaceSecondary,
     paddingLeft: 12,
   },
   replyCard: {
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 10,
     padding: 10,
     marginTop: 6,
     borderWidth: 0.5,
-    borderColor: theme.colors.surfaceSecondary,
+    borderColor: colors.surfaceSecondary,
   },
   replyAuthorName: {
     fontWeight: "600",
     fontSize: 13,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   stromaScoreBadgeReply: {
     backgroundColor: "#F3F4F6",
@@ -2466,13 +2474,13 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   stromaScoreTextReply: {
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontSize: 10,
     fontWeight: "500",
   },
   replyText: {
     fontSize: 13,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     lineHeight: 16,
   },
   emptyDoubts: {
@@ -2484,12 +2492,12 @@ const styles = StyleSheet.create({
   emptyDoubtsTitle: {
     fontSize: 15,
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     marginTop: 8,
   },
   emptyDoubtsText: {
     fontSize: 13,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     textAlign: "center",
     marginTop: 4,
   },
@@ -2499,20 +2507,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.surfaceSecondary,
-    backgroundColor: theme.colors.surfacePrimary,
+    borderTopColor: colors.surfaceSecondary,
+    backgroundColor: colors.surfacePrimary,
   },
   input: {
     flex: 1,
     minHeight: 40,
     maxHeight: 100,
-    backgroundColor: theme.colors.surfaceSecondary,
+    backgroundColor: colors.surfaceSecondary,
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingTop: 8,
     paddingBottom: 8,
     fontSize: 14,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   sendButton: {
     margin: 0,
@@ -2521,13 +2529,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: theme.colors.primaryLight,
+    backgroundColor: colors.primaryLight,
     paddingHorizontal: 16,
     paddingVertical: 4,
   },
   replyBannerText: {
     fontSize: 12,
-    color: theme.colors.primary,
+    color: colors.primary,
   },
   videoActionsRow: {
     flexDirection: "row",
@@ -2541,7 +2549,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderBottomWidth: 1,
     borderBottomColor: "#E5E7EB",
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
   },
   tabButton: {
     flex: 1,
@@ -2554,20 +2562,20 @@ const styles = StyleSheet.create({
     borderBottomColor: "transparent",
   },
   activeTabButton: {
-    borderBottomColor: theme.colors.primary,
+    borderBottomColor: colors.primary,
   },
   tabButtonText: {
     fontSize: 14,
     fontWeight: "600",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   activeTabButtonText: {
-    color: theme.colors.primary,
+    color: colors.primary,
     fontWeight: "bold",
   },
   notesTabContent: {
     flex: 1,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
   },
   notesTabHeader: {
     flexDirection: "row",
@@ -2576,12 +2584,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.surfaceSecondary,
+    borderBottomColor: colors.surfaceSecondary,
   },
   notesTabTitle: {
     fontSize: 14,
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     flex: 1,
     marginRight: 8,
   },
@@ -2603,19 +2611,19 @@ const styles = StyleSheet.create({
   },
   pdfFullscreenSafeArea: {
     flex: 1,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
   },
   pdfFullscreenHeader: {
     height: 56,
     flexDirection: "row",
     alignItems: "center",
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.surfaceSecondary,
+    borderBottomColor: colors.surfaceSecondary,
   },
   pdfFullscreenTitle: {
     flex: 1,
     textAlign: "center",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontWeight: "bold",
     fontSize: 16,
   },
@@ -2623,7 +2631,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   freeBadge: {
-    backgroundColor: theme.colors.success,
+    backgroundColor: colors.success,
     color: "#FFFFFF",
     fontWeight: "700",
     marginRight: 6,

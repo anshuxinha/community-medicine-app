@@ -20,7 +20,8 @@ if (Constants.appOwnership !== "expo") {
   Purchases = require("react-native-purchases").default;
 }
 import { AppContext } from "../context/AppContext";
-import { theme } from "../styles/theme";
+import { theme } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 import {
   enableScreenCaptureProtection,
   disableScreenCaptureProtection,
@@ -70,6 +71,8 @@ const PLAN_METADATA = [
 ];
 
 const PaywallScreen = ({ navigation }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   const [selectedPlan, setSelectedPlan] = useState("yearly");
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [showCouponInput, setShowCouponInput] = useState(false);
@@ -675,22 +678,25 @@ const PaywallScreen = ({ navigation }) => {
   );
 };
 
-const FeatureItem = ({ text }) => (
-  <View style={styles.featureItem}>
-    <MaterialIcons
-      name="check-circle"
-      size={24}
-      color="#A855F7"
-      style={styles.featureIcon}
-    />
-    <Text style={styles.featureText}>{text}</Text>
-  </View>
-);
+const FeatureItem = ({ text }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
+  return (
+    <View style={styles.featureItem}>
+      <MaterialIcons
+        name="check-circle"
+        size={24}
+        color={colors.secondary}
+        style={styles.featureIcon}
+      />
+      <Text style={styles.featureText}>{text}</Text>
+    </View>
+  );
+};
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: theme.colors.backgroundMain,
+    backgroundColor: colors.backgroundMain,
   },
   container: {
     flexGrow: 1,
@@ -705,7 +711,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     marginTop: 16,
-    color: theme.colors.error,
+    color: colors.error,
     fontSize: 16,
     textAlign: "center",
     paddingHorizontal: 20,
@@ -733,7 +739,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 16,
-    shadowColor: theme.colors.secondary,
+    shadowColor: colors.secondary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -742,7 +748,7 @@ const styles = StyleSheet.create({
   iconBg: {
     opacity: 0.8,
     elevation: 10,
-    shadowColor: theme.colors.chartBlue,
+    shadowColor: colors.chartBlue,
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
     shadowRadius: 15,
@@ -752,7 +758,7 @@ const styles = StyleSheet.create({
     top: "30%",
   },
   title: {
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontFamily: Platform.OS === "ios" ? "Georgia" : "serif",
     fontSize: 28, // Reduced from 32
     textAlign: "center",
@@ -768,7 +774,7 @@ const styles = StyleSheet.create({
   },
   featureIcon: {
     marginRight: 12,
-    backgroundColor: theme.colors.primaryLight,
+    backgroundColor: colors.primaryLight,
     borderRadius: 12,
   },
   featureText: {
@@ -786,10 +792,10 @@ const styles = StyleSheet.create({
   },
   pricingCard: {
     flex: 1,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: theme.colors.surfaceSecondary,
+    borderColor: colors.surfaceSecondary,
     marginHorizontal: 4,
     paddingVertical: 12,
     elevation: 2,
@@ -801,7 +807,7 @@ const styles = StyleSheet.create({
   pricingCardActive: {
     borderWidth: 2,
     borderColor: "#A855F7",
-    backgroundColor: theme.colors.surfaceTertiary,
+    backgroundColor: colors.surfaceTertiary,
     transform: [{ scale: 1.05 }],
     zIndex: 10,
   },
@@ -810,25 +816,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   planName: {
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontWeight: "bold",
     fontSize: 14,
     marginBottom: 2,
   },
   planDuration: {
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     fontSize: 10,
     marginBottom: 8,
   },
   priceText: {
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontWeight: "bold",
     fontSize: 12,
     marginBottom: 8,
     textAlign: "center",
   },
   planDesc: {
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     fontSize: 10,
     textAlign: "center",
   },
@@ -836,7 +842,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -12,
     alignSelf: "center",
-    backgroundColor: theme.colors.primaryLight,
+    backgroundColor: colors.primaryLight,
     borderRadius: 12,
     paddingHorizontal: 8,
     paddingVertical: 2,
@@ -847,8 +853,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   saveBadge: {
-    color: theme.colors.primaryDark,
-    backgroundColor: theme.colors.primaryLight,
+    color: colors.primaryDark,
+    backgroundColor: colors.primaryLight,
     borderRadius: 8,
     paddingHorizontal: 6,
     paddingVertical: 2,
@@ -858,12 +864,12 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   subscribeButton: {
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: colors.secondary,
     paddingVertical: 10,
     borderRadius: 30,
     marginBottom: 16, // Reduced from 24
     elevation: 4,
-    shadowColor: theme.colors.secondary,
+    shadowColor: colors.secondary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -871,7 +877,7 @@ const styles = StyleSheet.create({
   subscribeButtonText: {
     fontSize: 18,
     fontWeight: "bold",
-    color: theme.colors.buttonText,
+    color: colors.buttonText,
   },
   footerLinks: {
     flexDirection: "row",
@@ -880,7 +886,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   footerLinkText: {
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     fontSize: 11,
   },
   legalDisclaimer: {
@@ -889,14 +895,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   legalText: {
-    color: theme.colors.textPlaceholder,
+    color: colors.textPlaceholder,
     fontSize: 9,
     textAlign: "center",
     lineHeight: 12,
   },
   strikethroughPrice: {
     textDecorationLine: "line-through",
-    color: theme.colors.textPlaceholder,
+    color: colors.textPlaceholder,
     fontSize: 10,
     marginBottom: 0,
   },
@@ -913,7 +919,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   couponTriggerText: {
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     fontSize: 14,
   },
   applyNowText: {
@@ -927,7 +933,7 @@ const styles = StyleSheet.create({
   couponInput: {
     flex: 1,
     height: 40,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
   },
   applyButton: {
     marginLeft: 8,
@@ -943,7 +949,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: theme.colors.surfaceTertiary,
+    backgroundColor: colors.surfaceTertiary,
     padding: 10,
     borderRadius: 8,
     borderWidth: 1,
@@ -956,12 +962,12 @@ const styles = StyleSheet.create({
   },
   appliedCouponText: {
     marginLeft: 6,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontWeight: "600",
     fontSize: 14,
   },
   removeCouponText: {
-    color: theme.colors.error,
+    color: colors.error,
     fontSize: 12,
     fontWeight: "bold",
   },

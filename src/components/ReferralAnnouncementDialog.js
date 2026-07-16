@@ -12,7 +12,8 @@ import {
   Divider,
 } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-import { theme } from "../styles/theme";
+import { theme } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 
 /**
  * Branded premium dialog to introduce the new Refer & Earn system.
@@ -24,6 +25,8 @@ import { theme } from "../styles/theme";
  *  - onAction: () => void
  */
 const ReferralAnnouncementDialog = ({ visible, onDismiss, onAction }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   return (
     <Portal>
       <Dialog
@@ -113,9 +116,9 @@ const ReferralAnnouncementDialog = ({ visible, onDismiss, onAction }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   dialog: {
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 24,
     maxHeight: "80%",
     overflow: "hidden",
@@ -127,7 +130,7 @@ const styles = StyleSheet.create({
   },
   accentBar: {
     height: 6,
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: colors.secondary,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
   },
@@ -157,13 +160,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     textAlign: "center",
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 14,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     textAlign: "center",
     lineHeight: 20,
     marginBottom: 16,
@@ -197,21 +200,21 @@ const styles = StyleSheet.create({
   benefitTitle: {
     fontSize: 15,
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     marginBottom: 4,
   },
   benefitDescription: {
     fontSize: 13,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 18,
   },
   boldText: {
     fontWeight: "bold",
-    color: theme.colors.secondary,
+    color: colors.secondary,
   },
   helperText: {
     fontSize: 12,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     textAlign: "center",
     lineHeight: 16,
     paddingHorizontal: 12,
@@ -223,7 +226,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   btnPrimary: {
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: colors.secondary,
     borderRadius: 14,
     paddingHorizontal: 8,
   },

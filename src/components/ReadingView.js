@@ -17,7 +17,8 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
-import { theme } from "../styles/theme";
+import { theme } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 import { normalizeUpdatedSnippet } from "../utils/contentRegistry";
 
 const stripBold = (text) => text.replace(/\*\*(.+?)\*\*/g, "$1");
@@ -725,6 +726,7 @@ const ReadingView = ({
   searchTerms = "",
   contentKey,
 }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
   console.log("ReadingView: illustrations prop", illustrations);
   const insets = useSafeAreaInsets();
   const blocks = useMemo(() => {
@@ -1863,20 +1865,20 @@ const ReadingView = ({
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
   },
   captureProtectedOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     alignItems: "center",
     justifyContent: "center",
     zIndex: 1000,
   },
   captureProtectedText: {
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontSize: 14,
     fontWeight: "600",
   },
@@ -1887,7 +1889,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 12,
     paddingVertical: 10,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: "#E5E7EB",
     zIndex: 10,
@@ -1902,7 +1904,7 @@ const styles = StyleSheet.create({
   headerSectionTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: theme.colors.secondary,
+    color: colors.secondary,
     marginLeft: 4,
     marginRight: "auto",
   },
@@ -1921,12 +1923,12 @@ const styles = StyleSheet.create({
   // ── Progress ──
   progressBarBackground: {
     height: 2.5,
-    backgroundColor: theme.colors.surfaceSecondary,
+    backgroundColor: colors.surfaceSecondary,
     width: "100%",
   },
   progressBarFill: {
     height: "100%",
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
   },
 
   // ── Chapter Intro ──
@@ -1939,13 +1941,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600",
     letterSpacing: 1.5,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     marginBottom: 8,
   },
   chapterTitle: {
     fontSize: 24,
     fontWeight: "800",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     lineHeight: 32,
     marginBottom: 16,
   },
@@ -1973,13 +1975,13 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 10,
     borderRadius: 12,
-    backgroundColor: theme.colors.warningBackground,
+    backgroundColor: colors.warningBackground,
     borderWidth: 1,
     borderColor: "#FDE68A",
   },
   updateBannerText: {
     flex: 1,
-    color: theme.colors.warningText,
+    color: colors.warningText,
     fontSize: 13,
     lineHeight: 18,
     fontWeight: "600",
@@ -1999,7 +2001,7 @@ const styles = StyleSheet.create({
   },
   annotationModeBannerText: {
     flex: 1,
-    color: theme.colors.secondary,
+    color: colors.secondary,
     fontSize: 13,
     lineHeight: 18,
     fontWeight: "600",
@@ -2007,21 +2009,21 @@ const styles = StyleSheet.create({
 
   // ── Typography (body size unchanged) ──
   h1: {
-    color: theme.colors.secondary,
+    color: colors.secondary,
     fontSize: 22,
     fontWeight: "700",
     marginTop: 16,
     marginBottom: 8,
   },
   h2: {
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     fontSize: 19,
     fontWeight: "700",
     marginTop: 14,
     marginBottom: 6,
   },
   body: {
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontSize: 15.5,
     lineHeight: 24,
     marginVertical: 4,
@@ -2038,7 +2040,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   tableTitleText: {
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontSize: 16,
     fontWeight: "700",
     lineHeight: 22,
@@ -2048,7 +2050,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   referenceText: {
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     fontSize: 12.5,
     fontStyle: "italic",
     lineHeight: 18,
@@ -2127,14 +2129,14 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   bulletDot: {
-    color: theme.colors.secondary,
+    color: colors.secondary,
     fontSize: 16,
     lineHeight: 24,
     width: 20,
   },
   bulletText: {
     flex: 1,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontSize: 15.5,
     lineHeight: 24,
   },
@@ -2148,14 +2150,14 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   nestedBulletDot: {
-    color: theme.colors.secondary,
+    color: colors.secondary,
     fontSize: 14,
     lineHeight: 22,
     width: 20,
   },
   nestedBulletText: {
     flex: 1,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontSize: 14.5,
     lineHeight: 22,
   },
@@ -2212,12 +2214,12 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderLeftWidth: 4,
-    borderLeftColor: theme.colors.primary,
-    backgroundColor: theme.colors.primaryLight || "#F3E8FF",
+    borderLeftColor: colors.primary,
+    backgroundColor: colors.primaryLight || "#F3E8FF",
     borderRadius: 4,
   },
   blockquoteText: {
-    color: theme.colors.textTitle || "#1F2937",
+    color: colors.textTitle || "#1F2937",
     fontSize: 15,
     fontStyle: "italic",
     lineHeight: 24,
@@ -2235,12 +2237,12 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderLeftWidth: 4,
-    borderLeftColor: theme.colors.secondary || "#7C3AED",
+    borderLeftColor: colors.secondary || "#7C3AED",
     backgroundColor: "#F5F3FF",
     borderRadius: 4,
   },
   questionText: {
-    color: theme.colors.textTitle || "#1F2937",
+    color: colors.textTitle || "#1F2937",
     fontSize: 15,
     fontWeight: "600",
     lineHeight: 22,
@@ -2250,7 +2252,7 @@ const styles = StyleSheet.create({
   tableContainer: {
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: theme.colors.surfaceSecondary || "#E5E7EB",
+    borderColor: colors.surfaceSecondary || "#E5E7EB",
   },
   tableScrollContainer: {
     marginVertical: 12,
@@ -2262,10 +2264,10 @@ const styles = StyleSheet.create({
   },
   tableRow: {
     flexDirection: "row",
-    backgroundColor: theme.colors.surfacePrimary || "#FFFFFF",
+    backgroundColor: colors.surfacePrimary || "#FFFFFF",
   },
   tableRowAlt: {
-    backgroundColor: theme.colors.surfaceSecondary || "#F9FAFB",
+    backgroundColor: colors.surfaceSecondary || "#F9FAFB",
   },
   tableCell: {
     paddingHorizontal: 10,
@@ -2286,7 +2288,7 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   tableCellText: {
-    color: theme.colors.textTitle || "#1F2937",
+    color: colors.textTitle || "#1F2937",
     fontSize: 13,
     lineHeight: 19,
   },
@@ -2302,7 +2304,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.surfaceTertiary,
+    backgroundColor: colors.surfaceTertiary,
   },
   contentImage: {
     width: "100%",
@@ -2322,9 +2324,9 @@ const styles = StyleSheet.create({
   illustrationCard: {
     marginVertical: 14,
     borderRadius: 16,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderWidth: 1,
-    borderColor: theme.colors.surfaceSecondary,
+    borderColor: colors.surfaceSecondary,
     elevation: 2,
     shadowColor: "#000",
     shadowOpacity: 0.08,
@@ -2335,7 +2337,7 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.surfaceTertiary,
+    backgroundColor: colors.surfaceTertiary,
   },
   illustrationImage: {
     width: "100%",
@@ -2347,13 +2349,13 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   illustrationCaption: {
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontSize: 14.5,
     lineHeight: 21,
     fontWeight: "700",
   },
   illustrationPurpose: {
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     fontSize: 13.5,
     lineHeight: 20,
   },
@@ -2364,7 +2366,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-around",
     paddingTop: 8,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: "#E5E7EB",
     elevation: 8,
@@ -2383,11 +2385,11 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: "700",
     letterSpacing: 0.5,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     marginTop: 3,
   },
   toolbarLabelActive: {
-    color: theme.colors.secondary,
+    color: colors.secondary,
   },
 
   // ── Annotation Mode ──
@@ -2400,7 +2402,7 @@ const styles = StyleSheet.create({
   annotationModePressedBlock: {
     backgroundColor: "#F3F0FF",
     borderRadius: 6,
-    borderColor: theme.colors.secondary,
+    borderColor: colors.secondary,
     borderWidth: 1,
     borderStyle: "dashed",
   },
@@ -2434,7 +2436,7 @@ const styles = StyleSheet.create({
   annotationCardText: {
     fontSize: 14,
     lineHeight: 20,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
 
   // ── Annotation Input ──
@@ -2445,7 +2447,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderLeftWidth: 3,
-    borderLeftColor: theme.colors.secondary,
+    borderLeftColor: colors.secondary,
     backgroundColor: "#F9FAFB",
     borderRadius: 8,
     borderWidth: 1,
@@ -2454,7 +2456,7 @@ const styles = StyleSheet.create({
   annotationInput: {
     fontSize: 14,
     lineHeight: 20,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     minHeight: 48,
     textAlignVertical: "top",
     padding: 0,
@@ -2473,13 +2475,13 @@ const styles = StyleSheet.create({
   annotationCancelText: {
     fontSize: 13,
     fontWeight: "600",
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
   },
   annotationSaveBtn: {
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 6,
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: colors.secondary,
   },
   annotationSaveBtnDisabled: {
     opacity: 0.4,
@@ -2500,7 +2502,7 @@ const styles = StyleSheet.create({
   },
   noteModalContent: {
     width: "100%",
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 16,
     paddingHorizontal: 20,
     paddingTop: 20,
@@ -2509,13 +2511,13 @@ const styles = StyleSheet.create({
   noteModalTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     marginBottom: 16,
   },
   noteModalInput: {
     fontSize: 15,
     lineHeight: 22,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     minHeight: 80,
     textAlignVertical: "top",
     padding: 12,

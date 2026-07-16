@@ -21,7 +21,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { theme, useResponsive } from "../styles/theme";
+import { theme, useResponsive } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 import { AppContext } from "../context/AppContext";
 import { PYQ_IMAGES } from "../data/pyq_images_map";
 
@@ -30,6 +31,8 @@ const STORAGE_BOOKMARKS_KEY = "pyq_bookmarks_v1";
 const WINDOW_WIDTH = Dimensions.get("window").width;
 
 const PYQPracticeScreen = ({ route, navigation }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   const { questions, mode, title } = route.params;
   const { completeDailyGoal } = useContext(AppContext);
   const { isTablet, horizontalPadding, contentMaxWidth } = useResponsive();
@@ -616,17 +619,17 @@ const PYQPracticeScreen = ({ route, navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: theme.colors.backgroundMain,
+    backgroundColor: colors.backgroundMain,
   },
   topBar: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 10,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderBottomWidth: 1,
     borderBottomColor: "#E5E7EB",
   },
@@ -640,7 +643,7 @@ const styles = StyleSheet.create({
   progressText: {
     fontSize: 12,
     fontWeight: "bold",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginBottom: 4,
   },
   progressBar: {
@@ -656,7 +659,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   timerText: {
-    color: theme.colors.primaryDark,
+    color: colors.primaryDark,
     fontWeight: "bold",
     fontSize: 13,
     marginLeft: 4,
@@ -669,7 +672,7 @@ const styles = StyleSheet.create({
     paddingBottom: 80,
   },
   questionCard: {
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 16,
     elevation: 3,
     shadowColor: "#000",
@@ -680,7 +683,7 @@ const styles = StyleSheet.create({
   },
   questionText: {
     fontWeight: "800",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     lineHeight: 24,
     marginBottom: 16,
   },
@@ -688,7 +691,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginVertical: 16,
-    backgroundColor: theme.colors.surfaceTertiary,
+    backgroundColor: colors.surfaceTertiary,
     borderRadius: 12,
     padding: 8,
     height: 220,
@@ -705,7 +708,7 @@ const styles = StyleSheet.create({
   optionRow: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.surfaceTertiary,
+    backgroundColor: colors.surfaceTertiary,
     borderColor: "#E5E7EB",
     borderWidth: 1,
     borderRadius: 12,
@@ -715,15 +718,15 @@ const styles = StyleSheet.create({
   },
   selectedOptionRow: {
     backgroundColor: "#EDE9FE",
-    borderColor: theme.colors.primary,
+    borderColor: colors.primary,
   },
   correctOptionRow: {
     backgroundColor: "#D1FAE5",
-    borderColor: theme.colors.success,
+    borderColor: colors.success,
   },
   incorrectOptionRow: {
     backgroundColor: "#FEE2E2",
-    borderColor: theme.colors.error,
+    borderColor: colors.error,
   },
   optionCircle: {
     width: 28,
@@ -735,27 +738,27 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   selectedOptionCircle: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
   },
   correctOptionCircle: {
-    backgroundColor: theme.colors.success,
+    backgroundColor: colors.success,
   },
   incorrectOptionCircle: {
-    backgroundColor: theme.colors.error,
+    backgroundColor: colors.error,
   },
   optionCircleText: {
     fontWeight: "bold",
     fontSize: 13,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   optionLabel: {
     flex: 1,
     fontSize: 15,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     lineHeight: 20,
   },
   selectedOptionText: {
-    color: theme.colors.primaryDark,
+    color: colors.primaryDark,
     fontWeight: "bold",
   },
   correctOptionText: {
@@ -767,7 +770,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   explanationCard: {
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 16,
     elevation: 2,
     shadowColor: "#000",
@@ -785,17 +788,17 @@ const styles = StyleSheet.create({
   explanationHeaderTitle: {
     fontSize: 15,
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     marginLeft: 8,
   },
   explanationBodyText: {
     fontSize: 14,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 21,
   },
   footerContainer: {
     padding: 16,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderTopWidth: 1,
     borderTopColor: "#E5E7EB",
   },
@@ -827,14 +830,14 @@ const styles = StyleSheet.create({
   },
   resultTitle: {
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   resultSubtitle: {
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 6,
   },
   scoreCard: {
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 20,
     elevation: 4,
     shadowColor: "#000",
@@ -854,16 +857,16 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     borderWidth: 6,
-    borderColor: theme.colors.primaryLight,
+    borderColor: colors.primaryLight,
     alignItems: "center",
     justifyContent: "center",
   },
   scoreText: {
     fontWeight: "bold",
-    color: theme.colors.primary,
+    color: colors.primary,
   },
   scoreSubtext: {
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     fontSize: 10,
     marginTop: 2,
   },
@@ -877,20 +880,20 @@ const styles = StyleSheet.create({
   },
   statText: {
     fontSize: 14,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginLeft: 8,
   },
   statBold: {
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   reviewHeader: {
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     marginBottom: 12,
   },
   reviewItemCard: {
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 12,
     borderLeftWidth: 5,
     marginBottom: 10,
@@ -907,35 +910,35 @@ const styles = StyleSheet.create({
   },
   reviewItemNumber: {
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontSize: 13,
   },
   reviewItemText: {
     fontSize: 14,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 18,
     marginVertical: 4,
   },
   reviewItemExam: {
     fontSize: 11,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     alignSelf: "flex-end",
   },
   doneButton: {
     marginTop: 20,
     borderRadius: 12,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
   },
 
   // Review Dialog Styles
   reviewDialog: {
     maxHeight: "85%",
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 16,
   },
   reviewDialogTitle: {
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   dialogScrollContent: {
     padding: 16,
@@ -943,32 +946,32 @@ const styles = StyleSheet.create({
   dialogQuestion: {
     fontSize: 16,
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     lineHeight: 22,
     marginBottom: 12,
   },
   dialogImage: {
     width: "100%",
     height: 180,
-    backgroundColor: theme.colors.surfaceTertiary,
+    backgroundColor: colors.surfaceTertiary,
     borderRadius: 10,
     marginBottom: 16,
   },
   explanationSection: {
-    backgroundColor: theme.colors.surfaceTertiary,
+    backgroundColor: colors.surfaceTertiary,
     padding: 14,
     borderRadius: 10,
     marginTop: 8,
   },
   explanationHeader: {
     fontWeight: "bold",
-    color: theme.colors.primary,
+    color: colors.primary,
     fontSize: 13,
     marginBottom: 4,
   },
   explanationText: {
     fontSize: 14,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 20,
   },
 });

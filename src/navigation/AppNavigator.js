@@ -11,6 +11,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { AppContext } from "../context/AppContext";
 import { useSessionEnforcer } from "../hooks/useSessionEnforcer";
 import { setupNotificationTapHandler } from "../services/notificationService";
+import { useAppTheme } from "../styles/ThemeContext";
 
 // Eager: first-paint surfaces only
 import DashboardScreen from "../screens/DashboardScreen";
@@ -18,9 +19,8 @@ import LibraryScreen from "../screens/LibraryScreen";
 import VideosScreen from "../screens/VideosScreen";
 import LoginScreen from "../screens/LoginScreen";
 import PaywallScreen from "../screens/PaywallScreen";
-import { theme } from "../styles/theme";
 
-// Deferred screens: loaded on first navigation via getComponent (not parsed at cold start)
+// Deferred screens: loaded on first navigation via getComponent
 const getUpdatesScreen = () => require("../screens/UpdatesScreen").default;
 const getPYQCreateScreen = () => require("../screens/PYQCreateScreen").default;
 const getReadingScreen = () => require("../screens/ReadingScreen").default;
@@ -51,6 +51,7 @@ const navigationRef = createNavigationContainerRef();
 const TabNavigator = () => {
   const insets = useSafeAreaInsets();
   const { isPremium } = React.useContext(AppContext);
+  const { colors } = useAppTheme();
 
   return (
     <Tab.Navigator
@@ -65,13 +66,13 @@ const TabNavigator = () => {
           else if (route.name === "Videos") iconName = "ondemand-video";
           return <MaterialIcons name={iconName} color={color} size={size} />;
         },
-        tabBarActiveTintColor: theme.colors.secondary,
-        tabBarInactiveTintColor: theme.colors.textPlaceholder,
+        tabBarActiveTintColor: colors.secondary,
+        tabBarInactiveTintColor: colors.textPlaceholder,
         tabBarStyle: {
-          backgroundColor: theme.colors.surfacePrimary,
+          backgroundColor: colors.surfacePrimary,
           borderTopWidth: 0,
           elevation: 10,
-          shadowColor: "#000",
+          shadowColor: colors.shadow,
           shadowOpacity: 0.1,
           shadowRadius: 10,
           shadowOffset: { width: 0, height: -5 },
@@ -89,7 +90,6 @@ const TabNavigator = () => {
         listeners={({ navigation }) => ({
           tabPress: (event) => {
             if (isPremium) return;
-
             event.preventDefault();
             navigation.getParent()?.navigate("Paywall");
           },
@@ -100,13 +100,10 @@ const TabNavigator = () => {
   );
 };
 
-// Silent route guard for premium content
 const PremiumGuard = ({ navigation, route }) => {
   const { user, isPremium } = React.useContext(AppContext);
   React.useEffect(() => {
-    // user === undefined means auth is still resolving — don't redirect yet
     if (user === undefined) return;
-
     if (!user) {
       navigation.replace("Login");
     } else if (!isPremium) {
@@ -125,6 +122,7 @@ const PremiumGuard = ({ navigation, route }) => {
 
 const AppNavigator = () => {
   const { user } = React.useContext(AppContext);
+  const { colors, navigationTheme } = useAppTheme();
 
   useSessionEnforcer();
 
@@ -132,7 +130,6 @@ const AppNavigator = () => {
     setupNotificationTapHandler(navigationRef);
   }, []);
 
-  // undefined = still resolving auth state (onAuthStateChanged not yet fired)
   if (user === undefined) {
     return (
       <View
@@ -140,17 +137,24 @@ const AppNavigator = () => {
           flex: 1,
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: theme.colors.textPrimary,
+          backgroundColor: colors.inverseSurface,
         }}
       >
-        <ActivityIndicator size="large" color={theme.colors.secondary} />
+        <ActivityIndicator size="large" color={colors.secondary} />
       </View>
     );
   }
 
   return (
-    <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator>
+    <NavigationContainer ref={navigationRef} theme={navigationTheme}>
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: { backgroundColor: colors.surfacePrimary },
+          headerTintColor: colors.textTitle,
+          headerTitleStyle: { color: colors.textTitle },
+          contentStyle: { backgroundColor: colors.backgroundMain },
+        }}
+      >
         {!user ? (
           <Stack.Screen
             name="Login"
@@ -159,14 +163,11 @@ const AppNavigator = () => {
           />
         ) : (
           <>
-            {/* ── Main tabs ── */}
             <Stack.Screen
               name="MainTabs"
               component={TabNavigator}
               options={{ headerShown: false }}
             />
-
-            {/* ── Library sub-screens ── */}
             <Stack.Screen
               name="Reading"
               getComponent={getReadingScreen}
@@ -187,8 +188,6 @@ const AppNavigator = () => {
               getComponent={getPYQPracticeScreen}
               options={{ headerShown: false }}
             />
-
-            {/* ── Field Toolbox ── */}
             <Stack.Screen
               name="FieldToolbox"
               getComponent={getFieldToolboxScreen}
@@ -224,8 +223,6 @@ const AppNavigator = () => {
               getComponent={getNFHSTrendsScreen}
               options={{ title: "NFHS Trends" }}
             />
-
-            {/* ── Other Modules ── */}
             <Stack.Screen
               name="VirtualMuseum"
               getComponent={getVirtualMuseumScreen}
@@ -241,8 +238,6 @@ const AppNavigator = () => {
               getComponent={getGemsScreen}
               options={{ title: "💎 Study Gems" }}
             />
-
-            {/* ── Paywall / Guards ── */}
             <Stack.Screen
               name="Paywall"
               component={PaywallScreen}
@@ -253,8 +248,6 @@ const AppNavigator = () => {
               component={PremiumGuard}
               options={{ headerShown: false, presentation: "transparentModal" }}
             />
-
-            {/* ── Drawer-linked screens ── */}
             <Stack.Screen
               name="Notifications"
               getComponent={getNotificationsScreen}

@@ -4,6 +4,7 @@ import { Text, TextInput, Button, Card, Title, Divider, SegmentedButtons } from 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 
 function calcChi2(a, b, c, d) {
     const n = a + b + c + d;
@@ -68,6 +69,8 @@ const PRESET_PROBLEMS = [
 const SOLVER_OFFSETS = { chi2: 0, efficacy: 0, imr: 0 };
 
 const BiostatsAssistantScreen = () => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
     const [tab, setTab] = useState('samplesize');
     const scrollRef = useRef(null);
 
@@ -394,22 +397,22 @@ const BiostatsAssistantScreen = () => {
     );
 };
 
-const styles = StyleSheet.create({
-    safeArea: { flex: 1, backgroundColor: theme.colors.backgroundMain },
+const createStyles = (colors) => StyleSheet.create({
+    safeArea: { flex: 1, backgroundColor: colors.backgroundMain },
     container: { padding: 16, paddingBottom: 48 },
-    headerText: { fontSize: 26, fontWeight: 'bold', color: theme.colors.textTitle, marginBottom: 16 },
-    card: { marginBottom: 14, backgroundColor: theme.colors.surfacePrimary, borderRadius: 12, elevation: 2 },
-    cardTitle: { fontSize: 16, fontWeight: 'bold', color: theme.colors.textTitle, marginBottom: 4 },
-    hint: { color: theme.colors.textTertiary, fontSize: 12, marginBottom: 8, fontStyle: 'italic' },
+    headerText: { fontSize: 26, fontWeight: 'bold', color: colors.textTitle, marginBottom: 16 },
+    card: { marginBottom: 14, backgroundColor: colors.surfacePrimary, borderRadius: 12, elevation: 2 },
+    cardTitle: { fontSize: 16, fontWeight: 'bold', color: colors.textTitle, marginBottom: 4 },
+    hint: { color: colors.textTertiary, fontSize: 12, marginBottom: 8, fontStyle: 'italic' },
     typeBtn: { marginTop: 8, borderColor: '#E5E7EB' },
     pillRow: { flexDirection: 'row', gap: 8, marginTop: 8 },
     pill: { flex: 1 },
     grid2x2: { gap: 8 },
     gridRow: { flexDirection: 'row', gap: 8 },
-    cell: { flex: 1, backgroundColor: theme.colors.surfacePrimary },
-    input: { marginBottom: 8, backgroundColor: theme.colors.surfacePrimary },
-    btn: { marginTop: 12, backgroundColor: theme.colors.secondary, paddingVertical: 4 },
-    resultBox: { marginTop: 12, padding: 14, backgroundColor: theme.colors.primaryLight, borderRadius: 10, borderLeftWidth: 4 },
+    cell: { flex: 1, backgroundColor: colors.surfacePrimary },
+    input: { marginBottom: 8, backgroundColor: colors.surfacePrimary },
+    btn: { marginTop: 12, backgroundColor: colors.secondary, paddingVertical: 4 },
+    resultBox: { marginTop: 12, padding: 14, backgroundColor: colors.primaryLight, borderRadius: 10, borderLeftWidth: 4 },
     errText: { color: '#B91C1C', marginTop: 8, fontWeight: '500' },
     refRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 6 },
     refText: { flex: 1, color: '#374151', lineHeight: 20 },

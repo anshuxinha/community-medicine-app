@@ -6,6 +6,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { WebView } from 'react-native-webview';
 import DropdownPicker from '../components/DropdownPicker';
 import { theme } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 import { NFHS, NFHS_META } from '../data/nfhsTrendsData';
 
 const ROUND_ORDER = ["NFHS-1", "NFHS-2", "NFHS-3", "NFHS-4", "NFHS-5", "NFHS-6"];
@@ -19,6 +20,8 @@ const YEARS = {
 };
 
 const NFHSTrendsScreen = () => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
     // 1. Selector States
     const groups = NFHS_META.group_order;
     const [selectedGroup, setSelectedGroup] = useState(groups[0]);
@@ -575,17 +578,17 @@ const NFHSTrendsScreen = () => {
     );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: theme.colors.backgroundMain,
+        backgroundColor: colors.backgroundMain,
     },
     container: {
         padding: 16,
         paddingBottom: 40,
     },
     filterCard: {
-        backgroundColor: theme.colors.surfacePrimary,
+        backgroundColor: colors.surfacePrimary,
         borderRadius: 12,
         elevation: 1,
     },
@@ -594,7 +597,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textTransform: 'uppercase',
         letterSpacing: 0.5,
-        color: theme.colors.textSecondary,
+        color: colors.textSecondary,
     },
     dropdown: {
         marginTop: 4,
@@ -617,12 +620,12 @@ const styles = StyleSheet.create({
         marginTop: 6,
     },
     chip: {
-        backgroundColor: theme.colors.surfaceSecondary,
+        backgroundColor: colors.surfaceSecondary,
         borderRadius: 8,
     },
     chipText: {
         fontSize: 12,
-        color: theme.colors.textPrimary,
+        color: colors.textPrimary,
     },
     infoCard: {
         marginTop: 12,
@@ -654,7 +657,7 @@ const styles = StyleSheet.create({
         lineHeight: 16,
     },
     chartCard: {
-        backgroundColor: theme.colors.surfacePrimary,
+        backgroundColor: colors.surfacePrimary,
         borderRadius: 12,
         elevation: 2,
         overflow: 'hidden',
@@ -675,13 +678,13 @@ const styles = StyleSheet.create({
     },
     chartFootnote: {
         fontSize: 11,
-        color: theme.colors.textTertiary,
+        color: colors.textTertiary,
         marginTop: 8,
         textAlign: 'center',
         paddingHorizontal: 8,
     },
     accordion: {
-        backgroundColor: theme.colors.surfacePrimary,
+        backgroundColor: colors.surfacePrimary,
         marginTop: 12,
         borderRadius: 12,
         borderWidth: 1,
@@ -690,10 +693,10 @@ const styles = StyleSheet.create({
     accordionTitle: {
         fontSize: 14,
         fontWeight: 'bold',
-        color: theme.colors.textTitle,
+        color: colors.textTitle,
     },
     definitionsContent: {
-        backgroundColor: theme.colors.surfaceTertiary,
+        backgroundColor: colors.surfaceTertiary,
         padding: 12,
         borderBottomLeftRadius: 12,
         borderBottomRightRadius: 12,
@@ -706,12 +709,12 @@ const styles = StyleSheet.create({
     defRound: {
         fontWeight: 'bold',
         fontSize: 12,
-        color: theme.colors.secondary,
+        color: colors.secondary,
         marginBottom: 1,
     },
     defText: {
         fontSize: 12,
-        color: theme.colors.textPrimary,
+        color: colors.textPrimary,
         lineHeight: 16,
     },
     nfhs12NoteContainer: {
@@ -730,7 +733,7 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 11,
         fontStyle: 'italic',
-        color: theme.colors.textSecondary,
+        color: colors.textSecondary,
         lineHeight: 15,
     },
     disclaimerContainer: {
@@ -739,14 +742,14 @@ const styles = StyleSheet.create({
     },
     disclaimerText: {
         fontSize: 11,
-        color: theme.colors.textPlaceholder,
+        color: colors.textPlaceholder,
         textAlign: 'center',
         lineHeight: 15,
     },
     // Modal styles
     modalSafeArea: {
         flex: 1,
-        backgroundColor: theme.colors.backgroundMain,
+        backgroundColor: colors.backgroundMain,
     },
     modalHeader: {
         flexDirection: 'row',
@@ -759,7 +762,7 @@ const styles = StyleSheet.create({
     modalTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: theme.colors.textTitle,
+        color: colors.textTitle,
     },
     modalCloseButton: {
         padding: 4,
@@ -767,7 +770,7 @@ const styles = StyleSheet.create({
     modalSearchContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: theme.colors.surfaceSecondary,
+        backgroundColor: colors.surfaceSecondary,
         margin: 12,
         paddingHorizontal: 12,
         borderRadius: 8,
@@ -776,7 +779,7 @@ const styles = StyleSheet.create({
     modalSearchInput: {
         flex: 1,
         fontSize: 15,
-        color: theme.colors.textTitle,
+        color: colors.textTitle,
         paddingVertical: 8,
     },
     modalControlsRow: {
@@ -802,21 +805,21 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
     },
     stateItemSelected: {
-        backgroundColor: theme.colors.primaryLight,
+        backgroundColor: colors.primaryLight,
     },
     stateItemText: {
         fontSize: 15,
-        color: theme.colors.textPrimary,
+        color: colors.textPrimary,
     },
     stateItemTextSelected: {
         fontWeight: 'bold',
-        color: theme.colors.primaryDark,
+        color: colors.primaryDark,
     },
     modalFooter: {
         padding: 16,
         borderTopWidth: 1,
         borderTopColor: '#E5E7EB',
-        backgroundColor: theme.colors.surfacePrimary,
+        backgroundColor: colors.surfacePrimary,
     },
     doneButton: {
         borderRadius: 10,

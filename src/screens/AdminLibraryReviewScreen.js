@@ -30,7 +30,8 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { db } from "../config/firebase";
 import { AppContext } from "../context/AppContext";
-import { theme } from "../styles/theme";
+import { theme } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 
 const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
 
@@ -101,6 +102,8 @@ const sendLibraryUpdateNotification = async (libraryTitle) => {
 };
 
 const AdminLibraryReviewScreen = () => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   const { user, refreshLibraryContent } = useContext(AppContext);
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -504,10 +507,10 @@ const AdminLibraryReviewScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: theme.colors.backgroundMain,
+    backgroundColor: colors.backgroundMain,
   },
   container: {
     flex: 1,
@@ -520,11 +523,11 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 28,
     fontWeight: "700",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   headerSubtitle: {
     marginTop: 6,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 20,
   },
   scrollContent: {
@@ -539,34 +542,34 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 10,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   emptyTitle: {
     marginTop: 10,
     fontSize: 18,
     fontWeight: "700",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   emptyText: {
     marginTop: 8,
     textAlign: "center",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 20,
   },
   lockedTitle: {
     marginTop: 10,
     fontSize: 18,
     fontWeight: "700",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   lockedText: {
     marginTop: 8,
     textAlign: "center",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 20,
   },
   card: {
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 18,
   },
   cardHeader: {
@@ -581,15 +584,15 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   cardMeta: {
     marginTop: 4,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
   },
   summaryReason: {
     marginTop: 12,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     lineHeight: 20,
   },
   metricRow: {
@@ -599,7 +602,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   metricText: {
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontWeight: "600",
   },
   sourcesBlock: {
@@ -618,7 +621,7 @@ const styles = StyleSheet.create({
   // ── Full-screen Modal ──
   modalSafeArea: {
     flex: 1,
-    backgroundColor: theme.colors.backgroundMain,
+    backgroundColor: colors.backgroundMain,
   },
   modalHeader: {
     flexDirection: "row",
@@ -627,14 +630,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.surfaceSecondary,
-    backgroundColor: theme.colors.surfacePrimary,
+    borderBottomColor: colors.surfaceSecondary,
+    backgroundColor: colors.surfacePrimary,
   },
   modalHeaderTitle: {
     flex: 1,
     fontSize: 17,
     fontWeight: "700",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     textAlign: "center",
     marginHorizontal: 12,
   },
@@ -652,25 +655,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.surfaceSecondary,
-    backgroundColor: theme.colors.surfacePrimary,
+    borderTopColor: colors.surfaceSecondary,
+    backgroundColor: colors.surfacePrimary,
   },
   dialogLabel: {
     marginTop: 16,
     marginBottom: 8,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontWeight: "700",
     fontSize: 15,
   },
   input: {
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
   },
   contentInput: {
     minHeight: 180,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
   },
   noChangesText: {
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontStyle: "italic",
     lineHeight: 20,
   },
@@ -679,15 +682,15 @@ const styles = StyleSheet.create({
   changeItem: {
     marginBottom: 12,
     borderRadius: 10,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: theme.colors.surfaceSecondary,
+    borderColor: colors.surfaceSecondary,
   },
   changeLabel: {
     fontSize: 12,
     fontWeight: "700",
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     paddingHorizontal: 12,
     paddingTop: 8,
     paddingBottom: 4,

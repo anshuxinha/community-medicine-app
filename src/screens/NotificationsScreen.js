@@ -9,7 +9,8 @@ import {
 import { Text, Card, Divider, Chip, Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
-import { theme } from "../styles/theme";
+import { theme } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   isSubscribedToVideoNotifications,
@@ -22,6 +23,8 @@ import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 
 const NotificationsScreen = () => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   const [refreshing, setRefreshing] = useState(false);
   const [isVideoSubscribed, setIsVideoSubscribed] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -235,24 +238,24 @@ const NotificationsScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: theme.colors.backgroundMain },
+const createStyles = (colors) => StyleSheet.create({
+  safeArea: { flex: 1, backgroundColor: colors.backgroundMain },
   container: { padding: 16, paddingTop: 20, paddingBottom: 40 },
   header: {
     fontSize: 26,
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: "700",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     marginTop: 24,
     marginBottom: 16,
   },
   preferencesCard: {
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     marginBottom: 20,
   },
   preferenceHeader: {
@@ -263,12 +266,12 @@ const styles = StyleSheet.create({
   preferenceTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     marginLeft: 12,
   },
   divider: {
     marginVertical: 8,
-    backgroundColor: theme.colors.border,
+    backgroundColor: colors.border,
   },
   preferenceItem: {
     flexDirection: "row",
@@ -282,12 +285,12 @@ const styles = StyleSheet.create({
   },
   preferenceText: {
     fontSize: 16,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginLeft: 12,
   },
   preferenceDescription: {
     fontSize: 14,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 12,
     lineHeight: 20,
   },
@@ -295,21 +298,21 @@ const styles = StyleSheet.create({
     height: 32,
   },
   chipActive: {
-    backgroundColor: theme.colors.success + "20",
-    borderColor: theme.colors.success,
+    backgroundColor: colors.success + "20",
+    borderColor: colors.success,
   },
   chipInactive: {
-    backgroundColor: theme.colors.surfaceSecondary,
-    borderColor: theme.colors.border,
+    backgroundColor: colors.surfaceSecondary,
+    borderColor: colors.border,
   },
   chipText: {
     fontSize: 12,
   },
   updateCard: {
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     marginBottom: 12,
     borderLeftWidth: 4,
-    borderLeftColor: theme.colors.accent,
+    borderLeftColor: colors.accent,
     borderRadius: 12,
   },
   updateHeader: {
@@ -323,7 +326,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   dateChip: {
-    backgroundColor: theme.colors.surfaceSecondary,
+    backgroundColor: colors.surfaceSecondary,
     height: 24,
     justifyContent: "center",
     alignItems: "center",
@@ -331,15 +334,15 @@ const styles = StyleSheet.create({
   },
   dateChipText: {
     fontSize: 11,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 12,
     textAlignVertical: "center",
     marginVertical: 0,
     paddingVertical: 0,
   },
   newChip: {
-    backgroundColor: theme.colors.accent + "20",
-    borderColor: theme.colors.accent,
+    backgroundColor: colors.accent + "20",
+    borderColor: colors.accent,
     height: 24,
     justifyContent: "center",
     alignItems: "center",
@@ -347,7 +350,7 @@ const styles = StyleSheet.create({
   },
   newChipText: {
     fontSize: 11,
-    color: theme.colors.accent,
+    color: colors.accent,
     fontWeight: "bold",
     lineHeight: 12,
     textAlignVertical: "center",
@@ -357,17 +360,17 @@ const styles = StyleSheet.create({
   updateTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     marginBottom: 8,
     lineHeight: 22,
   },
   updateSummary: {
     fontSize: 14,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 20,
   },
   emptyCard: {
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     marginBottom: 20,
   },
   emptyContent: {
@@ -385,13 +388,13 @@ const styles = StyleSheet.create({
   },
   emptyBody: {
     fontSize: 14,
-    color: theme.colors.textPlaceholder,
+    color: colors.textPlaceholder,
     textAlign: "center",
     lineHeight: 22,
     maxWidth: 300,
   },
   infoCard: {
-    backgroundColor: theme.colors.surfaceSecondary,
+    backgroundColor: colors.surfaceSecondary,
     marginTop: 20,
   },
   infoHeader: {
@@ -402,12 +405,12 @@ const styles = StyleSheet.create({
   infoTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     marginLeft: 12,
   },
   infoText: {
     fontSize: 14,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 22,
   },
 });

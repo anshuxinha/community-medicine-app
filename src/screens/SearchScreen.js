@@ -15,7 +15,8 @@ import {
   getItemStatus,
   getUpdatedSegmentsForItem,
 } from "../utils/contentRegistry";
-import { theme } from "../styles/theme";
+import { theme } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 
 // Flatten topics with subsections into individual searchable items
 const flattenTopics = (data, section) => {
@@ -42,6 +43,8 @@ const flattenTopics = (data, section) => {
 };
 
 const StatusMark = ({ status }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   if (status === "updated") {
     return <Badge style={styles.newBadge}>NEW</Badge>;
   }
@@ -73,6 +76,8 @@ const buildReadingParams = (item, status) => ({
 });
 
 const SearchScreen = ({ navigation }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   const { readItemVersions, contentRegistryVersion } = useContext(AppContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -195,18 +200,18 @@ const SearchScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
   },
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
   },
   searchBar: {
-    backgroundColor: theme.colors.surfaceSecondary,
+    backgroundColor: colors.surfaceSecondary,
     borderRadius: 12,
     elevation: 0,
     height: 48,
@@ -214,7 +219,7 @@ const styles = StyleSheet.create({
   },
   searchBarInput: {
     fontSize: 16,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     minHeight: 48,
     alignSelf: "center",
   },
@@ -228,7 +233,7 @@ const styles = StyleSheet.create({
   },
   card: {
     marginBottom: 12,
-    backgroundColor: theme.colors.surfaceTertiary,
+    backgroundColor: colors.surfaceTertiary,
   },
   titleRow: {
     flexDirection: "row",
@@ -241,10 +246,10 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   snippet: {
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
   },
   parentTitle: {
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginBottom: 2,
     fontStyle: "italic",
   },
@@ -256,7 +261,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.primaryLight,
+    backgroundColor: colors.primaryLight,
     borderWidth: 1,
     borderColor: "#DDD6FE",
   },
@@ -264,7 +269,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     marginBottom: 4,
     backgroundColor: "#F3E8FF",
-    color: theme.colors.primaryDark,
+    color: colors.primaryDark,
     fontSize: 10,
     fontWeight: "900",
   },

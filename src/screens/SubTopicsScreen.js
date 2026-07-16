@@ -6,7 +6,8 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { theme } from "../styles/theme";
+import { theme } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 import { AppContext } from "../context/AppContext";
 import {
   enableScreenCaptureProtection,
@@ -71,6 +72,8 @@ const getIconForSubtopic = (item) => {
 };
 
 const StatusMark = ({ status }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   if (status === "updated") {
     return <Badge style={styles.newBadge}>NEW</Badge>;
   }
@@ -109,6 +112,8 @@ const buildReadingParams = (item, section, status) => ({
 });
 
 const SubTopicsScreen = ({ route, navigation }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   const { items, section = "theory" } = route.params;
   const { readItemVersions, markAsUnread } = useContext(AppContext);
   const [openMenuKey, setOpenMenuKey] = useState(null);
@@ -223,23 +228,23 @@ const SubTopicsScreen = ({ route, navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
   },
   listContent: {
     paddingBottom: 16,
   },
   itemTitle: {
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontWeight: "600",
     fontSize: 15,
     lineHeight: 22,
     paddingRight: 12,
   },
   itemDescription: {
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontSize: 13,
   },
   rightSlot: {
@@ -256,13 +261,13 @@ const styles = StyleSheet.create({
     borderRadius: 11,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.primaryLight,
+    backgroundColor: colors.primaryLight,
     borderWidth: 1,
     borderColor: "#DDD6FE",
   },
   newBadge: {
     backgroundColor: "#F3E8FF",
-    color: theme.colors.primaryDark,
+    color: colors.primaryDark,
     fontSize: 10,
     fontWeight: "900",
   },

@@ -27,14 +27,17 @@ import UpdateDetailDialog from "../components/UpdateDetailDialog";
 import ReferralAnnouncementDialog from "../components/ReferralAnnouncementDialog";
 import { scheduleAllNotifications } from "../services/notificationService";
 import { auth } from "../config/firebase";
-import { theme, useResponsive } from "../styles/theme";
+import { theme, useResponsive } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 
 const DASHBOARD_NEW_BADGES_STORAGE_KEY = "dashboardNewBadgesSeen:v1";
 const REFERRAL_ANNOUNCEMENT_STORAGE_KEY = "referralAnnouncementSeen:v1";
 
-const RECOVERY_LABEL = "recovery-2026-07-16";
+const BUILD_LABEL = "dark-2026-07-16";
 
 const UpdateDownloadIndicator = () => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   const {
     isDownloading,
     isUpdatePending,
@@ -105,70 +108,62 @@ const UpdateDownloadIndicator = () => {
     phase === "downloading" || phase === "checking" || isDownloading;
   const showReady = phase === "ready" || isUpdatePending;
   const showApplying = phase === "applying";
+  const showBanner =
+    errorMessage || showDownloading || showReady || showApplying || embedded;
 
-  // Always visible so we can confirm this recovery bundle is running.
+  // Hide when running an applied OTA and idle (clean dashboard).
+  if (!showBanner) return null;
+
   return (
     <View style={styles.updateDownloadIndicator}>
       <View style={styles.updateDownloadIcon}>
         <MaterialIcons
-          name={embedded ? "info-outline" : "check-circle"}
+          name={embedded ? "info-outline" : "system-update"}
           size={20}
-          color={embedded ? "#D97706" : "#047857"}
+          color={embedded ? "#D97706" : theme.colors.secondary}
         />
       </View>
       <View style={styles.updateDownloadTextColumn}>
         <Text style={styles.updateDebugLine}>
-          {RECOVERY_LABEL} · {embedded ? "EMBEDDED" : "OTA"} · id:
-          {updateIdShort} · ch:{channel}
+          {BUILD_LABEL} · {embedded ? "EMBEDDED" : "OTA"} · id:{updateIdShort}
         </Text>
-        <Text style={styles.updateDebugLine}>
-          pending={String(!!isUpdatePending)} · {lastCheck || "…"}
+        <Text style={styles.updateDownloadTitle}>
+          {errorMessage
+            ? "Update install failed"
+            : showApplying
+              ? "Installing…"
+              : showReady
+                ? "Update ready"
+                : showDownloading
+                  ? "Checking for update…"
+                  : "Store binary"}
         </Text>
-
-        {errorMessage || showDownloading || showReady || showApplying ? (
-          <>
-            <Text style={styles.updateDownloadTitle}>
-              {errorMessage
-                ? "Update install failed"
-                : showApplying
-                  ? "Installing…"
-                  : showReady
-                    ? "Update ready"
-                    : "Checking for update…"}
-            </Text>
-            <Text style={styles.updateDownloadSubtitle}>
-              {errorMessage
-                ? errorMessage
-                : showApplying
-                  ? "Loading the new version…"
-                  : showReady
-                    ? "Tap Install now (do not only swipe the app away)."
-                    : "Please keep the app open."}
-            </Text>
-            {showDownloading && !showReady && !showApplying ? (
-              <ProgressBar
-                progress={downloadProgress || 0.12}
-                color={theme.colors.secondary}
-                style={styles.updateDownloadProgress}
-              />
-            ) : null}
-            {(showReady || errorMessage) && !showApplying ? (
-              <TouchableOpacity
-                style={styles.updateInstallButton}
-                onPress={installNow}
-              >
-                <Text style={styles.updateInstallButtonText}>Install now</Text>
-              </TouchableOpacity>
-            ) : null}
-          </>
-        ) : (
-          <Text style={styles.updateDownloadSubtitle}>
-            {embedded
-              ? "Store binary is running. Tap Check again if an update should be available."
-              : "Recovery OTA is active."}
-          </Text>
-        )}
-
+        <Text style={styles.updateDownloadSubtitle}>
+          {errorMessage
+            ? errorMessage
+            : showApplying
+              ? "Loading the new version…"
+              : showReady
+                ? "Tap Install now (do not only swipe the app away)."
+                : embedded
+                  ? "Tap Check again, then Install now if available."
+                  : "Please keep the app open."}
+        </Text>
+        {showDownloading && !showReady && !showApplying ? (
+          <ProgressBar
+            progress={downloadProgress || 0.12}
+            color={theme.colors.secondary}
+            style={styles.updateDownloadProgress}
+          />
+        ) : null}
+        {(showReady || errorMessage) && !showApplying ? (
+          <TouchableOpacity
+            style={styles.updateInstallButton}
+            onPress={installNow}
+          >
+            <Text style={styles.updateInstallButtonText}>Install now</Text>
+          </TouchableOpacity>
+        ) : null}
         <TouchableOpacity
           style={[styles.updateInstallButton, styles.updateCheckButton]}
           onPress={runCheck}
@@ -181,6 +176,8 @@ const UpdateDownloadIndicator = () => {
 };
 
 const DashboardScreen = ({ navigation }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   const { readingProgress, currentStreak, studyScore, user, refreshFromCloud, isPremium } =
     useContext(AppContext);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -679,10 +676,10 @@ const DashboardScreen = ({ navigation }) => {
 };
 
 // Step 5: Styling
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: theme.colors.backgroundMain,
+    backgroundColor: colors.backgroundMain,
   },
   container: {
     flex: 1,
@@ -701,7 +698,7 @@ const styles = StyleSheet.create({
   appName: {
     fontSize: 18,
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     letterSpacing: 2,
   },
   iconBtn: {
@@ -710,7 +707,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 20,
-    backgroundColor: theme.colors.surfaceSecondary,
+    backgroundColor: colors.surfaceSecondary,
   },
   headerSection: {
     marginBottom: 24,
@@ -719,11 +716,11 @@ const styles = StyleSheet.create({
   welcomeText: {
     fontFamily: Platform.OS === "ios" ? "Georgia" : "serif",
     fontSize: 36,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     lineHeight: 40,
   },
   subText: {
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     marginTop: 8,
   },
   updateDownloadIndicator: {
@@ -752,17 +749,17 @@ const styles = StyleSheet.create({
   updateDebugLine: {
     fontSize: 11,
     fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginBottom: 2,
   },
   updateDownloadTitle: {
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontSize: 14,
     fontWeight: "800",
     marginTop: 6,
   },
   updateDownloadSubtitle: {
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontSize: 12,
     lineHeight: 17,
     marginTop: 2,
@@ -776,7 +773,7 @@ const styles = StyleSheet.create({
   updateInstallButton: {
     alignSelf: "flex-start",
     marginTop: 10,
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: colors.secondary,
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 10,
@@ -791,7 +788,7 @@ const styles = StyleSheet.create({
   },
   progressCard: {
     marginBottom: 24,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 20,
     elevation: 4,
     shadowColor: "#000",
@@ -802,17 +799,17 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontWeight: "bold",
     fontSize: 16,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   progressBar: {
     height: 12,
     borderRadius: 6,
     marginVertical: 12,
-    backgroundColor: theme.colors.surfaceSecondary,
+    backgroundColor: colors.surfaceSecondary,
   },
   progressText: {
     textAlign: "right",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontWeight: "600",
   },
   statsRow: {
@@ -822,7 +819,7 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 20,
     elevation: 4,
     shadowColor: "#000",
@@ -842,14 +839,14 @@ const styles = StyleSheet.create({
   statValue: {
     fontWeight: "bold",
     fontSize: 24,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     marginVertical: 4,
   },
   sectionTitle: {
     fontWeight: "bold",
     fontSize: 20,
     marginBottom: 16,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   quickAccessRow: {
     flexDirection: "row",
@@ -858,7 +855,7 @@ const styles = StyleSheet.create({
   },
   quickCard: {
     flex: 1,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 16,
     elevation: 2,
     shadowColor: "#000",
@@ -878,7 +875,7 @@ const styles = StyleSheet.create({
     top: 5,
     right: 5,
     backgroundColor: "#F3E8FF",
-    color: theme.colors.primaryDark,
+    color: colors.primaryDark,
     borderRadius: 6,
     overflow: "hidden",
     paddingHorizontal: 5,
@@ -889,11 +886,11 @@ const styles = StyleSheet.create({
   quickText: {
     marginTop: 8,
     fontWeight: "bold",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   updateCard: {
     marginBottom: 16,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 16,
     elevation: 2,
     shadowColor: "#000",
@@ -902,7 +899,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
   },
   dateText: {
-    color: theme.colors.secondary,
+    color: colors.secondary,
     marginBottom: 6,
     fontWeight: "bold",
     fontSize: 12,
@@ -911,21 +908,21 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 18,
     marginBottom: 8,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   updateSummary: {
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     lineHeight: 22,
   },
   updateCategory: {
-    color: theme.colors.secondary,
+    color: colors.secondary,
     fontWeight: "700",
     marginBottom: 4,
     textTransform: "uppercase",
   },
   updateSource: {
     marginTop: 8,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   healthDaysListContent: {
     paddingHorizontal: 16,
@@ -945,14 +942,14 @@ const styles = StyleSheet.create({
   healthDayName: {
     fontSize: 16,
     fontWeight: "700",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     lineHeight: 22,
     marginBottom: 0,
     includeFontPadding: false,
   },
   healthDayDate: {
     marginTop: 1,
-    color: theme.colors.secondary,
+    color: colors.secondary,
     fontSize: 13,
     fontWeight: "700",
     lineHeight: 18,
@@ -960,13 +957,13 @@ const styles = StyleSheet.create({
   },
   healthDayDescription: {
     marginTop: 6,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontSize: 14,
     lineHeight: 20,
     includeFontPadding: false,
   },
   qbankBanner: {
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 20,
     elevation: 4,
     shadowColor: "#000",
@@ -986,7 +983,7 @@ const styles = StyleSheet.create({
     width: 46,
     height: 46,
     borderRadius: 23,
-    backgroundColor: theme.colors.primaryLight,
+    backgroundColor: colors.primaryLight,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 14,
@@ -997,11 +994,11 @@ const styles = StyleSheet.create({
   },
   qbankBannerTitle: {
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontSize: 16,
   },
   qbankBannerDesc: {
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontSize: 12,
     marginTop: 2,
     lineHeight: 16,
