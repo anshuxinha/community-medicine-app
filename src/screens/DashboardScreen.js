@@ -29,153 +29,164 @@ import { scheduleAllNotifications } from "../services/notificationService";
 import { auth } from "../config/firebase";
 import { useResponsive } from "../styles/theme";
 import { useThemedStyles } from "../styles/useThemedStyles";
-import { applyPendingUpdateIfNeeded } from "../utils/applyPendingUpdate";
 
 const DASHBOARD_NEW_BADGES_STORAGE_KEY = "dashboardNewBadgesSeen:v1";
 const REFERRAL_ANNOUNCEMENT_STORAGE_KEY = "referralAnnouncementSeen:v1";
+/** Visible proof which JS bundle is running. */
+const OTA_LABEL = "ota-2026-07-16c";
 
+/**
+ * Always-visible update strip.
+ * Old "Reopen the app" copy meant the store embedded binary never applied OTAs
+ * (often because a bad OTA crashed before "content appeared" and was blacklisted).
+ */
 const UpdateDownloadIndicator = () => {
   const { styles, colors } = useThemedStyles(createStyles);
-
   const {
     isDownloading,
     isUpdatePending,
     downloadProgress,
   } = Updates.useUpdates();
-  const [phase, setPhase] = useState("idle"); // idle | checking | downloading | applying
+  const [phase, setPhase] = useState("idle");
   const [errorMessage, setErrorMessage] = useState(null);
+  const [lastCheck, setLastCheck] = useState(null);
   const checkedRef = React.useRef(false);
+
+  const embedded = Updates.isEmbeddedLaunch;
+  const updateIdShort = Updates.updateId
+    ? String(Updates.updateId).slice(0, 8)
+    : "none";
+  const channel = Updates.channel || "unknown";
 
   const applyUpdate = React.useCallback(async () => {
     setPhase("applying");
     setErrorMessage(null);
     try {
-      // force: user tapped Restart — bypass auto-reload cooldown
-      const started = await applyPendingUpdateIfNeeded("dashboard-button", {
-        force: true,
-      });
-      if (!started) {
-        // Fallback if isUpdatePending was false but fetch just finished
-        await Updates.reloadAsync();
-      }
+      await Updates.reloadAsync();
     } catch (error) {
       setPhase("idle");
       setErrorMessage(
-        "Tap Restart now again, or: Settings → Apps → STROMA → Force stop → open the app.",
+        error?.message ||
+          "Reload failed. Force stop STROMA in system settings, then open again.",
       );
       console.warn("Updates.reloadAsync failed:", error);
     }
   }, []);
 
-  useEffect(() => {
-    if (__DEV__ || !Updates.isEnabled || checkedRef.current) return;
-    checkedRef.current = true;
-    let cancelled = false;
+  const runCheck = React.useCallback(async () => {
+    if (__DEV__ || !Updates.isEnabled) {
+      setLastCheck(__DEV__ ? "dev-mode" : "updates-disabled");
+      return;
+    }
+    try {
+      setPhase("checking");
+      setErrorMessage(null);
 
-    (async () => {
-      try {
-        if (Updates.isUpdatePending || isUpdatePending) {
-          // Pending from a prior download — apply without waiting for a tap.
-          if (!cancelled) await applyUpdate();
-          return;
-        }
-
-        setPhase("checking");
-        const update = await Updates.checkForUpdateAsync();
-        if (cancelled) return;
-        if (!update.isAvailable) {
-          setPhase("idle");
-          return;
-        }
-
-        setPhase("downloading");
-        await Updates.fetchUpdateAsync();
-        if (cancelled) return;
-        await applyUpdate();
-      } catch (error) {
-        if (!cancelled) {
-          setPhase("idle");
-          console.warn("App update check failed:", error);
-        }
+      if (Updates.isUpdatePending) {
+        setLastCheck("already-pending");
+        setPhase("ready");
+        return;
       }
-    })();
 
-    return () => {
-      cancelled = true;
-    };
-  }, [applyUpdate, isUpdatePending]);
+      const result = await Updates.checkForUpdateAsync();
+      setLastCheck(result.isAvailable ? "available" : "up-to-date");
+      if (!result.isAvailable) {
+        setPhase("idle");
+        return;
+      }
 
-  // Sticky local "ready" without isUpdatePending was the old bug. Only show when
-  // native says pending, or while we are actively checking/downloading/applying.
+      setPhase("downloading");
+      await Updates.fetchUpdateAsync();
+      setPhase("ready");
+      // Install immediately — swiping away does not apply OTAs reliably.
+      await applyUpdate();
+    } catch (error) {
+      setPhase("idle");
+      setLastCheck(`err:${error?.message || "check-failed"}`);
+      console.warn("App update check failed:", error);
+    }
+  }, [applyUpdate]);
+
+  useEffect(() => {
+    if (checkedRef.current) return;
+    checkedRef.current = true;
+    runCheck();
+  }, [runCheck]);
+
   const showDownloading =
     phase === "downloading" || phase === "checking" || isDownloading;
-  const showReady = isUpdatePending && phase !== "applying";
+  const showReady = phase === "ready" || isUpdatePending;
   const showApplying = phase === "applying";
-  const showBanner =
-    showDownloading || showReady || showApplying || !!errorMessage;
-
-  if (!showBanner) return null;
 
   return (
     <View style={styles.updateDownloadIndicator}>
       <View style={styles.updateDownloadIcon}>
         <MaterialIcons
-          name={
-            errorMessage
-              ? "error-outline"
-              : showApplying || showReady
-                ? "system-update"
-                : "downloading"
-          }
+          name={embedded ? "info-outline" : "check-circle"}
           size={20}
-          color={
-            errorMessage
-              ? colors.error
-              : showApplying || showReady
-                ? colors.successStrong
-                : colors.secondary
-          }
+          color={embedded ? colors.warning : colors.successStrong}
         />
       </View>
       <View style={styles.updateDownloadTextColumn}>
-        <Text style={styles.updateDownloadTitle}>
-          {errorMessage
-            ? "Update needs a restart"
-            : showApplying
-              ? "Applying update…"
-              : showReady
-                ? "Update ready"
-                : "Downloading update"}
+        <Text style={styles.updateDebugLine}>
+          {OTA_LABEL} · {embedded ? "EMBEDDED (store)" : "OTA"} · id:
+          {updateIdShort} · ch:{channel}
         </Text>
-        <Text style={styles.updateDownloadSubtitle}>
-          {errorMessage
-            ? errorMessage
-            : showApplying
-              ? "Restarting the app to install it…"
-              : showReady
-                ? "A new version is downloaded. Tap the button to install it now."
-                : "Please keep the app open for a moment."}
+        <Text style={styles.updateDebugLine}>
+          pending={String(!!isUpdatePending)} enabled=
+          {String(!!Updates.isEnabled)} · {lastCheck || "…"}
         </Text>
-        {showDownloading && !showReady && !showApplying ? (
-          <ProgressBar
-            progress={downloadProgress || 0.12}
-            color={colors.secondary}
-            style={styles.updateDownloadProgress}
-          />
-        ) : null}
-        {(showReady || errorMessage || showApplying) && phase !== "applying" ? (
-          <TouchableOpacity
-            style={styles.updateRestartButton}
-            onPress={applyUpdate}
-          >
-            <Text style={styles.updateRestartButtonText}>Restart now</Text>
-          </TouchableOpacity>
-        ) : null}
-        {showApplying ? (
-          <Text style={[styles.updateDownloadSubtitle, { marginTop: 8 }]}>
-            If this hangs, Force stop STROMA in system settings, then reopen.
+
+        {errorMessage || showDownloading || showReady || showApplying ? (
+          <>
+            <Text style={styles.updateDownloadTitle}>
+              {errorMessage
+                ? "Update needs install"
+                : showApplying
+                  ? "Installing update…"
+                  : showReady
+                    ? "Update ready"
+                    : "Checking for update…"}
+            </Text>
+            <Text style={styles.updateDownloadSubtitle}>
+              {errorMessage
+                ? errorMessage
+                : showApplying
+                  ? "Loading the new version…"
+                  : showReady
+                    ? "Tap Install now (do not only swipe the app away)."
+                    : "Please keep the app open."}
+            </Text>
+            {showDownloading && !showReady && !showApplying ? (
+              <ProgressBar
+                progress={downloadProgress || 0.12}
+                color={colors.secondary}
+                style={styles.updateDownloadProgress}
+              />
+            ) : null}
+            {(showReady || errorMessage) && !showApplying ? (
+              <TouchableOpacity
+                style={styles.updateRestartButton}
+                onPress={applyUpdate}
+              >
+                <Text style={styles.updateRestartButtonText}>Install now</Text>
+              </TouchableOpacity>
+            ) : null}
+          </>
+        ) : (
+          <Text style={styles.updateDownloadSubtitle}>
+            {embedded
+              ? "Still on the store binary. Use Check again → Install now if an update is available."
+              : "OTA is active. Open Profile for Appearance."}
           </Text>
-        ) : null}
+        )}
+
+        <TouchableOpacity
+          style={[styles.updateRestartButton, styles.updateSecondaryButton]}
+          onPress={runCheck}
+        >
+          <Text style={styles.updateRestartButtonText}>Check again</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -730,7 +741,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   updateDownloadIndicator: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     backgroundColor: colors.surfaceMuted,
     borderRadius: 14,
     borderWidth: 1,
@@ -746,14 +757,22 @@ const createStyles = (colors) => StyleSheet.create({
     justifyContent: "center",
     backgroundColor: colors.primarySoft,
     marginRight: 10,
+    marginTop: 2,
   },
   updateDownloadTextColumn: {
     flex: 1,
+  },
+  updateDebugLine: {
+    fontSize: 11,
+    fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace",
+    color: colors.textSecondary,
+    marginBottom: 2,
   },
   updateDownloadTitle: {
     color: colors.textTitle,
     fontSize: 14,
     fontWeight: "800",
+    marginTop: 6,
   },
   updateDownloadSubtitle: {
     color: colors.textSecondary,
@@ -774,6 +793,9 @@ const createStyles = (colors) => StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 10,
+  },
+  updateSecondaryButton: {
+    backgroundColor: colors.textBody,
   },
   updateRestartButtonText: {
     color: colors.onPrimary,

@@ -1,16 +1,10 @@
 import { registerRootComponent } from "expo";
-import * as Updates from "expo-updates";
-
-// If an OTA was downloaded but not applied, kick reload before React mounts.
-// Guarded lightly: only when pending (no cooldown storage at this stage).
-// App.js has a stronger cooldown + user "Restart now" fallback.
-if (!__DEV__ && Updates.isEnabled && Updates.isUpdatePending) {
-  Updates.reloadAsync().catch((err) => {
-    console.warn("[updates] early reloadAsync failed:", err?.message || err);
-  });
-}
-
 import App from "./App";
+
+// Do NOT call Updates.reloadAsync() here. An early reload while the root is
+// registering can crash OTA activation; expo-updates then blacklists that
+// update and permanently falls back to the embedded binary (which still shows
+// "Reopen the app to finish updating").
 
 // registerRootComponent calls AppRegistry.registerComponent('main', () => App);
 // It also ensures that whether you load the app in Expo Go or in a native build,
