@@ -49,9 +49,9 @@ const StatusMark = ({ status }) => {
     return (
       <View style={styles.readTickWrap}>
         <MaterialCommunityIcons
-          name="check"
-          size={14}
-          color={colors.secondary}
+          name="check-bold"
+          size={13}
+          color={colors.onPrimary}
         />
       </View>
     );
@@ -656,6 +656,7 @@ const createStyles = (colors) => StyleSheet.create({
     justifyContent: "center",
     backgroundColor: colors.secondary,
     borderWidth: 0,
+    overflow: "visible",
   },
   newBadge: {
     backgroundColor: colors.secondary,
