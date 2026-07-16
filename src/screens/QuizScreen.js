@@ -6,7 +6,7 @@ import {
 import { View, StyleSheet, ScrollView } from "react-native";
 import { Text, Card, Button, RadioButton } from "react-native-paper";
 import { AppContext } from "../context/AppContext";
-import { theme } from "../styles/theme";
+import { useThemedStyles } from "../styles/useThemedStyles";
 
 const QuizScreen = ({ route, navigation }) => {
   const { title, quizzes } = route.params;
@@ -42,6 +42,8 @@ const QuizScreen = ({ route, navigation }) => {
   const currentQuiz = quizzes[currentQuestionIndex];
 
   const handleNext = () => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
     const isCorrect = selectedAnswer === currentQuiz.correctAnswer;
     const newScore = isCorrect ? score + 10 : score;
 
@@ -129,34 +131,34 @@ const QuizScreen = ({ route, navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.surfaceSecondary,
+    backgroundColor: colors.surfaceSecondary,
   },
   contentContainer: {
     padding: 16,
   },
   centerContainer: {
     flex: 1,
-    backgroundColor: theme.colors.surfaceSecondary,
+    backgroundColor: colors.surfaceSecondary,
     justifyContent: "center",
     alignItems: "center",
     padding: 16,
   },
   progressText: {
-    color: theme.colors.primary,
+    color: colors.primary,
     marginBottom: 16,
     fontWeight: "bold",
   },
   questionCard: {
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     elevation: 2,
     marginBottom: 24,
   },
   questionText: {
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     marginBottom: 16,
     lineHeight: 28,
   },
@@ -169,13 +171,13 @@ const styles = StyleSheet.create({
     marginVertical: 4,
     paddingVertical: 8,
     paddingHorizontal: 12,
-    backgroundColor: theme.colors.surfaceTertiary,
+    backgroundColor: colors.surfaceTertiary,
     borderRadius: 8,
   },
   optionText: {
     marginLeft: 8,
     fontSize: 16,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     flexShrink: 1,
   },
   nextButton: {
@@ -183,7 +185,7 @@ const styles = StyleSheet.create({
   },
   resultCard: {
     width: "100%",
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     elevation: 3,
     padding: 16,
   },
@@ -193,7 +195,7 @@ const styles = StyleSheet.create({
   titleText: {
     fontWeight: "bold",
     marginVertical: 12,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   centerActions: {
     justifyContent: "center",

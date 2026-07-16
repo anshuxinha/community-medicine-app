@@ -3,7 +3,7 @@ import { View, StyleSheet, ScrollView, Platform, Linking } from 'react-native';
 import { TextInput, Button, Card, Text, SegmentedButtons } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DropdownPicker from '../components/DropdownPicker';
-import { theme } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 
 const EDUCATION_OPTIONS = [
     { label: 'Profession or Honours', value: 7 },
@@ -26,6 +26,8 @@ const OCCUPATION_OPTIONS = [
 ];
 
 const SESCalculatorScreen = () => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
     const [scaleType, setScaleType] = useState('kuppuswamy'); // 'kuppuswamy' or 'bgprasad'
 
     // Kuppuswamy State
@@ -159,7 +161,7 @@ const SESCalculatorScreen = () => {
                                 keyboardType="numeric"
                                 mode="outlined"
                                 style={styles.input}
-                                textColor={theme.colors.textTitle}
+                                textColor={colors.textTitle}
                             />
 
                             <Text style={styles.label}>Education of Head of Family</Text>
@@ -185,7 +187,7 @@ const SESCalculatorScreen = () => {
                                 keyboardType="numeric"
                                 mode="outlined"
                                 style={styles.input}
-                                textColor={theme.colors.textTitle}
+                                textColor={colors.textTitle}
                             />
                         </Card.Content>
                     </Card>
@@ -201,7 +203,7 @@ const SESCalculatorScreen = () => {
                                 keyboardType="numeric"
                                 mode="outlined"
                                 style={styles.input}
-                                textColor={theme.colors.textTitle}
+                                textColor={colors.textTitle}
                             />
 
                             <TextInput
@@ -212,13 +214,13 @@ const SESCalculatorScreen = () => {
                                 mode="outlined"
                                 style={styles.input}
                                 placeholder="Total Family Income / Family Size"
-                                textColor={theme.colors.textTitle}
+                                textColor={colors.textTitle}
                             />
                         </Card.Content>
                     </Card>
                 )}
 
-                <Button mode="contained" textColor={theme.colors.buttonText} onPress={handleCalculate} style={styles.calcButton}>
+                <Button mode="contained" textColor={colors.buttonText} onPress={handleCalculate} style={styles.calcButton}>
                     Calculate SES
                 </Button>
 
@@ -231,9 +233,9 @@ const SESCalculatorScreen = () => {
                                 <>
                                     <Text style={styles.resultTitle}>Result: {result.class}</Text>
                                     {result.score !== undefined && (
-                                        <Text variant="titleMedium" style={{ color: theme.colors.textTitle }}>Total Score: {result.score}</Text>
+                                        <Text variant="titleMedium" style={{ color: colors.textTitle }}>Total Score: {result.score}</Text>
                                     )}
-                                    <Text style={{ marginTop: 8, color: theme.colors.textTertiary }}>{result.details}</Text>
+                                    <Text style={{ marginTop: 8, color: colors.textTertiary }}>{result.details}</Text>
                                 </>
                             )}
                         </Card.Content>
@@ -245,10 +247,10 @@ const SESCalculatorScreen = () => {
     );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: theme.colors.backgroundMain,
+        backgroundColor: colors.backgroundMain,
     },
     container: {
         paddingHorizontal: 16,
@@ -256,15 +258,15 @@ const styles = StyleSheet.create({
         paddingTop: 16,
     },
     hintContainer: {
-        backgroundColor: theme.colors.warningBackground,
+        backgroundColor: colors.warningBackground,
         padding: 12,
         borderRadius: 8,
         marginBottom: 16,
         borderWidth: 1,
-        borderColor: theme.colors.warning,
+        borderColor: colors.warning,
     },
     hintText: {
-        color: theme.colors.warningText,
+        color: colors.warningText,
         fontSize: 14,
         lineHeight: 20,
     },
@@ -274,35 +276,35 @@ const styles = StyleSheet.create({
     },
     card: {
         marginBottom: 16,
-        backgroundColor: theme.colors.surfacePrimary,
+        backgroundColor: colors.surfacePrimary,
     },
     input: {
         marginTop: 8,
         marginBottom: 8,
-        backgroundColor: theme.colors.surfacePrimary,
+        backgroundColor: colors.surfacePrimary,
     },
     sectionTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: theme.colors.textTitle,
+        color: colors.textTitle,
         marginBottom: 8,
     },
     label: {
         marginTop: 16,
-        color: theme.colors.textSecondary,
+        color: colors.textSecondary,
         fontWeight: 'bold',
     },
     calcButton: {
         marginVertical: 16,
         paddingVertical: 8,
-        backgroundColor: theme.colors.secondary,
+        backgroundColor: colors.secondary,
     },
     resultCard: {
-        backgroundColor: '#F3E8FF',
+        backgroundColor: colors.primarySoft,
         marginBottom: 32,
     },
     resultTitle: {
-        color: theme.colors.primary,
+        color: colors.primary,
         fontWeight: 'bold',
         fontSize: 16,
         marginBottom: 4,

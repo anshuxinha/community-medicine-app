@@ -6,7 +6,7 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { theme } from "../styles/theme";
+import { useThemedStyles } from "../styles/useThemedStyles";
 import { AppContext } from "../context/AppContext";
 import {
   enableScreenCaptureProtection,
@@ -71,6 +71,8 @@ const getIconForSubtopic = (item) => {
 };
 
 const StatusMark = ({ status }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   if (status === "updated") {
     return <Badge style={styles.newBadge}>NEW</Badge>;
   }
@@ -81,7 +83,7 @@ const StatusMark = ({ status }) => {
         <MaterialCommunityIcons
           name="check"
           size={14}
-          color={theme.colors.primaryDark}
+          color={colors.primaryDark}
         />
       </View>
     );
@@ -91,7 +93,7 @@ const StatusMark = ({ status }) => {
     <MaterialCommunityIcons
       name="chevron-right"
       size={22}
-      color={theme.colors.textTertiary}
+      color={colors.textTertiary}
     />
   );
 };
@@ -175,7 +177,7 @@ const SubTopicsScreen = ({ route, navigation }) => {
                     <MaterialCommunityIcons
                       name={getIconForSubtopic(item)}
                       size={24}
-                      color={theme.colors.secondary}
+                      color={colors.secondary}
                     />
                   )}
                 />
@@ -223,23 +225,23 @@ const SubTopicsScreen = ({ route, navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
   },
   listContent: {
     paddingBottom: 16,
   },
   itemTitle: {
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontWeight: "600",
     fontSize: 15,
     lineHeight: 22,
     paddingRight: 12,
   },
   itemDescription: {
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontSize: 13,
   },
   rightSlot: {
@@ -256,13 +258,13 @@ const styles = StyleSheet.create({
     borderRadius: 11,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.primaryLight,
+    backgroundColor: colors.primaryLight,
     borderWidth: 1,
-    borderColor: "#DDD6FE",
+    borderColor: colors.primaryMuted,
   },
   newBadge: {
-    backgroundColor: "#F3E8FF",
-    color: theme.colors.primaryDark,
+    backgroundColor: colors.primarySoft,
+    color: colors.primaryDark,
     fontSize: 10,
     fontWeight: "900",
   },

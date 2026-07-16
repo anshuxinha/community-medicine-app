@@ -19,7 +19,7 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import ViewShot from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
-import { theme } from "../styles/theme";
+import { useThemedStyles } from "../styles/useThemedStyles";
 
 
 const appIcon = require("../../assets/icon.png");
@@ -33,6 +33,8 @@ const appIcon = require("../../assets/icon.png");
  *  - onDismiss: () => void
  */
 const UpdateDetailDialog = ({ visible, update, onDismiss }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   const viewShotRef = useRef(null);
 
   const handleShare = useCallback(async () => {
@@ -223,7 +225,7 @@ const UpdateDetailDialog = ({ visible, update, onDismiss }) => {
           <Dialog.Actions style={styles.actions}>
             <Button
               onPress={onDismiss}
-              textColor={theme.colors.textSecondary}
+              textColor={colors.textSecondary}
             >
               Close
             </Button>
@@ -243,7 +245,7 @@ const UpdateDetailDialog = ({ visible, update, onDismiss }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   /* ── Hidden capture area ── */
   hiddenCapture: {
     position: "absolute",
@@ -253,13 +255,13 @@ const styles = StyleSheet.create({
   },
   shareCard: {
     width: 380,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 16,
     overflow: "hidden",
   },
   shareAccentBar: {
     height: 6,
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: colors.secondary,
   },
   shareContent: {
     padding: 24,
@@ -268,7 +270,7 @@ const styles = StyleSheet.create({
   shareCategory: {
     fontSize: 11,
     fontWeight: "800",
-    color: theme.colors.secondary,
+    color: colors.secondary,
     textTransform: "uppercase",
     letterSpacing: 1,
     marginBottom: 8,
@@ -276,32 +278,32 @@ const styles = StyleSheet.create({
   shareTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#111827",
+    color: colors.textTitle,
     lineHeight: 28,
     marginBottom: 8,
   },
   shareDate: {
     fontSize: 12,
-    color: "#6B7280",
+    color: colors.textTertiary,
     marginBottom: 12,
   },
   shareDivider: {
     height: 1,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: colors.border,
     marginBottom: 12,
   },
   shareSummary: {
     fontSize: 14,
-    color: "#374151",
+    color: colors.textBody,
     lineHeight: 22,
   },
   shareSource: {
     fontSize: 11,
-    color: "#9CA3AF",
+    color: colors.textPlaceholder,
     marginTop: 12,
   },
   shareFooter: {
-    backgroundColor: "#0D1B2A",
+    backgroundColor: colors.inverseSurface,
     padding: 20,
   },
   shareFooterTop: {
@@ -321,23 +323,23 @@ const styles = StyleSheet.create({
   shareAppName: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
     letterSpacing: 2,
   },
   shareAppTagline: {
     fontSize: 11,
-    color: "#9CA3AF",
+    color: colors.textPlaceholder,
     marginTop: 2,
   },
   shareCTA: {
     fontSize: 12,
-    color: "#D1D5DB",
+    color: colors.borderStrong,
     lineHeight: 18,
   },
 
   /* ── Dialog ── */
   dialog: {
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 20,
     maxHeight: "85%",
     overflow: "hidden",
@@ -349,7 +351,7 @@ const styles = StyleSheet.create({
   },
   accentBar: {
     height: 4,
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: colors.secondary,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },
@@ -370,13 +372,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   dateChip: {
-    backgroundColor: theme.colors.primaryLight,
+    backgroundColor: colors.primaryLight,
     height: 30,
   },
   dateChipText: {
     fontSize: 12,
     fontWeight: "700",
-    color: theme.colors.primary,
+    color: colors.primary,
   },
   categoryChip: {
     alignSelf: "flex-start",
@@ -387,29 +389,29 @@ const styles = StyleSheet.create({
   categoryChipText: {
     fontSize: 11,
     fontWeight: "700",
-    color: theme.colors.secondary,
+    color: colors.secondary,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   title: {
     fontSize: 22,
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     lineHeight: 30,
     marginBottom: 12,
   },
   divider: {
-    backgroundColor: "#E5E7EB",
+    backgroundColor: colors.border,
     marginBottom: 16,
   },
   body: {
     fontSize: 15,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 24,
     marginBottom: 16,
   },
   updatedItemsBox: {
-    backgroundColor: theme.colors.primaryLight,
+    backgroundColor: colors.primaryLight,
     borderRadius: 12,
     padding: 14,
     marginBottom: 16,
@@ -417,30 +419,30 @@ const styles = StyleSheet.create({
   updatedItemsLabel: {
     fontSize: 12,
     fontWeight: "700",
-    color: theme.colors.primary,
+    color: colors.primary,
     marginBottom: 4,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   updatedItemsText: {
     fontSize: 13,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 20,
   },
   sourceText: {
     fontSize: 12,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     marginBottom: 8,
   },
   sourceBtn: {
     alignSelf: "flex-start",
-    borderColor: theme.colors.secondary,
+    borderColor: colors.secondary,
     borderRadius: 10,
     marginBottom: 4,
   },
   sourceBtnLabel: {
     fontSize: 13,
-    color: theme.colors.secondary,
+    color: colors.secondary,
   },
   actions: {
     paddingHorizontal: 16,
@@ -448,12 +450,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   shareBtn: {
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: colors.secondary,
     borderRadius: 10,
     elevation: 2,
   },
   shareBtnLabel: {
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
     fontWeight: "700",
   },
 

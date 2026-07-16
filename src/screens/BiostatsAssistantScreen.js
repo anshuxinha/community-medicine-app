@@ -3,7 +3,7 @@ import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Text, TextInput, Button, Card, Title, Divider, SegmentedButtons } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-import { theme } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 
 function calcChi2(a, b, c, d) {
     const n = a + b + c + d;
@@ -68,6 +68,8 @@ const PRESET_PROBLEMS = [
 const SOLVER_OFFSETS = { chi2: 0, efficacy: 0, imr: 0 };
 
 const BiostatsAssistantScreen = () => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
     const [tab, setTab] = useState('samplesize');
     const scrollRef = useRef(null);
 
@@ -173,9 +175,9 @@ const BiostatsAssistantScreen = () => {
                     value={tab}
                     onValueChange={setTab}
                     buttons={[
-                        { value: 'samplesize', label: 'Sample Size', labelStyle: tab !== 'samplesize' ? { color: '#374151' } : {} },
-                        { value: 'solver', label: 'Solver', labelStyle: tab !== 'solver' ? { color: '#374151' } : {} },
-                        { value: 'reference', label: 'Reference', labelStyle: tab !== 'reference' ? { color: '#374151' } : {} },
+                        { value: 'samplesize', label: 'Sample Size', labelStyle: tab !== 'samplesize' ? { color: colors.textBody } : {} },
+                        { value: 'solver', label: 'Solver', labelStyle: tab !== 'solver' ? { color: colors.textBody } : {} },
+                        { value: 'reference', label: 'Reference', labelStyle: tab !== 'reference' ? { color: colors.textBody } : {} },
                     ]}
                     style={{ marginBottom: 20 }}
                 />
@@ -194,7 +196,7 @@ const BiostatsAssistantScreen = () => {
                                     <Button key={opt.value} mode={ssType === opt.value ? 'contained' : 'outlined'}
                                         onPress={() => { setSsType(opt.value); setSsResult(null); }}
                                         style={styles.typeBtn}
-                                        labelStyle={{ color: ssType === opt.value ? theme.colors.surfacePrimary : '#374151', fontSize: 13 }}
+                                        labelStyle={{ color: ssType === opt.value ? colors.surfacePrimary : colors.textBody, fontSize: 13 }}
                                         contentStyle={{ justifyContent: 'flex-start' }}>
                                         {opt.label}
                                     </Button>
@@ -209,7 +211,7 @@ const BiostatsAssistantScreen = () => {
                                     {[90, 95, 99].map(ci => (
                                         <Button key={ci} mode={ssCI === ci ? 'contained' : 'outlined'}
                                             onPress={() => setSsCI(ci)} style={styles.pill}
-                                            labelStyle={{ color: ssCI === ci ? theme.colors.surfacePrimary : '#374151' }}>
+                                            labelStyle={{ color: ssCI === ci ? colors.surfacePrimary : colors.textBody }}>
                                             {ci}%
                                         </Button>
                                     ))}
@@ -221,7 +223,7 @@ const BiostatsAssistantScreen = () => {
                                             {[80, 90, 95].map(pw => (
                                                 <Button key={pw} mode={ssPower === pw ? 'contained' : 'outlined'}
                                                     onPress={() => setSsPower(pw)} style={styles.pill}
-                                                    labelStyle={{ color: ssPower === pw ? theme.colors.surfacePrimary : '#374151' }}>
+                                                    labelStyle={{ color: ssPower === pw ? colors.surfacePrimary : colors.textBody }}>
                                                     {pw}%
                                                 </Button>
                                             ))}
@@ -238,9 +240,9 @@ const BiostatsAssistantScreen = () => {
                                         <Title style={styles.cardTitle}>Prevalence Study / Cross-Sectional</Title>
                                         <Text style={styles.hint}>Formula: n = Z² × P(1-P) / e²</Text>
                                         <TextInput label="Expected Prevalence P (0 to 1, e.g. 0.5)" value={ssP}
-                                            onChangeText={setSsP} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
+                                            onChangeText={setSsP} keyboardType="numeric" mode="outlined" style={styles.input} textColor={colors.textTitle} />
                                         <TextInput label="Margin of Error e (e.g. 0.05 for ±5%)" value={ssE}
-                                            onChangeText={setSsE} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
+                                            onChangeText={setSsE} keyboardType="numeric" mode="outlined" style={styles.input} textColor={colors.textTitle} />
                                     </>
                                 )}
                                 {ssType === 'prop2' && (
@@ -248,9 +250,9 @@ const BiostatsAssistantScreen = () => {
                                         <Title style={styles.cardTitle}>Two Proportions (RCT / Cohort / Case-Control)</Title>
                                         <Text style={styles.hint}>Formula: uses z_alpha + z_beta with p̄</Text>
                                         <TextInput label="P1 – Proportion in Group 1 (%)" value={ssP1}
-                                            onChangeText={setSsP1} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
+                                            onChangeText={setSsP1} keyboardType="numeric" mode="outlined" style={styles.input} textColor={colors.textTitle} />
                                         <TextInput label="P2 – Proportion in Group 2 (%)" value={ssP2}
-                                            onChangeText={setSsP2} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
+                                            onChangeText={setSsP2} keyboardType="numeric" mode="outlined" style={styles.input} textColor={colors.textTitle} />
                                     </>
                                 )}
                                 {ssType === 'means' && (
@@ -258,21 +260,21 @@ const BiostatsAssistantScreen = () => {
                                         <Title style={styles.cardTitle}>Two Independent Means</Title>
                                         <Text style={styles.hint}>Formula: n = 2(z_α + z_β)²σ² / Δ²</Text>
                                         <TextInput label="SD – Standard Deviation (pooled estimate)" value={ssSd}
-                                            onChangeText={setSsSd} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
+                                            onChangeText={setSsSd} keyboardType="numeric" mode="outlined" style={styles.input} textColor={colors.textTitle} />
                                         <TextInput label="Δ – Minimum Detectable Difference" value={ssDelta}
-                                            onChangeText={setSsDelta} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
+                                            onChangeText={setSsDelta} keyboardType="numeric" mode="outlined" style={styles.input} textColor={colors.textTitle} />
                                     </>
                                 )}
-                                <Button mode="contained" textColor={theme.colors.buttonText} onPress={calculateSS} style={styles.btn}>Calculate Sample Size</Button>
+                                <Button mode="contained" textColor={colors.buttonText} onPress={calculateSS} style={styles.btn}>Calculate Sample Size</Button>
                                 {ssResult && !ssResult.error && (
-                                    <View style={[styles.resultBox, { borderLeftColor: theme.colors.secondary }]}>
-                                        <Text style={{ color: theme.colors.textTertiary, marginBottom: 4 }}>{ssResult.label}</Text>
-                                        <Text variant="displaySmall" style={{ fontWeight: 'bold', color: theme.colors.secondary }}>n = {ssResult.n}</Text>
+                                    <View style={[styles.resultBox, { borderLeftColor: colors.secondary }]}>
+                                        <Text style={{ color: colors.textTertiary, marginBottom: 4 }}>{ssResult.label}</Text>
+                                        <Text variant="displaySmall" style={{ fontWeight: 'bold', color: colors.secondary }}>n = {ssResult.n}</Text>
                                         <Divider style={{ marginVertical: 8 }} />
-                                        <Text style={{ color: '#374151', fontSize: 13 }}>
+                                        <Text style={{ color: colors.textBody, fontSize: 13 }}>
                                             CI: {ssCI}% {(ssType !== 'prop1') ? `| Power: ${ssPower}%` : ''}
                                         </Text>
-                                        <Text style={{ color: theme.colors.textTertiary, fontSize: 12, marginTop: 4 }}>Add 10–20% for expected non-response / dropout</Text>
+                                        <Text style={{ color: colors.textTertiary, fontSize: 12, marginTop: 4 }}>Add 10–20% for expected non-response / dropout</Text>
                                     </View>
                                 )}
                                 {ssResult?.error && <Text style={styles.errText}>{ssResult.error}</Text>}
@@ -292,18 +294,18 @@ const BiostatsAssistantScreen = () => {
                                     <Text style={styles.hint}>Yates' corrected formula</Text>
                                     <View style={styles.grid2x2}>
                                         <View style={styles.gridRow}>
-                                            <TextInput label="a (D+, E+)" value={a} onChangeText={setA} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor={theme.colors.textTitle} />
-                                            <TextInput label="b (D–, E+)" value={b} onChangeText={setB} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor={theme.colors.textTitle} />
+                                            <TextInput label="a (D+, E+)" value={a} onChangeText={setA} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor={colors.textTitle} />
+                                            <TextInput label="b (D–, E+)" value={b} onChangeText={setB} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor={colors.textTitle} />
                                         </View>
                                         <View style={styles.gridRow}>
-                                            <TextInput label="c (D+, E–)" value={c} onChangeText={setC} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor={theme.colors.textTitle} />
-                                            <TextInput label="d (D–, E–)" value={d} onChangeText={setD} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor={theme.colors.textTitle} />
+                                            <TextInput label="c (D+, E–)" value={c} onChangeText={setC} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor={colors.textTitle} />
+                                            <TextInput label="d (D–, E–)" value={d} onChangeText={setD} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor={colors.textTitle} />
                                         </View>
                                     </View>
-                                    <Button mode="contained" textColor={theme.colors.buttonText} onPress={runChi2} style={styles.btn}>Calculate χ²</Button>
+                                    <Button mode="contained" textColor={colors.buttonText} onPress={runChi2} style={styles.btn}>Calculate χ²</Button>
                                     {result && resultType === 'chi2' && !result.error && (
-                                        <View style={[styles.resultBox, { borderLeftColor: result.significant ? '#15803D' : '#B91C1C' }]}>
-                                            <Text style={{ fontWeight: 'bold', color: result.significant ? '#15803D' : '#B91C1C' }}>{result.result}</Text>
+                                        <View style={[styles.resultBox, { borderLeftColor: result.significant ? colors.successStrong : colors.errorStrong }]}>
+                                            <Text style={{ fontWeight: 'bold', color: result.significant ? colors.successStrong : colors.errorStrong }}>{result.result}</Text>
                                         </View>
                                     )}
                                 </Card.Content>
@@ -316,12 +318,12 @@ const BiostatsAssistantScreen = () => {
                                 <Card.Content>
                                     <Title style={styles.cardTitle}>Vaccine Efficacy</Title>
                                     <Text style={styles.hint}>VE = (ARu – ARv) / ARu × 100</Text>
-                                    <TextInput label="Attack Rate in Vaccinated (%)" value={arV} onChangeText={setArV} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
-                                    <TextInput label="Attack Rate in Unvaccinated (%)" value={arU} onChangeText={setArU} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
-                                    <Button mode="contained" textColor={theme.colors.buttonText} onPress={runEfficacy} style={styles.btn}>Calculate VE</Button>
+                                    <TextInput label="Attack Rate in Vaccinated (%)" value={arV} onChangeText={setArV} keyboardType="numeric" mode="outlined" style={styles.input} textColor={colors.textTitle} />
+                                    <TextInput label="Attack Rate in Unvaccinated (%)" value={arU} onChangeText={setArU} keyboardType="numeric" mode="outlined" style={styles.input} textColor={colors.textTitle} />
+                                    <Button mode="contained" textColor={colors.buttonText} onPress={runEfficacy} style={styles.btn}>Calculate VE</Button>
                                     {result && resultType === 'efficacy' && !result.error && (
-                                        <View style={[styles.resultBox, { borderLeftColor: theme.colors.secondary }]}>
-                                            <Text variant="headlineMedium" style={{ fontWeight: 'bold', color: theme.colors.primary }}>VE = {result.ve}%</Text>
+                                        <View style={[styles.resultBox, { borderLeftColor: colors.secondary }]}>
+                                            <Text variant="headlineMedium" style={{ fontWeight: 'bold', color: colors.primary }}>VE = {result.ve}%</Text>
                                         </View>
                                     )}
                                 </Card.Content>
@@ -334,12 +336,12 @@ const BiostatsAssistantScreen = () => {
                                 <Card.Content>
                                     <Title style={styles.cardTitle}>Infant Mortality Rate (IMR)</Title>
                                     <Text style={styles.hint}>IMR = (Infant Deaths / Live Births) × 1000</Text>
-                                    <TextInput label="Infant Deaths" value={deaths} onChangeText={setDeaths} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
-                                    <TextInput label="Live Births" value={births} onChangeText={setBirths} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
-                                    <Button mode="contained" textColor={theme.colors.buttonText} onPress={runIMR} style={styles.btn}>Calculate IMR</Button>
+                                    <TextInput label="Infant Deaths" value={deaths} onChangeText={setDeaths} keyboardType="numeric" mode="outlined" style={styles.input} textColor={colors.textTitle} />
+                                    <TextInput label="Live Births" value={births} onChangeText={setBirths} keyboardType="numeric" mode="outlined" style={styles.input} textColor={colors.textTitle} />
+                                    <Button mode="contained" textColor={colors.buttonText} onPress={runIMR} style={styles.btn}>Calculate IMR</Button>
                                     {result && resultType === 'imr' && !result.error && (
-                                        <View style={[styles.resultBox, { borderLeftColor: theme.colors.secondary }]}>
-                                            <Text variant="headlineMedium" style={{ fontWeight: 'bold', color: theme.colors.primary }}>IMR = {result.imr} / 1000 live births</Text>
+                                        <View style={[styles.resultBox, { borderLeftColor: colors.secondary }]}>
+                                            <Text variant="headlineMedium" style={{ fontWeight: 'bold', color: colors.primary }}>IMR = {result.imr} / 1000 live births</Text>
                                         </View>
                                     )}
                                 </Card.Content>
@@ -350,13 +352,13 @@ const BiostatsAssistantScreen = () => {
 
                         <Divider style={{ marginVertical: 16 }} />
                         <Text style={[styles.headerText, { fontSize: 18, marginBottom: 4 }]}>📝 MCQ Presets</Text>
-                        <Text style={{ color: theme.colors.textTertiary, marginBottom: 12 }}>Tap "Load" to fill the solver above and jump to it.</Text>
+                        <Text style={{ color: colors.textTertiary, marginBottom: 12 }}>Tap "Load" to fill the solver above and jump to it.</Text>
                         {PRESET_PROBLEMS.map(p => (
                             <Card key={p.id} style={styles.card}>
                                 <Card.Content>
                                     <Title style={[styles.cardTitle, { fontSize: 15 }]}>{p.title}</Title>
-                                    <Text style={{ color: '#374151', lineHeight: 20 }}>{p.description}</Text>
-                                    <Button mode="outlined" textColor={theme.colors.textTitle} compact style={{ marginTop: 10, alignSelf: 'flex-start' }} onPress={() => loadPreset(p)}>Load →</Button>
+                                    <Text style={{ color: colors.textBody, lineHeight: 20 }}>{p.description}</Text>
+                                    <Button mode="outlined" textColor={colors.textTitle} compact style={{ marginTop: 10, alignSelf: 'flex-start' }} onPress={() => loadPreset(p)}>Load →</Button>
                                 </Card.Content>
                             </Card>
                         ))}
@@ -380,7 +382,7 @@ const BiostatsAssistantScreen = () => {
                                     <Divider style={{ marginVertical: 8 }} />
                                     {section.items.map((item, i) => (
                                         <View key={i} style={styles.refRow}>
-                                            <MaterialIcons name="chevron-right" size={16} color={theme.colors.secondary} />
+                                            <MaterialIcons name="chevron-right" size={16} color={colors.secondary} />
                                             <Text style={styles.refText}>{item}</Text>
                                         </View>
                                     ))}
@@ -394,25 +396,25 @@ const BiostatsAssistantScreen = () => {
     );
 };
 
-const styles = StyleSheet.create({
-    safeArea: { flex: 1, backgroundColor: theme.colors.backgroundMain },
+const createStyles = (colors) => StyleSheet.create({
+    safeArea: { flex: 1, backgroundColor: colors.backgroundMain },
     container: { padding: 16, paddingBottom: 48 },
-    headerText: { fontSize: 26, fontWeight: 'bold', color: theme.colors.textTitle, marginBottom: 16 },
-    card: { marginBottom: 14, backgroundColor: theme.colors.surfacePrimary, borderRadius: 12, elevation: 2 },
-    cardTitle: { fontSize: 16, fontWeight: 'bold', color: theme.colors.textTitle, marginBottom: 4 },
-    hint: { color: theme.colors.textTertiary, fontSize: 12, marginBottom: 8, fontStyle: 'italic' },
-    typeBtn: { marginTop: 8, borderColor: '#E5E7EB' },
+    headerText: { fontSize: 26, fontWeight: 'bold', color: colors.textTitle, marginBottom: 16 },
+    card: { marginBottom: 14, backgroundColor: colors.surfacePrimary, borderRadius: 12, elevation: 2 },
+    cardTitle: { fontSize: 16, fontWeight: 'bold', color: colors.textTitle, marginBottom: 4 },
+    hint: { color: colors.textTertiary, fontSize: 12, marginBottom: 8, fontStyle: 'italic' },
+    typeBtn: { marginTop: 8, borderColor: colors.border },
     pillRow: { flexDirection: 'row', gap: 8, marginTop: 8 },
     pill: { flex: 1 },
     grid2x2: { gap: 8 },
     gridRow: { flexDirection: 'row', gap: 8 },
-    cell: { flex: 1, backgroundColor: theme.colors.surfacePrimary },
-    input: { marginBottom: 8, backgroundColor: theme.colors.surfacePrimary },
-    btn: { marginTop: 12, backgroundColor: theme.colors.secondary, paddingVertical: 4 },
-    resultBox: { marginTop: 12, padding: 14, backgroundColor: theme.colors.primaryLight, borderRadius: 10, borderLeftWidth: 4 },
-    errText: { color: '#B91C1C', marginTop: 8, fontWeight: '500' },
+    cell: { flex: 1, backgroundColor: colors.surfacePrimary },
+    input: { marginBottom: 8, backgroundColor: colors.surfacePrimary },
+    btn: { marginTop: 12, backgroundColor: colors.secondary, paddingVertical: 4 },
+    resultBox: { marginTop: 12, padding: 14, backgroundColor: colors.primaryLight, borderRadius: 10, borderLeftWidth: 4 },
+    errText: { color: colors.errorStrong, marginTop: 8, fontWeight: '500' },
     refRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 6 },
-    refText: { flex: 1, color: '#374151', lineHeight: 20 },
+    refText: { flex: 1, color: colors.textBody, lineHeight: 20 },
 });
 
 export default BiostatsAssistantScreen;

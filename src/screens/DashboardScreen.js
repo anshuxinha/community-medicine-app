@@ -27,12 +27,15 @@ import UpdateDetailDialog from "../components/UpdateDetailDialog";
 import ReferralAnnouncementDialog from "../components/ReferralAnnouncementDialog";
 import { scheduleAllNotifications } from "../services/notificationService";
 import { auth } from "../config/firebase";
-import { theme, useResponsive } from "../styles/theme";
+import { useResponsive } from "../styles/theme";
+import { useThemedStyles } from "../styles/useThemedStyles";
 
 const DASHBOARD_NEW_BADGES_STORAGE_KEY = "dashboardNewBadgesSeen:v1";
 const REFERRAL_ANNOUNCEMENT_STORAGE_KEY = "referralAnnouncementSeen:v1";
 
 const UpdateDownloadIndicator = () => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   const {
     isDownloading,
     isUpdatePending,
@@ -87,7 +90,7 @@ const UpdateDownloadIndicator = () => {
         <MaterialIcons
           name={showReady ? "check-circle" : "downloading"}
           size={20}
-          color={showReady ? "#047857" : theme.colors.secondary}
+          color={showReady ? colors.successStrong : colors.secondary}
         />
       </View>
       <View style={styles.updateDownloadTextColumn}>
@@ -102,7 +105,7 @@ const UpdateDownloadIndicator = () => {
         {showDownloading ? (
           <ProgressBar
             progress={downloadProgress || 0.12}
-            color={theme.colors.secondary}
+            color={colors.secondary}
             style={styles.updateDownloadProgress}
           />
         ) : null}
@@ -112,6 +115,7 @@ const UpdateDownloadIndicator = () => {
 };
 
 const DashboardScreen = ({ navigation }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
   const { readingProgress, currentStreak, studyScore, user, refreshFromCloud, isPremium } =
     useContext(AppContext);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -333,7 +337,7 @@ const DashboardScreen = ({ navigation }) => {
             <MaterialIcons
               name="menu"
               size={26}
-              color={theme.colors.textTitle}
+              color={colors.textTitle}
             />
           </TouchableOpacity>
           <Text style={styles.appName}>STROMA</Text>
@@ -344,7 +348,7 @@ const DashboardScreen = ({ navigation }) => {
             <MaterialIcons
               name="bookmark-border"
               size={26}
-              color={theme.colors.textTitle}
+              color={colors.textTitle}
             />
           </TouchableOpacity>
         </View>
@@ -366,12 +370,12 @@ const DashboardScreen = ({ navigation }) => {
           <Card.Title
             title="Learning Progress"
             titleStyle={styles.cardTitle}
-            subtitleStyle={{ color: theme.colors.textTitle }}
+            subtitleStyle={{ color: colors.textTitle }}
           />
           <Card.Content>
             <ProgressBar
               progress={readingProgress}
-              color="#A855F7" // Soft purple
+              color={colors.secondary} // Soft purple
               style={styles.progressBar}
             />
             <Text variant="bodyMedium" style={styles.progressText}>
@@ -416,7 +420,7 @@ const DashboardScreen = ({ navigation }) => {
                 variant="labelSmall"
                 style={[
                   styles.statLabel,
-                  { marginTop: 4, color: theme.colors.secondary },
+                  { marginTop: 4, color: colors.secondary },
                 ]}
               >
                 {nextHealthDay.dateLabel}
@@ -444,7 +448,7 @@ const DashboardScreen = ({ navigation }) => {
               <MaterialIcons
                 name="build"
                 size={32}
-                color={theme.colors.secondary}
+                color={colors.secondary}
               />
               <Text variant="labelMedium" style={styles.quickText}>
                 Toolbox
@@ -465,7 +469,7 @@ const DashboardScreen = ({ navigation }) => {
               <MaterialIcons
                 name="diamond"
                 size={32}
-                color={theme.colors.secondary}
+                color={colors.secondary}
               />
               <Text variant="labelMedium" style={styles.quickText}>
                 Gems
@@ -480,7 +484,7 @@ const DashboardScreen = ({ navigation }) => {
               <MaterialIcons
                 name="museum"
                 size={32}
-                color={theme.colors.secondary}
+                color={colors.secondary}
               />
               <Text variant="labelMedium" style={styles.quickText}>
                 Museum
@@ -495,7 +499,7 @@ const DashboardScreen = ({ navigation }) => {
               <MaterialIcons
                 name="insert-chart"
                 size={32}
-                color={theme.colors.secondary}
+                color={colors.secondary}
               />
               <Text variant="labelMedium" style={styles.quickText}>
                 Biostats
@@ -536,7 +540,7 @@ const DashboardScreen = ({ navigation }) => {
             </Card.Content>
             <Card.Actions>
               <Button
-                textColor={theme.colors.secondary}
+                textColor={colors.secondary}
                 onPress={() => {
                   if (!isPremium) {
                     navigation.navigate("Paywall");
@@ -572,12 +576,12 @@ const DashboardScreen = ({ navigation }) => {
           onDismiss={() => setHealthDaysVisible(false)}
           style={{
             maxHeight: "82%",
-            backgroundColor: theme.colors.surfacePrimary,
+            backgroundColor: colors.surfacePrimary,
             borderRadius: 16,
           }}
         >
           <Dialog.Title
-            style={{ color: theme.colors.textTitle, fontWeight: "bold" }}
+            style={{ color: colors.textTitle, fontWeight: "bold" }}
           >
             Public Health Days
           </Dialog.Title>
@@ -610,10 +614,10 @@ const DashboardScreen = ({ navigation }) => {
 };
 
 // Step 5: Styling
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: theme.colors.backgroundMain,
+    backgroundColor: colors.backgroundMain,
   },
   container: {
     flex: 1,
@@ -632,7 +636,7 @@ const styles = StyleSheet.create({
   appName: {
     fontSize: 18,
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     letterSpacing: 2,
   },
   iconBtn: {
@@ -641,7 +645,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 20,
-    backgroundColor: theme.colors.surfaceSecondary,
+    backgroundColor: colors.surfaceSecondary,
   },
   headerSection: {
     marginBottom: 24,
@@ -650,20 +654,20 @@ const styles = StyleSheet.create({
   welcomeText: {
     fontFamily: Platform.OS === "ios" ? "Georgia" : "serif",
     fontSize: 36,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     lineHeight: 40,
   },
   subText: {
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     marginTop: 8,
   },
   updateDownloadIndicator: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F8FAFC",
+    backgroundColor: colors.surfaceMuted,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.border,
     padding: 12,
     marginBottom: 16,
   },
@@ -673,19 +677,19 @@ const styles = StyleSheet.create({
     borderRadius: 17,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#F3E8FF",
+    backgroundColor: colors.primarySoft,
     marginRight: 10,
   },
   updateDownloadTextColumn: {
     flex: 1,
   },
   updateDownloadTitle: {
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontSize: 14,
     fontWeight: "800",
   },
   updateDownloadSubtitle: {
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontSize: 12,
     lineHeight: 17,
     marginTop: 2,
@@ -693,12 +697,12 @@ const styles = StyleSheet.create({
   updateDownloadProgress: {
     height: 5,
     borderRadius: 3,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: colors.border,
     marginTop: 8,
   },
   progressCard: {
     marginBottom: 24,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 20,
     elevation: 4,
     shadowColor: "#000",
@@ -709,17 +713,17 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontWeight: "bold",
     fontSize: 16,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   progressBar: {
     height: 12,
     borderRadius: 6,
     marginVertical: 12,
-    backgroundColor: theme.colors.surfaceSecondary,
+    backgroundColor: colors.surfaceSecondary,
   },
   progressText: {
     textAlign: "right",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontWeight: "600",
   },
   statsRow: {
@@ -729,7 +733,7 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 20,
     elevation: 4,
     shadowColor: "#000",
@@ -738,7 +742,7 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
   },
   statLabel: {
-    color: "#374151",
+    color: colors.textBody,
     fontWeight: "600",
   },
   statContent: {
@@ -749,14 +753,14 @@ const styles = StyleSheet.create({
   statValue: {
     fontWeight: "bold",
     fontSize: 24,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     marginVertical: 4,
   },
   sectionTitle: {
     fontWeight: "bold",
     fontSize: 20,
     marginBottom: 16,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   quickAccessRow: {
     flexDirection: "row",
@@ -765,7 +769,7 @@ const styles = StyleSheet.create({
   },
   quickCard: {
     flex: 1,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 16,
     elevation: 2,
     shadowColor: "#000",
@@ -784,8 +788,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 5,
     right: 5,
-    backgroundColor: "#F3E8FF",
-    color: theme.colors.primaryDark,
+    backgroundColor: colors.primarySoft,
+    color: colors.primaryDark,
     borderRadius: 6,
     overflow: "hidden",
     paddingHorizontal: 5,
@@ -796,11 +800,11 @@ const styles = StyleSheet.create({
   quickText: {
     marginTop: 8,
     fontWeight: "bold",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   updateCard: {
     marginBottom: 16,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 16,
     elevation: 2,
     shadowColor: "#000",
@@ -809,7 +813,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
   },
   dateText: {
-    color: theme.colors.secondary,
+    color: colors.secondary,
     marginBottom: 6,
     fontWeight: "bold",
     fontSize: 12,
@@ -818,21 +822,21 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 18,
     marginBottom: 8,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   updateSummary: {
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     lineHeight: 22,
   },
   updateCategory: {
-    color: theme.colors.secondary,
+    color: colors.secondary,
     fontWeight: "700",
     marginBottom: 4,
     textTransform: "uppercase",
   },
   updateSource: {
     marginTop: 8,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   healthDaysListContent: {
     paddingHorizontal: 16,
@@ -852,14 +856,14 @@ const styles = StyleSheet.create({
   healthDayName: {
     fontSize: 16,
     fontWeight: "700",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     lineHeight: 22,
     marginBottom: 0,
     includeFontPadding: false,
   },
   healthDayDate: {
     marginTop: 1,
-    color: theme.colors.secondary,
+    color: colors.secondary,
     fontSize: 13,
     fontWeight: "700",
     lineHeight: 18,
@@ -867,13 +871,13 @@ const styles = StyleSheet.create({
   },
   healthDayDescription: {
     marginTop: 6,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontSize: 14,
     lineHeight: 20,
     includeFontPadding: false,
   },
   qbankBanner: {
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 20,
     elevation: 4,
     shadowColor: "#000",
@@ -882,7 +886,7 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     marginBottom: 24,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.border,
   },
   qbankBannerContent: {
     flexDirection: "row",
@@ -893,7 +897,7 @@ const styles = StyleSheet.create({
     width: 46,
     height: 46,
     borderRadius: 23,
-    backgroundColor: theme.colors.primaryLight,
+    backgroundColor: colors.primaryLight,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 14,
@@ -904,11 +908,11 @@ const styles = StyleSheet.create({
   },
   qbankBannerTitle: {
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontSize: 16,
   },
   qbankBannerDesc: {
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontSize: 12,
     marginTop: 2,
     lineHeight: 16,

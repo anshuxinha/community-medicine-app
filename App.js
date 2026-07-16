@@ -2,11 +2,12 @@ import React, { useEffect } from "react";
 import { Platform } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider as PaperProvider } from "react-native-paper";
+import { StatusBar } from "expo-status-bar";
 import * as Notifications from "expo-notifications";
 import * as ScreenOrientation from "expo-screen-orientation";
 import AppNavigator from "./src/navigation/AppNavigator";
 import { AppProvider } from "./src/context/AppContext";
-import { paperTheme } from "./src/styles/theme";
+import { ThemeProvider, useAppTheme } from "./src/styles/ThemeContext";
 import ErrorBoundary from "./src/components/ErrorBoundary";
 import { scheduleAllNotifications } from "./src/services/notificationService";
 import UpdateBottomSheet from "./src/components/UpdateBottomSheet";
@@ -22,6 +23,18 @@ if (Platform.OS === "android") {
   });
 }
 
+function ThemedApp() {
+  const { paperTheme, isDark } = useAppTheme();
+
+  return (
+    <PaperProvider theme={paperTheme}>
+      <StatusBar style={isDark ? "light" : "dark"} />
+      <AppNavigator />
+      <UpdateBottomSheet />
+    </PaperProvider>
+  );
+}
+
 export default function App() {
   useEffect(() => {
     // Keep the app portrait by default; Videos unlocks landscape while playing.
@@ -34,19 +47,18 @@ export default function App() {
     // Schedule recurring notifications (Public Health Days, Weekly Digest)
     // on app startup. This ensures they pop up even when the app is closed.
     scheduleAllNotifications().catch((err) =>
-      console.warn("Failed to schedule notifications:", err),
+      console.warn("Failed to schedule notifications:", err?.message),
     );
   }, []);
 
   return (
     <SafeAreaProvider>
       <ErrorBoundary>
-        <AppProvider>
-          <PaperProvider theme={paperTheme}>
-            <AppNavigator />
-            <UpdateBottomSheet />
-          </PaperProvider>
-        </AppProvider>
+        <ThemeProvider>
+          <AppProvider>
+            <ThemedApp />
+          </AppProvider>
+        </ThemeProvider>
       </ErrorBoundary>
     </SafeAreaProvider>
   );

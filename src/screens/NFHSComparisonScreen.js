@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import { Card, SegmentedButtons, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
-import { theme } from "../styles/theme";
+import { useThemedStyles } from "../styles/useThemedStyles";
 import {
   NFHS_COMPARISON_CATEGORIES,
   NFHS_COMPARISON_INDICATORS,
@@ -47,7 +47,7 @@ const IndicatorRow = ({ item, area }) => {
           <MaterialIcons
             name={!hasComparison ? "remove" : delta < 0 ? "south" : delta > 0 ? "north" : "remove"}
             size={14}
-            color={tone === "good" ? "#047857" : tone === "watch" ? "#B45309" : "#4B5563"}
+            color={tone === "good" ? colors.successStrong : tone === "watch" ? colors.warningStrong : colors.textSecondary}
           />
           <Text style={[styles.deltaText, styles[`${tone}Text`]]}>
             {hasComparison ? Math.abs(delta).toFixed(item.unit === "females/1000 males" ? 0 : 1) : "NR"}
@@ -81,6 +81,8 @@ const IndicatorRow = ({ item, area }) => {
 };
 
 const NFHSComparisonScreen = () => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   const [area, setArea] = useState("total");
   const [category, setCategory] = useState("headline");
 
@@ -160,7 +162,7 @@ const NFHSComparisonScreen = () => {
                 </Text>
                 <Text style={styles.matrixSubtitle}>{AREA_LABELS[area]} lens</Text>
               </View>
-              <MaterialIcons name="compare-arrows" size={28} color={theme.colors.secondary} />
+              <MaterialIcons name="compare-arrows" size={28} color={colors.secondary} />
             </View>
             {filteredIndicators.map((item) => (
               <IndicatorRow key={item.id} item={item} area={area} />
@@ -184,10 +186,10 @@ const NFHSComparisonScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: theme.colors.backgroundMain,
+    backgroundColor: colors.backgroundMain,
   },
   container: {
     padding: 16,
@@ -200,14 +202,14 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   kicker: {
-    color: "#F8FAFC",
+    color: colors.surfaceMuted,
     fontSize: 28,
     fontWeight: "900",
     letterSpacing: 0,
     textAlign: "center",
   },
   title: {
-    color: "#A855F7",
+    color: colors.secondary,
     fontSize: 34,
     fontWeight: "900",
     letterSpacing: 0,
@@ -242,19 +244,19 @@ const styles = StyleSheet.create({
   },
   nfhs5Badge: {
     backgroundColor: "#3B1479",
-    borderColor: "#8B5CF6",
+    borderColor: colors.chartPurple,
   },
   nfhs6Badge: {
     backgroundColor: "#047A3D",
     borderColor: "#22C55E",
   },
   badgeTitle: {
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
     fontSize: 28,
     fontWeight: "900",
   },
   badgeSubtitle: {
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
     fontSize: 16,
     fontWeight: "700",
     marginTop: 2,
@@ -263,23 +265,23 @@ const styles = StyleSheet.create({
     width: 54,
     height: 54,
     borderRadius: 27,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surfacePrimary,
     alignItems: "center",
     justifyContent: "center",
     marginHorizontal: 10,
   },
   vsText: {
-    color: "#111827",
+    color: colors.textTitle,
     fontSize: 24,
     fontWeight: "900",
   },
   controlCard: {
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 8,
     marginBottom: 16,
   },
   controlLabel: {
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontSize: 16,
     fontWeight: "800",
     marginBottom: 10,
@@ -288,7 +290,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   helperText: {
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontSize: 13,
     lineHeight: 18,
   },
@@ -297,8 +299,8 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   categoryTab: {
-    backgroundColor: "#EEF2F7",
-    color: "#334155",
+    backgroundColor: colors.surfaceMuted,
+    color: colors.textBody,
     borderRadius: 8,
     paddingHorizontal: 14,
     paddingVertical: 9,
@@ -307,11 +309,11 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   categoryTabActive: {
-    backgroundColor: theme.colors.secondary,
-    color: "#FFFFFF",
+    backgroundColor: colors.secondary,
+    color: colors.surfacePrimary,
   },
   matrixCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 8,
     marginBottom: 16,
   },
@@ -322,19 +324,19 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   matrixTitle: {
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontSize: 20,
     fontWeight: "900",
   },
   matrixSubtitle: {
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontSize: 13,
     fontWeight: "700",
     marginTop: 2,
   },
   indicatorRow: {
     borderTopWidth: 1,
-    borderTopColor: "#E5E7EB",
+    borderTopColor: colors.border,
     paddingTop: 14,
     marginTop: 14,
   },
@@ -346,7 +348,7 @@ const styles = StyleSheet.create({
   },
   indicatorTitle: {
     flex: 1,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontSize: 15,
     fontWeight: "800",
     lineHeight: 20,
@@ -360,26 +362,26 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   goodPill: {
-    backgroundColor: "#DCFCE7",
+    backgroundColor: colors.successSoft,
   },
   watchPill: {
-    backgroundColor: "#FEF3C7",
+    backgroundColor: colors.warningBackground,
   },
   neutralPill: {
-    backgroundColor: "#E5E7EB",
+    backgroundColor: colors.border,
   },
   deltaText: {
     fontSize: 12,
     fontWeight: "900",
   },
   goodText: {
-    color: "#047857",
+    color: colors.successStrong,
   },
   watchText: {
-    color: "#B45309",
+    color: colors.warningStrong,
   },
   neutralText: {
-    color: "#4B5563",
+    color: colors.textSecondary,
   },
   matrixRow: {
     flexDirection: "row",
@@ -388,12 +390,12 @@ const styles = StyleSheet.create({
   },
   yearCell: {
     flex: 1,
-    backgroundColor: "#F8FAFC",
+    backgroundColor: colors.surfaceMuted,
     borderRadius: 8,
     padding: 10,
   },
   yearLabel: {
-    color: "#64748B",
+    color: colors.textTertiary,
     fontSize: 11,
     fontWeight: "900",
     textTransform: "uppercase",
@@ -405,7 +407,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   nfhs6Value: {
-    color: "#15803D",
+    color: colors.successStrong,
     fontSize: 22,
     fontWeight: "900",
     marginTop: 2,
@@ -417,7 +419,7 @@ const styles = StyleSheet.create({
   barTrack: {
     height: 8,
     borderRadius: 8,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: colors.border,
     overflow: "hidden",
   },
   barFill: {
@@ -425,23 +427,23 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   nfhs5Bar: {
-    backgroundColor: "#7C3AED",
+    backgroundColor: colors.secondary,
   },
   nfhs6Bar: {
     backgroundColor: "#16A34A",
   },
   noteText: {
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontSize: 12,
     lineHeight: 17,
     marginTop: 8,
   },
   sourceCard: {
-    backgroundColor: "#F8FAFC",
+    backgroundColor: colors.surfaceMuted,
     borderRadius: 8,
   },
   sourceTitle: {
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontSize: 16,
     fontWeight: "900",
     marginBottom: 10,
@@ -450,12 +452,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   sourceLabel: {
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontSize: 13,
     fontWeight: "800",
   },
   sourceDetail: {
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontSize: 12,
     lineHeight: 17,
     marginTop: 2,

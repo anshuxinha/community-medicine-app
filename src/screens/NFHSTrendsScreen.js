@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { WebView } from 'react-native-webview';
 import DropdownPicker from '../components/DropdownPicker';
-import { theme } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 import { NFHS, NFHS_META } from '../data/nfhsTrendsData';
 
 const ROUND_ORDER = ["NFHS-1", "NFHS-2", "NFHS-3", "NFHS-4", "NFHS-5", "NFHS-6"];
@@ -19,6 +19,8 @@ const YEARS = {
 };
 
 const NFHSTrendsScreen = () => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
     // 1. Selector States
     const groups = NFHS_META.group_order;
     const [selectedGroup, setSelectedGroup] = useState(groups[0]);
@@ -131,7 +133,7 @@ const NFHSTrendsScreen = () => {
                 marker: { size: 9 },
                 text: textLabels,
                 textposition: "middle right",
-                textfont: { size: 11, color: "#1F2937" },
+                textfont: { size: 11, color: colors.textPrimary },
                 cliponaxis: false,
                 hovertemplate: `<b>${st}</b><br>%{x} (%{customdata})<br>Value: %{y}<extra></extra>`,
                 customdata: ROUND_ORDER.map(r => YEARS[r])
@@ -150,15 +152,15 @@ const NFHSTrendsScreen = () => {
                 tickmode: "array",
                 tickvals: ROUND_ORDER,
                 ticktext: ticktext,
-                tickfont: { size: 10, color: "#4B5563" },
-                gridcolor: "#F3F4F6"
+                tickfont: { size: 10, color: colors.textSecondary },
+                gridcolor: colors.surfaceSecondary
             },
             yaxis: {
                 autorange: true,
                 title: "",
                 zeroline: false,
-                gridcolor: "#E5E7EB",
-                tickfont: { size: 10, color: "#4B5563" }
+                gridcolor: colors.border,
+                tickfont: { size: 10, color: colors.textSecondary }
             },
             showlegend: true,
             legend: { 
@@ -168,12 +170,12 @@ const NFHSTrendsScreen = () => {
                 font: { size: 11 }
             },
             hovermode: "closest",
-            plot_bgcolor: "#ffffff",
-            paper_bgcolor: "#FBFCFE",
+            plot_bgcolor: colors.surfacePrimary,
+            paper_bgcolor: colors.backgroundMain,
             annotations: anyData ? [] : [{
                 text: "No data for this indicator / area in selected states.",
                 showarrow: false,
-                font: { size: 13, color: "#EF4444" },
+                font: { size: 13, color: colors.error },
                 xref: "paper",
                 yref: "paper",
                 x: 0.5,
@@ -370,7 +372,7 @@ const NFHSTrendsScreen = () => {
                                 { value: 'Rural', label: 'Rural' },
                                 { value: 'Urban', label: 'Urban' },
                             ]}
-                            theme={{ colors: { primary: theme.colors.secondary } }}
+                            theme={{ colors: { primary: colors.secondary } }}
                             style={styles.segmentedButtons}
                         />
                     </Card.Content>
@@ -384,7 +386,7 @@ const NFHSTrendsScreen = () => {
                             <Button 
                                 compact 
                                 mode="text" 
-                                textColor={theme.colors.secondary}
+                                textColor={colors.secondary}
                                 onPress={() => {
                                     setStateSearchQuery("");
                                     setStateModalVisible(true);
@@ -417,7 +419,7 @@ const NFHSTrendsScreen = () => {
                             <MaterialIcons 
                                 name={comparabilityInfo.level === "caution" ? "warning" : "check-circle"} 
                                 size={22} 
-                                color={comparabilityInfo.level === "caution" ? "#B45309" : "#047857"} 
+                                color={comparabilityInfo.level === "caution" ? colors.warningStrong : colors.successStrong} 
                                 style={{ marginRight: 8, marginTop: 1 }}
                             />
                             <View style={{ flex: 1 }}>
@@ -446,8 +448,8 @@ const NFHSTrendsScreen = () => {
                             />
                             {!webViewReady && (
                                 <View style={styles.loaderContainer}>
-                                    <ActivityIndicator size="large" color={theme.colors.secondary} />
-                                    <Text style={{ marginTop: 12, color: theme.colors.textSecondary }}>Preparing chart engine...</Text>
+                                    <ActivityIndicator size="large" color={colors.secondary} />
+                                    <Text style={{ marginTop: 12, color: colors.textSecondary }}>Preparing chart engine...</Text>
                                 </View>
                             )}
                         </View>
@@ -465,13 +467,13 @@ const NFHSTrendsScreen = () => {
                         style={styles.accordion}
                         expanded={expanded}
                         onPress={() => setExpanded(!expanded)}
-                        left={props => <List.Icon {...props} icon="book-open-outline" color={theme.colors.secondary} />}
+                        left={props => <List.Icon {...props} icon="book-open-outline" color={colors.secondary} />}
                     >
                         <View style={styles.definitionsContent}>
                             {definitionRows}
                             {nfhs12Unavailable && (
                                 <View style={styles.nfhs12NoteContainer}>
-                                    <MaterialIcons name="info-outline" size={16} color={theme.colors.textSecondary} style={styles.nfhs12NoteIcon} />
+                                    <MaterialIcons name="info-outline" size={16} color={colors.textSecondary} style={styles.nfhs12NoteIcon} />
                                     <Text style={styles.nfhs12NoteText}>
                                         Note: NFHS-1 (1992-93) and NFHS-2 (1998-99) data/definitions are not available for this indicator. Systematic tracking for this metric commenced in subsequent rounds.
                                     </Text>
@@ -499,12 +501,12 @@ const NFHSTrendsScreen = () => {
                     <View style={styles.modalHeader}>
                         <Text style={styles.modalTitle}>Select States &amp; UTs</Text>
                         <TouchableOpacity onPress={() => setStateModalVisible(false)} style={styles.modalCloseButton}>
-                            <MaterialIcons name="close" size={24} color={theme.colors.textTitle} />
+                            <MaterialIcons name="close" size={24} color={colors.textTitle} />
                         </TouchableOpacity>
                     </View>
                     
                     <View style={styles.modalSearchContainer}>
-                        <MaterialIcons name="search" size={22} color={theme.colors.textSecondary} style={{ marginRight: 8 }} />
+                        <MaterialIcons name="search" size={22} color={colors.textSecondary} style={{ marginRight: 8 }} />
                         <TextInput
                             placeholder="Search state..."
                             value={stateSearchQuery}
@@ -514,19 +516,19 @@ const NFHSTrendsScreen = () => {
                         />
                         {stateSearchQuery.length > 0 && (
                             <TouchableOpacity onPress={() => setStateSearchQuery("")}>
-                                <MaterialIcons name="cancel" size={20} color={theme.colors.textSecondary} />
+                                <MaterialIcons name="cancel" size={20} color={colors.textSecondary} />
                             </TouchableOpacity>
                         )}
                     </View>
 
                     <View style={styles.modalControlsRow}>
-                        <Button mode="outlined" compact onPress={selectIndiaOnly} style={styles.modalControlBtn} textColor={theme.colors.secondary}>
+                        <Button mode="outlined" compact onPress={selectIndiaOnly} style={styles.modalControlBtn} textColor={colors.secondary}>
                             India Only
                         </Button>
-                        <Button mode="outlined" compact onPress={clearAllStates} style={styles.modalControlBtn} textColor={theme.colors.secondary}>
+                        <Button mode="outlined" compact onPress={clearAllStates} style={styles.modalControlBtn} textColor={colors.secondary}>
                             Reset
                         </Button>
-                        <Button mode="outlined" compact onPress={selectAllStates} style={styles.modalControlBtn} textColor={theme.colors.secondary}>
+                        <Button mode="outlined" compact onPress={selectAllStates} style={styles.modalControlBtn} textColor={colors.secondary}>
                             Select All
                         </Button>
                     </View>
@@ -549,9 +551,9 @@ const NFHSTrendsScreen = () => {
                                         {item}
                                     </Text>
                                     {isSelected ? (
-                                        <MaterialIcons name="check-box" size={24} color={theme.colors.secondary} />
+                                        <MaterialIcons name="check-box" size={24} color={colors.secondary} />
                                     ) : (
-                                        <MaterialIcons name="check-box-outline-blank" size={24} color={theme.colors.textPlaceholder} />
+                                        <MaterialIcons name="check-box-outline-blank" size={24} color={colors.textPlaceholder} />
                                     )}
                                 </TouchableOpacity>
                             );
@@ -562,8 +564,8 @@ const NFHSTrendsScreen = () => {
                         <Button 
                             mode="contained" 
                             style={styles.doneButton}
-                            buttonColor={theme.colors.secondary}
-                            textColor="#fff"
+                            buttonColor={colors.secondary}
+                            textColor={colors.surfacePrimary}
                             onPress={() => setStateModalVisible(false)}
                         >
                             Done ({selectedStates.length} Selected)
@@ -575,17 +577,17 @@ const NFHSTrendsScreen = () => {
     );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: theme.colors.backgroundMain,
+        backgroundColor: colors.backgroundMain,
     },
     container: {
         padding: 16,
         paddingBottom: 40,
     },
     filterCard: {
-        backgroundColor: theme.colors.surfacePrimary,
+        backgroundColor: colors.surfacePrimary,
         borderRadius: 12,
         elevation: 1,
     },
@@ -594,12 +596,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textTransform: 'uppercase',
         letterSpacing: 0.5,
-        color: theme.colors.textSecondary,
+        color: colors.textSecondary,
     },
     dropdown: {
         marginTop: 4,
         marginBottom: 4,
-        borderColor: '#E5E7EB',
+        borderColor: colors.border,
         borderRadius: 8,
     },
     segmentedButtons: {
@@ -617,12 +619,12 @@ const styles = StyleSheet.create({
         marginTop: 6,
     },
     chip: {
-        backgroundColor: theme.colors.surfaceSecondary,
+        backgroundColor: colors.surfaceSecondary,
         borderRadius: 8,
     },
     chipText: {
         fontSize: 12,
-        color: theme.colors.textPrimary,
+        color: colors.textPrimary,
     },
     infoCard: {
         marginTop: 12,
@@ -634,8 +636,8 @@ const styles = StyleSheet.create({
         borderColor: '#A7F3D0',
     },
     cautionCard: {
-        backgroundColor: '#FFFBEB',
-        borderColor: '#FDE68A',
+        backgroundColor: colors.warningBackground,
+        borderColor: colors.userHighlightSentence,
     },
     infoTitle: {
         fontWeight: 'bold',
@@ -643,18 +645,18 @@ const styles = StyleSheet.create({
         marginBottom: 2,
     },
     okTitle: {
-        color: '#065F46',
+        color: colors.successStrong,
     },
     cautionTitle: {
-        color: '#92400E',
+        color: colors.warningText,
     },
     infoNote: {
         fontSize: 12,
-        color: '#374151',
+        color: colors.textBody,
         lineHeight: 16,
     },
     chartCard: {
-        backgroundColor: theme.colors.surfacePrimary,
+        backgroundColor: colors.surfacePrimary,
         borderRadius: 12,
         elevation: 2,
         overflow: 'hidden',
@@ -665,40 +667,40 @@ const styles = StyleSheet.create({
     },
     webview: {
         flex: 1,
-        backgroundColor: '#FBFCFE',
+        backgroundColor: colors.backgroundMain,
     },
     loaderContainer: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: '#FBFCFE',
+        backgroundColor: colors.backgroundMain,
         justifyContent: 'center',
         alignItems: 'center',
     },
     chartFootnote: {
         fontSize: 11,
-        color: theme.colors.textTertiary,
+        color: colors.textTertiary,
         marginTop: 8,
         textAlign: 'center',
         paddingHorizontal: 8,
     },
     accordion: {
-        backgroundColor: theme.colors.surfacePrimary,
+        backgroundColor: colors.surfacePrimary,
         marginTop: 12,
         borderRadius: 12,
         borderWidth: 1,
-        borderColor: '#E5E7EB',
+        borderColor: colors.border,
     },
     accordionTitle: {
         fontSize: 14,
         fontWeight: 'bold',
-        color: theme.colors.textTitle,
+        color: colors.textTitle,
     },
     definitionsContent: {
-        backgroundColor: theme.colors.surfaceTertiary,
+        backgroundColor: colors.surfaceTertiary,
         padding: 12,
         borderBottomLeftRadius: 12,
         borderBottomRightRadius: 12,
         borderTopWidth: 1,
-        borderTopColor: '#E5E7EB',
+        borderTopColor: colors.border,
     },
     defRow: {
         marginBottom: 10,
@@ -706,12 +708,12 @@ const styles = StyleSheet.create({
     defRound: {
         fontWeight: 'bold',
         fontSize: 12,
-        color: theme.colors.secondary,
+        color: colors.secondary,
         marginBottom: 1,
     },
     defText: {
         fontSize: 12,
-        color: theme.colors.textPrimary,
+        color: colors.textPrimary,
         lineHeight: 16,
     },
     nfhs12NoteContainer: {
@@ -720,7 +722,7 @@ const styles = StyleSheet.create({
         marginTop: 12,
         paddingTop: 10,
         borderTopWidth: 1,
-        borderTopColor: '#E5E7EB',
+        borderTopColor: colors.border,
     },
     nfhs12NoteIcon: {
         marginRight: 6,
@@ -730,7 +732,7 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 11,
         fontStyle: 'italic',
-        color: theme.colors.textSecondary,
+        color: colors.textSecondary,
         lineHeight: 15,
     },
     disclaimerContainer: {
@@ -739,14 +741,14 @@ const styles = StyleSheet.create({
     },
     disclaimerText: {
         fontSize: 11,
-        color: theme.colors.textPlaceholder,
+        color: colors.textPlaceholder,
         textAlign: 'center',
         lineHeight: 15,
     },
     // Modal styles
     modalSafeArea: {
         flex: 1,
-        backgroundColor: theme.colors.backgroundMain,
+        backgroundColor: colors.backgroundMain,
     },
     modalHeader: {
         flexDirection: 'row',
@@ -754,12 +756,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 16,
         borderBottomWidth: 1,
-        borderBottomColor: '#E5E7EB',
+        borderBottomColor: colors.border,
     },
     modalTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: theme.colors.textTitle,
+        color: colors.textTitle,
     },
     modalCloseButton: {
         padding: 4,
@@ -767,7 +769,7 @@ const styles = StyleSheet.create({
     modalSearchContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: theme.colors.surfaceSecondary,
+        backgroundColor: colors.surfaceSecondary,
         margin: 12,
         paddingHorizontal: 12,
         borderRadius: 8,
@@ -776,7 +778,7 @@ const styles = StyleSheet.create({
     modalSearchInput: {
         flex: 1,
         fontSize: 15,
-        color: theme.colors.textTitle,
+        color: colors.textTitle,
         paddingVertical: 8,
     },
     modalControlsRow: {
@@ -788,7 +790,7 @@ const styles = StyleSheet.create({
     modalControlBtn: {
         flex: 1,
         marginHorizontal: 4,
-        borderColor: '#E5E7EB',
+        borderColor: colors.border,
         borderRadius: 6,
     },
     statesList: {
@@ -802,21 +804,21 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
     },
     stateItemSelected: {
-        backgroundColor: theme.colors.primaryLight,
+        backgroundColor: colors.primaryLight,
     },
     stateItemText: {
         fontSize: 15,
-        color: theme.colors.textPrimary,
+        color: colors.textPrimary,
     },
     stateItemTextSelected: {
         fontWeight: 'bold',
-        color: theme.colors.primaryDark,
+        color: colors.primaryDark,
     },
     modalFooter: {
         padding: 16,
         borderTopWidth: 1,
-        borderTopColor: '#E5E7EB',
-        backgroundColor: theme.colors.surfacePrimary,
+        borderTopColor: colors.border,
+        backgroundColor: colors.surfacePrimary,
     },
     doneButton: {
         borderRadius: 10,

@@ -17,7 +17,7 @@ import { signOut } from "firebase/auth";
 import { doc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
 import { AppContext } from "../context/AppContext";
-import { theme } from "../styles/theme";
+import { useThemedStyles } from "../styles/useThemedStyles";
 import Constants from "expo-constants";
 
 const { width } = Dimensions.get("window");
@@ -67,6 +67,8 @@ const BASE_MENU_ITEMS = [
 ];
 
 const DrawerMenu = ({ visible, onClose, user }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   const slideAnim = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
   const backdropAnim = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation();
@@ -243,7 +245,7 @@ const DrawerMenu = ({ visible, onClose, user }) => {
                     name={item.icon}
                     size={20}
                     color={
-                      item.danger ? theme.colors.error : theme.colors.secondary
+                      item.danger ? colors.error : colors.secondary
                     }
                   />
                 </View>
@@ -255,7 +257,7 @@ const DrawerMenu = ({ visible, onClose, user }) => {
                 >
                   {item.label}
                 </Text>
-                <MaterialIcons name="chevron-right" size={18} color="#D1D5DB" />
+                <MaterialIcons name="chevron-right" size={18} color={colors.borderStrong} />
               </TouchableOpacity>
             );
           })}
@@ -268,7 +270,7 @@ const DrawerMenu = ({ visible, onClose, user }) => {
       </Animated.View>
       {isLoggingOut && (
         <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color="#FFFFFF" />
+          <ActivityIndicator size="large" color={colors.surfacePrimary} />
           <Text style={styles.loadingText}>Logging out...</Text>
         </View>
       )}
@@ -276,7 +278,7 @@ const DrawerMenu = ({ visible, onClose, user }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.55)",
@@ -287,7 +289,7 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     width: DRAWER_WIDTH,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     elevation: 16,
     shadowColor: "#000",
     shadowOffset: { width: 4, height: 0 },
@@ -295,32 +297,32 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
   },
   drawerHeader: {
-    backgroundColor: theme.colors.textPrimary,
+    backgroundColor: colors.textPrimary,
     paddingTop: 56,
     paddingBottom: 24,
     paddingHorizontal: 20,
   },
   avatar: {
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: colors.secondary,
     marginBottom: 12,
   },
   avatarLabel: {
     fontSize: 22,
     fontWeight: "bold",
-    color: theme.colors.surfacePrimary,
+    color: colors.surfacePrimary,
   },
   userName: {
     fontSize: 18,
     fontWeight: "bold",
-    color: theme.colors.surfacePrimary,
+    color: colors.surfacePrimary,
     marginBottom: 2,
   },
   userEmail: {
     fontSize: 13,
-    color: theme.colors.textPlaceholder,
+    color: colors.textPlaceholder,
   },
   headerDivider: {
-    backgroundColor: "#E5E7EB",
+    backgroundColor: colors.border,
     height: 1,
   },
   menuScroll: {
@@ -337,31 +339,31 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: "#F3E8FF",
+    backgroundColor: colors.primarySoft,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 14,
   },
   iconBoxDanger: {
-    backgroundColor: theme.colors.errorLight,
+    backgroundColor: colors.errorLight,
   },
   menuLabel: {
     flex: 1,
     fontSize: 15,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontWeight: "500",
   },
   menuLabelDanger: {
-    color: theme.colors.error,
+    color: colors.error,
   },
   divider: {
     marginVertical: 6,
     marginHorizontal: 20,
-    backgroundColor: theme.colors.surfaceSecondary,
+    backgroundColor: colors.surfaceSecondary,
   },
   version: {
     textAlign: "center",
-    color: theme.colors.textPlaceholder,
+    color: colors.textPlaceholder,
     fontSize: 12,
     paddingVertical: 16,
   },
@@ -376,7 +378,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     fontSize: 16,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
   },
 });
 

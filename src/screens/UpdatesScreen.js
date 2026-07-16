@@ -9,7 +9,8 @@ import { Text, Card, Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AppContext } from "../context/AppContext";
-import { theme, useResponsive } from "../styles/theme";
+import { useResponsive } from "../styles/theme";
+import { useThemedStyles } from "../styles/useThemedStyles";
 import UpdateDetailDialog from "../components/UpdateDetailDialog";
 import currentUpdates from "../data/updates.json";
 import archiveData from "../data/updates_archive.json";
@@ -93,6 +94,8 @@ const UpdatesScreen = ({ navigation }) => {
   };
 
   const renderMonthGrid = () => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
     const rows = [];
     for (let row = 0; row < 3; row++) {
       const cols = [];
@@ -148,7 +151,7 @@ const UpdatesScreen = ({ navigation }) => {
               <MaterialIcons
                 name={isFuture ? "lock-clock" : "remove"}
                 size={16}
-                color={theme.colors.textPlaceholder}
+                color={colors.textPlaceholder}
                 style={{ marginTop: 4 }}
               />
             )}
@@ -197,7 +200,7 @@ const UpdatesScreen = ({ navigation }) => {
                 <MaterialIcons
                   name="close"
                   size={22}
-                  color={theme.colors.textTertiary}
+                  color={colors.textTertiary}
                 />
               </TouchableOpacity>
             </View>
@@ -222,7 +225,7 @@ const UpdatesScreen = ({ navigation }) => {
                   </Card.Content>
                   <Card.Actions>
                     <Button
-                      textColor={theme.colors.secondary}
+                      textColor={colors.secondary}
                       onPress={() => showUpdateDialog(update)}
                       mode="text"
                       compact
@@ -246,10 +249,10 @@ const UpdatesScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: theme.colors.backgroundMain,
+    backgroundColor: colors.backgroundMain,
   },
   container: {
     flex: 1,
@@ -261,17 +264,17 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 28,
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     marginBottom: 2,
   },
   subHeader: {
     fontSize: 15,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     marginBottom: 20,
     fontWeight: "500",
   },
   gridCard: {
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 20,
     elevation: 4,
     shadowColor: "#000",
@@ -293,44 +296,44 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     marginHorizontal: 4,
     borderRadius: 14,
-    backgroundColor: theme.colors.surfaceSecondary,
+    backgroundColor: colors.surfaceSecondary,
     minHeight: 72,
   },
   monthBoxSelected: {
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: colors.secondary,
     elevation: 4,
-    shadowColor: theme.colors.secondary,
+    shadowColor: colors.secondary,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
   },
   monthBoxCurrent: {
-    backgroundColor: theme.colors.primaryLight,
+    backgroundColor: colors.primaryLight,
     borderWidth: 2,
-    borderColor: theme.colors.secondary,
+    borderColor: colors.secondary,
   },
   monthBoxFuture: {
-    backgroundColor: theme.colors.surfaceTertiary,
+    backgroundColor: colors.surfaceTertiary,
     opacity: 0.6,
   },
   monthName: {
     fontSize: 14,
     fontWeight: "700",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginBottom: 2,
   },
   monthNameSelected: {
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
   },
   monthNameCurrent: {
-    color: theme.colors.secondary,
+    color: colors.secondary,
   },
   monthNameEmpty: {
-    color: theme.colors.textPlaceholder,
+    color: colors.textPlaceholder,
   },
   badge: {
     marginTop: 4,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 10,
     paddingHorizontal: 8,
     paddingVertical: 2,
@@ -341,15 +344,15 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.25)",
   },
   badgeCurrent: {
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: colors.secondary,
   },
   badgeText: {
     fontSize: 12,
     fontWeight: "bold",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   badgeTextActive: {
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
   },
   updatesSection: {
     marginTop: 4,
@@ -363,17 +366,17 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontWeight: "bold",
     fontSize: 20,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   emptyText: {
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     fontSize: 15,
     textAlign: "center",
     paddingVertical: 24,
   },
   updateCard: {
     marginBottom: 16,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 16,
     elevation: 2,
     shadowColor: "#000",
@@ -382,7 +385,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
   },
   dateText: {
-    color: theme.colors.secondary,
+    color: colors.secondary,
     marginBottom: 6,
     fontWeight: "bold",
     fontSize: 12,
@@ -391,10 +394,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 18,
     marginBottom: 8,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   updateSummary: {
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     lineHeight: 22,
   },
 });

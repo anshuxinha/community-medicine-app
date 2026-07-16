@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import * as Speech from "expo-speech";
 import ReadingView from "../components/ReadingView";
 import { AppContext } from "../context/AppContext";
-import { theme } from "../styles/theme";
+import { useThemedStyles } from "../styles/useThemedStyles";
 import { buildSpeechChunks, buildSpeechText } from "../utils/tts";
 import {
   getContentKey,
@@ -167,6 +167,8 @@ const ReadingScreen = ({ route, navigation }) => {
 
   // ── TTS ──
   const stopSpeech = () => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
     speechSessionRef.current += 1;
     speechQueueRef.current = [];
     Speech.stop();
@@ -359,10 +361,10 @@ const ReadingScreen = ({ route, navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.backgroundMain,
+    backgroundColor: colors.backgroundMain,
   },
 });
 

@@ -4,11 +4,13 @@ import { Text, Card } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { theme } from '../styles/theme';
+import { useThemedStyles } from '../styles/useThemedStyles';
 
 const TOOLBOX_NEW_BADGES_STORAGE_KEY = 'toolboxNewBadgesSeen:v1';
 
 const FieldToolboxScreen = ({ navigation }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
     const [seenNewBadges, setSeenNewBadges] = useState({});
 
     useEffect(() => {
@@ -58,7 +60,7 @@ const FieldToolboxScreen = ({ navigation }) => {
 
                 <Card style={styles.card} onPress={() => navigation.navigate('SESCalculator')}>
                     <Card.Content style={styles.cardContent}>
-                        <MaterialIcons name="calculate" size={40} color={theme.colors.secondary} />
+                        <MaterialIcons name="calculate" size={40} color={colors.secondary} />
                         <View style={styles.textContainer}>
                             <Text style={styles.cardTitle}>SES Calculator</Text>
                             <Text style={styles.cardDesc}>Compute Socio-Economic Status (Modified Kuppuswamy & BG Prasad)</Text>
@@ -68,7 +70,7 @@ const FieldToolboxScreen = ({ navigation }) => {
 
                 <Card style={styles.card} onPress={() => navigation.navigate('DietarySurvey')}>
                     <Card.Content style={styles.cardContent}>
-                        <MaterialIcons name="restaurant-menu" size={40} color={theme.colors.secondary} />
+                        <MaterialIcons name="restaurant-menu" size={40} color={colors.secondary} />
                         <View style={styles.textContainer}>
                             <Text style={styles.cardTitle}>Dietary Survey</Text>
                             <Text style={styles.cardDesc}>Calculate Calories, Protein, and Fat intake vs Reference</Text>
@@ -78,7 +80,7 @@ const FieldToolboxScreen = ({ navigation }) => {
 
                 <Card style={styles.card} onPress={() => navigation.navigate('Anthropometry')}>
                     <Card.Content style={styles.cardContent}>
-                        <MaterialIcons name="accessibility-new" size={40} color={theme.colors.secondary} />
+                        <MaterialIcons name="accessibility-new" size={40} color={colors.secondary} />
                         <View style={styles.textContainer}>
                             <Text style={styles.cardTitle}>Anthropometry</Text>
                             <Text style={styles.cardDesc}>Calculate BMI, MUAC, WHR, WHtR, and Ideal Body Weight</Text>
@@ -94,7 +96,7 @@ const FieldToolboxScreen = ({ navigation }) => {
                     }}
                 >
                     <Card.Content style={styles.cardContent}>
-                        <MaterialIcons name="compare-arrows" size={40} color={theme.colors.secondary} />
+                        <MaterialIcons name="compare-arrows" size={40} color={colors.secondary} />
                         <View style={styles.textContainer}>
                             <View style={styles.titleRow}>
                                 <Text style={styles.cardTitle}>NFHS-5 vs NFHS-6</Text>
@@ -115,7 +117,7 @@ const FieldToolboxScreen = ({ navigation }) => {
                     }}
                 >
                     <Card.Content style={styles.cardContent}>
-                        <MaterialIcons name="location-city" size={40} color={theme.colors.secondary} />
+                        <MaterialIcons name="location-city" size={40} color={colors.secondary} />
                         <View style={styles.textContainer}>
                             <View style={styles.titleRow}>
                                 <Text style={styles.cardTitle}>NFHS-6 Rural vs Urban</Text>
@@ -136,7 +138,7 @@ const FieldToolboxScreen = ({ navigation }) => {
                     }}
                 >
                     <Card.Content style={styles.cardContent}>
-                        <MaterialIcons name="trending-up" size={40} color={theme.colors.secondary} />
+                        <MaterialIcons name="trending-up" size={40} color={colors.secondary} />
                         <View style={styles.textContainer}>
                             <View style={styles.titleRow}>
                                 <Text style={styles.cardTitle}>NFHS Trends</Text>
@@ -153,10 +155,10 @@ const FieldToolboxScreen = ({ navigation }) => {
     );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: theme.colors.backgroundMain,
+        backgroundColor: colors.backgroundMain,
     },
     container: {
         padding: 16,
@@ -165,11 +167,11 @@ const styles = StyleSheet.create({
     title: {
         fontWeight: 'bold',
         marginBottom: 24,
-        color: theme.colors.textTitle,
+        color: colors.textTitle,
     },
     card: {
         marginBottom: 16,
-        backgroundColor: theme.colors.surfacePrimary,
+        backgroundColor: colors.surfacePrimary,
         borderRadius: 16,
         elevation: 2,
     },
@@ -190,12 +192,12 @@ const styles = StyleSheet.create({
     cardTitle: {
         fontWeight: 'bold',
         fontSize: 18,
-        color: theme.colors.textTitle,
+        color: colors.textTitle,
         marginRight: 8,
     },
     newBadge: {
-        backgroundColor: '#F3E8FF',
-        color: theme.colors.primaryDark,
+        backgroundColor: colors.primarySoft,
+        color: colors.primaryDark,
         borderRadius: 6,
         overflow: 'hidden',
         paddingHorizontal: 6,
@@ -205,7 +207,7 @@ const styles = StyleSheet.create({
     },
     cardDesc: {
         fontSize: 14,
-        color: '#374151',
+        color: colors.textBody,
         lineHeight: 20,
     },
 });

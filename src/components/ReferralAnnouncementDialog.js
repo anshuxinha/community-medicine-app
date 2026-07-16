@@ -12,7 +12,7 @@ import {
   Divider,
 } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-import { theme } from "../styles/theme";
+import { useThemedStyles } from "../styles/useThemedStyles";
 
 /**
  * Branded premium dialog to introduce the new Refer & Earn system.
@@ -24,6 +24,8 @@ import { theme } from "../styles/theme";
  *  - onAction: () => void
  */
 const ReferralAnnouncementDialog = ({ visible, onDismiss, onAction }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   return (
     <Portal>
       <Dialog
@@ -45,7 +47,7 @@ const ReferralAnnouncementDialog = ({ visible, onDismiss, onAction }) => {
                 <MaterialIcons
                   name="card-giftcard"
                   size={40}
-                  color={theme.colors.secondary}
+                  color={colors.secondary}
                 />
               </View>
             </View>
@@ -62,7 +64,7 @@ const ReferralAnnouncementDialog = ({ visible, onDismiss, onAction }) => {
             {/* Benefit Box */}
             <View style={styles.benefitBox}>
               <View style={styles.benefitRow}>
-                <MaterialIcons name="local-offer" size={22} color={theme.colors.secondary} style={styles.benefitIcon} />
+                <MaterialIcons name="local-offer" size={22} color={colors.secondary} style={styles.benefitIcon} />
                 <View style={styles.benefitTextCol}>
                   <Text style={styles.benefitTitle}>Friends Get 15% Off</Text>
                   <Text style={styles.benefitDescription}>
@@ -72,7 +74,7 @@ const ReferralAnnouncementDialog = ({ visible, onDismiss, onAction }) => {
               </View>
 
               <View style={styles.benefitRow}>
-                <MaterialIcons name="stars" size={22} color="#4CAF50" style={styles.benefitIcon} />
+                <MaterialIcons name="stars" size={22} color={colors.success} style={styles.benefitIcon} />
                 <View style={styles.benefitTextCol}>
                   <Text style={styles.benefitTitle}>You Get 30 Days Free</Text>
                   <Text style={styles.benefitDescription}>
@@ -91,7 +93,7 @@ const ReferralAnnouncementDialog = ({ visible, onDismiss, onAction }) => {
         <Dialog.Actions style={styles.actions}>
           <Button
             onPress={onDismiss}
-            textColor={theme.colors.textSecondary}
+            textColor={colors.textSecondary}
             style={styles.btnSecondary}
             labelStyle={styles.btnLabelSecondary}
           >
@@ -113,9 +115,9 @@ const ReferralAnnouncementDialog = ({ visible, onDismiss, onAction }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   dialog: {
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 24,
     maxHeight: "80%",
     overflow: "hidden",
@@ -127,7 +129,7 @@ const styles = StyleSheet.create({
   },
   accentBar: {
     height: 6,
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: colors.secondary,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
   },
@@ -157,20 +159,20 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     textAlign: "center",
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 14,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     textAlign: "center",
     lineHeight: 20,
     marginBottom: 16,
     paddingHorizontal: 8,
   },
   divider: {
-    backgroundColor: "#E5E7EB",
+    backgroundColor: colors.border,
     marginBottom: 16,
   },
   benefitBox: {
@@ -197,21 +199,21 @@ const styles = StyleSheet.create({
   benefitTitle: {
     fontSize: 15,
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     marginBottom: 4,
   },
   benefitDescription: {
     fontSize: 13,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 18,
   },
   boldText: {
     fontWeight: "bold",
-    color: theme.colors.secondary,
+    color: colors.secondary,
   },
   helperText: {
     fontSize: 12,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     textAlign: "center",
     lineHeight: 16,
     paddingHorizontal: 12,
@@ -223,7 +225,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   btnPrimary: {
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: colors.secondary,
     borderRadius: 14,
     paddingHorizontal: 8,
   },
@@ -231,7 +233,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
   },
   btnLabelPrimary: {
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
     fontWeight: "bold",
     fontSize: 14,
   },

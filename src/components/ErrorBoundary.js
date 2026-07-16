@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { Text, Button } from "react-native-paper";
-import { theme } from "../styles/theme";
+import { lightColors as colors } from "../styles/theme";
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -66,7 +66,7 @@ class ErrorBoundary extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.backgroundMain,
+    backgroundColor: colors.backgroundMain,
   },
   content: {
     flex: 1,
@@ -81,20 +81,20 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     marginBottom: 8,
     textAlign: "center",
   },
   subtitle: {
     fontSize: 16,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     textAlign: "center",
     marginBottom: 24,
     lineHeight: 24,
   },
   errorBox: {
     width: "100%",
-    backgroundColor: theme.colors.errorLight,
+    backgroundColor: colors.errorLight,
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
@@ -102,17 +102,17 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontSize: 14,
     fontWeight: "bold",
-    color: theme.colors.error,
+    color: colors.error,
     marginBottom: 8,
   },
   errorText: {
     fontSize: 13,
-    color: theme.colors.error,
+    color: colors.error,
     marginBottom: 8,
   },
   errorStack: {
     fontSize: 11,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontFamily: "monospace",
   },
   buttonRow: {

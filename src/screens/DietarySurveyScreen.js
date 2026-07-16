@@ -14,7 +14,7 @@ import { Text, TextInput, Button, Card, Divider } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DropdownPicker from "../components/DropdownPicker";
 import foodData from "../data/foodData.json";
-import { theme } from "../styles/theme";
+import { useThemedStyles } from "../styles/useThemedStyles";
 
 // Reference Daily Intakes (ICMR 2020)
 const REFERENCE_VALUES = {
@@ -57,6 +57,8 @@ const REFERENCE_VALUES = {
 };
 
 const DietarySurveyScreen = () => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
   const [rows, setRows] = useState([{ foodId: foodData[0].id, grams: "" }]);
   const [referenceKey, setReferenceKey] = useState("man_sedentary");
   const [result, setResult] = useState(null);
@@ -112,7 +114,7 @@ const DietarySurveyScreen = () => {
     });
   };
 
-  const diffColor = (val) => (parseFloat(val) >= 0 ? "#15803D" : "#B91C1C");
+  const diffColor = (val) => (parseFloat(val) >= 0 ? colors.successStrong : colors.errorStrong);
   const diffLabel = (val) =>
     parseFloat(val) >= 0 ? `+${val}% Surplus` : `${val}% Deficit`;
 
@@ -153,7 +155,7 @@ const DietarySurveyScreen = () => {
                   onChangeText={(v) => updateRow(index, "grams", v)}
                   keyboardType="numeric"
                   mode="outlined"
-                  textColor={theme.colors.textTitle}
+                  textColor={colors.textTitle}
                   style={styles.gramInput}
                   dense
                 />
@@ -161,14 +163,14 @@ const DietarySurveyScreen = () => {
                   onPress={() => removeRow(index)}
                   style={styles.removeBtn}
                 >
-                  <Text style={{ color: "#B91C1C", fontSize: 20 }}>✕</Text>
+                  <Text style={{ color: colors.errorStrong, fontSize: 20 }}>✕</Text>
                 </TouchableOpacity>
               </View>
             ))}
             <Button
               icon="plus"
               mode="outlined"
-              textColor={theme.colors.textTitle}
+              textColor={colors.textTitle}
               onPress={addRow}
               style={{ marginTop: 8 }}
             >
@@ -179,7 +181,7 @@ const DietarySurveyScreen = () => {
 
         <Button
           mode="contained"
-          textColor="#FFFFFF"
+          textColor={colors.surfacePrimary}
           onPress={calculate}
           style={styles.calcButton}
         >
@@ -222,14 +224,14 @@ const DietarySurveyScreen = () => {
                   <Text style={styles.resultLabel}>{row.label}</Text>
                   <Text
                     style={{
-                      color: theme.colors.textTitle,
+                      color: colors.textTitle,
                       fontWeight: "600",
                       fontSize: 15,
                     }}
                   >
                     {row.got} {row.unit}
                   </Text>
-                  <Text style={{ color: theme.colors.textSecondary }}>
+                  <Text style={{ color: colors.textSecondary }}>
                     Ref: {row.ref} {row.unit}
                   </Text>
                   <Text
@@ -247,26 +249,26 @@ const DietarySurveyScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: theme.colors.backgroundMain },
+const createStyles = (colors) => StyleSheet.create({
+  safeArea: { flex: 1, backgroundColor: colors.backgroundMain },
   container: { padding: 16, paddingBottom: 48 },
-  card: { marginBottom: 16, backgroundColor: theme.colors.surfacePrimary },
+  card: { marginBottom: 16, backgroundColor: colors.surfacePrimary },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     marginBottom: 8,
   },
   pickerContainerSmall: {
     flex: 2,
     borderWidth: 1,
-    borderColor: "#D1D5DB",
+    borderColor: colors.borderStrong,
     borderRadius: 4,
     marginRight: 8,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
   },
   rowContainer: { flexDirection: "row", alignItems: "center", marginTop: 8 },
-  gramInput: { flex: 1, backgroundColor: theme.colors.surfacePrimary },
+  gramInput: { flex: 1, backgroundColor: colors.surfacePrimary },
   removeBtn: {
     marginLeft: 8,
     padding: 4,
@@ -276,19 +278,19 @@ const styles = StyleSheet.create({
   calcButton: {
     marginVertical: 16,
     paddingVertical: 8,
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: colors.secondary,
   },
-  resultCard: { backgroundColor: "#F3E8FF", marginBottom: 32 },
+  resultCard: { backgroundColor: colors.primarySoft, marginBottom: 32 },
   resultRow: {
     marginVertical: 6,
     paddingBottom: 6,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.primaryLight,
+    borderBottomColor: colors.primaryLight,
   },
   resultLabel: {
     fontWeight: "bold",
     fontSize: 16,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     marginBottom: 2,
   },
 });

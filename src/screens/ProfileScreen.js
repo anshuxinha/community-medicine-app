@@ -16,14 +16,24 @@ import { signOut, deleteUser } from "firebase/auth";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
 import { AppContext } from "../context/AppContext";
-import { theme } from "../styles/theme";
+import { useThemedStyles } from "../styles/useThemedStyles";
+import { useAppTheme } from "../styles/ThemeContext";
 import Constants from "expo-constants";
 import {
   enableScreenCaptureProtection,
   disableScreenCaptureProtection,
 } from "../utils/screenCaptureProtection";
 
+const APPEARANCE_OPTIONS = [
+  { value: "system", label: "System", icon: "brightness-auto" },
+  { value: "light", label: "Light", icon: "light-mode" },
+  { value: "dark", label: "Dark", icon: "dark-mode" },
+];
+
 const ProfileScreen = () => {
+  const { styles, colors } = useThemedStyles(createStyles);
+  const { preference, setPreference, scheme } = useAppTheme();
+
   const navigation = useNavigation();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const {
@@ -255,7 +265,7 @@ const ProfileScreen = () => {
           <View style={styles.nameRow}>
             <Text style={styles.userName}>{displayName}</Text>
             <TouchableOpacity onPress={handleStartEditName} style={styles.editButton}>
-              <MaterialIcons name="edit" size={16} color="#FFFFFF" style={styles.editIcon} />
+              <MaterialIcons name="edit" size={16} color={colors.onInverseSurface} style={styles.editIcon} />
             </TouchableOpacity>
           </View>
           <Text style={styles.userEmail}>{user?.email || ""}</Text>
@@ -279,7 +289,7 @@ const ProfileScreen = () => {
                 <FontAwesome5
                   name={isPremium ? "crown" : "crown"}
                   size={16}
-                  color={isPremium ? "#FFD700" : theme.colors.textPlaceholder}
+                  color={isPremium ? "#FFD700" : colors.textPlaceholder}
                 />
               </View>
               <View style={styles.subscriptionText}>
@@ -312,7 +322,7 @@ const ProfileScreen = () => {
               <MaterialIcons
                 name="local-fire-department"
                 size={28}
-                color={theme.colors.accent}
+                color={colors.accent}
               />
               <Text style={styles.statValue}>{currentStreak}</Text>
               <Text style={styles.statLabel}>Day Streak</Text>
@@ -324,7 +334,7 @@ const ProfileScreen = () => {
               <MaterialIcons
                 name="stars"
                 size={28}
-                color={theme.colors.secondary}
+                color={colors.secondary}
               />
               <Text style={styles.statValue}>{studyScore}</Text>
               <Text style={styles.statLabel}>Stroma Score</Text>
@@ -336,7 +346,7 @@ const ProfileScreen = () => {
               <MaterialIcons
                 name="trending-up"
                 size={28}
-                color={theme.colors.chartGreen}
+                color={colors.chartGreen}
               />
               <Text style={styles.statValue}>{progressPercent}%</Text>
               <Text style={styles.statLabel}>Progress</Text>
@@ -380,7 +390,7 @@ const ProfileScreen = () => {
                 style={styles.shareButton}
                 onPress={handleShareReferral}
               >
-                <MaterialIcons name="share" size={20} color={theme.colors.surfacePrimary} />
+                <MaterialIcons name="share" size={20} color={colors.surfacePrimary} />
                 <Text style={styles.shareButtonText}>Share</Text>
               </TouchableOpacity>
             </View>
@@ -407,6 +417,49 @@ const ProfileScreen = () => {
           </Card.Content>
         </Card>
 
+        {/* Appearance */}
+        <Text style={styles.sectionTitle}>🎨 Appearance</Text>
+        <Card style={styles.actionsCard}>
+          <Card.Content style={styles.actionsContent}>
+            <View style={styles.appearanceRow}>
+              {APPEARANCE_OPTIONS.map((opt) => {
+                const selected = preference === opt.value;
+                return (
+                  <TouchableOpacity
+                    key={opt.value}
+                    style={[
+                      styles.appearanceOption,
+                      selected && styles.appearanceOptionSelected,
+                    ]}
+                    onPress={() => setPreference(opt.value)}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected }}
+                  >
+                    <MaterialIcons
+                      name={opt.icon}
+                      size={22}
+                      color={selected ? colors.secondary : colors.textTertiary}
+                    />
+                    <Text
+                      style={[
+                        styles.appearanceOptionLabel,
+                        selected && styles.appearanceOptionLabelSelected,
+                      ]}
+                    >
+                      {opt.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+            {preference === "system" ? (
+              <Text style={styles.appearanceHint}>
+                Following system · {scheme === "dark" ? "Dark" : "Light"}
+              </Text>
+            ) : null}
+          </Card.Content>
+        </Card>
+
         {/* Quick Actions */}
         <Text style={styles.sectionTitle}>⚙️ Quick Actions</Text>
         <Card style={styles.actionsCard}>
@@ -416,14 +469,14 @@ const ProfileScreen = () => {
                 <MaterialIcons
                   name="star-outline"
                   size={20}
-                  color={theme.colors.secondary}
+                  color={colors.secondary}
                 />
               </View>
               <Text style={styles.actionLabel}>Rate the App</Text>
               <MaterialIcons
                 name="chevron-right"
                 size={20}
-                color={theme.colors.textPlaceholder}
+                color={colors.textPlaceholder}
               />
             </TouchableOpacity>
 
@@ -437,14 +490,14 @@ const ProfileScreen = () => {
                 <MaterialIcons
                   name="feedback"
                   size={20}
-                  color={theme.colors.secondary}
+                  color={colors.secondary}
                 />
               </View>
               <Text style={styles.actionLabel}>Send Feedback</Text>
               <MaterialIcons
                 name="chevron-right"
                 size={20}
-                color={theme.colors.textPlaceholder}
+                color={colors.textPlaceholder}
               />
             </TouchableOpacity>
 
@@ -459,14 +512,14 @@ const ProfileScreen = () => {
                 <MaterialIcons
                   name="privacy-tip"
                   size={20}
-                  color={theme.colors.secondary}
+                  color={colors.secondary}
                 />
               </View>
               <Text style={styles.actionLabel}>Privacy Policy</Text>
               <MaterialIcons
                 name="chevron-right"
                 size={20}
-                color={theme.colors.textPlaceholder}
+                color={colors.textPlaceholder}
               />
             </TouchableOpacity>
 
@@ -482,14 +535,14 @@ const ProfileScreen = () => {
                     <MaterialIcons
                       name="fact-check"
                       size={20}
-                      color={theme.colors.secondary}
+                      color={colors.secondary}
                     />
                   </View>
                   <Text style={styles.actionLabel}>Library Review Queue</Text>
                   <MaterialIcons
                     name="chevron-right"
                     size={20}
-                    color={theme.colors.textPlaceholder}
+                    color={colors.textPlaceholder}
                   />
                 </TouchableOpacity>
               </>
@@ -499,13 +552,13 @@ const ProfileScreen = () => {
 
         {/* Logout Button */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <MaterialIcons name="logout" size={20} color={theme.colors.error} />
+          <MaterialIcons name="logout" size={20} color={colors.error} />
           <Text style={styles.logoutText}>Log Out</Text>
         </TouchableOpacity>
 
         {/* Delete Account Button */}
         <TouchableOpacity style={styles.deleteAccountButton} onPress={handleDeleteAccount}>
-          <MaterialIcons name="delete-forever" size={20} color={theme.colors.error} />
+          <MaterialIcons name="delete-forever" size={20} color={colors.error} />
           <Text style={styles.deleteAccountText}>Delete Account</Text>
         </TouchableOpacity>
 
@@ -532,21 +585,21 @@ const ProfileScreen = () => {
               onChangeText={setNewName}
               style={styles.modalInput}
               outlineStyle={{ borderRadius: 10 }}
-              activeOutlineColor={theme.colors.primary}
+              activeOutlineColor={colors.primary}
             />
             <View style={styles.modalButtons}>
               <Button
                 mode="outlined"
                 onPress={() => setIsEditingName(false)}
                 style={styles.modalButton}
-                textColor={theme.colors.textSecondary}
+                textColor={colors.textSecondary}
               >
                 Cancel
               </Button>
               <Button
                 mode="contained"
                 onPress={handleSaveName}
-                style={[styles.modalButton, { backgroundColor: theme.colors.primary }]}
+                style={[styles.modalButton, { backgroundColor: colors.primary }]}
                 loading={isSavingName}
                 disabled={isSavingName || !newName.trim()}
               >
@@ -559,7 +612,7 @@ const ProfileScreen = () => {
 
       {isLoggingOut && (
         <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>Logging out...</Text>
         </View>
       )}
@@ -567,13 +620,13 @@ const ProfileScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.backgroundMain,
+    backgroundColor: colors.backgroundMain,
   },
   header: {
-    backgroundColor: theme.colors.textPrimary,
+    backgroundColor: colors.inverseSurface,
     paddingTop: 56,
     paddingBottom: 32,
     paddingHorizontal: 20,
@@ -582,23 +635,57 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   avatar: {
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: colors.secondary,
     marginBottom: 16,
   },
   avatarLabel: {
     fontSize: 28,
     fontWeight: "bold",
-    color: theme.colors.surfacePrimary,
+    color: colors.onInverseSurface,
   },
   userName: {
     fontSize: 22,
     fontWeight: "bold",
-    color: theme.colors.surfacePrimary,
+    color: colors.onInverseSurface,
     marginBottom: 4,
   },
   userEmail: {
     fontSize: 14,
-    color: theme.colors.textPlaceholder,
+    color: colors.textPlaceholder,
+  },
+  appearanceRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  appearanceOption: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surfaceTertiary,
+    gap: 6,
+  },
+  appearanceOptionSelected: {
+    borderColor: colors.secondary,
+    backgroundColor: colors.primarySoft,
+  },
+  appearanceOptionLabel: {
+    fontSize: 13,
+    fontWeight: "500",
+    color: colors.textTertiary,
+  },
+  appearanceOptionLabelSelected: {
+    color: colors.secondary,
+    fontWeight: "700",
+  },
+  appearanceHint: {
+    marginTop: 10,
+    fontSize: 12,
+    color: colors.textTertiary,
+    textAlign: "center",
   },
   scrollView: {
     flex: 1,
@@ -607,14 +694,14 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     marginHorizontal: 20,
     marginTop: 24,
     marginBottom: 12,
   },
   subscriptionCard: {
     marginHorizontal: 16,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 16,
     elevation: 2,
   },
@@ -641,7 +728,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF8DC",
   },
   premiumInactive: {
-    backgroundColor: theme.colors.surfaceSecondary,
+    backgroundColor: colors.surfaceSecondary,
   },
   subscriptionText: {
     flex: 1,
@@ -649,21 +736,21 @@ const styles = StyleSheet.create({
   subscriptionTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   subscriptionSubtitle: {
     fontSize: 13,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 2,
   },
   upgradeButton: {
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: colors.secondary,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 20,
   },
   upgradeButtonText: {
-    color: theme.colors.buttonText,
+    color: colors.buttonText,
     fontWeight: "600",
     fontSize: 14,
   },
@@ -674,7 +761,7 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 16,
     elevation: 2,
   },
@@ -685,17 +772,17 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 24,
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     marginTop: 8,
   },
   statLabel: {
     fontSize: 12,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 4,
   },
   activityCard: {
     marginHorizontal: 16,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 16,
     elevation: 2,
   },
@@ -711,21 +798,21 @@ const styles = StyleSheet.create({
   activityDivider: {
     width: 1,
     height: 40,
-    backgroundColor: theme.colors.surfaceSecondary,
+    backgroundColor: colors.surfaceSecondary,
   },
   activityValue: {
     fontSize: 28,
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   activityLabel: {
     fontSize: 13,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 4,
   },
   accountCard: {
     marginHorizontal: 16,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 16,
     elevation: 2,
   },
@@ -737,20 +824,20 @@ const styles = StyleSheet.create({
   },
   accountLabel: {
     fontSize: 14,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   accountValue: {
     fontSize: 14,
     fontWeight: "500",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
   },
   accountDivider: {
     marginVertical: 12,
-    backgroundColor: theme.colors.surfaceSecondary,
+    backgroundColor: colors.surfaceSecondary,
   },
   actionsCard: {
     marginHorizontal: 16,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 16,
     elevation: 2,
   },
@@ -766,7 +853,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: "#F3E8FF",
+    backgroundColor: colors.primarySoft,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 14,
@@ -774,12 +861,12 @@ const styles = StyleSheet.create({
   actionLabel: {
     flex: 1,
     fontSize: 15,
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     fontWeight: "500",
   },
   actionDivider: {
     marginVertical: 4,
-    backgroundColor: theme.colors.surfaceSecondary,
+    backgroundColor: colors.surfaceSecondary,
   },
   logoutButton: {
     flexDirection: "row",
@@ -788,14 +875,14 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginTop: 24,
     paddingVertical: 14,
-    backgroundColor: theme.colors.errorLight,
+    backgroundColor: colors.errorLight,
     borderRadius: 12,
     gap: 8,
   },
   logoutText: {
     fontSize: 15,
     fontWeight: "600",
-    color: theme.colors.error,
+    color: colors.error,
   },
   deleteAccountButton: {
     flexDirection: "row",
@@ -806,18 +893,18 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     backgroundColor: "transparent",
     borderWidth: 1,
-    borderColor: theme.colors.errorLight,
+    borderColor: colors.errorLight,
     borderRadius: 12,
     gap: 8,
   },
   deleteAccountText: {
     fontSize: 15,
     fontWeight: "600",
-    color: theme.colors.error,
+    color: colors.error,
   },
   version: {
     textAlign: "center",
-    color: theme.colors.textPlaceholder,
+    color: colors.textPlaceholder,
     fontSize: 12,
     marginTop: 24,
   },
@@ -828,7 +915,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginVertical: 8,
     borderRadius: 12,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
@@ -837,7 +924,7 @@ const styles = StyleSheet.create({
   },
   referralSubtitle: {
     fontSize: 14,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginBottom: 16,
     lineHeight: 20,
   },
@@ -845,7 +932,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: theme.colors.surfaceSecondary,
+    backgroundColor: colors.surfaceSecondary,
     padding: 12,
     borderRadius: 10,
   },
@@ -854,27 +941,27 @@ const styles = StyleSheet.create({
   },
   codeLabel: {
     fontSize: 10,
-    color: theme.colors.textPlaceholder,
+    color: colors.textPlaceholder,
     fontWeight: "600",
     marginBottom: 4,
   },
   codeText: {
     fontSize: 18,
     fontWeight: "700",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     letterSpacing: 1,
   },
   shareButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
     gap: 6,
   },
   shareButtonText: {
-    color: theme.colors.surfacePrimary,
+    color: colors.surfacePrimary,
     fontWeight: "600",
     fontSize: 14,
   },
@@ -889,7 +976,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     fontSize: 16,
     fontWeight: "600",
-    color: theme.colors.primary,
+    color: colors.primary,
   },
   nameRow: {
     flexDirection: "row",
@@ -916,7 +1003,7 @@ const styles = StyleSheet.create({
   modalContent: {
     width: "100%",
     maxWidth: 340,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 16,
     padding: 24,
     elevation: 5,
@@ -928,13 +1015,13 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: theme.colors.textTitle,
+    color: colors.textTitle,
     marginBottom: 16,
     textAlign: "center",
   },
   modalInput: {
     marginBottom: 20,
-    backgroundColor: theme.colors.surfacePrimary,
+    backgroundColor: colors.surfacePrimary,
   },
   modalButtons: {
     flexDirection: "row",
