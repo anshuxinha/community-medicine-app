@@ -82,7 +82,13 @@ const FreeLabel = () => {
   return <Badge style={styles.freeBadge}>FREE</Badge>;
 };
 
-const pdfViewerHtml = (pdfUrl) => `
+const pdfViewerHtml = (pdfUrl, colors = {}) => {
+  const bg = colors.surfaceSecondary || "#f3f4f6";
+  const pageBg = colors.surfacePrimary || "#fff";
+  const text = colors.textSecondary || "#4b5563";
+  const fab = colors.primary || "#6B21A8";
+  const fabActive = colors.primaryDark || "#581C87";
+  return `
 <!DOCTYPE html>
 <html>
 <head>
@@ -94,7 +100,7 @@ const pdfViewerHtml = (pdfUrl) => `
     body {
       margin: 0;
       padding: 0;
-      background-color: #f3f4f6;
+      background-color: ${bg};
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -116,7 +122,7 @@ const pdfViewerHtml = (pdfUrl) => `
       max-width: 800px;
       margin: 8px 0;
       box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
-      background-color: #fff;
+      background-color: ${pageBg};
       border-radius: 6px;
       overflow: hidden;
     }
@@ -128,7 +134,7 @@ const pdfViewerHtml = (pdfUrl) => `
     #loading {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       margin-top: 60px;
-      color: #4b5563;
+      color: ${text};
       font-size: 15px;
       font-weight: 500;
       text-align: center;
@@ -140,7 +146,7 @@ const pdfViewerHtml = (pdfUrl) => `
       width: 56px;
       height: 56px;
       border-radius: 50%;
-      background-color: #6B21A8;
+      background-color: ${fab};
       color: white;
       border: none;
       box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2), 0 2px 4px -1px rgba(0,0,0,0.1);
@@ -154,7 +160,7 @@ const pdfViewerHtml = (pdfUrl) => `
       -webkit-tap-highlight-color: transparent;
     }
     .fab:active {
-      background-color: #581C87;
+      background-color: ${fabActive};
       transform: scale(0.95);
     }
     .fab-icon {
@@ -228,6 +234,7 @@ const pdfViewerHtml = (pdfUrl) => `
 </body>
 </html>
 `;
+};
 
 const onShouldStartLoadWithRequest = (request) => {
   const url = request.url;
@@ -2018,7 +2025,7 @@ const VideosScreen = ({ navigation }) => {
                   <View style={styles.pdfPreviewContainer}>
                     <WebView
                       originWhitelist={["*"]}
-                      source={{ html: pdfViewerHtml(selectedVideo?.pdfUrl) }}
+                      source={{ html: pdfViewerHtml(selectedVideo?.pdfUrl, colors) }}
                       style={styles.pdfWebView}
                       onShouldStartLoadWithRequest={
                         onShouldStartLoadWithRequest
@@ -2067,7 +2074,7 @@ const VideosScreen = ({ navigation }) => {
 
           <WebView
             originWhitelist={["*"]}
-            source={{ html: pdfViewerHtml(selectedVideo?.pdfUrl) }}
+            source={{ html: pdfViewerHtml(selectedVideo?.pdfUrl, colors) }}
             style={styles.pdfFullscreenWebView}
             onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
             javaScriptEnabled={true}

@@ -33,8 +33,6 @@ import { useThemedStyles } from '../styles/useThemedStyles';
 const DASHBOARD_NEW_BADGES_STORAGE_KEY = "dashboardNewBadgesSeen:v1";
 const REFERRAL_ANNOUNCEMENT_STORAGE_KEY = "referralAnnouncementSeen:v1";
 
-const BUILD_LABEL = "dark-2026-07-16";
-
 const UpdateDownloadIndicator = () => {
   const { styles, colors } = useThemedStyles(createStyles);
 
@@ -45,14 +43,7 @@ const UpdateDownloadIndicator = () => {
   } = Updates.useUpdates();
   const [phase, setPhase] = useState("idle"); // idle | checking | downloading | applying | error
   const [errorMessage, setErrorMessage] = useState(null);
-  const [lastCheck, setLastCheck] = useState(null);
   const checkedRef = React.useRef(false);
-
-  const embedded = Updates.isEmbeddedLaunch;
-  const updateIdShort = Updates.updateId
-    ? String(Updates.updateId).slice(0, 8)
-    : "none";
-  const channel = Updates.channel || "unknown";
 
   const installNow = React.useCallback(async () => {
     setPhase("applying");
@@ -68,65 +59,72 @@ const UpdateDownloadIndicator = () => {
     }
   }, []);
 
-  const runCheck = React.useCallback(async () => {
-    if (__DEV__ || !Updates.isEnabled) {
-      setLastCheck(__DEV__ ? "dev" : "disabled");
-      return;
-    }
-    try {
-      setPhase("checking");
-      setErrorMessage(null);
-      if (Updates.isUpdatePending) {
-        setLastCheck("pending");
-        setPhase("ready");
-        return;
-      }
-      const result = await Updates.checkForUpdateAsync();
-      setLastCheck(result.isAvailable ? "available" : "up-to-date");
-      if (!result.isAvailable) {
-        setPhase("idle");
-        return;
-      }
-      setPhase("downloading");
-      await Updates.fetchUpdateAsync();
-      setPhase("ready");
-    } catch (error) {
-      setPhase("error");
-      setLastCheck("check-failed");
-      setErrorMessage(error?.message || "Update check failed");
-      console.warn("App update check failed:", error);
-    }
-  }, []);
-
   useEffect(() => {
-    if (checkedRef.current) return;
+    if (__DEV__ || !Updates.isEnabled || checkedRef.current) return;
     checkedRef.current = true;
-    runCheck();
-  }, [runCheck]);
+    let cancelled = false;
+
+    (async () => {
+      try {
+        if (Updates.isUpdatePending) {
+          if (!cancelled) setPhase("ready");
+          return;
+        }
+        setPhase("checking");
+        const result = await Updates.checkForUpdateAsync();
+        if (cancelled) return;
+        if (!result.isAvailable) {
+          setPhase("idle");
+          return;
+        }
+        setPhase("downloading");
+        await Updates.fetchUpdateAsync();
+        if (!cancelled) setPhase("ready");
+      } catch (error) {
+        if (!cancelled) {
+          setPhase("idle");
+          console.warn("App update check failed:", error);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const showDownloading =
     phase === "downloading" || phase === "checking" || isDownloading;
   const showReady = phase === "ready" || isUpdatePending;
   const showApplying = phase === "applying";
   const showBanner =
-    errorMessage || showDownloading || showReady || showApplying || embedded;
+    errorMessage || showDownloading || showReady || showApplying;
 
-  // Hide when running an applied OTA and idle (clean dashboard).
+  // Quiet when up to date — no debug strip in normal use.
   if (!showBanner) return null;
 
   return (
     <View style={styles.updateDownloadIndicator}>
       <View style={styles.updateDownloadIcon}>
         <MaterialIcons
-          name={embedded ? "info-outline" : "system-update"}
+          name={
+            errorMessage
+              ? "error-outline"
+              : showApplying || showReady
+                ? "system-update"
+                : "downloading"
+          }
           size={20}
-          color={embedded ? "#D97706" : theme.colors.secondary}
+          color={
+            errorMessage
+              ? colors.error
+              : showApplying || showReady
+                ? colors.successStrong
+                : colors.secondary
+          }
         />
       </View>
       <View style={styles.updateDownloadTextColumn}>
-        <Text style={styles.updateDebugLine}>
-          {BUILD_LABEL} · {embedded ? "EMBEDDED" : "OTA"} · id:{updateIdShort}
-        </Text>
         <Text style={styles.updateDownloadTitle}>
           {errorMessage
             ? "Update install failed"
@@ -134,9 +132,7 @@ const UpdateDownloadIndicator = () => {
               ? "Installing…"
               : showReady
                 ? "Update ready"
-                : showDownloading
-                  ? "Checking for update…"
-                  : "Store binary"}
+                : "Downloading update"}
         </Text>
         <Text style={styles.updateDownloadSubtitle}>
           {errorMessage
@@ -144,15 +140,13 @@ const UpdateDownloadIndicator = () => {
             : showApplying
               ? "Loading the new version…"
               : showReady
-                ? "Tap Install now (do not only swipe the app away)."
-                : embedded
-                  ? "Tap Check again, then Install now if available."
-                  : "Please keep the app open."}
+                ? "Tap Install now to apply the update."
+                : "Please keep the app open for a moment."}
         </Text>
         {showDownloading && !showReady && !showApplying ? (
           <ProgressBar
             progress={downloadProgress || 0.12}
-            color={theme.colors.secondary}
+            color={colors.secondary}
             style={styles.updateDownloadProgress}
           />
         ) : null}
@@ -164,12 +158,6 @@ const UpdateDownloadIndicator = () => {
             <Text style={styles.updateInstallButtonText}>Install now</Text>
           </TouchableOpacity>
         ) : null}
-        <TouchableOpacity
-          style={[styles.updateInstallButton, styles.updateCheckButton]}
-          onPress={runCheck}
-        >
-          <Text style={styles.updateInstallButtonText}>Check again</Text>
-        </TouchableOpacity>
       </View>
     </View>
   );
@@ -726,10 +714,10 @@ const createStyles = (colors) => StyleSheet.create({
   updateDownloadIndicator: {
     flexDirection: "row",
     alignItems: "flex-start",
-    backgroundColor: "#F8FAFC",
+    backgroundColor: colors.surfaceMuted,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.border,
     padding: 12,
     marginBottom: 16,
   },
@@ -739,24 +727,17 @@ const createStyles = (colors) => StyleSheet.create({
     borderRadius: 17,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#F3E8FF",
+    backgroundColor: colors.primarySoft,
     marginRight: 10,
     marginTop: 2,
   },
   updateDownloadTextColumn: {
     flex: 1,
   },
-  updateDebugLine: {
-    fontSize: 11,
-    fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace",
-    color: colors.textSecondary,
-    marginBottom: 2,
-  },
   updateDownloadTitle: {
     color: colors.textTitle,
     fontSize: 14,
     fontWeight: "800",
-    marginTop: 6,
   },
   updateDownloadSubtitle: {
     color: colors.textSecondary,
@@ -767,7 +748,7 @@ const createStyles = (colors) => StyleSheet.create({
   updateDownloadProgress: {
     height: 5,
     borderRadius: 3,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: colors.border,
     marginTop: 8,
   },
   updateInstallButton: {
@@ -778,11 +759,8 @@ const createStyles = (colors) => StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 10,
   },
-  updateCheckButton: {
-    backgroundColor: "#374151",
-  },
   updateInstallButtonText: {
-    color: "#FFFFFF",
+    color: colors.onPrimary,
     fontSize: 13,
     fontWeight: "700",
   },
