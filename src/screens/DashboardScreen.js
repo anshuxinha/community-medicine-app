@@ -27,27 +27,20 @@ import UpdateDetailDialog from "../components/UpdateDetailDialog";
 import ReferralAnnouncementDialog from "../components/ReferralAnnouncementDialog";
 import { scheduleAllNotifications } from "../services/notificationService";
 import { auth } from "../config/firebase";
-import { useResponsive } from "../styles/theme";
-import { useThemedStyles } from "../styles/useThemedStyles";
+import { theme, useResponsive } from "../styles/theme";
 
 const DASHBOARD_NEW_BADGES_STORAGE_KEY = "dashboardNewBadgesSeen:v1";
 const REFERRAL_ANNOUNCEMENT_STORAGE_KEY = "referralAnnouncementSeen:v1";
-/** Visible proof which JS bundle is running. */
-const OTA_LABEL = "ota-2026-07-16c";
 
-/**
- * Always-visible update strip.
- * Old "Reopen the app" copy meant the store embedded binary never applied OTAs
- * (often because a bad OTA crashed before "content appeared" and was blacklisted).
- */
+const RECOVERY_LABEL = "recovery-2026-07-16";
+
 const UpdateDownloadIndicator = () => {
-  const { styles, colors } = useThemedStyles(createStyles);
   const {
     isDownloading,
     isUpdatePending,
     downloadProgress,
   } = Updates.useUpdates();
-  const [phase, setPhase] = useState("idle");
+  const [phase, setPhase] = useState("idle"); // idle | checking | downloading | applying | error
   const [errorMessage, setErrorMessage] = useState(null);
   const [lastCheck, setLastCheck] = useState(null);
   const checkedRef = React.useRef(false);
@@ -58,54 +51,49 @@ const UpdateDownloadIndicator = () => {
     : "none";
   const channel = Updates.channel || "unknown";
 
-  const applyUpdate = React.useCallback(async () => {
+  const installNow = React.useCallback(async () => {
     setPhase("applying");
     setErrorMessage(null);
     try {
       await Updates.reloadAsync();
     } catch (error) {
-      setPhase("idle");
+      setPhase("error");
       setErrorMessage(
         error?.message ||
-          "Reload failed. Force stop STROMA in system settings, then open again.",
+          "Install failed. Force-stop STROMA in system settings, then open again.",
       );
-      console.warn("Updates.reloadAsync failed:", error);
     }
   }, []);
 
   const runCheck = React.useCallback(async () => {
     if (__DEV__ || !Updates.isEnabled) {
-      setLastCheck(__DEV__ ? "dev-mode" : "updates-disabled");
+      setLastCheck(__DEV__ ? "dev" : "disabled");
       return;
     }
     try {
       setPhase("checking");
       setErrorMessage(null);
-
       if (Updates.isUpdatePending) {
-        setLastCheck("already-pending");
+        setLastCheck("pending");
         setPhase("ready");
         return;
       }
-
       const result = await Updates.checkForUpdateAsync();
       setLastCheck(result.isAvailable ? "available" : "up-to-date");
       if (!result.isAvailable) {
         setPhase("idle");
         return;
       }
-
       setPhase("downloading");
       await Updates.fetchUpdateAsync();
       setPhase("ready");
-      // Install immediately — swiping away does not apply OTAs reliably.
-      await applyUpdate();
     } catch (error) {
-      setPhase("idle");
-      setLastCheck(`err:${error?.message || "check-failed"}`);
+      setPhase("error");
+      setLastCheck("check-failed");
+      setErrorMessage(error?.message || "Update check failed");
       console.warn("App update check failed:", error);
     }
-  }, [applyUpdate]);
+  }, []);
 
   useEffect(() => {
     if (checkedRef.current) return;
@@ -118,32 +106,32 @@ const UpdateDownloadIndicator = () => {
   const showReady = phase === "ready" || isUpdatePending;
   const showApplying = phase === "applying";
 
+  // Always visible so we can confirm this recovery bundle is running.
   return (
     <View style={styles.updateDownloadIndicator}>
       <View style={styles.updateDownloadIcon}>
         <MaterialIcons
           name={embedded ? "info-outline" : "check-circle"}
           size={20}
-          color={embedded ? colors.warning : colors.successStrong}
+          color={embedded ? "#D97706" : "#047857"}
         />
       </View>
       <View style={styles.updateDownloadTextColumn}>
         <Text style={styles.updateDebugLine}>
-          {OTA_LABEL} · {embedded ? "EMBEDDED (store)" : "OTA"} · id:
+          {RECOVERY_LABEL} · {embedded ? "EMBEDDED" : "OTA"} · id:
           {updateIdShort} · ch:{channel}
         </Text>
         <Text style={styles.updateDebugLine}>
-          pending={String(!!isUpdatePending)} enabled=
-          {String(!!Updates.isEnabled)} · {lastCheck || "…"}
+          pending={String(!!isUpdatePending)} · {lastCheck || "…"}
         </Text>
 
         {errorMessage || showDownloading || showReady || showApplying ? (
           <>
             <Text style={styles.updateDownloadTitle}>
               {errorMessage
-                ? "Update needs install"
+                ? "Update install failed"
                 : showApplying
-                  ? "Installing update…"
+                  ? "Installing…"
                   : showReady
                     ? "Update ready"
                     : "Checking for update…"}
@@ -160,32 +148,32 @@ const UpdateDownloadIndicator = () => {
             {showDownloading && !showReady && !showApplying ? (
               <ProgressBar
                 progress={downloadProgress || 0.12}
-                color={colors.secondary}
+                color={theme.colors.secondary}
                 style={styles.updateDownloadProgress}
               />
             ) : null}
             {(showReady || errorMessage) && !showApplying ? (
               <TouchableOpacity
-                style={styles.updateRestartButton}
-                onPress={applyUpdate}
+                style={styles.updateInstallButton}
+                onPress={installNow}
               >
-                <Text style={styles.updateRestartButtonText}>Install now</Text>
+                <Text style={styles.updateInstallButtonText}>Install now</Text>
               </TouchableOpacity>
             ) : null}
           </>
         ) : (
           <Text style={styles.updateDownloadSubtitle}>
             {embedded
-              ? "Still on the store binary. Use Check again → Install now if an update is available."
-              : "OTA is active. Open Profile for Appearance."}
+              ? "Store binary is running. Tap Check again if an update should be available."
+              : "Recovery OTA is active."}
           </Text>
         )}
 
         <TouchableOpacity
-          style={[styles.updateRestartButton, styles.updateSecondaryButton]}
+          style={[styles.updateInstallButton, styles.updateCheckButton]}
           onPress={runCheck}
         >
-          <Text style={styles.updateRestartButtonText}>Check again</Text>
+          <Text style={styles.updateInstallButtonText}>Check again</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -193,7 +181,6 @@ const UpdateDownloadIndicator = () => {
 };
 
 const DashboardScreen = ({ navigation }) => {
-  const { styles, colors } = useThemedStyles(createStyles);
   const { readingProgress, currentStreak, studyScore, user, refreshFromCloud, isPremium } =
     useContext(AppContext);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -415,7 +402,7 @@ const DashboardScreen = ({ navigation }) => {
             <MaterialIcons
               name="menu"
               size={26}
-              color={colors.textTitle}
+              color={theme.colors.textTitle}
             />
           </TouchableOpacity>
           <Text style={styles.appName}>STROMA</Text>
@@ -426,7 +413,7 @@ const DashboardScreen = ({ navigation }) => {
             <MaterialIcons
               name="bookmark-border"
               size={26}
-              color={colors.textTitle}
+              color={theme.colors.textTitle}
             />
           </TouchableOpacity>
         </View>
@@ -448,12 +435,12 @@ const DashboardScreen = ({ navigation }) => {
           <Card.Title
             title="Learning Progress"
             titleStyle={styles.cardTitle}
-            subtitleStyle={{ color: colors.textTitle }}
+            subtitleStyle={{ color: theme.colors.textTitle }}
           />
           <Card.Content>
             <ProgressBar
               progress={readingProgress}
-              color={colors.secondary} // Soft purple
+              color="#A855F7" // Soft purple
               style={styles.progressBar}
             />
             <Text variant="bodyMedium" style={styles.progressText}>
@@ -498,7 +485,7 @@ const DashboardScreen = ({ navigation }) => {
                 variant="labelSmall"
                 style={[
                   styles.statLabel,
-                  { marginTop: 4, color: colors.secondary },
+                  { marginTop: 4, color: theme.colors.secondary },
                 ]}
               >
                 {nextHealthDay.dateLabel}
@@ -526,7 +513,7 @@ const DashboardScreen = ({ navigation }) => {
               <MaterialIcons
                 name="build"
                 size={32}
-                color={colors.secondary}
+                color={theme.colors.secondary}
               />
               <Text variant="labelMedium" style={styles.quickText}>
                 Toolbox
@@ -547,7 +534,7 @@ const DashboardScreen = ({ navigation }) => {
               <MaterialIcons
                 name="diamond"
                 size={32}
-                color={colors.secondary}
+                color={theme.colors.secondary}
               />
               <Text variant="labelMedium" style={styles.quickText}>
                 Gems
@@ -562,7 +549,7 @@ const DashboardScreen = ({ navigation }) => {
               <MaterialIcons
                 name="museum"
                 size={32}
-                color={colors.secondary}
+                color={theme.colors.secondary}
               />
               <Text variant="labelMedium" style={styles.quickText}>
                 Museum
@@ -577,7 +564,7 @@ const DashboardScreen = ({ navigation }) => {
               <MaterialIcons
                 name="insert-chart"
                 size={32}
-                color={colors.secondary}
+                color={theme.colors.secondary}
               />
               <Text variant="labelMedium" style={styles.quickText}>
                 Biostats
@@ -618,7 +605,7 @@ const DashboardScreen = ({ navigation }) => {
             </Card.Content>
             <Card.Actions>
               <Button
-                textColor={colors.secondary}
+                textColor={theme.colors.secondary}
                 onPress={() => {
                   if (!isPremium) {
                     navigation.navigate("Paywall");
@@ -654,12 +641,12 @@ const DashboardScreen = ({ navigation }) => {
           onDismiss={() => setHealthDaysVisible(false)}
           style={{
             maxHeight: "82%",
-            backgroundColor: colors.surfacePrimary,
+            backgroundColor: theme.colors.surfacePrimary,
             borderRadius: 16,
           }}
         >
           <Dialog.Title
-            style={{ color: colors.textTitle, fontWeight: "bold" }}
+            style={{ color: theme.colors.textTitle, fontWeight: "bold" }}
           >
             Public Health Days
           </Dialog.Title>
@@ -692,10 +679,10 @@ const DashboardScreen = ({ navigation }) => {
 };
 
 // Step 5: Styling
-const createStyles = (colors) => StyleSheet.create({
+const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.backgroundMain,
+    backgroundColor: theme.colors.backgroundMain,
   },
   container: {
     flex: 1,
@@ -714,7 +701,7 @@ const createStyles = (colors) => StyleSheet.create({
   appName: {
     fontSize: 18,
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     letterSpacing: 2,
   },
   iconBtn: {
@@ -723,7 +710,7 @@ const createStyles = (colors) => StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 20,
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: theme.colors.surfaceSecondary,
   },
   headerSection: {
     marginBottom: 24,
@@ -732,20 +719,20 @@ const createStyles = (colors) => StyleSheet.create({
   welcomeText: {
     fontFamily: Platform.OS === "ios" ? "Georgia" : "serif",
     fontSize: 36,
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     lineHeight: 40,
   },
   subText: {
-    color: colors.textTertiary,
+    color: theme.colors.textTertiary,
     marginTop: 8,
   },
   updateDownloadIndicator: {
     flexDirection: "row",
     alignItems: "flex-start",
-    backgroundColor: colors.surfaceMuted,
+    backgroundColor: "#F8FAFC",
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: "#E5E7EB",
     padding: 12,
     marginBottom: 16,
   },
@@ -755,7 +742,7 @@ const createStyles = (colors) => StyleSheet.create({
     borderRadius: 17,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.primarySoft,
+    backgroundColor: "#F3E8FF",
     marginRight: 10,
     marginTop: 2,
   },
@@ -765,17 +752,17 @@ const createStyles = (colors) => StyleSheet.create({
   updateDebugLine: {
     fontSize: 11,
     fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace",
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     marginBottom: 2,
   },
   updateDownloadTitle: {
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontSize: 14,
     fontWeight: "800",
     marginTop: 6,
   },
   updateDownloadSubtitle: {
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     fontSize: 12,
     lineHeight: 17,
     marginTop: 2,
@@ -783,28 +770,28 @@ const createStyles = (colors) => StyleSheet.create({
   updateDownloadProgress: {
     height: 5,
     borderRadius: 3,
-    backgroundColor: colors.border,
+    backgroundColor: "#E5E7EB",
     marginTop: 8,
   },
-  updateRestartButton: {
+  updateInstallButton: {
     alignSelf: "flex-start",
     marginTop: 10,
-    backgroundColor: colors.secondary,
+    backgroundColor: theme.colors.secondary,
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 10,
   },
-  updateSecondaryButton: {
-    backgroundColor: colors.textBody,
+  updateCheckButton: {
+    backgroundColor: "#374151",
   },
-  updateRestartButtonText: {
-    color: colors.onPrimary,
+  updateInstallButtonText: {
+    color: "#FFFFFF",
     fontSize: 13,
     fontWeight: "700",
   },
   progressCard: {
     marginBottom: 24,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 20,
     elevation: 4,
     shadowColor: "#000",
@@ -815,17 +802,17 @@ const createStyles = (colors) => StyleSheet.create({
   cardTitle: {
     fontWeight: "bold",
     fontSize: 16,
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
   },
   progressBar: {
     height: 12,
     borderRadius: 6,
     marginVertical: 12,
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: theme.colors.surfaceSecondary,
   },
   progressText: {
     textAlign: "right",
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     fontWeight: "600",
   },
   statsRow: {
@@ -835,7 +822,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 20,
     elevation: 4,
     shadowColor: "#000",
@@ -844,7 +831,7 @@ const createStyles = (colors) => StyleSheet.create({
     shadowRadius: 10,
   },
   statLabel: {
-    color: colors.textBody,
+    color: "#374151",
     fontWeight: "600",
   },
   statContent: {
@@ -855,14 +842,14 @@ const createStyles = (colors) => StyleSheet.create({
   statValue: {
     fontWeight: "bold",
     fontSize: 24,
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     marginVertical: 4,
   },
   sectionTitle: {
     fontWeight: "bold",
     fontSize: 20,
     marginBottom: 16,
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
   },
   quickAccessRow: {
     flexDirection: "row",
@@ -871,7 +858,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   quickCard: {
     flex: 1,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 16,
     elevation: 2,
     shadowColor: "#000",
@@ -890,8 +877,8 @@ const createStyles = (colors) => StyleSheet.create({
     position: "absolute",
     top: 5,
     right: 5,
-    backgroundColor: colors.primarySoft,
-    color: colors.primaryDark,
+    backgroundColor: "#F3E8FF",
+    color: theme.colors.primaryDark,
     borderRadius: 6,
     overflow: "hidden",
     paddingHorizontal: 5,
@@ -902,11 +889,11 @@ const createStyles = (colors) => StyleSheet.create({
   quickText: {
     marginTop: 8,
     fontWeight: "bold",
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
   },
   updateCard: {
     marginBottom: 16,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 16,
     elevation: 2,
     shadowColor: "#000",
@@ -915,7 +902,7 @@ const createStyles = (colors) => StyleSheet.create({
     shadowRadius: 8,
   },
   dateText: {
-    color: colors.secondary,
+    color: theme.colors.secondary,
     marginBottom: 6,
     fontWeight: "bold",
     fontSize: 12,
@@ -924,21 +911,21 @@ const createStyles = (colors) => StyleSheet.create({
     fontWeight: "bold",
     fontSize: 18,
     marginBottom: 8,
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
   },
   updateSummary: {
-    color: colors.textTertiary,
+    color: theme.colors.textTertiary,
     lineHeight: 22,
   },
   updateCategory: {
-    color: colors.secondary,
+    color: theme.colors.secondary,
     fontWeight: "700",
     marginBottom: 4,
     textTransform: "uppercase",
   },
   updateSource: {
     marginTop: 8,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
   },
   healthDaysListContent: {
     paddingHorizontal: 16,
@@ -958,14 +945,14 @@ const createStyles = (colors) => StyleSheet.create({
   healthDayName: {
     fontSize: 16,
     fontWeight: "700",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     lineHeight: 22,
     marginBottom: 0,
     includeFontPadding: false,
   },
   healthDayDate: {
     marginTop: 1,
-    color: colors.secondary,
+    color: theme.colors.secondary,
     fontSize: 13,
     fontWeight: "700",
     lineHeight: 18,
@@ -973,13 +960,13 @@ const createStyles = (colors) => StyleSheet.create({
   },
   healthDayDescription: {
     marginTop: 6,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     fontSize: 14,
     lineHeight: 20,
     includeFontPadding: false,
   },
   qbankBanner: {
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 20,
     elevation: 4,
     shadowColor: "#000",
@@ -988,7 +975,7 @@ const createStyles = (colors) => StyleSheet.create({
     shadowRadius: 10,
     marginBottom: 24,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: "#E5E7EB",
   },
   qbankBannerContent: {
     flexDirection: "row",
@@ -999,7 +986,7 @@ const createStyles = (colors) => StyleSheet.create({
     width: 46,
     height: 46,
     borderRadius: 23,
-    backgroundColor: colors.primaryLight,
+    backgroundColor: theme.colors.primaryLight,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 14,
@@ -1010,11 +997,11 @@ const createStyles = (colors) => StyleSheet.create({
   },
   qbankBannerTitle: {
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontSize: 16,
   },
   qbankBannerDesc: {
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     fontSize: 12,
     marginTop: 2,
     lineHeight: 16,

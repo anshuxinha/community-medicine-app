@@ -30,7 +30,7 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { db } from "../config/firebase";
 import { AppContext } from "../context/AppContext";
-import { useThemedStyles } from "../styles/useThemedStyles";
+import { theme } from "../styles/theme";
 
 const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
 
@@ -47,9 +47,9 @@ const getSortValue = (value) => {
 };
 
 const STATUS_TONES = {
-  pending: { backgroundColor: colors.warningBackground, textColor: colors.warningText },
-  approved: { backgroundColor: colors.successSoft, textColor: colors.successStrong },
-  superseded: { backgroundColor: colors.border, textColor: colors.textBody },
+  pending: { backgroundColor: "#FEF3C7", textColor: "#92400E" },
+  approved: { backgroundColor: "#DCFCE7", textColor: "#166534" },
+  superseded: { backgroundColor: "#E5E7EB", textColor: "#374151" },
 };
 
 /**
@@ -101,8 +101,6 @@ const sendLibraryUpdateNotification = async (libraryTitle) => {
 };
 
 const AdminLibraryReviewScreen = () => {
-  const { styles, colors } = useThemedStyles(createStyles);
-
   const { user, refreshLibraryContent } = useContext(AppContext);
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -307,7 +305,7 @@ const AdminLibraryReviewScreen = () => {
     return (
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.centeredState}>
-          <MaterialIcons name="lock-outline" size={44} color={colors.error} />
+          <MaterialIcons name="lock-outline" size={44} color={theme.colors.error} />
           <Text style={styles.lockedTitle}>Admin Access Required</Text>
           <Text style={styles.lockedText}>
             Sign in with your admin account to review and publish Library suggestions.
@@ -329,7 +327,7 @@ const AdminLibraryReviewScreen = () => {
 
         {loading ? (
           <View style={styles.centeredState}>
-            <ActivityIndicator color={colors.secondary} />
+            <ActivityIndicator color={theme.colors.secondary} />
             <Text style={styles.loadingText}>Loading suggestions...</Text>
           </View>
         ) : pendingSuggestions.length === 0 ? (
@@ -337,7 +335,7 @@ const AdminLibraryReviewScreen = () => {
             <MaterialIcons
               name="playlist-add-check-circle"
               size={46}
-              color={colors.chartGreen}
+              color={theme.colors.chartGreen}
             />
             <Text style={styles.emptyTitle}>No pending suggestions</Text>
             <Text style={styles.emptyText}>
@@ -394,7 +392,7 @@ const AdminLibraryReviewScreen = () => {
                             key={`${suggestion.id}:${sourceUpdate.link}`}
                             mode="text"
                             compact
-                            textColor={colors.secondary}
+                            textColor={theme.colors.secondary}
                             onPress={() => Linking.openURL(sourceUpdate.link)}
                             contentStyle={styles.sourceButtonContent}
                           >
@@ -410,7 +408,7 @@ const AdminLibraryReviewScreen = () => {
                       </Button>
                       <Button
                         mode="text"
-                        textColor={colors.error}
+                        textColor={theme.colors.error}
                         onPress={() => handleDelete(suggestion)}
                       >
                         Delete
@@ -439,7 +437,7 @@ const AdminLibraryReviewScreen = () => {
               disabled={saving}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
-              <MaterialIcons name="close" size={24} color={colors.textTitle} />
+              <MaterialIcons name="close" size={24} color={theme.colors.textTitle} />
             </TouchableOpacity>
             <Text style={styles.modalHeaderTitle} numberOfLines={1}>
               {selectedSuggestion?.libraryTitle || "Edit suggestion"}
@@ -495,7 +493,7 @@ const AdminLibraryReviewScreen = () => {
               onPress={handleApprove}
               loading={saving}
               disabled={saving}
-              buttonColor={colors.chartGreen}
+              buttonColor={theme.colors.chartGreen}
             >
               Approve Live
             </Button>
@@ -506,10 +504,10 @@ const AdminLibraryReviewScreen = () => {
   );
 };
 
-const createStyles = (colors) => StyleSheet.create({
+const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.backgroundMain,
+    backgroundColor: theme.colors.backgroundMain,
   },
   container: {
     flex: 1,
@@ -522,11 +520,11 @@ const createStyles = (colors) => StyleSheet.create({
   headerTitle: {
     fontSize: 28,
     fontWeight: "700",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
   },
   headerSubtitle: {
     marginTop: 6,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     lineHeight: 20,
   },
   scrollContent: {
@@ -541,34 +539,34 @@ const createStyles = (colors) => StyleSheet.create({
   },
   loadingText: {
     marginTop: 10,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
   },
   emptyTitle: {
     marginTop: 10,
     fontSize: 18,
     fontWeight: "700",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
   },
   emptyText: {
     marginTop: 8,
     textAlign: "center",
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     lineHeight: 20,
   },
   lockedTitle: {
     marginTop: 10,
     fontSize: 18,
     fontWeight: "700",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
   },
   lockedText: {
     marginTop: 8,
     textAlign: "center",
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     lineHeight: 20,
   },
   card: {
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 18,
   },
   cardHeader: {
@@ -583,15 +581,15 @@ const createStyles = (colors) => StyleSheet.create({
   cardTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
   },
   cardMeta: {
     marginTop: 4,
-    color: colors.textTertiary,
+    color: theme.colors.textTertiary,
   },
   summaryReason: {
     marginTop: 12,
-    color: colors.textPrimary,
+    color: theme.colors.textPrimary,
     lineHeight: 20,
   },
   metricRow: {
@@ -601,7 +599,7 @@ const createStyles = (colors) => StyleSheet.create({
     marginTop: 12,
   },
   metricText: {
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     fontWeight: "600",
   },
   sourcesBlock: {
@@ -620,7 +618,7 @@ const createStyles = (colors) => StyleSheet.create({
   // ── Full-screen Modal ──
   modalSafeArea: {
     flex: 1,
-    backgroundColor: colors.backgroundMain,
+    backgroundColor: theme.colors.backgroundMain,
   },
   modalHeader: {
     flexDirection: "row",
@@ -629,14 +627,14 @@ const createStyles = (colors) => StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: colors.surfaceSecondary,
-    backgroundColor: colors.surfacePrimary,
+    borderBottomColor: theme.colors.surfaceSecondary,
+    backgroundColor: theme.colors.surfacePrimary,
   },
   modalHeaderTitle: {
     flex: 1,
     fontSize: 17,
     fontWeight: "700",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     textAlign: "center",
     marginHorizontal: 12,
   },
@@ -654,25 +652,25 @@ const createStyles = (colors) => StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderTopWidth: 1,
-    borderTopColor: colors.surfaceSecondary,
-    backgroundColor: colors.surfacePrimary,
+    borderTopColor: theme.colors.surfaceSecondary,
+    backgroundColor: theme.colors.surfacePrimary,
   },
   dialogLabel: {
     marginTop: 16,
     marginBottom: 8,
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontWeight: "700",
     fontSize: 15,
   },
   input: {
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
   },
   contentInput: {
     minHeight: 180,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
   },
   noChangesText: {
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     fontStyle: "italic",
     lineHeight: 20,
   },
@@ -681,15 +679,15 @@ const createStyles = (colors) => StyleSheet.create({
   changeItem: {
     marginBottom: 12,
     borderRadius: 10,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: colors.surfaceSecondary,
+    borderColor: theme.colors.surfaceSecondary,
   },
   changeLabel: {
     fontSize: 12,
     fontWeight: "700",
-    color: colors.textTertiary,
+    color: theme.colors.textTertiary,
     paddingHorizontal: 12,
     paddingTop: 8,
     paddingBottom: 4,
@@ -700,13 +698,13 @@ const createStyles = (colors) => StyleSheet.create({
   },
   changeOld: {
     flexDirection: "row",
-    backgroundColor: colors.errorLight,
+    backgroundColor: "#FEE2E2",
     borderRadius: 6,
     padding: 8,
     marginBottom: 4,
   },
   changePrefixOld: {
-    color: colors.errorStrong,
+    color: "#B91C1C",
     fontWeight: "700",
     fontSize: 14,
     marginRight: 6,
@@ -714,18 +712,18 @@ const createStyles = (colors) => StyleSheet.create({
   },
   changeTextOld: {
     flex: 1,
-    color: colors.errorStrong,
+    color: "#991B1B",
     fontSize: 13,
     lineHeight: 19,
   },
   changeNew: {
     flexDirection: "row",
-    backgroundColor: colors.successSoft,
+    backgroundColor: "#DCFCE7",
     borderRadius: 6,
     padding: 8,
   },
   changePrefixNew: {
-    color: colors.successStrong,
+    color: "#166534",
     fontWeight: "700",
     fontSize: 14,
     marginRight: 6,

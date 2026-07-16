@@ -19,7 +19,7 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import ViewShot from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
-import { useThemedStyles } from "../styles/useThemedStyles";
+import { theme } from "../styles/theme";
 
 
 const appIcon = require("../../assets/icon.png");
@@ -33,8 +33,6 @@ const appIcon = require("../../assets/icon.png");
  *  - onDismiss: () => void
  */
 const UpdateDetailDialog = ({ visible, update, onDismiss }) => {
-  const { styles, colors } = useThemedStyles(createStyles);
-
   const viewShotRef = useRef(null);
 
   const handleShare = useCallback(async () => {
@@ -225,7 +223,7 @@ const UpdateDetailDialog = ({ visible, update, onDismiss }) => {
           <Dialog.Actions style={styles.actions}>
             <Button
               onPress={onDismiss}
-              textColor={colors.textSecondary}
+              textColor={theme.colors.textSecondary}
             >
               Close
             </Button>
@@ -245,7 +243,7 @@ const UpdateDetailDialog = ({ visible, update, onDismiss }) => {
   );
 };
 
-const createStyles = (colors) => StyleSheet.create({
+const styles = StyleSheet.create({
   /* ── Hidden capture area ── */
   hiddenCapture: {
     position: "absolute",
@@ -255,13 +253,13 @@ const createStyles = (colors) => StyleSheet.create({
   },
   shareCard: {
     width: 380,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: "#FFFFFF",
     borderRadius: 16,
     overflow: "hidden",
   },
   shareAccentBar: {
     height: 6,
-    backgroundColor: colors.secondary,
+    backgroundColor: theme.colors.secondary,
   },
   shareContent: {
     padding: 24,
@@ -270,7 +268,7 @@ const createStyles = (colors) => StyleSheet.create({
   shareCategory: {
     fontSize: 11,
     fontWeight: "800",
-    color: colors.secondary,
+    color: theme.colors.secondary,
     textTransform: "uppercase",
     letterSpacing: 1,
     marginBottom: 8,
@@ -278,32 +276,32 @@ const createStyles = (colors) => StyleSheet.create({
   shareTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: "#111827",
     lineHeight: 28,
     marginBottom: 8,
   },
   shareDate: {
     fontSize: 12,
-    color: colors.textTertiary,
+    color: "#6B7280",
     marginBottom: 12,
   },
   shareDivider: {
     height: 1,
-    backgroundColor: colors.border,
+    backgroundColor: "#E5E7EB",
     marginBottom: 12,
   },
   shareSummary: {
     fontSize: 14,
-    color: colors.textBody,
+    color: "#374151",
     lineHeight: 22,
   },
   shareSource: {
     fontSize: 11,
-    color: colors.textPlaceholder,
+    color: "#9CA3AF",
     marginTop: 12,
   },
   shareFooter: {
-    backgroundColor: colors.inverseSurface,
+    backgroundColor: "#0D1B2A",
     padding: 20,
   },
   shareFooterTop: {
@@ -323,23 +321,23 @@ const createStyles = (colors) => StyleSheet.create({
   shareAppName: {
     fontSize: 16,
     fontWeight: "bold",
-    color: colors.surfacePrimary,
+    color: "#FFFFFF",
     letterSpacing: 2,
   },
   shareAppTagline: {
     fontSize: 11,
-    color: colors.textPlaceholder,
+    color: "#9CA3AF",
     marginTop: 2,
   },
   shareCTA: {
     fontSize: 12,
-    color: colors.borderStrong,
+    color: "#D1D5DB",
     lineHeight: 18,
   },
 
   /* ── Dialog ── */
   dialog: {
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 20,
     maxHeight: "85%",
     overflow: "hidden",
@@ -351,7 +349,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   accentBar: {
     height: 4,
-    backgroundColor: colors.secondary,
+    backgroundColor: theme.colors.secondary,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },
@@ -372,13 +370,13 @@ const createStyles = (colors) => StyleSheet.create({
     marginBottom: 10,
   },
   dateChip: {
-    backgroundColor: colors.primaryLight,
+    backgroundColor: theme.colors.primaryLight,
     height: 30,
   },
   dateChipText: {
     fontSize: 12,
     fontWeight: "700",
-    color: colors.primary,
+    color: theme.colors.primary,
   },
   categoryChip: {
     alignSelf: "flex-start",
@@ -389,29 +387,29 @@ const createStyles = (colors) => StyleSheet.create({
   categoryChipText: {
     fontSize: 11,
     fontWeight: "700",
-    color: colors.secondary,
+    color: theme.colors.secondary,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   title: {
     fontSize: 22,
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     lineHeight: 30,
     marginBottom: 12,
   },
   divider: {
-    backgroundColor: colors.border,
+    backgroundColor: "#E5E7EB",
     marginBottom: 16,
   },
   body: {
     fontSize: 15,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     lineHeight: 24,
     marginBottom: 16,
   },
   updatedItemsBox: {
-    backgroundColor: colors.primaryLight,
+    backgroundColor: theme.colors.primaryLight,
     borderRadius: 12,
     padding: 14,
     marginBottom: 16,
@@ -419,30 +417,30 @@ const createStyles = (colors) => StyleSheet.create({
   updatedItemsLabel: {
     fontSize: 12,
     fontWeight: "700",
-    color: colors.primary,
+    color: theme.colors.primary,
     marginBottom: 4,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   updatedItemsText: {
     fontSize: 13,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     lineHeight: 20,
   },
   sourceText: {
     fontSize: 12,
-    color: colors.textTertiary,
+    color: theme.colors.textTertiary,
     marginBottom: 8,
   },
   sourceBtn: {
     alignSelf: "flex-start",
-    borderColor: colors.secondary,
+    borderColor: theme.colors.secondary,
     borderRadius: 10,
     marginBottom: 4,
   },
   sourceBtnLabel: {
     fontSize: 13,
-    color: colors.secondary,
+    color: theme.colors.secondary,
   },
   actions: {
     paddingHorizontal: 16,
@@ -450,12 +448,12 @@ const createStyles = (colors) => StyleSheet.create({
     justifyContent: "space-between",
   },
   shareBtn: {
-    backgroundColor: colors.secondary,
+    backgroundColor: theme.colors.secondary,
     borderRadius: 10,
     elevation: 2,
   },
   shareBtnLabel: {
-    color: colors.surfacePrimary,
+    color: "#FFFFFF",
     fontWeight: "700",
   },
 

@@ -14,8 +14,7 @@ import {
 } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useResponsive } from "../styles/theme";
-import { useThemedStyles } from "../styles/useThemedStyles";
+import { theme, useResponsive } from "../styles/theme";
 import { AppContext } from "../context/AppContext";
 import gemsData from "../data/gemsData.json";
 
@@ -31,8 +30,6 @@ const stripGemMarkup = (value = "") =>
     .trim();
 
 const GemsScreen = ({ navigation }) => {
-  const { styles, colors } = useThemedStyles(createStyles);
-
   const [searchQuery, setSearchbarQuery] = useState("");
   const { isBookmarked, toggleBookmark, isPremium } = useContext(AppContext);
   
@@ -186,12 +183,12 @@ const GemsScreen = ({ navigation }) => {
               <Card.Content style={styles.gemCardContent}>
                 <View style={styles.gemHeader}>
                   <View style={styles.gemIconContainer}>
-                    <MaterialIcons name="diamond" size={20} color={colors.primary} />
+                    <MaterialIcons name="diamond" size={20} color={theme.colors.primary} />
                   </View>
                   <Text style={styles.gemTitle} variant="titleMedium">{gem.title}</Text>
                   <IconButton 
                     icon={isGemBookmarked ? "bookmark" : "bookmark-outline"} 
-                    iconColor={isGemBookmarked ? colors.secondary : undefined}
+                    iconColor={isGemBookmarked ? theme.colors.secondary : undefined}
                     size={20} 
                     onPress={() => handleToggleBookmark(gem, sectionTitle)}
                   />
@@ -205,7 +202,7 @@ const GemsScreen = ({ navigation }) => {
                 </Text>
                 <View style={styles.cardFooter}>
                   <Text style={styles.readMoreText}>Tap to read full gem</Text>
-                  <MaterialIcons name="chevron-right" size={18} color={colors.secondary} />
+                  <MaterialIcons name="chevron-right" size={18} color={theme.colors.secondary} />
                 </View>
               </Card.Content>
             </Card>
@@ -214,7 +211,7 @@ const GemsScreen = ({ navigation }) => {
 
         {visibleGemItems.length === 0 && (
           <View style={styles.emptyState}>
-            <MaterialIcons name="search-off" size={64} color={colors.textPlaceholder} />
+            <MaterialIcons name="search-off" size={64} color={theme.colors.textPlaceholder} />
             <Text style={styles.emptyText}>No gems found matching your search</Text>
           </View>
         )}
@@ -223,10 +220,10 @@ const GemsScreen = ({ navigation }) => {
   );
 };
 
-const createStyles = (colors) => StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.backgroundMain,
+    backgroundColor: theme.colors.backgroundMain,
   },
   searchContainer: {
     paddingHorizontal: 16,
@@ -234,7 +231,7 @@ const createStyles = (colors) => StyleSheet.create({
     marginBottom: 16,
   },
   searchbar: {
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 12,
     elevation: 2,
   },
@@ -249,18 +246,18 @@ const createStyles = (colors) => StyleSheet.create({
     gap: 8,
   },
   chip: {
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: theme.colors.surfaceSecondary,
     borderRadius: 20,
   },
   selectedChip: {
-    backgroundColor: colors.secondary,
+    backgroundColor: theme.colors.secondary,
   },
   chipText: {
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     fontWeight: "600",
   },
   selectedChipText: {
-    color: colors.surfacePrimary,
+    color: "#FFF",
   },
   gemsList: {
     flex: 1,
@@ -272,7 +269,7 @@ const createStyles = (colors) => StyleSheet.create({
   gemCard: {
     marginBottom: 16,
     borderRadius: 16,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     elevation: 3,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -291,7 +288,7 @@ const createStyles = (colors) => StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: theme.colors.surfaceSecondary,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 12,
@@ -299,11 +296,11 @@ const createStyles = (colors) => StyleSheet.create({
   gemTitle: {
     flex: 1,
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     lineHeight: 22,
   },
   gemSnippet: {
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     lineHeight: 20,
     marginBottom: 12,
   },
@@ -312,12 +309,12 @@ const createStyles = (colors) => StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     borderTopWidth: 1,
-    borderTopColor: colors.surfaceSecondary,
+    borderTopColor: theme.colors.surfaceSecondary,
     paddingTop: 8,
   },
   readMoreText: {
     fontSize: 12,
-    color: colors.secondary,
+    color: theme.colors.secondary,
     fontWeight: "600",
   },
   emptyState: {
@@ -328,7 +325,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   emptyText: {
     marginTop: 16,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     fontSize: 16,
   }
 });

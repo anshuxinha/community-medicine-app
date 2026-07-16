@@ -17,7 +17,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useThemedStyles } from "../styles/useThemedStyles";
+import { theme } from "../styles/theme";
 import { normalizeUpdatedSnippet } from "../utils/contentRegistry";
 
 const stripBold = (text) => text.replace(/\*\*(.+?)\*\*/g, "$1");
@@ -725,7 +725,6 @@ const ReadingView = ({
   searchTerms = "",
   contentKey,
 }) => {
-  const { styles, colors } = useThemedStyles(createStyles);
   console.log("ReadingView: illustrations prop", illustrations);
   const insets = useSafeAreaInsets();
   const blocks = useMemo(() => {
@@ -1328,7 +1327,7 @@ const ReadingView = ({
                 })
               }
             >
-              <MaterialIcons name="fullscreen" size={18} color={colors.surfacePrimary} />
+              <MaterialIcons name="fullscreen" size={18} color="#FFFFFF" />
             </Pressable>
           </View>
         );
@@ -1388,7 +1387,7 @@ const ReadingView = ({
                   })
                 }
               >
-                <MaterialIcons name="fullscreen" size={18} color={colors.surfacePrimary} />
+                <MaterialIcons name="fullscreen" size={18} color="#FFFFFF" />
               </Pressable>
             </View>
             {block.caption || block.purpose ? (
@@ -1482,7 +1481,7 @@ const ReadingView = ({
       }}
     >
       <View style={styles.annotationCardHeader}>
-        <MaterialIcons name="sticky-note-2" size={14} color={colors.highlightBorder} />
+        <MaterialIcons name="sticky-note-2" size={14} color="#D4A853" />
         <Text style={styles.annotationCardLabel} selectable={false}>
           Note
         </Text>
@@ -1490,7 +1489,7 @@ const ReadingView = ({
           onPress={() => handleDeleteAnnotation(annotation.id)}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <MaterialIcons name="close" size={16} color={colors.textPlaceholder} />
+          <MaterialIcons name="close" size={16} color="#9CA3AF" />
         </TouchableOpacity>
       </View>
       <Text style={styles.annotationCardText} selectable={false}>
@@ -1537,7 +1536,7 @@ const ReadingView = ({
           onPress={() => navigation?.goBack()}
           activeOpacity={0.7}
         >
-          <MaterialIcons name="arrow-back" size={24} color={colors.textTitle} />
+          <MaterialIcons name="arrow-back" size={24} color={theme.colors.textTitle} />
         </TouchableOpacity>
         <Text style={styles.headerSectionTitle} numberOfLines={1} selectable={false}>
           {headerTitle}
@@ -1551,7 +1550,7 @@ const ReadingView = ({
             <MaterialIcons
               name={isBookmarked ? "bookmark" : "bookmark-border"}
               size={22}
-              color={colors.secondary}
+              color={theme.colors.secondary}
             />
           </TouchableOpacity>
           <TouchableOpacity
@@ -1562,7 +1561,7 @@ const ReadingView = ({
             <MaterialIcons
               name={isSpeaking ? "stop" : "volume-up"}
               size={22}
-              color={colors.secondary}
+              color={theme.colors.secondary}
             />
           </TouchableOpacity>
         </View>
@@ -1609,7 +1608,7 @@ const ReadingView = ({
             <MaterialIcons
               name="auto-awesome"
               size={18}
-              color={colors.warningText}
+              color={theme.colors.warningText}
             />
             <Text style={styles.updateBannerText}>
               Updated lines are highlighted in this topic until you review them.
@@ -1626,7 +1625,7 @@ const ReadingView = ({
           onPress={() => navigation?.navigate("MainTabs", { screen: "Library" })}
           activeOpacity={0.7}
         >
-          <MaterialIcons name="menu-book" size={22} color={colors.textTertiary} />
+          <MaterialIcons name="menu-book" size={22} color={theme.colors.textTertiary} />
           <Text style={styles.toolbarLabel} selectable={false}>LIBRARY</Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -1637,7 +1636,7 @@ const ReadingView = ({
           <MaterialIcons
             name="border-color"
             size={22}
-            color={isHighlightMode ? colors.secondary : colors.textTertiary}
+            color={isHighlightMode ? theme.colors.secondary : theme.colors.textTertiary}
           />
           <Text
             style={[
@@ -1666,7 +1665,7 @@ const ReadingView = ({
           <MaterialIcons
             name="edit-note"
             size={24}
-            color={isAnnotationMode ? colors.secondary : colors.textTertiary}
+            color={isAnnotationMode ? theme.colors.secondary : theme.colors.textTertiary}
           />
           <Text
             style={[
@@ -1706,7 +1705,7 @@ const ReadingView = ({
             <TextInput
               style={styles.noteModalInput}
               placeholder="Write your note..."
-              placeholderTextColor={colors.textPlaceholder}
+              placeholderTextColor="#9CA3AF"
               value={annotationText}
               onChangeText={setAnnotationText}
               multiline
@@ -1754,7 +1753,7 @@ const ReadingView = ({
             style={styles.fullscreenClose}
             onPress={() => setFullscreenImage(null)}
           >
-            <MaterialIcons name="close" size={28} color={colors.surfacePrimary} />
+            <MaterialIcons name="close" size={28} color="#FFFFFF" />
           </Pressable>
 
           <View
@@ -1805,7 +1804,7 @@ const ReadingView = ({
                   styles.viewerControlButtonDisabled,
               ]}
             >
-              <MaterialIcons name="remove" size={22} color={colors.surfacePrimary} />
+              <MaterialIcons name="remove" size={22} color="#FFFFFF" />
             </Pressable>
             <Text style={styles.viewerZoomLabel}>
               {Math.round(viewerZoomScale * 100)}%
@@ -1824,7 +1823,7 @@ const ReadingView = ({
                   styles.viewerControlButtonDisabled,
               ]}
             >
-              <MaterialIcons name="add" size={22} color={colors.surfacePrimary} />
+              <MaterialIcons name="add" size={22} color="#FFFFFF" />
             </Pressable>
             <Pressable
               accessibilityRole="button"
@@ -1838,7 +1837,7 @@ const ReadingView = ({
               }}
               style={styles.viewerControlButton}
             >
-              <MaterialIcons name="rotate-left" size={22} color={colors.surfacePrimary} />
+              <MaterialIcons name="rotate-left" size={22} color="#FFFFFF" />
             </Pressable>
             <Pressable
               accessibilityRole="button"
@@ -1850,7 +1849,7 @@ const ReadingView = ({
               }}
               style={styles.viewerControlButton}
             >
-              <MaterialIcons name="rotate-right" size={22} color={colors.surfacePrimary} />
+              <MaterialIcons name="rotate-right" size={22} color="#FFFFFF" />
             </Pressable>
           </View>
 
@@ -1864,20 +1863,20 @@ const ReadingView = ({
   );
 };
 
-const createStyles = (colors) => StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
   },
   captureProtectedOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     alignItems: "center",
     justifyContent: "center",
     zIndex: 1000,
   },
   captureProtectedText: {
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     fontSize: 14,
     fontWeight: "600",
   },
@@ -1888,9 +1887,9 @@ const createStyles = (colors) => StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 12,
     paddingVertical: 10,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.border,
+    borderBottomColor: "#E5E7EB",
     zIndex: 10,
   },
   headerBackBtn: {
@@ -1903,7 +1902,7 @@ const createStyles = (colors) => StyleSheet.create({
   headerSectionTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: colors.secondary,
+    color: theme.colors.secondary,
     marginLeft: 4,
     marginRight: "auto",
   },
@@ -1922,12 +1921,12 @@ const createStyles = (colors) => StyleSheet.create({
   // ── Progress ──
   progressBarBackground: {
     height: 2.5,
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: theme.colors.surfaceSecondary,
     width: "100%",
   },
   progressBarFill: {
     height: "100%",
-    backgroundColor: colors.primary,
+    backgroundColor: theme.colors.primary,
   },
 
   // ── Chapter Intro ──
@@ -1940,19 +1939,19 @@ const createStyles = (colors) => StyleSheet.create({
     fontSize: 12,
     fontWeight: "600",
     letterSpacing: 1.5,
-    color: colors.textTertiary,
+    color: theme.colors.textTertiary,
     marginBottom: 8,
   },
   chapterTitle: {
     fontSize: 24,
     fontWeight: "800",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     lineHeight: 32,
     marginBottom: 16,
   },
   chapterDivider: {
     height: 1,
-    backgroundColor: colors.border,
+    backgroundColor: "#E5E7EB",
   },
 
   // ── Scroll ──
@@ -1974,13 +1973,13 @@ const createStyles = (colors) => StyleSheet.create({
     marginTop: 8,
     marginBottom: 10,
     borderRadius: 12,
-    backgroundColor: colors.warningBackground,
+    backgroundColor: theme.colors.warningBackground,
     borderWidth: 1,
-    borderColor: colors.userHighlightSentence,
+    borderColor: "#FDE68A",
   },
   updateBannerText: {
     flex: 1,
-    color: colors.warningText,
+    color: theme.colors.warningText,
     fontSize: 13,
     lineHeight: 18,
     fontWeight: "600",
@@ -1994,13 +1993,13 @@ const createStyles = (colors) => StyleSheet.create({
     marginTop: 8,
     marginBottom: 10,
     borderRadius: 12,
-    backgroundColor: colors.primarySoft,
+    backgroundColor: "#F3F0FF",
     borderWidth: 1,
-    borderColor: colors.primaryMuted,
+    borderColor: "#DDD6FE",
   },
   annotationModeBannerText: {
     flex: 1,
-    color: colors.secondary,
+    color: theme.colors.secondary,
     fontSize: 13,
     lineHeight: 18,
     fontWeight: "600",
@@ -2008,27 +2007,27 @@ const createStyles = (colors) => StyleSheet.create({
 
   // ── Typography (body size unchanged) ──
   h1: {
-    color: colors.secondary,
+    color: theme.colors.secondary,
     fontSize: 22,
     fontWeight: "700",
     marginTop: 16,
     marginBottom: 8,
   },
   h2: {
-    color: colors.textPrimary,
+    color: theme.colors.textPrimary,
     fontSize: 19,
     fontWeight: "700",
     marginTop: 14,
     marginBottom: 6,
   },
   body: {
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontSize: 15.5,
     lineHeight: 24,
     marginVertical: 4,
   },
   allCapsTitle: {
-    color: colors.secondary,
+    color: "#9333ea",
     fontSize: 16,
     fontWeight: "bold",
     lineHeight: 24,
@@ -2039,7 +2038,7 @@ const createStyles = (colors) => StyleSheet.create({
     marginBottom: 6,
   },
   tableTitleText: {
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontSize: 16,
     fontWeight: "700",
     lineHeight: 22,
@@ -2049,7 +2048,7 @@ const createStyles = (colors) => StyleSheet.create({
     marginBottom: 4,
   },
   referenceText: {
-    color: colors.textTertiary,
+    color: theme.colors.textTertiary,
     fontSize: 12.5,
     fontStyle: "italic",
     lineHeight: 18,
@@ -2093,8 +2092,8 @@ const createStyles = (colors) => StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderLeftWidth: 4,
-    borderLeftColor: colors.warningStrong,
-    backgroundColor: colors.warningBackground,
+    borderLeftColor: "#B45309",
+    backgroundColor: "#FEF3C7",
     borderRadius: 4,
     flexDirection: "row",
     alignItems: "center",
@@ -2102,18 +2101,18 @@ const createStyles = (colors) => StyleSheet.create({
     gap: 8,
   },
   examLaqBadge: {
-    color: colors.warningText,
+    color: "#92400E",
     fontSize: 11,
     fontWeight: "800",
     letterSpacing: 0.6,
-    backgroundColor: colors.userHighlightSentence,
+    backgroundColor: "#FDE68A",
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 4,
     overflow: "hidden",
   },
   examLaqText: {
-    color: colors.warningText,
+    color: "#92400E",
     fontSize: 14,
     fontWeight: "700",
     lineHeight: 20,
@@ -2128,14 +2127,14 @@ const createStyles = (colors) => StyleSheet.create({
     marginBottom: 4,
   },
   bulletDot: {
-    color: colors.secondary,
+    color: theme.colors.secondary,
     fontSize: 16,
     lineHeight: 24,
     width: 20,
   },
   bulletText: {
     flex: 1,
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontSize: 15.5,
     lineHeight: 24,
   },
@@ -2149,14 +2148,14 @@ const createStyles = (colors) => StyleSheet.create({
     marginBottom: 4,
   },
   nestedBulletDot: {
-    color: colors.secondary,
+    color: theme.colors.secondary,
     fontSize: 14,
     lineHeight: 22,
     width: 20,
   },
   nestedBulletText: {
     flex: 1,
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontSize: 14.5,
     lineHeight: 22,
   },
@@ -2167,21 +2166,21 @@ const createStyles = (colors) => StyleSheet.create({
     paddingLeft: 14,
     paddingVertical: 4,
     borderLeftWidth: 4,
-    borderLeftColor: colors.highlightBorder,
-    backgroundColor: colors.highlightBg,
+    borderLeftColor: "#D4A853",
+    backgroundColor: "#FDFAF3",
     borderRadius: 0,
   },
   highlightBulletRow: {
     paddingLeft: 10,
     borderLeftWidth: 4,
-    borderLeftColor: colors.highlightBorder,
-    backgroundColor: colors.highlightBg,
+    borderLeftColor: "#D4A853",
+    backgroundColor: "#FDFAF3",
     borderRadius: 0,
   },
 
   // ── User Highlights (yellow background) ──
   userHighlightBlock: {
-    backgroundColor: colors.userHighlightBg,
+    backgroundColor: "#FEF9C3",
     borderRadius: 4,
     paddingHorizontal: 4,
     paddingVertical: 2,
@@ -2194,7 +2193,7 @@ const createStyles = (colors) => StyleSheet.create({
     borderStyle: "dashed",
   },
   userHighlightSentence: {
-    backgroundColor: colors.userHighlightSentence,
+    backgroundColor: "#FEF08A",
     borderRadius: 2,
   },
   sentenceWrap: {
@@ -2213,12 +2212,12 @@ const createStyles = (colors) => StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderLeftWidth: 4,
-    borderLeftColor: colors.primary,
-    backgroundColor: colors.primaryLight || colors.primarySoft,
+    borderLeftColor: theme.colors.primary,
+    backgroundColor: theme.colors.primaryLight || "#F3E8FF",
     borderRadius: 4,
   },
   blockquoteText: {
-    color: colors.textTitle || colors.textPrimary,
+    color: theme.colors.textTitle || "#1F2937",
     fontSize: 15,
     fontStyle: "italic",
     lineHeight: 24,
@@ -2236,12 +2235,12 @@ const createStyles = (colors) => StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderLeftWidth: 4,
-    borderLeftColor: colors.secondary || colors.secondary,
-    backgroundColor: colors.primaryLight,
+    borderLeftColor: theme.colors.secondary || "#7C3AED",
+    backgroundColor: "#F5F3FF",
     borderRadius: 4,
   },
   questionText: {
-    color: colors.textTitle || colors.textPrimary,
+    color: theme.colors.textTitle || "#1F2937",
     fontSize: 15,
     fontWeight: "600",
     lineHeight: 22,
@@ -2251,7 +2250,7 @@ const createStyles = (colors) => StyleSheet.create({
   tableContainer: {
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.surfaceSecondary || colors.border,
+    borderColor: theme.colors.surfaceSecondary || "#E5E7EB",
   },
   tableScrollContainer: {
     marginVertical: 12,
@@ -2259,14 +2258,14 @@ const createStyles = (colors) => StyleSheet.create({
 
   tableHeaderRow: {
     flexDirection: "row",
-    backgroundColor: colors.secondary,
+    backgroundColor: "#9333ea",
   },
   tableRow: {
     flexDirection: "row",
-    backgroundColor: colors.surfacePrimary || colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary || "#FFFFFF",
   },
   tableRowAlt: {
-    backgroundColor: colors.surfaceSecondary || colors.surfaceTertiary,
+    backgroundColor: theme.colors.surfaceSecondary || "#F9FAFB",
   },
   tableCell: {
     paddingHorizontal: 10,
@@ -2281,13 +2280,13 @@ const createStyles = (colors) => StyleSheet.create({
     borderRightColor: "rgba(255,255,255,0.2)",
   },
   tableHeaderText: {
-    color: colors.surfacePrimary,
+    color: "#FFFFFF",
     fontSize: 13,
     fontWeight: "700",
     lineHeight: 18,
   },
   tableCellText: {
-    color: colors.textTitle || colors.textPrimary,
+    color: theme.colors.textTitle || "#1F2937",
     fontSize: 13,
     lineHeight: 19,
   },
@@ -2303,7 +2302,7 @@ const createStyles = (colors) => StyleSheet.create({
     overflow: "hidden",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.surfaceTertiary,
+    backgroundColor: theme.colors.surfaceTertiary,
   },
   contentImage: {
     width: "100%",
@@ -2323,9 +2322,9 @@ const createStyles = (colors) => StyleSheet.create({
   illustrationCard: {
     marginVertical: 14,
     borderRadius: 16,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderWidth: 1,
-    borderColor: colors.surfaceSecondary,
+    borderColor: theme.colors.surfaceSecondary,
     elevation: 2,
     shadowColor: "#000",
     shadowOpacity: 0.08,
@@ -2336,7 +2335,7 @@ const createStyles = (colors) => StyleSheet.create({
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.surfaceTertiary,
+    backgroundColor: theme.colors.surfaceTertiary,
   },
   illustrationImage: {
     width: "100%",
@@ -2348,13 +2347,13 @@ const createStyles = (colors) => StyleSheet.create({
     gap: 4,
   },
   illustrationCaption: {
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontSize: 14.5,
     lineHeight: 21,
     fontWeight: "700",
   },
   illustrationPurpose: {
-    color: colors.textPrimary,
+    color: theme.colors.textPrimary,
     fontSize: 13.5,
     lineHeight: 20,
   },
@@ -2365,9 +2364,9 @@ const createStyles = (colors) => StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-around",
     paddingTop: 8,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.border,
+    borderTopColor: "#E5E7EB",
     elevation: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -2 },
@@ -2384,11 +2383,11 @@ const createStyles = (colors) => StyleSheet.create({
     fontSize: 10,
     fontWeight: "700",
     letterSpacing: 0.5,
-    color: colors.textTertiary,
+    color: theme.colors.textTertiary,
     marginTop: 3,
   },
   toolbarLabelActive: {
-    color: colors.secondary,
+    color: theme.colors.secondary,
   },
 
   // ── Annotation Mode ──
@@ -2399,9 +2398,9 @@ const createStyles = (colors) => StyleSheet.create({
     borderStyle: "dashed",
   },
   annotationModePressedBlock: {
-    backgroundColor: colors.primarySoft,
+    backgroundColor: "#F3F0FF",
     borderRadius: 6,
-    borderColor: colors.secondary,
+    borderColor: theme.colors.secondary,
     borderWidth: 1,
     borderStyle: "dashed",
   },
@@ -2414,7 +2413,7 @@ const createStyles = (colors) => StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderLeftWidth: 3,
-    borderLeftColor: colors.highlightBorder,
+    borderLeftColor: "#D4A853",
     backgroundColor: "#FEFCE8",
     borderRadius: 8,
   },
@@ -2428,14 +2427,14 @@ const createStyles = (colors) => StyleSheet.create({
     flex: 1,
     fontSize: 11,
     fontWeight: "700",
-    color: colors.warningText,
+    color: "#92400E",
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   annotationCardText: {
     fontSize: 14,
     lineHeight: 20,
-    color: colors.textPrimary,
+    color: theme.colors.textPrimary,
   },
 
   // ── Annotation Input ──
@@ -2446,16 +2445,16 @@ const createStyles = (colors) => StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderLeftWidth: 3,
-    borderLeftColor: colors.secondary,
-    backgroundColor: colors.surfaceTertiary,
+    borderLeftColor: theme.colors.secondary,
+    backgroundColor: "#F9FAFB",
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.primaryMuted,
+    borderColor: "#DDD6FE",
   },
   annotationInput: {
     fontSize: 14,
     lineHeight: 20,
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     minHeight: 48,
     textAlignVertical: "top",
     padding: 0,
@@ -2474,13 +2473,13 @@ const createStyles = (colors) => StyleSheet.create({
   annotationCancelText: {
     fontSize: 13,
     fontWeight: "600",
-    color: colors.textTertiary,
+    color: theme.colors.textTertiary,
   },
   annotationSaveBtn: {
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 6,
-    backgroundColor: colors.secondary,
+    backgroundColor: theme.colors.secondary,
   },
   annotationSaveBtnDisabled: {
     opacity: 0.4,
@@ -2488,7 +2487,7 @@ const createStyles = (colors) => StyleSheet.create({
   annotationSaveText: {
     fontSize: 13,
     fontWeight: "600",
-    color: colors.surfacePrimary,
+    color: "#FFFFFF",
   },
 
   // ── Note Modal ──
@@ -2501,7 +2500,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   noteModalContent: {
     width: "100%",
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 16,
     paddingHorizontal: 20,
     paddingTop: 20,
@@ -2510,20 +2509,20 @@ const createStyles = (colors) => StyleSheet.create({
   noteModalTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     marginBottom: 16,
   },
   noteModalInput: {
     fontSize: 15,
     lineHeight: 22,
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     minHeight: 80,
     textAlignVertical: "top",
     padding: 12,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: "#E5E7EB",
     borderRadius: 10,
-    backgroundColor: colors.surfaceTertiary,
+    backgroundColor: "#F9FAFB",
   },
   noteModalActions: {
     flexDirection: "row",
@@ -2597,13 +2596,13 @@ const createStyles = (colors) => StyleSheet.create({
   viewerZoomLabel: {
     minWidth: 58,
     textAlign: "center",
-    color: colors.surfacePrimary,
+    color: "#FFFFFF",
     fontSize: 14,
     fontWeight: "700",
   },
   fullscreenHint: {
     marginTop: 12,
-    color: colors.surfaceSecondary,
+    color: "#F3F4F6",
     fontSize: 13,
     lineHeight: 18,
     textAlign: "center",
@@ -2611,7 +2610,7 @@ const createStyles = (colors) => StyleSheet.create({
 
   // ── Search Term Highlight ──
   searchTermMatch: {
-    color: colors.secondary,
+    color: "#9333ea",
     fontWeight: "700",
   },
 });

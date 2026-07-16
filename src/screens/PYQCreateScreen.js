@@ -20,8 +20,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useResponsive } from "../styles/theme";
-import { useThemedStyles } from "../styles/useThemedStyles";
+import { theme, useResponsive } from "../styles/theme";
 import { AppContext } from "../context/AppContext";
 import pyqData from "../data/pyq_data.json";
 
@@ -94,8 +93,6 @@ const PYQCreateScreen = ({ navigation }) => {
 
   // Helper to filter and build the question list
   const getFilteredQuestions = () => {
-  const { styles, colors } = useThemedStyles(createStyles);
-
     return pyqData.filter((q) => {
       // 1. Exam group filter
       // Exam names are e.g. "AIIMS 2017", "NEET 2018", "INI-CET 2021"
@@ -152,7 +149,7 @@ const PYQCreateScreen = ({ navigation }) => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.secondary} />
+        <ActivityIndicator size="large" color={theme.colors.secondary} />
       </View>
     );
   }
@@ -185,7 +182,7 @@ const PYQCreateScreen = ({ navigation }) => {
         {!isPremium && (
           <Card style={styles.premiumBanner} onPress={() => navigation.navigate("Paywall")}>
             <Card.Content style={styles.premiumBannerContent}>
-              <MaterialCommunityIcons name="crown" size={32} color={colors.warning} />
+              <MaterialCommunityIcons name="crown" size={32} color="#F59E0B" />
               <View style={styles.premiumTextContainer}>
                 <Text style={styles.premiumTitle}>Unlock Full QBank Access</Text>
                 <Text style={styles.premiumDesc}>
@@ -200,7 +197,7 @@ const PYQCreateScreen = ({ navigation }) => {
         <Card style={styles.sectionCard}>
           <Card.Content>
             <View style={styles.sectionHeader}>
-              <MaterialIcons name="source" size={22} color={colors.primary} />
+              <MaterialIcons name="source" size={22} color={theme.colors.primary} />
               <Text variant="titleMedium" style={styles.sectionTitle}>
                 Exam Sources
               </Text>
@@ -223,13 +220,13 @@ const PYQCreateScreen = ({ navigation }) => {
                       isVisuallySelected && styles.selectedChip,
                       isLocked && styles.lockedChip,
                     ]}
-                    selectedColor={isVisuallySelected ? colors.surfacePrimary : (isLocked ? colors.textPlaceholder : colors.textSecondary)}
+                    selectedColor={isVisuallySelected ? "#FFFFFF" : (isLocked ? "#9CA3AF" : theme.colors.textSecondary)}
                     showSelectedOverlay={false}
                     icon={() => (
                       <MaterialCommunityIcons
                         name={isLocked ? "lock" : (isVisuallySelected ? "check" : "school-outline")}
                         size={16}
-                        color={isVisuallySelected ? colors.surfacePrimary : (isLocked ? colors.textPlaceholder : colors.textSecondary)}
+                        color={isVisuallySelected ? "#FFFFFF" : (isLocked ? "#9CA3AF" : theme.colors.textSecondary)}
                       />
                     )}
                   >
@@ -245,7 +242,7 @@ const PYQCreateScreen = ({ navigation }) => {
         <Card style={styles.sectionCard}>
           <Card.Content>
             <View style={styles.sectionHeader}>
-              <MaterialIcons name="filter-alt" size={22} color={colors.primary} />
+              <MaterialIcons name="filter-alt" size={22} color={theme.colors.primary} />
               <Text variant="titleMedium" style={styles.sectionTitle}>
                 Question Status
               </Text>
@@ -274,13 +271,13 @@ const PYQCreateScreen = ({ navigation }) => {
                       isVisuallySelected && styles.selectedChip,
                       isLocked && styles.lockedChip,
                     ]}
-                    selectedColor={isVisuallySelected ? colors.surfacePrimary : (isLocked ? colors.textPlaceholder : colors.textSecondary)}
+                    selectedColor={isVisuallySelected ? "#FFFFFF" : (isLocked ? "#9CA3AF" : theme.colors.textSecondary)}
                     showSelectedOverlay={false}
                     icon={() => (
                       <MaterialCommunityIcons
                         name={isLocked ? "lock" : status.icon}
                         size={16}
-                        color={isVisuallySelected ? colors.surfacePrimary : (isLocked ? colors.textPlaceholder : colors.textSecondary)}
+                        color={isVisuallySelected ? "#FFFFFF" : (isLocked ? "#9CA3AF" : theme.colors.textSecondary)}
                       />
                     )}
                   >
@@ -296,7 +293,7 @@ const PYQCreateScreen = ({ navigation }) => {
         <Card style={styles.sectionCard}>
           <Card.Content>
             <View style={styles.sectionHeader}>
-              <MaterialCommunityIcons name="format-list-numbered" size={22} color={colors.primary} />
+              <MaterialCommunityIcons name="format-list-numbered" size={22} color={theme.colors.primary} />
               <Text variant="titleMedium" style={styles.sectionTitle}>
                 Number of Questions
               </Text>
@@ -316,11 +313,11 @@ const PYQCreateScreen = ({ navigation }) => {
                       isVisuallySelected && styles.selectedChip,
                       isLocked && styles.lockedChip,
                     ]}
-                    selectedColor={isVisuallySelected ? colors.surfacePrimary : (isLocked ? colors.textPlaceholder : colors.textSecondary)}
+                    selectedColor={isVisuallySelected ? "#FFFFFF" : (isLocked ? "#9CA3AF" : theme.colors.textSecondary)}
                     showSelectedOverlay={false}
                     icon={() =>
                       isLocked ? (
-                        <MaterialCommunityIcons name="lock" size={12} color={colors.textPlaceholder} />
+                        <MaterialCommunityIcons name="lock" size={12} color="#9CA3AF" />
                       ) : null
                     }
                   >
@@ -336,7 +333,7 @@ const PYQCreateScreen = ({ navigation }) => {
         <Card style={styles.sectionCard}>
           <Card.Content>
             <View style={styles.sectionHeader}>
-              <MaterialCommunityIcons name="compass-outline" size={22} color={colors.primary} />
+              <MaterialCommunityIcons name="compass-outline" size={22} color={theme.colors.primary} />
               <Text variant="titleMedium" style={styles.sectionTitle}>
                 Practice Mode
               </Text>
@@ -353,7 +350,7 @@ const PYQCreateScreen = ({ navigation }) => {
                 <MaterialCommunityIcons
                   name="book-open-page-variant"
                   size={28}
-                  color={mode === "study" ? colors.primary : colors.textSecondary}
+                  color={mode === "study" ? theme.colors.primary : "#4B5563"}
                 />
                 <Text style={[styles.modeTitle, mode === "study" && styles.selectedModeText]}>
                   Study Mode
@@ -375,7 +372,7 @@ const PYQCreateScreen = ({ navigation }) => {
                 <MaterialCommunityIcons
                   name="timer-outline"
                   size={28}
-                  color={mode === "exam" ? colors.primary : colors.textSecondary}
+                  color={mode === "exam" ? theme.colors.primary : "#4B5563"}
                 />
                 <Text style={[styles.modeTitle, mode === "exam" && styles.selectedModeText]}>
                   Exam Mode
@@ -414,10 +411,10 @@ const PYQCreateScreen = ({ navigation }) => {
   );
 };
 
-const createStyles = (colors) => StyleSheet.create({
+const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.backgroundMain,
+    backgroundColor: theme.colors.backgroundMain,
   },
   container: {
     flex: 1,
@@ -430,22 +427,22 @@ const createStyles = (colors) => StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: colors.backgroundMain,
+    backgroundColor: theme.colors.backgroundMain,
   },
   header: {
     marginBottom: 20,
   },
   title: {
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
   },
   subtitle: {
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     marginTop: 6,
     lineHeight: 20,
   },
   premiumBanner: {
-    backgroundColor: colors.warningBackground,
+    backgroundColor: "#FFFBEB",
     borderColor: "#FCD34D",
     borderWidth: 1,
     borderRadius: 16,
@@ -462,17 +459,17 @@ const createStyles = (colors) => StyleSheet.create({
   },
   premiumTitle: {
     fontWeight: "bold",
-    color: colors.warningText,
+    color: "#92400E",
     fontSize: 15,
   },
   premiumDesc: {
-    color: colors.warningStrong,
+    color: "#B45309",
     fontSize: 12,
     marginTop: 2,
     lineHeight: 16,
   },
   sectionCard: {
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 16,
     marginBottom: 16,
     elevation: 2,
@@ -488,11 +485,11 @@ const createStyles = (colors) => StyleSheet.create({
   },
   sectionTitle: {
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     marginLeft: 8,
   },
   sectionDesc: {
-    color: colors.textTertiary,
+    color: theme.colors.textTertiary,
     marginBottom: 12,
   },
   chipsContainer: {
@@ -503,24 +500,24 @@ const createStyles = (colors) => StyleSheet.create({
   chip: {
     marginRight: 8,
     marginBottom: 8,
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: "#F3F4F6",
     borderRadius: 20,
     borderWidth: 0,
   },
   chipSmall: {
     marginRight: 6,
     marginBottom: 6,
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: "#F3F4F6",
     borderRadius: 12,
     borderWidth: 0,
     paddingHorizontal: 4,
   },
   selectedChip: {
-    backgroundColor: colors.primary,
+    backgroundColor: theme.colors.primary,
   },
   lockedChip: {
     opacity: 0.6,
-    backgroundColor: colors.border,
+    backgroundColor: "#E5E7EB",
   },
   modeContainer: {
     flexDirection: "row",
@@ -528,25 +525,25 @@ const createStyles = (colors) => StyleSheet.create({
   },
   modeOption: {
     flex: 1,
-    backgroundColor: colors.surfaceTertiary,
-    borderColor: colors.border,
+    backgroundColor: theme.colors.surfaceTertiary,
+    borderColor: "#E5E7EB",
     borderWidth: 1,
     borderRadius: 12,
     padding: 12,
     alignItems: "flex-start",
   },
   selectedModeOption: {
-    borderColor: colors.primary,
-    backgroundColor: colors.primaryLight,
+    borderColor: theme.colors.primary,
+    backgroundColor: theme.colors.primaryLight,
   },
   modeTitle: {
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     marginTop: 8,
     fontSize: 14,
   },
   selectedModeText: {
-    color: colors.primaryDark,
+    color: theme.colors.primaryDark,
   },
   modeOptionContainer: {
     flexDirection: "row",
@@ -554,17 +551,17 @@ const createStyles = (colors) => StyleSheet.create({
   },
   modeDesc: {
     fontSize: 11,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     marginTop: 4,
     lineHeight: 15,
   },
   summaryContainer: {
     marginTop: 10,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: "#E5E7EB",
   },
   matchingStats: {
     flexDirection: "row",
@@ -572,16 +569,16 @@ const createStyles = (colors) => StyleSheet.create({
     marginBottom: 12,
   },
   matchingText: {
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     fontSize: 13,
   },
   matchingBold: {
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
   },
   createButton: {
     borderRadius: 12,
-    backgroundColor: colors.primary,
+    backgroundColor: theme.colors.primary,
   },
 });
 

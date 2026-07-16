@@ -16,14 +16,12 @@ import { MaterialIcons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import { db } from "../config/firebase";
 import { doc, getDoc } from "firebase/firestore";
-import { useThemedStyles } from "../styles/useThemedStyles";
+import { theme } from "../styles/theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { height: WINDOW_HEIGHT } = Dimensions.get("window");
 
 const UpdateBottomSheet = () => {
-  const { styles, colors } = useThemedStyles(createStyles);
-
   const insets = useSafeAreaInsets();
   const [visible, setVisible] = useState(false);
   const [updateInfo, setUpdateInfo] = useState({
@@ -246,7 +244,7 @@ const UpdateBottomSheet = () => {
             <View style={styles.whatsNew}>
               <View style={styles.whatsNewHeader}>
                 <Text style={styles.whatsNewTitle}>What's new</Text>
-                <MaterialIcons name="keyboard-arrow-down" size={24} color={colors.textSecondary} />
+                <MaterialIcons name="keyboard-arrow-down" size={24} color={theme.colors.textSecondary} />
               </View>
               <Text style={styles.whatsNewText}>
                 {updateInfo.notes}
@@ -281,7 +279,7 @@ const UpdateBottomSheet = () => {
 
 const flex1 = { flex: 1 };
 
-const createStyles = (colors) => StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     zIndex: 9999,
     elevation: 9999,
@@ -300,7 +298,7 @@ const createStyles = (colors) => StyleSheet.create({
   surface: {
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: "#FFFFFF",
     paddingBottom: Platform.OS === "ios" ? 40 : 20,
     overflow: "hidden",
   },
@@ -318,7 +316,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   storeText: {
     fontSize: 14,
-    color: colors.textTertiary,
+    color: "#5F6368",
     fontWeight: "500",
   },
   closeBtn: {
@@ -331,12 +329,12 @@ const createStyles = (colors) => StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "500",
-    color: colors.textTitle,
+    color: "#202124",
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 14,
-    color: colors.textTertiary,
+    color: "#5F6368",
     marginBottom: 20,
   },
   appRow: {
@@ -362,11 +360,11 @@ const createStyles = (colors) => StyleSheet.create({
   appName: {
     fontSize: 16,
     fontWeight: "500",
-    color: colors.textTitle,
+    color: "#202124",
   },
   appMeta: {
     fontSize: 12,
-    color: colors.textTertiary,
+    color: "#5F6368",
     marginTop: 2,
   },
   whatsNew: {
@@ -381,11 +379,11 @@ const createStyles = (colors) => StyleSheet.create({
   whatsNewTitle: {
     fontSize: 16,
     fontWeight: "500",
-    color: colors.textTitle,
+    color: "#202124",
   },
   whatsNewText: {
     fontSize: 14,
-    color: colors.textTertiary,
+    color: "#5F6368",
     lineHeight: 20,
   },
   actions: {

@@ -21,8 +21,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useResponsive } from "../styles/theme";
-import { useThemedStyles } from "../styles/useThemedStyles";
+import { theme, useResponsive } from "../styles/theme";
 import { AppContext } from "../context/AppContext";
 import { PYQ_IMAGES } from "../data/pyq_images_map";
 
@@ -53,8 +52,6 @@ const PYQPracticeScreen = ({ route, navigation }) => {
   // Back handler to warn user before exiting
   useEffect(() => {
     const backAction = () => {
-  const { styles, colors } = useThemedStyles(createStyles);
-
       if (testFinished) {
         navigation.goBack();
         return true;
@@ -246,19 +243,19 @@ const PYQPracticeScreen = ({ route, navigation }) => {
 
               <View style={styles.statsColumn}>
                 <View style={styles.statRow}>
-                  <MaterialIcons name="check-circle" size={20} color={colors.success} />
+                  <MaterialIcons name="check-circle" size={20} color={theme.colors.success} />
                   <Text style={styles.statText}>
                     Correct: <Text style={styles.statBold}>{totalCorrect} / {questions.length}</Text>
                   </Text>
                 </View>
                 <View style={styles.statRow}>
-                  <MaterialIcons name="cancel" size={20} color={colors.error} />
+                  <MaterialIcons name="cancel" size={20} color={theme.colors.error} />
                   <Text style={styles.statText}>
                     Incorrect: <Text style={styles.statBold}>{questions.length - totalCorrect}</Text>
                   </Text>
                 </View>
                 <View style={styles.statRow}>
-                  <MaterialIcons name="timer" size={20} color={colors.secondary} />
+                  <MaterialIcons name="timer" size={20} color={theme.colors.secondary} />
                   <Text style={styles.statText}>
                     Time: <Text style={styles.statBold}>{formatTime(actualDurationRef.current)}</Text>
                   </Text>
@@ -279,7 +276,7 @@ const PYQPracticeScreen = ({ route, navigation }) => {
                 key={q.id}
                 style={[
                   styles.reviewItemCard,
-                  { borderLeftColor: isCorrect ? colors.success : colors.error },
+                  { borderLeftColor: isCorrect ? theme.colors.success : theme.colors.error },
                 ]}
                 onPress={() => setReviewIdx(idx)}
               >
@@ -289,7 +286,7 @@ const PYQPracticeScreen = ({ route, navigation }) => {
                     <MaterialIcons
                       name={isCorrect ? "check-circle" : "cancel"}
                       size={22}
-                      color={isCorrect ? colors.success : colors.error}
+                      color={isCorrect ? theme.colors.success : theme.colors.error}
                     />
                   </View>
                   <Text numberOfLines={2} style={styles.reviewItemText}>
@@ -365,7 +362,7 @@ const PYQPracticeScreen = ({ route, navigation }) => {
                             <Text
                               style={[
                                 styles.optionCircleText,
-                                (isCorrectOpt || isUserSelected) && { color: colors.surfacePrimary },
+                                (isCorrectOpt || isUserSelected) && { color: "#FFFFFF" },
                               ]}
                             >
                               {letter.toUpperCase()}
@@ -377,7 +374,7 @@ const PYQPracticeScreen = ({ route, navigation }) => {
                     })}
                   </View>
 
-                  <View style={{ marginVertical: 16, borderBottomWidth: 1, borderBottomColor: colors.border }} />
+                  <View style={{ marginVertical: 16, borderBottomWidth: 1, borderBottomColor: "#E5E7EB" }} />
 
                   <View style={styles.explanationSection}>
                     <Text style={styles.explanationHeader}>Detailed Explanation</Text>
@@ -401,7 +398,7 @@ const PYQPracticeScreen = ({ route, navigation }) => {
       {/* Session progress and timer header */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <MaterialIcons name="arrow-back" size={24} color={colors.textTitle} />
+          <MaterialIcons name="arrow-back" size={24} color={theme.colors.textTitle} />
         </TouchableOpacity>
         
         <View style={styles.progressContainer}>
@@ -410,20 +407,20 @@ const PYQPracticeScreen = ({ route, navigation }) => {
           </Text>
           <ProgressBar
             progress={(currentIdx + 1) / questions.length}
-            color={colors.primary}
+            color={theme.colors.primary}
             style={styles.progressBar}
           />
         </View>
 
         {mode === "exam" ? (
           <View style={styles.timerContainer}>
-            <MaterialIcons name="timer" size={16} color={colors.primary} />
+            <MaterialIcons name="timer" size={16} color={theme.colors.primary} />
             <Text style={styles.timerText}>{formatTime(timeRemaining)}</Text>
           </View>
         ) : (
           <IconButton
             icon={isBookmarked ? "bookmark" : "bookmark-outline"}
-            iconColor={isBookmarked ? colors.primary : colors.textSecondary}
+            iconColor={isBookmarked ? theme.colors.primary : theme.colors.textSecondary}
             size={24}
             onPress={() => toggleBookmark(currentQ.id)}
           />
@@ -502,7 +499,7 @@ const PYQPracticeScreen = ({ route, navigation }) => {
                       <Text
                         style={[
                           styles.optionCircleText,
-                          (isSelected || (mode === "study" && isRevealed && isCorrect)) && { color: colors.surfacePrimary },
+                          (isSelected || (mode === "study" && isRevealed && isCorrect)) && { color: "#FFFFFF" },
                         ]}
                       >
                         {letter.toUpperCase()}
@@ -524,7 +521,7 @@ const PYQPracticeScreen = ({ route, navigation }) => {
                 <MaterialCommunityIcons
                   name={selectedOpt === currentQ.correctAnswer ? "check-decagram" : "alert-decagram"}
                   size={24}
-                  color={selectedOpt === currentQ.correctAnswer ? colors.success : colors.error}
+                  color={selectedOpt === currentQ.correctAnswer ? theme.colors.success : theme.colors.error}
                 />
                 <Text style={styles.explanationHeaderTitle}>
                   {selectedOpt === currentQ.correctAnswer ? "Correct Answer!" : "Incorrect"}
@@ -544,7 +541,7 @@ const PYQPracticeScreen = ({ route, navigation }) => {
             onPress={handlePrev}
             disabled={currentIdx === 0}
             style={styles.navButton}
-            labelStyle={{ color: currentIdx === 0 ? colors.textPlaceholder : colors.primary }}
+            labelStyle={{ color: currentIdx === 0 ? "#9CA3AF" : theme.colors.primary }}
           >
             Previous
           </Button>
@@ -598,7 +595,7 @@ const PYQPracticeScreen = ({ route, navigation }) => {
         <Dialog
           visible={confirmSubmitVisible}
           onDismiss={() => setConfirmSubmitVisible(false)}
-          style={{ backgroundColor: colors.surfacePrimary }}
+          style={{ backgroundColor: theme.colors.surfacePrimary }}
         >
           <Dialog.Title>Submit Test?</Dialog.Title>
           <Dialog.Content>
@@ -609,7 +606,7 @@ const PYQPracticeScreen = ({ route, navigation }) => {
           </Dialog.Content>
           <Dialog.Actions>
             <Button onPress={() => setConfirmSubmitVisible(false)}>Cancel</Button>
-            <Button onPress={() => handleSubmitTest(false)} textColor={colors.error}>
+            <Button onPress={() => handleSubmitTest(false)} textColor={theme.colors.error}>
               Submit
             </Button>
           </Dialog.Actions>
@@ -619,19 +616,19 @@ const PYQPracticeScreen = ({ route, navigation }) => {
   );
 };
 
-const createStyles = (colors) => StyleSheet.create({
+const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.backgroundMain,
+    backgroundColor: theme.colors.backgroundMain,
   },
   topBar: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 10,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: "#E5E7EB",
   },
   backButton: {
     padding: 4,
@@ -643,7 +640,7 @@ const createStyles = (colors) => StyleSheet.create({
   progressText: {
     fontSize: 12,
     fontWeight: "bold",
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     marginBottom: 4,
   },
   progressBar: {
@@ -659,7 +656,7 @@ const createStyles = (colors) => StyleSheet.create({
     borderRadius: 8,
   },
   timerText: {
-    color: colors.primaryDark,
+    color: theme.colors.primaryDark,
     fontWeight: "bold",
     fontSize: 13,
     marginLeft: 4,
@@ -672,7 +669,7 @@ const createStyles = (colors) => StyleSheet.create({
     paddingBottom: 80,
   },
   questionCard: {
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 16,
     elevation: 3,
     shadowColor: "#000",
@@ -683,7 +680,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   questionText: {
     fontWeight: "800",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     lineHeight: 24,
     marginBottom: 16,
   },
@@ -691,12 +688,12 @@ const createStyles = (colors) => StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginVertical: 16,
-    backgroundColor: colors.surfaceTertiary,
+    backgroundColor: theme.colors.surfaceTertiary,
     borderRadius: 12,
     padding: 8,
     height: 220,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: "#E5E7EB",
   },
   questionImage: {
     width: "100%",
@@ -708,8 +705,8 @@ const createStyles = (colors) => StyleSheet.create({
   optionRow: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.surfaceTertiary,
-    borderColor: colors.border,
+    backgroundColor: theme.colors.surfaceTertiary,
+    borderColor: "#E5E7EB",
     borderWidth: 1,
     borderRadius: 12,
     paddingVertical: 12,
@@ -717,60 +714,60 @@ const createStyles = (colors) => StyleSheet.create({
     marginVertical: 6,
   },
   selectedOptionRow: {
-    backgroundColor: colors.primaryLight,
-    borderColor: colors.primary,
+    backgroundColor: "#EDE9FE",
+    borderColor: theme.colors.primary,
   },
   correctOptionRow: {
     backgroundColor: "#D1FAE5",
-    borderColor: colors.success,
+    borderColor: theme.colors.success,
   },
   incorrectOptionRow: {
-    backgroundColor: colors.errorLight,
-    borderColor: colors.error,
+    backgroundColor: "#FEE2E2",
+    borderColor: theme.colors.error,
   },
   optionCircle: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: colors.border,
+    backgroundColor: "#E5E7EB",
     alignItems: "center",
     justifyContent: "center",
     marginRight: 12,
   },
   selectedOptionCircle: {
-    backgroundColor: colors.primary,
+    backgroundColor: theme.colors.primary,
   },
   correctOptionCircle: {
-    backgroundColor: colors.success,
+    backgroundColor: theme.colors.success,
   },
   incorrectOptionCircle: {
-    backgroundColor: colors.error,
+    backgroundColor: theme.colors.error,
   },
   optionCircleText: {
     fontWeight: "bold",
     fontSize: 13,
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
   },
   optionLabel: {
     flex: 1,
     fontSize: 15,
-    color: colors.textPrimary,
+    color: theme.colors.textPrimary,
     lineHeight: 20,
   },
   selectedOptionText: {
-    color: colors.primaryDark,
+    color: theme.colors.primaryDark,
     fontWeight: "bold",
   },
   correctOptionText: {
-    color: colors.successStrong,
+    color: "#065F46",
     fontWeight: "bold",
   },
   incorrectOptionText: {
-    color: colors.errorStrong,
+    color: "#991B1B",
     fontWeight: "bold",
   },
   explanationCard: {
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 16,
     elevation: 2,
     shadowColor: "#000",
@@ -778,7 +775,7 @@ const createStyles = (colors) => StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 8,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: "#E5E7EB",
   },
   explanationHeaderRow: {
     flexDirection: "row",
@@ -788,19 +785,19 @@ const createStyles = (colors) => StyleSheet.create({
   explanationHeaderTitle: {
     fontSize: 15,
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     marginLeft: 8,
   },
   explanationBodyText: {
     fontSize: 14,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     lineHeight: 21,
   },
   footerContainer: {
     padding: 16,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
+    borderTopColor: "#E5E7EB",
   },
   navRow: {
     flexDirection: "row",
@@ -830,14 +827,14 @@ const createStyles = (colors) => StyleSheet.create({
   },
   resultTitle: {
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
   },
   resultSubtitle: {
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     marginTop: 6,
   },
   scoreCard: {
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 20,
     elevation: 4,
     shadowColor: "#000",
@@ -857,16 +854,16 @@ const createStyles = (colors) => StyleSheet.create({
     height: 100,
     borderRadius: 50,
     borderWidth: 6,
-    borderColor: colors.primaryLight,
+    borderColor: theme.colors.primaryLight,
     alignItems: "center",
     justifyContent: "center",
   },
   scoreText: {
     fontWeight: "bold",
-    color: colors.primary,
+    color: theme.colors.primary,
   },
   scoreSubtext: {
-    color: colors.textTertiary,
+    color: theme.colors.textTertiary,
     fontSize: 10,
     marginTop: 2,
   },
@@ -880,20 +877,20 @@ const createStyles = (colors) => StyleSheet.create({
   },
   statText: {
     fontSize: 14,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     marginLeft: 8,
   },
   statBold: {
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
   },
   reviewHeader: {
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     marginBottom: 12,
   },
   reviewItemCard: {
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 12,
     borderLeftWidth: 5,
     marginBottom: 10,
@@ -910,35 +907,35 @@ const createStyles = (colors) => StyleSheet.create({
   },
   reviewItemNumber: {
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontSize: 13,
   },
   reviewItemText: {
     fontSize: 14,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     lineHeight: 18,
     marginVertical: 4,
   },
   reviewItemExam: {
     fontSize: 11,
-    color: colors.textTertiary,
+    color: theme.colors.textTertiary,
     alignSelf: "flex-end",
   },
   doneButton: {
     marginTop: 20,
     borderRadius: 12,
-    backgroundColor: colors.primary,
+    backgroundColor: theme.colors.primary,
   },
 
   // Review Dialog Styles
   reviewDialog: {
     maxHeight: "85%",
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 16,
   },
   reviewDialogTitle: {
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
   },
   dialogScrollContent: {
     padding: 16,
@@ -946,32 +943,32 @@ const createStyles = (colors) => StyleSheet.create({
   dialogQuestion: {
     fontSize: 16,
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     lineHeight: 22,
     marginBottom: 12,
   },
   dialogImage: {
     width: "100%",
     height: 180,
-    backgroundColor: colors.surfaceTertiary,
+    backgroundColor: theme.colors.surfaceTertiary,
     borderRadius: 10,
     marginBottom: 16,
   },
   explanationSection: {
-    backgroundColor: colors.surfaceTertiary,
+    backgroundColor: theme.colors.surfaceTertiary,
     padding: 14,
     borderRadius: 10,
     marginTop: 8,
   },
   explanationHeader: {
     fontWeight: "bold",
-    color: colors.primary,
+    color: theme.colors.primary,
     fontSize: 13,
     marginBottom: 4,
   },
   explanationText: {
     fontSize: 14,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     lineHeight: 20,
   },
 });

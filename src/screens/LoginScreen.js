@@ -33,7 +33,7 @@ import {
 } from "firebase/auth";
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import Constants from "expo-constants";
-import { useThemedStyles } from "../styles/useThemedStyles";
+import { theme } from "../styles/theme";
 import * as AppleAuthentication from "expo-apple-authentication";
 import * as Crypto from "expo-crypto";
 
@@ -72,8 +72,6 @@ const formatAppleName = (fullName) => {
 };
 
 const LoginScreen = () => {
-  const { styles, colors } = useThemedStyles(createStyles);
-
   const { login } = useContext(AppContext);
   const [isRegistering, setIsRegistering] = useState(false);
 
@@ -485,7 +483,7 @@ const LoginScreen = () => {
               <MaterialIcons
                 name="error-outline"
                 size={16}
-                color={colors.error}
+                color={theme.colors.error}
               />
               <Text style={styles.errorText}>{validationError}</Text>
             </View>
@@ -496,7 +494,7 @@ const LoginScreen = () => {
             <MaterialIcons
               name="mail-outline"
               size={20}
-              color={colors.secondary}
+              color={theme.colors.secondary}
               style={styles.inputIcon}
             />
             <TextInput
@@ -506,8 +504,8 @@ const LoginScreen = () => {
               keyboardType="email-address"
               autoCapitalize="none"
               style={styles.input}
-              textColor={colors.textTitle}
-              placeholderTextColor={colors.textPlaceholder}
+              textColor={theme.colors.textTitle}
+              placeholderTextColor={theme.colors.textPlaceholder}
               activeUnderlineColor="transparent"
               underlineColor="transparent"
             />
@@ -518,7 +516,7 @@ const LoginScreen = () => {
             <MaterialIcons
               name="lock-outline"
               size={20}
-              color={colors.secondary}
+              color={theme.colors.secondary}
               style={styles.inputIcon}
             />
             <TextInput
@@ -527,8 +525,8 @@ const LoginScreen = () => {
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
               style={styles.input}
-              textColor={colors.textTitle}
-              placeholderTextColor={colors.textPlaceholder}
+              textColor={theme.colors.textTitle}
+              placeholderTextColor={theme.colors.textPlaceholder}
               activeUnderlineColor="transparent"
               underlineColor="transparent"
             />
@@ -539,7 +537,7 @@ const LoginScreen = () => {
               <MaterialIcons
                 name={showPassword ? "visibility-off" : "visibility"}
                 size={20}
-                color={colors.textPlaceholder}
+                color={theme.colors.textPlaceholder}
               />
             </TouchableOpacity>
           </View>
@@ -577,7 +575,7 @@ const LoginScreen = () => {
             <FontAwesome5
               name="google"
               size={18}
-              color={colors.error}
+              color={theme.colors.error}
               style={styles.googleIcon}
             />
             <Text style={styles.googleBtnText}>Continue with Google</Text>
@@ -635,7 +633,7 @@ const LoginScreen = () => {
               <MaterialIcons
                 name="devices-other"
                 size={36}
-                color={colors.accent}
+                color={theme.colors.accent}
               />
             </View>
 
@@ -661,14 +659,14 @@ const LoginScreen = () => {
               {conflictLoading ? (
                 <ActivityIndicator
                   size="small"
-                  color={colors.surfacePrimary}
+                  color={theme.colors.surfacePrimary}
                 />
               ) : (
                 <>
                   <MaterialIcons
                     name="logout"
                     size={18}
-                    color={colors.surfacePrimary}
+                    color={theme.colors.surfacePrimary}
                     style={{ marginRight: 8 }}
                   />
                   <Text style={styles.modalPrimaryBtnText}>
@@ -694,8 +692,8 @@ const LoginScreen = () => {
   );
 };
 
-const createStyles = (colors) => StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.inverseSurface },
+const styles = StyleSheet.create({
+  root: { flex: 1, backgroundColor: theme.colors.textPrimary },
 
   // ── Top dark half ────────────────────────────────────────────
   topHalf: {
@@ -711,14 +709,14 @@ const createStyles = (colors) => StyleSheet.create({
   },
   brandTagline: {
     fontSize: 13,
-    color: colors.textPlaceholder,
+    color: theme.colors.textPlaceholder,
     letterSpacing: 1,
   },
 
   // ── Bottom white sheet ───────────────────────────────────────
   sheet: {
     flex: 1,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
     overflow: "hidden",
@@ -731,12 +729,12 @@ const createStyles = (colors) => StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     marginBottom: 6,
   },
   subtitle: {
     fontSize: 14,
-    color: colors.textTertiary,
+    color: theme.colors.textTertiary,
     marginBottom: 28,
   },
 
@@ -744,10 +742,10 @@ const createStyles = (colors) => StyleSheet.create({
   inputRow: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.surfaceTertiary,
+    backgroundColor: theme.colors.surfaceTertiary,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: "#E5E7EB",
     paddingHorizontal: 14,
     marginBottom: 14,
     height: 56,
@@ -765,7 +763,7 @@ const createStyles = (colors) => StyleSheet.create({
   errorBanner: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.errorLight,
+    backgroundColor: theme.colors.errorLight,
     borderRadius: 10,
     padding: 12,
     marginBottom: 14,
@@ -773,14 +771,14 @@ const createStyles = (colors) => StyleSheet.create({
   },
   errorText: {
     flex: 1,
-    color: colors.error,
+    color: theme.colors.error,
     fontSize: 13,
     lineHeight: 18,
   },
 
   // ── Primary button ───────────────────────────────────────────
   primaryBtn: {
-    backgroundColor: colors.secondary,
+    backgroundColor: theme.colors.secondary,
     borderRadius: 14,
     height: 52,
     alignItems: "center",
@@ -788,14 +786,14 @@ const createStyles = (colors) => StyleSheet.create({
     marginTop: 8,
     marginBottom: 24,
     elevation: 4,
-    shadowColor: colors.secondary,
+    shadowColor: theme.colors.secondary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.35,
     shadowRadius: 8,
   },
   primaryBtnDisabled: { opacity: 0.6 },
   primaryBtnText: {
-    color: colors.surfacePrimary,
+    color: theme.colors.surfacePrimary,
     fontSize: 16,
     fontWeight: "700",
     letterSpacing: 0.5,
@@ -807,10 +805,10 @@ const createStyles = (colors) => StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
   },
-  dividerLine: { flex: 1, height: 1, backgroundColor: colors.border },
+  dividerLine: { flex: 1, height: 1, backgroundColor: "#E5E7EB" },
   dividerText: {
     fontSize: 13,
-    color: colors.textPlaceholder,
+    color: theme.colors.textPlaceholder,
     marginHorizontal: 12,
   },
 
@@ -819,11 +817,11 @@ const createStyles = (colors) => StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 14,
     height: 52,
     borderWidth: 1.5,
-    borderColor: colors.border,
+    borderColor: "#E5E7EB",
     marginBottom: 12,
     elevation: 1,
     shadowColor: "#000",
@@ -833,7 +831,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   googleIcon: { marginRight: 10 },
   googleBtnText: {
-    color: colors.textBody,
+    color: "#374151",
     fontSize: 15,
     fontWeight: "600",
   },
@@ -845,13 +843,13 @@ const createStyles = (colors) => StyleSheet.create({
 
   // ── Toggle ───────────────────────────────────────────────────
   toggle: { alignItems: "center", marginBottom: 20 },
-  toggleText: { color: colors.textPlaceholder, fontSize: 14 },
-  toggleLink: { color: colors.secondary, fontWeight: "700" },
+  toggleText: { color: theme.colors.textPlaceholder, fontSize: 14 },
+  toggleLink: { color: theme.colors.secondary, fontWeight: "700" },
 
   // ── Privacy link ─────────────────────────────────────────────
   privacyLink: { alignItems: "center", paddingVertical: 4 },
   privacyText: {
-    color: colors.secondary,
+    color: theme.colors.secondary,
     fontSize: 12,
     textDecorationLine: "underline",
   },
@@ -865,7 +863,7 @@ const createStyles = (colors) => StyleSheet.create({
     paddingHorizontal: 24,
   },
   modalCard: {
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 20,
     paddingVertical: 32,
     paddingHorizontal: 28,
@@ -882,7 +880,7 @@ const createStyles = (colors) => StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: 36,
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: theme.colors.surfaceSecondary,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 20,
@@ -890,20 +888,20 @@ const createStyles = (colors) => StyleSheet.create({
   modalTitle: {
     fontSize: 22,
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     textAlign: "center",
     marginBottom: 12,
   },
   modalBody: {
     fontSize: 14,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     textAlign: "center",
     lineHeight: 21,
     marginBottom: 28,
   },
   modalPrimaryBtn: {
     flexDirection: "row",
-    backgroundColor: colors.secondary,
+    backgroundColor: theme.colors.secondary,
     borderRadius: 14,
     height: 50,
     alignItems: "center",
@@ -911,13 +909,13 @@ const createStyles = (colors) => StyleSheet.create({
     width: "100%",
     marginBottom: 12,
     elevation: 4,
-    shadowColor: colors.secondary,
+    shadowColor: theme.colors.secondary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.35,
     shadowRadius: 8,
   },
   modalPrimaryBtnText: {
-    color: colors.surfacePrimary,
+    color: theme.colors.surfacePrimary,
     fontSize: 15,
     fontWeight: "700",
   },
@@ -928,10 +926,10 @@ const createStyles = (colors) => StyleSheet.create({
     justifyContent: "center",
     width: "100%",
     borderWidth: 1.5,
-    borderColor: colors.border,
+    borderColor: "#E5E7EB",
   },
   modalCancelBtnText: {
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     fontSize: 15,
     fontWeight: "600",
   },

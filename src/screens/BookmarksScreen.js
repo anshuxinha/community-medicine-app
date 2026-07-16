@@ -4,7 +4,7 @@ import { Text, Button, List, Divider } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AppContext } from "../context/AppContext";
-import { useThemedStyles } from "../styles/useThemedStyles";
+import { theme } from "../styles/theme";
 import {
   enableScreenCaptureProtection,
   disableScreenCaptureProtection,
@@ -18,8 +18,6 @@ import {
 } from "../utils/contentRegistry";
 
 const BookmarksScreen = ({ navigation }) => {
-  const { styles, colors } = useThemedStyles(createStyles);
-
   const { bookmarks, readItemVersions } = useContext(AppContext);
 
   useEffect(() => {
@@ -99,7 +97,7 @@ const BookmarksScreen = ({ navigation }) => {
                       <MaterialIcons
                         name="bookmark"
                         size={24}
-                        color={colors.secondary}
+                        color={theme.colors.secondary}
                       />
                     )}
                   />
@@ -111,7 +109,7 @@ const BookmarksScreen = ({ navigation }) => {
                       <MaterialIcons
                         name="chevron-right"
                         size={24}
-                        color={colors.textTertiary}
+                        color={theme.colors.textTertiary}
                       />
                     )}
                   />
@@ -127,23 +125,23 @@ const BookmarksScreen = ({ navigation }) => {
   );
 };
 
-const createStyles = (colors) => StyleSheet.create({
+const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
   },
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
   },
   header: {
     marginBottom: 16,
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
   },
   itemTitle: {
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontWeight: "600",
     fontSize: 16,
   },
@@ -153,7 +151,7 @@ const createStyles = (colors) => StyleSheet.create({
     alignItems: "center",
   },
   emptyText: {
-    color: colors.textBody,
+    color: "#374151",
   },
 });
 

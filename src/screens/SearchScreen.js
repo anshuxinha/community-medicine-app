@@ -15,7 +15,7 @@ import {
   getItemStatus,
   getUpdatedSegmentsForItem,
 } from "../utils/contentRegistry";
-import { useThemedStyles } from "../styles/useThemedStyles";
+import { theme } from "../styles/theme";
 
 // Flatten topics with subsections into individual searchable items
 const flattenTopics = (data, section) => {
@@ -42,8 +42,6 @@ const flattenTopics = (data, section) => {
 };
 
 const StatusMark = ({ status }) => {
-  const { styles, colors } = useThemedStyles(createStyles);
-
   if (status === "updated") {
     return <Badge style={styles.newBadge}>NEW</Badge>;
   }
@@ -54,7 +52,7 @@ const StatusMark = ({ status }) => {
         <MaterialCommunityIcons
           name="check"
           size={14}
-          color={colors.primaryDark}
+          color={theme.colors.primaryDark}
         />
       </View>
     );
@@ -173,7 +171,7 @@ const SearchScreen = ({ navigation }) => {
           value={searchQuery}
           style={styles.searchBar}
           inputStyle={styles.searchBarInput}
-          iconColor={colors.textPlaceholder}
+          iconColor={theme.colors.textPlaceholder}
           elevation={0}
         />
         {searchResults.length > 0 ? (
@@ -197,18 +195,18 @@ const SearchScreen = ({ navigation }) => {
   );
 };
 
-const createStyles = (colors) => StyleSheet.create({
+const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
   },
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
   },
   searchBar: {
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: theme.colors.surfaceSecondary,
     borderRadius: 12,
     elevation: 0,
     height: 48,
@@ -216,7 +214,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   searchBarInput: {
     fontSize: 16,
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     minHeight: 48,
     alignSelf: "center",
   },
@@ -230,7 +228,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   card: {
     marginBottom: 12,
-    backgroundColor: colors.surfaceTertiary,
+    backgroundColor: theme.colors.surfaceTertiary,
   },
   titleRow: {
     flexDirection: "row",
@@ -243,10 +241,10 @@ const createStyles = (colors) => StyleSheet.create({
     flexShrink: 1,
   },
   snippet: {
-    color: colors.textTertiary,
+    color: theme.colors.textTertiary,
   },
   parentTitle: {
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     marginBottom: 2,
     fontStyle: "italic",
   },
@@ -258,15 +256,15 @@ const createStyles = (colors) => StyleSheet.create({
     marginBottom: 4,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.primaryLight,
+    backgroundColor: theme.colors.primaryLight,
     borderWidth: 1,
-    borderColor: colors.primaryMuted,
+    borderColor: "#DDD6FE",
   },
   newBadge: {
     marginLeft: 8,
     marginBottom: 4,
-    backgroundColor: colors.primarySoft,
-    color: colors.primaryDark,
+    backgroundColor: "#F3E8FF",
+    color: theme.colors.primaryDark,
     fontSize: 10,
     fontWeight: "900",
   },

@@ -2,11 +2,9 @@ import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Modal, FlatList } from 'react-native';
 import { Text, Divider } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useThemedStyles } from '../styles/useThemedStyles';
+import { theme } from '../styles/theme';
 
 const DropdownPicker = ({ selectedValue, onValueChange, items, labelExtractor, valueExtractor, style }) => {
-  const { styles, colors } = useThemedStyles(createStyles);
-
     const [visible, setVisible] = useState(false);
 
     const handleSelect = (item) => {
@@ -31,7 +29,7 @@ const DropdownPicker = ({ selectedValue, onValueChange, items, labelExtractor, v
                 onPress={() => setVisible(true)}
             >
                 <Text style={styles.dropdownText} numberOfLines={1}>{displayLabel}</Text>
-                <MaterialIcons name="arrow-drop-down" size={24} color={colors.textSecondary} />
+                <MaterialIcons name="arrow-drop-down" size={24} color={theme.colors.textSecondary} />
             </TouchableOpacity>
 
             <Modal visible={visible} transparent={true} animationType="fade" onRequestClose={() => setVisible(false)}>
@@ -40,7 +38,7 @@ const DropdownPicker = ({ selectedValue, onValueChange, items, labelExtractor, v
                         <View style={styles.modalHeader}>
                             <Text style={styles.modalTitle}>Select Option</Text>
                             <TouchableOpacity onPress={() => setVisible(false)} hitSlop={{top:10, bottom:10, left:10, right:10}}>
-                                <MaterialIcons name="close" size={24} color={colors.textSecondary} />
+                                <MaterialIcons name="close" size={24} color={theme.colors.textSecondary} />
                             </TouchableOpacity>
                         </View>
                         <Divider />
@@ -57,7 +55,7 @@ const DropdownPicker = ({ selectedValue, onValueChange, items, labelExtractor, v
                                         onPress={() => handleSelect(item)}
                                     >
                                         <Text style={[styles.optionText, isSelected && styles.optionTextSelected]}>{lab}</Text>
-                                        {isSelected && <MaterialIcons name="check" size={20} color={colors.primary} />}
+                                        {isSelected && <MaterialIcons name="check" size={20} color={theme.colors.primary} />}
                                     </TouchableOpacity>
                                 );
                             }}
@@ -69,7 +67,7 @@ const DropdownPicker = ({ selectedValue, onValueChange, items, labelExtractor, v
     );
 };
 
-const createStyles = (colors) => StyleSheet.create({
+const styles = StyleSheet.create({
     dropdownButton: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -77,14 +75,14 @@ const createStyles = (colors) => StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 12,
         borderWidth: 1,
-        borderColor: colors.borderStrong,
+        borderColor: '#D1D5DB',
         borderRadius: 4,
-        backgroundColor: colors.surfacePrimary,
+        backgroundColor: theme.colors.surfacePrimary,
         marginTop: 8,
     },
     dropdownText: {
         fontSize: 14,
-        color: colors.textTitle,
+        color: theme.colors.textTitle,
         flex: 1,
     },
     modalOverlay: {
@@ -95,7 +93,7 @@ const createStyles = (colors) => StyleSheet.create({
         padding: 20,
     },
     modalContent: {
-        backgroundColor: colors.surfacePrimary,
+        backgroundColor: theme.colors.surfacePrimary,
         borderRadius: 12,
         width: '100%',
         maxHeight: '80%',
@@ -115,7 +113,7 @@ const createStyles = (colors) => StyleSheet.create({
     modalTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: colors.textTitle,
+        color: theme.colors.textTitle,
     },
     optionItem: {
         flexDirection: 'row',
@@ -123,18 +121,18 @@ const createStyles = (colors) => StyleSheet.create({
         alignItems: 'center',
         padding: 16,
         borderBottomWidth: 1,
-        borderBottomColor: colors.surfaceSecondary,
+        borderBottomColor: theme.colors.surfaceSecondary,
     },
     optionItemSelected: {
-        backgroundColor: colors.primaryLight,
+        backgroundColor: theme.colors.primaryLight,
     },
     optionText: {
         fontSize: 16,
-        color: colors.textTitle,
+        color: theme.colors.textTitle,
         flex: 1,
     },
     optionTextSelected: {
-        color: colors.primary,
+        color: theme.colors.primary,
         fontWeight: 'bold',
     },
 });

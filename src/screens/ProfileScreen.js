@@ -16,25 +16,14 @@ import { signOut, deleteUser } from "firebase/auth";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
 import { AppContext } from "../context/AppContext";
-import { useThemedStyles } from "../styles/useThemedStyles";
-import { useAppTheme } from "../styles/ThemeContext";
+import { theme } from "../styles/theme";
 import Constants from "expo-constants";
-import * as Updates from "expo-updates";
 import {
   enableScreenCaptureProtection,
   disableScreenCaptureProtection,
 } from "../utils/screenCaptureProtection";
 
-const APPEARANCE_OPTIONS = [
-  { value: "system", label: "System", icon: "phone-android" },
-  { value: "light", label: "Light", icon: "wb-sunny" },
-  { value: "dark", label: "Dark", icon: "nights-stay" },
-];
-
 const ProfileScreen = () => {
-  const { styles, colors } = useThemedStyles(createStyles);
-  const { preference, setPreference, scheme } = useAppTheme();
-
   const navigation = useNavigation();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const {
@@ -266,7 +255,7 @@ const ProfileScreen = () => {
           <View style={styles.nameRow}>
             <Text style={styles.userName}>{displayName}</Text>
             <TouchableOpacity onPress={handleStartEditName} style={styles.editButton}>
-              <MaterialIcons name="edit" size={16} color={colors.onInverseSurface} style={styles.editIcon} />
+              <MaterialIcons name="edit" size={16} color="#FFFFFF" style={styles.editIcon} />
             </TouchableOpacity>
           </View>
           <Text style={styles.userEmail}>{user?.email || ""}</Text>
@@ -290,7 +279,7 @@ const ProfileScreen = () => {
                 <FontAwesome5
                   name={isPremium ? "crown" : "crown"}
                   size={16}
-                  color={isPremium ? "#FFD700" : colors.textPlaceholder}
+                  color={isPremium ? "#FFD700" : theme.colors.textPlaceholder}
                 />
               </View>
               <View style={styles.subscriptionText}>
@@ -323,7 +312,7 @@ const ProfileScreen = () => {
               <MaterialIcons
                 name="local-fire-department"
                 size={28}
-                color={colors.accent}
+                color={theme.colors.accent}
               />
               <Text style={styles.statValue}>{currentStreak}</Text>
               <Text style={styles.statLabel}>Day Streak</Text>
@@ -335,7 +324,7 @@ const ProfileScreen = () => {
               <MaterialIcons
                 name="stars"
                 size={28}
-                color={colors.secondary}
+                color={theme.colors.secondary}
               />
               <Text style={styles.statValue}>{studyScore}</Text>
               <Text style={styles.statLabel}>Stroma Score</Text>
@@ -347,7 +336,7 @@ const ProfileScreen = () => {
               <MaterialIcons
                 name="trending-up"
                 size={28}
-                color={colors.chartGreen}
+                color={theme.colors.chartGreen}
               />
               <Text style={styles.statValue}>{progressPercent}%</Text>
               <Text style={styles.statLabel}>Progress</Text>
@@ -391,56 +380,10 @@ const ProfileScreen = () => {
                 style={styles.shareButton}
                 onPress={handleShareReferral}
               >
-                <MaterialIcons name="share" size={20} color={colors.surfacePrimary} />
+                <MaterialIcons name="share" size={20} color={theme.colors.surfacePrimary} />
                 <Text style={styles.shareButtonText}>Share</Text>
               </TouchableOpacity>
             </View>
-          </Card.Content>
-        </Card>
-
-        {/* Appearance — high in the scroll so it’s easy to find */}
-        <Text style={styles.sectionTitle}>🎨 Appearance</Text>
-        <Card style={styles.actionsCard}>
-          <Card.Content style={styles.actionsContent}>
-            <Text style={styles.appearanceIntro}>
-              Choose Light, Dark, or match your phone settings.
-            </Text>
-            <View style={styles.appearanceRow}>
-              {APPEARANCE_OPTIONS.map((opt) => {
-                const selected = preference === opt.value;
-                return (
-                  <TouchableOpacity
-                    key={opt.value}
-                    style={[
-                      styles.appearanceOption,
-                      selected && styles.appearanceOptionSelected,
-                    ]}
-                    onPress={() => setPreference(opt.value)}
-                    accessibilityRole="button"
-                    accessibilityState={{ selected }}
-                  >
-                    <MaterialIcons
-                      name={opt.icon}
-                      size={22}
-                      color={selected ? colors.secondary : colors.textTertiary}
-                    />
-                    <Text
-                      style={[
-                        styles.appearanceOptionLabel,
-                        selected && styles.appearanceOptionLabelSelected,
-                      ]}
-                    >
-                      {opt.label}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-            {preference === "system" ? (
-              <Text style={styles.appearanceHint}>
-                Following system · {scheme === "dark" ? "Dark" : "Light"}
-              </Text>
-            ) : null}
           </Card.Content>
         </Card>
 
@@ -473,14 +416,14 @@ const ProfileScreen = () => {
                 <MaterialIcons
                   name="star-outline"
                   size={20}
-                  color={colors.secondary}
+                  color={theme.colors.secondary}
                 />
               </View>
               <Text style={styles.actionLabel}>Rate the App</Text>
               <MaterialIcons
                 name="chevron-right"
                 size={20}
-                color={colors.textPlaceholder}
+                color={theme.colors.textPlaceholder}
               />
             </TouchableOpacity>
 
@@ -494,14 +437,14 @@ const ProfileScreen = () => {
                 <MaterialIcons
                   name="feedback"
                   size={20}
-                  color={colors.secondary}
+                  color={theme.colors.secondary}
                 />
               </View>
               <Text style={styles.actionLabel}>Send Feedback</Text>
               <MaterialIcons
                 name="chevron-right"
                 size={20}
-                color={colors.textPlaceholder}
+                color={theme.colors.textPlaceholder}
               />
             </TouchableOpacity>
 
@@ -516,14 +459,14 @@ const ProfileScreen = () => {
                 <MaterialIcons
                   name="privacy-tip"
                   size={20}
-                  color={colors.secondary}
+                  color={theme.colors.secondary}
                 />
               </View>
               <Text style={styles.actionLabel}>Privacy Policy</Text>
               <MaterialIcons
                 name="chevron-right"
                 size={20}
-                color={colors.textPlaceholder}
+                color={theme.colors.textPlaceholder}
               />
             </TouchableOpacity>
 
@@ -539,14 +482,14 @@ const ProfileScreen = () => {
                     <MaterialIcons
                       name="fact-check"
                       size={20}
-                      color={colors.secondary}
+                      color={theme.colors.secondary}
                     />
                   </View>
                   <Text style={styles.actionLabel}>Library Review Queue</Text>
                   <MaterialIcons
                     name="chevron-right"
                     size={20}
-                    color={colors.textPlaceholder}
+                    color={theme.colors.textPlaceholder}
                   />
                 </TouchableOpacity>
               </>
@@ -556,22 +499,19 @@ const ProfileScreen = () => {
 
         {/* Logout Button */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <MaterialIcons name="logout" size={20} color={colors.error} />
+          <MaterialIcons name="logout" size={20} color={theme.colors.error} />
           <Text style={styles.logoutText}>Log Out</Text>
         </TouchableOpacity>
 
         {/* Delete Account Button */}
         <TouchableOpacity style={styles.deleteAccountButton} onPress={handleDeleteAccount}>
-          <MaterialIcons name="delete-forever" size={20} color={colors.error} />
+          <MaterialIcons name="delete-forever" size={20} color={theme.colors.error} />
           <Text style={styles.deleteAccountText}>Delete Account</Text>
         </TouchableOpacity>
 
-        {/* App Version — update id proves which OTA is running */}
+        {/* App Version */}
         <Text style={styles.version}>
           STROMA v{Constants.expoConfig?.version || "1.0.0"}
-          {Updates.updateId
-            ? ` · ${String(Updates.updateId).slice(0, 8)}`
-            : " · embedded"}
         </Text>
 
         <View style={styles.bottomPadding} />
@@ -592,21 +532,21 @@ const ProfileScreen = () => {
               onChangeText={setNewName}
               style={styles.modalInput}
               outlineStyle={{ borderRadius: 10 }}
-              activeOutlineColor={colors.primary}
+              activeOutlineColor={theme.colors.primary}
             />
             <View style={styles.modalButtons}>
               <Button
                 mode="outlined"
                 onPress={() => setIsEditingName(false)}
                 style={styles.modalButton}
-                textColor={colors.textSecondary}
+                textColor={theme.colors.textSecondary}
               >
                 Cancel
               </Button>
               <Button
                 mode="contained"
                 onPress={handleSaveName}
-                style={[styles.modalButton, { backgroundColor: colors.primary }]}
+                style={[styles.modalButton, { backgroundColor: theme.colors.primary }]}
                 loading={isSavingName}
                 disabled={isSavingName || !newName.trim()}
               >
@@ -619,7 +559,7 @@ const ProfileScreen = () => {
 
       {isLoggingOut && (
         <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color={colors.primary} />
+          <ActivityIndicator size="large" color={theme.colors.primary} />
           <Text style={styles.loadingText}>Logging out...</Text>
         </View>
       )}
@@ -627,13 +567,13 @@ const ProfileScreen = () => {
   );
 };
 
-const createStyles = (colors) => StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.backgroundMain,
+    backgroundColor: theme.colors.backgroundMain,
   },
   header: {
-    backgroundColor: colors.inverseSurface,
+    backgroundColor: theme.colors.textPrimary,
     paddingTop: 56,
     paddingBottom: 32,
     paddingHorizontal: 20,
@@ -642,63 +582,23 @@ const createStyles = (colors) => StyleSheet.create({
     alignItems: "center",
   },
   avatar: {
-    backgroundColor: colors.secondary,
+    backgroundColor: theme.colors.secondary,
     marginBottom: 16,
   },
   avatarLabel: {
     fontSize: 28,
     fontWeight: "bold",
-    color: colors.onInverseSurface,
+    color: theme.colors.surfacePrimary,
   },
   userName: {
     fontSize: 22,
     fontWeight: "bold",
-    color: colors.onInverseSurface,
+    color: theme.colors.surfacePrimary,
     marginBottom: 4,
   },
   userEmail: {
     fontSize: 14,
-    color: colors.textPlaceholder,
-  },
-  appearanceIntro: {
-    fontSize: 13,
-    color: colors.textSecondary,
-    marginBottom: 12,
-    lineHeight: 18,
-  },
-  appearanceRow: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  appearanceOption: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surfaceTertiary,
-    gap: 6,
-  },
-  appearanceOptionSelected: {
-    borderColor: colors.secondary,
-    backgroundColor: colors.primarySoft,
-  },
-  appearanceOptionLabel: {
-    fontSize: 13,
-    fontWeight: "500",
-    color: colors.textTertiary,
-  },
-  appearanceOptionLabelSelected: {
-    color: colors.secondary,
-    fontWeight: "700",
-  },
-  appearanceHint: {
-    marginTop: 10,
-    fontSize: 12,
-    color: colors.textTertiary,
-    textAlign: "center",
+    color: theme.colors.textPlaceholder,
   },
   scrollView: {
     flex: 1,
@@ -707,14 +607,14 @@ const createStyles = (colors) => StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     marginHorizontal: 20,
     marginTop: 24,
     marginBottom: 12,
   },
   subscriptionCard: {
     marginHorizontal: 16,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 16,
     elevation: 2,
   },
@@ -741,7 +641,7 @@ const createStyles = (colors) => StyleSheet.create({
     backgroundColor: "#FFF8DC",
   },
   premiumInactive: {
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: theme.colors.surfaceSecondary,
   },
   subscriptionText: {
     flex: 1,
@@ -749,21 +649,21 @@ const createStyles = (colors) => StyleSheet.create({
   subscriptionTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
   },
   subscriptionSubtitle: {
     fontSize: 13,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     marginTop: 2,
   },
   upgradeButton: {
-    backgroundColor: colors.secondary,
+    backgroundColor: theme.colors.secondary,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 20,
   },
   upgradeButtonText: {
-    color: colors.buttonText,
+    color: theme.colors.buttonText,
     fontWeight: "600",
     fontSize: 14,
   },
@@ -774,7 +674,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 16,
     elevation: 2,
   },
@@ -785,17 +685,17 @@ const createStyles = (colors) => StyleSheet.create({
   statValue: {
     fontSize: 24,
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     marginTop: 8,
   },
   statLabel: {
     fontSize: 12,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     marginTop: 4,
   },
   activityCard: {
     marginHorizontal: 16,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 16,
     elevation: 2,
   },
@@ -811,21 +711,21 @@ const createStyles = (colors) => StyleSheet.create({
   activityDivider: {
     width: 1,
     height: 40,
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: theme.colors.surfaceSecondary,
   },
   activityValue: {
     fontSize: 28,
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
   },
   activityLabel: {
     fontSize: 13,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     marginTop: 4,
   },
   accountCard: {
     marginHorizontal: 16,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 16,
     elevation: 2,
   },
@@ -837,20 +737,20 @@ const createStyles = (colors) => StyleSheet.create({
   },
   accountLabel: {
     fontSize: 14,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
   },
   accountValue: {
     fontSize: 14,
     fontWeight: "500",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
   },
   accountDivider: {
     marginVertical: 12,
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: theme.colors.surfaceSecondary,
   },
   actionsCard: {
     marginHorizontal: 16,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 16,
     elevation: 2,
   },
@@ -866,7 +766,7 @@ const createStyles = (colors) => StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: colors.primarySoft,
+    backgroundColor: "#F3E8FF",
     alignItems: "center",
     justifyContent: "center",
     marginRight: 14,
@@ -874,12 +774,12 @@ const createStyles = (colors) => StyleSheet.create({
   actionLabel: {
     flex: 1,
     fontSize: 15,
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontWeight: "500",
   },
   actionDivider: {
     marginVertical: 4,
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: theme.colors.surfaceSecondary,
   },
   logoutButton: {
     flexDirection: "row",
@@ -888,14 +788,14 @@ const createStyles = (colors) => StyleSheet.create({
     marginHorizontal: 16,
     marginTop: 24,
     paddingVertical: 14,
-    backgroundColor: colors.errorLight,
+    backgroundColor: theme.colors.errorLight,
     borderRadius: 12,
     gap: 8,
   },
   logoutText: {
     fontSize: 15,
     fontWeight: "600",
-    color: colors.error,
+    color: theme.colors.error,
   },
   deleteAccountButton: {
     flexDirection: "row",
@@ -906,18 +806,18 @@ const createStyles = (colors) => StyleSheet.create({
     paddingVertical: 14,
     backgroundColor: "transparent",
     borderWidth: 1,
-    borderColor: colors.errorLight,
+    borderColor: theme.colors.errorLight,
     borderRadius: 12,
     gap: 8,
   },
   deleteAccountText: {
     fontSize: 15,
     fontWeight: "600",
-    color: colors.error,
+    color: theme.colors.error,
   },
   version: {
     textAlign: "center",
-    color: colors.textPlaceholder,
+    color: theme.colors.textPlaceholder,
     fontSize: 12,
     marginTop: 24,
   },
@@ -928,7 +828,7 @@ const createStyles = (colors) => StyleSheet.create({
     marginHorizontal: 16,
     marginVertical: 8,
     borderRadius: 12,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
@@ -937,7 +837,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   referralSubtitle: {
     fontSize: 14,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     marginBottom: 16,
     lineHeight: 20,
   },
@@ -945,7 +845,7 @@ const createStyles = (colors) => StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: theme.colors.surfaceSecondary,
     padding: 12,
     borderRadius: 10,
   },
@@ -954,27 +854,27 @@ const createStyles = (colors) => StyleSheet.create({
   },
   codeLabel: {
     fontSize: 10,
-    color: colors.textPlaceholder,
+    color: theme.colors.textPlaceholder,
     fontWeight: "600",
     marginBottom: 4,
   },
   codeText: {
     fontSize: 18,
     fontWeight: "700",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     letterSpacing: 1,
   },
   shareButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.primary,
+    backgroundColor: theme.colors.primary,
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
     gap: 6,
   },
   shareButtonText: {
-    color: colors.surfacePrimary,
+    color: theme.colors.surfacePrimary,
     fontWeight: "600",
     fontSize: 14,
   },
@@ -989,7 +889,7 @@ const createStyles = (colors) => StyleSheet.create({
     marginTop: 16,
     fontSize: 16,
     fontWeight: "600",
-    color: colors.primary,
+    color: theme.colors.primary,
   },
   nameRow: {
     flexDirection: "row",
@@ -1016,7 +916,7 @@ const createStyles = (colors) => StyleSheet.create({
   modalContent: {
     width: "100%",
     maxWidth: 340,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 16,
     padding: 24,
     elevation: 5,
@@ -1028,13 +928,13 @@ const createStyles = (colors) => StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     marginBottom: 16,
     textAlign: "center",
   },
   modalInput: {
     marginBottom: 20,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
   },
   modalButtons: {
     flexDirection: "row",

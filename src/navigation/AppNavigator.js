@@ -11,7 +11,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { AppContext } from "../context/AppContext";
 import { useSessionEnforcer } from "../hooks/useSessionEnforcer";
 import { setupNotificationTapHandler } from "../services/notificationService";
-import { useAppTheme } from "../styles/ThemeContext";
 
 // Eager: first-paint surfaces only
 import DashboardScreen from "../screens/DashboardScreen";
@@ -19,6 +18,7 @@ import LibraryScreen from "../screens/LibraryScreen";
 import VideosScreen from "../screens/VideosScreen";
 import LoginScreen from "../screens/LoginScreen";
 import PaywallScreen from "../screens/PaywallScreen";
+import { theme } from "../styles/theme";
 
 // Deferred screens: loaded on first navigation via getComponent (not parsed at cold start)
 const getUpdatesScreen = () => require("../screens/UpdatesScreen").default;
@@ -51,7 +51,6 @@ const navigationRef = createNavigationContainerRef();
 const TabNavigator = () => {
   const insets = useSafeAreaInsets();
   const { isPremium } = React.useContext(AppContext);
-  const { colors } = useAppTheme();
 
   return (
     <Tab.Navigator
@@ -66,13 +65,13 @@ const TabNavigator = () => {
           else if (route.name === "Videos") iconName = "ondemand-video";
           return <MaterialIcons name={iconName} color={color} size={size} />;
         },
-        tabBarActiveTintColor: colors.secondary,
-        tabBarInactiveTintColor: colors.textPlaceholder,
+        tabBarActiveTintColor: theme.colors.secondary,
+        tabBarInactiveTintColor: theme.colors.textPlaceholder,
         tabBarStyle: {
-          backgroundColor: colors.surfacePrimary,
+          backgroundColor: theme.colors.surfacePrimary,
           borderTopWidth: 0,
           elevation: 10,
-          shadowColor: colors.shadow,
+          shadowColor: "#000",
           shadowOpacity: 0.1,
           shadowRadius: 10,
           shadowOffset: { width: 0, height: -5 },
@@ -126,7 +125,6 @@ const PremiumGuard = ({ navigation, route }) => {
 
 const AppNavigator = () => {
   const { user } = React.useContext(AppContext);
-  const { colors, navigationTheme } = useAppTheme();
 
   useSessionEnforcer();
 
@@ -142,24 +140,17 @@ const AppNavigator = () => {
           flex: 1,
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: colors.inverseSurface,
+          backgroundColor: theme.colors.textPrimary,
         }}
       >
-        <ActivityIndicator size="large" color={colors.secondary} />
+        <ActivityIndicator size="large" color={theme.colors.secondary} />
       </View>
     );
   }
 
   return (
-    <NavigationContainer ref={navigationRef} theme={navigationTheme}>
-      <Stack.Navigator
-        screenOptions={{
-          headerStyle: { backgroundColor: colors.surfacePrimary },
-          headerTintColor: colors.textTitle,
-          headerTitleStyle: { color: colors.textTitle },
-          contentStyle: { backgroundColor: colors.backgroundMain },
-        }}
-      >
+    <NavigationContainer ref={navigationRef}>
+      <Stack.Navigator>
         {!user ? (
           <Stack.Screen
             name="Login"

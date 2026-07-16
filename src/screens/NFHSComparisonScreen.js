@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import { Card, SegmentedButtons, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useThemedStyles } from "../styles/useThemedStyles";
+import { theme } from "../styles/theme";
 import {
   NFHS_COMPARISON_CATEGORIES,
   NFHS_COMPARISON_INDICATORS,
@@ -47,7 +47,7 @@ const IndicatorRow = ({ item, area }) => {
           <MaterialIcons
             name={!hasComparison ? "remove" : delta < 0 ? "south" : delta > 0 ? "north" : "remove"}
             size={14}
-            color={tone === "good" ? colors.successStrong : tone === "watch" ? colors.warningStrong : colors.textSecondary}
+            color={tone === "good" ? "#047857" : tone === "watch" ? "#B45309" : "#4B5563"}
           />
           <Text style={[styles.deltaText, styles[`${tone}Text`]]}>
             {hasComparison ? Math.abs(delta).toFixed(item.unit === "females/1000 males" ? 0 : 1) : "NR"}
@@ -81,8 +81,6 @@ const IndicatorRow = ({ item, area }) => {
 };
 
 const NFHSComparisonScreen = () => {
-  const { styles, colors } = useThemedStyles(createStyles);
-
   const [area, setArea] = useState("total");
   const [category, setCategory] = useState("headline");
 
@@ -162,7 +160,7 @@ const NFHSComparisonScreen = () => {
                 </Text>
                 <Text style={styles.matrixSubtitle}>{AREA_LABELS[area]} lens</Text>
               </View>
-              <MaterialIcons name="compare-arrows" size={28} color={colors.secondary} />
+              <MaterialIcons name="compare-arrows" size={28} color={theme.colors.secondary} />
             </View>
             {filteredIndicators.map((item) => (
               <IndicatorRow key={item.id} item={item} area={area} />
@@ -186,10 +184,10 @@ const NFHSComparisonScreen = () => {
   );
 };
 
-const createStyles = (colors) => StyleSheet.create({
+const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.backgroundMain,
+    backgroundColor: theme.colors.backgroundMain,
   },
   container: {
     padding: 16,
@@ -202,14 +200,14 @@ const createStyles = (colors) => StyleSheet.create({
     marginBottom: 16,
   },
   kicker: {
-    color: colors.surfaceMuted,
+    color: "#F8FAFC",
     fontSize: 28,
     fontWeight: "900",
     letterSpacing: 0,
     textAlign: "center",
   },
   title: {
-    color: colors.secondary,
+    color: "#A855F7",
     fontSize: 34,
     fontWeight: "900",
     letterSpacing: 0,
@@ -244,19 +242,19 @@ const createStyles = (colors) => StyleSheet.create({
   },
   nfhs5Badge: {
     backgroundColor: "#3B1479",
-    borderColor: colors.chartPurple,
+    borderColor: "#8B5CF6",
   },
   nfhs6Badge: {
     backgroundColor: "#047A3D",
     borderColor: "#22C55E",
   },
   badgeTitle: {
-    color: colors.surfacePrimary,
+    color: "#FFFFFF",
     fontSize: 28,
     fontWeight: "900",
   },
   badgeSubtitle: {
-    color: colors.surfacePrimary,
+    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "700",
     marginTop: 2,
@@ -265,23 +263,23 @@ const createStyles = (colors) => StyleSheet.create({
     width: 54,
     height: 54,
     borderRadius: 27,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: "#FFFFFF",
     alignItems: "center",
     justifyContent: "center",
     marginHorizontal: 10,
   },
   vsText: {
-    color: colors.textTitle,
+    color: "#111827",
     fontSize: 24,
     fontWeight: "900",
   },
   controlCard: {
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 8,
     marginBottom: 16,
   },
   controlLabel: {
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontSize: 16,
     fontWeight: "800",
     marginBottom: 10,
@@ -290,7 +288,7 @@ const createStyles = (colors) => StyleSheet.create({
     marginBottom: 10,
   },
   helperText: {
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     fontSize: 13,
     lineHeight: 18,
   },
@@ -299,8 +297,8 @@ const createStyles = (colors) => StyleSheet.create({
     paddingBottom: 12,
   },
   categoryTab: {
-    backgroundColor: colors.surfaceMuted,
-    color: colors.textBody,
+    backgroundColor: "#EEF2F7",
+    color: "#334155",
     borderRadius: 8,
     paddingHorizontal: 14,
     paddingVertical: 9,
@@ -309,11 +307,11 @@ const createStyles = (colors) => StyleSheet.create({
     overflow: "hidden",
   },
   categoryTabActive: {
-    backgroundColor: colors.secondary,
-    color: colors.surfacePrimary,
+    backgroundColor: theme.colors.secondary,
+    color: "#FFFFFF",
   },
   matrixCard: {
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: "#FFFFFF",
     borderRadius: 8,
     marginBottom: 16,
   },
@@ -324,19 +322,19 @@ const createStyles = (colors) => StyleSheet.create({
     marginBottom: 6,
   },
   matrixTitle: {
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontSize: 20,
     fontWeight: "900",
   },
   matrixSubtitle: {
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     fontSize: 13,
     fontWeight: "700",
     marginTop: 2,
   },
   indicatorRow: {
     borderTopWidth: 1,
-    borderTopColor: colors.border,
+    borderTopColor: "#E5E7EB",
     paddingTop: 14,
     marginTop: 14,
   },
@@ -348,7 +346,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   indicatorTitle: {
     flex: 1,
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontSize: 15,
     fontWeight: "800",
     lineHeight: 20,
@@ -362,26 +360,26 @@ const createStyles = (colors) => StyleSheet.create({
     gap: 2,
   },
   goodPill: {
-    backgroundColor: colors.successSoft,
+    backgroundColor: "#DCFCE7",
   },
   watchPill: {
-    backgroundColor: colors.warningBackground,
+    backgroundColor: "#FEF3C7",
   },
   neutralPill: {
-    backgroundColor: colors.border,
+    backgroundColor: "#E5E7EB",
   },
   deltaText: {
     fontSize: 12,
     fontWeight: "900",
   },
   goodText: {
-    color: colors.successStrong,
+    color: "#047857",
   },
   watchText: {
-    color: colors.warningStrong,
+    color: "#B45309",
   },
   neutralText: {
-    color: colors.textSecondary,
+    color: "#4B5563",
   },
   matrixRow: {
     flexDirection: "row",
@@ -390,12 +388,12 @@ const createStyles = (colors) => StyleSheet.create({
   },
   yearCell: {
     flex: 1,
-    backgroundColor: colors.surfaceMuted,
+    backgroundColor: "#F8FAFC",
     borderRadius: 8,
     padding: 10,
   },
   yearLabel: {
-    color: colors.textTertiary,
+    color: "#64748B",
     fontSize: 11,
     fontWeight: "900",
     textTransform: "uppercase",
@@ -407,7 +405,7 @@ const createStyles = (colors) => StyleSheet.create({
     marginTop: 2,
   },
   nfhs6Value: {
-    color: colors.successStrong,
+    color: "#15803D",
     fontSize: 22,
     fontWeight: "900",
     marginTop: 2,
@@ -419,7 +417,7 @@ const createStyles = (colors) => StyleSheet.create({
   barTrack: {
     height: 8,
     borderRadius: 8,
-    backgroundColor: colors.border,
+    backgroundColor: "#E5E7EB",
     overflow: "hidden",
   },
   barFill: {
@@ -427,23 +425,23 @@ const createStyles = (colors) => StyleSheet.create({
     borderRadius: 8,
   },
   nfhs5Bar: {
-    backgroundColor: colors.secondary,
+    backgroundColor: "#7C3AED",
   },
   nfhs6Bar: {
     backgroundColor: "#16A34A",
   },
   noteText: {
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     fontSize: 12,
     lineHeight: 17,
     marginTop: 8,
   },
   sourceCard: {
-    backgroundColor: colors.surfaceMuted,
+    backgroundColor: "#F8FAFC",
     borderRadius: 8,
   },
   sourceTitle: {
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontSize: 16,
     fontWeight: "900",
     marginBottom: 10,
@@ -452,12 +450,12 @@ const createStyles = (colors) => StyleSheet.create({
     marginBottom: 10,
   },
   sourceLabel: {
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontSize: 13,
     fontWeight: "800",
   },
   sourceDetail: {
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     fontSize: 12,
     lineHeight: 17,
     marginTop: 2,

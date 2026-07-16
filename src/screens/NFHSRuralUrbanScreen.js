@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import { Card, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useThemedStyles } from "../styles/useThemedStyles";
+import { theme } from "../styles/theme";
 import {
   NFHS_COMPARISON_CATEGORIES,
   NFHS_COMPARISON_INDICATORS,
@@ -42,7 +42,7 @@ const RuralUrbanRow = ({ item }) => {
           <MaterialIcons
             name="swap-horiz"
             size={15}
-            color={tone === "rural" ? colors.successStrong : tone === "urban" ? colors.chartBlue : colors.textSecondary}
+            color={tone === "rural" ? "#047857" : tone === "urban" ? "#1D4ED8" : "#4B5563"}
           />
           <Text style={[styles.gapText, styles[`${tone}Text`]]}>
             {hasComparison ? Math.abs(gap).toFixed(item.unit === "females/1000 males" ? 0 : 1) : "NR"}
@@ -82,8 +82,6 @@ const RuralUrbanRow = ({ item }) => {
 };
 
 const NFHSRuralUrbanScreen = () => {
-  const { styles, colors } = useThemedStyles(createStyles);
-
   const [category, setCategory] = useState("headline");
   const filteredIndicators = useMemo(
     () =>
@@ -141,7 +139,7 @@ const NFHSRuralUrbanScreen = () => {
                 </Text>
                 <Text style={styles.matrixSubtitle}>NFHS-6 rural and urban columns only</Text>
               </View>
-              <MaterialIcons name="location-city" size={28} color={colors.secondary} />
+              <MaterialIcons name="location-city" size={28} color={theme.colors.secondary} />
             </View>
             {filteredIndicators.map((item) => (
               <RuralUrbanRow key={item.id} item={item} />
@@ -161,10 +159,10 @@ const NFHSRuralUrbanScreen = () => {
   );
 };
 
-const createStyles = (colors) => StyleSheet.create({
+const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.backgroundMain,
+    backgroundColor: theme.colors.backgroundMain,
   },
   container: {
     padding: 16,
@@ -177,7 +175,7 @@ const createStyles = (colors) => StyleSheet.create({
     marginBottom: 16,
   },
   kicker: {
-    color: colors.surfaceMuted,
+    color: "#F8FAFC",
     fontSize: 24,
     fontWeight: "900",
     letterSpacing: 0,
@@ -192,7 +190,7 @@ const createStyles = (colors) => StyleSheet.create({
     marginTop: 4,
   },
   subtitle: {
-    color: colors.surfaceMuted,
+    color: "#F8FAFC",
     fontSize: 14,
     fontWeight: "800",
     textAlign: "center",
@@ -212,15 +210,15 @@ const createStyles = (colors) => StyleSheet.create({
     borderWidth: 1,
   },
   ruralBadge: {
-    backgroundColor: colors.successStrong,
+    backgroundColor: "#065F46",
     borderColor: "#34D399",
   },
   urbanBadge: {
-    backgroundColor: colors.chartBlue,
-    borderColor: colors.chartBlue,
+    backgroundColor: "#1D4ED8",
+    borderColor: "#60A5FA",
   },
   badgeTitle: {
-    color: colors.surfacePrimary,
+    color: "#FFFFFF",
     fontSize: 25,
     fontWeight: "900",
   },
@@ -228,13 +226,13 @@ const createStyles = (colors) => StyleSheet.create({
     width: 54,
     height: 54,
     borderRadius: 27,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: "#FFFFFF",
     alignItems: "center",
     justifyContent: "center",
     marginHorizontal: 10,
   },
   vsText: {
-    color: colors.textTitle,
+    color: "#111827",
     fontSize: 24,
     fontWeight: "900",
   },
@@ -243,8 +241,8 @@ const createStyles = (colors) => StyleSheet.create({
     paddingBottom: 12,
   },
   categoryTab: {
-    backgroundColor: colors.surfaceMuted,
-    color: colors.textBody,
+    backgroundColor: "#EEF2F7",
+    color: "#334155",
     borderRadius: 8,
     paddingHorizontal: 14,
     paddingVertical: 9,
@@ -253,11 +251,11 @@ const createStyles = (colors) => StyleSheet.create({
     overflow: "hidden",
   },
   categoryTabActive: {
-    backgroundColor: colors.secondary,
-    color: colors.surfacePrimary,
+    backgroundColor: theme.colors.secondary,
+    color: "#FFFFFF",
   },
   matrixCard: {
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: "#FFFFFF",
     borderRadius: 8,
     marginBottom: 16,
   },
@@ -268,19 +266,19 @@ const createStyles = (colors) => StyleSheet.create({
     marginBottom: 6,
   },
   matrixTitle: {
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontSize: 20,
     fontWeight: "900",
   },
   matrixSubtitle: {
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     fontSize: 13,
     fontWeight: "700",
     marginTop: 2,
   },
   row: {
     borderTopWidth: 1,
-    borderTopColor: colors.border,
+    borderTopColor: "#E5E7EB",
     paddingTop: 14,
     marginTop: 14,
   },
@@ -292,7 +290,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   indicatorTitle: {
     flex: 1,
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontSize: 15,
     fontWeight: "800",
     lineHeight: 20,
@@ -306,26 +304,26 @@ const createStyles = (colors) => StyleSheet.create({
     gap: 2,
   },
   ruralPill: {
-    backgroundColor: colors.successSoft,
+    backgroundColor: "#DCFCE7",
   },
   urbanPill: {
     backgroundColor: "#DBEAFE",
   },
   neutralPill: {
-    backgroundColor: colors.border,
+    backgroundColor: "#E5E7EB",
   },
   gapText: {
     fontSize: 12,
     fontWeight: "900",
   },
   ruralText: {
-    color: colors.successStrong,
+    color: "#047857",
   },
   urbanText: {
-    color: colors.chartBlue,
+    color: "#1D4ED8",
   },
   neutralText: {
-    color: colors.textSecondary,
+    color: "#4B5563",
   },
   valueRow: {
     flexDirection: "row",
@@ -334,24 +332,24 @@ const createStyles = (colors) => StyleSheet.create({
   },
   valueCell: {
     flex: 1,
-    backgroundColor: colors.surfaceMuted,
+    backgroundColor: "#F8FAFC",
     borderRadius: 8,
     padding: 10,
   },
   cellLabel: {
-    color: colors.textTertiary,
+    color: "#64748B",
     fontSize: 11,
     fontWeight: "900",
     textTransform: "uppercase",
   },
   ruralValue: {
-    color: colors.successStrong,
+    color: "#047857",
     fontSize: 22,
     fontWeight: "900",
     marginTop: 2,
   },
   urbanValue: {
-    color: colors.chartBlue,
+    color: "#1D4ED8",
     fontSize: 22,
     fontWeight: "900",
     marginTop: 2,
@@ -363,7 +361,7 @@ const createStyles = (colors) => StyleSheet.create({
   barTrack: {
     height: 8,
     borderRadius: 8,
-    backgroundColor: colors.border,
+    backgroundColor: "#E5E7EB",
     overflow: "hidden",
   },
   barFill: {
@@ -371,34 +369,34 @@ const createStyles = (colors) => StyleSheet.create({
     borderRadius: 8,
   },
   ruralBar: {
-    backgroundColor: colors.chartGreen,
+    backgroundColor: "#10B981",
   },
   urbanBar: {
-    backgroundColor: colors.chartBlue,
+    backgroundColor: "#3B82F6",
   },
   gapNote: {
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     fontSize: 12,
     lineHeight: 17,
     marginTop: 8,
   },
   sourceCard: {
-    backgroundColor: colors.surfaceMuted,
+    backgroundColor: "#F8FAFC",
     borderRadius: 8,
   },
   sourceTitle: {
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontSize: 16,
     fontWeight: "900",
     marginBottom: 10,
   },
   sourceLabel: {
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontSize: 13,
     fontWeight: "800",
   },
   sourceDetail: {
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     fontSize: 12,
     lineHeight: 17,
     marginTop: 2,

@@ -43,7 +43,7 @@ import { db } from "../config/firebase";
 import * as Device from "expo-device";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { AppContext } from "../context/AppContext";
-import { useThemedStyles } from "../styles/useThemedStyles";
+import { theme } from "../styles/theme";
 import {
   formatDuration,
   formatPublishedDate,
@@ -76,18 +76,10 @@ const isVideoFree = (video) => {
 };
 
 const FreeLabel = () => {
-  const { styles, colors } = useThemedStyles(createStyles);
-
   return <Badge style={styles.freeBadge}>FREE</Badge>;
 };
 
-const pdfViewerHtml = (pdfUrl, colors = {}) => {
-  const bg = colors.surfaceSecondary || "#f3f4f6";
-  const pageBg = colors.surfacePrimary || "#fff";
-  const text = colors.textSecondary || "#4b5563";
-  const fab = colors.primary || "#6B21A8";
-  const fabActive = colors.primaryDark || "#581C87";
-  return `
+const pdfViewerHtml = (pdfUrl) => `
 <!DOCTYPE html>
 <html>
 <head>
@@ -99,7 +91,7 @@ const pdfViewerHtml = (pdfUrl, colors = {}) => {
     body {
       margin: 0;
       padding: 0;
-      background-color: ${bg};
+      background-color: #f3f4f6;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -121,7 +113,7 @@ const pdfViewerHtml = (pdfUrl, colors = {}) => {
       max-width: 800px;
       margin: 8px 0;
       box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
-      background-color: ${pageBg};
+      background-color: #fff;
       border-radius: 6px;
       overflow: hidden;
     }
@@ -133,7 +125,7 @@ const pdfViewerHtml = (pdfUrl, colors = {}) => {
     #loading {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       margin-top: 60px;
-      color: ${text};
+      color: #4b5563;
       font-size: 15px;
       font-weight: 500;
       text-align: center;
@@ -145,7 +137,7 @@ const pdfViewerHtml = (pdfUrl, colors = {}) => {
       width: 56px;
       height: 56px;
       border-radius: 50%;
-      background-color: ${fab};
+      background-color: #6B21A8;
       color: white;
       border: none;
       box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2), 0 2px 4px -1px rgba(0,0,0,0.1);
@@ -159,7 +151,7 @@ const pdfViewerHtml = (pdfUrl, colors = {}) => {
       -webkit-tap-highlight-color: transparent;
     }
     .fab:active {
-      background-color: ${fabActive};
+      background-color: #581C87;
       transform: scale(0.95);
     }
     .fab-icon {
@@ -233,7 +225,6 @@ const pdfViewerHtml = (pdfUrl, colors = {}) => {
 </body>
 </html>
 `;
-};
 
 const onShouldStartLoadWithRequest = (request) => {
   const url = request.url;
@@ -895,7 +886,7 @@ const EmptyState = ({ isFiltered }) => (
     <MaterialIcons
       name="video-library"
       size={48}
-      color={colors.textPlaceholder}
+      color={theme.colors.textPlaceholder}
     />
     <Text style={styles.emptyTitle}>
       {isFiltered ? "No videos in this category" : "No videos yet"}
@@ -1417,7 +1408,7 @@ const VideosScreen = ({ navigation }) => {
               <MaterialIcons
                 name={isDoubtUpvoted ? "thumb-up" : "thumb-up-off-alt"}
                 size={16}
-                color={isDoubtUpvoted ? colors.primary : colors.textSecondary}
+                color={isDoubtUpvoted ? theme.colors.primary : theme.colors.textSecondary}
               />
               <Text style={[styles.actionButtonText, isDoubtUpvoted && styles.actionActiveText]}>
                 {item.upvotedBy?.length || 0}
@@ -1428,7 +1419,7 @@ const VideosScreen = ({ navigation }) => {
                 style={styles.actionButton}
                 onPress={() => setReplyingTo(item)}
               >
-                <MaterialIcons name="reply" size={16} color={colors.textSecondary} />
+                <MaterialIcons name="reply" size={16} color={theme.colors.textSecondary} />
                 <Text style={styles.actionButtonText}>Reply</Text>
               </Pressable>
             )}
@@ -1437,7 +1428,7 @@ const VideosScreen = ({ navigation }) => {
                 style={styles.deleteButton}
                 onPress={() => confirmDeleteDoubt(item)}
               >
-                <MaterialIcons name="delete-outline" size={16} color={colors.error} />
+                <MaterialIcons name="delete-outline" size={16} color={theme.colors.error} />
                 <Text style={styles.deleteButtonText}>Delete</Text>
               </Pressable>
             )}
@@ -1446,7 +1437,7 @@ const VideosScreen = ({ navigation }) => {
                 style={styles.approveButton}
                 onPress={() => handleApproveDoubt(item.id)}
               >
-                <MaterialIcons name="check-circle" size={16} color={colors.success} />
+                <MaterialIcons name="check-circle" size={16} color={theme.colors.success} />
                 <Text style={styles.approveButtonText}>Approve</Text>
               </Pressable>
             )}
@@ -1455,7 +1446,7 @@ const VideosScreen = ({ navigation }) => {
                 style={styles.disapproveButton}
                 onPress={() => handleDisapproveDoubt(item.id)}
               >
-                <MaterialIcons name="visibility-off" size={16} color={colors.warningText} />
+                <MaterialIcons name="visibility-off" size={16} color={theme.colors.warningText} />
                 <Text style={styles.disapproveButtonText}>Disapprove</Text>
               </Pressable>
             )}
@@ -1489,7 +1480,7 @@ const VideosScreen = ({ navigation }) => {
                       <MaterialIcons
                         name={isReplyUpvoted ? "thumb-up" : "thumb-up-off-alt"}
                         size={14}
-                        color={isReplyUpvoted ? colors.primary : colors.textSecondary}
+                        color={isReplyUpvoted ? theme.colors.primary : theme.colors.textSecondary}
                       />
                       <Text style={[styles.actionButtonText, isReplyUpvoted && styles.actionActiveText]}>
                         {reply.upvotedBy?.length || 0}
@@ -1500,7 +1491,7 @@ const VideosScreen = ({ navigation }) => {
                         style={styles.deleteButton}
                         onPress={() => confirmDeleteReply(item, reply.id)}
                       >
-                        <MaterialIcons name="delete-outline" size={14} color={colors.error} />
+                        <MaterialIcons name="delete-outline" size={14} color={theme.colors.error} />
                         <Text style={styles.deleteButtonText}>Delete</Text>
                       </Pressable>
                     )}
@@ -1627,7 +1618,7 @@ const VideosScreen = ({ navigation }) => {
             imageStyle={styles.itemThumbnailImage}
           >
             <View style={styles.itemPlayOverlay}>
-              <MaterialIcons name="play-arrow" size={20} color={colors.surfacePrimary} />
+              <MaterialIcons name="play-arrow" size={20} color="#FFFFFF" />
             </View>
             {duration ? (
               <View style={styles.itemDurationBadge}>
@@ -1651,7 +1642,7 @@ const VideosScreen = ({ navigation }) => {
         <IconButton
           icon="dots-vertical"
           size={20}
-          iconColor={colors.textTertiary}
+          iconColor={theme.colors.textTertiary}
           onPress={() => {}}
           style={styles.itemOptions}
         />
@@ -1680,7 +1671,7 @@ const VideosScreen = ({ navigation }) => {
               </View>
               <IconButton
                 icon={isSubscribed ? "bell" : "bell-outline"}
-                iconColor={isSubscribed ? colors.success : colors.textTitle}
+                iconColor={isSubscribed ? theme.colors.success : theme.colors.textTitle}
                 size={24}
                 onPress={toggleNotifications}
                 disabled={isTogglingNotifications}
@@ -1697,7 +1688,7 @@ const VideosScreen = ({ navigation }) => {
                 <Chip
                   selected={selectedCategory === item.id}
                   mode={selectedCategory === item.id ? "flat" : "outlined"}
-                  selectedColor={colors.primary}
+                  selectedColor={theme.colors.primary}
                   style={[
                     styles.filterChip,
                     selectedCategory === item.id && styles.filterChipSelected,
@@ -1710,7 +1701,7 @@ const VideosScreen = ({ navigation }) => {
                   onPress={() => setSelectedCategory(item.id)}
                   showSelectedOverlay={false}
                   icon={selectedCategory === item.id ? ({ size, color }) => (
-                    <MaterialIcons name="check" size={18} color={colors.primary} />
+                    <MaterialIcons name="check" size={18} color={theme.colors.primary} />
                   ) : undefined}
                 >
                   {item.label}
@@ -1728,14 +1719,14 @@ const VideosScreen = ({ navigation }) => {
               onPress={() => setVisibleCount(prev => prev + 10)}
             >
               <Text style={styles.loadMoreText}>Load more</Text>
-              <MaterialIcons name="keyboard-arrow-down" size={20} color={colors.textPrimary} />
+              <MaterialIcons name="keyboard-arrow-down" size={20} color={theme.colors.textPrimary} />
             </Pressable>
           ) : null
         }
         ListEmptyComponent={
           isLoadingVideos ? (
             <View style={styles.loadingState}>
-              <ActivityIndicator color={colors.secondary} />
+              <ActivityIndicator color={theme.colors.secondary} />
               <Text style={styles.loadingText}>Loading videos...</Text>
             </View>
           ) : (
@@ -1778,7 +1769,7 @@ const VideosScreen = ({ navigation }) => {
             <View style={styles.playerHeader}>
               <IconButton
                 icon="close"
-                iconColor={colors.textTitle}
+                iconColor={theme.colors.textTitle}
                 onPress={closePlayerModal}
               />
               <Text style={styles.playerTitle} numberOfLines={1}>
@@ -1786,7 +1777,7 @@ const VideosScreen = ({ navigation }) => {
               </Text>
               <IconButton
                 icon="fullscreen"
-                iconColor={colors.textTitle}
+                iconColor={theme.colors.textTitle}
                 onPress={() => setPlayerFullscreen(true)}
               />
             </View>
@@ -1831,7 +1822,7 @@ const VideosScreen = ({ navigation }) => {
                   <MaterialIcons
                     name="error-outline"
                     size={42}
-                    color={colors.warning}
+                    color={theme.colors.warning}
                   />
                   <Text style={styles.emptyTitle}>Video is still processing</Text>
                   <Text style={styles.emptyText}>
@@ -1843,7 +1834,7 @@ const VideosScreen = ({ navigation }) => {
                 <View style={styles.playerFullscreenControls} pointerEvents="box-none">
                   <IconButton
                     icon="fullscreen-exit"
-                    iconColor={colors.surfacePrimary}
+                    iconColor="#FFFFFF"
                     containerColor="rgba(0,0,0,0.45)"
                     onPress={() => {
                       setPlayerFullscreen(false);
@@ -1882,8 +1873,8 @@ const VideosScreen = ({ navigation }) => {
                     size={18}
                     color={
                       activeTab === "doubts"
-                        ? colors.primary
-                        : colors.textSecondary
+                        ? theme.colors.primary
+                        : theme.colors.textSecondary
                     }
                   />
                   <Text
@@ -1907,8 +1898,8 @@ const VideosScreen = ({ navigation }) => {
                     size={18}
                     color={
                       activeTab === "notes"
-                        ? colors.primary
-                        : colors.textSecondary
+                        ? theme.colors.primary
+                        : theme.colors.textSecondary
                     }
                   />
                   <Text
@@ -1937,7 +1928,7 @@ const VideosScreen = ({ navigation }) => {
                         <MaterialIcons
                           name="forum"
                           size={40}
-                          color={colors.textPlaceholder}
+                          color={theme.colors.textPlaceholder}
                         />
                         <Text style={styles.emptyDoubtsTitle}>
                           No comments yet
@@ -1961,7 +1952,7 @@ const VideosScreen = ({ navigation }) => {
                       <IconButton
                         icon="close"
                         size={16}
-                        iconColor={colors.textSecondary}
+                        iconColor={theme.colors.textSecondary}
                         onPress={() => setReplyingTo(null)}
                         style={{ margin: 0 }}
                       />
@@ -1978,15 +1969,15 @@ const VideosScreen = ({ navigation }) => {
                           ? "Type your reply..."
                           : "Add a comment about this video..."
                       }
-                      placeholderTextColor={colors.textPlaceholder}
+                      placeholderTextColor={theme.colors.textPlaceholder}
                       multiline
                     />
                     <IconButton
                       icon="send"
                       iconColor={
                         newDoubtText.trim()
-                          ? colors.primary
-                          : colors.textPlaceholder
+                          ? theme.colors.primary
+                          : theme.colors.textPlaceholder
                       }
                       disabled={!newDoubtText.trim()}
                       onPress={handleAddDoubt}
@@ -2004,14 +1995,14 @@ const VideosScreen = ({ navigation }) => {
                     <IconButton
                       icon="download"
                       size={24}
-                      iconColor={colors.primary}
+                      iconColor={theme.colors.primary}
                       onPress={handleDownloadPdf}
                       style={{ marginRight: 8 }}
                     />
                     <IconButton
                       icon="fullscreen"
                       size={24}
-                      iconColor={colors.primary}
+                      iconColor={theme.colors.primary}
                       onPress={() => setFullscreenPdf(true)}
                       style={styles.fullscreenIcon}
                     />
@@ -2019,7 +2010,7 @@ const VideosScreen = ({ navigation }) => {
                   <View style={styles.pdfPreviewContainer}>
                     <WebView
                       originWhitelist={["*"]}
-                      source={{ html: pdfViewerHtml(selectedVideo?.pdfUrl, colors) }}
+                      source={{ html: pdfViewerHtml(selectedVideo?.pdfUrl) }}
                       style={styles.pdfWebView}
                       onShouldStartLoadWithRequest={
                         onShouldStartLoadWithRequest
@@ -2031,7 +2022,7 @@ const VideosScreen = ({ navigation }) => {
                       renderLoading={() => (
                         <View style={styles.pdfLoadingContainer}>
                           <ActivityIndicator
-                            color={colors.primary}
+                            color={theme.colors.primary}
                             size="large"
                           />
                         </View>
@@ -2053,7 +2044,7 @@ const VideosScreen = ({ navigation }) => {
           <View style={styles.pdfFullscreenHeader}>
             <IconButton
               icon="arrow-left"
-              iconColor={colors.textTitle}
+              iconColor={theme.colors.textTitle}
               onPress={handleCloseFullscreenPdf}
             />
             <Text style={styles.pdfFullscreenTitle} numberOfLines={1}>
@@ -2061,14 +2052,14 @@ const VideosScreen = ({ navigation }) => {
             </Text>
             <IconButton
               icon="download"
-              iconColor={colors.primary}
+              iconColor={theme.colors.primary}
               onPress={handleDownloadPdf}
             />
           </View>
 
           <WebView
             originWhitelist={["*"]}
-            source={{ html: pdfViewerHtml(selectedVideo?.pdfUrl, colors) }}
+            source={{ html: pdfViewerHtml(selectedVideo?.pdfUrl) }}
             style={styles.pdfFullscreenWebView}
             onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
             javaScriptEnabled={true}
@@ -2078,7 +2069,7 @@ const VideosScreen = ({ navigation }) => {
             renderLoading={() => (
               <View style={styles.pdfLoadingContainer}>
                 <ActivityIndicator
-                  color={colors.primary}
+                  color={theme.colors.primary}
                   size="large"
                 />
               </View>
@@ -2090,10 +2081,10 @@ const VideosScreen = ({ navigation }) => {
   );
 };
 
-const createStyles = (colors) => StyleSheet.create({
+const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
   },
   listContent: {
     paddingBottom: 32,
@@ -2110,11 +2101,11 @@ const createStyles = (colors) => StyleSheet.create({
   title: {
     fontSize: 30,
     fontWeight: "800",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
   },
   subtitle: {
     marginTop: 6,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     fontSize: 14,
     lineHeight: 20,
     maxWidth: 260,
@@ -2124,28 +2115,28 @@ const createStyles = (colors) => StyleSheet.create({
     paddingRight: 20,
   },
   filterChip: {
-    backgroundColor: colors.surfacePrimary,
-    borderColor: colors.border,
+    backgroundColor: theme.colors.surfacePrimary,
+    borderColor: "#E5E7EB",
     borderRadius: 20,
   },
   filterChipSelected: {
-    backgroundColor: colors.primaryLight, // Light purple background
-    borderColor: colors.primary,
+    backgroundColor: "#EDE9FE", // Light purple background
+    borderColor: theme.colors.primary,
     borderWidth: 1,
   },
   filterChipText: {
-    color: colors.textSecondary,
+    color: "#4B5563",
     fontWeight: "600",
     fontSize: 14,
   },
   filterChipTextSelected: {
-    color: colors.primary,
+    color: theme.colors.primary,
     fontWeight: "bold",
   },
   sectionHeading: {
     fontSize: 12,
     fontWeight: "800",
-    color: colors.textTertiary,
+    color: theme.colors.textTertiary,
     letterSpacing: 1,
     marginTop: 10,
   },
@@ -2189,7 +2180,7 @@ const createStyles = (colors) => StyleSheet.create({
     paddingVertical: 2,
   },
   itemDurationText: {
-    color: colors.surfacePrimary,
+    color: "#FFFFFF",
     fontSize: 10,
     fontWeight: "800",
   },
@@ -2205,15 +2196,15 @@ const createStyles = (colors) => StyleSheet.create({
     gap: 6,
   },
   itemTitle: {
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontSize: 15,
     fontWeight: "800",
     lineHeight: 20,
     flexShrink: 1,
   },
   videoNewBadge: {
-    backgroundColor: colors.primarySoft,
-    color: colors.primaryDark,
+    backgroundColor: "#F3E8FF",
+    color: theme.colors.primaryDark,
     borderRadius: 6,
     overflow: "hidden",
     paddingHorizontal: 6,
@@ -2222,7 +2213,7 @@ const createStyles = (colors) => StyleSheet.create({
     fontWeight: "900",
   },
   itemMeta: {
-    color: colors.textTertiary,
+    color: theme.colors.textTertiary,
     fontSize: 12,
     fontWeight: "500",
   },
@@ -2238,7 +2229,7 @@ const createStyles = (colors) => StyleSheet.create({
     gap: 4,
   },
   loadMoreText: {
-    color: colors.textPrimary,
+    color: theme.colors.textPrimary,
     fontSize: 15,
     fontWeight: "800",
   },
@@ -2249,7 +2240,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   loadingText: {
     marginTop: 10,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
   },
   emptyState: {
     alignItems: "center",
@@ -2259,20 +2250,20 @@ const createStyles = (colors) => StyleSheet.create({
   },
   emptyTitle: {
     marginTop: 12,
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontWeight: "800",
     fontSize: 18,
     textAlign: "center",
   },
   emptyText: {
     marginTop: 8,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     textAlign: "center",
     lineHeight: 20,
   },
   playerSafeArea: {
     flex: 1,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
   },
   playerSafeAreaFullscreen: {
     backgroundColor: "#000000",
@@ -2281,14 +2272,14 @@ const createStyles = (colors) => StyleSheet.create({
     height: 58,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderBottomWidth: 1,
-    borderBottomColor: colors.surfaceSecondary,
+    borderBottomColor: theme.colors.surfaceSecondary,
   },
   playerTitle: {
     flex: 1,
     textAlign: "center",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontWeight: "800",
   },
   playerHeaderSpacer: {
@@ -2326,11 +2317,11 @@ const createStyles = (colors) => StyleSheet.create({
     marginVertical: 6,
   },
   doubtCard: {
-    backgroundColor: colors.surfaceTertiary,
+    backgroundColor: theme.colors.surfaceTertiary,
     borderRadius: 12,
     padding: 12,
     borderWidth: 1,
-    borderColor: colors.surfaceSecondary,
+    borderColor: theme.colors.surfaceSecondary,
   },
   doubtHeader: {
     flexDirection: "row",
@@ -2346,39 +2337,39 @@ const createStyles = (colors) => StyleSheet.create({
   doubtAuthorName: {
     fontWeight: "bold",
     fontSize: 14,
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
   },
   stromaScoreBadge: {
-    backgroundColor: colors.primaryLight,
+    backgroundColor: theme.colors.primaryLight,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 6,
   },
   stromaScoreText: {
-    color: colors.primary,
+    color: theme.colors.primary,
     fontSize: 11,
     fontWeight: "600",
   },
   underReviewBadge: {
-    backgroundColor: colors.warningBackground,
+    backgroundColor: theme.colors.warningBackground,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 6,
     borderWidth: 0.5,
-    borderColor: colors.warning,
+    borderColor: theme.colors.warning,
   },
   underReviewText: {
-    color: colors.warningText,
+    color: theme.colors.warningText,
     fontSize: 11,
     fontWeight: "bold",
   },
   doubtDate: {
     fontSize: 11,
-    color: colors.textTertiary,
+    color: theme.colors.textTertiary,
   },
   doubtText: {
     fontSize: 14,
-    color: colors.textPrimary,
+    color: theme.colors.textPrimary,
     lineHeight: 18,
   },
   doubtActions: {
@@ -2396,14 +2387,14 @@ const createStyles = (colors) => StyleSheet.create({
     borderRadius: 6,
   },
   actionActive: {
-    backgroundColor: colors.primaryLight,
+    backgroundColor: theme.colors.primaryLight,
   },
   actionButtonText: {
     fontSize: 12,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
   },
   actionActiveText: {
-    color: colors.primary,
+    color: theme.colors.primary,
     fontWeight: "bold",
   },
   approveButton: {
@@ -2417,7 +2408,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   approveButtonText: {
     fontSize: 12,
-    color: colors.success,
+    color: theme.colors.success,
     fontWeight: "bold",
   },
   disapproveButton: {
@@ -2426,12 +2417,12 @@ const createStyles = (colors) => StyleSheet.create({
     gap: 4,
     paddingVertical: 4,
     paddingHorizontal: 8,
-    backgroundColor: colors.warningBackground,
+    backgroundColor: theme.colors.warningBackground,
     borderRadius: 6,
   },
   disapproveButtonText: {
     fontSize: 12,
-    color: colors.warningText,
+    color: theme.colors.warningText,
     fontWeight: "bold",
   },
   deleteButton: {
@@ -2440,48 +2431,48 @@ const createStyles = (colors) => StyleSheet.create({
     gap: 4,
     paddingVertical: 4,
     paddingHorizontal: 8,
-    backgroundColor: colors.errorLight,
+    backgroundColor: theme.colors.errorLight,
     borderRadius: 6,
   },
   deleteButtonText: {
     fontSize: 12,
-    color: colors.error,
+    color: theme.colors.error,
     fontWeight: "bold",
   },
   repliesContainer: {
     marginLeft: 20,
     marginTop: 4,
     borderLeftWidth: 1.5,
-    borderLeftColor: colors.surfaceSecondary,
+    borderLeftColor: theme.colors.surfaceSecondary,
     paddingLeft: 12,
   },
   replyCard: {
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 10,
     padding: 10,
     marginTop: 6,
     borderWidth: 0.5,
-    borderColor: colors.surfaceSecondary,
+    borderColor: theme.colors.surfaceSecondary,
   },
   replyAuthorName: {
     fontWeight: "600",
     fontSize: 13,
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
   },
   stromaScoreBadgeReply: {
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: "#F3F4F6",
     paddingHorizontal: 4,
     paddingVertical: 1,
     borderRadius: 4,
   },
   stromaScoreTextReply: {
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     fontSize: 10,
     fontWeight: "500",
   },
   replyText: {
     fontSize: 13,
-    color: colors.textPrimary,
+    color: theme.colors.textPrimary,
     lineHeight: 16,
   },
   emptyDoubts: {
@@ -2493,12 +2484,12 @@ const createStyles = (colors) => StyleSheet.create({
   emptyDoubtsTitle: {
     fontSize: 15,
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     marginTop: 8,
   },
   emptyDoubtsText: {
     fontSize: 13,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     textAlign: "center",
     marginTop: 4,
   },
@@ -2508,20 +2499,20 @@ const createStyles = (colors) => StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderTopWidth: 1,
-    borderTopColor: colors.surfaceSecondary,
-    backgroundColor: colors.surfacePrimary,
+    borderTopColor: theme.colors.surfaceSecondary,
+    backgroundColor: theme.colors.surfacePrimary,
   },
   input: {
     flex: 1,
     minHeight: 40,
     maxHeight: 100,
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: theme.colors.surfaceSecondary,
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingTop: 8,
     paddingBottom: 8,
     fontSize: 14,
-    color: colors.textPrimary,
+    color: theme.colors.textPrimary,
   },
   sendButton: {
     margin: 0,
@@ -2530,13 +2521,13 @@ const createStyles = (colors) => StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: colors.primaryLight,
+    backgroundColor: theme.colors.primaryLight,
     paddingHorizontal: 16,
     paddingVertical: 4,
   },
   replyBannerText: {
     fontSize: 12,
-    color: colors.primary,
+    color: theme.colors.primary,
   },
   videoActionsRow: {
     flexDirection: "row",
@@ -2549,8 +2540,8 @@ const createStyles = (colors) => StyleSheet.create({
   tabsContainer: {
     flexDirection: "row",
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-    backgroundColor: colors.surfacePrimary,
+    borderBottomColor: "#E5E7EB",
+    backgroundColor: theme.colors.surfacePrimary,
   },
   tabButton: {
     flex: 1,
@@ -2563,20 +2554,20 @@ const createStyles = (colors) => StyleSheet.create({
     borderBottomColor: "transparent",
   },
   activeTabButton: {
-    borderBottomColor: colors.primary,
+    borderBottomColor: theme.colors.primary,
   },
   tabButtonText: {
     fontSize: 14,
     fontWeight: "600",
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
   },
   activeTabButtonText: {
-    color: colors.primary,
+    color: theme.colors.primary,
     fontWeight: "bold",
   },
   notesTabContent: {
     flex: 1,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
   },
   notesTabHeader: {
     flexDirection: "row",
@@ -2585,12 +2576,12 @@ const createStyles = (colors) => StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: colors.surfaceSecondary,
+    borderBottomColor: theme.colors.surfaceSecondary,
   },
   notesTabTitle: {
     fontSize: 14,
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     flex: 1,
     marginRight: 8,
   },
@@ -2599,7 +2590,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   pdfPreviewContainer: {
     flex: 1,
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: "#F3F4F6",
   },
   pdfWebView: {
     flex: 1,
@@ -2612,19 +2603,19 @@ const createStyles = (colors) => StyleSheet.create({
   },
   pdfFullscreenSafeArea: {
     flex: 1,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
   },
   pdfFullscreenHeader: {
     height: 56,
     flexDirection: "row",
     alignItems: "center",
     borderBottomWidth: 1,
-    borderBottomColor: colors.surfaceSecondary,
+    borderBottomColor: theme.colors.surfaceSecondary,
   },
   pdfFullscreenTitle: {
     flex: 1,
     textAlign: "center",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontWeight: "bold",
     fontSize: 16,
   },
@@ -2632,8 +2623,8 @@ const createStyles = (colors) => StyleSheet.create({
     flex: 1,
   },
   freeBadge: {
-    backgroundColor: colors.success,
-    color: colors.surfacePrimary,
+    backgroundColor: theme.colors.success,
+    color: "#FFFFFF",
     fontWeight: "700",
     marginRight: 6,
     alignSelf: "center",

@@ -15,7 +15,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { MUSEUM_ITEMS, CATEGORIES, FREE_CATEGORY } from "../data/museumData";
 import { AppContext } from "../context/AppContext";
-import { useThemedStyles } from "../styles/useThemedStyles";
+import { theme } from "../styles/theme";
 import {
   enableScreenCaptureProtection,
   disableScreenCaptureProtection,
@@ -27,7 +27,6 @@ const ZOOM_STEP = 0.5;
 
 // Individual card component to manage its own image loading state
 const MuseumCard = ({ item }) => {
-  const { styles, colors } = useThemedStyles(createStyles);
   const [expanded, setExpanded] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
@@ -65,7 +64,7 @@ const MuseumCard = ({ item }) => {
           <MaterialIcons
             name={expanded ? "expand-less" : "expand-more"}
             size={26}
-            color={colors.secondary}
+            color={theme.colors.secondary}
           />
         </View>
 
@@ -84,7 +83,7 @@ const MuseumCard = ({ item }) => {
                   <View style={styles.imageLoadingOverlay}>
                     <ActivityIndicator
                       size="large"
-                      color={colors.secondary}
+                      color={theme.colors.secondary}
                     />
                   </View>
                 )}
@@ -99,7 +98,7 @@ const MuseumCard = ({ item }) => {
                   }}
                 />
                 <View style={styles.fullscreenIconButton}>
-                  <MaterialIcons name="fullscreen" size={20} color={colors.surfacePrimary} />
+                  <MaterialIcons name="fullscreen" size={20} color="#FFFFFF" />
                 </View>
               </Pressable>
             ) : (
@@ -138,7 +137,7 @@ const MuseumCard = ({ item }) => {
                 onPress={() => setViewerVisible(false)}
                 style={styles.viewerCloseButton}
               >
-                <MaterialIcons name="close" size={24} color={colors.surfacePrimary} />
+                <MaterialIcons name="close" size={24} color="#FFFFFF" />
               </Pressable>
             </View>
 
@@ -177,7 +176,7 @@ const MuseumCard = ({ item }) => {
                   zoomScale <= MIN_ZOOM && styles.viewerControlButtonDisabled,
                 ]}
               >
-                <MaterialIcons name="remove" size={22} color={colors.surfacePrimary} />
+                <MaterialIcons name="remove" size={22} color="#FFFFFF" />
               </Pressable>
               <Text style={styles.viewerZoomLabel}>
                 {Math.round(zoomScale * 100)}%
@@ -195,7 +194,7 @@ const MuseumCard = ({ item }) => {
                   zoomScale >= MAX_ZOOM && styles.viewerControlButtonDisabled,
                 ]}
               >
-                <MaterialIcons name="add" size={22} color={colors.surfacePrimary} />
+                <MaterialIcons name="add" size={22} color="#FFFFFF" />
               </Pressable>
             </View>
           </SafeAreaView>
@@ -207,8 +206,6 @@ const MuseumCard = ({ item }) => {
 
 // ── Main screen ─────────────────────────────────────────────
 const VirtualMuseumScreen = () => {
-  const { styles, colors } = useThemedStyles(createStyles);
-
   const { isPremium, isScreenCapturePrevented } = useContext(AppContext);
   const navigation = useNavigation();
   const [activeCategory, setActiveCategory] = useState(FREE_CATEGORY);
@@ -257,7 +254,7 @@ const VirtualMuseumScreen = () => {
               <Chip
                 key={cat}
                 selected={activeCategory === cat}
-                selectedColor={colors.primary}
+                selectedColor={theme.colors.primary}
                 onPress={() => handleCategoryPress(cat)}
                 style={[
                   styles.chip,
@@ -266,7 +263,7 @@ const VirtualMuseumScreen = () => {
                 textStyle={
                   activeCategory === cat
                     ? styles.chipTextActive
-                    : { color: colors.textBody }
+                    : { color: "#374151" }
                 }
               >
                 {cat}
@@ -295,7 +292,6 @@ const KNOWN_HEADERS = [
 ];
 
 const DescriptionBlock = ({ text }) => {
-  const { styles } = useThemedStyles(createStyles);
   if (!text) return null;
   const lines = text.split("\n");
   return (
@@ -339,40 +335,40 @@ const DescriptionBlock = ({ text }) => {
   );
 };
 
-const createStyles = (colors) => StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: colors.backgroundMain },
+const styles = StyleSheet.create({
+  safeArea: { flex: 1, backgroundColor: theme.colors.backgroundMain },
   container: { padding: 16, paddingBottom: 48 },
   captureProtectedOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: colors.backgroundMain,
+    backgroundColor: theme.colors.backgroundMain,
     alignItems: "center",
     justifyContent: "center",
     zIndex: 1000,
   },
   captureProtectedText: {
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     fontSize: 14,
     fontWeight: "600",
   },
   headerText: {
     fontSize: 28,
     fontWeight: "bold",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     marginBottom: 4,
   },
   subText: {
-    color: colors.textTertiary,
+    color: theme.colors.textTertiary,
     marginBottom: 16,
     lineHeight: 20,
   },
   chipRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 16 },
-  chip: { backgroundColor: colors.surfaceSecondary },
-  chipActive: { backgroundColor: colors.primaryLight },
-  chipTextActive: { color: colors.primary, fontWeight: "bold" },
-  freeLabel: { color: colors.success, fontWeight: "bold" },
+  chip: { backgroundColor: theme.colors.surfaceSecondary },
+  chipActive: { backgroundColor: theme.colors.primaryLight },
+  chipTextActive: { color: theme.colors.primary, fontWeight: "bold" },
+  freeLabel: { color: theme.colors.success, fontWeight: "bold" },
   card: {
     marginBottom: 10,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 12,
     elevation: 2,
   },
@@ -387,12 +383,12 @@ const createStyles = (colors) => StyleSheet.create({
   cardTitle: {
     fontSize: 15,
     fontWeight: "700",
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     marginBottom: 3,
     lineHeight: 20,
   },
   cardSubtitle: {
-    color: colors.secondary,
+    color: theme.colors.secondary,
     fontSize: 11,
     fontWeight: "600",
     letterSpacing: 0.3,
@@ -406,13 +402,13 @@ const createStyles = (colors) => StyleSheet.create({
     marginBottom: 14,
     borderRadius: 10,
     overflow: "hidden",
-    backgroundColor: colors.surfaceTertiary,
+    backgroundColor: theme.colors.surfaceTertiary,
   },
   imageLoadingOverlay: {
     ...StyleSheet.absoluteFillObject,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: theme.colors.surfaceSecondary,
   },
   itemImage: { width: "100%", height: "100%" },
   fullscreenIconButton: {
@@ -431,14 +427,14 @@ const createStyles = (colors) => StyleSheet.create({
     height: 140,
     borderRadius: 10,
     marginBottom: 14,
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: theme.colors.surfaceSecondary,
     alignItems: "center",
     justifyContent: "center",
   },
   placeholderEmoji: { fontSize: 48, marginBottom: 6 },
-  placeholderText: { color: colors.textPlaceholder, fontSize: 13 },
+  placeholderText: { color: theme.colors.textPlaceholder, fontSize: 13 },
   imageHint: {
-    color: colors.textTertiary,
+    color: theme.colors.textTertiary,
     fontSize: 12,
     marginBottom: 10,
     marginTop: -2,
@@ -446,18 +442,18 @@ const createStyles = (colors) => StyleSheet.create({
   descriptionBlock: { marginTop: 4 },
   descriptionRowText: { marginBottom: 5, lineHeight: 20 },
   descriptionLabel: {
-    color: colors.secondary,
+    color: theme.colors.secondary,
     fontWeight: "700",
     fontSize: 13,
     lineHeight: 20,
   },
   descriptionValue: {
-    color: colors.textTitle ?? colors.textPrimary,
+    color: theme.colors.textTitle ?? "#1F2937",
     fontSize: 13,
     lineHeight: 20,
   },
   descriptionPlain: {
-    color: colors.textBody,
+    color: "#374151",
     fontSize: 13,
     lineHeight: 20,
     marginBottom: 3,
@@ -479,7 +475,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   viewerTitle: {
     flex: 1,
-    color: colors.surfacePrimary,
+    color: "#FFFFFF",
     fontSize: 18,
     fontWeight: "700",
     lineHeight: 24,
@@ -497,7 +493,7 @@ const createStyles = (colors) => StyleSheet.create({
     flex: 1,
     borderRadius: 18,
     overflow: "hidden",
-    backgroundColor: colors.textTitle,
+    backgroundColor: "#111827",
   },
   viewerOuterScrollContent: {
     flexGrow: 1,
@@ -528,7 +524,7 @@ const createStyles = (colors) => StyleSheet.create({
   viewerZoomLabel: {
     minWidth: 70,
     textAlign: "center",
-    color: colors.surfacePrimary,
+    color: "#FFFFFF",
     fontWeight: "700",
     fontSize: 14,
     marginHorizontal: 16,

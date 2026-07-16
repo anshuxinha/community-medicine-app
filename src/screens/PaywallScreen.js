@@ -20,7 +20,7 @@ if (Constants.appOwnership !== "expo") {
   Purchases = require("react-native-purchases").default;
 }
 import { AppContext } from "../context/AppContext";
-import { useThemedStyles } from "../styles/useThemedStyles";
+import { theme } from "../styles/theme";
 import {
   enableScreenCaptureProtection,
   disableScreenCaptureProtection,
@@ -70,8 +70,6 @@ const PLAN_METADATA = [
 ];
 
 const PaywallScreen = ({ navigation }) => {
-  const { styles, colors } = useThemedStyles(createStyles);
-
   const [selectedPlan, setSelectedPlan] = useState("yearly");
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [showCouponInput, setShowCouponInput] = useState(false);
@@ -446,7 +444,7 @@ const PaywallScreen = ({ navigation }) => {
             <MaterialIcons
               name="close"
               size={28}
-              color={colors.textPlaceholder}
+              color={theme.colors.textPlaceholder}
             />
           </TouchableOpacity>
         </View>
@@ -478,7 +476,7 @@ const PaywallScreen = ({ navigation }) => {
             <MaterialIcons
               name="error-outline"
               size={48}
-              color={colors.error}
+              color={theme.colors.error}
             />
             <Text style={styles.errorText}>{loadError}</Text>
           </View>
@@ -599,7 +597,7 @@ const PaywallScreen = ({ navigation }) => {
                       <MaterialIcons
                         name="close"
                         size={20}
-                        color={colors.textPlaceholder}
+                        color={theme.colors.textPlaceholder}
                       />
                     </TouchableOpacity>
                   </View>
@@ -610,7 +608,7 @@ const PaywallScreen = ({ navigation }) => {
                     <MaterialIcons
                       name="local-offer"
                       size={14}
-                      color={colors.secondary}
+                      color="#A855F7"
                     />
                     <Text style={styles.appliedCouponText}>
                       Code {appliedCoupon.code} applied!
@@ -677,25 +675,22 @@ const PaywallScreen = ({ navigation }) => {
   );
 };
 
-const FeatureItem = ({ text }) => {
-  const { styles, colors } = useThemedStyles(createStyles);
-  return (
-    <View style={styles.featureItem}>
-      <MaterialIcons
-        name="check-circle"
-        size={24}
-        color={colors.secondary}
-        style={styles.featureIcon}
-      />
-      <Text style={styles.featureText}>{text}</Text>
-    </View>
-  );
-};
+const FeatureItem = ({ text }) => (
+  <View style={styles.featureItem}>
+    <MaterialIcons
+      name="check-circle"
+      size={24}
+      color="#A855F7"
+      style={styles.featureIcon}
+    />
+    <Text style={styles.featureText}>{text}</Text>
+  </View>
+);
 
-const createStyles = (colors) => StyleSheet.create({
+const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.backgroundMain,
+    backgroundColor: theme.colors.backgroundMain,
   },
   container: {
     flexGrow: 1,
@@ -710,7 +705,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   errorText: {
     marginTop: 16,
-    color: colors.error,
+    color: theme.colors.error,
     fontSize: 16,
     textAlign: "center",
     paddingHorizontal: 20,
@@ -738,7 +733,7 @@ const createStyles = (colors) => StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 16,
-    shadowColor: colors.secondary,
+    shadowColor: theme.colors.secondary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -747,7 +742,7 @@ const createStyles = (colors) => StyleSheet.create({
   iconBg: {
     opacity: 0.8,
     elevation: 10,
-    shadowColor: colors.chartBlue,
+    shadowColor: theme.colors.chartBlue,
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
     shadowRadius: 15,
@@ -757,7 +752,7 @@ const createStyles = (colors) => StyleSheet.create({
     top: "30%",
   },
   title: {
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontFamily: Platform.OS === "ios" ? "Georgia" : "serif",
     fontSize: 28, // Reduced from 32
     textAlign: "center",
@@ -773,11 +768,11 @@ const createStyles = (colors) => StyleSheet.create({
   },
   featureIcon: {
     marginRight: 12,
-    backgroundColor: colors.primaryLight,
+    backgroundColor: theme.colors.primaryLight,
     borderRadius: 12,
   },
   featureText: {
-    color: colors.textBody,
+    color: "#374151",
     fontSize: 16,
     fontWeight: "500",
   },
@@ -791,10 +786,10 @@ const createStyles = (colors) => StyleSheet.create({
   },
   pricingCard: {
     flex: 1,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: colors.surfaceSecondary,
+    borderColor: theme.colors.surfaceSecondary,
     marginHorizontal: 4,
     paddingVertical: 12,
     elevation: 2,
@@ -805,8 +800,8 @@ const createStyles = (colors) => StyleSheet.create({
   },
   pricingCardActive: {
     borderWidth: 2,
-    borderColor: colors.secondary,
-    backgroundColor: colors.surfaceTertiary,
+    borderColor: "#A855F7",
+    backgroundColor: theme.colors.surfaceTertiary,
     transform: [{ scale: 1.05 }],
     zIndex: 10,
   },
@@ -815,25 +810,25 @@ const createStyles = (colors) => StyleSheet.create({
     paddingHorizontal: 4,
   },
   planName: {
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontWeight: "bold",
     fontSize: 14,
     marginBottom: 2,
   },
   planDuration: {
-    color: colors.textTertiary,
+    color: theme.colors.textTertiary,
     fontSize: 10,
     marginBottom: 8,
   },
   priceText: {
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontWeight: "bold",
     fontSize: 12,
     marginBottom: 8,
     textAlign: "center",
   },
   planDesc: {
-    color: colors.textTertiary,
+    color: theme.colors.textTertiary,
     fontSize: 10,
     textAlign: "center",
   },
@@ -841,7 +836,7 @@ const createStyles = (colors) => StyleSheet.create({
     position: "absolute",
     top: -12,
     alignSelf: "center",
-    backgroundColor: colors.primaryLight,
+    backgroundColor: theme.colors.primaryLight,
     borderRadius: 12,
     paddingHorizontal: 8,
     paddingVertical: 2,
@@ -852,8 +847,8 @@ const createStyles = (colors) => StyleSheet.create({
     fontWeight: "bold",
   },
   saveBadge: {
-    color: colors.primaryDark,
-    backgroundColor: colors.primaryLight,
+    color: theme.colors.primaryDark,
+    backgroundColor: theme.colors.primaryLight,
     borderRadius: 8,
     paddingHorizontal: 6,
     paddingVertical: 2,
@@ -863,12 +858,12 @@ const createStyles = (colors) => StyleSheet.create({
     overflow: "hidden",
   },
   subscribeButton: {
-    backgroundColor: colors.secondary,
+    backgroundColor: theme.colors.secondary,
     paddingVertical: 10,
     borderRadius: 30,
     marginBottom: 16, // Reduced from 24
     elevation: 4,
-    shadowColor: colors.secondary,
+    shadowColor: theme.colors.secondary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -876,7 +871,7 @@ const createStyles = (colors) => StyleSheet.create({
   subscribeButtonText: {
     fontSize: 18,
     fontWeight: "bold",
-    color: colors.buttonText,
+    color: theme.colors.buttonText,
   },
   footerLinks: {
     flexDirection: "row",
@@ -885,7 +880,7 @@ const createStyles = (colors) => StyleSheet.create({
     marginBottom: 10,
   },
   footerLinkText: {
-    color: colors.textTertiary,
+    color: theme.colors.textTertiary,
     fontSize: 11,
   },
   legalDisclaimer: {
@@ -894,19 +889,19 @@ const createStyles = (colors) => StyleSheet.create({
     marginBottom: 20,
   },
   legalText: {
-    color: colors.textPlaceholder,
+    color: theme.colors.textPlaceholder,
     fontSize: 9,
     textAlign: "center",
     lineHeight: 12,
   },
   strikethroughPrice: {
     textDecorationLine: "line-through",
-    color: colors.textPlaceholder,
+    color: theme.colors.textPlaceholder,
     fontSize: 10,
     marginBottom: 0,
   },
   discountedPrice: {
-    color: colors.chartGreen,
+    color: "#10B981",
     fontSize: 14,
   },
   couponContainer: {
@@ -918,11 +913,11 @@ const createStyles = (colors) => StyleSheet.create({
     paddingVertical: 8,
   },
   couponTriggerText: {
-    color: colors.textTertiary,
+    color: theme.colors.textTertiary,
     fontSize: 14,
   },
   applyNowText: {
-    color: colors.secondary,
+    color: "#A855F7",
     fontWeight: "bold",
   },
   couponInputWrapper: {
@@ -932,7 +927,7 @@ const createStyles = (colors) => StyleSheet.create({
   couponInput: {
     flex: 1,
     height: 40,
-    backgroundColor: colors.surfacePrimary,
+    backgroundColor: theme.colors.surfacePrimary,
   },
   applyButton: {
     marginLeft: 8,
@@ -948,11 +943,11 @@ const createStyles = (colors) => StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: colors.surfaceTertiary,
+    backgroundColor: theme.colors.surfaceTertiary,
     padding: 10,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.secondary,
+    borderColor: "#A855F7",
     borderStyle: "dashed",
   },
   appliedCouponTag: {
@@ -961,12 +956,12 @@ const createStyles = (colors) => StyleSheet.create({
   },
   appliedCouponText: {
     marginLeft: 6,
-    color: colors.textTitle,
+    color: theme.colors.textTitle,
     fontWeight: "600",
     fontSize: 14,
   },
   removeCouponText: {
-    color: colors.error,
+    color: theme.colors.error,
     fontSize: 12,
     fontWeight: "bold",
   },
