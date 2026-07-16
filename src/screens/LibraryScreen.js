@@ -51,7 +51,7 @@ const StatusMark = ({ status }) => {
         <MaterialCommunityIcons
           name="check"
           size={14}
-          color={theme.colors.primaryDark}
+          color={colors.secondary}
         />
       </View>
     );
@@ -654,13 +654,12 @@ const createStyles = (colors) => StyleSheet.create({
     borderRadius: 11,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.primaryLight,
-    borderWidth: 1,
-    borderColor: colors.primaryMuted,
+    backgroundColor: colors.secondary,
+    borderWidth: 0,
   },
   newBadge: {
-    backgroundColor: colors.primarySoft,
-    color: colors.primaryDark,
+    backgroundColor: colors.secondary,
+    color: colors.onPrimary,
     fontSize: 10,
     fontWeight: "900",
   },

@@ -259,7 +259,7 @@ const VirtualMuseumScreen = () => {
               <Chip
                 key={cat}
                 selected={activeCategory === cat}
-                selectedColor={theme.colors.primary}
+                selectedColor={colors.onPrimary}
                 onPress={() => handleCategoryPress(cat)}
                 style={[
                   styles.chip,
@@ -268,7 +268,7 @@ const VirtualMuseumScreen = () => {
                 textStyle={
                   activeCategory === cat
                     ? styles.chipTextActive
-                    : { color: "#374151" }
+                    : styles.chipText
                 }
               >
                 {cat}
@@ -370,8 +370,9 @@ const createStyles = (colors) => StyleSheet.create({
   },
   chipRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 16 },
   chip: { backgroundColor: colors.surfaceSecondary },
-  chipActive: { backgroundColor: colors.primaryLight },
-  chipTextActive: { color: colors.primary, fontWeight: "bold" },
+  chipActive: { backgroundColor: colors.secondary },
+  chipText: { color: colors.textPrimary, fontWeight: "600" },
+  chipTextActive: { color: colors.onPrimary, fontWeight: "700" },
   freeLabel: { color: colors.success, fontWeight: "bold" },
   card: {
     marginBottom: 10,

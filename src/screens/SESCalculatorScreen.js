@@ -162,7 +162,7 @@ const SESCalculatorScreen = () => {
                                 keyboardType="numeric"
                                 mode="outlined"
                                 style={styles.input}
-                                textColor={theme.colors.textTitle}
+                                textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary}
                             />
 
                             <Text style={styles.label}>Education of Head of Family</Text>
@@ -188,7 +188,7 @@ const SESCalculatorScreen = () => {
                                 keyboardType="numeric"
                                 mode="outlined"
                                 style={styles.input}
-                                textColor={theme.colors.textTitle}
+                                textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary}
                             />
                         </Card.Content>
                     </Card>
@@ -204,7 +204,7 @@ const SESCalculatorScreen = () => {
                                 keyboardType="numeric"
                                 mode="outlined"
                                 style={styles.input}
-                                textColor={theme.colors.textTitle}
+                                textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary}
                             />
 
                             <TextInput
@@ -215,13 +215,13 @@ const SESCalculatorScreen = () => {
                                 mode="outlined"
                                 style={styles.input}
                                 placeholder="Total Family Income / Family Size"
-                                textColor={theme.colors.textTitle}
+                                textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary}
                             />
                         </Card.Content>
                     </Card>
                 )}
 
-                <Button mode="contained" textColor={theme.colors.buttonText} onPress={handleCalculate} style={styles.calcButton}>
+                <Button mode="contained" textColor={colors.buttonText} onPress={handleCalculate} style={styles.calcButton}>
                     Calculate SES
                 </Button>
 

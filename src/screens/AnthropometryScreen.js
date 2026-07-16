@@ -160,9 +160,9 @@ const AnthropometryScreen = () => {
                             Asian Indian cut-offs (WHO 2004)
                         </Text>
                         <TextInput label="Height (cm)" value={height} onChangeText={setHeight}
-                            keyboardType="numeric" mode="outlined" textColor={theme.colors.textTitle} style={styles.input} />
+                            keyboardType="numeric" mode="outlined" textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} style={styles.input} />
                         <TextInput label="Weight (kg)" value={weight} onChangeText={setWeight}
-                            keyboardType="numeric" mode="outlined" textColor={theme.colors.textTitle} style={styles.input} />
+                            keyboardType="numeric" mode="outlined" textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} style={styles.input} />
                         <Button mode="contained" textColor="#FFFFFF" onPress={calculateBMI} style={styles.calcButton}>
                             Calculate BMI
                         </Button>
@@ -202,10 +202,10 @@ const AnthropometryScreen = () => {
                         />
                         <TextInput label="Waist circumference (cm)" value={waistWHR}
                             onChangeText={setWaistWHR} keyboardType="numeric"
-                            mode="outlined" textColor={theme.colors.textTitle} style={styles.input} />
+                            mode="outlined" textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} style={styles.input} />
                         <TextInput label="Hip circumference (cm)" value={hipWHR}
                             onChangeText={setHipWHR} keyboardType="numeric"
-                            mode="outlined" textColor={theme.colors.textTitle} style={styles.input} />
+                            mode="outlined" textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} style={styles.input} />
                         <Button mode="contained" textColor="#FFFFFF" onPress={calculateWHR} style={styles.calcButton}>
                             Calculate WHR
                         </Button>
@@ -238,10 +238,10 @@ const AnthropometryScreen = () => {
                         </Text>
                         <TextInput label="Waist circumference (cm)" value={waistWHtR}
                             onChangeText={setWaistWHtR} keyboardType="numeric"
-                            mode="outlined" textColor={theme.colors.textTitle} style={styles.input} />
+                            mode="outlined" textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} style={styles.input} />
                         <TextInput label="Height (cm)" value={heightWHtR}
                             onChangeText={setHeightWHtR} keyboardType="numeric"
-                            mode="outlined" textColor={theme.colors.textTitle} style={styles.input} />
+                            mode="outlined" textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} style={styles.input} />
                         <Button mode="contained" textColor="#FFFFFF" onPress={calculateWHtR} style={styles.calcButton}>
                             Calculate WHtR
                         </Button>
@@ -284,7 +284,7 @@ const AnthropometryScreen = () => {
 
                         <TextInput label="MUAC (cm)" value={muacValue}
                             onChangeText={setMuacValue} keyboardType="numeric"
-                            mode="outlined" textColor={theme.colors.textTitle} style={styles.input} />
+                            mode="outlined" textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} style={styles.input} />
                         <Button mode="contained" textColor="#FFFFFF" onPress={calculateMUAC} style={styles.calcButton}>
                             Interpret MUAC
                         </Button>
@@ -383,16 +383,16 @@ const AnthropometryScreen = () => {
                         />
                         <TextInput label="Height (cm)" value={ibwHeight}
                             onChangeText={setIbwHeight} keyboardType="numeric"
-                            mode="outlined" textColor={theme.colors.textTitle} style={styles.input} />
+                            mode="outlined" textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} style={styles.input} />
                         <TextInput label="Actual weight (kg) — optional, for ABW" value={weight}
                             onChangeText={setWeight} keyboardType="numeric"
-                            mode="outlined" textColor={theme.colors.textTitle} style={styles.input} />
+                            mode="outlined" textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} style={styles.input} />
                         <Button mode="contained" textColor="#FFFFFF" onPress={calculateIBW} style={styles.calcButton}>
                             Calculate IBW
                         </Button>
                         {ibwResult && (ibwResult.error
                             ? <Text style={styles.errorText}>{ibwResult.error}</Text>
-                            : <ResultBox color={theme.colors.secondary}>
+                            : <ResultBox color={colors.secondary}>
                                 <Text variant="titleMedium" style={{ color: theme.colors.textTertiary }}>Ideal Body Weight</Text>
                                 <Text variant="displaySmall" style={{ fontWeight: 'bold', color: theme.colors.secondary }}>
                                     {ibwResult.ibw} kg

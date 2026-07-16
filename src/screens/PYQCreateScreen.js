@@ -223,13 +223,32 @@ const PYQCreateScreen = ({ navigation }) => {
                       isVisuallySelected && styles.selectedChip,
                       isLocked && styles.lockedChip,
                     ]}
-                    selectedColor={isVisuallySelected ? "#FFFFFF" : (isLocked ? "#9CA3AF" : theme.colors.textSecondary)}
+                    selectedColor={
+                      isVisuallySelected
+                        ? colors.onPrimary
+                        : isLocked
+                          ? colors.textPlaceholder
+                          : colors.textPrimary
+                    }
+                    textStyle={
+                      isVisuallySelected
+                        ? styles.chipTextSelected
+                        : isLocked
+                          ? styles.chipTextLocked
+                          : styles.chipText
+                    }
                     showSelectedOverlay={false}
                     icon={() => (
                       <MaterialCommunityIcons
                         name={isLocked ? "lock" : (isVisuallySelected ? "check" : "school-outline")}
                         size={16}
-                        color={isVisuallySelected ? "#FFFFFF" : (isLocked ? "#9CA3AF" : theme.colors.textSecondary)}
+                        color={
+                          isVisuallySelected
+                            ? colors.onPrimary
+                            : isLocked
+                              ? colors.textPlaceholder
+                              : colors.textPrimary
+                        }
                       />
                     )}
                   >
@@ -274,13 +293,32 @@ const PYQCreateScreen = ({ navigation }) => {
                       isVisuallySelected && styles.selectedChip,
                       isLocked && styles.lockedChip,
                     ]}
-                    selectedColor={isVisuallySelected ? "#FFFFFF" : (isLocked ? "#9CA3AF" : theme.colors.textSecondary)}
+                    selectedColor={
+                      isVisuallySelected
+                        ? colors.onPrimary
+                        : isLocked
+                          ? colors.textPlaceholder
+                          : colors.textPrimary
+                    }
+                    textStyle={
+                      isVisuallySelected
+                        ? styles.chipTextSelected
+                        : isLocked
+                          ? styles.chipTextLocked
+                          : styles.chipText
+                    }
                     showSelectedOverlay={false}
                     icon={() => (
                       <MaterialCommunityIcons
                         name={isLocked ? "lock" : status.icon}
                         size={16}
-                        color={isVisuallySelected ? "#FFFFFF" : (isLocked ? "#9CA3AF" : theme.colors.textSecondary)}
+                        color={
+                          isVisuallySelected
+                            ? colors.onPrimary
+                            : isLocked
+                              ? colors.textPlaceholder
+                              : colors.textPrimary
+                        }
                       />
                     )}
                   >
@@ -316,11 +354,28 @@ const PYQCreateScreen = ({ navigation }) => {
                       isVisuallySelected && styles.selectedChip,
                       isLocked && styles.lockedChip,
                     ]}
-                    selectedColor={isVisuallySelected ? "#FFFFFF" : (isLocked ? "#9CA3AF" : theme.colors.textSecondary)}
+                    selectedColor={
+                      isVisuallySelected
+                        ? colors.onPrimary
+                        : isLocked
+                          ? colors.textPlaceholder
+                          : colors.textPrimary
+                    }
+                    textStyle={
+                      isVisuallySelected
+                        ? styles.chipTextSelected
+                        : isLocked
+                          ? styles.chipTextLocked
+                          : styles.chipText
+                    }
                     showSelectedOverlay={false}
                     icon={() =>
                       isLocked ? (
-                        <MaterialCommunityIcons name="lock" size={12} color="#9CA3AF" />
+                        <MaterialCommunityIcons
+                          name="lock"
+                          size={12}
+                          color={colors.textPlaceholder}
+                        />
                       ) : null
                     }
                   >
@@ -516,11 +571,23 @@ const createStyles = (colors) => StyleSheet.create({
     paddingHorizontal: 4,
   },
   selectedChip: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.secondary,
   },
   lockedChip: {
-    opacity: 0.6,
-    backgroundColor: colors.border,
+    opacity: 0.75,
+    backgroundColor: colors.surfaceTertiary,
+  },
+  chipText: {
+    color: colors.textPrimary,
+    fontWeight: "600",
+  },
+  chipTextSelected: {
+    color: colors.onPrimary,
+    fontWeight: "700",
+  },
+  chipTextLocked: {
+    color: colors.textPlaceholder,
+    fontWeight: "500",
   },
   modeContainer: {
     flexDirection: "row",

@@ -26,6 +26,7 @@ const getGapTone = (gap, lowerIsBetter) => {
 };
 
 const RuralUrbanRow = ({ item }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
   const rural = item.nfhs6.rural;
   const urban = item.nfhs6.urban;
   const hasComparison = rural !== null && urban !== null && rural !== undefined && urban !== undefined;
@@ -34,6 +35,12 @@ const RuralUrbanRow = ({ item }) => {
   const maxValue = Math.max(hasComparison ? rural : 0, hasComparison ? urban : 0, 1);
   const ruralWidth = hasComparison ? `${Math.max((rural / maxValue) * 100, 8)}%` : "0%";
   const urbanWidth = hasComparison ? `${Math.max((urban / maxValue) * 100, 8)}%` : "0%";
+  const toneIconColor =
+    tone === "rural"
+      ? colors.successStrong
+      : tone === "urban"
+        ? colors.chartBlue
+        : colors.textSecondary;
 
   return (
     <View style={styles.row}>
@@ -43,7 +50,7 @@ const RuralUrbanRow = ({ item }) => {
           <MaterialIcons
             name="swap-horiz"
             size={15}
-            color={tone === "rural" ? "#047857" : tone === "urban" ? "#1D4ED8" : "#4B5563"}
+            color={toneIconColor}
           />
           <Text style={[styles.gapText, styles[`${tone}Text`]]}>
             {hasComparison ? Math.abs(gap).toFixed(item.unit === "females/1000 males" ? 0 : 1) : "NR"}

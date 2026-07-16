@@ -241,9 +241,9 @@ const BiostatsAssistantScreen = () => {
                                         <Title style={styles.cardTitle}>Prevalence Study / Cross-Sectional</Title>
                                         <Text style={styles.hint}>Formula: n = Z² × P(1-P) / e²</Text>
                                         <TextInput label="Expected Prevalence P (0 to 1, e.g. 0.5)" value={ssP}
-                                            onChangeText={setSsP} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
+                                            onChangeText={setSsP} keyboardType="numeric" mode="outlined" style={styles.input} textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} />
                                         <TextInput label="Margin of Error e (e.g. 0.05 for ±5%)" value={ssE}
-                                            onChangeText={setSsE} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
+                                            onChangeText={setSsE} keyboardType="numeric" mode="outlined" style={styles.input} textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} />
                                     </>
                                 )}
                                 {ssType === 'prop2' && (
@@ -251,9 +251,9 @@ const BiostatsAssistantScreen = () => {
                                         <Title style={styles.cardTitle}>Two Proportions (RCT / Cohort / Case-Control)</Title>
                                         <Text style={styles.hint}>Formula: uses z_alpha + z_beta with p̄</Text>
                                         <TextInput label="P1 – Proportion in Group 1 (%)" value={ssP1}
-                                            onChangeText={setSsP1} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
+                                            onChangeText={setSsP1} keyboardType="numeric" mode="outlined" style={styles.input} textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} />
                                         <TextInput label="P2 – Proportion in Group 2 (%)" value={ssP2}
-                                            onChangeText={setSsP2} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
+                                            onChangeText={setSsP2} keyboardType="numeric" mode="outlined" style={styles.input} textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} />
                                     </>
                                 )}
                                 {ssType === 'means' && (
@@ -261,12 +261,12 @@ const BiostatsAssistantScreen = () => {
                                         <Title style={styles.cardTitle}>Two Independent Means</Title>
                                         <Text style={styles.hint}>Formula: n = 2(z_α + z_β)²σ² / Δ²</Text>
                                         <TextInput label="SD – Standard Deviation (pooled estimate)" value={ssSd}
-                                            onChangeText={setSsSd} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
+                                            onChangeText={setSsSd} keyboardType="numeric" mode="outlined" style={styles.input} textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} />
                                         <TextInput label="Δ – Minimum Detectable Difference" value={ssDelta}
-                                            onChangeText={setSsDelta} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
+                                            onChangeText={setSsDelta} keyboardType="numeric" mode="outlined" style={styles.input} textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} />
                                     </>
                                 )}
-                                <Button mode="contained" textColor={theme.colors.buttonText} onPress={calculateSS} style={styles.btn}>Calculate Sample Size</Button>
+                                <Button mode="contained" textColor={colors.buttonText} onPress={calculateSS} style={styles.btn}>Calculate Sample Size</Button>
                                 {ssResult && !ssResult.error && (
                                     <View style={[styles.resultBox, { borderLeftColor: theme.colors.secondary }]}>
                                         <Text style={{ color: theme.colors.textTertiary, marginBottom: 4 }}>{ssResult.label}</Text>
@@ -295,15 +295,15 @@ const BiostatsAssistantScreen = () => {
                                     <Text style={styles.hint}>Yates' corrected formula</Text>
                                     <View style={styles.grid2x2}>
                                         <View style={styles.gridRow}>
-                                            <TextInput label="a (D+, E+)" value={a} onChangeText={setA} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor={theme.colors.textTitle} />
-                                            <TextInput label="b (D–, E+)" value={b} onChangeText={setB} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor={theme.colors.textTitle} />
+                                            <TextInput label="a (D+, E+)" value={a} onChangeText={setA} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} />
+                                            <TextInput label="b (D–, E+)" value={b} onChangeText={setB} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} />
                                         </View>
                                         <View style={styles.gridRow}>
-                                            <TextInput label="c (D+, E–)" value={c} onChangeText={setC} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor={theme.colors.textTitle} />
-                                            <TextInput label="d (D–, E–)" value={d} onChangeText={setD} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor={theme.colors.textTitle} />
+                                            <TextInput label="c (D+, E–)" value={c} onChangeText={setC} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} />
+                                            <TextInput label="d (D–, E–)" value={d} onChangeText={setD} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} />
                                         </View>
                                     </View>
-                                    <Button mode="contained" textColor={theme.colors.buttonText} onPress={runChi2} style={styles.btn}>Calculate χ²</Button>
+                                    <Button mode="contained" textColor={colors.buttonText} onPress={runChi2} style={styles.btn}>Calculate χ²</Button>
                                     {result && resultType === 'chi2' && !result.error && (
                                         <View style={[styles.resultBox, { borderLeftColor: result.significant ? '#15803D' : '#B91C1C' }]}>
                                             <Text style={{ fontWeight: 'bold', color: result.significant ? '#15803D' : '#B91C1C' }}>{result.result}</Text>
@@ -319,9 +319,9 @@ const BiostatsAssistantScreen = () => {
                                 <Card.Content>
                                     <Title style={styles.cardTitle}>Vaccine Efficacy</Title>
                                     <Text style={styles.hint}>VE = (ARu – ARv) / ARu × 100</Text>
-                                    <TextInput label="Attack Rate in Vaccinated (%)" value={arV} onChangeText={setArV} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
-                                    <TextInput label="Attack Rate in Unvaccinated (%)" value={arU} onChangeText={setArU} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
-                                    <Button mode="contained" textColor={theme.colors.buttonText} onPress={runEfficacy} style={styles.btn}>Calculate VE</Button>
+                                    <TextInput label="Attack Rate in Vaccinated (%)" value={arV} onChangeText={setArV} keyboardType="numeric" mode="outlined" style={styles.input} textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} />
+                                    <TextInput label="Attack Rate in Unvaccinated (%)" value={arU} onChangeText={setArU} keyboardType="numeric" mode="outlined" style={styles.input} textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} />
+                                    <Button mode="contained" textColor={colors.buttonText} onPress={runEfficacy} style={styles.btn}>Calculate VE</Button>
                                     {result && resultType === 'efficacy' && !result.error && (
                                         <View style={[styles.resultBox, { borderLeftColor: theme.colors.secondary }]}>
                                             <Text variant="headlineMedium" style={{ fontWeight: 'bold', color: theme.colors.primary }}>VE = {result.ve}%</Text>
@@ -337,9 +337,9 @@ const BiostatsAssistantScreen = () => {
                                 <Card.Content>
                                     <Title style={styles.cardTitle}>Infant Mortality Rate (IMR)</Title>
                                     <Text style={styles.hint}>IMR = (Infant Deaths / Live Births) × 1000</Text>
-                                    <TextInput label="Infant Deaths" value={deaths} onChangeText={setDeaths} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
-                                    <TextInput label="Live Births" value={births} onChangeText={setBirths} keyboardType="numeric" mode="outlined" style={styles.input} textColor={theme.colors.textTitle} />
-                                    <Button mode="contained" textColor={theme.colors.buttonText} onPress={runIMR} style={styles.btn}>Calculate IMR</Button>
+                                    <TextInput label="Infant Deaths" value={deaths} onChangeText={setDeaths} keyboardType="numeric" mode="outlined" style={styles.input} textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} />
+                                    <TextInput label="Live Births" value={births} onChangeText={setBirths} keyboardType="numeric" mode="outlined" style={styles.input} textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} />
+                                    <Button mode="contained" textColor={colors.buttonText} onPress={runIMR} style={styles.btn}>Calculate IMR</Button>
                                     {result && resultType === 'imr' && !result.error && (
                                         <View style={[styles.resultBox, { borderLeftColor: theme.colors.secondary }]}>
                                             <Text variant="headlineMedium" style={{ fontWeight: 'bold', color: theme.colors.primary }}>IMR = {result.imr} / 1000 live births</Text>
@@ -359,7 +359,7 @@ const BiostatsAssistantScreen = () => {
                                 <Card.Content>
                                     <Title style={[styles.cardTitle, { fontSize: 15 }]}>{p.title}</Title>
                                     <Text style={{ color: colors.textSecondary, lineHeight: 20 }}>{p.description}</Text>
-                                    <Button mode="outlined" textColor={theme.colors.textTitle} compact style={{ marginTop: 10, alignSelf: 'flex-start' }} onPress={() => loadPreset(p)}>Load →</Button>
+                                    <Button mode="outlined" textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} compact style={{ marginTop: 10, alignSelf: 'flex-start' }} onPress={() => loadPreset(p)}>Load →</Button>
                                 </Card.Content>
                             </Card>
                         ))}
@@ -383,7 +383,7 @@ const BiostatsAssistantScreen = () => {
                                     <Divider style={{ marginVertical: 8 }} />
                                     {section.items.map((item, i) => (
                                         <View key={i} style={styles.refRow}>
-                                            <MaterialIcons name="chevron-right" size={16} color={theme.colors.secondary} />
+                                            <MaterialIcons name="chevron-right" size={16} color={colors.secondary} />
                                             <Text style={styles.refText}>{item}</Text>
                                         </View>
                                     ))}

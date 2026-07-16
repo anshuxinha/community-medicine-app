@@ -156,7 +156,7 @@ const DietarySurveyScreen = () => {
                   onChangeText={(v) => updateRow(index, "grams", v)}
                   keyboardType="numeric"
                   mode="outlined"
-                  textColor={theme.colors.textTitle}
+                  textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary}
                   style={styles.gramInput}
                   dense
                 />
@@ -171,7 +171,7 @@ const DietarySurveyScreen = () => {
             <Button
               icon="plus"
               mode="outlined"
-              textColor={theme.colors.textTitle}
+              textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary}
               onPress={addRow}
               style={{ marginTop: 8 }}
             >

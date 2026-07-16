@@ -32,6 +32,7 @@ const getDeltaTone = (delta, lowerIsBetter) => {
 };
 
 const IndicatorRow = ({ item, area }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
   const nfhs6Value = item.nfhs6[area];
   const hasComparison = nfhs6Value !== null && nfhs6Value !== undefined;
   const delta = hasComparison ? nfhs6Value - item.nfhs5 : null;
@@ -39,6 +40,12 @@ const IndicatorRow = ({ item, area }) => {
   const maxValue = Math.max(item.nfhs5, hasComparison ? nfhs6Value : 0, 1);
   const nfhs5Width = `${Math.max((item.nfhs5 / maxValue) * 100, 8)}%`;
   const nfhs6Width = hasComparison ? `${Math.max((nfhs6Value / maxValue) * 100, 8)}%` : "0%";
+  const toneIconColor =
+    tone === "good"
+      ? colors.successStrong
+      : tone === "watch"
+        ? colors.warningStrong
+        : colors.textSecondary;
 
   return (
     <View style={styles.indicatorRow}>
@@ -48,7 +55,7 @@ const IndicatorRow = ({ item, area }) => {
           <MaterialIcons
             name={!hasComparison ? "remove" : delta < 0 ? "south" : delta > 0 ? "north" : "remove"}
             size={14}
-            color={tone === "good" ? "#047857" : tone === "watch" ? "#B45309" : "#4B5563"}
+            color={toneIconColor}
           />
           <Text style={[styles.deltaText, styles[`${tone}Text`]]}>
             {hasComparison ? Math.abs(delta).toFixed(item.unit === "females/1000 males" ? 0 : 1) : "NR"}

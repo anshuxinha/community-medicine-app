@@ -386,7 +386,7 @@ const DashboardScreen = ({ navigation }) => {
             <MaterialIcons
               name="menu"
               size={26}
-              color={theme.colors.textTitle}
+              color={colors.textTitle}
             />
           </TouchableOpacity>
           <Text style={styles.appName}>STROMA</Text>
@@ -397,7 +397,7 @@ const DashboardScreen = ({ navigation }) => {
             <MaterialIcons
               name="bookmark-border"
               size={26}
-              color={theme.colors.textTitle}
+              color={colors.textTitle}
             />
           </TouchableOpacity>
         </View>
@@ -623,20 +623,12 @@ const DashboardScreen = ({ navigation }) => {
         <Dialog
           visible={healthDaysVisible}
           onDismiss={() => setHealthDaysVisible(false)}
-          style={{
-            maxHeight: "82%",
-            backgroundColor: theme.colors.surfacePrimary,
-            borderRadius: 16,
-          }}
+          style={styles.healthDaysDialog}
         >
-          <Dialog.Title
-            style={{ color: theme.colors.textTitle, fontWeight: "bold" }}
-          >
+          <Dialog.Title style={styles.healthDaysDialogTitle}>
             Public Health Days
           </Dialog.Title>
-          <Dialog.ScrollArea
-            style={{ paddingHorizontal: 0, borderColor: "transparent" }}
-          >
+          <Dialog.ScrollArea style={styles.healthDaysScrollArea}>
             <ScrollView contentContainerStyle={styles.healthDaysListContent}>
               {publicHealthDays.map((day, index) => (
                 <View key={index} style={styles.healthDayItem}>
@@ -654,7 +646,12 @@ const DashboardScreen = ({ navigation }) => {
             </ScrollView>
           </Dialog.ScrollArea>
           <Dialog.Actions>
-            <Button onPress={() => setHealthDaysVisible(false)}>Close</Button>
+            <Button
+              textColor={colors.secondary}
+              onPress={() => setHealthDaysVisible(false)}
+            >
+              Close
+            </Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
@@ -900,6 +897,19 @@ const createStyles = (colors) => StyleSheet.create({
   updateSource: {
     marginTop: 8,
     color: colors.textSecondary,
+  },
+  healthDaysDialog: {
+    maxHeight: "82%",
+    backgroundColor: colors.surfacePrimary,
+    borderRadius: 16,
+  },
+  healthDaysDialogTitle: {
+    color: colors.textTitle,
+    fontWeight: "bold",
+  },
+  healthDaysScrollArea: {
+    paddingHorizontal: 0,
+    borderColor: "transparent",
   },
   healthDaysListContent: {
     paddingHorizontal: 16,
