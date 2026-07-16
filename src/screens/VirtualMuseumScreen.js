@@ -455,12 +455,12 @@ const createStyles = (colors) => StyleSheet.create({
     lineHeight: 20,
   },
   descriptionValue: {
-    color: colors.textTitle ?? "#1F2937",
+    color: colors.textTitle ?? colors.textPrimary,
     fontSize: 13,
     lineHeight: 20,
   },
   descriptionPlain: {
-    color: "#374151",
+    color: colors.textBody,
     fontSize: 13,
     lineHeight: 20,
     marginBottom: 3,
@@ -482,7 +482,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   viewerTitle: {
     flex: 1,
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
     fontSize: 18,
     fontWeight: "700",
     lineHeight: 24,
@@ -500,7 +500,7 @@ const createStyles = (colors) => StyleSheet.create({
     flex: 1,
     borderRadius: 18,
     overflow: "hidden",
-    backgroundColor: "#111827",
+    backgroundColor: colors.textTitle,
   },
   viewerOuterScrollContent: {
     flexGrow: 1,
@@ -531,7 +531,7 @@ const createStyles = (colors) => StyleSheet.create({
   viewerZoomLabel: {
     minWidth: 70,
     textAlign: "center",
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
     fontWeight: "700",
     fontSize: 14,
     marginHorizontal: 16,

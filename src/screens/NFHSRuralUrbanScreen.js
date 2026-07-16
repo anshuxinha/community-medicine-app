@@ -178,7 +178,7 @@ const createStyles = (colors) => StyleSheet.create({
     marginBottom: 16,
   },
   kicker: {
-    color: "#F8FAFC",
+    color: colors.surfaceMuted,
     fontSize: 24,
     fontWeight: "900",
     letterSpacing: 0,
@@ -193,7 +193,7 @@ const createStyles = (colors) => StyleSheet.create({
     marginTop: 4,
   },
   subtitle: {
-    color: "#F8FAFC",
+    color: colors.surfaceMuted,
     fontSize: 14,
     fontWeight: "800",
     textAlign: "center",
@@ -221,7 +221,7 @@ const createStyles = (colors) => StyleSheet.create({
     borderColor: "#60A5FA",
   },
   badgeTitle: {
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
     fontSize: 25,
     fontWeight: "900",
   },
@@ -229,13 +229,13 @@ const createStyles = (colors) => StyleSheet.create({
     width: 54,
     height: 54,
     borderRadius: 27,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surfacePrimary,
     alignItems: "center",
     justifyContent: "center",
     marginHorizontal: 10,
   },
   vsText: {
-    color: "#111827",
+    color: colors.textTitle,
     fontSize: 24,
     fontWeight: "900",
   },
@@ -255,10 +255,10 @@ const createStyles = (colors) => StyleSheet.create({
   },
   categoryTabActive: {
     backgroundColor: colors.secondary,
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
   },
   matrixCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 8,
     marginBottom: 16,
   },
@@ -281,7 +281,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   row: {
     borderTopWidth: 1,
-    borderTopColor: "#E5E7EB",
+    borderTopColor: colors.border,
     paddingTop: 14,
     marginTop: 14,
   },
@@ -307,26 +307,26 @@ const createStyles = (colors) => StyleSheet.create({
     gap: 2,
   },
   ruralPill: {
-    backgroundColor: "#DCFCE7",
+    backgroundColor: colors.successSoft,
   },
   urbanPill: {
     backgroundColor: "#DBEAFE",
   },
   neutralPill: {
-    backgroundColor: "#E5E7EB",
+    backgroundColor: colors.border,
   },
   gapText: {
     fontSize: 12,
     fontWeight: "900",
   },
   ruralText: {
-    color: "#047857",
+    color: colors.successStrong,
   },
   urbanText: {
     color: "#1D4ED8",
   },
   neutralText: {
-    color: "#4B5563",
+    color: colors.textSecondary,
   },
   valueRow: {
     flexDirection: "row",
@@ -335,7 +335,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   valueCell: {
     flex: 1,
-    backgroundColor: "#F8FAFC",
+    backgroundColor: colors.surfaceMuted,
     borderRadius: 8,
     padding: 10,
   },
@@ -346,7 +346,7 @@ const createStyles = (colors) => StyleSheet.create({
     textTransform: "uppercase",
   },
   ruralValue: {
-    color: "#047857",
+    color: colors.successStrong,
     fontSize: 22,
     fontWeight: "900",
     marginTop: 2,
@@ -364,7 +364,7 @@ const createStyles = (colors) => StyleSheet.create({
   barTrack: {
     height: 8,
     borderRadius: 8,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: colors.border,
     overflow: "hidden",
   },
   barFill: {
@@ -372,10 +372,10 @@ const createStyles = (colors) => StyleSheet.create({
     borderRadius: 8,
   },
   ruralBar: {
-    backgroundColor: "#10B981",
+    backgroundColor: colors.chartGreen,
   },
   urbanBar: {
-    backgroundColor: "#3B82F6",
+    backgroundColor: colors.chartBlue,
   },
   gapNote: {
     color: colors.textSecondary,
@@ -384,7 +384,7 @@ const createStyles = (colors) => StyleSheet.create({
     marginTop: 8,
   },
   sourceCard: {
-    backgroundColor: "#F8FAFC",
+    backgroundColor: colors.surfaceMuted,
     borderRadius: 8,
   },
   sourceTitle: {

@@ -2131,16 +2131,16 @@ const createStyles = (colors) => StyleSheet.create({
   },
   filterChip: {
     backgroundColor: colors.surfacePrimary,
-    borderColor: "#E5E7EB",
+    borderColor: colors.border,
     borderRadius: 20,
   },
   filterChipSelected: {
-    backgroundColor: "#EDE9FE", // Light purple background
+    backgroundColor: colors.primaryLight, // Light purple background
     borderColor: colors.primary,
     borderWidth: 1,
   },
   filterChipText: {
-    color: "#4B5563",
+    color: colors.textSecondary,
     fontWeight: "600",
     fontSize: 14,
   },
@@ -2173,7 +2173,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   itemThumbnailImage: {
     borderRadius: 12,
-    backgroundColor: "#4C1D95", // Dark purple base
+    backgroundColor: colors.primaryDark, // Dark purple base
   },
   itemPlayOverlay: {
     width: 36,
@@ -2195,7 +2195,7 @@ const createStyles = (colors) => StyleSheet.create({
     paddingVertical: 2,
   },
   itemDurationText: {
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
     fontSize: 10,
     fontWeight: "800",
   },
@@ -2218,7 +2218,7 @@ const createStyles = (colors) => StyleSheet.create({
     flexShrink: 1,
   },
   videoNewBadge: {
-    backgroundColor: "#F3E8FF",
+    backgroundColor: colors.primarySoft,
     color: colors.primaryDark,
     borderRadius: 6,
     overflow: "hidden",
@@ -2281,7 +2281,7 @@ const createStyles = (colors) => StyleSheet.create({
     backgroundColor: colors.surfacePrimary,
   },
   playerSafeAreaFullscreen: {
-    backgroundColor: "#000000",
+    backgroundColor: colors.textTitle,
   },
   playerHeader: {
     height: 58,
@@ -2302,12 +2302,12 @@ const createStyles = (colors) => StyleSheet.create({
   },
   player: {
     flex: 1,
-    backgroundColor: "#000000",
+    backgroundColor: colors.textTitle,
   },
   videoPlayerContainer: {
     width: "100%",
     height: width * (9 / 16),
-    backgroundColor: "#000000",
+    backgroundColor: colors.textTitle,
   },
   videoPlayerContainerFullscreen: {
     flex: 1,
@@ -2418,7 +2418,7 @@ const createStyles = (colors) => StyleSheet.create({
     gap: 4,
     paddingVertical: 4,
     paddingHorizontal: 8,
-    backgroundColor: "#E8F5E9",
+    backgroundColor: colors.successSoft,
     borderRadius: 6,
   },
   approveButtonText: {
@@ -2475,7 +2475,7 @@ const createStyles = (colors) => StyleSheet.create({
     color: colors.textTitle,
   },
   stromaScoreBadgeReply: {
-    backgroundColor: "#F3F4F6",
+    backgroundColor: colors.surfaceSecondary,
     paddingHorizontal: 4,
     paddingVertical: 1,
     borderRadius: 4,
@@ -2555,7 +2555,7 @@ const createStyles = (colors) => StyleSheet.create({
   tabsContainer: {
     flexDirection: "row",
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: colors.border,
     backgroundColor: colors.surfacePrimary,
   },
   tabButton: {
@@ -2605,7 +2605,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   pdfPreviewContainer: {
     flex: 1,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: colors.surfaceSecondary,
   },
   pdfWebView: {
     flex: 1,
@@ -2639,7 +2639,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   freeBadge: {
     backgroundColor: colors.success,
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
     fontWeight: "700",
     marginRight: 6,
     alignSelf: "center",

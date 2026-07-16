@@ -381,7 +381,7 @@ const createStyles = (colors) => StyleSheet.create({
   emptyTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#374151",
+    color: colors.textBody,
     marginTop: 20,
     marginBottom: 10,
     textAlign: "center",

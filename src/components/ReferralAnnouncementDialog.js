@@ -123,7 +123,7 @@ const createStyles = (colors) => StyleSheet.create({
     maxHeight: "80%",
     overflow: "hidden",
     elevation: 8,
-    shadowColor: "#000",
+    shadowColor: colors.textTitle,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.12,
     shadowRadius: 24,
@@ -173,7 +173,7 @@ const createStyles = (colors) => StyleSheet.create({
     paddingHorizontal: 8,
   },
   divider: {
-    backgroundColor: "#E5E7EB",
+    backgroundColor: colors.border,
     marginBottom: 16,
   },
   benefitBox: {
@@ -234,7 +234,7 @@ const createStyles = (colors) => StyleSheet.create({
     borderRadius: 14,
   },
   btnLabelPrimary: {
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
     fontWeight: "bold",
     fontSize: 14,
   },

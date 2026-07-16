@@ -292,7 +292,7 @@ const createStyles = (colors) => StyleSheet.create({
     width: DRAWER_WIDTH,
     backgroundColor: colors.surfacePrimary,
     elevation: 16,
-    shadowColor: "#000",
+    shadowColor: colors.textTitle,
     shadowOffset: { width: 4, height: 0 },
     shadowOpacity: 0.3,
     shadowRadius: 12,
@@ -323,7 +323,7 @@ const createStyles = (colors) => StyleSheet.create({
     color: colors.textPlaceholder,
   },
   headerDivider: {
-    backgroundColor: "#E5E7EB",
+    backgroundColor: colors.border,
     height: 1,
   },
   menuScroll: {
@@ -340,7 +340,7 @@ const createStyles = (colors) => StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: "#F3E8FF",
+    backgroundColor: colors.primarySoft,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 14,
@@ -379,7 +379,7 @@ const createStyles = (colors) => StyleSheet.create({
     marginTop: 16,
     fontSize: 16,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
   },
 });
 

@@ -263,7 +263,7 @@ const createStyles = (colors) => StyleSheet.create({
   pickerContainerSmall: {
     flex: 2,
     borderWidth: 1,
-    borderColor: "#D1D5DB",
+    borderColor: colors.borderStrong,
     borderRadius: 4,
     marginRight: 8,
     backgroundColor: colors.surfacePrimary,
@@ -281,7 +281,7 @@ const createStyles = (colors) => StyleSheet.create({
     paddingVertical: 8,
     backgroundColor: colors.secondary,
   },
-  resultCard: { backgroundColor: "#F3E8FF", marginBottom: 32 },
+  resultCard: { backgroundColor: colors.primarySoft, marginBottom: 32 },
   resultRow: {
     marginVertical: 6,
     paddingBottom: 6,

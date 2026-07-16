@@ -260,7 +260,7 @@ const createStyles = (colors) => StyleSheet.create({
     fontWeight: "600",
   },
   selectedChipText: {
-    color: "#FFF",
+    color: colors.surfacePrimary,
   },
   gemsList: {
     flex: 1,
@@ -274,7 +274,7 @@ const createStyles = (colors) => StyleSheet.create({
     borderRadius: 16,
     backgroundColor: colors.surfacePrimary,
     elevation: 3,
-    shadowColor: "#000",
+    shadowColor: colors.textTitle,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,

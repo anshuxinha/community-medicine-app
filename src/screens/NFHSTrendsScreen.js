@@ -602,7 +602,7 @@ const createStyles = (colors) => StyleSheet.create({
     dropdown: {
         marginTop: 4,
         marginBottom: 4,
-        borderColor: '#E5E7EB',
+        borderColor: colors.border,
         borderRadius: 8,
     },
     segmentedButtons: {
@@ -637,7 +637,7 @@ const createStyles = (colors) => StyleSheet.create({
         borderColor: '#A7F3D0',
     },
     cautionCard: {
-        backgroundColor: '#FFFBEB',
+        backgroundColor: colors.warningBackground,
         borderColor: '#FDE68A',
     },
     infoTitle: {
@@ -649,11 +649,11 @@ const createStyles = (colors) => StyleSheet.create({
         color: '#065F46',
     },
     cautionTitle: {
-        color: '#92400E',
+        color: colors.warningText,
     },
     infoNote: {
         fontSize: 12,
-        color: '#374151',
+        color: colors.textBody,
         lineHeight: 16,
     },
     chartCard: {
@@ -668,11 +668,11 @@ const createStyles = (colors) => StyleSheet.create({
     },
     webview: {
         flex: 1,
-        backgroundColor: '#FBFCFE',
+        backgroundColor: colors.backgroundMain,
     },
     loaderContainer: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: '#FBFCFE',
+        backgroundColor: colors.backgroundMain,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -688,7 +688,7 @@ const createStyles = (colors) => StyleSheet.create({
         marginTop: 12,
         borderRadius: 12,
         borderWidth: 1,
-        borderColor: '#E5E7EB',
+        borderColor: colors.border,
     },
     accordionTitle: {
         fontSize: 14,
@@ -701,7 +701,7 @@ const createStyles = (colors) => StyleSheet.create({
         borderBottomLeftRadius: 12,
         borderBottomRightRadius: 12,
         borderTopWidth: 1,
-        borderTopColor: '#E5E7EB',
+        borderTopColor: colors.border,
     },
     defRow: {
         marginBottom: 10,
@@ -723,7 +723,7 @@ const createStyles = (colors) => StyleSheet.create({
         marginTop: 12,
         paddingTop: 10,
         borderTopWidth: 1,
-        borderTopColor: '#E5E7EB',
+        borderTopColor: colors.border,
     },
     nfhs12NoteIcon: {
         marginRight: 6,
@@ -757,7 +757,7 @@ const createStyles = (colors) => StyleSheet.create({
         alignItems: 'center',
         padding: 16,
         borderBottomWidth: 1,
-        borderBottomColor: '#E5E7EB',
+        borderBottomColor: colors.border,
     },
     modalTitle: {
         fontSize: 18,
@@ -791,7 +791,7 @@ const createStyles = (colors) => StyleSheet.create({
     modalControlBtn: {
         flex: 1,
         marginHorizontal: 4,
-        borderColor: '#E5E7EB',
+        borderColor: colors.border,
         borderRadius: 6,
     },
     statesList: {
@@ -818,7 +818,7 @@ const createStyles = (colors) => StyleSheet.create({
     modalFooter: {
         padding: 16,
         borderTopWidth: 1,
-        borderTopColor: '#E5E7EB',
+        borderTopColor: colors.border,
         backgroundColor: colors.surfacePrimary,
     },
     doneButton: {

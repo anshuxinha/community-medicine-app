@@ -203,14 +203,14 @@ const createStyles = (colors) => StyleSheet.create({
     marginBottom: 16,
   },
   kicker: {
-    color: "#F8FAFC",
+    color: colors.surfaceMuted,
     fontSize: 28,
     fontWeight: "900",
     letterSpacing: 0,
     textAlign: "center",
   },
   title: {
-    color: "#A855F7",
+    color: colors.secondary,
     fontSize: 34,
     fontWeight: "900",
     letterSpacing: 0,
@@ -245,19 +245,19 @@ const createStyles = (colors) => StyleSheet.create({
   },
   nfhs5Badge: {
     backgroundColor: "#3B1479",
-    borderColor: "#8B5CF6",
+    borderColor: colors.chartPurple,
   },
   nfhs6Badge: {
     backgroundColor: "#047A3D",
     borderColor: "#22C55E",
   },
   badgeTitle: {
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
     fontSize: 28,
     fontWeight: "900",
   },
   badgeSubtitle: {
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
     fontSize: 16,
     fontWeight: "700",
     marginTop: 2,
@@ -266,13 +266,13 @@ const createStyles = (colors) => StyleSheet.create({
     width: 54,
     height: 54,
     borderRadius: 27,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surfacePrimary,
     alignItems: "center",
     justifyContent: "center",
     marginHorizontal: 10,
   },
   vsText: {
-    color: "#111827",
+    color: colors.textTitle,
     fontSize: 24,
     fontWeight: "900",
   },
@@ -311,10 +311,10 @@ const createStyles = (colors) => StyleSheet.create({
   },
   categoryTabActive: {
     backgroundColor: colors.secondary,
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
   },
   matrixCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 8,
     marginBottom: 16,
   },
@@ -337,7 +337,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   indicatorRow: {
     borderTopWidth: 1,
-    borderTopColor: "#E5E7EB",
+    borderTopColor: colors.border,
     paddingTop: 14,
     marginTop: 14,
   },
@@ -363,26 +363,26 @@ const createStyles = (colors) => StyleSheet.create({
     gap: 2,
   },
   goodPill: {
-    backgroundColor: "#DCFCE7",
+    backgroundColor: colors.successSoft,
   },
   watchPill: {
     backgroundColor: "#FEF3C7",
   },
   neutralPill: {
-    backgroundColor: "#E5E7EB",
+    backgroundColor: colors.border,
   },
   deltaText: {
     fontSize: 12,
     fontWeight: "900",
   },
   goodText: {
-    color: "#047857",
+    color: colors.successStrong,
   },
   watchText: {
-    color: "#B45309",
+    color: colors.warningStrong,
   },
   neutralText: {
-    color: "#4B5563",
+    color: colors.textSecondary,
   },
   matrixRow: {
     flexDirection: "row",
@@ -391,7 +391,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   yearCell: {
     flex: 1,
-    backgroundColor: "#F8FAFC",
+    backgroundColor: colors.surfaceMuted,
     borderRadius: 8,
     padding: 10,
   },
@@ -408,7 +408,7 @@ const createStyles = (colors) => StyleSheet.create({
     marginTop: 2,
   },
   nfhs6Value: {
-    color: "#15803D",
+    color: colors.successStrong,
     fontSize: 22,
     fontWeight: "900",
     marginTop: 2,
@@ -420,7 +420,7 @@ const createStyles = (colors) => StyleSheet.create({
   barTrack: {
     height: 8,
     borderRadius: 8,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: colors.border,
     overflow: "hidden",
   },
   barFill: {
@@ -440,7 +440,7 @@ const createStyles = (colors) => StyleSheet.create({
     marginTop: 8,
   },
   sourceCard: {
-    backgroundColor: "#F8FAFC",
+    backgroundColor: colors.surfaceMuted,
     borderRadius: 8,
   },
   sourceTitle: {

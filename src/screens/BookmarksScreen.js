@@ -154,7 +154,7 @@ const createStyles = (colors) => StyleSheet.create({
     alignItems: "center",
   },
   emptyText: {
-    color: "#374151",
+    color: colors.textBody,
   },
 });
 

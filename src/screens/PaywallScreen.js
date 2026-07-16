@@ -778,7 +778,7 @@ const createStyles = (colors) => StyleSheet.create({
     borderRadius: 12,
   },
   featureText: {
-    color: "#374151",
+    color: colors.textBody,
     fontSize: 16,
     fontWeight: "500",
   },
@@ -799,14 +799,14 @@ const createStyles = (colors) => StyleSheet.create({
     marginHorizontal: 4,
     paddingVertical: 12,
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: colors.textTitle,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 4,
   },
   pricingCardActive: {
     borderWidth: 2,
-    borderColor: "#A855F7",
+    borderColor: colors.secondary,
     backgroundColor: colors.surfaceTertiary,
     transform: [{ scale: 1.05 }],
     zIndex: 10,
@@ -848,7 +848,7 @@ const createStyles = (colors) => StyleSheet.create({
     paddingVertical: 2,
   },
   badgeText: {
-    color: "#000000",
+    color: colors.textTitle,
     fontSize: 10,
     fontWeight: "bold",
   },
@@ -907,7 +907,7 @@ const createStyles = (colors) => StyleSheet.create({
     marginBottom: 0,
   },
   discountedPrice: {
-    color: "#10B981",
+    color: colors.chartGreen,
     fontSize: 14,
   },
   couponContainer: {
@@ -923,7 +923,7 @@ const createStyles = (colors) => StyleSheet.create({
     fontSize: 14,
   },
   applyNowText: {
-    color: "#A855F7",
+    color: colors.secondary,
     fontWeight: "bold",
   },
   couponInputWrapper: {
@@ -953,7 +953,7 @@ const createStyles = (colors) => StyleSheet.create({
     padding: 10,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#A855F7",
+    borderColor: colors.secondary,
     borderStyle: "dashed",
   },
   appliedCouponTag: {

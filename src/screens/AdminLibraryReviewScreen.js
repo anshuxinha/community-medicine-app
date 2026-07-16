@@ -701,13 +701,13 @@ const createStyles = (colors) => StyleSheet.create({
   },
   changeOld: {
     flexDirection: "row",
-    backgroundColor: "#FEE2E2",
+    backgroundColor: colors.errorLight,
     borderRadius: 6,
     padding: 8,
     marginBottom: 4,
   },
   changePrefixOld: {
-    color: "#B91C1C",
+    color: colors.errorStrong,
     fontWeight: "700",
     fontSize: 14,
     marginRight: 6,
@@ -721,7 +721,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   changeNew: {
     flexDirection: "row",
-    backgroundColor: "#DCFCE7",
+    backgroundColor: colors.successSoft,
     borderRadius: 6,
     padding: 8,
   },

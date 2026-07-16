@@ -301,7 +301,7 @@ const createStyles = (colors) => StyleSheet.create({
   surface: {
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surfacePrimary,
     paddingBottom: Platform.OS === "ios" ? 40 : 20,
     overflow: "hidden",
   },

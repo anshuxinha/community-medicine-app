@@ -176,9 +176,9 @@ const BiostatsAssistantScreen = () => {
                     value={tab}
                     onValueChange={setTab}
                     buttons={[
-                        { value: 'samplesize', label: 'Sample Size', labelStyle: tab !== 'samplesize' ? { color: '#374151' } : {} },
-                        { value: 'solver', label: 'Solver', labelStyle: tab !== 'solver' ? { color: '#374151' } : {} },
-                        { value: 'reference', label: 'Reference', labelStyle: tab !== 'reference' ? { color: '#374151' } : {} },
+                        { value: 'samplesize', label: 'Sample Size', labelStyle: tab !== 'samplesize' ? { color: colors.textSecondary } : {} },
+                        { value: 'solver', label: 'Solver', labelStyle: tab !== 'solver' ? { color: colors.textSecondary } : {} },
+                        { value: 'reference', label: 'Reference', labelStyle: tab !== 'reference' ? { color: colors.textSecondary } : {} },
                     ]}
                     style={{ marginBottom: 20 }}
                 />
@@ -272,7 +272,7 @@ const BiostatsAssistantScreen = () => {
                                         <Text style={{ color: theme.colors.textTertiary, marginBottom: 4 }}>{ssResult.label}</Text>
                                         <Text variant="displaySmall" style={{ fontWeight: 'bold', color: theme.colors.secondary }}>n = {ssResult.n}</Text>
                                         <Divider style={{ marginVertical: 8 }} />
-                                        <Text style={{ color: '#374151', fontSize: 13 }}>
+                                        <Text style={{ color: colors.textSecondary, fontSize: 13 }}>
                                             CI: {ssCI}% {(ssType !== 'prop1') ? `| Power: ${ssPower}%` : ''}
                                         </Text>
                                         <Text style={{ color: theme.colors.textTertiary, fontSize: 12, marginTop: 4 }}>Add 10–20% for expected non-response / dropout</Text>
@@ -358,7 +358,7 @@ const BiostatsAssistantScreen = () => {
                             <Card key={p.id} style={styles.card}>
                                 <Card.Content>
                                     <Title style={[styles.cardTitle, { fontSize: 15 }]}>{p.title}</Title>
-                                    <Text style={{ color: '#374151', lineHeight: 20 }}>{p.description}</Text>
+                                    <Text style={{ color: colors.textSecondary, lineHeight: 20 }}>{p.description}</Text>
                                     <Button mode="outlined" textColor={theme.colors.textTitle} compact style={{ marginTop: 10, alignSelf: 'flex-start' }} onPress={() => loadPreset(p)}>Load →</Button>
                                 </Card.Content>
                             </Card>
@@ -404,7 +404,7 @@ const createStyles = (colors) => StyleSheet.create({
     card: { marginBottom: 14, backgroundColor: colors.surfacePrimary, borderRadius: 12, elevation: 2 },
     cardTitle: { fontSize: 16, fontWeight: 'bold', color: colors.textTitle, marginBottom: 4 },
     hint: { color: colors.textTertiary, fontSize: 12, marginBottom: 8, fontStyle: 'italic' },
-    typeBtn: { marginTop: 8, borderColor: '#E5E7EB' },
+    typeBtn: { marginTop: 8, borderColor: colors.border },
     pillRow: { flexDirection: 'row', gap: 8, marginTop: 8 },
     pill: { flex: 1 },
     grid2x2: { gap: 8 },
@@ -413,9 +413,9 @@ const createStyles = (colors) => StyleSheet.create({
     input: { marginBottom: 8, backgroundColor: colors.surfacePrimary },
     btn: { marginTop: 12, backgroundColor: colors.secondary, paddingVertical: 4 },
     resultBox: { marginTop: 12, padding: 14, backgroundColor: colors.primaryLight, borderRadius: 10, borderLeftWidth: 4 },
-    errText: { color: '#B91C1C', marginTop: 8, fontWeight: '500' },
+    errText: { color: colors.errorStrong, marginTop: 8, fontWeight: '500' },
     refRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 6 },
-    refText: { flex: 1, color: '#374151', lineHeight: 20 },
+    refText: { flex: 1, color: colors.textBody, lineHeight: 20 },
 });
 
 export default BiostatsAssistantScreen;

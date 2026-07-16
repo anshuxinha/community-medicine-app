@@ -301,7 +301,7 @@ const createStyles = (colors) => StyleSheet.create({
         backgroundColor: colors.secondary,
     },
     resultCard: {
-        backgroundColor: '#F3E8FF',
+        backgroundColor: colors.primarySoft,
         marginBottom: 32,
     },
     resultTitle: {

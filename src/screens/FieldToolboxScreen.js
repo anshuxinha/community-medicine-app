@@ -197,7 +197,7 @@ const createStyles = (colors) => StyleSheet.create({
         marginRight: 8,
     },
     newBadge: {
-        backgroundColor: '#F3E8FF',
+        backgroundColor: colors.primarySoft,
         color: colors.primaryDark,
         borderRadius: 6,
         overflow: 'hidden',
@@ -208,7 +208,7 @@ const createStyles = (colors) => StyleSheet.create({
     },
     cardDesc: {
         fontSize: 14,
-        color: '#374151',
+        color: colors.textBody,
         lineHeight: 20,
     },
 });

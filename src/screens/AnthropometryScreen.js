@@ -437,7 +437,7 @@ const createStyles = (colors) => StyleSheet.create({
         borderRadius: 12,
         borderLeftWidth: 4,
     },
-    errorText: { color: '#B91C1C', marginTop: 8 },
+    errorText: { color: colors.errorStrong, marginTop: 8 },
     noteText: { color: colors.textTertiary, lineHeight: 18 },
     /* MUAC band chips */
     muacBandRow: {

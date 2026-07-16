@@ -277,7 +277,7 @@ const createStyles = (colors) => StyleSheet.create({
     backgroundColor: colors.surfacePrimary,
     borderRadius: 20,
     elevation: 4,
-    shadowColor: "#000",
+    shadowColor: colors.textTitle,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.05,
     shadowRadius: 10,
@@ -323,7 +323,7 @@ const createStyles = (colors) => StyleSheet.create({
     marginBottom: 2,
   },
   monthNameSelected: {
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
   },
   monthNameCurrent: {
     color: colors.secondary,
@@ -352,7 +352,7 @@ const createStyles = (colors) => StyleSheet.create({
     color: colors.textSecondary,
   },
   badgeTextActive: {
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
   },
   updatesSection: {
     marginTop: 4,
@@ -379,7 +379,7 @@ const createStyles = (colors) => StyleSheet.create({
     backgroundColor: colors.surfacePrimary,
     borderRadius: 16,
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: colors.textTitle,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,

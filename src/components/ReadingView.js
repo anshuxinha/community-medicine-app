@@ -1891,7 +1891,7 @@ const createStyles = (colors) => StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: colors.surfacePrimary,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: colors.border,
     zIndex: 10,
   },
   headerBackBtn: {
@@ -1953,7 +1953,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   chapterDivider: {
     height: 1,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: colors.border,
   },
 
   // ── Scroll ──
@@ -1997,7 +1997,7 @@ const createStyles = (colors) => StyleSheet.create({
     borderRadius: 12,
     backgroundColor: "#F3F0FF",
     borderWidth: 1,
-    borderColor: "#DDD6FE",
+    borderColor: colors.primaryMuted,
   },
   annotationModeBannerText: {
     flex: 1,
@@ -2029,7 +2029,7 @@ const createStyles = (colors) => StyleSheet.create({
     marginVertical: 4,
   },
   allCapsTitle: {
-    color: "#9333ea",
+    color: colors.secondary,
     fontSize: 16,
     fontWeight: "bold",
     lineHeight: 24,
@@ -2094,7 +2094,7 @@ const createStyles = (colors) => StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderLeftWidth: 4,
-    borderLeftColor: "#B45309",
+    borderLeftColor: colors.warningStrong,
     backgroundColor: "#FEF3C7",
     borderRadius: 4,
     flexDirection: "row",
@@ -2103,7 +2103,7 @@ const createStyles = (colors) => StyleSheet.create({
     gap: 8,
   },
   examLaqBadge: {
-    color: "#92400E",
+    color: colors.warningText,
     fontSize: 11,
     fontWeight: "800",
     letterSpacing: 0.6,
@@ -2114,7 +2114,7 @@ const createStyles = (colors) => StyleSheet.create({
     overflow: "hidden",
   },
   examLaqText: {
-    color: "#92400E",
+    color: colors.warningText,
     fontSize: 14,
     fontWeight: "700",
     lineHeight: 20,
@@ -2168,21 +2168,21 @@ const createStyles = (colors) => StyleSheet.create({
     paddingLeft: 14,
     paddingVertical: 4,
     borderLeftWidth: 4,
-    borderLeftColor: "#D4A853",
-    backgroundColor: "#FDFAF3",
+    borderLeftColor: colors.highlightBorder,
+    backgroundColor: colors.highlightBg,
     borderRadius: 0,
   },
   highlightBulletRow: {
     paddingLeft: 10,
     borderLeftWidth: 4,
-    borderLeftColor: "#D4A853",
-    backgroundColor: "#FDFAF3",
+    borderLeftColor: colors.highlightBorder,
+    backgroundColor: colors.highlightBg,
     borderRadius: 0,
   },
 
   // ── User Highlights (yellow background) ──
   userHighlightBlock: {
-    backgroundColor: "#FEF9C3",
+    backgroundColor: colors.userHighlightBg,
     borderRadius: 4,
     paddingHorizontal: 4,
     paddingVertical: 2,
@@ -2195,7 +2195,7 @@ const createStyles = (colors) => StyleSheet.create({
     borderStyle: "dashed",
   },
   userHighlightSentence: {
-    backgroundColor: "#FEF08A",
+    backgroundColor: colors.userHighlightSentence,
     borderRadius: 2,
   },
   sentenceWrap: {
@@ -2215,11 +2215,11 @@ const createStyles = (colors) => StyleSheet.create({
     paddingHorizontal: 16,
     borderLeftWidth: 4,
     borderLeftColor: colors.primary,
-    backgroundColor: colors.primaryLight || "#F3E8FF",
+    backgroundColor: colors.primaryLight || colors.primarySoft,
     borderRadius: 4,
   },
   blockquoteText: {
-    color: colors.textTitle || "#1F2937",
+    color: colors.textTitle || colors.textPrimary,
     fontSize: 15,
     fontStyle: "italic",
     lineHeight: 24,
@@ -2242,7 +2242,7 @@ const createStyles = (colors) => StyleSheet.create({
     borderRadius: 4,
   },
   questionText: {
-    color: colors.textTitle || "#1F2937",
+    color: colors.textTitle || colors.textPrimary,
     fontSize: 15,
     fontWeight: "600",
     lineHeight: 22,
@@ -2252,7 +2252,7 @@ const createStyles = (colors) => StyleSheet.create({
   tableContainer: {
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.surfaceSecondary || "#E5E7EB",
+    borderColor: colors.surfaceSecondary || colors.border,
   },
   tableScrollContainer: {
     marginVertical: 12,
@@ -2260,14 +2260,14 @@ const createStyles = (colors) => StyleSheet.create({
 
   tableHeaderRow: {
     flexDirection: "row",
-    backgroundColor: "#9333ea",
+    backgroundColor: colors.secondary,
   },
   tableRow: {
     flexDirection: "row",
-    backgroundColor: colors.surfacePrimary || "#FFFFFF",
+    backgroundColor: colors.surfacePrimary || colors.surfacePrimary,
   },
   tableRowAlt: {
-    backgroundColor: colors.surfaceSecondary || "#F9FAFB",
+    backgroundColor: colors.surfaceSecondary || colors.surfaceTertiary,
   },
   tableCell: {
     paddingHorizontal: 10,
@@ -2282,13 +2282,13 @@ const createStyles = (colors) => StyleSheet.create({
     borderRightColor: "rgba(255,255,255,0.2)",
   },
   tableHeaderText: {
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
     fontSize: 13,
     fontWeight: "700",
     lineHeight: 18,
   },
   tableCellText: {
-    color: colors.textTitle || "#1F2937",
+    color: colors.textTitle || colors.textPrimary,
     fontSize: 13,
     lineHeight: 19,
   },
@@ -2328,7 +2328,7 @@ const createStyles = (colors) => StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.surfaceSecondary,
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: colors.textTitle,
     shadowOpacity: 0.08,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 2 },
@@ -2368,9 +2368,9 @@ const createStyles = (colors) => StyleSheet.create({
     paddingTop: 8,
     backgroundColor: colors.surfacePrimary,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: "#E5E7EB",
+    borderTopColor: colors.border,
     elevation: 8,
-    shadowColor: "#000",
+    shadowColor: colors.textTitle,
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.06,
     shadowRadius: 4,
@@ -2415,7 +2415,7 @@ const createStyles = (colors) => StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderLeftWidth: 3,
-    borderLeftColor: "#D4A853",
+    borderLeftColor: colors.highlightBorder,
     backgroundColor: "#FEFCE8",
     borderRadius: 8,
   },
@@ -2429,7 +2429,7 @@ const createStyles = (colors) => StyleSheet.create({
     flex: 1,
     fontSize: 11,
     fontWeight: "700",
-    color: "#92400E",
+    color: colors.warningText,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
@@ -2448,10 +2448,10 @@ const createStyles = (colors) => StyleSheet.create({
     paddingVertical: 10,
     borderLeftWidth: 3,
     borderLeftColor: colors.secondary,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: colors.surfaceTertiary,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#DDD6FE",
+    borderColor: colors.primaryMuted,
   },
   annotationInput: {
     fontSize: 14,
@@ -2489,7 +2489,7 @@ const createStyles = (colors) => StyleSheet.create({
   annotationSaveText: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
   },
 
   // ── Note Modal ──
@@ -2522,9 +2522,9 @@ const createStyles = (colors) => StyleSheet.create({
     textAlignVertical: "top",
     padding: 12,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.border,
     borderRadius: 10,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: colors.surfaceTertiary,
   },
   noteModalActions: {
     flexDirection: "row",
@@ -2598,13 +2598,13 @@ const createStyles = (colors) => StyleSheet.create({
   viewerZoomLabel: {
     minWidth: 58,
     textAlign: "center",
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
     fontSize: 14,
     fontWeight: "700",
   },
   fullscreenHint: {
     marginTop: 12,
-    color: "#F3F4F6",
+    color: colors.surfaceSecondary,
     fontSize: 13,
     lineHeight: 18,
     textAlign: "center",
@@ -2612,7 +2612,7 @@ const createStyles = (colors) => StyleSheet.create({
 
   // ── Search Term Highlight ──
   searchTermMatch: {
-    color: "#9333ea",
+    color: colors.secondary,
     fontWeight: "700",
   },
 });

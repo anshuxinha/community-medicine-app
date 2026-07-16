@@ -256,7 +256,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   shareCard: {
     width: 380,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surfacePrimary,
     borderRadius: 16,
     overflow: "hidden",
   },
@@ -279,32 +279,32 @@ const createStyles = (colors) => StyleSheet.create({
   shareTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#111827",
+    color: colors.textTitle,
     lineHeight: 28,
     marginBottom: 8,
   },
   shareDate: {
     fontSize: 12,
-    color: "#6B7280",
+    color: colors.textTertiary,
     marginBottom: 12,
   },
   shareDivider: {
     height: 1,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: colors.border,
     marginBottom: 12,
   },
   shareSummary: {
     fontSize: 14,
-    color: "#374151",
+    color: colors.textBody,
     lineHeight: 22,
   },
   shareSource: {
     fontSize: 11,
-    color: "#9CA3AF",
+    color: colors.textPlaceholder,
     marginTop: 12,
   },
   shareFooter: {
-    backgroundColor: "#0D1B2A",
+    backgroundColor: colors.inverseSurface,
     padding: 20,
   },
   shareFooterTop: {
@@ -324,17 +324,17 @@ const createStyles = (colors) => StyleSheet.create({
   shareAppName: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
     letterSpacing: 2,
   },
   shareAppTagline: {
     fontSize: 11,
-    color: "#9CA3AF",
+    color: colors.textPlaceholder,
     marginTop: 2,
   },
   shareCTA: {
     fontSize: 12,
-    color: "#D1D5DB",
+    color: colors.borderStrong,
     lineHeight: 18,
   },
 
@@ -345,7 +345,7 @@ const createStyles = (colors) => StyleSheet.create({
     maxHeight: "85%",
     overflow: "hidden",
     elevation: 8,
-    shadowColor: "#000",
+    shadowColor: colors.textTitle,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.12,
     shadowRadius: 24,
@@ -402,7 +402,7 @@ const createStyles = (colors) => StyleSheet.create({
     marginBottom: 12,
   },
   divider: {
-    backgroundColor: "#E5E7EB",
+    backgroundColor: colors.border,
     marginBottom: 16,
   },
   body: {
@@ -456,7 +456,7 @@ const createStyles = (colors) => StyleSheet.create({
     elevation: 2,
   },
   shareBtnLabel: {
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
     fontWeight: "700",
   },
 

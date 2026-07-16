@@ -445,7 +445,7 @@ const createStyles = (colors) => StyleSheet.create({
     lineHeight: 20,
   },
   premiumBanner: {
-    backgroundColor: "#FFFBEB",
+    backgroundColor: colors.warningBackground,
     borderColor: "#FCD34D",
     borderWidth: 1,
     borderRadius: 16,
@@ -462,11 +462,11 @@ const createStyles = (colors) => StyleSheet.create({
   },
   premiumTitle: {
     fontWeight: "bold",
-    color: "#92400E",
+    color: colors.warningText,
     fontSize: 15,
   },
   premiumDesc: {
-    color: "#B45309",
+    color: colors.warningStrong,
     fontSize: 12,
     marginTop: 2,
     lineHeight: 16,
@@ -476,7 +476,7 @@ const createStyles = (colors) => StyleSheet.create({
     borderRadius: 16,
     marginBottom: 16,
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: colors.textTitle,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
@@ -503,14 +503,14 @@ const createStyles = (colors) => StyleSheet.create({
   chip: {
     marginRight: 8,
     marginBottom: 8,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: colors.surfaceSecondary,
     borderRadius: 20,
     borderWidth: 0,
   },
   chipSmall: {
     marginRight: 6,
     marginBottom: 6,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: colors.surfaceSecondary,
     borderRadius: 12,
     borderWidth: 0,
     paddingHorizontal: 4,
@@ -520,7 +520,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   lockedChip: {
     opacity: 0.6,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: colors.border,
   },
   modeContainer: {
     flexDirection: "row",
@@ -529,7 +529,7 @@ const createStyles = (colors) => StyleSheet.create({
   modeOption: {
     flex: 1,
     backgroundColor: colors.surfaceTertiary,
-    borderColor: "#E5E7EB",
+    borderColor: colors.border,
     borderWidth: 1,
     borderRadius: 12,
     padding: 12,
@@ -564,7 +564,7 @@ const createStyles = (colors) => StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.border,
   },
   matchingStats: {
     flexDirection: "row",

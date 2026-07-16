@@ -58,7 +58,7 @@ const StatusMark = ({ status }) => {
   }
 
   return (
-    <MaterialCommunityIcons name="chevron-right" size={24} color="#D1D5DB" />
+    <MaterialCommunityIcons name="chevron-right" size={24} color={colors.borderStrong} />
   );
 };
 
@@ -83,7 +83,8 @@ const buildReadingParams = (item, section, status, searchTerms = "") => ({
 
 // ── Search excerpt: finds keyword context in body content ──────────────────
 const EXCERPT_CONTEXT = 55; // chars of context before/after match
-const SEARCH_PURPLE = "#9333ea";
+// Use theme secondary; fallback for static excerpt styles module-level
+const SEARCH_PURPLE = "#A855F7";
 
 const getExcerptAroundMatch = (text, query) => {
   if (!text || !query) return null;
@@ -120,6 +121,8 @@ const findFirstMatchingItemOrSub = (item, query) => {
 };
 
 const SearchExcerpt = ({ item, searchQuery }) => {
+  const { colors } = useThemedStyles(createStyles);
+  const excerptStyles = getExcerptStyles(colors);
   if (!searchQuery) return null;
   const matchItem = findFirstMatchingItemOrSub(item, searchQuery);
   if (!matchItem) return null;
@@ -155,11 +158,16 @@ const SearchExcerpt = ({ item, searchQuery }) => {
   );
 };
 
-const excerptStyles = {
-  container: { fontSize: 12, lineHeight: 17, color: "#6B7280", marginTop: 2 },
-  plain: { color: "#6B7280" },
-  match: { color: SEARCH_PURPLE, fontWeight: "700" },
-};
+const getExcerptStyles = (colors) => ({
+  container: {
+    fontSize: 12,
+    lineHeight: 17,
+    color: colors.textTertiary,
+    marginTop: 2,
+  },
+  plain: { color: colors.textTertiary },
+  match: { color: colors.secondary, fontWeight: "700" },
+});
 
 const LibraryScreen = (props) => {
   const { styles, colors } = useThemedStyles(createStyles);
@@ -428,7 +436,8 @@ const LibraryScreen = (props) => {
             value={searchQuery}
             style={styles.searchBar}
             inputStyle={styles.searchBarInput}
-            iconColor="#9CA3AF"
+            iconColor={colors.textPlaceholder}
+            placeholderTextColor={colors.textPlaceholder}
           />
         </View>
 
@@ -450,6 +459,7 @@ const LibraryScreen = (props) => {
                 icon: "stethoscope",
               },
             ]}
+            style={styles.segmentedButtons}
           />
         </View>
 
@@ -474,6 +484,7 @@ const LibraryScreen = (props) => {
                 title={item.title}
                 titleNumberOfLines={3}
                 titleStyle={styles.listItemTitle}
+                style={styles.listItem}
                 description={() => {
                   if (searchQuery.trim().length > 0) {
                     return (
@@ -499,7 +510,7 @@ const LibraryScreen = (props) => {
                       <MaterialCommunityIcons
                         name={iconName}
                         size={24}
-                        color="#6B7280"
+                        color={colors.textTertiary}
                       />
                     )}
                   />
@@ -558,15 +569,15 @@ const LibraryScreen = (props) => {
 const createStyles = (colors) => StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.backgroundMain,
   },
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.backgroundMain,
   },
   captureProtectedOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.backgroundMain,
     alignItems: "center",
     justifyContent: "center",
     zIndex: 1000,
@@ -582,7 +593,7 @@ const createStyles = (colors) => StyleSheet.create({
     paddingBottom: 12,
   },
   searchBar: {
-    backgroundColor: "#F3F4F6",
+    backgroundColor: colors.surfaceSecondary,
     borderRadius: 12,
     elevation: 0,
     height: 48,
@@ -590,14 +601,14 @@ const createStyles = (colors) => StyleSheet.create({
   },
   searchBarInput: {
     fontSize: 16,
-    color: "#111827",
+    color: colors.textTitle,
     minHeight: 48,
     alignSelf: "center",
   },
   header: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#000000",
+    color: colors.textTitle,
     paddingHorizontal: 16,
     marginTop: 0,
     marginBottom: 12,
@@ -614,11 +625,12 @@ const createStyles = (colors) => StyleSheet.create({
   },
   listItem: {
     paddingVertical: 8,
+    backgroundColor: colors.backgroundMain,
   },
   listItemTitle: {
     fontSize: 16,
     lineHeight: 24,
-    color: "#111827",
+    color: colors.textTitle,
     fontWeight: "500",
     paddingRight: 12,
   },
@@ -644,22 +656,22 @@ const createStyles = (colors) => StyleSheet.create({
     justifyContent: "center",
     backgroundColor: colors.primaryLight,
     borderWidth: 1,
-    borderColor: "#DDD6FE",
+    borderColor: colors.primaryMuted,
   },
   newBadge: {
-    backgroundColor: "#F3E8FF",
+    backgroundColor: colors.primarySoft,
     color: colors.primaryDark,
     fontSize: 10,
     fontWeight: "900",
   },
   freeBadge: {
     backgroundColor: colors.success,
-    color: "#FFFFFF",
+    color: colors.surfacePrimary,
     fontWeight: "700",
     marginRight: 6,
   },
   divider: {
-    backgroundColor: "#E5E7EB",
+    backgroundColor: colors.border,
     height: 1,
     marginLeft: 64,
   },

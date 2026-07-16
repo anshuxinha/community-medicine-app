@@ -52,10 +52,8 @@ const UpdateDownloadIndicator = () => {
       await Updates.reloadAsync();
     } catch (error) {
       setPhase("error");
-      setErrorMessage(
-        error?.message ||
-          "Install failed. Force-stop STROMA in system settings, then open again.",
-      );
+      setErrorMessage("Couldn't apply the update. Please close the app fully and open it again.");
+      console.warn("Updates.reloadAsync failed:", error);
     }
   }, []);
 
@@ -70,7 +68,7 @@ const UpdateDownloadIndicator = () => {
           if (!cancelled) setPhase("ready");
           return;
         }
-        setPhase("checking");
+        // Silent check — only show UI when something needs user action
         const result = await Updates.checkForUpdateAsync();
         if (cancelled) return;
         if (!result.isAvailable) {
@@ -93,14 +91,13 @@ const UpdateDownloadIndicator = () => {
     };
   }, []);
 
-  const showDownloading =
-    phase === "downloading" || phase === "checking" || isDownloading;
+  const showDownloading = phase === "downloading" || isDownloading;
   const showReady = phase === "ready" || isUpdatePending;
   const showApplying = phase === "applying";
+  // Never show technical codes or idle "checking" state to users.
   const showBanner =
     errorMessage || showDownloading || showReady || showApplying;
 
-  // Quiet when up to date — no debug strip in normal use.
   if (!showBanner) return null;
 
   return (
@@ -112,7 +109,7 @@ const UpdateDownloadIndicator = () => {
               ? "error-outline"
               : showApplying || showReady
                 ? "system-update"
-                : "downloading"
+                : "cloud-download"
           }
           size={20}
           color={
@@ -127,21 +124,21 @@ const UpdateDownloadIndicator = () => {
       <View style={styles.updateDownloadTextColumn}>
         <Text style={styles.updateDownloadTitle}>
           {errorMessage
-            ? "Update install failed"
+            ? "Update couldn't install"
             : showApplying
-              ? "Installing…"
+              ? "Installing update"
               : showReady
-                ? "Update ready"
+                ? "Update available"
                 : "Downloading update"}
         </Text>
         <Text style={styles.updateDownloadSubtitle}>
           {errorMessage
             ? errorMessage
             : showApplying
-              ? "Loading the new version…"
+              ? "Almost done — the app will refresh shortly."
               : showReady
-                ? "Tap Install now to apply the update."
-                : "Please keep the app open for a moment."}
+                ? "A new version is ready. Tap below to install it now."
+                : "Please keep the app open while we finish downloading."}
         </Text>
         {showDownloading && !showReady && !showApplying ? (
           <ProgressBar
@@ -155,7 +152,9 @@ const UpdateDownloadIndicator = () => {
             style={styles.updateInstallButton}
             onPress={installNow}
           >
-            <Text style={styles.updateInstallButtonText}>Install now</Text>
+            <Text style={styles.updateInstallButtonText}>
+              {errorMessage ? "Try again" : "Install now"}
+            </Text>
           </TouchableOpacity>
         ) : null}
       </View>
@@ -769,7 +768,7 @@ const createStyles = (colors) => StyleSheet.create({
     backgroundColor: colors.surfacePrimary,
     borderRadius: 20,
     elevation: 4,
-    shadowColor: "#000",
+    shadowColor: colors.textTitle,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.05,
     shadowRadius: 10,
@@ -800,13 +799,13 @@ const createStyles = (colors) => StyleSheet.create({
     backgroundColor: colors.surfacePrimary,
     borderRadius: 20,
     elevation: 4,
-    shadowColor: "#000",
+    shadowColor: colors.textTitle,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.05,
     shadowRadius: 10,
   },
   statLabel: {
-    color: "#374151",
+    color: colors.textBody,
     fontWeight: "600",
   },
   statContent: {
@@ -836,7 +835,7 @@ const createStyles = (colors) => StyleSheet.create({
     backgroundColor: colors.surfacePrimary,
     borderRadius: 16,
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: colors.textTitle,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
@@ -852,7 +851,7 @@ const createStyles = (colors) => StyleSheet.create({
     position: "absolute",
     top: 5,
     right: 5,
-    backgroundColor: "#F3E8FF",
+    backgroundColor: colors.primarySoft,
     color: colors.primaryDark,
     borderRadius: 6,
     overflow: "hidden",
@@ -871,7 +870,7 @@ const createStyles = (colors) => StyleSheet.create({
     backgroundColor: colors.surfacePrimary,
     borderRadius: 16,
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: colors.textTitle,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
@@ -944,13 +943,13 @@ const createStyles = (colors) => StyleSheet.create({
     backgroundColor: colors.surfacePrimary,
     borderRadius: 20,
     elevation: 4,
-    shadowColor: "#000",
+    shadowColor: colors.textTitle,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.05,
     shadowRadius: 10,
     marginBottom: 24,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.border,
   },
   qbankBannerContent: {
     flexDirection: "row",

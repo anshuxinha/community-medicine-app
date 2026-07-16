@@ -263,10 +263,10 @@ const createStyles = (colors) => StyleSheet.create({
     justifyContent: "center",
     backgroundColor: colors.primaryLight,
     borderWidth: 1,
-    borderColor: "#DDD6FE",
+    borderColor: colors.primaryMuted,
   },
   newBadge: {
-    backgroundColor: "#F3E8FF",
+    backgroundColor: colors.primarySoft,
     color: colors.primaryDark,
     fontSize: 10,
     fontWeight: "900",
