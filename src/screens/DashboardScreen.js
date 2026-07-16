@@ -29,6 +29,7 @@ import { scheduleAllNotifications } from "../services/notificationService";
 import { auth } from "../config/firebase";
 import { useResponsive } from "../styles/theme";
 import { useThemedStyles } from "../styles/useThemedStyles";
+import { applyPendingUpdateIfNeeded } from "../utils/applyPendingUpdate";
 
 const DASHBOARD_NEW_BADGES_STORAGE_KEY = "dashboardNewBadgesSeen:v1";
 const REFERRAL_ANNOUNCEMENT_STORAGE_KEY = "referralAnnouncementSeen:v1";
@@ -41,25 +42,26 @@ const UpdateDownloadIndicator = () => {
     isUpdatePending,
     downloadProgress,
   } = Updates.useUpdates();
-  // Local phase for this session only — never stick "ready" without isUpdatePending.
   const [phase, setPhase] = useState("idle"); // idle | checking | downloading | applying
   const [errorMessage, setErrorMessage] = useState(null);
   const checkedRef = React.useRef(false);
-  const applyAttemptedRef = React.useRef(false);
 
   const applyUpdate = React.useCallback(async () => {
-    if (applyAttemptedRef.current) return;
-    applyAttemptedRef.current = true;
     setPhase("applying");
     setErrorMessage(null);
     try {
-      await Updates.reloadAsync();
-      // reloadAsync does not return on success (JS context is torn down).
+      // force: user tapped Restart — bypass auto-reload cooldown
+      const started = await applyPendingUpdateIfNeeded("dashboard-button", {
+        force: true,
+      });
+      if (!started) {
+        // Fallback if isUpdatePending was false but fetch just finished
+        await Updates.reloadAsync();
+      }
     } catch (error) {
-      applyAttemptedRef.current = false;
       setPhase("idle");
       setErrorMessage(
-        "Could not apply the update. Force-close the app completely, then open it again.",
+        "Tap Restart now again, or: Settings → Apps → STROMA → Force stop → open the app.",
       );
       console.warn("Updates.reloadAsync failed:", error);
     }
@@ -67,22 +69,20 @@ const UpdateDownloadIndicator = () => {
 
   useEffect(() => {
     if (__DEV__ || !Updates.isEnabled || checkedRef.current) return;
-
     checkedRef.current = true;
     let cancelled = false;
 
-    const checkAndDownloadUpdate = async () => {
+    (async () => {
       try {
-        // Previous session left a downloaded update unapplied — offer restart (no auto loop).
-        if (isUpdatePending) {
-          if (!cancelled) setPhase("idle"); // banner driven by isUpdatePending + Restart button
+        if (Updates.isUpdatePending || isUpdatePending) {
+          // Pending from a prior download — apply without waiting for a tap.
+          if (!cancelled) await applyUpdate();
           return;
         }
 
         setPhase("checking");
         const update = await Updates.checkForUpdateAsync();
         if (cancelled) return;
-
         if (!update.isAvailable) {
           setPhase("idle");
           return;
@@ -91,8 +91,6 @@ const UpdateDownloadIndicator = () => {
         setPhase("downloading");
         await Updates.fetchUpdateAsync();
         if (cancelled) return;
-
-        // Apply immediately. "Reopen the app" alone often leaves Android on the old JS bundle.
         await applyUpdate();
       } catch (error) {
         if (!cancelled) {
@@ -100,19 +98,17 @@ const UpdateDownloadIndicator = () => {
           console.warn("App update check failed:", error);
         }
       }
-    };
-
-    checkAndDownloadUpdate();
+    })();
 
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only check
-  }, []);
+  }, [applyUpdate, isUpdatePending]);
 
+  // Sticky local "ready" without isUpdatePending was the old bug. Only show when
+  // native says pending, or while we are actively checking/downloading/applying.
   const showDownloading =
     phase === "downloading" || phase === "checking" || isDownloading;
-  // Pending update that needs a reload (including left over from a prior session).
   const showReady = isUpdatePending && phase !== "applying";
   const showApplying = phase === "applying";
   const showBanner =
@@ -128,7 +124,7 @@ const UpdateDownloadIndicator = () => {
             errorMessage
               ? "error-outline"
               : showApplying || showReady
-                ? "check-circle"
+                ? "system-update"
                 : "downloading"
           }
           size={20}
@@ -144,7 +140,7 @@ const UpdateDownloadIndicator = () => {
       <View style={styles.updateDownloadTextColumn}>
         <Text style={styles.updateDownloadTitle}>
           {errorMessage
-            ? "Update not applied"
+            ? "Update needs a restart"
             : showApplying
               ? "Applying update…"
               : showReady
@@ -155,9 +151,9 @@ const UpdateDownloadIndicator = () => {
           {errorMessage
             ? errorMessage
             : showApplying
-              ? "Restarting to finish the update."
+              ? "Restarting the app to install it…"
               : showReady
-                ? "Tap Restart now to load the new version (Appearance and other fixes)."
+                ? "A new version is downloaded. Tap the button to install it now."
                 : "Please keep the app open for a moment."}
         </Text>
         {showDownloading && !showReady && !showApplying ? (
@@ -167,14 +163,18 @@ const UpdateDownloadIndicator = () => {
             style={styles.updateDownloadProgress}
           />
         ) : null}
-        {showReady || errorMessage ? (
+        {(showReady || errorMessage || showApplying) && phase !== "applying" ? (
           <TouchableOpacity
             style={styles.updateRestartButton}
             onPress={applyUpdate}
-            disabled={phase === "applying"}
           >
             <Text style={styles.updateRestartButtonText}>Restart now</Text>
           </TouchableOpacity>
+        ) : null}
+        {showApplying ? (
+          <Text style={[styles.updateDownloadSubtitle, { marginTop: 8 }]}>
+            If this hangs, Force stop STROMA in system settings, then reopen.
+          </Text>
         ) : null}
       </View>
     </View>

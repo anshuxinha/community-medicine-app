@@ -19,15 +19,16 @@ import { AppContext } from "../context/AppContext";
 import { useThemedStyles } from "../styles/useThemedStyles";
 import { useAppTheme } from "../styles/ThemeContext";
 import Constants from "expo-constants";
+import * as Updates from "expo-updates";
 import {
   enableScreenCaptureProtection,
   disableScreenCaptureProtection,
 } from "../utils/screenCaptureProtection";
 
 const APPEARANCE_OPTIONS = [
-  { value: "system", label: "System", icon: "brightness-auto" },
-  { value: "light", label: "Light", icon: "light-mode" },
-  { value: "dark", label: "Dark", icon: "dark-mode" },
+  { value: "system", label: "System", icon: "phone-android" },
+  { value: "light", label: "Light", icon: "wb-sunny" },
+  { value: "dark", label: "Dark", icon: "nights-stay" },
 ];
 
 const ProfileScreen = () => {
@@ -565,9 +566,12 @@ const ProfileScreen = () => {
           <Text style={styles.deleteAccountText}>Delete Account</Text>
         </TouchableOpacity>
 
-        {/* App Version */}
+        {/* App Version — update id proves which OTA is running */}
         <Text style={styles.version}>
           STROMA v{Constants.expoConfig?.version || "1.0.0"}
+          {Updates.updateId
+            ? ` · ${String(Updates.updateId).slice(0, 8)}`
+            : " · embedded"}
         </Text>
 
         <View style={styles.bottomPadding} />

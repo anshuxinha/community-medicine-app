@@ -27,13 +27,13 @@ function resolveScheme(preference, systemScheme) {
 }
 
 export function ThemeProvider({ children }) {
+  // Default to light until AsyncStorage hydrates — safer first paint / avoids
+  // rare startup issues if the OS reports dark before storage is ready.
   const [preference, setPreferenceState] = useState(
-    /** @type {ThemePreference} */ ("system"),
+    /** @type {ThemePreference} */ ("light"),
   );
   const [systemScheme, setSystemScheme] = useState(
-    /** @type {ColorScheme} */ (
-      Appearance.getColorScheme() === "dark" ? "dark" : "light"
-    ),
+    /** @type {ColorScheme} */ ("light"),
   );
   const [hydrated, setHydrated] = useState(false);
 
@@ -41,12 +41,24 @@ export function ThemeProvider({ children }) {
     let cancelled = false;
     (async () => {
       try {
+        try {
+          const os = Appearance.getColorScheme();
+          if (!cancelled) {
+            setSystemScheme(os === "dark" ? "dark" : "light");
+          }
+        } catch (_) {
+          /* keep light */
+        }
+
         const stored = await AsyncStorage.getItem(STORAGE_KEY);
         if (
           !cancelled &&
           (stored === "light" || stored === "dark" || stored === "system")
         ) {
           setPreferenceState(stored);
+        } else if (!cancelled) {
+          // No stored preference: follow system (product default).
+          setPreferenceState("system");
         }
       } catch (e) {
         console.warn("Failed to load theme preference:", e?.message);
@@ -60,10 +72,21 @@ export function ThemeProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    const sub = Appearance.addChangeListener(({ colorScheme }) => {
-      setSystemScheme(colorScheme === "dark" ? "dark" : "light");
-    });
-    return () => sub.remove();
+    let sub;
+    try {
+      sub = Appearance.addChangeListener(({ colorScheme }) => {
+        setSystemScheme(colorScheme === "dark" ? "dark" : "light");
+      });
+    } catch (e) {
+      console.warn("Appearance listener failed:", e?.message);
+    }
+    return () => {
+      try {
+        sub?.remove?.();
+      } catch (_) {
+        /* ignore */
+      }
+    };
   }, []);
 
   const setPreference = useCallback(async (next) => {
