@@ -397,30 +397,13 @@ const ProfileScreen = () => {
           </Card.Content>
         </Card>
 
-        {/* Account Info */}
-        <Text style={styles.sectionTitle}>👤 Account</Text>
-        <Card style={styles.accountCard}>
-          <Card.Content>
-            <View style={styles.accountRow}>
-              <Text style={styles.accountLabel}>Account Type</Text>
-              <Text style={styles.accountValue}>
-                {user ? "Registered" : "Guest"}
-              </Text>
-            </View>
-            <Divider style={styles.accountDivider} />
-            <View style={styles.accountRow}>
-              <Text style={styles.accountLabel}>Subscription Expiry</Text>
-              <Text style={styles.accountValue}>
-                {getSubscriptionExpiryDisplay()}
-              </Text>
-            </View>
-          </Card.Content>
-        </Card>
-
-        {/* Appearance */}
+        {/* Appearance — high in the scroll so it’s easy to find */}
         <Text style={styles.sectionTitle}>🎨 Appearance</Text>
         <Card style={styles.actionsCard}>
           <Card.Content style={styles.actionsContent}>
+            <Text style={styles.appearanceIntro}>
+              Choose Light, Dark, or match your phone settings.
+            </Text>
             <View style={styles.appearanceRow}>
               {APPEARANCE_OPTIONS.map((opt) => {
                 const selected = preference === opt.value;
@@ -457,6 +440,26 @@ const ProfileScreen = () => {
                 Following system · {scheme === "dark" ? "Dark" : "Light"}
               </Text>
             ) : null}
+          </Card.Content>
+        </Card>
+
+        {/* Account Info */}
+        <Text style={styles.sectionTitle}>👤 Account</Text>
+        <Card style={styles.accountCard}>
+          <Card.Content>
+            <View style={styles.accountRow}>
+              <Text style={styles.accountLabel}>Account Type</Text>
+              <Text style={styles.accountValue}>
+                {user ? "Registered" : "Guest"}
+              </Text>
+            </View>
+            <Divider style={styles.accountDivider} />
+            <View style={styles.accountRow}>
+              <Text style={styles.accountLabel}>Subscription Expiry</Text>
+              <Text style={styles.accountValue}>
+                {getSubscriptionExpiryDisplay()}
+              </Text>
+            </View>
           </Card.Content>
         </Card>
 
@@ -652,6 +655,12 @@ const createStyles = (colors) => StyleSheet.create({
   userEmail: {
     fontSize: 14,
     color: colors.textPlaceholder,
+  },
+  appearanceIntro: {
+    fontSize: 13,
+    color: colors.textSecondary,
+    marginBottom: 12,
+    lineHeight: 18,
   },
   appearanceRow: {
     flexDirection: "row",

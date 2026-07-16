@@ -41,8 +41,29 @@ const UpdateDownloadIndicator = () => {
     isUpdatePending,
     downloadProgress,
   } = Updates.useUpdates();
-  const [status, setStatus] = useState("idle");
+  // Local phase for this session only — never stick "ready" without isUpdatePending.
+  const [phase, setPhase] = useState("idle"); // idle | checking | downloading | applying
+  const [errorMessage, setErrorMessage] = useState(null);
   const checkedRef = React.useRef(false);
+  const applyAttemptedRef = React.useRef(false);
+
+  const applyUpdate = React.useCallback(async () => {
+    if (applyAttemptedRef.current) return;
+    applyAttemptedRef.current = true;
+    setPhase("applying");
+    setErrorMessage(null);
+    try {
+      await Updates.reloadAsync();
+      // reloadAsync does not return on success (JS context is torn down).
+    } catch (error) {
+      applyAttemptedRef.current = false;
+      setPhase("idle");
+      setErrorMessage(
+        "Could not apply the update. Force-close the app completely, then open it again.",
+      );
+      console.warn("Updates.reloadAsync failed:", error);
+    }
+  }, []);
 
   useEffect(() => {
     if (__DEV__ || !Updates.isEnabled || checkedRef.current) return;
@@ -52,15 +73,32 @@ const UpdateDownloadIndicator = () => {
 
     const checkAndDownloadUpdate = async () => {
       try {
-        const update = await Updates.checkForUpdateAsync();
-        if (!cancelled && update.isAvailable) {
-          setStatus("downloading");
-          await Updates.fetchUpdateAsync();
-          if (!cancelled) setStatus("ready");
+        // Previous session left a downloaded update unapplied — offer restart (no auto loop).
+        if (isUpdatePending) {
+          if (!cancelled) setPhase("idle"); // banner driven by isUpdatePending + Restart button
+          return;
         }
+
+        setPhase("checking");
+        const update = await Updates.checkForUpdateAsync();
+        if (cancelled) return;
+
+        if (!update.isAvailable) {
+          setPhase("idle");
+          return;
+        }
+
+        setPhase("downloading");
+        await Updates.fetchUpdateAsync();
+        if (cancelled) return;
+
+        // Apply immediately. "Reopen the app" alone often leaves Android on the old JS bundle.
+        await applyUpdate();
       } catch (error) {
-        if (!cancelled) setStatus("idle");
-        console.warn("App update check failed:", error);
+        if (!cancelled) {
+          setPhase("idle");
+          console.warn("App update check failed:", error);
+        }
       }
     };
 
@@ -69,45 +107,74 @@ const UpdateDownloadIndicator = () => {
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only check
   }, []);
 
-  useEffect(() => {
-    if (isDownloading) {
-      setStatus("downloading");
-    } else if (isUpdatePending) {
-      setStatus("ready");
-    }
-  }, [isDownloading, isUpdatePending]);
+  const showDownloading =
+    phase === "downloading" || phase === "checking" || isDownloading;
+  // Pending update that needs a reload (including left over from a prior session).
+  const showReady = isUpdatePending && phase !== "applying";
+  const showApplying = phase === "applying";
+  const showBanner =
+    showDownloading || showReady || showApplying || !!errorMessage;
 
-  const showDownloading = status === "downloading" || isDownloading;
-  const showReady = status === "ready" || isUpdatePending;
-
-  if (!showDownloading && !showReady) return null;
+  if (!showBanner) return null;
 
   return (
     <View style={styles.updateDownloadIndicator}>
       <View style={styles.updateDownloadIcon}>
         <MaterialIcons
-          name={showReady ? "check-circle" : "downloading"}
+          name={
+            errorMessage
+              ? "error-outline"
+              : showApplying || showReady
+                ? "check-circle"
+                : "downloading"
+          }
           size={20}
-          color={showReady ? colors.successStrong : colors.secondary}
+          color={
+            errorMessage
+              ? colors.error
+              : showApplying || showReady
+                ? colors.successStrong
+                : colors.secondary
+          }
         />
       </View>
       <View style={styles.updateDownloadTextColumn}>
         <Text style={styles.updateDownloadTitle}>
-          {showReady ? "Update ready" : "Downloading update"}
+          {errorMessage
+            ? "Update not applied"
+            : showApplying
+              ? "Applying update…"
+              : showReady
+                ? "Update ready"
+                : "Downloading update"}
         </Text>
         <Text style={styles.updateDownloadSubtitle}>
-          {showReady
-            ? "Reopen the app to finish updating."
-            : "Please keep the app open for a moment."}
+          {errorMessage
+            ? errorMessage
+            : showApplying
+              ? "Restarting to finish the update."
+              : showReady
+                ? "Tap Restart now to load the new version (Appearance and other fixes)."
+                : "Please keep the app open for a moment."}
         </Text>
-        {showDownloading ? (
+        {showDownloading && !showReady && !showApplying ? (
           <ProgressBar
             progress={downloadProgress || 0.12}
             color={colors.secondary}
             style={styles.updateDownloadProgress}
           />
+        ) : null}
+        {showReady || errorMessage ? (
+          <TouchableOpacity
+            style={styles.updateRestartButton}
+            onPress={applyUpdate}
+            disabled={phase === "applying"}
+          >
+            <Text style={styles.updateRestartButtonText}>Restart now</Text>
+          </TouchableOpacity>
         ) : null}
       </View>
     </View>
@@ -699,6 +766,19 @@ const createStyles = (colors) => StyleSheet.create({
     borderRadius: 3,
     backgroundColor: colors.border,
     marginTop: 8,
+  },
+  updateRestartButton: {
+    alignSelf: "flex-start",
+    marginTop: 10,
+    backgroundColor: colors.secondary,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 10,
+  },
+  updateRestartButtonText: {
+    color: colors.onPrimary,
+    fontSize: 13,
+    fontWeight: "700",
   },
   progressCard: {
     marginBottom: 24,
