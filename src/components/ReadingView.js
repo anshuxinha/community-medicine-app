@@ -68,6 +68,15 @@ const buildTableCellSet = (block) => {
   return set;
 };
 
+// Full-line exam markup used by library-chapter-review (must never become table cells).
+const isExamMarkupLine = (line = "") => {
+  const t = String(line).trim();
+  if (!t) return false;
+  if (/^\[(SN|LAQ|EXAMTIP|REF)\]/i.test(t)) return true;
+  if (/\[\/(SN|LAQ|EXAMTIP|REF)\]/i.test(t)) return true;
+  return false;
+};
+
 const parseTextTable = (lines, startIndex) => {
   const n = lines.length;
   let i = startIndex;
@@ -76,6 +85,10 @@ const parseTextTable = (lines, startIndex) => {
   const headers = [];
   while (i < n && lines[i].trim() && lines[i].trim().length < 60) {
     const line = lines[i].trim();
+    // Exam tags / REF lines are never table headers (e.g. [SN]Topic[/SN] + TITLE)
+    if (isExamMarkupLine(line)) {
+      break;
+    }
     // Skip lines that are clearly not headers
     if (line.startsWith("Q") || line.startsWith("A)") || line.startsWith("-") || 
         line.startsWith("•") || line.startsWith("◦") || line.startsWith("#") || 
@@ -91,12 +104,18 @@ const parseTextTable = (lines, startIndex) => {
     if (/^(CORE CONCEPTS|FORMULAS AND CALCULATIONS|MNEMONICS|KEY POINTS|NOT APPLICABLE|OVERVIEW)\b/.test(line)) {
       break;
     }
+    // ALL-CAPS section titles are headings, not table column headers
+    if (line.length < 60 && line === line.toUpperCase() && /[A-Z]/.test(line) && !line.includes("|")) {
+      break;
+    }
     headers.push(line);
     i++;
   }
   
   // Need 2+ headers to be a table
   if (headers.length < 2) return null;
+  // Safety: never promote exam markup into a synthetic table
+  if (headers.some((h) => isExamMarkupLine(h))) return null;
   
   // Skip empty lines after headers
   while (i < n && !lines[i].trim()) {
@@ -112,6 +131,10 @@ const parseTextTable = (lines, startIndex) => {
     if (!line) {
       i++;
       continue;
+    }
+
+    if (isExamMarkupLine(line)) {
+      break;
     }
     
     if (line.startsWith("Q") || line.startsWith("A)") || line.startsWith("#") || 
@@ -161,12 +184,14 @@ const preprocessTextTables = (content) => {
     const line = lines[i].trim();
     
     // Check if this could be the start of a text table
-    // Headers: non-empty, <60 chars, not starting with special chars
+    // Headers: non-empty, <60 chars, not starting with special chars / exam tags
     let isTableStart = line && line.length < 60 && 
+        !isExamMarkupLine(line) &&
         !line.startsWith("Q") && !line.startsWith("A)") && !line.startsWith("-") && 
         !line.startsWith("•") && !line.startsWith("◦") && !line.startsWith("#") && 
         !line.startsWith("##") && !line.startsWith("!") && !line.startsWith(">") &&
-        !line.startsWith("|");
+        !line.startsWith("|") &&
+        !(line === line.toUpperCase() && /[A-Z]/.test(line));
     
     if (isTableStart) {
       // Try to parse a text table starting at i
@@ -348,11 +373,12 @@ const parseMarkdown = (content, { isGem = false } = {}) => {
 
     const trimmedLine = line.trim();
     const tableTitleMatch = trimmedLine.match(/^\*\*Table\s+\d+(?:\.\d+)?\s*(.*?)\*\*$/i);
-    const refMatch = trimmedLine.match(/^\[REF\](.*?)\[\/REF\]$/i);
+    const refMatch = trimmedLine.match(/^\[REF\]([\s\S]*?)\[\/REF\]$/i);
     // Fixed exam tags — colours documented in .grok/skills/library-chapter-review/references/tag-format.md
-    const snTagMatch = trimmedLine.match(/^\[SN\](.*?)\[\/SN\]$/i);
-    const laqTagMatch = trimmedLine.match(/^\[LAQ\](.*?)\[\/LAQ\]$/i);
-    const examTipMatch = trimmedLine.match(/^\[EXAMTIP\](.*?)\[\/EXAMTIP\]$/i);
+    // Allow optional surrounding whitespace inside markers; tip body may include arrows/quotes.
+    const snTagMatch = trimmedLine.match(/^\[SN\]([\s\S]*?)\[\/SN\]$/i);
+    const laqTagMatch = trimmedLine.match(/^\[LAQ\]([\s\S]*?)\[\/LAQ\]$/i);
+    const examTipMatch = trimmedLine.match(/^\[EXAMTIP\]([\s\S]*?)\[\/EXAMTIP\]$/i);
 
     if (line.startsWith("# ")) {
       flushBullets();

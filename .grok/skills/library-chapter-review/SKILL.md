@@ -177,13 +177,14 @@ Use the **fixed** format in `references/tag-format.md` only:
 Rules:
 
 1. SN/LAQ: one full line per tag, immediately above the answering section.
-2. Align titles with PYQ wording when possible.
-3. Both SN and LAQ tags allowed if a section serves both.
-4. EXAMTIP: one full line at the **end** of each new/expanded exam block.
-5. In the report, list **proposed tag insertions** as exact before/after snippets (file leaf id + surrounding lines).
-6. Do not invent alternate colours or markup.
+2. **Always leave a blank line after SN/LAQ tag block(s)** before the section heading/body — otherwise `ReadingView` text-table preprocessing can turn `[SN]…` + title into a fake 2-column table.
+3. Align titles with PYQ wording when possible.
+4. Both SN and LAQ tags allowed if a section serves both.
+5. EXAMTIP: one full line at the **end** of each new/expanded exam block (prefer a blank line before it). Must render as a box, never as raw `[EXAMTIP]…` body text.
+6. In the report, list **proposed tag insertions** as exact before/after snippets (file leaf id + surrounding lines).
+7. Do not invent alternate colours or markup.
 
-If `ReadingView.js` lacks SN/LAQ/EXAMTIP block styles, restore them from `references/tag-format.md` before applying tags to live content.
+If `ReadingView.js` lacks SN/LAQ/EXAMTIP block styles **or** still folds exam tags into text-tables, restore parser + styles from `references/tag-format.md` before applying tags to live content.
 
 ## Step 5 — Academic quality (non-factual)
 
