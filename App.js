@@ -17,10 +17,13 @@ import { paperTheme as fallbackPaperTheme } from "./src/styles/theme";
 // on cold start are never dropped due to a missing channel.
 if (Platform.OS === "android") {
   Notifications.setNotificationChannelAsync("default", {
-    name: "default",
+    name: "Video & app updates",
     importance: Notifications.AndroidImportance.MAX,
     vibrationPattern: [0, 250, 250, 250],
     lightColor: "#6C3AE0",
+    sound: "default",
+    enableVibrate: true,
+    showBadge: true,
   });
 }
 

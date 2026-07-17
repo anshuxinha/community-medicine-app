@@ -40,7 +40,6 @@ import {
   arrayRemove,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
-import * as Device from "expo-device";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { AppContext } from "../context/AppContext";
 import { theme } from '../styles/theme';
@@ -51,14 +50,7 @@ import {
   getVideoCategories,
   subscribeToVideos,
 } from "../services/videoService";
-import {
-  addVideoSubscriptionListener,
-  isSubscribedToVideoNotifications,
-  requestPermissions,
-  sendReplyNotification,
-  subscribeToVideoNotifications,
-  unsubscribeFromVideoNotifications,
-} from "../services/notificationService";
+import { sendReplyNotification } from "../services/notificationService";
 import {
   enableScreenCaptureProtection,
   disableScreenCaptureProtection,
@@ -940,11 +932,8 @@ const VideosScreen = ({ navigation }) => {
   const [replyingTo, setReplyingTo] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedVideo, setSelectedVideo] = useState(null);
-  const [isSubscribed, setIsSubscribed] = useState(true);
   const [isLoadingVideos, setIsLoadingVideos] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isTogglingNotifications, setIsTogglingNotifications] =
-    useState(false);
   const [visibleCount, setVisibleCount] = useState(10);
 
   const [activeTab, setActiveTab] = useState("doubts");
@@ -1520,12 +1509,6 @@ const VideosScreen = ({ navigation }) => {
     );
   };
   useEffect(() => {
-    let mounted = true;
-
-    isSubscribedToVideoNotifications().then((subscribed) => {
-      if (mounted) setIsSubscribed(subscribed);
-    });
-
     const unsubscribeVideos = subscribeToVideos({
       onData: (nextVideos) => {
         setVideos(nextVideos);
@@ -1539,16 +1522,8 @@ const VideosScreen = ({ navigation }) => {
       },
     });
 
-    const unsubscribeNotifications = addVideoSubscriptionListener(
-      (subscribed) => {
-        setIsSubscribed(subscribed);
-      },
-    );
-
     return () => {
-      mounted = false;
       unsubscribeVideos?.();
-      unsubscribeNotifications?.();
     };
   }, [navigation]);
 
@@ -1563,44 +1538,6 @@ const VideosScreen = ({ navigation }) => {
   }, [selectedCategory, videos]);
 
   const displayedVideos = useMemo(() => filteredVideos.slice(0, visibleCount), [filteredVideos, visibleCount]);
-
-  const toggleNotifications = async () => {
-    if (isTogglingNotifications) return;
-
-    setIsTogglingNotifications(true);
-    try {
-      if (isSubscribed) {
-        await unsubscribeFromVideoNotifications();
-        return;
-      }
-
-      if (!Device.isDevice) {
-        Alert.alert(
-          "Physical Device Required",
-          "Push notifications need a real device for testing.",
-        );
-        return;
-      }
-
-      const granted = await requestPermissions();
-      if (!granted) {
-        Alert.alert(
-          "Permission Required",
-          "Enable notifications in device settings to receive new video alerts.",
-        );
-        return;
-      }
-
-      await subscribeToVideoNotifications();
-    } catch (error) {
-      Alert.alert(
-        "Notification update failed",
-        error?.message || "Please try again.",
-      );
-    } finally {
-      setIsTogglingNotifications(false);
-    }
-  };
 
   const onRefresh = () => {
     setIsRefreshing(true);
@@ -1684,13 +1621,6 @@ const VideosScreen = ({ navigation }) => {
                   Recorded lectures, revisions, and case discussions.
                 </Text>
               </View>
-              <IconButton
-                icon={isSubscribed ? "bell" : "bell-outline"}
-                iconColor={isSubscribed ? theme.colors.success : theme.colors.textTitle}
-                size={24}
-                onPress={toggleNotifications}
-                disabled={isTogglingNotifications}
-              />
             </View>
 
             <FlatList

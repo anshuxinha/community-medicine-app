@@ -228,13 +228,13 @@ const getExpoPushTokens = async (db) => {
   const snapshot = await db.collection("users").get();
   const tokens = [];
 
+  // All users with a valid Expo push token receive video notifications.
+  // Opt-out was removed; videoNotificationsEnabled is no longer consulted.
   snapshot.forEach((userDoc) => {
     const data = userDoc.data();
     const token = data.pushToken;
-    const wantsVideos = data.videoNotificationsEnabled !== false;
 
     if (
-      wantsVideos &&
       typeof token === "string" &&
       (token.startsWith("ExponentPushToken[") || token.startsWith("ExpoPushToken["))
     ) {
@@ -261,6 +261,8 @@ const sendVideoPushNotification = async (db, video, customBody) => {
     data: { screen: "Videos", type: "video", videoId: video.bunnyVideoId },
   }));
 
+  let accepted = 0;
+
   for (let index = 0; index < messages.length; index += 100) {
     const chunk = messages.slice(index, index + 100);
     const response = await fetch(EXPO_PUSH_URL, {
@@ -277,9 +279,33 @@ const sendVideoPushNotification = async (db, video, customBody) => {
       const body = await response.text();
       throw new Error(`Expo push ${response.status}: ${body}`);
     }
+
+    // Surface per-token ticket errors (e.g. DeviceNotRegistered) so Android
+    // FCM failures are visible instead of looking like a full success.
+    try {
+      const payload = await response.json();
+      const tickets = Array.isArray(payload?.data) ? payload.data : [];
+      tickets.forEach((ticket, ticketIndex) => {
+        if (ticket?.status === "ok") {
+          accepted += 1;
+          return;
+        }
+        const token = chunk[ticketIndex]?.to || "unknown";
+        console.warn(
+          `Expo push ticket error for ${token}:`,
+          ticket?.message || ticket?.details?.error || JSON.stringify(ticket),
+        );
+      });
+      if (tickets.length === 0) {
+        accepted += chunk.length;
+      }
+    } catch (parseError) {
+      accepted += chunk.length;
+      console.warn("Could not parse Expo push response:", parseError?.message);
+    }
   }
 
-  return tokens.length;
+  return accepted;
 };
 
 const markNotified = async (db, videoId) => {

@@ -87,6 +87,8 @@ export function ensureNotificationHandler() {
         shouldShowAlert: true,
         shouldPlaySound: true,
         shouldSetBadge: true,
+        shouldShowBanner: true,
+        shouldShowList: true,
       }),
     });
   } catch (e) {
@@ -122,10 +124,13 @@ export async function scheduleAllNotifications() {
   // channel had not yet been created by AppContext.
   if (Platform.OS === "android") {
     await Notifications.setNotificationChannelAsync("default", {
-      name: "default",
+      name: "Video & app updates",
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 250, 250, 250],
       lightColor: "#6C3AE0",
+      sound: "default",
+      enableVibrate: true,
+      showBadge: true,
     });
   }
 
@@ -504,16 +509,10 @@ export function setupNotificationTapHandler(navigationRef) {
 /**
  * Send an immediate local notification for a newly available video.
  * Server-side broadcast push is handled by scripts/bunny-videos.js.
+ * Video notifications are always on for all users (no opt-out).
  */
 export async function sendVideoNotification(videoTitle, videoDescription) {
   try {
-    const subscribed = await isSubscribedToVideoNotifications();
-
-    if (!subscribed) {
-      console.log("User not subscribed to video notifications");
-      return;
-    }
-
     const granted = await requestPermissions();
     if (!granted) {
       console.log("Notification permissions not granted");
@@ -605,11 +604,12 @@ function emitVideoSubscriptionChange(isSubscribed) {
   });
 }
 
-async function persistVideoNotificationPreference(isSubscribed) {
-  await AsyncStorage.setItem(
-    VIDEO_NOTIFICATION_STORAGE_KEY,
-    isSubscribed ? "true" : "false",
-  );
+/**
+ * Ensure local + Firestore preference is always enabled.
+ * Opt-out was removed; all users receive new-video pushes by default.
+ */
+async function ensureVideoNotificationsEnabled() {
+  await AsyncStorage.setItem(VIDEO_NOTIFICATION_STORAGE_KEY, "true");
   await AsyncStorage.removeItem(LEGACY_WEBINAR_NOTIFICATION_STORAGE_KEY);
 
   const uid = auth.currentUser?.uid;
@@ -618,7 +618,7 @@ async function persistVideoNotificationPreference(isSubscribed) {
   await setDoc(
     doc(db, "users", uid),
     {
-      videoNotificationsEnabled: isSubscribed,
+      videoNotificationsEnabled: true,
       videoNotificationsUpdatedAt: serverTimestamp(),
     },
     { merge: true },
@@ -630,49 +630,31 @@ export function addVideoSubscriptionListener(listener) {
   return () => videoSubscriptionListeners.delete(listener);
 }
 
+/** Always true — video notifications cannot be disabled in-app. */
 export async function isSubscribedToVideoNotifications() {
-  try {
-    const subscribed = await AsyncStorage.getItem(VIDEO_NOTIFICATION_STORAGE_KEY);
-
-    if (subscribed === "true") return true;
-    if (subscribed === "false") return false;
-
-    const legacySubscribed = await AsyncStorage.getItem(
-      LEGACY_WEBINAR_NOTIFICATION_STORAGE_KEY,
-    );
-
-    if (legacySubscribed === "true") {
-      await persistVideoNotificationPreference(true);
-      return true;
-    }
-
-    return true;
-  } catch (error) {
-    console.error("Error checking video subscription:", error);
-    return true;
-  }
+  return true;
 }
 
+/** No-op kept for callers; opt-out is disabled. */
 export async function unsubscribeFromVideoNotifications() {
   try {
-    await persistVideoNotificationPreference(false);
-    console.log("User unsubscribed from video notifications");
-    emitVideoSubscriptionChange(false);
+    await ensureVideoNotificationsEnabled();
+    emitVideoSubscriptionChange(true);
     return true;
   } catch (error) {
-    console.error("Error unsubscribing from video notifications:", error);
+    console.error("Error ensuring video notifications enabled:", error);
     return false;
   }
 }
 
 export async function subscribeToVideoNotifications() {
   try {
-    await persistVideoNotificationPreference(true);
-    console.log("User subscribed to video notifications");
+    await ensureVideoNotificationsEnabled();
+    console.log("Video notifications enabled");
     emitVideoSubscriptionChange(true);
     return true;
   } catch (error) {
-    console.error("Error subscribing to video notifications:", error);
+    console.error("Error enabling video notifications:", error);
     return false;
   }
 }

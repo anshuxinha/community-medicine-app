@@ -1159,26 +1159,32 @@ export const AppProvider = ({ children }) => {
   ]);
 
   useEffect(() => {
-    if (user && user.uid) {
-      registerForPushNotificationsAsync().then((token) => {
-        if (token) {
-          setUser((currentUser) => {
-            if (!currentUser || currentUser.uid !== user.uid) return currentUser;
-            if (currentUser.pushToken === token) return currentUser;
-            return { ...currentUser, pushToken: token };
-          });
-          setDoc(
-            doc(db, "users", user.uid),
-            {
-              pushToken: token,
-              pushTokenUpdatedAt: serverTimestamp(),
-            },
-            { merge: true },
-          ).catch((err) => console.log("Error saving push token", err));
-        }
+    const uid = user?.uid;
+    if (!uid) return;
+
+    registerForPushNotificationsAsync().then((token) => {
+      if (!token) return;
+
+      setUser((currentUser) => {
+        if (!currentUser || currentUser.uid !== uid) return currentUser;
+        if (currentUser.pushToken === token) return currentUser;
+        return { ...currentUser, pushToken: token };
       });
-    }
-  }, [user]);
+
+      // Always keep video notifications on; store platform for debugging.
+      setDoc(
+        doc(db, "users", uid),
+        {
+          pushToken: token,
+          pushTokenUpdatedAt: serverTimestamp(),
+          pushTokenPlatform: Platform.OS,
+          videoNotificationsEnabled: true,
+          videoNotificationsUpdatedAt: serverTimestamp(),
+        },
+        { merge: true },
+      ).catch((err) => console.log("Error saving push token", err));
+    });
+  }, [user?.uid]);
 
   async function registerForPushNotificationsAsync() {
     let token;
@@ -1186,6 +1192,24 @@ export const AppProvider = ({ children }) => {
     if (!Notifications) {
       console.log("Skipping push notification registration in Expo Go.");
       return null;
+    }
+
+    // Android: create the channel before requesting the token so remote
+    // FCM deliveries always have a MAX-importance channel available.
+    if (Platform.OS === "android") {
+      try {
+        await Notifications.setNotificationChannelAsync("default", {
+          name: "Video & app updates",
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: theme.colors.primaryDark,
+          sound: "default",
+          enableVibrate: true,
+          showBadge: true,
+        });
+      } catch (err) {
+        console.log("Failed to create Android notification channel:", err);
+      }
     }
 
     if (Device.isDevice) {
@@ -1213,14 +1237,6 @@ export const AppProvider = ({ children }) => {
       return null;
     }
 
-    if (Platform.OS === "android") {
-      await Notifications.setNotificationChannelAsync("default", {
-        name: "default",
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: theme.colors.primaryDark,
-      });
-    }
     return token;
   }
 

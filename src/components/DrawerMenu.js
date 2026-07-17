@@ -32,12 +32,6 @@ const BASE_MENU_ITEMS = [
     screen: "Profile",
     iconLib: "material",
   },
-  {
-    icon: "settings",
-    label: "Settings",
-    screen: "Notifications",
-    iconLib: "material",
-  },
   { divider: true },
   {
     icon: "star-outline",

@@ -1,122 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
   ScrollView,
   RefreshControl,
-  Alert,
 } from "react-native";
-import { Text, Card, Divider, Chip, Button } from "react-native-paper";
+import { Text, Card, Chip } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { theme } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  isSubscribedToVideoNotifications,
-  addVideoSubscriptionListener,
-  subscribeToVideoNotifications,
-  unsubscribeFromVideoNotifications,
-  requestPermissions,
-} from "../services/notificationService";
-import * as Notifications from "expo-notifications";
-import * as Device from "expo-device";
 
 const NotificationsScreen = () => {
   const { styles, colors } = useThemedStyles(createStyles);
-
   const [refreshing, setRefreshing] = useState(false);
-  const [isVideoSubscribed, setIsVideoSubscribed] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    loadData();
-
-    // Listen for subscription changes from other screens
-    const unsubscribe = addVideoSubscriptionListener((subscribed) => {
-      setIsVideoSubscribed(subscribed);
-    });
-
-    return unsubscribe;
-  }, []);
-
-  const loadData = async () => {
-    try {
-      const subscribed = await isSubscribedToVideoNotifications();
-      setIsVideoSubscribed(subscribed);
-    } catch (error) {
-      console.error("Error loading notification data:", error);
-    }
-  };
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await loadData();
     setRefreshing(false);
-  };
-
-  const toggleVideoSubscription = async () => {
-    if (isLoading) return;
-
-    setIsLoading(true);
-    try {
-      if (isVideoSubscribed) {
-        const success = await unsubscribeFromVideoNotifications();
-        if (success) {
-          Alert.alert(
-            "Unsubscribed",
-            "You've been unsubscribed from video notifications.",
-            [{ text: "OK" }],
-          );
-        }
-      } else {
-        // Subscribe
-        if (!Device.isDevice) {
-          Alert.alert(
-            "Simulator",
-            "Push notifications don't work on simulators. Please test on a real device.",
-          );
-          setIsLoading(false);
-          return;
-        }
-
-        const granted = await requestPermissions();
-        if (!granted) {
-          Alert.alert(
-            "Permission Required",
-            "Please enable notifications in your device settings to get video updates.",
-            [{ text: "OK" }],
-          );
-          setIsLoading(false);
-          return;
-        }
-
-        const success = await subscribeToVideoNotifications();
-        if (success) {
-          Alert.alert(
-            "Subscribed!",
-            "You'll receive push notifications when new videos are added.",
-            [{ text: "OK" }],
-          );
-        }
-      }
-    } catch (error) {
-      console.error("Error toggling video subscription:", error);
-      Alert.alert("Error", "Failed to update subscription. Please try again.", [
-        { text: "OK" },
-      ]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
   };
 
   return (
@@ -129,55 +30,6 @@ const NotificationsScreen = () => {
       >
         <Text style={styles.header}>Notifications</Text>
 
-        {/* Notification Preferences Section */}
-        <Card style={styles.preferencesCard}>
-          <Card.Content>
-            <View style={styles.preferenceHeader}>
-              <MaterialIcons
-                name="settings"
-                size={24}
-                color={theme.colors.primary}
-              />
-              <Text style={styles.preferenceTitle}>
-                Notification Preferences
-              </Text>
-            </View>
-            <Divider style={styles.divider} />
-
-            <View style={styles.preferenceItem}>
-              <View style={styles.preferenceInfo}>
-                <MaterialIcons
-                  name="ondemand-video"
-                  size={20}
-                  color={theme.colors.secondary}
-                />
-                <Text style={styles.preferenceText}>Video Updates</Text>
-              </View>
-              <Chip
-                icon={isVideoSubscribed ? "bell-check" : "bell-outline"}
-                mode="outlined"
-                style={[
-                  styles.chip,
-                  isVideoSubscribed ? styles.chipActive : styles.chipInactive,
-                ]}
-                textStyle={styles.chipText}
-                onPress={toggleVideoSubscription}
-                disabled={isLoading}
-                showSelectedOverlay={false}
-              >
-                {isVideoSubscribed ? "Subscribed" : "Subscribe"}
-              </Chip>
-            </View>
-
-            <Text style={styles.preferenceDescription}>
-              {isVideoSubscribed
-                ? "You'll receive push notifications when new videos are added."
-                : "Enable video notifications to get updates about new lessons."}
-            </Text>
-          </Card.Content>
-        </Card>
-
-        {/* Recent Notifications Section */}
         <Text style={styles.sectionTitle}>Recent Notifications</Text>
 
         <Card style={styles.updateCard}>
@@ -215,7 +67,6 @@ const NotificationsScreen = () => {
           </Card.Content>
         </Card>
 
-        {/* System Notifications Info */}
         <Card style={styles.infoCard}>
           <Card.Content>
             <View style={styles.infoHeader}>
@@ -230,6 +81,8 @@ const NotificationsScreen = () => {
               • Weekly progress digest every Sunday at 10:00 AM
               {"\n"}• Video notifications when new lessons are added
               {"\n"}• Streak milestones for consistent study habits
+              {"\n\n"}
+              New video alerts are always on. You can manage system permission in your device settings.
             </Text>
           </Card.Content>
         </Card>
@@ -251,62 +104,8 @@ const createStyles = (colors) => StyleSheet.create({
     fontSize: 20,
     fontWeight: "700",
     color: colors.textTitle,
-    marginTop: 24,
+    marginTop: 8,
     marginBottom: 16,
-  },
-  preferencesCard: {
-    backgroundColor: colors.surfacePrimary,
-    marginBottom: 20,
-  },
-  preferenceHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  preferenceTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: colors.textTitle,
-    marginLeft: 12,
-  },
-  divider: {
-    marginVertical: 8,
-    backgroundColor: colors.border,
-  },
-  preferenceItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginVertical: 8,
-  },
-  preferenceInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  preferenceText: {
-    fontSize: 16,
-    color: colors.textPrimary,
-    marginLeft: 12,
-  },
-  preferenceDescription: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    marginTop: 12,
-    lineHeight: 20,
-  },
-  chip: {
-    height: 32,
-  },
-  chipActive: {
-    backgroundColor: colors.success + "20",
-    borderColor: colors.success,
-  },
-  chipInactive: {
-    backgroundColor: colors.surfaceSecondary,
-    borderColor: colors.border,
-  },
-  chipText: {
-    fontSize: 12,
   },
   updateCard: {
     backgroundColor: colors.surfacePrimary,
@@ -368,30 +167,6 @@ const createStyles = (colors) => StyleSheet.create({
     fontSize: 14,
     color: colors.textSecondary,
     lineHeight: 20,
-  },
-  emptyCard: {
-    backgroundColor: colors.surfacePrimary,
-    marginBottom: 20,
-  },
-  emptyContent: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 40,
-  },
-  emptyTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: colors.textBody,
-    marginTop: 20,
-    marginBottom: 10,
-    textAlign: "center",
-  },
-  emptyBody: {
-    fontSize: 14,
-    color: colors.textPlaceholder,
-    textAlign: "center",
-    lineHeight: 22,
-    maxWidth: 300,
   },
   infoCard: {
     backgroundColor: colors.surfaceSecondary,
