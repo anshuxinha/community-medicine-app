@@ -26,16 +26,26 @@ Use **exactly** these markers in Library content (one full line each), same fami
 |-------|--------|------------|------------|
 | LAQ   | `#B45309` | `#FEF3C7` | `#92400E` |
 
-## Exam Tip box (EXAMTIP)
+## Exam Tip box
 
 Place at the **end** of every **new or substantially expanded** SN/LAQ content block. Brief only — how to frame the answer in the exam, not a second content dump.
 
+### Preferred (portable — works even without a JS OTA)
+
 ```text
-[EXAMTIP]SN (5 marks): Definition (WHO) → 6–8 bullets on classification + features → 1 India/programme line. Skip history essays.[/EXAMTIP]
+> **EXAM TIP:** SN (5 marks): Definition (WHO) → 6–8 bullets on classification + features → 1 India/programme line. Skip history essays.
 ```
 
 ```text
-[EXAMTIP]LAQ (10 marks): Intro/definition → classification table → elaborate each limb with example → national programmes → 2-line conclusion. Aim structured headings, not paragraphs of fluff.[/EXAMTIP]
+> **EXAM TIP:** LAQ (10 marks): Intro/definition → classification table → elaborate each limb → national programmes → short conclusion.
+```
+
+Older app builds still render this as a blockquote box; newer builds map it to the dedicated indigo **EXAM TIP** badge box.
+
+### Alternate (newer builds only — avoid for live content until renderer is confirmed)
+
+```text
+[EXAMTIP]SN (5 marks): Definition (WHO) → 6–8 bullets…[/EXAMTIP]
 ```
 
 **Fixed colours (do not invent alternatives):**
@@ -46,27 +56,28 @@ Place at the **end** of every **new or substantially expanded** SN/LAQ content b
 
 **Rules for Exam Tip content**
 
-1. One full line: `[EXAMTIP]…[/EXAMTIP]` (keep tip text concise; one or two sentences).
+1. Prefer one full line blockquote `> **EXAM TIP:** …`.
 2. State question type and typical marks when known (SN ~5 / LAQ ~10).
 3. Give **answer frame only**: heading order, what table to draw, what not to miss.
 4. Do not repeat the full academic content inside the tip.
-5. Always pair with the SN/LAQ section it serves (tip goes **after** the section body).
+5. Always pair with the SN/LAQ section it serves (tip goes **after** the section body; blank line before tip).
 
 ## Placement rules
 
 1. Put SN/LAQ tags on their **own line**, immediately **above** the section that answers that PYQ.
-2. **Blank line after every SN/LAQ tag block** (and before the ALL-CAPS/section heading). Required so the text-table heuristic in `ReadingView` does not treat `[SN]…` + title as a 2-column table.
+2. **Blank line after every individual SN/LAQ tag line** — including between two consecutive tags. Required so the text-table heuristic never treats `[SN]A[/SN]` + `[SN]B[/SN]` or `[SN]…` + title as a 2-column table.
 3. Topic title inside SN/LAQ tags should match the PYQ wording closely (or a clear shortened form).
 4. One tag per discrete exam topic. Prefer multiple SN tags over one vague LAQ tag.
 5. Do **not** nest tags. Do **not** put other markup inside the tag body.
-6. If a section serves **both** SN and LAQ (common for “Levels of prevention”), place **both** tags on consecutive lines, SN first then LAQ, then a blank line, then the heading.
-7. Optional: after the SN/LAQ tag line(s) + blank line, keep the existing ALL-CAPS section heading so navigation stays clear.
-8. Place `[EXAMTIP]…[/EXAMTIP]` on its **own single line** at the **end** of that section’s new content (after body, blank line preferred, before the next major heading). Keep the whole tip on one line so the full-line parser matches.
+6. If a section serves **both** SN and LAQ, place SN then LAQ **each followed by a blank line**, then the heading.
+7. Optional: after tags + blank line, keep the existing ALL-CAPS section heading so navigation stays clear.
+8. Exam tip: prefer `> **EXAM TIP:** …` on its own line at the **end** of the section (blank line before it).
 
 ### Example
 
 ```text
 [SN]Levels of prevention[/SN]
+
 [LAQ]Levels of Prevention and Modes of Intervention[/LAQ]
 
 LEVELS OF PREVENTION & MODES OF INTERVENTION
@@ -75,7 +86,7 @@ LEVELS OF PREVENTION & MODES OF INTERVENTION
 - Secondary Prevention: ...
 - Tertiary Prevention: ...
 
-[EXAMTIP]LAQ (10): Define prevention → table of 4 levels × mode of intervention + example each → link to national programmes → close with “levels are complementary”. SN: definition + 4 levels with one example each.[/EXAMTIP]
+> **EXAM TIP:** LAQ (10): Define prevention → table of 4 levels × mode of intervention + example each → link to national programmes → close with “levels are complementary”. SN: definition + 4 levels with one example each.
 ```
 
 ## Renderer (do not regress)
@@ -83,8 +94,10 @@ LEVELS OF PREVENTION & MODES OF INTERVENTION
 `ReadingView.js` must:
 
 1. Parse full-line `[SN]…[/SN]`, `[LAQ]…[/LAQ]`, and `[EXAMTIP]…[/EXAMTIP]` into coloured badge/box blocks (`exam_sn`, `exam_laq`, `exam_tip`).
-2. **Exclude** exam-markup lines from `preprocessTextTables` / `parseTextTable` (never convert `[SN]`/`[LAQ]` + heading into a markdown table).
-3. Render EXAMTIP as an indigo left-border box with an **EXAM TIP** badge — never as raw body text showing the brackets.
+2. Map blockquotes starting with `**EXAM TIP:**` / `EXAM TIP:` to `exam_tip` as well.
+3. **Skip** `preprocessTextTables` entirely when content contains exam markup tags.
+4. **Exclude** exam-markup lines from `parseTextTable` (never convert `[SN]`/`[LAQ]` + heading into a markdown table).
+5. Render exam tips as an indigo left-border box with an **EXAM TIP** badge — never as raw `[EXAMTIP]…` body text.
 
 If those styles or exclusions are missing, restore them from this file before publishing tagged content.
 

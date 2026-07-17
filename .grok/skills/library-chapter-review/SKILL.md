@@ -138,15 +138,17 @@ Full rules: `references/quality-rubric.md` §C1–C2.
 
 ### Exam Tip box (mandatory on every new SN/LAQ block)
 
-End every new/expanded exam block with a single full line (format in `references/tag-format.md`):
+End every new/expanded exam block with a single full line (format in `references/tag-format.md`). **Prefer blockquote form** so all app builds show a box (not raw tags):
 
 ```text
-[EXAMTIP]…brief framing for the resident…[/EXAMTIP]
+> **EXAM TIP:** …brief framing for the resident…
 ```
+
+(Alternate on newer builds only: `[EXAMTIP]…[/EXAMTIP]`.)
 
 The tip must tell the reader **how to frame the answer in the exam** (heading order, tables to draw, marks-aware structure). It must **not** restate the whole answer.
 
-Also place the matching `[SN]…[/SN]` and/or `[LAQ]…[/LAQ]` tag(s) above the section when tagging that topic.
+Also place the matching `[SN]…[/SN]` and/or `[LAQ]…[/LAQ]` tag(s) above the section when tagging that topic — **each tag on its own line, each followed by a blank line** (never stack tags on adjacent lines; the text-table heuristic will turn them into a purple 2-column table).
 
 ### Draft quality gate before including in report or applying
 

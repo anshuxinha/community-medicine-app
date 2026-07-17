@@ -229,7 +229,11 @@ const preprocessTextTables = (content) => {
 };
 
 const parseMarkdown = (content, { isGem = false } = {}) => {
-  const processedContent = isGem ? content : preprocessTextTables(content);
+  // Library exam markup ([SN]/[LAQ]/[EXAMTIP]) must never go through the
+  // aggressive text-table heuristic — short tag lines + titles become fake tables.
+  const hasExamMarkup = /\[(?:SN|LAQ|EXAMTIP|REF)\]/i.test(content || "");
+  const processedContent =
+    isGem || hasExamMarkup ? content : preprocessTextTables(content);
   const lines = processedContent.split("\n");
   const rawBlocks = [];
   let bulletGroup = [];
@@ -438,12 +442,26 @@ const parseMarkdown = (content, { isGem = false } = {}) => {
     } else if (line.startsWith("> ")) {
       flushBullets();
       flushNested();
-      rawBlocks.push({ type: "blockquote", text: line.replace(/^>\s*/, "") });
+      const quoteText = line.replace(/^>\s*/, "");
+      // Prefer dedicated exam-tip box when blockquote is an exam tip
+      const tipFromQuote = quoteText.match(/^\*\*EXAM\s*TIP:\*\*\s*(.*)$/i)
+        || quoteText.match(/^EXAM\s*TIP:\s*(.*)$/i);
+      if (tipFromQuote) {
+        rawBlocks.push({ type: "exam_tip", text: (tipFromQuote[1] || "").trim() || quoteText });
+      } else {
+        rawBlocks.push({ type: "blockquote", text: quoteText });
+      }
     } else {
       const bodyText = line;
       const strippedBody = stripBold(bodyText).trim();
+      // Fallback: full-line EXAMTIP that failed earlier match (e.g. odd whitespace)
+      const looseTip = strippedBody.match(/^\[EXAMTIP\]\s*([\s\S]*?)\s*\[\/EXAMTIP\]$/i);
+      if (looseTip) {
+        flushBullets();
+        flushNested();
+        rawBlocks.push({ type: "exam_tip", text: looseTip[1].trim() });
       // Continuation of a bullet: non-empty, starts with lowercase, currently accumulating bullets
-      if (bulletGroup.length > 0 && strippedBody && /^[a-z]/.test(strippedBody)) {
+      } else if (bulletGroup.length > 0 && strippedBody && /^[a-z]/.test(strippedBody)) {
         bulletGroup[bulletGroup.length - 1] += " " + bodyText.trim();
       } else if (nestedGroup.length > 0 && strippedBody && /^[a-z]/.test(strippedBody)) {
         nestedGroup[nestedGroup.length - 1] += " " + bodyText.trim();
