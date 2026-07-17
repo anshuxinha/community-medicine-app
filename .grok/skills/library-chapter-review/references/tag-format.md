@@ -33,11 +33,11 @@ Place at the **end** of every **new or substantially expanded** SN/LAQ content b
 ### Preferred (portable — works even without a JS OTA)
 
 ```text
-> **EXAM TIP:** SN (5 marks): Definition (WHO) → 6–8 bullets on classification + features → 1 India/programme line. Skip history essays.
+> **EXAM TIP:** Open with WHO definition → 6–8 bullets on classification + features → one India/programme line. Skip history essays.
 ```
 
 ```text
-> **EXAM TIP:** LAQ (10 marks): Intro/definition → classification table → elaborate each limb → national programmes → short conclusion.
+> **EXAM TIP:** Intro/definition → classification table → elaborate each limb → national programmes → short conclusion. Prefer structured headings over fluff.
 ```
 
 Older app builds still render this as a blockquote box; newer builds map it to the dedicated indigo **EXAM TIP** badge box.
@@ -45,7 +45,7 @@ Older app builds still render this as a blockquote box; newer builds map it to t
 ### Alternate (newer builds only — avoid for live content until renderer is confirmed)
 
 ```text
-[EXAMTIP]SN (5 marks): Definition (WHO) → 6–8 bullets…[/EXAMTIP]
+[EXAMTIP]Open with WHO definition → 6–8 bullets on classification + features → one India/programme line.[/EXAMTIP]
 ```
 
 **Fixed colours (do not invent alternatives):**
@@ -57,10 +57,11 @@ Older app builds still render this as a blockquote box; newer builds map it to t
 **Rules for Exam Tip content**
 
 1. Prefer one full line blockquote `> **EXAM TIP:** …`.
-2. State question type and typical marks when known (SN ~5 / LAQ ~10).
-3. Give **answer frame only**: heading order, what table to draw, what not to miss.
-4. Do not repeat the full academic content inside the tip.
-5. Always pair with the SN/LAQ section it serves (tip goes **after** the section body; blank line before tip).
+2. Give **answer frame only**: heading order, what table to draw, what not to miss.
+3. Do not repeat the full academic content inside the tip.
+4. Always pair with the SN/LAQ section it serves (tip goes **after** the section body; blank line before tip).
+5. **Do not invent or show mark-count artifacts** such as `SN (5)`, `LAQ (10)`, `LAQ (10–15)`, `SN HDI (5)`, or `5 marks` / `10 marks` prefixes. The SN/LAQ coloured tags already mark question type; the tip is framing only.
+6. Avoid leading labels like `SN:`, `LAQ:`, or `LAQ/SN on …:` unless they are necessary clinical wording inside the frame.
 
 ## Placement rules
 
@@ -86,7 +87,7 @@ LEVELS OF PREVENTION & MODES OF INTERVENTION
 - Secondary Prevention: ...
 - Tertiary Prevention: ...
 
-> **EXAM TIP:** LAQ (10): Define prevention → table of 4 levels × mode of intervention + example each → link to national programmes → close with “levels are complementary”. SN: definition + 4 levels with one example each.
+> **EXAM TIP:** Define prevention → table of 4 levels × mode of intervention + example each → link to national programmes → close with “levels are complementary”. For short notes: definition + 4 levels with one example each.
 ```
 
 ## Renderer (do not regress)

@@ -41,7 +41,7 @@ Must include, in order:
 2. **Core body** — 6–12 high-yield bullets (or a short table + bullets). Cover classification, mechanism/features, advantages/limitations, or steps as the topic demands.
 3. **India / programme hook** where relevant (national programme, NFHS/SRS figure, legal act, institutional example).
 4. **Closing exam line** only if it adds marks (e.g. one high-yield contrast or “remember” point).
-5. **`[EXAMTIP]…[/EXAMTIP]`** — brief framing for a 5-mark SN (structure order, what not to miss). See `tag-format.md`.
+5. **Exam tip** (`> **EXAM TIP:** …` preferred) — brief framing (structure order, what not to miss). See `tag-format.md`. **No mark-count prefixes** (`SN (5)`, `LAQ (10)`, etc.).
 
 **Not enough:** definition alone; 2–3 UG bullets; heading with no body.
 
@@ -54,7 +54,7 @@ Must include, in order:
 3. **Elaboration** of each major limb with examples a resident can expand under time pressure.
 4. **National / programme context** (India-specific schemes, indicators, recent renames) when the topic allows.
 5. **Conclusion** — 2–4 lines tying concept to public-health practice or exam “so what”.
-6. **`[EXAMTIP]…[/EXAMTIP]`** — how to frame a 10-mark answer (recommended heading sequence; optional marks split if known from PYQs).
+6. **Exam tip** (`> **EXAM TIP:** …` preferred) — how to frame the long answer (recommended heading sequence). **No invented mark splits** (`LAQ (10)`, `10 marks`, etc.).
 
 **Not enough:** bullet dump without definition/framework; SN-length block labelled as LAQ; essay padding without structure.
 

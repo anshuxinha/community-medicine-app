@@ -146,7 +146,9 @@ End every new/expanded exam block with a single full line (format in `references
 
 (Alternate on newer builds only: `[EXAMTIP]…[/EXAMTIP]`.)
 
-The tip must tell the reader **how to frame the answer in the exam** (heading order, tables to draw, marks-aware structure). It must **not** restate the whole answer.
+The tip must tell the reader **how to frame the answer in the exam** (heading order, tables to draw, what not to miss). It must **not** restate the whole answer.
+
+**Forbidden in Exam Tip text:** mark-count or type-prefix artifacts such as `SN (5)`, `LAQ (10)`, `LAQ (10–15)`, `SN HDI (5)`, `5 marks`, `10 marks`, or leading `LAQ/SN on …:`. Question type is already shown by the SN/LAQ badges; the tip is framing only.
 
 Also place the matching `[SN]…[/SN]` and/or `[LAQ]…[/LAQ]` tag(s) above the section when tagging that topic — **each tag on its own line, each followed by a blank line** (never stack tags on adjacent lines; the text-table heuristic will turn them into a purple 2-column table).
 
@@ -182,7 +184,7 @@ Rules:
 2. **Always leave a blank line after SN/LAQ tag block(s)** before the section heading/body — otherwise `ReadingView` text-table preprocessing can turn `[SN]…` + title into a fake 2-column table.
 3. Align titles with PYQ wording when possible.
 4. Both SN and LAQ tags allowed if a section serves both.
-5. EXAMTIP: one full line at the **end** of each new/expanded exam block (prefer a blank line before it). Must render as a box, never as raw `[EXAMTIP]…` body text.
+5. Exam tip: one full line at the **end** of each new/expanded exam block (prefer `> **EXAM TIP:** …` and a blank line before it). Must render as a box, never as raw `[EXAMTIP]…` body text. **No** `SN (5)` / `LAQ (10)` mark-count prefixes.
 6. In the report, list **proposed tag insertions** as exact before/after snippets (file leaf id + surrounding lines).
 7. Do not invent alternate colours or markup.
 
