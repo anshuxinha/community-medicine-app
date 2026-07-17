@@ -2156,7 +2156,9 @@ const createStyles = (colors) => StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderLeftWidth: 4,
-    borderLeftColor: colors.warningStrong,
+    // Fixed light-mode amber palette (same as SN tags) so dark theme
+    // warningText (#FDE68A) never paints yellow-on-yellow on these chips.
+    borderLeftColor: "#B45309",
     backgroundColor: "#FEF3C7",
     borderRadius: 4,
     flexDirection: "row",
@@ -2165,7 +2167,7 @@ const createStyles = (colors) => StyleSheet.create({
     gap: 8,
   },
   examLaqBadge: {
-    color: colors.warningText,
+    color: "#92400E",
     fontSize: 11,
     fontWeight: "800",
     letterSpacing: 0.6,
@@ -2176,7 +2178,7 @@ const createStyles = (colors) => StyleSheet.create({
     overflow: "hidden",
   },
   examLaqText: {
-    color: colors.warningText,
+    color: "#92400E",
     fontSize: 14,
     fontWeight: "700",
     lineHeight: 20,
