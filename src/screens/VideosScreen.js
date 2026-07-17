@@ -313,7 +313,8 @@ const playerHtml = (embedUrl) => {
         top: 0;
         /* Leave native control bar free (play, scrubber, gear, etc.). */
         bottom: 64px;
-        pointer-events: auto;
+        /* Off until Player.js is ready so the native play button works (fail-open). */
+        pointer-events: none;
         -webkit-tap-highlight-color: transparent;
       }
       .zone-left { left: 0; width: 30%; }
@@ -641,9 +642,18 @@ const playerHtml = (embedUrl) => {
           }, HOLD_TICK_MS);
         }
 
+        function setZonesEnabled(enabled) {
+          var ids = ["zone-left", "zone-center", "zone-right"];
+          for (var i = 0; i < ids.length; i++) {
+            var el = document.getElementById(ids[i]);
+            if (el) el.style.pointerEvents = enabled ? "auto" : "none";
+          }
+        }
+
         function togglePlayPause() {
           if (!player || !ready) {
-            showToast("Loading…", "");
+            // Should not intercept while disabled; keep fail-open if it does.
+            setZonesEnabled(false);
             return;
           }
           // Call play/pause synchronously in the touch handler so mobile
@@ -834,30 +844,97 @@ const playerHtml = (embedUrl) => {
         }
 
         function initPlayer() {
-          if (typeof playerjs === "undefined" || !playerjs.Player) {
-            return;
+          var iframe = document.getElementById("bunny-player");
+          var attempts = 0;
+          var maxAttempts = 40;
+          var attached = false;
+
+          function onReady() {
+            if (ready) return;
+            ready = true;
+            setZonesEnabled(true);
+            try {
+              player.getPaused(function (paused) {
+                isPaused = Boolean(paused);
+              });
+            } catch (e) {
+              /* ignore */
+            }
           }
-          try {
-            player = new playerjs.Player("bunny-player");
-            player.on("ready", function () {
-              ready = true;
-              try {
-                player.getPaused(function (paused) {
-                  isPaused = Boolean(paused);
-                });
-              } catch (e) {
-                /* ignore */
-              }
-            });
-            player.on("play", function () {
+
+          function wirePlayer(instance) {
+            instance.on("ready", onReady);
+            instance.on("play", function () {
               isPaused = false;
             });
-            player.on("pause", function () {
+            instance.on("pause", function () {
               isPaused = true;
             });
-          } catch (e) {
-            player = null;
-            ready = false;
+            // If ready already fired before we subscribed, probe the API.
+            setTimeout(function () {
+              if (ready || !player) return;
+              try {
+                player.getPaused(function () {
+                  if (!ready) onReady();
+                });
+              } catch (e) {
+                /* wait for ready event */
+              }
+            }, 600);
+          }
+
+          function attach() {
+            if (ready) return;
+            if (typeof playerjs === "undefined" || !playerjs.Player) {
+              attempts += 1;
+              if (attempts < maxAttempts) setTimeout(attach, 150);
+              // Fail-open: zones stay pointer-events:none; native Bunny play works.
+              return;
+            }
+            try {
+              if (!attached) {
+                attached = true;
+                player = new playerjs.Player(iframe || "bunny-player");
+                wirePlayer(player);
+              } else if (player) {
+                // Already created; keep waiting / probing.
+                try {
+                  player.getPaused(function () {
+                    if (!ready) onReady();
+                  });
+                } catch (e) {
+                  /* ignore */
+                }
+              }
+            } catch (e) {
+              attached = false;
+              player = null;
+              ready = false;
+              setZonesEnabled(false);
+              attempts += 1;
+              if (attempts < maxAttempts) setTimeout(attach, 200);
+            }
+          }
+
+          if (iframe) {
+            iframe.addEventListener("load", function () {
+              // Re-bind after the embed document is actually available.
+              if (ready) return;
+              attempts = 0;
+              attached = false;
+              player = null;
+              attach();
+            });
+          }
+          attach();
+          // Retry a few times in case the first bind races the iframe.
+          var retryAt = [500, 1200, 2500];
+          for (var r = 0; r < retryAt.length; r++) {
+            (function (delay) {
+              setTimeout(function () {
+                if (!ready) attach();
+              }, delay);
+            })(retryAt[r]);
           }
         }
 
@@ -865,6 +942,7 @@ const playerHtml = (embedUrl) => {
         bindZone(document.getElementById("zone-center"));
         bindZone(document.getElementById("zone-right"));
         bindFullscreenCatch();
+        setZonesEnabled(false);
 
         if (document.readyState === "loading") {
           document.addEventListener("DOMContentLoaded", initPlayer);
