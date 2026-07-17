@@ -244,56 +244,22 @@ const onShouldStartLoadWithRequest = (request) => {
 };
 
 /**
- * Pure Bunny Stream embed — no gesture overlays.
- * Native Bunny controls handle play, seek, settings, and fullscreen.
+ * Pure Bunny Stream embed URL for WebView.
+ * Load the embed as the WebView document (not a nested HTML→iframe shell) so
+ * the player can preload media and start without a long black gap after Play.
  */
-const playerHtml = (embedUrl) => {
-  let resolvedUrl = String(embedUrl || "");
+const buildBunnyEmbedUrl = (embedUrl) => {
   try {
-    const parsed = new URL(resolvedUrl);
+    const parsed = new URL(String(embedUrl || ""));
+    // Buffer while the poster is visible so play can start immediately.
+    parsed.searchParams.set("preload", "true");
+    // Keep playback inside the WebView on mobile (faster first frame).
     parsed.searchParams.set("playsinline", "true");
-    resolvedUrl = parsed.toString();
+    parsed.searchParams.set("disableIosPlayer", "true");
+    return parsed.toString();
   } catch (_err) {
-    /* use raw url */
+    return String(embedUrl || "");
   }
-
-  const safeUrl = resolvedUrl
-    .replace(/&/g, "&amp;")
-    .replace(/"/g, "&quot;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-
-  return `<!doctype html>
-<html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-    <style>
-      html, body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        background: #000;
-        overflow: hidden;
-      }
-      iframe {
-        border: 0;
-        width: 100%;
-        height: 100%;
-        display: block;
-        background: #000;
-      }
-    </style>
-  </head>
-  <body>
-    <iframe
-      src="${safeUrl}"
-      allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen"
-      allowfullscreen="true"
-      playsinline
-    ></iframe>
-  </body>
-</html>`;
 };
 
 const getThumbnailSource = (thumbnailUrl) => {
@@ -1163,21 +1129,20 @@ const VideosScreen = ({ navigation }) => {
             >
               {selectedVideo?.embedUrl ? (
                 <WebView
+                  // Load Bunny player as the top-level page (matches pre-gesture
+                  // simplicity, without an extra HTML iframe hop that delayed start).
                   originWhitelist={["*"]}
-                  source={{
-                    html: playerHtml(selectedVideo.embedUrl),
-                    baseUrl: "https://iframe.mediadelivery.net/",
-                  }}
+                  source={{ uri: buildBunnyEmbedUrl(selectedVideo.embedUrl) }}
                   allowsFullscreenVideo
                   allowsInlineMediaPlayback
                   mediaPlaybackRequiresUserAction={false}
                   javaScriptEnabled
                   domStorageEnabled
-                  scrollEnabled={false}
-                  bounces={false}
-                  setSupportMultipleWindows={false}
                   allowsProtectedMedia
                   mixedContentMode="always"
+                  setSupportMultipleWindows={false}
+                  // Helps Android paint video frames instead of staying black while buffering.
+                  androidLayerType="hardware"
                   style={styles.player}
                 />
               ) : (
