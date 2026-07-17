@@ -247,12 +247,13 @@ const onShouldStartLoadWithRequest = (request) => {
  * Bunny Stream embed shell with modern outer-shell gestures (Player.js).
  * Fail-open: if Player.js fails, the iframe still plays with default controls.
  *
- * Gestures (bottom scrubber strip left free except fullscreen catch):
+ * Gestures (native control bar + settings menu left free; FS catch is narrow):
  * - Tap center → play / pause
  * - Double-tap left/right → seek −10s / +10s
  * - Long-press left/right → continuous skip (no setPlaybackRate in Player.js)
  * - Vertical drag right → volume
- * - Fullscreen catch (bottom-right) → app/shell fullscreen so gesture zones stay active
+ * - Fullscreen catch (far bottom-right only) → app/shell fullscreen so gesture zones stay active
+ *   (must not cover Bunny's gear/settings control immediately left of native FS)
  */
 const playerHtml = (embedUrl) => {
   let resolvedUrl = String(embedUrl || "");
@@ -310,21 +311,27 @@ const playerHtml = (embedUrl) => {
       .zone {
         position: absolute;
         top: 0;
-        bottom: 52px;
+        /* Leave native control bar free (play, scrubber, gear, etc.). */
+        bottom: 64px;
         pointer-events: auto;
         -webkit-tap-highlight-color: transparent;
       }
       .zone-left { left: 0; width: 30%; }
       .zone-center { left: 30%; width: 40%; }
-      .zone-right { right: 0; width: 30%; }
-      /* Cover Bunny's native fullscreen control so we expand the shell/app instead.
-         Native iframe fullscreen drops our gesture layer. */
+      /* Extra bottom clearance on the right so gear + settings menu (opens upward) stay tappable. */
+      .zone-right {
+        right: 0;
+        width: 30%;
+        bottom: 148px;
+      }
+      /* Cover only Bunny's native fullscreen button (far right). Wider catch also
+         ate the gear/settings control and fired app-fullscreen instead. */
       .fs-catch {
         position: absolute;
         right: 0;
         bottom: 0;
-        width: 56px;
-        height: 52px;
+        width: 44px;
+        height: 48px;
         z-index: 5;
         pointer-events: auto;
         -webkit-tap-highlight-color: transparent;

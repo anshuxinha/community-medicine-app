@@ -315,6 +315,10 @@
     "mtime": 1784212256.6586854,
     "hash": "be61ab8e9249c018b9390043d7447054"
   },
+  "D:\\The App\\scripts\\clean_ch2_exam_tips.js": {
+    "mtime": 1784305509.058137,
+    "hash": "81da54babb756dfa32f0fd2101a9c1db"
+  },
   "D:\\The App\\scripts\\create_admin.js": {
     "mtime": 1772355533.378721,
     "hash": "340987431de13941db032f91d2540782"
@@ -334,6 +338,10 @@
   "D:\\The App\\scripts\\fix_broken_color_props.js": {
     "mtime": 1784212218.394447,
     "hash": "06a24b33e86f80bf527fdceea677d908"
+  },
+  "D:\\The App\\scripts\\fix_ch2_exam_markup.js": {
+    "mtime": 1784304894.978399,
+    "hash": "c80482ea912116ba81db60cf39230fa6"
   },
   "D:\\The App\\scripts\\generate-reading-illustrations.js": {
     "mtime": 1774758104.8590746,
@@ -366,6 +374,14 @@
   "D:\\The App\\scripts\\pdf_to_json.py": {
     "mtime": 1778395627.2862573,
     "hash": "3da4cd0fc30e74dc4ef35813e2634863"
+  },
+  "D:\\The App\\scripts\\polish_ch2_exam_tips.js": {
+    "mtime": 1784305546.8587046,
+    "hash": "7702ac7fd46ad488cec729e06cedf02f"
+  },
+  "D:\\The App\\scripts\\publish_library_override.py": {
+    "mtime": 1784304331.0982354,
+    "hash": "03f9653cae3ed1920e163b56838f22c3"
   },
   "D:\\The App\\scripts\\push_notifications.py": {
     "mtime": 1783233662.8135293,
@@ -448,8 +464,8 @@
     "hash": "97abdb8fd522462f616d41d6c847c9b9"
   },
   "D:\\The App\\src\\components\\ReadingView.js": {
-    "mtime": 1784302185.6106741,
-    "hash": "5a3b5e384467ef88f796815a3ce53868"
+    "mtime": 1784306929.0334177,
+    "hash": "772cd1300f192902f6f926e37ab1ca1c"
   },
   "D:\\The App\\src\\components\\ReferralAnnouncementDialog.js": {
     "mtime": 1784224587.4018288,
@@ -600,8 +616,8 @@
     "hash": "f6eb550b80214139a46a94ea196fe185"
   },
   "D:\\The App\\src\\screens\\VideosScreen.js": {
-    "mtime": 1784274925.1069117,
-    "hash": "549e1aee444e1d182cf09ddf8aabff3f"
+    "mtime": 1784311959.1406164,
+    "hash": "2fdff006f36e8086cd2fdba1663be920"
   },
   "D:\\The App\\src\\screens\\VirtualMuseumScreen.js": {
     "mtime": 1784225570.202634,
