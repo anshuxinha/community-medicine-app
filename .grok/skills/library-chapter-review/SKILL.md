@@ -5,18 +5,19 @@ description: >
   libraryContentOverrides + mockData) against Park textbook PDFs in
   D:\Study Related\Books\Park Split and MD Community Medicine PYQs in
   categorized_questions_report.md. Tags SN/LAQ sections with fixed colour
-  markers, flags outdated facts only when verified from official sources,
-  and suggests PYQ content gaps. Use when the user runs
-  /library-chapter-review, /chapter-review, "review library chapter",
-  "check chapter accuracy", "audit Park chapter", or asks to quality-check
-  a specific Library chapter for MD exam prep.
+  markers, requires MD-exam-depth new content with Exam Tip boxes, fills
+  Park gaps only with verified knowledge, flags outdated facts only when
+  verified from official sources, and suggests PYQ content gaps. Use when
+  the user runs /library-chapter-review, /chapter-review, "review library
+  chapter", "check chapter accuracy", "audit Park chapter", or asks to
+  quality-check a specific Library chapter for MD exam prep.
 metadata:
-  short-description: "QA Library chapters vs Park + PYQs (SN/LAQ tags)"
+  short-description: "QA Library chapters vs Park + PYQs (SN/LAQ + Exam Tip)"
 ---
 
 # /library-chapter-review — Library chapter accuracy & exam quality
 
-Review one Library chapter for an **MD Community Medicine resident** exam prep standard: factual accuracy, academic structure, PYQ coverage, and fixed SN/LAQ colour tags.
+Review one Library chapter for an **MD Community Medicine resident** exam prep standard: factual accuracy, academic structure, PYQ coverage, fixed SN/LAQ colour tags, and **exam-ready new content** (depth + Exam Tip).
 
 ## Usage
 
@@ -45,7 +46,7 @@ Read `references/paths.md`. Critical paths:
 | Park reference | `D:\Study Related\Books\Park Split\` (match by chapter number or name) |
 | PYQs | `D:\IGIMS\Major Tests & Question Papers\categorized_questions_report.md` |
 | Rubric | `references/quality-rubric.md` |
-| SN/LAQ tags | `references/tag-format.md` |
+| SN/LAQ/EXAMTIP tags | `references/tag-format.md` |
 
 ## Step 0 — Resolve chapter and load bundle
 
@@ -78,10 +79,12 @@ Apply `references/quality-rubric.md`.
 
 Content must support:
 
-- **Short notes (SN):** definition, 6–12 high-yield bullets, India/programme hook where relevant
-- **Long answers (LAQ/LQ):** definition → framework/classification → elaboration → national context → closing exam line
+- **Short notes (SN):** definition → 6–12 high-yield bullets → India/programme hook → **Exam Tip box**
+- **Long answers (LAQ/LQ):** definition → framework/classification → elaboration → national context → conclusion → **Exam Tip box**
 
 Depth = MD theory exam, not UG one-liners and not textbook chapter rewrites.
+
+**When proposing or applying any new content**, the draft must be something a final-year MD Community Medicine resident could write from under exam conditions for that question type (see Step 3a and rubric §C).
 
 ## Step 2 — Accuracy audit (vs Park + official sources)
 
@@ -102,39 +105,85 @@ Using `pyqs.json`:
 
 | Status | Meaning |
 |--------|---------|
-| `covered` | Clear section answers the question |
+| `covered` | Clear section answers the question at MD exam depth |
 | `partial` | Related content exists but missing structure/depth for exam |
 | `missing` | No usable answer block |
 
 For each **LQ** and **SN** (MCQs optional summary only):
 
 - Status + leaf id(s)
-- For `partial` / `missing`: concrete content outline to add (headings + bullet skeleton), MD-exam depth
+- For `partial` / `missing`: produce a **full draft block** (not a skeleton only) per Step 3a
 - Prefer surgical additions over whole-chapter rewrites
 
-## Step 4 — SN / LAQ colour tags
+## Step 3a — Writing new content (mandatory for every gap fill)
+
+Whenever the review **proposes** or **applies** new/expanded text for a PYQ gap:
+
+### Depth by question type
+
+| Type | Minimum usable answer |
+|------|------------------------|
+| **SN** | Definition (with authority) + 6–12 high-yield points + India/programme hook when relevant. Length ≈ ½–1 exam page. |
+| **LAQ/LQ** | Definition → classification/framework (table preferred) → elaborate each limb with examples → national context → short conclusion. Length ≈ 1½–3 exam pages of scannable scaffold (not fluff). |
+
+Full rules: `references/quality-rubric.md` §C1–C2.
+
+### Park gaps — fill, don’t invent
+
+1. Use **Park** as primary when the chapter covers the topic.
+2. If Park is **brief or silent** but the PYQ is standard MD material, **fill the gap** using standard Community Medicine knowledge.
+3. **Cross-verify** definitions, programme names, and any numbers against good sources (official MoHFW/WHO/ICMR/NCDC/NHM pages; consistent textbook principles). Record sources in the report.
+4. **Do not hallucinate.** No invented rates, years, doses, or “latest” claims. If a figure cannot be verified, omit it or mark `NEEDS_HUMAN_VERIFY`.
+5. In the report, for each addition note: `Park coverage: full | partial | absent` and `Sources used: …`.
+
+### Exam Tip box (mandatory on every new SN/LAQ block)
+
+End every new/expanded exam block with a single full line (format in `references/tag-format.md`):
+
+```text
+[EXAMTIP]…brief framing for the resident…[/EXAMTIP]
+```
+
+The tip must tell the reader **how to frame the answer in the exam** (heading order, tables to draw, marks-aware structure). It must **not** restate the whole answer.
+
+Also place the matching `[SN]…[/SN]` and/or `[LAQ]…[/LAQ]` tag(s) above the section when tagging that topic.
+
+### Draft quality gate before including in report or applying
+
+- [ ] Matches SN vs LAQ depth above
+- [ ] Opens with definition/framework as required
+- [ ] No unverified statistics
+- [ ] Ends with `[EXAMTIP]…[/EXAMTIP]`
+- [ ] Precise medical English; no AI filler
+
+In **report-only** mode, write these full drafts under “Proposed content additions” so apply is copy-paste ready.
+
+## Step 4 — SN / LAQ / EXAMTIP colour tags
 
 Use the **fixed** format in `references/tag-format.md` only:
 
 ```text
 [SN]Topic title[/SN]
 [LAQ]Topic title[/LAQ]
+[EXAMTIP]Brief exam framing…[/EXAMTIP]
 ```
 
 | Tag | Border | Background | Label |
 |-----|--------|------------|-------|
 | SN  | `#0F766E` | `#CCFBF1` | `#115E59` |
 | LAQ | `#B45309` | `#FEF3C7` | `#92400E` |
+| EXAMTIP | `#4338CA` | `#E0E7FF` | `#3730A3` |
 
 Rules:
 
-1. One full line per tag, immediately above the answering section.
+1. SN/LAQ: one full line per tag, immediately above the answering section.
 2. Align titles with PYQ wording when possible.
-3. Both tags allowed if a section serves SN and LAQ.
-4. In the report, list **proposed tag insertions** as exact before/after snippets (file leaf id + surrounding lines).
-5. Do not invent alternate colours or markup.
+3. Both SN and LAQ tags allowed if a section serves both.
+4. EXAMTIP: one full line at the **end** of each new/expanded exam block.
+5. In the report, list **proposed tag insertions** as exact before/after snippets (file leaf id + surrounding lines).
+6. Do not invent alternate colours or markup.
 
-If `ReadingView.js` lacks SN/LAQ block styles, restore them from `references/tag-format.md` before applying tags to live content.
+If `ReadingView.js` lacks SN/LAQ/EXAMTIP block styles, restore them from `references/tag-format.md` before applying tags to live content.
 
 ## Step 5 — Academic quality (non-factual)
 
@@ -144,6 +193,7 @@ Check and note:
 - Broken formulas, wrong units, empty “FORMULAS” stubs that should exist
 - Contradictions between leaves of the same chapter
 - Weak LAQ scaffolding (lists without definitions/frameworks)
+- Missing Exam Tip on newly proposed blocks
 - Encoding glitches / OCR junk
 
 ## Step 6 — Write the report
@@ -182,7 +232,8 @@ Write `bundleDir/review_report.md` with this structure:
 (exact insertion snippets)
 
 ## Proposed content additions (PYQ gaps)
-(for each missing/partial: outline)
+(for each missing/partial: **full MD-exam draft** per Step 3a — not outline-only;
+ include Park coverage + sources used; end each draft with [EXAMTIP]…[/EXAMTIP])
 
 ## Optional apply plan
 (ordered surgical edits; do not apply unless user asks)
@@ -197,8 +248,9 @@ When applying:
 1. Edit the **effective** leaf content (respect override-backed text as the baseline).
 2. Prefer staging via existing library review flow (`docs/library-update-review-workflow.md` / `libraryReviewSuggestions`) when changing production Library text.
 3. Insert SN/LAQ tags without otherwise reformatting the chapter.
-4. Re-run the loader for that chapter and spot-check tags + critical fixes.
-5. Never force-push or `eas update` unless the user requests the full release path (see `Agents.md` EAS protocol).
+4. Insert full new blocks that pass Step 3a (depth + verified gap-fill + Exam Tip).
+5. Re-run the loader for that chapter and spot-check tags + critical fixes + Exam Tip rendering.
+6. Never force-push or `eas update` unless the user requests the full release path (see `Agents.md` EAS protocol).
 
 ## Success criteria
 
@@ -208,5 +260,8 @@ When applying:
 - [ ] Accuracy findings severity-tagged
 - [ ] Outdated claims web-checked against official sources; updates only at 100% confidence
 - [ ] SN/LAQ tags proposed in fixed format/colours
+- [ ] Every proposed/applied new SN/LAQ block is MD-exam depth for its type
+- [ ] Park gaps filled only with non-hallucinated, cross-verified material (sources noted)
+- [ ] Every new/expanded exam block ends with `[EXAMTIP]…[/EXAMTIP]`
 - [ ] `review_report.md` written under the bundle directory
 - [ ] No live content mutation unless explicitly requested

@@ -352,6 +352,7 @@ const parseMarkdown = (content, { isGem = false } = {}) => {
     // Fixed exam tags — colours documented in .grok/skills/library-chapter-review/references/tag-format.md
     const snTagMatch = trimmedLine.match(/^\[SN\](.*?)\[\/SN\]$/i);
     const laqTagMatch = trimmedLine.match(/^\[LAQ\](.*?)\[\/LAQ\]$/i);
+    const examTipMatch = trimmedLine.match(/^\[EXAMTIP\](.*?)\[\/EXAMTIP\]$/i);
 
     if (line.startsWith("# ")) {
       flushBullets();
@@ -400,6 +401,10 @@ const parseMarkdown = (content, { isGem = false } = {}) => {
       flushBullets();
       flushNested();
       rawBlocks.push({ type: "exam_laq", text: laqTagMatch[1].trim() });
+    } else if (examTipMatch) {
+      flushBullets();
+      flushNested();
+      rawBlocks.push({ type: "exam_tip", text: examTipMatch[1].trim() });
     } else if (line.trim() === "") {
       flushBullets();
       flushNested();
@@ -1134,6 +1139,19 @@ const ReadingView = ({
               LAQ
             </Text>
             {renderFormattedText(block.text, styles.examLaqText)}
+          </View>
+        );
+      case "exam_tip":
+        return (
+          <View
+            key={index}
+            style={styles.examTipBlock}
+            onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
+          >
+            <Text style={styles.examTipBadge} selectable={false}>
+              EXAM TIP
+            </Text>
+            {renderFormattedText(block.text, styles.examTipText)}
           </View>
         );
       case "blockquote": {
@@ -2117,6 +2135,38 @@ const createStyles = (colors) => StyleSheet.create({
     color: colors.warningText,
     fontSize: 14,
     fontWeight: "700",
+    lineHeight: 20,
+    flexShrink: 1,
+  },
+  // Fixed EXAMTIP box (library-chapter-review skill) — do not change colours casually
+  examTipBlock: {
+    marginTop: 10,
+    marginBottom: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: "#4338CA",
+    backgroundColor: "#E0E7FF",
+    borderRadius: 4,
+    flexDirection: "column",
+    alignItems: "flex-start",
+    gap: 6,
+  },
+  examTipBadge: {
+    color: "#3730A3",
+    fontSize: 11,
+    fontWeight: "800",
+    letterSpacing: 0.6,
+    backgroundColor: "#C7D2FE",
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+    overflow: "hidden",
+  },
+  examTipText: {
+    color: "#3730A3",
+    fontSize: 13.5,
+    fontWeight: "600",
     lineHeight: 20,
     flexShrink: 1,
   },

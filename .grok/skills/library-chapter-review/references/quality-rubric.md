@@ -23,13 +23,61 @@ Audience: **MD Community Medicine resident** preparing for university theory exa
 
 | Check | Expectation |
 |-------|-------------|
-| SN coverage | Every high-yield SN topic has a discrete, extractable block (definition → key points → exam bullets) |
-| LAQ coverage | Major LAQ themes have structure: intro/definition → classification/framework → details → Indian context/programmes → conclusion/exam tips |
+| SN coverage | Every high-yield SN topic has a discrete, extractable block (definition → key points → exam bullets → Exam Tip) |
+| LAQ coverage | Major LAQ themes have structure: intro/definition → classification/framework → details → Indian context/programmes → conclusion → Exam Tip |
 | PYQ map | Map each LQ/SN from `categorized_questions_report.md` → present / partial / missing |
 | Indian context | National programmes, NFHS/SRS figures where relevant, recent renames (e.g. NTEP) |
 | Comparators | Tables for classic contrasts (incidence vs prevalence, monitoring vs surveillance, SMR, etc.) |
 
-## C. Structure & pedagogy
+## C. New content depth (mandatory when adding or proposing full draft text)
+
+Any **new** or **substantially expanded** block must be enough for a final-year MD Community Medicine resident to write from in the university exam. Match depth to question type.
+
+### C1. Short note (SN) — target length ~½–1 exam page
+
+Must include, in order:
+
+1. **Definition** (1–2 lines) with authority (WHO / Park / MoHFW) when standard wording exists.
+2. **Core body** — 6–12 high-yield bullets (or a short table + bullets). Cover classification, mechanism/features, advantages/limitations, or steps as the topic demands.
+3. **India / programme hook** where relevant (national programme, NFHS/SRS figure, legal act, institutional example).
+4. **Closing exam line** only if it adds marks (e.g. one high-yield contrast or “remember” point).
+5. **`[EXAMTIP]…[/EXAMTIP]`** — brief framing for a 5-mark SN (structure order, what not to miss). See `tag-format.md`.
+
+**Not enough:** definition alone; 2–3 UG bullets; heading with no body.
+
+### C2. Long answer (LAQ/LQ) — target length ~1½–3 exam pages scaffold
+
+Must include, in order:
+
+1. **Introduction / definition(s)** with authority.
+2. **Framework or classification** (prefer a markdown table or numbered levels).
+3. **Elaboration** of each major limb with examples a resident can expand under time pressure.
+4. **National / programme context** (India-specific schemes, indicators, recent renames) when the topic allows.
+5. **Conclusion** — 2–4 lines tying concept to public-health practice or exam “so what”.
+6. **`[EXAMTIP]…[/EXAMTIP]`** — how to frame a 10-mark answer (recommended heading sequence; optional marks split if known from PYQs).
+
+**Not enough:** bullet dump without definition/framework; SN-length block labelled as LAQ; essay padding without structure.
+
+### C3. Gap-fill when Park is thin or silent
+
+Park chapter PDFs are the **primary** reference but are not exhaustive for every PYQ.
+
+| Situation | Action |
+|-----------|--------|
+| Park covers the topic fully | Align Library text to Park; modernise only with verified official sources |
+| Park mentions briefly; PYQ needs SN/LAQ depth | Expand to C1/C2 using standard MD Community Medicine knowledge |
+| Park silent; topic is standard in MD exams | Write full C1/C2 block from standard knowledge + **cross-verify** definitions, programmes, and numbers against good sources (Park other chapters if known, WHO, MoHFW, ICMR, NCDC, standard CM textbooks principles) |
+| Cannot verify a specific number/year/claim | Omit the number, or mark `NEEDS_HUMAN_VERIFY` — **do not invent** |
+
+**Anti-hallucination rules for gap-fill**
+
+- Do not invent statistics, coverage %, cut-offs, act years, vaccine doses, or “latest” guideline years.
+- Prefer qualitative, structural, and classification content when exact figures are uncertain.
+- Every time-sensitive claim in new content must be web-checked against an official source, or dropped.
+- Coaching blogs / random MCQ sites are never sole authority.
+- In the report, note for each gap-fill block: `Park coverage: full | partial | absent` and `Sources used: …`.
+
+## D. Structure & pedagogy
 
 | Check | Expectation |
 |-------|-------------|
@@ -37,9 +85,10 @@ Audience: **MD Community Medicine resident** preparing for university theory exa
 | Definitions first | Exam answers open with definition/authority |
 | Mnemonics | Only if accurate; flag wrong mnemonics |
 | Formulas | Correct formula + units + multiplier + when to use |
+| Exam Tip | Every new SN/LAQ block ends with `[EXAMTIP]…[/EXAMTIP]` (brief framing only — not a second essay) |
 | Redundancy | Duplicate blocks across subsections noted; don’t rewrite whole chapter unless asked |
 
-## D. Writing quality
+## E. Writing quality
 
 | Check | Expectation |
 |-------|-------------|
@@ -47,6 +96,7 @@ Audience: **MD Community Medicine resident** preparing for university theory exa
 | Consistency | Same term for same concept throughout (e.g. HWC vs Ayushman Arogya Mandir — state current official name if tagging updates) |
 | Tables | Prefer markdown tables for multi-column comparisons when ReadingView supports them |
 | Length | SN-depth ~½–1 page equivalent; LAQ scaffolds deeper without essay padding |
+| Exam Tip tone | Imperative, brief (“Open with WHO definition → table of … → 5 India points → close with …”) |
 
 ## Severity labels for findings
 
@@ -63,3 +113,5 @@ Audience: **MD Community Medicine resident** preparing for university theory exa
 - “Modernise” content based on blogs, coaching sites, or secondary MCQ banks alone.
 - Mass-rewrite style when a surgical fix suffices.
 - Apply Firebase/live overrides without explicit user approval after the report.
+- Ship new SN/LAQ text without an Exam Tip box.
+- Pad answers with generic AI filler that would not earn MD theory marks.
