@@ -1508,7 +1508,9 @@ const createStyles = (colors) => StyleSheet.create({
     paddingVertical: 2,
   },
   itemDurationText: {
-    color: colors.surfacePrimary,
+    // Always light text on the dark badge so duration stays readable in dark mode
+    // (surfacePrimary becomes dark in dark theme and would vanish on rgba(0,0,0,0.75)).
+    color: colors.buttonText,
     fontSize: 10,
     fontWeight: "800",
   },

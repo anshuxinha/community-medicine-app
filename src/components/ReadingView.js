@@ -2512,7 +2512,9 @@ const createStyles = (colors) => StyleSheet.create({
     paddingVertical: 10,
     borderLeftWidth: 3,
     borderLeftColor: colors.highlightBorder,
-    backgroundColor: "#FEFCE8",
+    // Theme-aware amber surface so note text stays readable in dark mode
+    // (hardcoded light yellow + light textPrimary was near-invisible on dark theme).
+    backgroundColor: colors.warningBackground,
     borderRadius: 8,
   },
   annotationCardHeader: {

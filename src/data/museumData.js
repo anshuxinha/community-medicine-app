@@ -931,7 +931,7 @@ export const MUSEUM_ITEMS = [
     category: "Entomology",
     title: "Housefly",
     emoji: "🦟",
-    image: `${BASE}/fig_19_5.png`,
+    image: `${BASE}/fig_19_6.png`,
     description:
       "Characteristic features: 3 body parts (head, thorax and abdomen)\nHead bears a pair of antennae and a pair of large compound eyes\nThorax bears 3 pairs of legs and a pair of wings\nAbdomen: Segmented\nVector of diseases: Typhoid, paratyphoid, diarrhoea, dysentery, cholera, polio, etc\nControl measures:\n1. Environmental: Sanitation and garbage disposal\n2. Insecticidal: Residual spray (DDT, lindane and malathion), baits (malathion), cords and ribbons, space sprays (DDT, pyrethrum, etc.), larvicides (diazinon)",
     keyFact:
@@ -942,7 +942,7 @@ export const MUSEUM_ITEMS = [
     category: "Entomology",
     title: "Sandfly",
     emoji: "🦟",
-    image: `${BASE}/fig_19_6.png`,
+    image: `${BASE}/fig_19_5.png`,
     description:
       "Characteristic features: 3 body parts (head, thorax and abdomen), smaller in size than mosquito, wings upright, hairy antennae\nVector species: Phlebotomus argentipes , P . papatasii , P. sergentii, Sergentomyia punjabensis .\nDiseases transmitted: Kala azar ( P . argentipes), sand fly fever, oriental sore\nControl measures: Insecticide (DDT or lindane), sanitation (removal of shrubs, filling up cracks and crevices, location\naway from cattle sheds and poultry house).",
     keyFact:
