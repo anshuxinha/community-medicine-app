@@ -11,6 +11,16 @@
 | PYQ list | `D:\IGIMS\Major Tests & Question Papers\categorized_questions_report.md` |
 | Review bundles | `D:\The App\dist\library_chapter_reviews\` |
 | Library update workflow | `D:\The App\docs\library-update-review-workflow.md` |
+| Publish one leaf override | `python scripts/publish_library_override.py <leafId> --reason "..."` |
+
+## On report approval (ship path)
+
+When the user approves a chapter review report:
+
+1. Apply fixes to `mockData.json` leaves.
+2. **Git commit + push** (related files only).
+3. **Firebase override** every changed leaf (`status: active`).
+4. **Ask before `eas update`** — only if renderer/app JS (not leaf text) must ship; leaf overrides alone do not need OTA.
 
 ## Park PDF naming (examples)
 

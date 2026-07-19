@@ -114,7 +114,7 @@ Park chapter PDFs are the **primary** reference but are not exhaustive for every
 - Invent statistics or guideline years.
 - “Modernise” content based on blogs, coaching sites, or secondary MCQ banks alone.
 - Mass-rewrite style when a surgical fix suffices.
-- Apply Firebase/live overrides without explicit user approval after the report.
+- Apply content, Firebase overrides, commit, or push without explicit user **approval of the report** (approval then triggers the full ship path in SKILL.md Step 7).
 - Ship new SN/LAQ text without an Exam Tip box.
 - Pad answers with generic AI filler that would not earn MD theory marks.
 - Put “verify latest…”, “confirm for your exam year”, or similar **reader-offload** wording into live Library content (including Exam Tips).

@@ -34,7 +34,9 @@ Examples:
 
 `<chapter>` may be a number, Library id, or title fragment.
 
-**Default mode: report only.** Do not write Firebase overrides or edit `mockData.json` unless the user explicitly asks to apply changes after the report.
+**Default mode: report only.** Do not edit `mockData.json`, commit, push, or publish Firebase overrides until the user **approves** the report (e.g. “apply”, “approve”, “ship it”, “do the fixes”).
+
+**On approval (mandatory ship path):** apply content → **git commit + git push** → **Firebase `libraryContentOverrides` for every changed leaf**. **Do not** run `eas update` unless required for non-override reasons — and if it is required, **ask the user first**.
 
 ## Fixed paths
 
@@ -257,25 +259,72 @@ Write `bundleDir/review_report.md` with this structure:
  include Park coverage + sources used; end each draft with [EXAMTIP]…[/EXAMTIP])
 
 ## Optional apply plan
-(ordered surgical edits; do not apply unless user asks)
+(ordered surgical edits; do not apply unless user **approves** the report)
 ```
 
-Also give the user a short in-chat summary with the bundle path and top findings.
+Also give the user a short in-chat summary with the bundle path and top findings. End report-only runs by asking whether to **approve and ship** (apply + commit + push + Firebase overrides).
 
-## Step 7 — Apply changes (only if user asks)
+## Step 7 — Apply + ship (when user approves the report)
 
-When applying:
+**Trigger:** User approves the report or explicitly asks to apply/ship (e.g. “apply all fixes”, “approve”, “publish”, “do it”). Partial apply is allowed if they name a subset.
 
-1. Edit the **effective** leaf content (respect override-backed text as the baseline).
-2. Prefer staging via existing library review flow (`docs/library-update-review-workflow.md` / `libraryReviewSuggestions`) when changing production Library text.
-3. Insert SN/LAQ tags without otherwise reformatting the chapter.
-4. Insert full new blocks that pass Step 3a (depth + verified gap-fill + Exam Tip).
-5. **Pre-flight:** grep applied text for forbidden reader-offload phrases (`verify latest`, `exam year`, `confirm yourself`, `NEEDS_`, “commonly taught; confirm”, etc.) and remove them before publish.
-6. Re-run the loader for that chapter and spot-check tags + critical fixes + Exam Tip rendering.
-7. Never force-push or `eas update` unless the user requests the full release path (see `Agents.md` EAS protocol).
-8. When publishing Firebase overrides, live text must be **authoritative finished prose** — verification belongs to the agent’s pre-publish work, not the subscriber.
+### 7a — Content apply
+
+1. Edit the **effective** leaf content in `src/data/mockData.json` (respect override-backed text as the baseline when merging).
+2. Insert SN/LAQ tags and full new blocks that pass Step 3a (depth + verified gap-fill + Exam Tip).
+3. Surgical edits only — no drive-by refactors.
+4. **Pre-flight:** grep applied text for forbidden reader-offload phrases (`verify latest`, `exam year`, `confirm yourself`, `NEEDS_`, “commonly taught; confirm”, etc.) and remove them before ship.
+5. Live text must be **authoritative finished prose** — verification is the agent’s job before publish, not the subscriber’s.
+
+### 7b — Git commit + push (**always** on approval)
+
+Do this for every approved apply that changes repo files (at minimum `mockData.json`; include skill/docs only if this session changed them for the same work):
+
+1. `git status` / `git diff` / `git log -5 --oneline` (parallel) per repo commit rules.
+2. Stage **only** files that belong to this library-review apply (never unrelated dirty files: graphify-out, unrelated scripts, secrets).
+3. Commit with a clear message (why: chapter id + what shipped).
+4. **`git push`** to the tracked remote branch (usually `origin/main`) — **required** on approval so GitHub matches what production overrides ship against.
+5. Never force-push unless the user explicitly requests it.
+
+### 7c — Firebase overrides (**always** on approval)
+
+Publish **every changed leaf** to Firestore `libraryContentOverrides`:
+
+```bash
+python scripts/publish_library_override.py <leafId> --reason "ChN library review apply: <short summary>"
+```
+
+- Repeat for each leaf id (e.g. `3-1` … `3-6`).
+- Confirm each response: `ok: true`, `status: "active"`, sensible `contentLen`.
+- Overrides make content visible in the app **without** a native rebuild (app merges active/approved overrides at runtime).
+
+### 7d — EAS Update (**ask first** — never auto-run)
+
+Library **body text** for overridden leaves does **not** need `eas update`.
+
+**Ask the user before any `eas update`** if (and only if) something outside override-backed leaf text must ship for the change to work, e.g.:
+
+- `ReadingView.js` / SN-LAQ-EXAMTIP renderer or styles
+- App navigation, contentRegistry merge logic, or other JS that does not come from Firestore overrides
+- Assets/config that are only in the JS bundle
+
+If unsure whether OTA is required, **ask** rather than publish OTA. If they approve OTA, follow `Agents.md` EAS protocol (commit + push already done in 7b; then channel/branch checks, `--branch main`, `--clear-cache` as per project EAS docs).
+
+### 7e — Close-out message
+
+After ship, report:
+
+| Item | Value |
+|------|--------|
+| Leaves edited | ids |
+| Git commit | hash + pushed yes/no |
+| Firebase overrides | leaf ids + active |
+| EAS update | not needed / asked user / ran after approval |
+| App check | force-close & reopen Library for the chapter |
 
 ## Success criteria
+
+### Report-only
 
 - [ ] Bundle loaded with Firebase merge attempted
 - [ ] Park PDF matched and used
@@ -283,9 +332,19 @@ When applying:
 - [ ] Accuracy findings severity-tagged
 - [ ] Outdated claims web-checked against official sources; updates only at 100% confidence
 - [ ] SN/LAQ tags proposed in fixed format/colours
-- [ ] Every proposed/applied new SN/LAQ block is MD-exam depth for its type
+- [ ] Every proposed new SN/LAQ block is MD-exam depth for its type
 - [ ] Park gaps filled only with non-hallucinated, cross-verified material (sources noted **in the report**)
-- [ ] Every new/expanded exam block ends with `[EXAMTIP]…[/EXAMTIP]`
-- [ ] No reader-offload / “verify yourself” language in proposed or applied live content
+- [ ] Every new/expanded exam block ends with Exam Tip
+- [ ] No reader-offload / “verify yourself” language in proposed live content
 - [ ] `review_report.md` written under the bundle directory
-- [ ] No live content mutation unless explicitly requested
+- [ ] No live content mutation unless user approved
+
+### On approval (additional)
+
+- [ ] `mockData.json` (and related apply files) updated
+- [ ] Pre-flight: no reader-offload phrases in shipped text
+- [ ] **Git commit completed**
+- [ ] **Git push completed** to remote tracking branch
+- [ ] **Firebase overrides published** (`status: active`) for **every** changed leaf
+- [ ] **EAS update not run** unless required — and if required, **user asked first**
+- [ ] Close-out summary given to user
