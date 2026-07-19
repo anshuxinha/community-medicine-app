@@ -62,6 +62,7 @@ Older app builds still render this as a blockquote box; newer builds map it to t
 4. Always pair with the SN/LAQ section it serves (tip goes **after** the section body; blank line before tip).
 5. **Do not invent or show mark-count artifacts** such as `SN (5)`, `LAQ (10)`, `LAQ (10–15)`, `SN HDI (5)`, or `5 marks` / `10 marks` prefixes. The SN/LAQ coloured tags already mark question type; the tip is framing only.
 6. Avoid leading labels like `SN:`, `LAQ:`, or `LAQ/SN on …:` unless they are necessary clinical wording inside the frame.
+7. **Never** tell the reader to verify circulars, schedules, or programme facts (“check latest MoHFW…”, “confirm for your exam year”). Exam Tips structure the answer; the body text must already be verified.
 
 ## Placement rules
 

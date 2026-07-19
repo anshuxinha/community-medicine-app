@@ -66,17 +66,17 @@ Use this after Firebase overrides are published. Check on a **real device or emu
 
 ---
 
-## E. Programme facts — human sign-off (do not skip)
+## E. Operator spot-check of time-sensitive facts (publisher only — never shown to readers)
 
-These are correct enough for teaching structure but **you** should confirm against current official PDFs before relying on them in lectures/exams.
+App text must already be authoritative. This section is for **you as publisher** to spot-check rendering against sources used at apply time — not a prompt to leave “verify yourself” wording in the product.
 
-| # | Topic | Leaf | What to verify | Source idea | Pass? |
-|---|--------|------|----------------|-------------|-------|
-| E1 | National Immunization Schedule (doses/ages/sites) | `3-6` | Matches **current** MoHFW UIP circular | MoHFW UIP schedule PDF | ☐ |
-| E2 | Open vial policy (which vaccines, 28 days) | `3-6` | Matches latest open-vial order | MoHFW open vial circular | ☐ |
-| E3 | Disease elimination list (yaws, guinea worm, MNT, leprosy PHP) | `3-5` | Still accurate for exam year | MoHFW / WHO India | ☐ |
-| E4 | IDSP forms S/P/L still accepted in local university answers | `3-2` | Vs pure IHIP wording | NCDC / your exam pattern | ☐ |
-| E5 | Hep A IG exact mL/kg if you want a number printed | `3-5` | Optional; currently qualitative | MoHFW/WHO traveller guidance | ☐ |
+| # | Topic | Leaf | What was applied | Source used at apply | Spot-check OK? |
+|---|--------|------|------------------|----------------------|----------------|
+| E1 | National Immunization Schedule | `3-6` | UIP NIS including fIPV-3 / PCV / MR; JE endemic districts; ages 9–11 mo visit | MoHFW/U-WIN NIS PDF; NHM schedule tables | ☐ |
+| E2 | Open vial policy | `3-6` | Multidose open-vial rules as taught (bOPV, IPV, Penta, Hep B, DPT, Td, TT; not lyophilized live) | MoHFW open-vial policy teaching standard | ☐ |
+| E3 | Elimination wording | `3-5` | Leprosy PHP 2005; KA residual foci; LF elimination ongoing | MoHFW/NLEP; PIB/NCDC KA updates | ☐ |
+| E4 | IDSP + IHIP | `3-2` | S/P/L classical forms + IHIP real-time | MoHFW IHIP-IDSP | ☐ |
+| E5 | Hep A traveller prophylaxis | `3-5` | Vaccine preferred; IG **mL/kg** (~0.1 / 0.2 by duration) | CDC Yellow Book / ACIP-style IG dosing | ☐ |
 
 ---
 

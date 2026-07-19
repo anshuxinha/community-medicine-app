@@ -16,8 +16,9 @@ Audience: **MD Community Medicine resident** preparing for university theory exa
 1. If Library content **or** Park states a time-sensitive fact (coverage targets, disease elimination status, vaccine schedule, notification rates, SES income slabs, BMW rules, NTEP/NLEP renames, etc.), **cross-check with web search**.
 2. Prefer **official** sources only: MoHFW / NHM / NCDC / ICMR / CDSCO / WHO fact sheets / Gazette / IPHS / NFHS reports / SRS / Census.
 3. Suggest an update **only if you are 100% sure** the official source supersedes the text. Cite the source title, date, and URL in the report.
-4. If unsure, mark **`NEEDS_HUMAN_VERIFY`** — do not propose a factual change.
-5. When Park is outdated but still exam-relevant, prefer: *current official fact* + short note *“Park (edition) still states X for historical/exam context.”*
+4. If unsure after official-source search, mark **`NEEDS_AGENT_VERIFY` in the review report only** — do not invent a change, and **do not** put any “verify this yourself” instruction into Library body text, headings, tags, or Exam Tips. Resolve with better sources before apply, or omit the claim.
+5. When Park is outdated but still exam-relevant, prefer: *current official fact* + short note *“Park (edition) still states X for historical context.”* (Historical framing is fine; telling the **reader** to re-check MoHFW is not.)
+6. **Paid-product rule:** Library content must read as finished, trustworthy material. Never offload verification to the subscriber (“verify latest circular”, “confirm for your exam year”, “check official PDF”, etc.).
 
 ## B. Completeness for exam use
 
@@ -67,15 +68,16 @@ Park chapter PDFs are the **primary** reference but are not exhaustive for every
 | Park covers the topic fully | Align Library text to Park; modernise only with verified official sources |
 | Park mentions briefly; PYQ needs SN/LAQ depth | Expand to C1/C2 using standard MD Community Medicine knowledge |
 | Park silent; topic is standard in MD exams | Write full C1/C2 block from standard knowledge + **cross-verify** definitions, programmes, and numbers against good sources (Park other chapters if known, WHO, MoHFW, ICMR, NCDC, standard CM textbooks principles) |
-| Cannot verify a specific number/year/claim | Omit the number, or mark `NEEDS_HUMAN_VERIFY` — **do not invent** |
+| Cannot verify a specific number/year/claim | **Omit** the number from live text; flag `NEEDS_AGENT_VERIFY` in the **report** only — **do not invent** and **do not** ask the reader to verify |
 
 **Anti-hallucination rules for gap-fill**
 
 - Do not invent statistics, coverage %, cut-offs, act years, vaccine doses, or “latest” guideline years.
-- Prefer qualitative, structural, and classification content when exact figures are uncertain.
-- Every time-sensitive claim in new content must be web-checked against an official source, or dropped.
+- Prefer qualitative, structural, and classification content when exact figures are uncertain — still write it as confident, correct teaching text, not as a disclaimer.
+- Every time-sensitive claim in new content must be web-checked against an official source, or dropped **before** it reaches mockData/overrides.
 - Coaching blogs / random MCQ sites are never sole authority.
 - In the report, note for each gap-fill block: `Park coverage: full | partial | absent` and `Sources used: …`.
+- **Never** ship phrases that make the paying reader re-verify programme facts.
 
 ## D. Structure & pedagogy
 
@@ -105,7 +107,7 @@ Park chapter PDFs are the **primary** reference but are not exhaustive for every
 - **minor** — wording, organisation, optional enrichment
 - **tag** — SN/LAQ tagging suggestion only
 - **pyq_gap** — PYQ not covered; suggest content to add
-- **verify** — possible outdated fact; not yet proven by official source
+- **verify** — possible outdated fact; not yet proven by official source (**report-only** severity; never a live-content label)
 
 ## Do not
 
@@ -115,3 +117,4 @@ Park chapter PDFs are the **primary** reference but are not exhaustive for every
 - Apply Firebase/live overrides without explicit user approval after the report.
 - Ship new SN/LAQ text without an Exam Tip box.
 - Pad answers with generic AI filler that would not earn MD theory marks.
+- Put “verify latest…”, “confirm for your exam year”, or similar **reader-offload** wording into live Library content (including Exam Tips).

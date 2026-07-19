@@ -95,9 +95,24 @@ For each leaf:
 3. **Time-sensitive / possibly outdated** facts (either side):
    - Web-search **official** sources only (MoHFW, NHM, NCDC, ICMR, WHO fact sheets, Gazette, IPHS, NFHS, SRS, Census).
    - Propose an update **only if 100% sure** and the official document clearly supersedes the text.
-   - Always include: claim → official source name → date → URL → exact suggested replacement sentence.
-   - If not certain: label `NEEDS_HUMAN_VERIFY` and **do not** invent a correction.
+   - Always include in the **report**: claim → official source name → date → URL → exact suggested replacement sentence.
+   - If not certain after search: label `NEEDS_AGENT_VERIFY` in the **report only** and **do not** invent a correction. Then **you** (the agent) must resolve it with further official sources before any apply, or **omit** the claim. Never pass uncertainty to the app reader.
 4. Never use coaching blogs or random MCQ sites as sole authority for factual updates.
+
+### Live content is paid product — never offload verification to the reader
+
+Residents pay for **finished, trustworthy Library text**. All of the following are **forbidden** in any text that will be written to `mockData.json`, Firebase overrides, SN/LAQ bodies, headings, or Exam Tips:
+
+- “Verify latest circular / schedule / guideline”
+- “Confirm for your exam year / exam sitting”
+- “Check MoHFW yourself” / “readers should verify”
+- “Content below may be outdated — verify”
+- Soft hedges that dump work on the reader: “commonly taught; confirm locally”, “name year only if verified”, “cite current version in viva; do not invent…”
+- Leaving `NEEDS_HUMAN_VERIFY` / `NEEDS_AGENT_VERIFY` tokens in live content
+
+**Allowed:** factual statements the agent has already checked (e.g. “JE vaccine in endemic districts only” from the official NIS).  
+**Allowed in Exam Tips only:** how to **structure the answer** (order of headings, tables to draw) — not “go verify this fact”.  
+**If a figure cannot be verified:** omit it or use qualitative wording the agent can defend — never tell the reader to verify.
 
 ## Step 3 — PYQ coverage map
 
@@ -132,9 +147,10 @@ Full rules: `references/quality-rubric.md` §C1–C2.
 
 1. Use **Park** as primary when the chapter covers the topic.
 2. If Park is **brief or silent** but the PYQ is standard MD material, **fill the gap** using standard Community Medicine knowledge.
-3. **Cross-verify** definitions, programme names, and any numbers against good sources (official MoHFW/WHO/ICMR/NCDC/NHM pages; consistent textbook principles). Record sources in the report.
-4. **Do not hallucinate.** No invented rates, years, doses, or “latest” claims. If a figure cannot be verified, omit it or mark `NEEDS_HUMAN_VERIFY`.
+3. **Cross-verify** definitions, programme names, and any numbers against good sources (official MoHFW/WHO/ICMR/NCDC/NHM pages; consistent textbook principles). Record sources in the **report** (not in live Library prose).
+4. **Do not hallucinate.** No invented rates, years, doses, or “latest” claims. If a figure cannot be verified after official-source search: **omit it** from proposed live text. Use `NEEDS_AGENT_VERIFY` only inside the review report as a task for the agent/user before apply — **never** in app-facing content.
 5. In the report, for each addition note: `Park coverage: full | partial | absent` and `Sources used: …`.
+6. Drafts under “Proposed content additions” must already be **reader-ready**: no verify-yourself language. The agent does the verification work before drafting.
 
 ### Exam Tip box (mandatory on every new SN/LAQ block)
 
@@ -254,8 +270,10 @@ When applying:
 2. Prefer staging via existing library review flow (`docs/library-update-review-workflow.md` / `libraryReviewSuggestions`) when changing production Library text.
 3. Insert SN/LAQ tags without otherwise reformatting the chapter.
 4. Insert full new blocks that pass Step 3a (depth + verified gap-fill + Exam Tip).
-5. Re-run the loader for that chapter and spot-check tags + critical fixes + Exam Tip rendering.
-6. Never force-push or `eas update` unless the user requests the full release path (see `Agents.md` EAS protocol).
+5. **Pre-flight:** grep applied text for forbidden reader-offload phrases (`verify latest`, `exam year`, `confirm yourself`, `NEEDS_`, “commonly taught; confirm”, etc.) and remove them before publish.
+6. Re-run the loader for that chapter and spot-check tags + critical fixes + Exam Tip rendering.
+7. Never force-push or `eas update` unless the user requests the full release path (see `Agents.md` EAS protocol).
+8. When publishing Firebase overrides, live text must be **authoritative finished prose** — verification belongs to the agent’s pre-publish work, not the subscriber.
 
 ## Success criteria
 
@@ -266,7 +284,8 @@ When applying:
 - [ ] Outdated claims web-checked against official sources; updates only at 100% confidence
 - [ ] SN/LAQ tags proposed in fixed format/colours
 - [ ] Every proposed/applied new SN/LAQ block is MD-exam depth for its type
-- [ ] Park gaps filled only with non-hallucinated, cross-verified material (sources noted)
+- [ ] Park gaps filled only with non-hallucinated, cross-verified material (sources noted **in the report**)
 - [ ] Every new/expanded exam block ends with `[EXAMTIP]…[/EXAMTIP]`
+- [ ] No reader-offload / “verify yourself” language in proposed or applied live content
 - [ ] `review_report.md` written under the bundle directory
 - [ ] No live content mutation unless explicitly requested
