@@ -52,6 +52,11 @@ import {
   resolvePlaybackSource,
   subscribeToVideos,
 } from "../services/videoService";
+import {
+  buildVideoSupportMailto,
+  mapVideoLoadError,
+  VIDEO_SUPPORT_EMAIL,
+} from "../services/videoLoadErrors";
 import { sendReplyNotification } from "../services/notificationService";
 import {
   enableScreenCaptureProtection,
@@ -280,6 +285,56 @@ const EmptyState = ({ isFiltered }) => {
   );
 };
 
+const VideosLoadErrorState = ({ errorInfo, onRetry }) => {
+  const { styles, colors } = useThemedStyles(createStyles);
+
+  const openSupport = () => {
+    const url = buildVideoSupportMailto(errorInfo);
+    Linking.openURL(url).catch(() => {
+      Alert.alert(
+        "Contact support",
+        `Email ${VIDEO_SUPPORT_EMAIL} and include error code ${errorInfo?.code || "VIDEOS_UNKNOWN"}.`,
+      );
+    });
+  };
+
+  return (
+    <View style={styles.emptyState}>
+      <MaterialIcons name="error-outline" size={48} color={colors.warning} />
+      <Text style={styles.emptyTitle}>{errorInfo?.title || "Could not load videos"}</Text>
+      <Text style={styles.emptyText}>{errorInfo?.message}</Text>
+      {errorInfo?.fix ? (
+        <Text style={styles.errorFixText}>{errorInfo.fix}</Text>
+      ) : null}
+      <View style={styles.errorCodeBadge}>
+        <Text style={styles.errorCodeLabel}>Error code</Text>
+        <Text style={styles.errorCodeValue} selectable>
+          {errorInfo?.code || "VIDEOS_UNKNOWN"}
+        </Text>
+      </View>
+      {errorInfo?.detail ? (
+        <Text style={styles.errorDetailText} selectable>
+          {errorInfo.detail}
+        </Text>
+      ) : null}
+      <View style={styles.errorActions}>
+        {typeof onRetry === "function" ? (
+          <Pressable style={styles.errorPrimaryBtn} onPress={onRetry}>
+            <MaterialIcons name="refresh" size={18} color="#FFFFFF" />
+            <Text style={styles.errorPrimaryBtnText}>Retry</Text>
+          </Pressable>
+        ) : null}
+        {errorInfo?.contactSupport !== false ? (
+          <Pressable style={styles.errorSecondaryBtn} onPress={openSupport}>
+            <MaterialIcons name="email" size={18} color={colors.primary} />
+            <Text style={styles.errorSecondaryBtnText}>Contact support</Text>
+          </Pressable>
+        ) : null}
+      </View>
+    </View>
+  );
+};
+
 const getDoubtTime = (createdAt) => {
   if (!createdAt) return 0;
   if (typeof createdAt.toDate === "function") {
@@ -310,6 +365,8 @@ const VideosScreen = ({ navigation }) => {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [isLoadingVideos, setIsLoadingVideos] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [videosError, setVideosError] = useState(null);
+  const [videosRetryKey, setVideosRetryKey] = useState(0);
   const [visibleCount, setVisibleCount] = useState(10);
 
   const [activeTab, setActiveTab] = useState("doubts");
@@ -952,15 +1009,37 @@ const VideosScreen = ({ navigation }) => {
       </View>
     );
   };
+  // Re-subscribe when auth is ready or user taps Retry / pull-to-refresh.
   useEffect(() => {
+    if (!user?.uid) {
+      // Still booting auth: keep spinner. Explicit signed-out is rare on this tab.
+      if (user === null) {
+        setIsLoadingVideos(false);
+        setVideos([]);
+        setVideosError(
+          mapVideoLoadError(
+            { code: "unauthenticated", message: "Not signed in" },
+            { hasAuth: false },
+          ),
+        );
+      }
+      return undefined;
+    }
+
+    setIsLoadingVideos(true);
+    setVideosError(null);
+
     const unsubscribeVideos = subscribeToVideos({
       onData: (nextVideos) => {
         setVideos(nextVideos);
+        setVideosError(null);
         setIsLoadingVideos(false);
         setIsRefreshing(false);
       },
       onError: (error) => {
-        console.warn("Video subscription failed:", error?.message);
+        console.warn("Video subscription failed:", error?.code, error?.message);
+        const mapped = mapVideoLoadError(error, { hasAuth: Boolean(user?.uid) });
+        setVideosError(mapped);
         setIsLoadingVideos(false);
         setIsRefreshing(false);
       },
@@ -969,7 +1048,7 @@ const VideosScreen = ({ navigation }) => {
     return () => {
       unsubscribeVideos?.();
     };
-  }, [navigation]);
+  }, [user, user?.uid, videosRetryKey]);
 
   const categories = useMemo(() => getVideoCategories(videos), [videos]);
 
@@ -983,9 +1062,15 @@ const VideosScreen = ({ navigation }) => {
 
   const displayedVideos = useMemo(() => filteredVideos.slice(0, visibleCount), [filteredVideos, visibleCount]);
 
-  const onRefresh = () => {
+  const retryVideosLoad = () => {
     setIsRefreshing(true);
-    setTimeout(() => setIsRefreshing(false), 700);
+    setIsLoadingVideos(true);
+    setVideosError(null);
+    setVideosRetryKey((key) => key + 1);
+  };
+
+  const onRefresh = () => {
+    retryVideosLoad();
   };
 
   const renderVideoItem = ({ item }) => {
@@ -1118,6 +1203,11 @@ const VideosScreen = ({ navigation }) => {
               <ActivityIndicator color={theme.colors.secondary} />
               <Text style={styles.loadingText}>Loading videos...</Text>
             </View>
+          ) : videosError ? (
+            <VideosLoadErrorState
+              errorInfo={videosError}
+              onRetry={retryVideosLoad}
+            />
           ) : (
             <EmptyState isFiltered={selectedCategory !== "all"} />
           )
@@ -1692,6 +1782,79 @@ const createStyles = (colors) => StyleSheet.create({
     color: colors.textSecondary,
     textAlign: "center",
     lineHeight: 20,
+  },
+  errorFixText: {
+    marginTop: 10,
+    color: colors.textPrimary,
+    textAlign: "center",
+    lineHeight: 20,
+    fontSize: 14,
+  },
+  errorCodeBadge: {
+    marginTop: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: colors.surfaceSecondary,
+    alignItems: "center",
+    minWidth: 200,
+  },
+  errorCodeLabel: {
+    fontSize: 11,
+    fontWeight: "600",
+    color: colors.textSecondary,
+    textTransform: "uppercase",
+    letterSpacing: 0.4,
+  },
+  errorCodeValue: {
+    marginTop: 4,
+    fontSize: 15,
+    fontWeight: "800",
+    color: colors.textTitle,
+    fontVariant: ["tabular-nums"],
+  },
+  errorDetailText: {
+    marginTop: 10,
+    fontSize: 11,
+    color: colors.textTertiary || colors.textSecondary,
+    textAlign: "center",
+    lineHeight: 16,
+    paddingHorizontal: 8,
+  },
+  errorActions: {
+    marginTop: 18,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 10,
+  },
+  errorPrimaryBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    backgroundColor: colors.primary,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 10,
+  },
+  errorPrimaryBtnText: {
+    color: "#FFFFFF",
+    fontWeight: "700",
+    fontSize: 14,
+  },
+  errorSecondaryBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    backgroundColor: colors.primaryLight || colors.surfaceSecondary,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 10,
+  },
+  errorSecondaryBtnText: {
+    color: colors.primary,
+    fontWeight: "700",
+    fontSize: 14,
   },
   playerSafeArea: {
     flex: 1,
