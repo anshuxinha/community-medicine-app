@@ -7,6 +7,7 @@ import {
   Pressable,
   RefreshControl,
   StyleSheet,
+  StatusBar,
   View,
   Dimensions,
   KeyboardAvoidingView,
@@ -331,6 +332,15 @@ const VideosScreen = ({ navigation }) => {
     });
     return () => subscription?.remove?.();
   }, []);
+
+  // Hide OS status bar (clock/notch strip) in video fullscreen / landscape.
+  useEffect(() => {
+    const hideOsChrome = Boolean(selectedVideo && effectivePlayerFullscreen);
+    StatusBar.setHidden(hideOsChrome, "fade");
+    return () => {
+      StatusBar.setHidden(false, "fade");
+    };
+  }, [selectedVideo, effectivePlayerFullscreen]);
 
   // Allow free rotation only while a video is open; re-lock portrait afterward.
   // Requires a native build with app.json orientation "default" (not OTA-only).
@@ -1104,6 +1114,7 @@ const VideosScreen = ({ navigation }) => {
           "landscape-left",
           "landscape-right",
         ]}
+        statusBarTranslucent={effectivePlayerFullscreen}
         onRequestClose={() => {
           if (playerFullscreen && !isLandscape) {
             setPlayerFullscreen(false);
