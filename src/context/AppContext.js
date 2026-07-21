@@ -1246,19 +1246,26 @@ export const AppProvider = ({ children }) => {
 
   const markAsRead = ({ itemTitle, contentKey, contentSignature }) => {
     if (!itemTitle || !contentKey || !contentSignature) {
-      return;
+      return { didComplete: false };
     }
 
     const prev = learningStateRef.current;
     if (prev.readItemVersions?.[contentKey] === contentSignature) {
-      return;
+      return { didComplete: false };
     }
 
+    const previousProgress =
+      totalItems === 0
+        ? 0
+        : Math.min(getEffectiveReadCount(prev.readItemVersions || {}) / totalItems, 1);
+
     const todayStr = new Date().toDateString();
-    let nextStreak = prev.currentStreak || 0;
+    const previousStreak = prev.currentStreak || 0;
+    let nextStreak = previousStreak;
     let nextLastRead = prev.lastReadDate || null;
     let nextScore = prev.studyScore || 0;
     let nextHistory = { ...(prev.dailyReadHistory || {}) };
+    let streakIncremented = false;
 
     if (prev.lastReadDate !== todayStr) {
       if (!prev.lastReadDate) {
@@ -1266,13 +1273,14 @@ export const AppProvider = ({ children }) => {
       } else {
         const diffDays = dayDiffFromToday(prev.lastReadDate);
         if (diffDays === 1) {
-          nextStreak = (prev.currentStreak || 0) + 1;
+          nextStreak = previousStreak + 1;
         } else if (diffDays === null || diffDays > 1) {
           nextStreak = 1;
         }
       }
       nextLastRead = todayStr;
       nextScore = (prev.studyScore || 0) + 10;
+      streakIncremented = nextStreak > previousStreak || previousStreak === 0;
     }
 
     const dateKey = new Date().toISOString().split("T")[0];
@@ -1288,6 +1296,11 @@ export const AppProvider = ({ children }) => {
     const nextReadItems = (prev.readItems || []).includes(itemTitle)
       ? prev.readItems
       : [...(prev.readItems || []), itemTitle];
+
+    const nextProgress =
+      totalItems === 0
+        ? 0
+        : Math.min(getEffectiveReadCount(nextVersions) / totalItems, 1);
 
     const snapshot = {
       readItems: nextReadItems,
@@ -1311,6 +1324,18 @@ export const AppProvider = ({ children }) => {
     if (uid) {
       void persistLearningLocally(uid, snapshot);
     }
+
+    return {
+      didComplete: true,
+      itemTitle,
+      contentKey,
+      contentSignature,
+      previousProgress,
+      nextProgress,
+      currentStreak: nextStreak,
+      streakIncremented,
+      readItemVersions: nextVersions,
+    };
   };
 
   // Trigger streak milestone notifications when streak changes
@@ -1327,11 +1352,18 @@ export const AppProvider = ({ children }) => {
     }
   }, [currentStreak]);
 
-  // Evaluate in-app review pre-prompt when reading progress changes
+  // Evaluate in-app review pre-prompt when reading progress changes.
+  // Delay so chapter-complete celebration can show first without an Alert collision.
   useEffect(() => {
-    if (readingProgress > 0) {
-      maybePromptReview(readingProgress);
+    if (!(readingProgress > 0)) {
+      return undefined;
     }
+
+    const timer = setTimeout(() => {
+      maybePromptReview(readingProgress);
+    }, 2500);
+
+    return () => clearTimeout(timer);
   }, [readingProgress]);
 
   const markAsUnread = (contentRefs = []) => {

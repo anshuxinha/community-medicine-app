@@ -1,7 +1,7 @@
 {
   "D:\\The App\\App.js": {
-    "mtime": 1784274924.8209355,
-    "hash": "2753d97878e1b73e9f5cf1a93838c644"
+    "mtime": 1784642894.3355474,
+    "hash": "3f993d1f314dd3e26cd85cfe5d65403e"
   },
   "D:\\The App\\ast_extract.py": {
     "mtime": 1778159580.4395475,
@@ -296,7 +296,7 @@
     "hash": "54936b9b06f3ffedf69217c6f0accca5"
   },
   "D:\\The App\\scripts\\attach-pdf-to-video.js": {
-    "mtime": 1784447916.0492163,
+    "mtime": 1784642936.4994378,
     "hash": "28efac71efc4c33cd17606c74e42d9b9"
   },
   "D:\\The App\\scripts\\audit_colors.js": {
@@ -463,6 +463,10 @@
     "mtime": 1783581377.52156,
     "hash": "7b541f09d0e63992235c558b48f8fef0"
   },
+  "D:\\The App\\src\\components\\ChapterCompleteSheet.js": {
+    "mtime": 1784650305.996749,
+    "hash": "3bafc95066756a75ace874f0c9e87808"
+  },
   "D:\\The App\\src\\components\\DrawerMenu.js": {
     "mtime": 1784274890.529977,
     "hash": "78cb0fdf2888c736027ce356907d5c58"
@@ -476,8 +480,8 @@
     "hash": "97abdb8fd522462f616d41d6c847c9b9"
   },
   "D:\\The App\\src\\components\\GestureVideoPlayer.js": {
-    "mtime": 1784607488.1972525,
-    "hash": "d4fdf590c9a71882585d15d45b8be12b"
+    "mtime": 1784647481.9275472,
+    "hash": "5384ee746b28f1977190d63ea93cc1e2"
   },
   "D:\\The App\\src\\components\\ReadingView.js": {
     "mtime": 1784344792.89133,
@@ -504,8 +508,8 @@
     "hash": "b6d28a52efa63c1ccfa616dabffb7bd9"
   },
   "D:\\The App\\src\\context\\AppContext.js": {
-    "mtime": 1784274962.1880517,
-    "hash": "39025c35529d59ff59a5c30a14143bc8"
+    "mtime": 1784650210.3571684,
+    "hash": "b1bb253f592dac6e6f70205ee32270aa"
   },
   "D:\\The App\\src\\data\\defaultTopicIllustrations.js": {
     "mtime": 1775143847.0992994,
@@ -552,8 +556,8 @@
     "hash": "54d95e35abd81c66cfcfb4d05ddcd448"
   },
   "D:\\The App\\src\\screens\\DashboardScreen.js": {
-    "mtime": 1784225605.1874974,
-    "hash": "d13da673fa97216ddc75ca0b18f3f700"
+    "mtime": 1784650264.7376685,
+    "hash": "838615cc1ec9d93109663b1d6487a5f5"
   },
   "D:\\The App\\src\\screens\\DietarySurveyScreen.js": {
     "mtime": 1784225615.114561,
@@ -612,8 +616,8 @@
     "hash": "f968241eb8b01706ae26202300310ee9"
   },
   "D:\\The App\\src\\screens\\ReadingScreen.js": {
-    "mtime": 1784220348.759747,
-    "hash": "d0381440ad5ba3a2b56093cf946cb9d3"
+    "mtime": 1784650236.0549412,
+    "hash": "7334b57e6139f8b2ad08fb4e79065303"
   },
   "D:\\The App\\src\\screens\\SearchScreen.js": {
     "mtime": 1784226107.9777696,
@@ -632,8 +636,8 @@
     "hash": "f6eb550b80214139a46a94ea196fe185"
   },
   "D:\\The App\\src\\screens\\VideosScreen.js": {
-    "mtime": 1784607472.1218455,
-    "hash": "0ef48aa8d71f87309a5cad1bb2257827"
+    "mtime": 1784647510.4421847,
+    "hash": "4436256d49cdcc33978612ceec1d9529"
   },
   "D:\\The App\\src\\screens\\VirtualMuseumScreen.js": {
     "mtime": 1784225570.202634,
@@ -667,6 +671,10 @@
     "mtime": 1778664278.3496735,
     "hash": "ea8466bc88791dd4c6ebedcee902c58a"
   },
+  "D:\\The App\\src\\services\\videoLoadErrors.js": {
+    "mtime": 1784644401.476598,
+    "hash": "56519b4570084501320ba552e4a31d5b"
+  },
   "D:\\The App\\src\\services\\videoService.js": {
     "mtime": 1784607395.4320846,
     "hash": "652f11e2b8565546aa6edde083a5436e"
@@ -692,12 +700,16 @@
     "hash": "aeeb25e31f8c2b1e8ab34083cf63308a"
   },
   "D:\\The App\\src\\utils\\contentRegistry.js": {
-    "mtime": 1784050128.6511462,
-    "hash": "cadc2e347fb723bbb9e06269b67be225"
+    "mtime": 1784650210.305622,
+    "hash": "5db94425a80be8aecf2bc70ac1173f56"
   },
   "D:\\The App\\src\\utils\\deviceUtils.js": {
     "mtime": 1776915497.5873566,
     "hash": "3173bec75bf9e2ad87bedbd9cf0360eb"
+  },
+  "D:\\The App\\src\\utils\\progressPresentation.js": {
+    "mtime": 1784650210.305622,
+    "hash": "211921205c1af08b837fb3d8b3d58f3b"
   },
   "D:\\The App\\src\\utils\\referralUtils.js": {
     "mtime": 1781108061.3430338,
@@ -715,9 +727,17 @@
     "mtime": 1773723664.9753537,
     "hash": "522bf0a626c6273ef0c931297aab724e"
   },
+  "D:\\The App\\src\\utils\\__tests__\\contentRegistry.nextLeaf.test.js": {
+    "mtime": 1784650282.931558,
+    "hash": "985dc88ff91debb96b26431b81f41c0e"
+  },
+  "D:\\The App\\src\\utils\\__tests__\\progressPresentation.test.js": {
+    "mtime": 1784650282.931558,
+    "hash": "035440e518221f9db9a58e3cb9736f87"
+  },
   "D:\\The App\\AGENTS.md": {
-    "mtime": 1784014047.6686404,
-    "hash": "e61521036afc4512ed28c9255b8a61a9"
+    "mtime": 1784642936.4863648,
+    "hash": "0aface78bddcdc964dfd24ecb2f57ca4"
   },
   "D:\\The App\\CLAUDE.md": {
     "mtime": 1784014047.6696413,
@@ -728,8 +748,8 @@
     "hash": "3cf53682ca29a79ec4d6899d2c41c273"
   },
   "D:\\The App\\CUSTOM_INSTRUCTION_EAS.md": {
-    "mtime": 1784014047.6696413,
-    "hash": "572449c2c769359c83566bb44e172c3d"
+    "mtime": 1784642936.4873748,
+    "hash": "3c39d5c6847f25136ed75f1f27263bed"
   },
   "D:\\The App\\EAS_UPDATE_GUIDELINES.md": {
     "mtime": 1784014047.6686404,

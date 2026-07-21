@@ -1,7 +1,8 @@
 import React, { useContext, useMemo, useRef, useEffect, useState, useCallback } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Platform, Vibration } from "react-native";
 import * as Speech from "expo-speech";
 import ReadingView from "../components/ReadingView";
+import ChapterCompleteSheet from "../components/ChapterCompleteSheet";
 import { AppContext } from "../context/AppContext";
 import { theme } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
@@ -11,6 +12,7 @@ import {
   getContentSignature,
   getCurrentContentEntry,
   getItemStatus,
+  getNextUnreadLeafEntry,
   getUpdatedSegmentsForItem,
 } from "../utils/contentRegistry";
 import { getTopicIllustrations } from "../services/topicIllustrations";
@@ -26,6 +28,38 @@ import {
   subscribeHighlights,
   saveHighlights,
 } from "../services/highlightService";
+
+const isFreeLibraryItem = (item) =>
+  String(item?.id) === "1" || item?.title === "Man and Medicine";
+
+const buildReadingParamsFromEntry = (entry) => {
+  const item = entry?.item || {};
+  const section = entry.section;
+  const status = "none";
+  return {
+    id: item.id,
+    title: item.title,
+    content: item.content || "# No Content\n\nThis topic has no content yet.",
+    quizzes: item.quizzes,
+    section,
+    contentKey: entry.key || getContentKey(section, item.id),
+    contentSignature: entry.signature || getContentSignature(item),
+    updatedSegments: getUpdatedSegmentsForItem(item),
+    showUpdateHighlights: status === "updated",
+  };
+};
+
+const triggerCompleteHaptic = () => {
+  try {
+    if (Platform.OS === "android") {
+      Vibration.vibrate(20);
+    } else if (Platform.OS === "ios") {
+      Vibration.vibrate();
+    }
+  } catch {
+    // Haptics are optional; ignore failures.
+  }
+};
 
 const ReadingScreen = ({ route, navigation }) => {
   const { styles, colors } = useThemedStyles(createStyles);
@@ -59,6 +93,7 @@ const ReadingScreen = ({ route, navigation }) => {
   const openedUpdateRef = useRef(false);
   const [annotations, setAnnotations] = useState([]);
   const [userHighlights, setUserHighlights] = useState({});
+  const [celebration, setCelebration] = useState(null);
 
   const currentEntry = useMemo(
     () => getCurrentContentEntry(route.params),
@@ -297,14 +332,63 @@ const ReadingScreen = ({ route, navigation }) => {
   ]);
 
   const handleReachEnd = () => {
-    if (effectiveTitle && effectiveContentKey && effectiveContentSignature) {
-      markAsRead({
-        itemTitle: effectiveTitle,
-        contentKey: effectiveContentKey,
-        contentSignature: effectiveContentSignature,
-      });
+    if (!effectiveTitle || !effectiveContentKey || !effectiveContentSignature) {
+      return;
     }
+
+    const result = markAsRead({
+      itemTitle: effectiveTitle,
+      contentKey: effectiveContentKey,
+      contentSignature: effectiveContentSignature,
+    });
+
+    if (!result?.didComplete || isGem) {
+      return;
+    }
+
+    const nextEntry = getNextUnreadLeafEntry(
+      result.contentKey,
+      result.readItemVersions || {},
+    );
+
+    triggerCompleteHaptic();
+    setCelebration({
+      title: result.itemTitle || effectiveTitle,
+      previousProgress: result.previousProgress || 0,
+      nextProgress: result.nextProgress || 0,
+      currentStreak: result.currentStreak || 0,
+      showStreakChip: Boolean(result.streakIncremented),
+      nextEntry,
+    });
   };
+
+  const dismissCelebration = useCallback(() => {
+    setCelebration(null);
+  }, []);
+
+  const handleBackToLibrary = useCallback(() => {
+    setCelebration(null);
+    navigation.navigate("MainTabs", { screen: "Library" });
+  }, [navigation]);
+
+  const handleNextChapter = useCallback(() => {
+    const nextEntry = celebration?.nextEntry;
+    setCelebration(null);
+    if (!nextEntry?.item) {
+      return;
+    }
+
+    const readingParams = buildReadingParamsFromEntry(nextEntry);
+    if (isFreeLibraryItem(nextEntry.item)) {
+      navigation.replace("Reading", readingParams);
+      return;
+    }
+
+    navigation.replace("PremiumGuard", {
+      destination: "Reading",
+      readingParams,
+    });
+  }, [celebration, navigation]);
 
   const handleSpeak = () => {
     if (isSpeaking) {
@@ -357,6 +441,20 @@ const ReadingScreen = ({ route, navigation }) => {
         onToggleHighlight={handleToggleHighlight}
         searchTerms={searchTerms}
         contentKey={effectiveContentKey}
+      />
+      <ChapterCompleteSheet
+        visible={Boolean(celebration)}
+        title={celebration?.title}
+        previousProgress={celebration?.previousProgress}
+        nextProgress={celebration?.nextProgress}
+        currentStreak={celebration?.currentStreak}
+        showStreakChip={celebration?.showStreakChip}
+        nextChapterTitle={celebration?.nextEntry?.title || null}
+        onNextChapter={
+          celebration?.nextEntry ? handleNextChapter : undefined
+        }
+        onBackToLibrary={handleBackToLibrary}
+        onDismiss={dismissCelebration}
       />
     </View>
   );

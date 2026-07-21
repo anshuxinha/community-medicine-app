@@ -230,6 +230,37 @@ export const getEffectiveReadCount = (readItemVersions = {}) =>
     0,
   );
 
+export const getLeafEntryIndex = (contentKey) => {
+  if (!contentKey) return -1;
+  return LEAF_CONTENT_ENTRIES.findIndex((entry) => entry.key === contentKey);
+};
+
+export const getNextLeafEntry = (contentKey) => {
+  const index = getLeafEntryIndex(contentKey);
+  if (index < 0 || index >= LEAF_CONTENT_ENTRIES.length - 1) {
+    return null;
+  }
+  return LEAF_CONTENT_ENTRIES[index + 1] || null;
+};
+
+/**
+ * Next unread leaf after contentKey in library order.
+ * Skips the current key and any leaves already matching their signature.
+ */
+export const getNextUnreadLeafEntry = (contentKey, readItemVersions = {}) => {
+  const startIndex = getLeafEntryIndex(contentKey);
+  const from = startIndex >= 0 ? startIndex + 1 : 0;
+
+  for (let i = from; i < LEAF_CONTENT_ENTRIES.length; i += 1) {
+    const entry = LEAF_CONTENT_ENTRIES[i];
+    if (readItemVersions?.[entry.key] !== entry.signature) {
+      return entry;
+    }
+  }
+
+  return null;
+};
+
 export const getReadTitles = (readItemVersions = {}) =>
   [...CONTENT_ENTRIES_BY_TITLE.entries()]
     .filter(([, entries]) =>

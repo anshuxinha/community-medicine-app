@@ -1,10 +1,11 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useRef, useCallback } from "react";
 import {
   ScrollView,
   View,
   StyleSheet,
   Platform,
   TouchableOpacity,
+  Animated,
 } from "react-native";
 import {
   Text,
@@ -16,6 +17,7 @@ import {
 } from "react-native-paper";
 import * as Updates from "expo-updates";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import recentUpdates from "../data/updates.json";
 import archiveData from "../data/updates_archive.json";
@@ -29,6 +31,11 @@ import { scheduleAllNotifications } from "../services/notificationService";
 import { auth } from "../config/firebase";
 import { theme, useResponsive } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
+import {
+  getLastSeenReadingProgress,
+  progressToPercent,
+  setLastSeenReadingProgress,
+} from "../utils/progressPresentation";
 
 const DASHBOARD_NEW_BADGES_STORAGE_KEY = "dashboardNewBadgesSeen:v1";
 const REFERRAL_ANNOUNCEMENT_STORAGE_KEY = "referralAnnouncementSeen:v1";
@@ -170,6 +177,12 @@ const DashboardScreen = ({ navigation }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [seenNewBadges, setSeenNewBadges] = useState({});
   const [referralAnnouncementVisible, setReferralAnnouncementVisible] = useState(false);
+  const [displayedProgressPercent, setDisplayedProgressPercent] = useState(
+    () => progressToPercent(readingProgress),
+  );
+  const [progressDeltaPercent, setProgressDeltaPercent] = useState(0);
+  const progressAnim = useRef(new Animated.Value(readingProgress || 0)).current;
+  const progressAnimListenerRef = useRef(null);
   const { isTablet, horizontalPadding, scaleFactor, contentMaxWidth } =
     useResponsive();
 
@@ -177,6 +190,80 @@ const DashboardScreen = ({ navigation }) => {
   useEffect(() => {
     if (refreshFromCloud) refreshFromCloud();
   }, []);
+
+  useEffect(() => {
+    progressAnimListenerRef.current = progressAnim.addListener(({ value }) => {
+      setDisplayedProgressPercent(progressToPercent(value));
+    });
+    return () => {
+      if (progressAnimListenerRef.current != null) {
+        progressAnim.removeListener(progressAnimListenerRef.current);
+      }
+    };
+  }, [progressAnim]);
+
+  useFocusEffect(
+    useCallback(() => {
+      let cancelled = false;
+      let hideDeltaTimer = null;
+      let animRef = null;
+
+      const runProgressPresentation = async () => {
+        const current = Math.min(Math.max(Number(readingProgress) || 0, 0), 1);
+        const lastSeen = await getLastSeenReadingProgress();
+
+        if (cancelled) return;
+
+        if (lastSeen === null) {
+          progressAnim.setValue(current);
+          setDisplayedProgressPercent(progressToPercent(current));
+          setProgressDeltaPercent(0);
+          await setLastSeenReadingProgress(current);
+          return;
+        }
+
+        const fromPct = progressToPercent(lastSeen);
+        const toPct = progressToPercent(current);
+        const shouldAnimate = current > lastSeen + 0.0005 && toPct > fromPct;
+
+        if (!shouldAnimate) {
+          progressAnim.setValue(current);
+          setDisplayedProgressPercent(toPct);
+          setProgressDeltaPercent(0);
+          if (Math.abs(current - lastSeen) > 0.00001) {
+            await setLastSeenReadingProgress(current);
+          }
+          return;
+        }
+
+        progressAnim.setValue(lastSeen);
+        setDisplayedProgressPercent(fromPct);
+        setProgressDeltaPercent(toPct - fromPct);
+
+        animRef = Animated.timing(progressAnim, {
+          toValue: current,
+          duration: 800,
+          useNativeDriver: false,
+        });
+        animRef.start(async ({ finished }) => {
+          if (cancelled || !finished) return;
+          setDisplayedProgressPercent(toPct);
+          await setLastSeenReadingProgress(current);
+          hideDeltaTimer = setTimeout(() => {
+            if (!cancelled) setProgressDeltaPercent(0);
+          }, 2200);
+        });
+      };
+
+      void runProgressPresentation();
+
+      return () => {
+        cancelled = true;
+        if (hideDeltaTimer) clearTimeout(hideDeltaTimer);
+        if (animRef) animRef.stop();
+      };
+    }, [readingProgress, progressAnim]),
+  );
 
   // Check and show referral system announcement modal
   useEffect(() => {
@@ -422,14 +509,34 @@ const DashboardScreen = ({ navigation }) => {
             subtitleStyle={{ color: theme.colors.textTitle }}
           />
           <Card.Content>
-            <ProgressBar
-              progress={readingProgress}
-              color="#A855F7" // Soft purple
-              style={styles.progressBar}
-            />
-            <Text variant="bodyMedium" style={styles.progressText}>
-              {`${Math.round(readingProgress * 100)}% Completed`}
-            </Text>
+            <View style={styles.progressTrack}>
+              <Animated.View
+                style={[
+                  styles.progressFill,
+                  {
+                    width: progressAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ["0%", "100%"],
+                      extrapolate: "clamp",
+                    }),
+                  },
+                ]}
+              />
+            </View>
+            <View style={styles.progressMetaRow}>
+              {progressDeltaPercent > 0 ? (
+                <View style={styles.progressDeltaBadge}>
+                  <Text style={styles.progressDeltaText}>
+                    {`+${progressDeltaPercent}%`}
+                  </Text>
+                </View>
+              ) : (
+                <View />
+              )}
+              <Text variant="bodyMedium" style={styles.progressText}>
+                {`${displayedProgressPercent}% Completed`}
+              </Text>
+            </View>
           </Card.Content>
         </Card>
 
@@ -781,10 +888,39 @@ const createStyles = (colors) => StyleSheet.create({
     marginVertical: 12,
     backgroundColor: colors.surfaceSecondary,
   },
+  progressTrack: {
+    height: 12,
+    borderRadius: 6,
+    marginVertical: 12,
+    backgroundColor: colors.surfaceSecondary,
+    overflow: "hidden",
+  },
+  progressFill: {
+    height: "100%",
+    borderRadius: 6,
+    backgroundColor: "#A855F7",
+  },
+  progressMetaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  progressDeltaBadge: {
+    backgroundColor: "rgba(168, 85, 247, 0.14)",
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 12,
+  },
+  progressDeltaText: {
+    color: "#A855F7",
+    fontWeight: "800",
+    fontSize: 13,
+  },
   progressText: {
     textAlign: "right",
     color: colors.textSecondary,
     fontWeight: "600",
+    marginLeft: "auto",
   },
   statsRow: {
     flexDirection: "row",
