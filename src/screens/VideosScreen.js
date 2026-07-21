@@ -334,20 +334,32 @@ const VideosScreen = ({ navigation }) => {
   }, []);
 
   // Hide OS notification/status bar in video fullscreen / landscape.
+  // pushStackEntry is more reliable than setHidden alone (especially with Modal
+  // and App.js theme updates fighting a single global setHidden call).
   useEffect(() => {
     const hideOsChrome = Boolean(selectedVideo && effectivePlayerFullscreen);
-    StatusBar.setHidden(hideOsChrome, "fade");
-    if (Platform.OS === "android") {
-      StatusBar.setTranslucent(hideOsChrome);
-      if (hideOsChrome) {
-        StatusBar.setBackgroundColor("transparent", true);
-      }
-    }
-    return () => {
+    if (!hideOsChrome) {
       StatusBar.setHidden(false, "fade");
-      if (Platform.OS === "android") {
-        StatusBar.setTranslucent(false);
+      return undefined;
+    }
+
+    StatusBar.setHidden(true, "fade");
+    const stackEntry = StatusBar.pushStackEntry({
+      hidden: true,
+      animated: true,
+      translucent: true,
+      backgroundColor: "transparent",
+      barStyle: "light-content",
+      networkActivityIndicatorVisible: false,
+    });
+
+    return () => {
+      try {
+        StatusBar.popStackEntry(stackEntry);
+      } catch (_err) {
+        // ignore
       }
+      StatusBar.setHidden(false, "fade");
     };
   }, [selectedVideo, effectivePlayerFullscreen]);
 
@@ -1115,6 +1127,8 @@ const VideosScreen = ({ navigation }) => {
       <Modal
         visible={Boolean(selectedVideo)}
         animationType="slide"
+        // fullScreen lets iOS hand status-bar control to us (pageSheet keeps OS chrome).
+        presentationStyle="fullScreen"
         // iOS Modal defaults to portrait-only; allow landscape while video is open.
         supportedOrientations={[
           "portrait",
@@ -1123,7 +1137,8 @@ const VideosScreen = ({ navigation }) => {
           "landscape-left",
           "landscape-right",
         ]}
-        statusBarTranslucent
+        statusBarTranslucent={effectivePlayerFullscreen}
+        navigationBarTranslucent={effectivePlayerFullscreen}
         onRequestClose={() => {
           if (playerFullscreen && !isLandscape) {
             setPlayerFullscreen(false);
@@ -1133,11 +1148,15 @@ const VideosScreen = ({ navigation }) => {
         }}
       >
         <StatusBar
+          key={
+            effectivePlayerFullscreen ? "player-fs-hidden" : "player-fs-visible"
+          }
           hidden={Boolean(selectedVideo && effectivePlayerFullscreen)}
-          translucent={Boolean(selectedVideo && effectivePlayerFullscreen)}
+          translucent
           backgroundColor="transparent"
           barStyle="light-content"
           animated
+          showHideTransition="fade"
         />
         <SafeAreaView
           style={[
@@ -1146,7 +1165,8 @@ const VideosScreen = ({ navigation }) => {
           ]}
           edges={
             effectivePlayerFullscreen
-              ? ["left", "right"]
+              ? // No top inset: OS bar is hidden; avoid leaving an empty strip.
+                ["left", "right"]
               : ["top", "right", "bottom", "left"]
           }
         >

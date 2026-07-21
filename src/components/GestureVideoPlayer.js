@@ -4,7 +4,6 @@ import {
   Image,
   PanResponder,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -22,8 +21,8 @@ const TOP_STRIP = 52;
 const BOTTOM_STRIP = 96;
 const VOLUME_EDGE = 56;
 
-// Common lecture speeds first so 1.25–2× stay visible; slower options below.
-const SPEED_OPTIONS = [1, 1.25, 1.5, 1.75, 2, 0.75, 0.5];
+// Compact set so every option fits in the 16:9 player without scrolling/clipping.
+const SPEED_OPTIONS = [1, 1.25, 1.5, 1.75, 2];
 
 const formatTime = (seconds) => {
   if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
@@ -256,8 +255,9 @@ const GestureVideoPlayer = ({
         onPanResponderGrant: (evt) => {
           const { locationX, locationY } = evt.nativeEvent;
           const h = layout.height || 1;
-          // Ignore top/bottom chrome for gesture start
-          if (locationY < TOP_STRIP || locationY > h - BOTTOM_STRIP) {
+          // Ignore top/bottom chrome for gesture start (taller when speed chips open)
+          const topInset = speedMenuOpen ? TOP_STRIP + 48 : TOP_STRIP;
+          if (locationY < topInset || locationY > h - BOTTOM_STRIP) {
             touchStartRef.current = null;
             return;
           }
@@ -346,7 +346,8 @@ const GestureVideoPlayer = ({
 
           const { locationX, locationY } = evt.nativeEvent;
           const h = layout.height || 1;
-          if (locationY < TOP_STRIP || locationY > h - BOTTOM_STRIP) return;
+          const topInset = speedMenuOpen ? TOP_STRIP + 48 : TOP_STRIP;
+          if (locationY < topInset || locationY > h - BOTTOM_STRIP) return;
 
           const side = sideFromX(locationX);
           const now = Date.now();
@@ -492,70 +493,65 @@ const GestureVideoPlayer = ({
 
       {showChrome ? (
         <View style={styles.controls} pointerEvents="box-none">
-          <View style={styles.topBar} pointerEvents="box-none">
-            <Pressable
-              onPress={toggleMute}
-              hitSlop={10}
-              style={styles.chromeBtn}
-              accessibilityLabel={isMuted ? "Unmute" : "Mute"}
-            >
-              <MaterialIcons
-                name={isMuted ? "volume-off" : "volume-up"}
-                size={22}
-                color="#FFFFFF"
-              />
-            </Pressable>
-
-            <View style={styles.topBarRight}>
+          <View style={styles.topChrome} pointerEvents="box-none">
+            <View style={styles.topBar} pointerEvents="box-none">
               <Pressable
-                onPress={() => {
-                  setSpeedMenuOpen((open) => !open);
-                  setControlsVisible(true);
-                  if (hideControlsTimerRef.current) {
-                    clearTimeout(hideControlsTimerRef.current);
-                  }
-                }}
+                onPress={toggleMute}
                 hitSlop={10}
-                style={[styles.chromeBtn, styles.speedBtn]}
-                accessibilityLabel="Playback speed"
+                style={styles.chromeBtn}
+                accessibilityLabel={isMuted ? "Unmute" : "Mute"}
               >
-                <Text style={styles.speedBtnText}>
-                  {formatSpeedLabel(playbackRate)}
-                </Text>
+                <MaterialIcons
+                  name={isMuted ? "volume-off" : "volume-up"}
+                  size={22}
+                  color="#FFFFFF"
+                />
               </Pressable>
 
-              {typeof onFullscreenPress === "function" ? (
+              <View style={styles.topBarRight}>
                 <Pressable
                   onPress={() => {
-                    setSpeedMenuOpen(false);
-                    onFullscreenPress();
-                    revealControls();
+                    setSpeedMenuOpen((open) => !open);
+                    setControlsVisible(true);
+                    if (hideControlsTimerRef.current) {
+                      clearTimeout(hideControlsTimerRef.current);
+                    }
                   }}
                   hitSlop={10}
-                  style={styles.chromeBtn}
-                  accessibilityLabel={
-                    isFullscreen ? "Exit fullscreen" : "Enter fullscreen"
-                  }
+                  style={[styles.chromeBtn, styles.speedBtn]}
+                  accessibilityLabel="Playback speed"
                 >
-                  <MaterialIcons
-                    name={isFullscreen ? "fullscreen-exit" : "fullscreen"}
-                    size={24}
-                    color="#FFFFFF"
-                  />
+                  <Text style={styles.speedBtnText}>
+                    {formatSpeedLabel(playbackRate)}
+                  </Text>
                 </Pressable>
-              ) : null}
-            </View>
-          </View>
 
-          {speedMenuOpen ? (
-            <View style={styles.speedMenu} pointerEvents="box-none">
-              <Text style={styles.speedMenuTitle}>Speed</Text>
-              <ScrollView
-                style={styles.speedMenuScroll}
-                bounces={false}
-                showsVerticalScrollIndicator={false}
-                keyboardShouldPersistTaps="handled"
-              >
+                {typeof onFullscreenPress === "function" ? (
+                  <Pressable
+                    onPress={() => {
+                      setSpeedMenuOpen(false);
+                      onFullscreenPress();
+                      revealControls();
+                    }}
+                    hitSlop={10}
+                    style={styles.chromeBtn}
+                    accessibilityLabel={
+                      isFullscreen ? "Exit fullscreen" : "Enter fullscreen"
+                    }
+                  >
+                    <MaterialIcons
+                      name={isFullscreen ? "fullscreen-exit" : "fullscreen"}
+                      size={24}
+                      color="#FFFFFF"
+                    />
+                  </Pressable>
+                ) : null}
+              </View>
+            </View>
+
+            {/* In-flow chip row so 16:9 portrait player never clips 2× */}
+            {speedMenuOpen ? (
+              <View style={styles.speedChipRow} pointerEvents="box-none">
                 {SPEED_OPTIONS.map((rate) => {
                   const selected = playbackRate === rate;
                   return (
@@ -563,14 +559,17 @@ const GestureVideoPlayer = ({
                       key={String(rate)}
                       onPress={() => selectSpeed(rate)}
                       style={[
-                        styles.speedOption,
-                        selected && styles.speedOptionSelected,
+                        styles.speedChip,
+                        selected && styles.speedChipSelected,
                       ]}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected }}
+                      accessibilityLabel={`${formatSpeedLabel(rate)} speed`}
                     >
                       <Text
                         style={[
-                          styles.speedOptionText,
-                          selected && styles.speedOptionTextSelected,
+                          styles.speedChipText,
+                          selected && styles.speedChipTextSelected,
                         ]}
                       >
                         {formatSpeedLabel(rate)}
@@ -578,9 +577,9 @@ const GestureVideoPlayer = ({
                     </Pressable>
                   );
                 })}
-              </ScrollView>
-            </View>
-          ) : null}
+              </View>
+            ) : null}
+          </View>
 
           <View style={styles.centerPlayRow} pointerEvents="box-none">
             <Pressable
@@ -694,6 +693,9 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     justifyContent: "space-between",
   },
+  topChrome: {
+    width: "100%",
+  },
   topBar: {
     flexDirection: "row",
     alignItems: "center",
@@ -725,49 +727,37 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "700",
   },
-  speedMenu: {
-    position: "absolute",
-    top: 56,
-    right: 10,
-    backgroundColor: "rgba(20,20,20,0.94)",
-    borderRadius: 12,
-    paddingTop: 8,
-    paddingBottom: 4,
-    minWidth: 120,
-    maxHeight: 280,
-    zIndex: 20,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "rgba(255,255,255,0.12)",
-    overflow: "hidden",
+  speedChipRow: {
+    flexDirection: "row",
+    flexWrap: "nowrap",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    backgroundColor: "rgba(0,0,0,0.45)",
   },
-  speedMenuScroll: {
-    maxHeight: 240,
+  speedChip: {
+    minWidth: 52,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderRadius: 16,
+    backgroundColor: "rgba(255,255,255,0.12)",
+    alignItems: "center",
   },
-  speedMenuTitle: {
-    color: "rgba(255,255,255,0.55)",
-    fontSize: 11,
-    fontWeight: "600",
-    letterSpacing: 0.4,
-    textTransform: "uppercase",
-    paddingHorizontal: 14,
-    paddingBottom: 6,
+  speedChipSelected: {
+    backgroundColor: "rgba(192,132,252,0.45)",
   },
-  speedOption: {
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-  },
-  speedOptionSelected: {
-    backgroundColor: "rgba(192,132,252,0.22)",
-  },
-  speedOptionText: {
+  speedChipText: {
     color: "#E5E7EB",
-    fontSize: 15,
-    fontWeight: "600",
+    fontSize: 13,
+    fontWeight: "700",
   },
-  speedOptionTextSelected: {
-    color: "#E9D5FF",
+  speedChipTextSelected: {
+    color: "#FFFFFF",
   },
   centerPlayRow: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",

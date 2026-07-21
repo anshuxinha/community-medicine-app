@@ -29,13 +29,10 @@ if (Platform.OS === "android") {
 function ThemedApp() {
   const { paperTheme, isDark } = useAppTheme();
 
-  // Prefer imperative barStyle only — a declarative StatusBar re-shows the OS
-  // bar on every re-render and fights video fullscreen hide.
+  // Imperative barStyle only when the status bar is visible. Avoid calling
+  // setBackgroundColor while video fullscreen may have the bar hidden.
   useEffect(() => {
     RNStatusBar.setBarStyle(isDark ? "light-content" : "dark-content", true);
-    if (Platform.OS === "android") {
-      RNStatusBar.setBackgroundColor(isDark ? "#0D1B2A" : "#FFFFFF", true);
-    }
   }, [isDark]);
 
   return (
