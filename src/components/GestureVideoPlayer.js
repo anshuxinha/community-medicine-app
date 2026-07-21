@@ -4,6 +4,7 @@ import {
   Image,
   PanResponder,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -21,7 +22,8 @@ const TOP_STRIP = 52;
 const BOTTOM_STRIP = 96;
 const VOLUME_EDGE = 56;
 
-const SPEED_OPTIONS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+// Common lecture speeds first so 1.25–2× stay visible; slower options below.
+const SPEED_OPTIONS = [1, 1.25, 1.5, 1.75, 2, 0.75, 0.5];
 
 const formatTime = (seconds) => {
   if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
@@ -548,28 +550,35 @@ const GestureVideoPlayer = ({
           {speedMenuOpen ? (
             <View style={styles.speedMenu} pointerEvents="box-none">
               <Text style={styles.speedMenuTitle}>Speed</Text>
-              {SPEED_OPTIONS.map((rate) => {
-                const selected = playbackRate === rate;
-                return (
-                  <Pressable
-                    key={String(rate)}
-                    onPress={() => selectSpeed(rate)}
-                    style={[
-                      styles.speedOption,
-                      selected && styles.speedOptionSelected,
-                    ]}
-                  >
-                    <Text
+              <ScrollView
+                style={styles.speedMenuScroll}
+                bounces={false}
+                showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
+              >
+                {SPEED_OPTIONS.map((rate) => {
+                  const selected = playbackRate === rate;
+                  return (
+                    <Pressable
+                      key={String(rate)}
+                      onPress={() => selectSpeed(rate)}
                       style={[
-                        styles.speedOptionText,
-                        selected && styles.speedOptionTextSelected,
+                        styles.speedOption,
+                        selected && styles.speedOptionSelected,
                       ]}
                     >
-                      {formatSpeedLabel(rate)}
-                    </Text>
-                  </Pressable>
-                );
-              })}
+                      <Text
+                        style={[
+                          styles.speedOptionText,
+                          selected && styles.speedOptionTextSelected,
+                        ]}
+                      >
+                        {formatSpeedLabel(rate)}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </ScrollView>
             </View>
           ) : null}
 
@@ -722,11 +731,17 @@ const styles = StyleSheet.create({
     right: 10,
     backgroundColor: "rgba(20,20,20,0.94)",
     borderRadius: 12,
-    paddingVertical: 8,
-    minWidth: 112,
+    paddingTop: 8,
+    paddingBottom: 4,
+    minWidth: 120,
+    maxHeight: 280,
     zIndex: 20,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: "rgba(255,255,255,0.12)",
+    overflow: "hidden",
+  },
+  speedMenuScroll: {
+    maxHeight: 240,
   },
   speedMenuTitle: {
     color: "rgba(255,255,255,0.55)",

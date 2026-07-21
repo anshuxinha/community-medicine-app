@@ -333,12 +333,21 @@ const VideosScreen = ({ navigation }) => {
     return () => subscription?.remove?.();
   }, []);
 
-  // Hide OS status bar (clock/notch strip) in video fullscreen / landscape.
+  // Hide OS notification/status bar in video fullscreen / landscape.
   useEffect(() => {
     const hideOsChrome = Boolean(selectedVideo && effectivePlayerFullscreen);
     StatusBar.setHidden(hideOsChrome, "fade");
+    if (Platform.OS === "android") {
+      StatusBar.setTranslucent(hideOsChrome);
+      if (hideOsChrome) {
+        StatusBar.setBackgroundColor("transparent", true);
+      }
+    }
     return () => {
       StatusBar.setHidden(false, "fade");
+      if (Platform.OS === "android") {
+        StatusBar.setTranslucent(false);
+      }
     };
   }, [selectedVideo, effectivePlayerFullscreen]);
 
@@ -1114,7 +1123,7 @@ const VideosScreen = ({ navigation }) => {
           "landscape-left",
           "landscape-right",
         ]}
-        statusBarTranslucent={effectivePlayerFullscreen}
+        statusBarTranslucent
         onRequestClose={() => {
           if (playerFullscreen && !isLandscape) {
             setPlayerFullscreen(false);
@@ -1123,6 +1132,13 @@ const VideosScreen = ({ navigation }) => {
           closePlayerModal();
         }}
       >
+        <StatusBar
+          hidden={Boolean(selectedVideo && effectivePlayerFullscreen)}
+          translucent={Boolean(selectedVideo && effectivePlayerFullscreen)}
+          backgroundColor="transparent"
+          barStyle="light-content"
+          animated
+        />
         <SafeAreaView
           style={[
             styles.playerSafeArea,

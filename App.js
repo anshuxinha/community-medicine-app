@@ -1,8 +1,7 @@
 import React, { useEffect } from "react";
-import { Platform } from "react-native";
+import { Platform, StatusBar as RNStatusBar } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider as PaperProvider } from "react-native-paper";
-import { StatusBar } from "expo-status-bar";
 import * as Notifications from "expo-notifications";
 import * as ScreenOrientation from "expo-screen-orientation";
 import AppNavigator from "./src/navigation/AppNavigator";
@@ -30,9 +29,17 @@ if (Platform.OS === "android") {
 function ThemedApp() {
   const { paperTheme, isDark } = useAppTheme();
 
+  // Prefer imperative barStyle only — a declarative StatusBar re-shows the OS
+  // bar on every re-render and fights video fullscreen hide.
+  useEffect(() => {
+    RNStatusBar.setBarStyle(isDark ? "light-content" : "dark-content", true);
+    if (Platform.OS === "android") {
+      RNStatusBar.setBackgroundColor(isDark ? "#0D1B2A" : "#FFFFFF", true);
+    }
+  }, [isDark]);
+
   return (
     <PaperProvider theme={paperTheme || fallbackPaperTheme}>
-      <StatusBar style={isDark ? "light" : "dark"} />
       <AppNavigator />
       <UpdateBottomSheet />
     </PaperProvider>
