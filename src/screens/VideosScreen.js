@@ -353,7 +353,7 @@ const getDoubtTime = (createdAt) => {
 };
 
 const VideosScreen = ({ navigation }) => {
-  const { styles, colors } = useThemedStyles(createStyles);
+  const { styles, colors, isDark } = useThemedStyles(createStyles);
 
   const { isPremium, user, studyScore, setStudyScore } = useContext(AppContext);
   const [videos, setVideos] = useState([]);
@@ -1251,7 +1251,9 @@ const VideosScreen = ({ navigation }) => {
         <SafeAreaView
           style={[
             styles.playerSafeArea,
-            effectivePlayerFullscreen && styles.playerSafeAreaFullscreen,
+            effectivePlayerFullscreen && {
+              backgroundColor: isDark ? "#000000" : "#FFFFFF",
+            },
           ]}
           edges={
             effectivePlayerFullscreen
@@ -1288,6 +1290,9 @@ const VideosScreen = ({ navigation }) => {
                 styles.videoPlayerContainer,
                 effectivePlayerFullscreen &&
                   styles.videoPlayerContainerFullscreen,
+                {
+                  backgroundColor: isDark ? "#000000" : "#FFFFFF",
+                },
               ]}
             >
               {playbackLoading ? (
@@ -1313,7 +1318,13 @@ const VideosScreen = ({ navigation }) => {
                   sourceUri={playbackUri}
                   posterUri={selectedVideo?.thumbnailUrl || null}
                   isFullscreen={effectivePlayerFullscreen}
-                  style={styles.player}
+                  isDark={isDark}
+                  style={[
+                    styles.player,
+                    {
+                      backgroundColor: isDark ? "#000000" : "#FFFFFF",
+                    },
+                  ]}
                   onFullscreenPress={() => {
                     if (effectivePlayerFullscreen) {
                       setPlayerFullscreen(false);
@@ -1833,9 +1844,6 @@ const createStyles = (colors) => StyleSheet.create({
     flex: 1,
     backgroundColor: colors.surfacePrimary,
   },
-  playerSafeAreaFullscreen: {
-    backgroundColor: colors.textTitle,
-  },
   playerHeader: {
     height: 58,
     flexDirection: "row",
@@ -1855,12 +1863,11 @@ const createStyles = (colors) => StyleSheet.create({
   },
   player: {
     flex: 1,
-    backgroundColor: colors.textTitle,
   },
   videoPlayerContainer: {
     width: "100%",
     height: width * (9 / 16),
-    backgroundColor: colors.textTitle,
+    backgroundColor: "#000000",
   },
   videoPlayerContainerFullscreen: {
     flex: 1,

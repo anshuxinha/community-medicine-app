@@ -19,8 +19,9 @@ const LONG_PRESS_MS = 420;
 const HUD_MS = 700;
 const CONTROLS_HIDE_MS = 3200;
 const TOP_STRIP = 24;
-const BOTTOM_STRIP_BASE = 112;
+const BOTTOM_STRIP_BASE = 100;
 const VOLUME_EDGE = 56;
+const SEEKER_COLOR = "#9333EA";
 
 const SPEED_OPTIONS = [1, 1.25, 1.5, 1.75, 2];
 
@@ -42,9 +43,15 @@ const formatSpeedLabel = (rate) => {
   return `${rate}×`;
 };
 
+const trackHeightLabel = (track) => {
+  const h = track?.size?.height || track?.height;
+  if (!h) return track?.id || "Track";
+  return `${h}p`;
+};
+
 /**
- * Native expo-video player with modern gestures + YouTube-style bottom chrome.
- * Mute / speed / fullscreen live on the bottom bar so the OS status bar never covers them.
+ * YouTube-inspired expo-video player: dark tap overlay, controls above a thin
+ * purple seeker, mute / quality / speed / fullscreen on the action row.
  */
 const GestureVideoPlayer = ({
   sourceUri,
@@ -52,8 +59,11 @@ const GestureVideoPlayer = ({
   style,
   isFullscreen = false,
   onFullscreenPress,
+  isDark = true,
 }) => {
   const insets = useSafeAreaInsets();
+  const canvasBg = isDark ? "#000000" : "#FFFFFF";
+
   const [showPoster, setShowPoster] = useState(Boolean(posterUri));
   const [controlsVisible, setControlsVisible] = useState(true);
   const [hud, setHud] = useState(null);
@@ -63,6 +73,9 @@ const GestureVideoPlayer = ({
   const [playbackRate, setPlaybackRate] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
   const [speedMenuOpen, setSpeedMenuOpen] = useState(false);
+  const [qualityMenuOpen, setQualityMenuOpen] = useState(false);
+  const [qualityLabel, setQualityLabel] = useState("Auto");
+  const [videoTracks, setVideoTracks] = useState([]);
 
   const lastTapRef = useRef({ t: 0, side: null });
   const longPressTimerRef = useRef(null);
@@ -76,8 +89,9 @@ const GestureVideoPlayer = ({
   const touchStartRef = useRef(null);
 
   const bottomSafe = isFullscreen ? Math.max(insets.bottom, 0) : 0;
+  const menuOpen = speedMenuOpen || qualityMenuOpen;
   const bottomStrip =
-    BOTTOM_STRIP_BASE + bottomSafe + (speedMenuOpen ? 48 : 0);
+    BOTTOM_STRIP_BASE + bottomSafe + (menuOpen ? 44 : 0);
 
   const videoSource = useMemo(() => {
     if (!sourceUri) return null;
@@ -104,12 +118,34 @@ const GestureVideoPlayer = ({
   const duration = player.duration || 0;
   durationRef.current = duration;
 
+  const refreshTracks = useCallback(() => {
+    try {
+      const tracks = player.availableVideoTracks || [];
+      setVideoTracks(Array.isArray(tracks) ? tracks : []);
+    } catch (_e) {
+      setVideoTracks([]);
+    }
+  }, [player]);
+
+  useEventListenerSafe(player, "sourceLoad", refreshTracks);
+  useEventListenerSafe(player, "videoTrackChange", () => {
+    try {
+      const current = player.videoTrack;
+      setQualityLabel(current ? trackHeightLabel(current) : "Auto");
+    } catch (_e) {
+      // ignore
+    }
+  });
+
   useEffect(() => {
     setShowPoster(Boolean(posterUri));
     setPlaybackRate(1);
     baseRateRef.current = 1;
     setIsMuted(false);
     setSpeedMenuOpen(false);
+    setQualityMenuOpen(false);
+    setQualityLabel("Auto");
+    setVideoTracks([]);
   }, [sourceUri, posterUri]);
 
   useEffect(() => {
@@ -133,12 +169,13 @@ const GestureVideoPlayer = ({
 
   const scheduleHideControls = useCallback(() => {
     if (hideControlsTimerRef.current) clearTimeout(hideControlsTimerRef.current);
-    if (speedMenuOpen) return;
+    if (menuOpen) return;
     hideControlsTimerRef.current = setTimeout(() => {
       setControlsVisible(false);
       setSpeedMenuOpen(false);
+      setQualityMenuOpen(false);
     }, CONTROLS_HIDE_MS);
-  }, [speedMenuOpen]);
+  }, [menuOpen]);
 
   const revealControls = useCallback(() => {
     setControlsVisible(true);
@@ -146,7 +183,7 @@ const GestureVideoPlayer = ({
   }, [scheduleHideControls]);
 
   useEffect(() => {
-    if (speedMenuOpen) {
+    if (menuOpen) {
       setControlsVisible(true);
       if (hideControlsTimerRef.current) clearTimeout(hideControlsTimerRef.current);
       return;
@@ -157,7 +194,7 @@ const GestureVideoPlayer = ({
       setControlsVisible(true);
       if (hideControlsTimerRef.current) clearTimeout(hideControlsTimerRef.current);
     }
-  }, [isPlaying, scheduleHideControls, speedMenuOpen]);
+  }, [isPlaying, scheduleHideControls, menuOpen]);
 
   const togglePlay = useCallback(() => {
     if (player.playing) {
@@ -191,6 +228,26 @@ const GestureVideoPlayer = ({
       revealControls();
     },
     [applyRate, revealControls, showHud],
+  );
+
+  const selectQuality = useCallback(
+    (track) => {
+      try {
+        // null / undefined → auto (adaptive)
+        player.videoTrack = track || null;
+        setQualityLabel(track ? trackHeightLabel(track) : "Auto");
+        showHud({
+          type: "quality",
+          label: track ? trackHeightLabel(track) : "Auto",
+          side: "center",
+        });
+      } catch (_e) {
+        showHud({ type: "quality", label: "N/A", side: "center" });
+      }
+      setQualityMenuOpen(false);
+      revealControls();
+    },
+    [player, revealControls, showHud],
   );
 
   const toggleMute = useCallback(() => {
@@ -265,8 +322,9 @@ const GestureVideoPlayer = ({
             return;
           }
 
-          if (speedMenuOpen) {
+          if (menuOpen) {
             setSpeedMenuOpen(false);
+            setQualityMenuOpen(false);
           }
 
           touchStartRef.current = {
@@ -389,12 +447,12 @@ const GestureVideoPlayer = ({
       clearLongPress,
       layout.height,
       layout.width,
+      menuOpen,
       player,
       revealControls,
       seekBy,
       showHud,
       sideFromX,
-      speedMenuOpen,
       togglePlay,
     ],
   );
@@ -434,11 +492,22 @@ const GestureVideoPlayer = ({
   const isLoading = status === "loading" || (!sourceUri && !error);
   const hasError = status === "error" || Boolean(error);
   const showChrome =
-    (controlsVisible || !isPlaying || isScrubbing || speedMenuOpen) && !hasError;
+    (controlsVisible || !isPlaying || isScrubbing || menuOpen) && !hasError;
+
+  const qualityOptions = useMemo(() => {
+    const sorted = [...videoTracks].sort(
+      (a, b) => (b?.size?.height || 0) - (a?.size?.height || 0),
+    );
+    return [{ key: "auto", track: null, label: "Auto" }, ...sorted.map((t) => ({
+      key: t.id || trackHeightLabel(t),
+      track: t,
+      label: trackHeightLabel(t),
+    }))];
+  }, [videoTracks]);
 
   return (
     <View
-      style={[styles.root, style]}
+      style={[styles.root, { backgroundColor: canvasBg }, style]}
       onLayout={(e) => {
         const { width, height } = e.nativeEvent.layout;
         setLayout({ width, height });
@@ -448,18 +517,22 @@ const GestureVideoPlayer = ({
         <VideoView
           style={StyleSheet.absoluteFill}
           player={player}
-          contentFit="contain"
+          // cover in fullscreen fills edges (crops slightly); contain otherwise
+          contentFit={isFullscreen ? "cover" : "contain"}
           nativeControls={false}
           allowsFullscreen={false}
-          onFirstFrameRender={() => setShowPoster(false)}
+          onFirstFrameRender={() => {
+            setShowPoster(false);
+            refreshTracks();
+          }}
         />
       ) : null}
 
       {showPoster && posterUri ? (
         <Image
           source={{ uri: posterUri }}
-          style={styles.poster}
-          resizeMode="contain"
+          style={[styles.poster, { backgroundColor: canvasBg }]}
+          resizeMode={isFullscreen ? "cover" : "contain"}
         />
       ) : null}
 
@@ -479,6 +552,11 @@ const GestureVideoPlayer = ({
       ) : null}
 
       <View style={StyleSheet.absoluteFill} {...panResponder.panHandlers} />
+
+      {/* Light dark overlay while controls are visible (YouTube-style) */}
+      {showChrome ? (
+        <View style={styles.tapOverlay} pointerEvents="none" />
+      ) : null}
 
       {hud ? (
         <View
@@ -500,102 +578,101 @@ const GestureVideoPlayer = ({
             <Pressable
               onPress={() => seekBy(-SEEK_STEP, "left")}
               hitSlop={8}
-              style={styles.seekBtn}
+              style={styles.iconHit}
               accessibilityLabel="Rewind 10 seconds"
             >
-              <MaterialIcons name="replay-10" size={28} color="#FFFFFF" />
+              <MaterialIcons name="replay-10" size={32} color="#FFFFFF" />
             </Pressable>
             <Pressable
               onPress={togglePlay}
               hitSlop={12}
-              style={styles.centerPlayBtn}
+              style={styles.iconHit}
             >
               <MaterialIcons
                 name={isPlaying ? "pause" : "play-arrow"}
-                size={isFullscreen ? 42 : 36}
+                size={isFullscreen ? 48 : 44}
                 color="#FFFFFF"
               />
             </Pressable>
             <Pressable
               onPress={() => seekBy(SEEK_STEP, "right")}
               hitSlop={8}
-              style={styles.seekBtn}
+              style={styles.iconHit}
               accessibilityLabel="Forward 10 seconds"
             >
-              <MaterialIcons name="forward-10" size={28} color="#FFFFFF" />
+              <MaterialIcons name="forward-10" size={32} color="#FFFFFF" />
             </Pressable>
           </View>
 
           <View
-            style={[
-              styles.bottomChrome,
-              { paddingBottom: 8 + bottomSafe },
-            ]}
+            style={[styles.bottomChrome, { paddingBottom: 6 + bottomSafe }]}
           >
-            {speedMenuOpen ? (
-              <View style={styles.speedChipRow} pointerEvents="box-none">
-                {SPEED_OPTIONS.map((rate) => {
-                  const selected = playbackRate === rate;
-                  return (
-                    <Pressable
-                      key={String(rate)}
-                      onPress={() => selectSpeed(rate)}
-                      style={[
-                        styles.speedChip,
-                        selected && styles.speedChipSelected,
-                      ]}
-                      accessibilityRole="button"
-                      accessibilityState={{ selected }}
-                      accessibilityLabel={`${formatSpeedLabel(rate)} speed`}
-                    >
-                      <Text
-                        style={[
-                          styles.speedChipText,
-                          selected && styles.speedChipTextSelected,
-                        ]}
-                      >
-                        {formatSpeedLabel(rate)}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
+            {(speedMenuOpen || qualityMenuOpen) && (
+              <View style={styles.chipRow} pointerEvents="box-none">
+                {speedMenuOpen
+                  ? SPEED_OPTIONS.map((rate) => {
+                      const selected = playbackRate === rate;
+                      return (
+                        <Pressable
+                          key={String(rate)}
+                          onPress={() => selectSpeed(rate)}
+                          style={[
+                            styles.chip,
+                            selected && styles.chipSelected,
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.chipText,
+                              selected && styles.chipTextSelected,
+                            ]}
+                          >
+                            {formatSpeedLabel(rate)}
+                          </Text>
+                        </Pressable>
+                      );
+                    })
+                  : qualityOptions.map((opt) => {
+                      const selected = qualityLabel === opt.label;
+                      return (
+                        <Pressable
+                          key={opt.key}
+                          onPress={() => selectQuality(opt.track)}
+                          style={[
+                            styles.chip,
+                            selected && styles.chipSelected,
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.chipText,
+                              selected && styles.chipTextSelected,
+                            ]}
+                          >
+                            {opt.label}
+                          </Text>
+                        </Pressable>
+                      );
+                    })}
               </View>
-            ) : null}
+            )}
 
-            <View style={styles.scrubRow}>
-              <Text style={styles.timeText}>
+            {/* Controls ABOVE seeker (YouTube-style) */}
+            <View style={styles.actionsRow}>
+              <Text style={styles.timeCombined} numberOfLines={1}>
                 {formatTime(
                   isScrubbing ? scrubRatio * duration : currentTime || 0,
                 )}
+                {" / "}
+                {formatTime(duration)}
               </Text>
-              <View
-                style={styles.scrubTrack}
-                onLayout={(e) => {
-                  scrubBarWidthRef.current = e.nativeEvent.layout.width;
-                }}
-                onStartShouldSetResponder={() => true}
-                onMoveShouldSetResponder={() => true}
-                onResponderGrant={onScrubGrant}
-                onResponderMove={onScrubMove}
-                onResponderRelease={onScrubRelease}
-                onResponderTerminate={() => setIsScrubbing(false)}
-              >
-                <View style={styles.scrubBg} />
-                <View
-                  style={[styles.scrubFill, { width: `${progress * 100}%` }]}
-                />
-                <View
-                  style={[styles.scrubThumb, { left: `${progress * 100}%` }]}
-                />
-              </View>
-              <Text style={styles.timeText}>{formatTime(duration)}</Text>
-            </View>
 
-            <View style={styles.actionsRow}>
+              <View style={styles.actionsSpacer} />
+
               <Pressable
                 onPress={toggleMute}
                 hitSlop={10}
-                style={styles.chromeBtn}
+                style={styles.iconHit}
                 accessibilityLabel={isMuted ? "Unmute" : "Mute"}
               >
                 <MaterialIcons
@@ -607,32 +684,51 @@ const GestureVideoPlayer = ({
 
               <Pressable
                 onPress={() => {
-                  setSpeedMenuOpen((open) => !open);
+                  refreshTracks();
+                  setQualityMenuOpen((open) => !open);
+                  setSpeedMenuOpen(false);
                   setControlsVisible(true);
                   if (hideControlsTimerRef.current) {
                     clearTimeout(hideControlsTimerRef.current);
                   }
                 }}
                 hitSlop={10}
-                style={[styles.chromeBtn, styles.speedBtn]}
-                accessibilityLabel="Playback speed"
+                style={styles.iconHit}
+                accessibilityLabel="Quality"
               >
-                <Text style={styles.speedBtnText}>
-                  {formatSpeedLabel(playbackRate)}
+                <Text style={styles.metaBtnText}>
+                  {qualityLabel === "Auto" ? "Auto" : qualityLabel}
                 </Text>
               </Pressable>
 
-              <View style={styles.actionsSpacer} />
+              <Pressable
+                onPress={() => {
+                  setSpeedMenuOpen((open) => !open);
+                  setQualityMenuOpen(false);
+                  setControlsVisible(true);
+                  if (hideControlsTimerRef.current) {
+                    clearTimeout(hideControlsTimerRef.current);
+                  }
+                }}
+                hitSlop={10}
+                style={styles.iconHit}
+                accessibilityLabel="Playback speed"
+              >
+                <Text style={styles.metaBtnText}>
+                  {formatSpeedLabel(playbackRate)}
+                </Text>
+              </Pressable>
 
               {typeof onFullscreenPress === "function" ? (
                 <Pressable
                   onPress={() => {
                     setSpeedMenuOpen(false);
+                    setQualityMenuOpen(false);
                     onFullscreenPress();
                     revealControls();
                   }}
                   hitSlop={10}
-                  style={styles.chromeBtn}
+                  style={styles.iconHit}
                   accessibilityLabel={
                     isFullscreen ? "Exit fullscreen" : "Enter fullscreen"
                   }
@@ -645,6 +741,28 @@ const GestureVideoPlayer = ({
                 </Pressable>
               ) : null}
             </View>
+
+            {/* Thin purple seeker */}
+            <View
+              style={styles.scrubTrack}
+              onLayout={(e) => {
+                scrubBarWidthRef.current = e.nativeEvent.layout.width;
+              }}
+              onStartShouldSetResponder={() => true}
+              onMoveShouldSetResponder={() => true}
+              onResponderGrant={onScrubGrant}
+              onResponderMove={onScrubMove}
+              onResponderRelease={onScrubRelease}
+              onResponderTerminate={() => setIsScrubbing(false)}
+            >
+              <View style={styles.scrubBg} />
+              <View
+                style={[styles.scrubFill, { width: `${progress * 100}%` }]}
+              />
+              <View
+                style={[styles.scrubThumb, { left: `${progress * 100}%` }]}
+              />
+            </View>
           </View>
         </View>
       ) : null}
@@ -652,15 +770,37 @@ const GestureVideoPlayer = ({
   );
 };
 
+/** Optional listener helper — ignores missing event names on older runtimes */
+function useEventListenerSafe(player, eventName, listener) {
+  useEffect(() => {
+    if (!player || typeof player.addListener !== "function") return undefined;
+    let sub;
+    try {
+      sub = player.addListener(eventName, listener);
+    } catch (_e) {
+      return undefined;
+    }
+    return () => {
+      try {
+        sub?.remove?.();
+      } catch (_e) {
+        // ignore
+      }
+    };
+  }, [player, eventName, listener]);
+}
+
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: "#000",
     overflow: "hidden",
   },
   poster: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "#000",
+  },
+  tapOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.35)",
   },
   centerOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -684,16 +824,9 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 10,
   },
-  hudLeft: {
-    left: "12%",
-  },
-  hudRight: {
-    right: "12%",
-  },
-  hudCenter: {
-    alignSelf: "center",
-    left: "40%",
-  },
+  hudLeft: { left: "12%" },
+  hudRight: { right: "12%" },
+  hudCenter: { alignSelf: "center", left: "40%" },
   hudText: {
     color: "#FFFFFF",
     fontSize: 16,
@@ -709,64 +842,40 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 28,
-    paddingBottom: 56,
+    gap: 36,
+    paddingBottom: 48,
   },
-  centerPlayBtn: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  seekBtn: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: "rgba(0,0,0,0.35)",
+  iconHit: {
+    padding: 8,
     alignItems: "center",
     justifyContent: "center",
   },
   bottomChrome: {
     width: "100%",
-    backgroundColor: "rgba(0,0,0,0.5)",
-    paddingTop: 6,
-  },
-  scrubRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 12,
-    gap: 8,
+    paddingTop: 4,
   },
   actionsRow: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 10,
-    paddingTop: 4,
-    gap: 4,
-  },
-  actionsSpacer: {
-    flex: 1,
-  },
-  chromeBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.1)",
-  },
-  speedBtn: {
-    minWidth: 48,
     paddingHorizontal: 8,
+    paddingBottom: 4,
+    gap: 2,
   },
-  speedBtnText: {
+  actionsSpacer: { flex: 1 },
+  timeCombined: {
     color: "#FFFFFF",
-    fontSize: 13,
-    fontWeight: "700",
+    fontSize: 12,
+    fontWeight: "600",
+    fontVariant: ["tabular-nums"],
+    marginLeft: 4,
   },
-  speedChipRow: {
+  metaBtnText: {
+    color: "#FFFFFF",
+    fontSize: 12,
+    fontWeight: "700",
+    paddingHorizontal: 4,
+  },
+  chipRow: {
     flexDirection: "row",
     flexWrap: "nowrap",
     alignItems: "center",
@@ -775,57 +884,51 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingBottom: 8,
   },
-  speedChip: {
-    minWidth: 52,
-    paddingVertical: 8,
+  chip: {
+    minWidth: 48,
+    paddingVertical: 6,
     paddingHorizontal: 10,
-    borderRadius: 16,
-    backgroundColor: "rgba(255,255,255,0.12)",
+    borderRadius: 14,
+    backgroundColor: "rgba(255,255,255,0.14)",
     alignItems: "center",
   },
-  speedChipSelected: {
-    backgroundColor: "rgba(192,132,252,0.45)",
+  chipSelected: {
+    backgroundColor: "rgba(147,51,234,0.55)",
   },
-  speedChipText: {
+  chipText: {
     color: "#E5E7EB",
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: "700",
   },
-  speedChipTextSelected: {
+  chipTextSelected: {
     color: "#FFFFFF",
   },
-  timeText: {
-    color: "#E5E7EB",
-    fontSize: 11,
-    fontVariant: ["tabular-nums"],
-    minWidth: 36,
-    textAlign: "center",
-  },
   scrubTrack: {
-    flex: 1,
-    height: 28,
+    height: 20,
     justifyContent: "center",
+    marginHorizontal: 10,
+    marginBottom: 2,
   },
   scrubBg: {
-    height: 3,
-    borderRadius: 2,
-    backgroundColor: "rgba(255,255,255,0.25)",
+    height: 2,
+    borderRadius: 1,
+    backgroundColor: "rgba(255,255,255,0.28)",
   },
   scrubFill: {
     position: "absolute",
     left: 0,
-    height: 3,
-    borderRadius: 2,
-    backgroundColor: "#C084FC",
+    height: 2,
+    borderRadius: 1,
+    backgroundColor: SEEKER_COLOR,
   },
   scrubThumb: {
     position: "absolute",
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    marginLeft: -6,
-    backgroundColor: "#FFFFFF",
-    top: 8,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginLeft: -5,
+    backgroundColor: SEEKER_COLOR,
+    top: 5,
   },
 });
 
