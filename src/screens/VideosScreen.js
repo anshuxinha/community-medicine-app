@@ -1177,6 +1177,28 @@ const VideosScreen = ({ navigation }) => {
                   posterUri={selectedVideo?.thumbnailUrl || null}
                   isFullscreen={effectivePlayerFullscreen}
                   style={styles.player}
+                  onFullscreenPress={() => {
+                    if (effectivePlayerFullscreen) {
+                      setPlayerFullscreen(false);
+                      // Landscape keeps effective fullscreen true; briefly lock
+                      // portrait so the UI can shrink, then unlock for auto-rotate.
+                      if (isLandscape) {
+                        ScreenOrientation.lockAsync(
+                          ScreenOrientation.OrientationLock.PORTRAIT_UP,
+                        )
+                          .catch(() => {})
+                          .finally(() => {
+                            setTimeout(() => {
+                              if (selectedVideo) {
+                                ScreenOrientation.unlockAsync().catch(() => {});
+                              }
+                            }, 700);
+                          });
+                      }
+                      return;
+                    }
+                    setPlayerFullscreen(true);
+                  }}
                 />
               ) : (
                 <View style={styles.emptyState}>

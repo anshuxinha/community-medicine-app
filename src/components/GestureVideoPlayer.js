@@ -17,8 +17,11 @@ const DOUBLE_TAP_MS = 280;
 const LONG_PRESS_MS = 420;
 const HUD_MS = 700;
 const CONTROLS_HIDE_MS = 3200;
-const BOTTOM_STRIP = 56;
+const TOP_STRIP = 52;
+const BOTTOM_STRIP = 96;
 const VOLUME_EDGE = 56;
+
+const SPEED_OPTIONS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
 const formatTime = (seconds) => {
   if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
@@ -32,8 +35,14 @@ const formatTime = (seconds) => {
   return `${m}:${String(s).padStart(2, "0")}`;
 };
 
+const formatSpeedLabel = (rate) => {
+  if (rate === 1) return "1×";
+  if (Number.isInteger(rate)) return `${rate}×`;
+  return `${rate}×`;
+};
+
 /**
- * Native expo-video player with modern gestures.
+ * Native expo-video player with modern gestures + chrome.
  * Gestures stay in the RN view hierarchy (work in app fullscreen).
  */
 const GestureVideoPlayer = ({
@@ -41,17 +50,22 @@ const GestureVideoPlayer = ({
   posterUri,
   style,
   isFullscreen = false,
+  onFullscreenPress,
 }) => {
   const [showPoster, setShowPoster] = useState(Boolean(posterUri));
   const [controlsVisible, setControlsVisible] = useState(true);
-  const [hud, setHud] = useState(null); // { type, label, side }
+  const [hud, setHud] = useState(null);
   const [isScrubbing, setIsScrubbing] = useState(false);
   const [scrubRatio, setScrubRatio] = useState(0);
   const [layout, setLayout] = useState({ width: 0, height: 0 });
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const [isMuted, setIsMuted] = useState(false);
+  const [speedMenuOpen, setSpeedMenuOpen] = useState(false);
 
   const lastTapRef = useRef({ t: 0, side: null });
   const longPressTimerRef = useRef(null);
   const rateBoostRef = useRef(false);
+  const baseRateRef = useRef(1);
   const volumeGestureRef = useRef(null);
   const hideControlsTimerRef = useRef(null);
   const hudTimerRef = useRef(null);
@@ -67,6 +81,7 @@ const GestureVideoPlayer = ({
   const player = useVideoPlayer(videoSource, (p) => {
     p.timeUpdateEventInterval = 0.25;
     p.loop = false;
+    p.preservesPitch = true;
   });
 
   const { isPlaying } = useEvent(player, "playingChange", {
@@ -85,6 +100,10 @@ const GestureVideoPlayer = ({
 
   useEffect(() => {
     setShowPoster(Boolean(posterUri));
+    setPlaybackRate(1);
+    baseRateRef.current = 1;
+    setIsMuted(false);
+    setSpeedMenuOpen(false);
   }, [sourceUri, posterUri]);
 
   useEffect(() => {
@@ -108,10 +127,12 @@ const GestureVideoPlayer = ({
 
   const scheduleHideControls = useCallback(() => {
     if (hideControlsTimerRef.current) clearTimeout(hideControlsTimerRef.current);
+    if (speedMenuOpen) return;
     hideControlsTimerRef.current = setTimeout(() => {
       setControlsVisible(false);
+      setSpeedMenuOpen(false);
     }, CONTROLS_HIDE_MS);
-  }, []);
+  }, [speedMenuOpen]);
 
   const revealControls = useCallback(() => {
     setControlsVisible(true);
@@ -119,13 +140,18 @@ const GestureVideoPlayer = ({
   }, [scheduleHideControls]);
 
   useEffect(() => {
+    if (speedMenuOpen) {
+      setControlsVisible(true);
+      if (hideControlsTimerRef.current) clearTimeout(hideControlsTimerRef.current);
+      return;
+    }
     if (isPlaying) {
       scheduleHideControls();
     } else {
       setControlsVisible(true);
       if (hideControlsTimerRef.current) clearTimeout(hideControlsTimerRef.current);
     }
-  }, [isPlaying, scheduleHideControls]);
+  }, [isPlaying, scheduleHideControls, speedMenuOpen]);
 
   const togglePlay = useCallback(() => {
     if (player.playing) {
@@ -135,6 +161,43 @@ const GestureVideoPlayer = ({
     }
     revealControls();
   }, [player, revealControls]);
+
+  const applyRate = useCallback(
+    (rate) => {
+      const next = Number(rate) || 1;
+      try {
+        player.playbackRate = next;
+        player.preservesPitch = true;
+      } catch (_e) {
+        // ignore
+      }
+      baseRateRef.current = next;
+      setPlaybackRate(next);
+    },
+    [player],
+  );
+
+  const selectSpeed = useCallback(
+    (rate) => {
+      applyRate(rate);
+      setSpeedMenuOpen(false);
+      showHud({ type: "rate", label: formatSpeedLabel(rate), side: "center" });
+      revealControls();
+    },
+    [applyRate, revealControls, showHud],
+  );
+
+  const toggleMute = useCallback(() => {
+    const next = !player.muted;
+    player.muted = next;
+    setIsMuted(next);
+    showHud({
+      type: "mute",
+      label: next ? "Muted" : "Unmuted",
+      side: "center",
+    });
+    revealControls();
+  }, [player, revealControls, showHud]);
 
   const seekBy = useCallback(
     (delta, side) => {
@@ -164,7 +227,7 @@ const GestureVideoPlayer = ({
     if (rateBoostRef.current) {
       rateBoostRef.current = false;
       try {
-        player.playbackRate = 1;
+        player.playbackRate = baseRateRef.current || 1;
       } catch (_e) {
         // ignore
       }
@@ -191,10 +254,14 @@ const GestureVideoPlayer = ({
         onPanResponderGrant: (evt) => {
           const { locationX, locationY } = evt.nativeEvent;
           const h = layout.height || 1;
-          // Ignore bottom control strip for gesture start
-          if (locationY > h - BOTTOM_STRIP) {
+          // Ignore top/bottom chrome for gesture start
+          if (locationY < TOP_STRIP || locationY > h - BOTTOM_STRIP) {
             touchStartRef.current = null;
             return;
+          }
+
+          if (speedMenuOpen) {
+            setSpeedMenuOpen(false);
           }
 
           touchStartRef.current = {
@@ -224,7 +291,6 @@ const GestureVideoPlayer = ({
           const w = layout.width || 1;
           const h = layout.height || 1;
 
-          // Right-edge vertical drag → volume
           const nearRight = touchStartRef.current.x > w - VOLUME_EDGE;
           if (
             nearRight &&
@@ -244,13 +310,16 @@ const GestureVideoPlayer = ({
               Math.min(1, volumeGestureRef.current.startVol - dy / (h * 0.6)),
             );
             player.volume = next;
+            if (player.muted && next > 0) {
+              player.muted = false;
+              setIsMuted(false);
+            }
             showHud({
               type: "volume",
               label: `${Math.round(next * 100)}%`,
               side: "right",
             });
           } else if (Math.abs(gesture.dx) > 12 || Math.abs(gesture.dy) > 12) {
-            // Cancel long-press if user is dragging
             if (longPressTimerRef.current && !rateBoostRef.current) {
               clearTimeout(longPressTimerRef.current);
               longPressTimerRef.current = null;
@@ -275,7 +344,7 @@ const GestureVideoPlayer = ({
 
           const { locationX, locationY } = evt.nativeEvent;
           const h = layout.height || 1;
-          if (locationY > h - BOTTOM_STRIP) return;
+          if (locationY < TOP_STRIP || locationY > h - BOTTOM_STRIP) return;
 
           const side = sideFromX(locationX);
           const now = Date.now();
@@ -294,7 +363,6 @@ const GestureVideoPlayer = ({
           lastTapRef.current = { t: now, side };
 
           if (side === "center") {
-            // Delay single-tap play/pause so double-tap on sides can win
             setTimeout(() => {
               const latest = lastTapRef.current;
               if (latest.t === now && latest.side === "center") {
@@ -302,11 +370,7 @@ const GestureVideoPlayer = ({
               }
             }, DOUBLE_TAP_MS);
           } else {
-            // First tap on side: show controls; second is seek
             revealControls();
-            setTimeout(() => {
-              // no-op: wait for possible double tap
-            }, DOUBLE_TAP_MS);
           }
         },
         onPanResponderTerminate: () => {
@@ -324,6 +388,7 @@ const GestureVideoPlayer = ({
       seekBy,
       showHud,
       sideFromX,
+      speedMenuOpen,
       togglePlay,
     ],
   );
@@ -362,6 +427,8 @@ const GestureVideoPlayer = ({
 
   const isLoading = status === "loading" || (!sourceUri && !error);
   const hasError = status === "error" || Boolean(error);
+  const showChrome =
+    (controlsVisible || !isPlaying || isScrubbing || speedMenuOpen) && !hasError;
 
   return (
     <View
@@ -405,7 +472,6 @@ const GestureVideoPlayer = ({
         </View>
       ) : null}
 
-      {/* Gesture surface (above video, below chrome HUD) */}
       <View style={StyleSheet.absoluteFill} {...panResponder.panHandlers} />
 
       {hud ? (
@@ -422,9 +488,100 @@ const GestureVideoPlayer = ({
         </View>
       ) : null}
 
-      {(controlsVisible || !isPlaying || isScrubbing) && !hasError ? (
+      {showChrome ? (
         <View style={styles.controls} pointerEvents="box-none">
+          <View style={styles.topBar} pointerEvents="box-none">
+            <Pressable
+              onPress={toggleMute}
+              hitSlop={10}
+              style={styles.chromeBtn}
+              accessibilityLabel={isMuted ? "Unmute" : "Mute"}
+            >
+              <MaterialIcons
+                name={isMuted ? "volume-off" : "volume-up"}
+                size={22}
+                color="#FFFFFF"
+              />
+            </Pressable>
+
+            <View style={styles.topBarRight}>
+              <Pressable
+                onPress={() => {
+                  setSpeedMenuOpen((open) => !open);
+                  setControlsVisible(true);
+                  if (hideControlsTimerRef.current) {
+                    clearTimeout(hideControlsTimerRef.current);
+                  }
+                }}
+                hitSlop={10}
+                style={[styles.chromeBtn, styles.speedBtn]}
+                accessibilityLabel="Playback speed"
+              >
+                <Text style={styles.speedBtnText}>
+                  {formatSpeedLabel(playbackRate)}
+                </Text>
+              </Pressable>
+
+              {typeof onFullscreenPress === "function" ? (
+                <Pressable
+                  onPress={() => {
+                    setSpeedMenuOpen(false);
+                    onFullscreenPress();
+                    revealControls();
+                  }}
+                  hitSlop={10}
+                  style={styles.chromeBtn}
+                  accessibilityLabel={
+                    isFullscreen ? "Exit fullscreen" : "Enter fullscreen"
+                  }
+                >
+                  <MaterialIcons
+                    name={isFullscreen ? "fullscreen-exit" : "fullscreen"}
+                    size={24}
+                    color="#FFFFFF"
+                  />
+                </Pressable>
+              ) : null}
+            </View>
+          </View>
+
+          {speedMenuOpen ? (
+            <View style={styles.speedMenu} pointerEvents="box-none">
+              <Text style={styles.speedMenuTitle}>Speed</Text>
+              {SPEED_OPTIONS.map((rate) => {
+                const selected = playbackRate === rate;
+                return (
+                  <Pressable
+                    key={String(rate)}
+                    onPress={() => selectSpeed(rate)}
+                    style={[
+                      styles.speedOption,
+                      selected && styles.speedOptionSelected,
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.speedOptionText,
+                        selected && styles.speedOptionTextSelected,
+                      ]}
+                    >
+                      {formatSpeedLabel(rate)}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          ) : null}
+
           <View style={styles.centerPlayRow} pointerEvents="box-none">
+            <Pressable
+              onPress={() => seekBy(-SEEK_STEP, "left")}
+              hitSlop={8}
+              style={styles.seekBtn}
+              accessibilityLabel="Rewind 10 seconds"
+            >
+              <MaterialIcons name="replay-10" size={28} color="#FFFFFF" />
+            </Pressable>
             <Pressable
               onPress={togglePlay}
               hitSlop={12}
@@ -435,6 +592,14 @@ const GestureVideoPlayer = ({
                 size={isFullscreen ? 42 : 36}
                 color="#FFFFFF"
               />
+            </Pressable>
+            <Pressable
+              onPress={() => seekBy(SEEK_STEP, "right")}
+              hitSlop={8}
+              style={styles.seekBtn}
+              accessibilityLabel="Forward 10 seconds"
+            >
+              <MaterialIcons name="forward-10" size={28} color="#FFFFFF" />
             </Pressable>
           </View>
 
@@ -518,18 +683,94 @@ const styles = StyleSheet.create({
   },
   controls: {
     ...StyleSheet.absoluteFillObject,
-    justifyContent: "flex-end",
+    justifyContent: "space-between",
   },
-  centerPlayRow: {
-    ...StyleSheet.absoluteFillObject,
+  topBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
+    paddingTop: 8,
+    paddingBottom: 6,
+    backgroundColor: "rgba(0,0,0,0.35)",
+  },
+  topBarRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  chromeBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "rgba(0,0,0,0.35)",
+  },
+  speedBtn: {
+    minWidth: 48,
+    paddingHorizontal: 8,
+  },
+  speedBtnText: {
+    color: "#FFFFFF",
+    fontSize: 13,
+    fontWeight: "700",
+  },
+  speedMenu: {
+    position: "absolute",
+    top: 56,
+    right: 10,
+    backgroundColor: "rgba(20,20,20,0.94)",
+    borderRadius: 12,
+    paddingVertical: 8,
+    minWidth: 112,
+    zIndex: 20,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: "rgba(255,255,255,0.12)",
+  },
+  speedMenuTitle: {
+    color: "rgba(255,255,255,0.55)",
+    fontSize: 11,
+    fontWeight: "600",
+    letterSpacing: 0.4,
+    textTransform: "uppercase",
+    paddingHorizontal: 14,
+    paddingBottom: 6,
+  },
+  speedOption: {
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+  },
+  speedOptionSelected: {
+    backgroundColor: "rgba(192,132,252,0.22)",
+  },
+  speedOptionText: {
+    color: "#E5E7EB",
+    fontSize: 15,
+    fontWeight: "600",
+  },
+  speedOptionTextSelected: {
+    color: "#E9D5FF",
+  },
+  centerPlayRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 28,
   },
   centerPlayBtn: {
     width: 64,
     height: 64,
     borderRadius: 32,
     backgroundColor: "rgba(0,0,0,0.4)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  seekBtn: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "rgba(0,0,0,0.35)",
     alignItems: "center",
     justifyContent: "center",
   },
