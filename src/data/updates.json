@@ -1,5 +1,19 @@
 [
     {
+        "id": "73f76a06-2465-49ce-a0d1-6d37f5d327eb",
+        "date": "2026-07-21",
+        "title": "ICMR Transfers Indigenous Biomedical Technologies for Cancer and Enteric Infections",
+        "summary": "Under the 'Medical Innovations Patent Mitra' initiative, ICMR licensed three indigenous technologies to Indian manufacturers. Key transfers include: 1) SHetA2, a first-in-class targeted therapeutic candidate for Cervical Intraepithelial Neoplasia (CIN) and cervical cancer, licensed to Emcure Pharmaceuticals Ltd. 2) Two next-generation vaccine technologies against enteric bacterial infections, developed at ICMR-NIRBI Kolkata and licensed to Biological E Ltd. These transfers aim to translate government-funded research into affordable healthcare solutions.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2286902"
+    },
+    {
+        "id": "7a07cf8b-b9c7-49db-a63b-cd9b2893af9d",
+        "date": "2026-07-21",
+        "title": "CDSCO Approves India's First Dengue Vaccine: Qdenga",
+        "summary": "CDSCO has granted marketing authorization for Qdenga\u00ae, the first recombinant live attenuated tetravalent dengue vaccine approved in India. Manufactured by Takeda GmbH, it is indicated for individuals aged 4\u201360 years. The vaccine is produced in Vero cells using a dengue virus type-2 backbone and contains GMOs. Administration is via subcutaneous injection; the recommended schedule is two 0.5 ml doses administered 0 and 3 months apart.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2286883"
+    },
+    {
         "id": "bcee4b34-fb00-40ff-a703-d2af13bfd80b",
         "date": "2026-07-17",
         "title": "NCAHP Releases Competency-Based Curriculum for DMLT",
@@ -54,19 +68,5 @@
         "title": "India Amends Drugs Rules for Advanced Cell and Gene Therapies",
         "summary": "The Central Government amended the Drugs Rules, 1945, expanding the Centrally License Approving Authority framework. This update brings cell and stem cell-derived products, gene therapeutic products, and xenografts under joint Central and State regulatory oversight. The move ensures uniform national standards and enhanced safety scrutiny for complex medical technologies used in treating blood cancers, genetic disorders, and cardiology procedures.",
         "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2280408"
-    },
-    {
-        "id": "2aa0f12f-e3be-42be-9f8d-980c87deb95e",
-        "date": "2026-07-01",
-        "title": "Union Health Minister Reviews Dengue Preparedness in Delhi",
-        "summary": "Union Health Minister Shri J.P. Nadda chaired a high-level review meeting on July 1, 2026, to assess dengue prevention and control in Delhi. The session focused on epidemiological trends, hospital readiness, and vector control. The Minister emphasized proactive surveillance and 'Jan Chetna through Jan Bhagidari' to strengthen the National Strategy for Prevention and Control of Dengue across the national capital.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2279977"
-    },
-    {
-        "id": "e7c5e79b-f6c9-433f-815b-a3a470e7e5e3",
-        "date": "2026-07-01",
-        "title": "Review of TB Mukt Bharat Abhiyaan in Delhi",
-        "summary": "Union Health Minister Shri J.P. Nadda reviewed the TB Mukt Bharat Abhiyaan in Delhi on July 1, 2026. Key achievements include screening 28.83 lakh people, 21.67 lakh chest X-rays, 3.65 lakh molecular tests, and notifying 1.75 lakh TB patients. The Minister urged greater community participation and 'Jan Bhagidari' from public representatives to bridge the gap between health efforts and elimination outcomes.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2279976"
     }
 ]
