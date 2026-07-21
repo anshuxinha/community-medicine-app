@@ -48,6 +48,7 @@ import {
   formatDuration,
   formatPublishedDate,
   getVideoCategories,
+  resolvePlaybackSource,
   subscribeToVideos,
 } from "../services/videoService";
 import { sendReplyNotification } from "../services/notificationService";
@@ -55,6 +56,7 @@ import {
   enableScreenCaptureProtection,
   disableScreenCaptureProtection,
 } from "../utils/screenCaptureProtection";
+import GestureVideoPlayer from "../components/GestureVideoPlayer";
 
 const { width } = Dimensions.get("window");
 const SEEN_VIDEO_IDS_STORAGE_KEY = "seenVideoIds:v1";
@@ -243,25 +245,6 @@ const onShouldStartLoadWithRequest = (request) => {
   return false;
 };
 
-/**
- * Pure Bunny Stream embed URL for WebView.
- * Load the embed as the WebView document (not a nested HTML→iframe shell) so
- * the player can preload media and start without a long black gap after Play.
- */
-const buildBunnyEmbedUrl = (embedUrl) => {
-  try {
-    const parsed = new URL(String(embedUrl || ""));
-    // Buffer while the poster is visible so play can start immediately.
-    parsed.searchParams.set("preload", "true");
-    // Keep playback inside the WebView on mobile (faster first frame).
-    parsed.searchParams.set("playsinline", "true");
-    parsed.searchParams.set("disableIosPlayer", "true");
-    return parsed.toString();
-  } catch (_err) {
-    return String(embedUrl || "");
-  }
-};
-
 const getThumbnailSource = (thumbnailUrl) => {
   if (!thumbnailUrl) return null;
 
@@ -332,6 +315,9 @@ const VideosScreen = ({ navigation }) => {
   const [fullscreenPdf, setFullscreenPdf] = useState(false);
   const [pdfOpenedFromList, setPdfOpenedFromList] = useState(false);
   const [playerFullscreen, setPlayerFullscreen] = useState(false);
+  const [playbackUri, setPlaybackUri] = useState(null);
+  const [playbackLoading, setPlaybackLoading] = useState(false);
+  const [playbackError, setPlaybackError] = useState(null);
   const [seenVideoIds, setSeenVideoIds] = useState({});
   const [windowSize, setWindowSize] = useState(() => Dimensions.get("window"));
 
@@ -426,7 +412,44 @@ const VideosScreen = ({ navigation }) => {
     setFullscreenPdf(false);
     setPdfOpenedFromList(false);
     setPlayerFullscreen(false);
+    setPlaybackUri(null);
+    setPlaybackError(null);
+    setPlaybackLoading(false);
   }, [selectedVideo]);
+
+  // Resolve short-lived (or open) HLS URL when a video is opened.
+  useEffect(() => {
+    if (!selectedVideo) {
+      setPlaybackUri(null);
+      setPlaybackError(null);
+      setPlaybackLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setPlaybackLoading(true);
+    setPlaybackError(null);
+    setPlaybackUri(null);
+
+    resolvePlaybackSource(selectedVideo)
+      .then((source) => {
+        if (cancelled) return;
+        setPlaybackUri(source.uri);
+        setPlaybackLoading(false);
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        console.warn("Playback source failed:", error?.message || error);
+        setPlaybackError(
+          error?.message || "Unable to load this video for playback.",
+        );
+        setPlaybackLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedVideo?.id]);
 
   useEffect(() => {
     if ((selectedVideo?.hasPdf && activeTab === "notes") || fullscreenPdf) {
@@ -478,6 +501,9 @@ const VideosScreen = ({ navigation }) => {
 
   const closePlayerModal = () => {
     setPlayerFullscreen(false);
+    setPlaybackUri(null);
+    setPlaybackError(null);
+    setPlaybackLoading(false);
     setSelectedVideo(null);
   };
 
@@ -1127,22 +1153,29 @@ const VideosScreen = ({ navigation }) => {
                   styles.videoPlayerContainerFullscreen,
               ]}
             >
-              {selectedVideo?.embedUrl ? (
-                <WebView
-                  // Load Bunny player as the top-level page (matches pre-gesture
-                  // simplicity, without an extra HTML iframe hop that delayed start).
-                  originWhitelist={["*"]}
-                  source={{ uri: buildBunnyEmbedUrl(selectedVideo.embedUrl) }}
-                  allowsFullscreenVideo
-                  allowsInlineMediaPlayback
-                  mediaPlaybackRequiresUserAction={false}
-                  javaScriptEnabled
-                  domStorageEnabled
-                  allowsProtectedMedia
-                  mixedContentMode="always"
-                  setSupportMultipleWindows={false}
-                  // Helps Android paint video frames instead of staying black while buffering.
-                  androidLayerType="hardware"
+              {playbackLoading ? (
+                <View style={styles.emptyState}>
+                  <ActivityIndicator color="#FFFFFF" />
+                  <Text style={[styles.emptyText, { color: "#E5E7EB" }]}>
+                    Preparing player...
+                  </Text>
+                </View>
+              ) : playbackError ? (
+                <View style={styles.emptyState}>
+                  <MaterialIcons
+                    name="error-outline"
+                    size={42}
+                    color={theme.colors.warning}
+                  />
+                  <Text style={styles.emptyTitle}>Unable to play video</Text>
+                  <Text style={styles.emptyText}>{playbackError}</Text>
+                </View>
+              ) : playbackUri ? (
+                <GestureVideoPlayer
+                  key={selectedVideo?.id || playbackUri}
+                  sourceUri={playbackUri}
+                  posterUri={selectedVideo?.thumbnailUrl || null}
+                  isFullscreen={effectivePlayerFullscreen}
                   style={styles.player}
                 />
               ) : (
@@ -1154,7 +1187,7 @@ const VideosScreen = ({ navigation }) => {
                   />
                   <Text style={styles.emptyTitle}>Video is still processing</Text>
                   <Text style={styles.emptyText}>
-                    The player will appear here once Bunny finishes preparing it.
+                    The player will appear here once the stream is ready.
                   </Text>
                 </View>
               )}

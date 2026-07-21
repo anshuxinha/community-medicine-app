@@ -139,9 +139,21 @@
     "mtime": 1776437152.4591136,
     "hash": "d86677b7acb85461ac8aa6026ba52141"
   },
+  "D:\\The App\\functions\\bunnyToken.js": {
+    "mtime": 1784607395.433206,
+    "hash": "597e6f363323f1f82a50df6e3fcd71de"
+  },
+  "D:\\The App\\functions\\index.js": {
+    "mtime": 1784607395.4320846,
+    "hash": "42cf115acd01075a3d7254f99984dc00"
+  },
   "D:\\The App\\scratch\\analyze_trends.py": {
     "mtime": 1783704747.112139,
     "hash": "04e4e5b8ed3b52ccb53a2ecd1026c8e7"
+  },
+  "D:\\The App\\scratch\\apply_ch3_review.py": {
+    "mtime": 1784446521.580635,
+    "hash": "135251130b21e624ee10a62ce35b6b7f"
   },
   "D:\\The App\\scratch\\apply_changes.py": {
     "mtime": 1783227825.509572,
@@ -284,7 +296,7 @@
     "hash": "54936b9b06f3ffedf69217c6f0accca5"
   },
   "D:\\The App\\scripts\\attach-pdf-to-video.js": {
-    "mtime": 1784277110.0672505,
+    "mtime": 1784447916.0492163,
     "hash": "28efac71efc4c33cd17606c74e42d9b9"
   },
   "D:\\The App\\scripts\\audit_colors.js": {
@@ -463,9 +475,13 @@
     "mtime": 1784219648.6295848,
     "hash": "97abdb8fd522462f616d41d6c847c9b9"
   },
+  "D:\\The App\\src\\components\\GestureVideoPlayer.js": {
+    "mtime": 1784607488.1972525,
+    "hash": "d4fdf590c9a71882585d15d45b8be12b"
+  },
   "D:\\The App\\src\\components\\ReadingView.js": {
-    "mtime": 1784306929.0334177,
-    "hash": "772cd1300f192902f6f926e37ab1ca1c"
+    "mtime": 1784344792.89133,
+    "hash": "6d105437ac15f8820536487adaac985a"
   },
   "D:\\The App\\src\\components\\ReferralAnnouncementDialog.js": {
     "mtime": 1784224587.4018288,
@@ -496,8 +512,8 @@
     "hash": "6d7efe5eaf665c93daf1b4265c4c2234"
   },
   "D:\\The App\\src\\data\\museumData.js": {
-    "mtime": 1778910985.3578393,
-    "hash": "2c36be0c5e2bcc8d4982b70792a0a081"
+    "mtime": 1784344792.89133,
+    "hash": "64c758559db436a2e7e27c0bd953ee16"
   },
   "D:\\The App\\src\\data\\nfhsComparisonData.js": {
     "mtime": 1783704947.214938,
@@ -616,8 +632,8 @@
     "hash": "f6eb550b80214139a46a94ea196fe185"
   },
   "D:\\The App\\src\\screens\\VideosScreen.js": {
-    "mtime": 1784314360.6709793,
-    "hash": "0f8fa27f0b9b51e93d264528c7138c7d"
+    "mtime": 1784607472.1218455,
+    "hash": "0ef48aa8d71f87309a5cad1bb2257827"
   },
   "D:\\The App\\src\\screens\\VirtualMuseumScreen.js": {
     "mtime": 1784225570.202634,
@@ -652,8 +668,8 @@
     "hash": "ea8466bc88791dd4c6ebedcee902c58a"
   },
   "D:\\The App\\src\\services\\videoService.js": {
-    "mtime": 1777869755.728923,
-    "hash": "606f1f22b4009a501bdba435caa2e0e0"
+    "mtime": 1784607395.4320846,
+    "hash": "652f11e2b8565546aa6edde083a5436e"
   },
   "D:\\The App\\src\\services\\__tests__\\couponService.test.js": {
     "mtime": 1778607110.6518483,
@@ -726,6 +742,10 @@
   "D:\\The App\\paper1_extracted.txt": {
     "mtime": 1778502162.3317487,
     "hash": "7226b3eb13693e04216b9518652aceb7"
+  },
+  "D:\\The App\\docs\\library-ch3-verification-checklist.md": {
+    "mtime": 1784447911.051121,
+    "hash": "3dd6c34e0688a13866f251afd525c666"
   },
   "D:\\The App\\docs\\library-update-review-workflow.md": {
     "mtime": 1783579224.3160555,
