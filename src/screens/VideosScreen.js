@@ -1350,33 +1350,6 @@ const VideosScreen = ({ navigation }) => {
                   </Text>
                 </View>
               )}
-              {effectivePlayerFullscreen && (
-                <View style={styles.playerFullscreenControls} pointerEvents="box-none">
-                  <IconButton
-                    icon="fullscreen-exit"
-                    iconColor="#FFFFFF"
-                    containerColor="rgba(0,0,0,0.45)"
-                    onPress={() => {
-                      setPlayerFullscreen(false);
-                      // Landscape keeps effective fullscreen true; briefly lock
-                      // portrait so the UI can shrink, then unlock for auto-rotate.
-                      if (isLandscape) {
-                        ScreenOrientation.lockAsync(
-                          ScreenOrientation.OrientationLock.PORTRAIT_UP,
-                        )
-                          .catch(() => {})
-                          .finally(() => {
-                            setTimeout(() => {
-                              if (selectedVideo) {
-                                ScreenOrientation.unlockAsync().catch(() => {});
-                              }
-                            }, 700);
-                          });
-                      }
-                    }}
-                  />
-                </View>
-              )}
             </View>
 
             {!effectivePlayerFullscreen && selectedVideo?.hasPdf && (
