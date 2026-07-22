@@ -10,17 +10,20 @@ When running `eas update`, changes weren't visible in the production app because
 
 ## Solution Workflow for Future Updates
 
-### 0. Always Commit and Push Related Changes First (MANDATORY)
+### 0. Always Ship App Changes: Commit → Push → EAS Update (MANDATORY)
 
-If this OTA is for code/config you changed locally:
+After any change that affects the shipped app, complete the full ship (not just local code):
 
 ```bash
 git add <related-files>
 git commit -m "Your message"
 git push origin main
+# then eas update (below)
 ```
 
 Do **not** publish related updates from a dirty or unpushed tree. EAS records the git commit; uncommitted publishes show `commit*` and diverge from GitHub.
+
+Always end with a **manual test checklist** for the user. See `Agents.md` → **App Change Ship Protocol**.
 
 ### 1. Always Check Channel Configuration First
 

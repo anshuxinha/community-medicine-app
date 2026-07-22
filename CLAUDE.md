@@ -8,7 +8,7 @@ Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-s
 
 - **graphify** ([SKILL.md](file:///C:/Users/Anshuman%20Sinha/.gemini/skills/graphify/SKILL.md)) - any input to knowledge graph. Trigger: `/graphify`
 
-**EAS Update Protocol**: If `eas update` is related to local code/config changes, **commit and push first**, then publish the OTA. See `Agents.md` (EAS Update Protocol) and `CUSTOM_INSTRUCTION_EAS.md`.
+**App Change Ship Protocol (MANDATORY):** After any change that affects the shipped app (`src/`, client JS, OTA-deliverable assets), always **commit → push → `eas update`**, then end with a **manual test checklist** for the user. Commit/push first (never OTA a dirty related tree). See `Agents.md` (App Change Ship Protocol) and `CUSTOM_INSTRUCTION_EAS.md`. Native-only changes need a store build, not just OTA — still commit/push and say so.
 
 ## 1. Think Before Coding
 

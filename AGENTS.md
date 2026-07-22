@@ -91,22 +91,37 @@ For multi-step tasks, state a brief plan and verify each step.
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
 
-# EAS Update Protocol
+# App Change Ship Protocol (Commit → Push → EAS Update)
 
-**MANDATORY: If an `eas update` is related to local code or config changes, commit and push those changes first.**
-
-Do not publish an OTA from a dirty or unpushed tree when the update depends on that work.
+**MANDATORY: After any change that affects the shipped app (JS/TS/React Native screens, services, app config that OTA can deliver, `src/`, client-facing assets bundled in the update), always complete this end-to-end ship — do not leave app changes only on the local machine.**
 
 ## Required order
 1. **Commit** related changes with a clear message (include only files that belong to the change).
 2. **Push** to the remote branch that production tracks (usually `origin/main`).
-3. **Then** run `eas update` (see `CUSTOM_INSTRUCTION_EAS.md` / `EAS_UPDATE_GUIDELINES.md` for channel checks, `--branch main`, `--clear-cache`, verify).
+3. **EAS Update** — publish OTA (see `CUSTOM_INSTRUCTION_EAS.md` / `EAS_UPDATE_GUIDELINES.md`: channel check, `--branch main`, `--clear-cache` when needed, verify).
+4. **Test checklist** — always end the reply with a short **manual test checklist** for the user (what to open, what to expect, pass/fail signals). Cover happy path + one regression risk for the change.
+
+Do **not** publish an OTA from a dirty or unpushed tree when the update depends on that work (avoids `commit*` / GitHub drift).
 
 ## Why
 - EAS Update records the git commit; dirty publishes show a `*` commit and drift from GitHub.
 - Teammates and future deploys must see the same code that production OTA ships.
 - Channel/branch mapping assumes the remote branch is the source of truth.
+- The user relies on a checklist to verify OTA behavior on device without guessing.
+
+## Scope (when this applies)
+- **Always ship OTA** for: `src/`, `App.js`, `index.js`, client assets that load via OTA, notification/client services, UI, mock/local data the app reads in the JS bundle.
+- **Commit + push still required; OTA optional/N/A** for pure backend scripts (e.g. `scripts/bunny-videos.js` only), docs-only, CI-only, or changes that need a **native rebuild** (new native module, `app.json` plugins, permissions, Expo SDK bump). For native-only work: commit, push, and say a **store/native build** is required instead of (or in addition to) OTA.
+- If the user already said to skip OTA for a specific task, follow that exception and still give a test checklist.
 
 ## Exceptions
 - Pure channel/config inspection (`eas channel:list`, etc.) needs no commit.
 - If the user explicitly asks to OTA uncommitted work, note the risk and still prefer committing first.
+- Read-only Q&A / planning with no code changes: no ship step.
+
+## Store auto-submit release notes (iOS + Android)
+When auto-submitting IPA/AAB to App Store and/or Play Store:
+- Always include **brief** release notes (real changes first).
+- **Always include a pun** in the notes (light, on-theme).
+- Same spirit on both platforms when submitting both.
+- See `CUSTOM_INSTRUCTION_EAS.md` for format and CLI hooks.

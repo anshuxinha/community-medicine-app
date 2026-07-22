@@ -4,7 +4,7 @@ const path = require("path");
 
 const SERVICE_ACCOUNT_PATH = path.join(__dirname, "..", "serviceAccountKey.json");
 const STORAGE_BUCKET = "community-med-app.firebasestorage.app";
-const LOCAL_PDF_PATH = "C:\\Users\\Anshuman Sinha\\Downloads\\Neonatal Tetanus.pdf";
+const LOCAL_PDF_PATH = "D:\\Stroma Files\\Videos\\Theory\\BMW\\Hospital Waste Management - STROMA.pdf";
 
 const main = async () => {
   if (!fs.existsSync(LOCAL_PDF_PATH)) {

@@ -1,8 +1,8 @@
 # Custom Instruction for EAS Updates
 
-## Rule 0: Commit and Push Related Changes First (MANDATORY)
+## Rule 0: Always Ship App Changes (Commit → Push → EAS Update) (MANDATORY)
 
-**If the EAS Update ships code or config you just changed, commit and push before `eas update`.**
+**After any change that affects the shipped app, always commit, push, and publish an EAS Update — then give the user a short manual test checklist.**
 
 ```bash
 # 1. Commit & push related work first
@@ -16,6 +16,8 @@ git push origin main
 - Do **not** run `eas update` from a dirty tree for related fixes (avoids `commit*` / unpushed drift).
 - Include only files that belong to the change.
 - Production channel tracks `main` — push to `origin/main` before publishing to production.
+- **Test checklist:** end the reply with what to verify on device (happy path + one regression check).
+- Full scope/exceptions: `Agents.md` → **App Change Ship Protocol**.
 
 ## Rule: Always Verify Channel-Branch Mapping Before EAS Update
 
@@ -52,4 +54,25 @@ eas update --branch main --message "message" --clear-cache --environment product
 
 # 4. Verify
 eas channel:view production --non-interactive
+```
+
+## Store auto-submit release notes (iOS + Android)
+
+When auto-submitting **store builds** to App Store and/or Play Store:
+
+1. Always include **release notes** (not only a build message).
+2. Keep them **brief** (2–4 short lines / bullets max).
+3. Lead with the real user-facing change(s).
+4. **Always end with one light pun** related to the update (not forced if it would be confusing; still prefer a pun).
+5. Use the **same notes spirit** on both platforms when submitting both.
+
+### Platform hooks
+- **iOS (TestFlight / what to test):** `eas submit` / build auto-submit `--what-to-test "..."` when available.
+- **Android (Play):** release notes via submit config / Play Console fields when EAS supports them; if CLI cannot set notes non-interactively, write the notes in the chat for the user to paste and still invent the pun.
+
+### Example shape
+```
+• New video player with smoother controls
+• Faster, more reliable lecture playback
+Don't skip class — we fixed the buffering so you won't miss a beat.
 ```
