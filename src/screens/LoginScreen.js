@@ -34,7 +34,6 @@ import {
 } from "firebase/auth";
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import Constants from "expo-constants";
-import { theme } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
 import * as AppleAuthentication from "expo-apple-authentication";
 import * as Crypto from "expo-crypto";
@@ -515,17 +514,18 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.root}>
-      {/* Dark top half with full logo (icon + STROMA text baked in) */}
+      {/* Brand navy hero — matches logo/splash so the mark sits cleanly */}
       <View style={styles.topHalf}>
         <Image
-          source={require("../../assets/icon.png")}
+          source={require("../../assets/stroma_logo_login.png")}
           style={styles.logo}
           resizeMode="contain"
+          accessibilityLabel="STROMA"
         />
         <Text style={styles.brandTagline}>Community Medicine · Simplified</Text>
       </View>
 
-      {/* White bottom sheet */}
+      {/* Form sheet */}
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.sheet}
@@ -550,7 +550,7 @@ const LoginScreen = () => {
               <MaterialIcons
                 name="error-outline"
                 size={16}
-                color={theme.colors.error}
+                color={colors.error}
               />
               <Text style={styles.errorText}>{validationError}</Text>
             </View>
@@ -573,7 +573,7 @@ const LoginScreen = () => {
             <MaterialIcons
               name="mail-outline"
               size={20}
-              color={theme.colors.secondary}
+              color={colors.secondary}
               style={styles.inputIcon}
             />
             <TextInput
@@ -588,10 +588,11 @@ const LoginScreen = () => {
               autoCapitalize="none"
               autoCorrect={false}
               style={styles.input}
-              textColor={theme.colors.textTitle}
-              placeholderTextColor={theme.colors.textPlaceholder}
+              textColor={colors.inputText}
+              placeholderTextColor={colors.inputPlaceholder}
               activeUnderlineColor="transparent"
               underlineColor="transparent"
+              selectionColor={colors.secondary}
             />
           </View>
 
@@ -600,7 +601,7 @@ const LoginScreen = () => {
             <MaterialIcons
               name="lock-outline"
               size={20}
-              color={theme.colors.secondary}
+              color={colors.secondary}
               style={styles.inputIcon}
             />
             <TextInput
@@ -609,10 +610,11 @@ const LoginScreen = () => {
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
               style={styles.input}
-              textColor={theme.colors.textTitle}
-              placeholderTextColor={theme.colors.textPlaceholder}
+              textColor={colors.inputText}
+              placeholderTextColor={colors.inputPlaceholder}
               activeUnderlineColor="transparent"
               underlineColor="transparent"
+              selectionColor={colors.secondary}
             />
             <TouchableOpacity
               onPress={() => setShowPassword(!showPassword)}
@@ -621,7 +623,7 @@ const LoginScreen = () => {
               <MaterialIcons
                 name={showPassword ? "visibility-off" : "visibility"}
                 size={20}
-                color={theme.colors.textPlaceholder}
+                color={colors.inputPlaceholder}
               />
             </TouchableOpacity>
           </View>
@@ -673,7 +675,7 @@ const LoginScreen = () => {
             <FontAwesome5
               name="google"
               size={18}
-              color={theme.colors.error}
+              color={colors.error}
               style={styles.googleIcon}
             />
             <Text style={styles.googleBtnText}>Continue with Google</Text>
@@ -735,7 +737,7 @@ const LoginScreen = () => {
               <MaterialIcons
                 name="devices-other"
                 size={36}
-                color={theme.colors.accent}
+                color={colors.accent}
               />
             </View>
 
@@ -761,14 +763,14 @@ const LoginScreen = () => {
               {conflictLoading ? (
                 <ActivityIndicator
                   size="small"
-                  color={theme.colors.surfacePrimary}
+                  color={colors.onPrimary}
                 />
               ) : (
                 <>
                   <MaterialIcons
                     name="logout"
                     size={18}
-                    color={theme.colors.surfacePrimary}
+                    color={colors.onPrimary}
                     style={{ marginRight: 8 }}
                   />
                   <Text style={styles.modalPrimaryBtnText}>
@@ -795,37 +797,40 @@ const LoginScreen = () => {
 };
 
 const createStyles = (colors) => StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.inverseSurface },
+  // Brand navy fills the screen behind the logo (matches logo asset)
+  root: { flex: 1, backgroundColor: colors.brandHero },
 
-  // ── Top dark half ────────────────────────────────────────────
+  // ── Top hero ─────────────────────────────────────────────────
   topHalf: {
-    height: 280,
+    height: 188,
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 16,
+    paddingTop: Platform.OS === "ios" ? 12 : 8,
+    paddingBottom: 4,
+    backgroundColor: colors.brandHero,
   },
   logo: {
-    width: 240,
-    height: 220,
-    marginBottom: 2,
+    width: 168,
+    height: 132,
+    marginBottom: 4,
   },
   brandTagline: {
-    fontSize: 13,
-    color: colors.textPlaceholder,
-    letterSpacing: 1,
+    fontSize: 12,
+    color: "rgba(248,250,252,0.62)",
+    letterSpacing: 0.8,
   },
 
-  // ── Bottom white sheet ───────────────────────────────────────
+  // ── Bottom form sheet ────────────────────────────────────────
   sheet: {
     flex: 1,
     backgroundColor: colors.surfacePrimary,
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
     overflow: "hidden",
   },
   sheetContent: {
     paddingHorizontal: 28,
-    paddingTop: 32,
+    paddingTop: 28,
     paddingBottom: 40,
   },
   title: {
@@ -837,17 +842,17 @@ const createStyles = (colors) => StyleSheet.create({
   subtitle: {
     fontSize: 14,
     color: colors.textTertiary,
-    marginBottom: 28,
+    marginBottom: 24,
   },
 
-  // ── Inputs ───────────────────────────────────────────────────
+  // ── Inputs (shared theme tokens: inputBackground / inputBorder / …) ──
   inputRow: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.surfaceTertiary,
+    backgroundColor: colors.inputBackground,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.inputBorder,
     paddingHorizontal: 14,
     marginBottom: 14,
     height: 56,

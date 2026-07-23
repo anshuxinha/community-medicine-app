@@ -49,6 +49,14 @@ export const lightColors = {
   surfaceTertiary: "#F9FAFB",
   surfaceMuted: "#F8FAFC",
 
+  // Shared form field tokens — use these instead of per-screen hardcoding
+  inputBackground: "#F3F4F6",
+  inputBorder: "#D1D5DB",
+  inputText: "#111827",
+  inputPlaceholder: "#9CA3AF",
+  /** Brand navy behind STROMA wordmark (matches logo asset + splash). */
+  brandHero: "#0D1B2A",
+
   border: "#E5E7EB",
   borderStrong: "#D1D5DB",
   divider: "#E5E7EB",
@@ -103,6 +111,14 @@ export const darkColors = {
   surfaceSecondary: "#24242E",
   surfaceTertiary: "#2A2A36",
   surfaceMuted: "#16161C",
+
+  // Shared form field tokens — elevated vs surfacePrimary for readable contrast
+  inputBackground: "#2E2E3C",
+  inputBorder: "#5B5B6B",
+  inputText: "#F9FAFB",
+  inputPlaceholder: "#A1A1AA",
+  /** Brand navy behind STROMA wordmark (matches logo asset + splash). */
+  brandHero: "#0D1B2A",
 
   border: "#3F3F4A",
   borderStrong: "#52525B",
@@ -165,10 +181,32 @@ export function getPaperTheme(scheme = "light") {
       background: colors.backgroundMain,
       surface: colors.surfacePrimary,
       onSurface: colors.textTitle,
-      outline: colors.borderStrong,
+      // Paper TextInput / outlined fields pick these up app-wide
+      surfaceVariant: colors.inputBackground,
+      onSurfaceVariant: colors.inputPlaceholder,
+      outline: colors.inputBorder,
       error: colors.error,
       onError: colors.onPrimary,
     },
+  };
+}
+
+/**
+ * Shared props for react-native-paper TextInput so screens stay consistent.
+ * @param {ReturnType<typeof getAppColors>} colors
+ * @param {{ mode?: 'flat' | 'outlined' }} [opts]
+ */
+export function getTextInputThemeProps(colors, opts = {}) {
+  const mode = opts.mode || "outlined";
+  return {
+    mode,
+    textColor: colors.inputText,
+    placeholderTextColor: colors.inputPlaceholder,
+    outlineColor: colors.inputBorder,
+    activeOutlineColor: colors.secondary,
+    underlineColor: "transparent",
+    activeUnderlineColor: "transparent",
+    style: { backgroundColor: colors.inputBackground },
   };
 }
 
