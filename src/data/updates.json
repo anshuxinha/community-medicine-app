@@ -1,5 +1,12 @@
 [
     {
+        "id": "fa13ba06-b0fc-4137-8a7c-7af74b18c5d9",
+        "date": "2026-07-22",
+        "title": "ICMR-NIN Releases Policy Priorities for Healthier Diets in Children and Adolescents",
+        "summary": "The ICMR-National Institute of Nutrition (NIN)-led 'Let's Fix Our Food' (LFOF) Consortium released a policy document titled 'Priority Policy Actions to Promote Healthier Diets and Food Environments for Children and Adolescents in India'. Launched by NITI Aayog, the document provides evidence-based recommendations to improve dietary behaviors and food environments. The LFOF is a multi-institutional platform involving partners such as WHO, UNICEF India, FSSAI, PHFI, and Resolve to Save Lives (RTSL).",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2287856"
+    },
+    {
         "id": "73f76a06-2465-49ce-a0d1-6d37f5d327eb",
         "date": "2026-07-21",
         "title": "ICMR Transfers Indigenous Biomedical Technologies for Cancer and Enteric Infections",
@@ -12,6 +19,20 @@
         "title": "CDSCO Approves India's First Dengue Vaccine: Qdenga",
         "summary": "CDSCO has granted marketing authorization for Qdenga\u00ae, the first recombinant live attenuated tetravalent dengue vaccine approved in India. Manufactured by Takeda GmbH, it is indicated for individuals aged 4\u201360 years. The vaccine is produced in Vero cells using a dengue virus type-2 backbone and contains GMOs. Administration is via subcutaneous injection; the recommended schedule is two 0.5 ml doses administered 0 and 3 months apart.",
         "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2286883"
+    },
+    {
+        "id": "a21c4efe-b08d-4b94-8b53-f5c92320fea8",
+        "date": "2026-07-21",
+        "title": "Update on National Immunization Coverage and Pandemic Preparedness",
+        "summary": "India has maintained National Full Immunization Coverage (FIC) above 90% for four years: 94.7% (22-23), 93.7% (23-24), 98.3% (24-25), and 97.9% (25-26). A nationwide HPV vaccination campaign launched Feb 28, 2026, targeting ~1.2 crore 14-year-old girls across 36 States/UTs. Other updates include the launch of an Integrated Training Module for Primary Healthcare Teams at Ayushman Arogya Mandirs (April 2026) and ICMR's network of 160+ Virus Research and Diagnostic Laboratories for pathogen diagnosis.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2286952"
+    },
+    {
+        "id": "d1237aae-16ab-4df5-8730-cbe7d79c08c8",
+        "date": "2026-07-21",
+        "title": "Progress Report on Nationwide HPV Vaccination and Cervical Cancer Prevention",
+        "summary": "As of July 15, 2026, 5,210,302 girls have received the HPV vaccine under the campaign launched Feb 28, 2026, targeting 1.2 crore 14-year-old girls. Vaccines are provided free at government facilities, including Ayushman Arogya Mandirs, PHCs, CHCs, and GMCs. Vaccination data is tracked via the U-WIN digital portal. The government's comprehensive cervical cancer strategy integrates HPV vaccination, screening, early diagnosis at Ayushman Arogya Mandirs, and treatment through Day Care Cancer Centres.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2286947"
     },
     {
         "id": "bcee4b34-fb00-40ff-a703-d2af13bfd80b",
@@ -47,26 +68,5 @@
         "title": "National ToT for Primary Healthcare Cadres at Ayushman Arogya Mandirs",
         "summary": "The Union Ministry of Health and Family Welfare conducted a National Training of Trainers (NToT) for five primary healthcare cadres operating at Ayushman Arogya Mandirs (AAMs). The initiative introduces an integrated training strategy and cadre-specific modules focusing on technical knowledge, behavioral competencies, empathy, and communication. The program will be implemented via a decentralized cascade model through over 100 Regional Training Institutes starting August 2026 to strengthen the primary healthcare workforce and improve service delivery through inter-agency convergence.",
         "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2282465"
-    },
-    {
-        "id": "c68cd6ff-7cbd-41ba-913b-72fa5f93e1a1",
-        "date": "2026-07-06",
-        "title": "India Launches National Action Plan for Zoonoses Control",
-        "summary": "The Union Ministry of Health and Family Welfare organized a National Multistakeholder Consultation to launch the National Action Plan for Prevention and Control of Zoonoses. Utilizing a One Health approach, the initiative introduces learning resource packages and e-learning modules. It aims to strengthen governance, laboratory networks, and integrated surveillance via IHIP 2.0 to enhance India's preparedness against zoonotic disease threats.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2281860"
-    },
-    {
-        "id": "2c70706f-c322-4f73-ae5f-149a00c4210d",
-        "date": "2026-07-05",
-        "title": "ICMR-MINDS Wins Gold at National e-Governance Awards 2026",
-        "summary": "The Indian Council of Medical Research's ICMR-MINDS initiative won the Gold Award for AI-enabled citizen-centric healthcare innovation at the 29th National Conference on e-Governance. This digital platform utilizes a Clinical Decision Support System to shift standardized mental health screening and substance use disorder management from specialists to trained frontline healthcare providers, enhancing accessibility through multilingual interfaces and evidence-based digital workflows.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2281222"
-    },
-    {
-        "id": "3b8b0e50-fdee-4bd5-b46d-1cabccf4e48c",
-        "date": "2026-07-02",
-        "title": "India Amends Drugs Rules for Advanced Cell and Gene Therapies",
-        "summary": "The Central Government amended the Drugs Rules, 1945, expanding the Centrally License Approving Authority framework. This update brings cell and stem cell-derived products, gene therapeutic products, and xenografts under joint Central and State regulatory oversight. The move ensures uniform national standards and enhanced safety scrutiny for complex medical technologies used in treating blood cancers, genetic disorders, and cardiology procedures.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2280408"
     }
 ]
