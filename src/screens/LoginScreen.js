@@ -26,6 +26,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signInWithCredential,
+  sendPasswordResetEmail,
   GoogleAuthProvider,
   OAuthProvider,
   getIdTokenResult,
@@ -72,6 +73,10 @@ const formatAppleName = (fullName) => {
     .trim();
 };
 
+// Shown after a reset request (success or unknown email). Browser link only.
+const PASSWORD_RESET_SENT_MESSAGE =
+  "If an account exists for that email, we sent a reset link. Open it in your browser to set a new password, then sign in here. Check spam if needed. Google/Apple-only accounts should use those buttons instead.";
+
 const LoginScreen = () => {
   const { styles, colors } = useThemedStyles(createStyles);
 
@@ -89,6 +94,7 @@ const LoginScreen = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [validationError, setValidationError] = useState("");
+  const [resetInfo, setResetInfo] = useState("");
   const [isAppleSignInAvailable, setIsAppleSignInAvailable] = useState(false);
 
   // ── Device conflict modal state ──
@@ -349,6 +355,7 @@ const LoginScreen = () => {
 
   const handleAuth = async () => {
     setValidationError("");
+    setResetInfo("");
 
     if (!email.trim()) {
       setValidationError("Please enter your email address.");
@@ -449,6 +456,63 @@ const LoginScreen = () => {
     }
   };
 
+  // Browser-hosted Firebase password reset (email link → Firebase reset page).
+  const handleForgotPassword = async () => {
+    setValidationError("");
+    setResetInfo("");
+
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail) {
+      setValidationError("Enter your email address above, then tap Forgot password.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const netState = await NetInfo.fetch();
+      if (!netState.isConnected) {
+        setValidationError("Please connect to the internet to reset your password.");
+        return;
+      }
+
+      await sendPasswordResetEmail(auth, trimmedEmail);
+      // Generic copy whether or not the account exists (avoids email enumeration).
+      setResetInfo(PASSWORD_RESET_SENT_MESSAGE);
+    } catch (error) {
+      const code = error?.code || "";
+      const message = error?.message || "";
+
+      // Treat missing user the same as success when Firebase still surfaces it.
+      if (
+        code === "auth/user-not-found" ||
+        message.includes("auth/user-not-found")
+      ) {
+        setResetInfo(PASSWORD_RESET_SENT_MESSAGE);
+      } else if (
+        code === "auth/invalid-email" ||
+        message.includes("auth/invalid-email")
+      ) {
+        setValidationError("Please enter a valid email address.");
+      } else if (
+        code === "auth/too-many-requests" ||
+        message.includes("auth/too-many-requests")
+      ) {
+        setValidationError("Too many attempts. Please wait a few minutes and try again.");
+      } else if (
+        code === "auth/network-request-failed" ||
+        message.includes("auth/network-request-failed")
+      ) {
+        setValidationError("Network error. Check your connection and try again.");
+      } else {
+        setValidationError(
+          message || "Could not send reset email. Please try again.",
+        );
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <View style={styles.root}>
       {/* Dark top half with full logo (icon + STROMA text baked in) */}
@@ -492,6 +556,18 @@ const LoginScreen = () => {
             </View>
           ) : null}
 
+          {/* Password reset info */}
+          {resetInfo ? (
+            <View style={styles.successBanner}>
+              <MaterialIcons
+                name="mark-email-read"
+                size={16}
+                color={colors.successStrong}
+              />
+              <Text style={styles.successText}>{resetInfo}</Text>
+            </View>
+          ) : null}
+
           {/* Email field */}
           <View style={styles.inputRow}>
             <MaterialIcons
@@ -503,9 +579,14 @@ const LoginScreen = () => {
             <TextInput
               placeholder="Email address"
               value={email}
-              onChangeText={setEmail}
+              onChangeText={(text) => {
+                setEmail(text);
+                if (resetInfo) setResetInfo("");
+                if (validationError) setValidationError("");
+              }}
               keyboardType="email-address"
               autoCapitalize="none"
+              autoCorrect={false}
               style={styles.input}
               textColor={theme.colors.textTitle}
               placeholderTextColor={theme.colors.textPlaceholder}
@@ -544,6 +625,20 @@ const LoginScreen = () => {
               />
             </TouchableOpacity>
           </View>
+
+          {/* Forgot password — sign-in only; opens Firebase browser reset */}
+          {!isRegistering ? (
+            <TouchableOpacity
+              onPress={handleForgotPassword}
+              disabled={loading}
+              style={styles.forgotPasswordBtn}
+              activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel="Forgot password"
+            >
+              <Text style={styles.forgotPasswordText}>Forgot password?</Text>
+            </TouchableOpacity>
+          ) : null}
 
           {/* Primary CTA */}
           <TouchableOpacity
@@ -596,7 +691,11 @@ const LoginScreen = () => {
 
           {/* Toggle */}
           <TouchableOpacity
-            onPress={() => setIsRegistering(!isRegistering)}
+            onPress={() => {
+              setIsRegistering(!isRegistering);
+              setValidationError("");
+              setResetInfo("");
+            }}
             style={styles.toggle}
           >
             <Text style={styles.toggleText}>
@@ -762,7 +861,19 @@ const createStyles = (colors) => StyleSheet.create({
   },
   eyeBtn: { padding: 4 },
 
-  // ── Error banner ───────────────────────────────────────────
+  // ── Forgot password ──────────────────────────────────────────
+  forgotPasswordBtn: {
+    alignSelf: "flex-end",
+    paddingVertical: 4,
+    marginBottom: 4,
+  },
+  forgotPasswordText: {
+    color: colors.secondary,
+    fontSize: 13,
+    fontWeight: "600",
+  },
+
+  // ── Error / success banners ────────────────────────────────
   errorBanner: {
     flexDirection: "row",
     alignItems: "center",
@@ -775,6 +886,21 @@ const createStyles = (colors) => StyleSheet.create({
   errorText: {
     flex: 1,
     color: colors.error,
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  successBanner: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    backgroundColor: colors.successSoft,
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 14,
+    gap: 8,
+  },
+  successText: {
+    flex: 1,
+    color: colors.successStrong,
     fontSize: 13,
     lineHeight: 18,
   },
