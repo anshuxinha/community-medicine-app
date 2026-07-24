@@ -7,6 +7,13 @@
         "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2287856"
     },
     {
+        "id": "dce984e3-a02a-4e8b-8255-74b31f053b42",
+        "date": "2026-07-22",
+        "title": "ICMR-NIN Releases Policy Priorities for Healthier Diets in Children and Adolescents",
+        "summary": "The ICMR-National Institute of Nutrition (NIN)-led 'Let's Fix Our Food' (LFOF) Consortium has released a policy document titled 'Priority Policy Actions to Promote Healthier Diets and Food Environments for Children and Adolescents in India'. Launched by NITI Aayog Member (Health) Dr. M. Srinivas, the document provides evidence-based recommendations to improve dietary behaviors and food environments for youth. The LFOF is a multi-institutional platform involving partners such as UNICEF India, WHO, FSSAI, PHFI, and Resolve to Save Lives (RTSL).",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2287825"
+    },
+    {
         "id": "73f76a06-2465-49ce-a0d1-6d37f5d327eb",
         "date": "2026-07-21",
         "title": "ICMR Transfers Indigenous Biomedical Technologies for Cancer and Enteric Infections",
@@ -35,6 +42,20 @@
         "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2286947"
     },
     {
+        "id": "5586e1d4-b519-4a5d-adc3-6ceb5f2f7aa7",
+        "date": "2026-07-21",
+        "title": "Strengthening Primary Healthcare and NCD Services in India",
+        "summary": "The Ministry of Health and Family Welfare is strengthening primary healthcare via 1.86 lakh Ayushman Arogya Mandirs (AAMs). Under the National Programme for Prevention and Control of Non-Communicable Diseases (NP-NCD), infrastructure includes 770 District NCD Clinics, 524 Day Care Cancer Centres, 233 Cardiac Care Units, and 6,410 CHC NCD Clinics. Additionally, the AB PM-JAY scheme has been expanded to cover 6 crore senior citizens (aged 70+) from 4.5 crore families, regardless of socio-economic status. Other key initiatives include Anaemia Mukt Bharat and TB Mukt Bharat Abhiyaan.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2286956"
+    },
+    {
+        "id": "10d17f05-40bf-4566-bec0-8d9877c741f7",
+        "date": "2026-07-21",
+        "title": "Enhancing National Preparedness Against Emerging Infectious Diseases",
+        "summary": "India is strengthening its infectious disease response through the expansion of the ICMR Viral Research and Diagnostic Laboratories (VRDL) network to 163 labs (11 Regional, 27 State, and 125 Medical College VRDLs). To improve genomic characterization and decentralized diagnostics, four Regional Next-Generation Sequencing Hubs and Infectious Disease Research and Diagnostic Laboratories have been established. The NCDC continues to implement the Integrated Disease Surveillance Programme (IDSP) for outbreak-prone communicable diseases, supported by wastewater surveillance and simulation exercises.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2286953"
+    },
+    {
         "id": "bcee4b34-fb00-40ff-a703-d2af13bfd80b",
         "date": "2026-07-17",
         "title": "NCAHP Releases Competency-Based Curriculum for DMLT",
@@ -47,26 +68,5 @@
         "title": "ICMR i-DRONE Initiative Reduces TB Diagnosis Time and Costs in Telangana",
         "summary": "An ICMR study under the i-DRONE initiative in Yadadri-Bhuvanagiri, Telangana, demonstrated that drone-assisted transport of sputum samples from PHCs/SCs to diagnostic laboratories significantly improves TB service access. In a study of 840 participants, the median turnaround time for diagnosis dropped from 15 days to 5 days. Furthermore, the mean out-of-pocket expenditure (OOPE) for patients decreased drastically from approximately \u20b99,451 to \u20b991, primarily due to reduced travel costs and wage loss. The project was conducted in collaboration with AIIMS Bibinagar and the National TB Elimination Programme (NTEP).",
         "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2285227"
-    },
-    {
-        "id": "cc13fc68-7ebc-4691-8d65-8d730812a4f0",
-        "date": "2026-07-11",
-        "title": "MoHFW Launches Monthly Webinar Series on NHM Best Practices",
-        "summary": "Launched on World Population Day (July 11, 2026), the Union Ministry of Health and Family Welfare introduced a Monthly Webinar Series under the National Health Mission (NHM). The initiative serves as a knowledge-sharing platform for States and UTs to document, exchange, and replicate scalable, evidence-based healthcare innovations to strengthen public health systems. The inaugural session, chaired by Smt. Aradhana Patnaik (Additional Secretary and Mission Director, NHM), focused on Anemia, Child, and Adolescent Health, with over 500 officials participating.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2283687"
-    },
-    {
-        "id": "5bff52f2-687b-4a62-a792-ff45ec494ad6",
-        "date": "2026-07-10",
-        "title": "Amendment to Drugs Rules 1945: Regulation of High Alcohol-Containing Formulations",
-        "summary": "The Ministry of Health and Family Welfare has amended the Drugs Rules, 1945, to prevent misuse of high-alcohol medicinal products. Formulations containing >12% v/v ethyl alcohol in quantities >30 mL are removed from Schedule K (licensing exemption) and moved to Schedule H1. Consequently, these products now require valid licenses under the Drugs and Cosmetics Act, 1940, and must be dispensed only against a prescription from a Registered Medical Practitioner (RMP) with strict record-keeping requirements.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2283196"
-    },
-    {
-        "id": "9e275e13-7364-4685-a394-80117e8d1418",
-        "date": "2026-07-08",
-        "title": "National ToT for Primary Healthcare Cadres at Ayushman Arogya Mandirs",
-        "summary": "The Union Ministry of Health and Family Welfare conducted a National Training of Trainers (NToT) for five primary healthcare cadres operating at Ayushman Arogya Mandirs (AAMs). The initiative introduces an integrated training strategy and cadre-specific modules focusing on technical knowledge, behavioral competencies, empathy, and communication. The program will be implemented via a decentralized cascade model through over 100 Regional Training Institutes starting August 2026 to strengthen the primary healthcare workforce and improve service delivery through inter-agency convergence.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2282465"
     }
 ]
