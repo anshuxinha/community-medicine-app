@@ -3,12 +3,19 @@ const dotenv = require("dotenv");
 const fs = require("fs");
 const https = require("https");
 const path = require("path");
+const { signUrl } = require("../functions/bunnyToken");
 
 dotenv.config({ path: path.join(__dirname, "..", ".env"), quiet: true });
+// Token auth key often lives next to Cloud Functions.
+if (!process.env.BUNNY_CDN_TOKEN_AUTH_KEY) {
+  dotenv.config({ path: path.join(__dirname, "..", "functions", ".env"), quiet: true });
+}
 
 const SERVICE_ACCOUNT_PATH = path.join(__dirname, "..", "serviceAccountKey.json");
+const STORAGE_BUCKET = "community-med-app.firebasestorage.app";
 const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
 const BUNNY_API_BASE = "https://video.bunnycdn.com";
+const THUMBNAIL_SIGN_TTL_SECONDS = 60 * 60; // 1 hour — only for the download hop
 
 const parseArgs = () => {
   const [command = "sync", ...rawArgs] = process.argv.slice(2);
@@ -52,6 +59,7 @@ const requireConfig = () => {
     apiKey,
     libraryId,
     pullZoneHostname: process.env.BUNNY_STREAM_PULL_ZONE_HOSTNAME || "",
+    tokenAuthKey: process.env.BUNNY_CDN_TOKEN_AUTH_KEY || "",
   };
 };
 
@@ -65,6 +73,7 @@ const ensureFirebaseApp = () => {
   const serviceAccount = JSON.parse(fs.readFileSync(SERVICE_ACCOUNT_PATH, "utf8"));
   return admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
+    storageBucket: STORAGE_BUCKET,
   });
 };
 
@@ -127,6 +136,22 @@ const buildThumbnailUrl = (config, video) => {
   return `https://${hostname}/${video.guid}/${thumbnail}`;
 };
 
+const isHostedThumbnailUrl = (url) =>
+  typeof url === "string" &&
+  (url.includes("storage.googleapis.com/") || url.includes("firebasestorage.app/"));
+
+const signBunnyAssetUrl = (config, openUrl, videoId) => {
+  if (!config.tokenAuthKey || !openUrl || !videoId) return openUrl;
+  return signUrl(
+    openUrl,
+    config.tokenAuthKey,
+    THUMBNAIL_SIGN_TTL_SECONDS,
+    "",
+    true,
+    `/${videoId}/`,
+  );
+};
+
 const discoverPullZoneHostname = async (config, video) => {
   if (config.pullZoneHostname || !video.guid) return config.pullZoneHostname;
 
@@ -135,23 +160,82 @@ const discoverPullZoneHostname = async (config, video) => {
   if (!response.ok) return "";
 
   const html = await response.text();
-  const thumbnail = video.thumbnailFileName || "thumbnail.jpg";
-  const escapedVideoId = video.guid.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const escapedThumbnail = thumbnail.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  // Prefer any pull-zone host on the video path (tokenized URLs vary).
   const match = html.match(
-    new RegExp(`https://([^/"'\\s<>]+)/${escapedVideoId}/${escapedThumbnail}`),
+    new RegExp(
+      `https://([^/"'\\s<>]+\\.b-cdn\\.net)/[^"'\\s<>]*${video.guid.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`,
+    ),
   );
 
   config.pullZoneHostname = match?.[1] || "";
   return config.pullZoneHostname;
 };
 
-const resolveThumbnailUrl = async (config, video, existing = {}) => {
-  const configuredUrl = buildThumbnailUrl(config, video);
-  if (configuredUrl) return configuredUrl;
+/**
+ * Download the Bunny thumbnail (token-auth signed when needed) and re-host on
+ * Firebase Storage so the app can load a permanent public image without CDN tokens.
+ */
+const hostThumbnailOnStorage = async (config, video, bunnyThumbnailUrl) => {
+  const videoId = video.guid;
+  const fetchUrl = signBunnyAssetUrl(config, bunnyThumbnailUrl, videoId);
+  const response = await fetch(fetchUrl);
+  if (!response.ok) {
+    throw new Error(`Thumbnail download ${response.status} for ${videoId}`);
+  }
 
-  await discoverPullZoneHostname(config, video);
-  return buildThumbnailUrl(config, video) || existing.thumbnailUrl || null;
+  const contentType = response.headers.get("content-type") || "image/jpeg";
+  const buffer = Buffer.from(await response.arrayBuffer());
+  if (buffer.length < 100) {
+    throw new Error(`Thumbnail too small (${buffer.length} bytes) for ${videoId}`);
+  }
+
+  const ext = contentType.includes("png") ? "png" : "jpg";
+  const remotePath = `videos/thumbnails/${videoId}.${ext}`;
+  const bucket = admin.storage().bucket();
+  const file = bucket.file(remotePath);
+
+  await file.save(buffer, {
+    metadata: {
+      contentType,
+      cacheControl: "public, max-age=31536000",
+    },
+    resumable: false,
+  });
+  await file.makePublic();
+
+  const publicUrl = `https://storage.googleapis.com/${STORAGE_BUCKET}/${remotePath}`;
+  console.log(`  Hosted thumbnail → ${publicUrl}`);
+  return publicUrl;
+};
+
+const resolveThumbnailUrl = async (config, video, existing = {}) => {
+  // Already on Firebase Storage — permanent and loadable without Bunny token auth.
+  if (isHostedThumbnailUrl(existing.thumbnailUrl)) {
+    return existing.thumbnailUrl;
+  }
+
+  let bunnyUrl = buildThumbnailUrl(config, video);
+  if (!bunnyUrl) {
+    await discoverPullZoneHostname(config, video);
+    bunnyUrl = buildThumbnailUrl(config, video);
+  }
+
+  if (!bunnyUrl) {
+    return existing.thumbnailUrl || null;
+  }
+
+  // Bunny pull zone uses token authentication; bare CDN URLs 403 in the app.
+  // Re-host so list posters work offline of short-lived signed playback tokens.
+  try {
+    return await hostThumbnailOnStorage(config, video, bunnyUrl);
+  } catch (error) {
+    console.warn(
+      `Could not host thumbnail for ${video.guid}: ${error.message}. Falling back to signed CDN URL.`,
+    );
+    const signed = signBunnyAssetUrl(config, bunnyUrl, video.guid);
+    // Prefer a still-working signed URL over a bare 403 URL or stale value.
+    return signed || existing.thumbnailUrl || bunnyUrl;
+  }
 };
 
 const parseFirestoreDate = (value) => {

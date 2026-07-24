@@ -296,8 +296,8 @@
     "hash": "54936b9b06f3ffedf69217c6f0accca5"
   },
   "D:\\The App\\scripts\\attach-pdf-to-video.js": {
-    "mtime": 1784723160.8440416,
-    "hash": "fe10379d9da0b5e3037f7ce46f9001ca"
+    "mtime": 1784901443.647495,
+    "hash": "4f27e3ba8943901cb5fa77c0b2eea505"
   },
   "D:\\The App\\scripts\\audit_colors.js": {
     "mtime": 1772547735.8824155,
@@ -308,8 +308,8 @@
     "hash": "d2356a6192520e31f73a149eeed2931b"
   },
   "D:\\The App\\scripts\\bunny-videos.js": {
-    "mtime": 1784274936.583163,
-    "hash": "c37afb4f531fd49fcfae59137861676d"
+    "mtime": 1784901340.8981462,
+    "hash": "c376cf3c08a108ae59ce19778d172043"
   },
   "D:\\The App\\scripts\\check-firestore-gem.js": {
     "mtime": 1778661542.9656944,
@@ -434,6 +434,10 @@
   "D:\\The App\\scripts\\tokenise_createstyles_hex.js": {
     "mtime": 1784224580.1890764,
     "hash": "0acc497ab78a179e477f10d4b4babfa2"
+  },
+  "D:\\The App\\scripts\\update-auth-email-templates.js": {
+    "mtime": 1784792562.7217884,
+    "hash": "c1636de446739811081bf9f11b4d4601"
   },
   "D:\\The App\\scripts\\update-firestore-version.js": {
     "mtime": 1782823208.4439752,
@@ -576,8 +580,8 @@
     "hash": "67e9ce8c20616a74c8605f27fa98925a"
   },
   "D:\\The App\\src\\screens\\LoginScreen.js": {
-    "mtime": 1784224587.365621,
-    "hash": "c6f9063aea1d59dc8803485a980e02a8"
+    "mtime": 1784792634.4212348,
+    "hash": "2e43b75ac76e434b40d1ad570632f0e1"
   },
   "D:\\The App\\src\\screens\\NFHSComparisonScreen.js": {
     "mtime": 1784225550.695324,
@@ -688,8 +692,8 @@
     "hash": "34c2be6fa56708b10839c0dff74bbdd9"
   },
   "D:\\The App\\src\\styles\\theme.js": {
-    "mtime": 1784220279.988786,
-    "hash": "051cf5ecba68e2af965b35fcf8a1863c"
+    "mtime": 1784792579.0562034,
+    "hash": "0ecf8ebc4f00c5d3b2a84af658fb8004"
   },
   "D:\\The App\\src\\styles\\ThemeContext.js": {
     "mtime": 1784220279.988786,
@@ -736,24 +740,24 @@
     "hash": "035440e518221f9db9a58e3cb9736f87"
   },
   "D:\\The App\\AGENTS.md": {
-    "mtime": 1784642936.4863648,
-    "hash": "0aface78bddcdc964dfd24ecb2f57ca4"
+    "mtime": 1784725297.409278,
+    "hash": "c98a113eb85a05795abeb6b7c86d1e66"
   },
   "D:\\The App\\CLAUDE.md": {
-    "mtime": 1784014047.6696413,
-    "hash": "99bb89fd195fcae1666729f0a86c5d0d"
+    "mtime": 1784725297.409278,
+    "hash": "647acf6cd82f26b312d239ac41668627"
   },
   "D:\\The App\\COUPON_SETUP.md": {
     "mtime": 1778570823.4695475,
     "hash": "3cf53682ca29a79ec4d6899d2c41c273"
   },
   "D:\\The App\\CUSTOM_INSTRUCTION_EAS.md": {
-    "mtime": 1784642936.4873748,
-    "hash": "3c39d5c6847f25136ed75f1f27263bed"
+    "mtime": 1784725297.409278,
+    "hash": "7d139208a1aa5ddbf797a296de9bd86f"
   },
   "D:\\The App\\EAS_UPDATE_GUIDELINES.md": {
-    "mtime": 1784014047.6686404,
-    "hash": "7c0319314d243c70bff1771d7d94f581"
+    "mtime": 1784725297.409278,
+    "hash": "b424f416a7e5f8e307c9a9553d9cd391"
   },
   "D:\\The App\\EXAMPLES.md": {
     "mtime": 1779247812.5566843,
@@ -914,6 +918,10 @@
   "D:\\The App\\assets\\splash.png": {
     "mtime": 1772355533.2839482,
     "hash": "8e7fa8c5e81f7b6f8b270692c680946b"
+  },
+  "D:\\The App\\assets\\stroma_logo_login.png": {
+    "mtime": 1783491665.2962155,
+    "hash": "434031801fd7d9073c062d515a109638"
   },
   "D:\\The App\\assets\\pyq\\Paper1_Diag1.png": {
     "mtime": 1777965241.4542718,
