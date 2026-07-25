@@ -3,6 +3,7 @@ import {
   View,
   StyleSheet,
   ScrollView,
+  useWindowDimensions,
 } from "react-native";
 import {
   Text,
@@ -12,7 +13,7 @@ import {
   Divider,
 } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-import { theme } from '../styles/theme';
+import { theme, useResponsive } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
 
 /**
@@ -25,71 +26,90 @@ import { useThemedStyles } from '../styles/useThemedStyles';
  *  - onAction: () => void
  */
 const ReferralAnnouncementDialog = ({ visible, onDismiss, onAction }) => {
-  const { styles, colors } = useThemedStyles(createStyles);
+  const { styles } = useThemedStyles(createStyles);
+  const { height } = useWindowDimensions();
+  const { isTablet } = useResponsive();
+
+  // Fixed-height announcement: only scroll on short viewports (small phones / landscape).
+  // Dialog.ScrollArea + always-on ScrollView was forcing unnecessary scroll on tablets.
+  const useScroll = height < 640;
+
+  const body = (
+    <>
+      {/* Branded Gift Header Icon */}
+      <View style={styles.iconContainer}>
+        <View style={styles.giftIconCircle}>
+          <MaterialIcons
+            name="card-giftcard"
+            size={40}
+            color={theme.colors.secondary}
+          />
+        </View>
+      </View>
+
+      {/* Title */}
+      <Text style={styles.title}>🎁 Introducing Refer & Earn!</Text>
+
+      <Text style={styles.subtitle}>
+        Share STROMA with your friends and unlock Premium benefits together.
+      </Text>
+
+      <Divider style={styles.divider} />
+
+      {/* Benefit Box */}
+      <View style={styles.benefitBox}>
+        <View style={styles.benefitRow}>
+          <MaterialIcons name="local-offer" size={22} color={theme.colors.secondary} style={styles.benefitIcon} />
+          <View style={styles.benefitTextCol}>
+            <Text style={styles.benefitTitle}>Friends Get 15% Off</Text>
+            <Text style={styles.benefitDescription}>
+              Your friends get the Yearly Premium plan for just <Text style={styles.boldText}>₹999</Text> (instead of ₹1,200) when they sign up with your code.
+            </Text>
+          </View>
+        </View>
+
+        <View style={[styles.benefitRow, styles.benefitRowLast]}>
+          <MaterialIcons name="stars" size={22} color="#4CAF50" style={styles.benefitIcon} />
+          <View style={styles.benefitTextCol}>
+            <Text style={styles.benefitTitle}>You Get 30 Days Free</Text>
+            <Text style={styles.benefitDescription}>
+              Receive <Text style={styles.boldText}>30 days of Premium free</Text> for every single friend who subscribes using your referral code.
+            </Text>
+          </View>
+        </View>
+      </View>
+
+      <Text style={styles.helperText}>
+        Find your unique referral code under the "Refer & Earn" section of your Profile.
+      </Text>
+    </>
+  );
 
   return (
     <Portal>
       <Dialog
         visible={visible}
         onDismiss={onDismiss}
-        style={styles.dialog}
+        style={[styles.dialog, isTablet && styles.dialogTablet]}
       >
-        {/* Accent bar */}
+        {/* Accent bar — marginTop: 0 overrides Paper v3 first-child marginTop: 24 */}
         <View style={styles.accentBar} />
 
-        <Dialog.ScrollArea style={styles.scrollArea}>
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
-          >
-            {/* Branded Gift Header Icon */}
-            <View style={styles.iconContainer}>
-              <View style={styles.giftIconCircle}>
-                <MaterialIcons
-                  name="card-giftcard"
-                  size={40}
-                  color={theme.colors.secondary}
-                />
-              </View>
-            </View>
-
-            {/* Title */}
-            <Text style={styles.title}>🎁 Introducing Refer & Earn!</Text>
-            
-            <Text style={styles.subtitle}>
-              Share STROMA with your friends and unlock Premium benefits together.
-            </Text>
-
-            <Divider style={styles.divider} />
-
-            {/* Benefit Box */}
-            <View style={styles.benefitBox}>
-              <View style={styles.benefitRow}>
-                <MaterialIcons name="local-offer" size={22} color={theme.colors.secondary} style={styles.benefitIcon} />
-                <View style={styles.benefitTextCol}>
-                  <Text style={styles.benefitTitle}>Friends Get 15% Off</Text>
-                  <Text style={styles.benefitDescription}>
-                    Your friends get the Yearly Premium plan for just <Text style={styles.boldText}>₹999</Text> (instead of ₹1,200) when they sign up with your code.
-                  </Text>
-                </View>
-              </View>
-
-              <View style={styles.benefitRow}>
-                <MaterialIcons name="stars" size={22} color="#4CAF50" style={styles.benefitIcon} />
-                <View style={styles.benefitTextCol}>
-                  <Text style={styles.benefitTitle}>You Get 30 Days Free</Text>
-                  <Text style={styles.benefitDescription}>
-                    Receive <Text style={styles.boldText}>30 days of Premium free</Text> for every single friend who subscribes using your referral code.
-                  </Text>
-                </View>
-              </View>
-            </View>
-
-            <Text style={styles.helperText}>
-              Find your unique referral code under the "Refer & Earn" section of your Profile.
-            </Text>
-          </ScrollView>
-        </Dialog.ScrollArea>
+        {useScroll ? (
+          <Dialog.ScrollArea style={styles.scrollArea}>
+            <ScrollView
+              contentContainerStyle={styles.scrollContent}
+              showsVerticalScrollIndicator={false}
+              bounces={false}
+            >
+              {body}
+            </ScrollView>
+          </Dialog.ScrollArea>
+        ) : (
+          <Dialog.Content style={styles.content}>
+            {body}
+          </Dialog.Content>
+        )}
 
         <Dialog.Actions style={styles.actions}>
           <Button
@@ -120,7 +140,7 @@ const createStyles = (colors) => StyleSheet.create({
   dialog: {
     backgroundColor: colors.surfacePrimary,
     borderRadius: 24,
-    maxHeight: "80%",
+    maxHeight: "90%",
     overflow: "hidden",
     elevation: 8,
     shadowColor: colors.textTitle,
@@ -128,21 +148,34 @@ const createStyles = (colors) => StyleSheet.create({
     shadowOpacity: 0.12,
     shadowRadius: 24,
   },
+  dialogTablet: {
+    // Keep a readable width on large screens so the card doesn't stretch full-bleed
+    alignSelf: "center",
+    width: "100%",
+    maxWidth: 440,
+  },
   accentBar: {
     height: 6,
+    marginTop: 0,
     backgroundColor: colors.secondary,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
+  },
+  content: {
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    paddingBottom: 8,
   },
   scrollArea: {
     paddingHorizontal: 0,
     borderTopWidth: 0,
     borderBottomWidth: 0,
     borderColor: "transparent",
+    marginBottom: 0,
   },
   scrollContent: {
     paddingHorizontal: 24,
-    paddingTop: 24,
+    paddingTop: 20,
     paddingBottom: 12,
   },
   iconContainer: {
@@ -190,6 +223,9 @@ const createStyles = (colors) => StyleSheet.create({
     alignItems: "flex-start",
     marginBottom: 16,
   },
+  benefitRowLast: {
+    marginBottom: 0,
+  },
   benefitIcon: {
     marginTop: 2,
     marginRight: 12,
@@ -222,6 +258,7 @@ const createStyles = (colors) => StyleSheet.create({
   actions: {
     paddingHorizontal: 20,
     paddingBottom: 16,
+    paddingTop: 4,
     justifyContent: "flex-end",
     gap: 8,
   },
