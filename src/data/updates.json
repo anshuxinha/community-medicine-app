@@ -1,5 +1,19 @@
 [
     {
+        "id": "08d86198-f22c-4698-a715-b6cb49d3310f",
+        "date": "2026-07-24",
+        "title": "Key Findings of NFHS-6 (2023-24)",
+        "summary": "NFHS-6 shows improvements in maternal and child health: institutional deliveries (90.6% vs 88.6%), ANC coverage (95.9% vs 92.6%), and skilled birth attendance (91.3% vs 89.4%). CPR increased to 69.1% with unmet need dropping to 8.5%. TFR remains stable at 2.0 (below replacement level). Child health gains include full immunization (87.1%), measles vaccine 2nd dose (71.8%), and a significant jump in rotavirus vaccine coverage (85.4% from 36.4%). Stunting (29.3%) and severe wasting (5.2%) have declined. However, lifestyle diseases are rising, with 30.7% of women and 27.3% of men (15-49 years) being overweight or obese, and an increase in high blood sugar levels among adults.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2288850"
+    },
+    {
+        "id": "c3e1c1ea-f35c-4004-8eb3-462eeba27b46",
+        "date": "2026-07-24",
+        "title": "Expansion of RBSK 2.0 for Childhood Health",
+        "summary": "The Ministry of Health and Family Welfare has launched RBSK 2.0, expanding its framework to cover 38 common childhood health conditions. New priorities include non-communicable diseases (diabetes, hypertension), mental health, and behavioral concerns. Implementation is strengthened through additional human resources for Mobile Health Teams (MHTs) screening in schools and Anganwadi centres. The program utilizes a digital platform for tracking and follow-up of the preventive, promotive, and curative continuum of care. To improve community awareness, new IEC materials (booklets, videos, posters) have been developed and shared with States/UTs.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2288846"
+    },
+    {
         "id": "fa13ba06-b0fc-4137-8a7c-7af74b18c5d9",
         "date": "2026-07-22",
         "title": "ICMR-NIN Releases Policy Priorities for Healthier Diets in Children and Adolescents",
@@ -54,19 +68,5 @@
         "title": "Enhancing National Preparedness Against Emerging Infectious Diseases",
         "summary": "India is strengthening its infectious disease response through the expansion of the ICMR Viral Research and Diagnostic Laboratories (VRDL) network to 163 labs (11 Regional, 27 State, and 125 Medical College VRDLs). To improve genomic characterization and decentralized diagnostics, four Regional Next-Generation Sequencing Hubs and Infectious Disease Research and Diagnostic Laboratories have been established. The NCDC continues to implement the Integrated Disease Surveillance Programme (IDSP) for outbreak-prone communicable diseases, supported by wastewater surveillance and simulation exercises.",
         "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2286953"
-    },
-    {
-        "id": "bcee4b34-fb00-40ff-a703-d2af13bfd80b",
-        "date": "2026-07-17",
-        "title": "NCAHP Releases Competency-Based Curriculum for DMLT",
-        "summary": "The National Commission for Allied and Healthcare Professions (NCAHP), MoHFW, has released a Competency-Based Curriculum for the Diploma in Medical Laboratory Technology (DMLT). Shifting from knowledge-based to a framework emphasizing Knowledge, Skills, Values, and Attitudes (KSVA), the curriculum focuses on pre-analytical, analytical, and post-analytical phases of laboratory testing. Implementation begins in Academic Year 2026\u201327, with mandatory adoption by 2027\u201328. This initiative aligns with the Union Budget 2026\u201327 goal to create one lakh additional Allied and Healthcare Professionals over five years. The two-year program is for Class XII Science (PCB) graduates.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2285818"
-    },
-    {
-        "id": "2ffe1e7c-4a69-46ab-bbaf-e714c1484ed1",
-        "date": "2026-07-16",
-        "title": "ICMR i-DRONE Initiative Reduces TB Diagnosis Time and Costs in Telangana",
-        "summary": "An ICMR study under the i-DRONE initiative in Yadadri-Bhuvanagiri, Telangana, demonstrated that drone-assisted transport of sputum samples from PHCs/SCs to diagnostic laboratories significantly improves TB service access. In a study of 840 participants, the median turnaround time for diagnosis dropped from 15 days to 5 days. Furthermore, the mean out-of-pocket expenditure (OOPE) for patients decreased drastically from approximately \u20b99,451 to \u20b991, primarily due to reduced travel costs and wage loss. The project was conducted in collaboration with AIIMS Bibinagar and the National TB Elimination Programme (NTEP).",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2285227"
     }
 ]
