@@ -17,7 +17,6 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
-import { theme } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
 import { normalizeUpdatedSnippet } from "../utils/contentRegistry";
 import ThemeModePill from "./ThemeModePill";
@@ -1601,7 +1600,7 @@ const ReadingView = ({
           onPress={() => navigation?.goBack()}
           activeOpacity={0.7}
         >
-          <MaterialIcons name="arrow-back" size={24} color={theme.colors.textTitle} />
+          <MaterialIcons name="arrow-back" size={24} color={colors.textTitle} />
         </TouchableOpacity>
         <Text style={styles.headerSectionTitle} numberOfLines={1} selectable={false}>
           {headerTitle}
@@ -1616,7 +1615,7 @@ const ReadingView = ({
             <MaterialIcons
               name={isBookmarked ? "bookmark" : "bookmark-border"}
               size={22}
-              color={theme.colors.secondary}
+              color={colors.secondary}
             />
           </TouchableOpacity>
           <TouchableOpacity
@@ -1627,7 +1626,7 @@ const ReadingView = ({
             <MaterialIcons
               name={isSpeaking ? "stop" : "volume-up"}
               size={22}
-              color={theme.colors.secondary}
+              color={colors.secondary}
             />
           </TouchableOpacity>
         </View>
@@ -1674,7 +1673,7 @@ const ReadingView = ({
             <MaterialIcons
               name="auto-awesome"
               size={18}
-              color={theme.colors.warningText}
+              color={colors.warningText}
             />
             <Text style={styles.updateBannerText}>
               Updated lines are highlighted in this topic until you review them.
@@ -1691,7 +1690,7 @@ const ReadingView = ({
           onPress={() => navigation?.navigate("MainTabs", { screen: "Library" })}
           activeOpacity={0.7}
         >
-          <MaterialIcons name="menu-book" size={22} color={theme.colors.textTertiary} />
+          <MaterialIcons name="menu-book" size={22} color={colors.textTertiary} />
           <Text style={styles.toolbarLabel} selectable={false}>LIBRARY</Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -1702,7 +1701,7 @@ const ReadingView = ({
           <MaterialIcons
             name="border-color"
             size={22}
-            color={isHighlightMode ? theme.colors.secondary : theme.colors.textTertiary}
+            color={isHighlightMode ? colors.secondary : colors.textTertiary}
           />
           <Text
             style={[
@@ -1731,7 +1730,7 @@ const ReadingView = ({
           <MaterialIcons
             name="edit-note"
             size={24}
-            color={isAnnotationMode ? theme.colors.secondary : theme.colors.textTertiary}
+            color={isAnnotationMode ? colors.secondary : colors.textTertiary}
           />
           <Text
             style={[
