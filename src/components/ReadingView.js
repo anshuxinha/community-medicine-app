@@ -20,6 +20,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { theme } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
 import { normalizeUpdatedSnippet } from "../utils/contentRegistry";
+import ThemeModePill from "./ThemeModePill";
 
 const stripBold = (text) => text.replace(/\*\*(.+?)\*\*/g, "$1");
 const normalizeAnchorText = (text = "") =>
@@ -1606,6 +1607,7 @@ const ReadingView = ({
           {headerTitle}
         </Text>
         <View style={styles.headerActions}>
+          <ThemeModePill />
           <TouchableOpacity
             style={styles.headerActionBtn}
             onPress={onToggleBookmark}

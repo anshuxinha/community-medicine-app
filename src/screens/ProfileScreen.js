@@ -26,14 +26,13 @@ import {
 } from "../utils/screenCaptureProtection";
 
 const APPEARANCE_OPTIONS = [
-  { value: "system", label: "System", icon: "phone-android" },
   { value: "light", label: "Light", icon: "wb-sunny" },
   { value: "dark", label: "Dark", icon: "nights-stay" },
 ];
 
 const ProfileScreen = () => {
   const { styles, colors } = useThemedStyles(createStyles);
-  const { preference, setPreference, scheme } = useAppTheme();
+  const { preference, setPreference } = useAppTheme();
 
   const navigation = useNavigation();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -423,7 +422,7 @@ const ProfileScreen = () => {
         <Card style={styles.actionsCard}>
           <Card.Content style={styles.actionsContent}>
             <Text style={styles.appearanceIntro}>
-              Choose Light, Dark, or match your phone settings.
+              Choose Light or Dark appearance.
             </Text>
             <View style={styles.appearanceRow}>
               {APPEARANCE_OPTIONS.map((opt) => {
@@ -456,11 +455,6 @@ const ProfileScreen = () => {
                 );
               })}
             </View>
-            {preference === "system" ? (
-              <Text style={styles.appearanceHint}>
-                Following system · {scheme === "dark" ? "Dark" : "Light"}
-              </Text>
-            ) : null}
           </Card.Content>
         </Card>
 
@@ -694,12 +688,6 @@ const createStyles = (colors) => StyleSheet.create({
   appearanceOptionLabelSelected: {
     color: colors.secondary,
     fontWeight: "700",
-  },
-  appearanceHint: {
-    marginTop: 10,
-    fontSize: 12,
-    color: colors.textTertiary,
-    textAlign: "center",
   },
   sectionTitle: {
     fontSize: 16,
