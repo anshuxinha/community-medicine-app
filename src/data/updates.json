@@ -14,6 +14,13 @@
         "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2288846"
     },
     {
+        "id": "27325ad4-4725-4918-8435-331cba9fabed",
+        "date": "2026-07-24",
+        "title": "Increase in Medical Seats and Improved Doctor-Population Ratio",
+        "summary": "The National Medical Commission (NMC) reported a significant increase in medical seats between AY 2023-24 and AY 2025-26: MBBS seats rose from 1,09,115 to 1,28,976, and PG seats nearly tripled from 31,185 to 86,360. According to the Indian Medical Register (IMR), there are currently 15,35,155 allopathic and 7,51,768 AYUSH registered practitioners. Assuming an 80% availability rate for both systems, India's estimated doctor-population ratio has improved to 1:778.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2288843"
+    },
+    {
         "id": "fa13ba06-b0fc-4137-8a7c-7af74b18c5d9",
         "date": "2026-07-22",
         "title": "ICMR-NIN Releases Policy Priorities for Healthier Diets in Children and Adolescents",
@@ -61,12 +68,5 @@
         "title": "Strengthening Primary Healthcare and NCD Services in India",
         "summary": "The Ministry of Health and Family Welfare is strengthening primary healthcare via 1.86 lakh Ayushman Arogya Mandirs (AAMs). Under the National Programme for Prevention and Control of Non-Communicable Diseases (NP-NCD), infrastructure includes 770 District NCD Clinics, 524 Day Care Cancer Centres, 233 Cardiac Care Units, and 6,410 CHC NCD Clinics. Additionally, the AB PM-JAY scheme has been expanded to cover 6 crore senior citizens (aged 70+) from 4.5 crore families, regardless of socio-economic status. Other key initiatives include Anaemia Mukt Bharat and TB Mukt Bharat Abhiyaan.",
         "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2286956"
-    },
-    {
-        "id": "10d17f05-40bf-4566-bec0-8d9877c741f7",
-        "date": "2026-07-21",
-        "title": "Enhancing National Preparedness Against Emerging Infectious Diseases",
-        "summary": "India is strengthening its infectious disease response through the expansion of the ICMR Viral Research and Diagnostic Laboratories (VRDL) network to 163 labs (11 Regional, 27 State, and 125 Medical College VRDLs). To improve genomic characterization and decentralized diagnostics, four Regional Next-Generation Sequencing Hubs and Infectious Disease Research and Diagnostic Laboratories have been established. The NCDC continues to implement the Integrated Disease Surveillance Programme (IDSP) for outbreak-prone communicable diseases, supported by wastewater surveillance and simulation exercises.",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2286953"
     }
 ]
