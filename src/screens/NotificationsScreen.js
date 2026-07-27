@@ -62,7 +62,7 @@ const NotificationsScreen = () => {
             </View>
             <Text style={styles.updateTitle}>Early Bird Price Migration Notice</Text>
             <Text style={styles.updateSummary}>
-              If you purchased your monthly or yearly subscription during the Early Bird Offer period, please note that you will be automatically migrated to the new price on your next billing date.
+              If you purchased your monthly or yearly STROMA Membership during the Early Bird Offer period, please note that you will be automatically migrated to the new price on your next billing date.
             </Text>
           </Card.Content>
         </Card>

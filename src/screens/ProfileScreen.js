@@ -126,7 +126,7 @@ const ProfileScreen = () => {
 
     try {
       await Share.share({
-        message: `Hey! I'm using STROMA to prep for Community Medicine. Join me using my referral code ${user.referralCode} to get the Yearly Premium plan for just ₹999 (instead of ₹1,200)! 📚✨\n\nDownload now:\nAndroid: https://bit.ly/stromaapp\niOS: https://apple.co/4oaVlLi`,
+        message: `Hey! I'm using STROMA to prep for Community Medicine. Join me using my referral code ${user.referralCode} to get Yearly STROMA Membership for just ₹999 (instead of ₹1,200)! 📚✨\n\nDownload now:\nAndroid: https://bit.ly/stromaapp\niOS: https://apple.co/4oaVlLi`,
       });
     } catch (error) {
       console.warn("Failed to share referral code:", error.message);
@@ -294,12 +294,12 @@ const ProfileScreen = () => {
               </View>
               <View style={styles.subscriptionText}>
                 <Text style={styles.subscriptionTitle}>
-                  {isPremium ? "Premium Member" : "Free Account"}
+                  {isPremium ? "STROMA Member" : "Free Account"}
                 </Text>
                 <Text style={styles.subscriptionSubtitle}>
                   {isPremium
-                    ? "Enjoying all premium features"
-                    : "Upgrade to unlock all features"}
+                    ? "Enjoying all membership features"
+                    : "Get STROMA Membership to unlock all features"}
                 </Text>
               </View>
             </View>
@@ -308,7 +308,7 @@ const ProfileScreen = () => {
                 style={styles.upgradeButton}
                 onPress={handleUpgradePremium}
               >
-                <Text style={styles.upgradeButtonText}>Upgrade</Text>
+                <Text style={styles.upgradeButtonText}>Get Membership</Text>
               </TouchableOpacity>
             )}
           </Card.Content>
@@ -377,7 +377,7 @@ const ProfileScreen = () => {
         <Card style={styles.referralCard}>
           <Card.Content>
             <Text style={styles.referralSubtitle}>
-              Give friends 15% off premium and get 30 days of premium free when they subscribe!
+              Give friends 15% off STROMA Membership and get 30 days free when they join with your code!
             </Text>
             
             <View style={styles.referralCodeBox}>
@@ -409,7 +409,7 @@ const ProfileScreen = () => {
             </View>
             <Divider style={styles.accountDivider} />
             <View style={styles.accountRow}>
-              <Text style={styles.accountLabel}>Subscription Expiry</Text>
+              <Text style={styles.accountLabel}>Membership Expiry</Text>
               <Text style={styles.accountValue}>
                 {getSubscriptionExpiryDisplay()}
               </Text>

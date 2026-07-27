@@ -51,7 +51,7 @@ const ReferralAnnouncementDialog = ({ visible, onDismiss, onAction }) => {
       <Text style={styles.title}>🎁 Introducing Refer & Earn!</Text>
 
       <Text style={styles.subtitle}>
-        Share STROMA with your friends and unlock Premium benefits together.
+        Share STROMA with your friends and unlock membership benefits together.
       </Text>
 
       <Divider style={styles.divider} />
@@ -63,7 +63,7 @@ const ReferralAnnouncementDialog = ({ visible, onDismiss, onAction }) => {
           <View style={styles.benefitTextCol}>
             <Text style={styles.benefitTitle}>Friends Get 15% Off</Text>
             <Text style={styles.benefitDescription}>
-              Your friends get the Yearly Premium plan for just <Text style={styles.boldText}>₹999</Text> (instead of ₹1,200) when they sign up with your code.
+              Your friends get Yearly STROMA Membership for just <Text style={styles.boldText}>₹999</Text> (instead of ₹1,200) when they sign up with your code.
             </Text>
           </View>
         </View>
@@ -73,7 +73,7 @@ const ReferralAnnouncementDialog = ({ visible, onDismiss, onAction }) => {
           <View style={styles.benefitTextCol}>
             <Text style={styles.benefitTitle}>You Get 30 Days Free</Text>
             <Text style={styles.benefitDescription}>
-              Receive <Text style={styles.boldText}>30 days of Premium free</Text> for every single friend who subscribes using your referral code.
+              Receive <Text style={styles.boldText}>30 days of membership free</Text> for every single friend who gets STROMA Membership using your referral code.
             </Text>
           </View>
         </View>

@@ -191,7 +191,7 @@ const PaywallScreen = ({ navigation }) => {
           Object.keys(result.all),
         );
         setLoadError(
-          `No subscription packages available (${errorMsg}). Please try again later.`,
+          `No membership packages available (${errorMsg}). Please try again later.`,
         );
         return;
       }
@@ -227,7 +227,7 @@ const PaywallScreen = ({ navigation }) => {
     } catch (err) {
       console.warn("Failed to fetch offerings:", err.message);
       setLoadError(
-        `Failed to load subscription plans: ${err.message}. Check your connection.`,
+        `Failed to load membership plans: ${err.message}. Check your connection.`,
       );
     }
   };
@@ -385,8 +385,8 @@ const PaywallScreen = ({ navigation }) => {
       });
 
       Alert.alert(
-        "🎉 Welcome to Premium!",
-        "Your subscription is now active. Enjoy full access to STROMA.",
+        "🎉 Welcome to STROMA Membership!",
+        "Your membership is now active. Enjoy full access to STROMA.",
         [{ text: "Start Learning", onPress: () => navigation.goBack() }],
       );
     } catch (error) {
@@ -421,7 +421,7 @@ const PaywallScreen = ({ navigation }) => {
         await upgradeToPremium({ premiumSource: "restore" });
         Alert.alert("Success", "Your purchases were restored!");
       } else {
-        Alert.alert("Notice", "No active premium subscriptions found.");
+        Alert.alert("Notice", "No active STROMA Membership found.");
       }
     } catch (e) {
       Alert.alert("Error restoring purchases", e.message);
@@ -461,7 +461,7 @@ const PaywallScreen = ({ navigation }) => {
             />
           </View>
           <Text variant="displaySmall" style={styles.title}>
-            Unlock Pro
+            Get STROMA Membership
           </Text>
         </View>
 
@@ -632,7 +632,7 @@ const PaywallScreen = ({ navigation }) => {
               disabled={isPurchasing}
               onPress={handlePurchase}
             >
-              {appliedCoupon ? "Get Discounted Price" : "Subscribe Now"}
+              {appliedCoupon ? "Get Discounted Price" : "Get STROMA Membership"}
             </Button>
 
             <View style={styles.footerLinks}>
@@ -659,7 +659,7 @@ const PaywallScreen = ({ navigation }) => {
 
             <View style={styles.legalDisclaimer}>
               <Text style={styles.legalText}>
-                Subscription Title: STROMA Premium. Length of subscription:
+                Subscription Title: STROMA Membership. Length of subscription:
                 Monthly, Yearly, or Lifetime as selected. Payment will be
                 charged to your Apple ID account at the confirmation of
                 purchase. Subscription automatically renews unless it is

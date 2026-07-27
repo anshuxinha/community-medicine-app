@@ -189,7 +189,7 @@ const PYQCreateScreen = ({ navigation }) => {
               <View style={styles.premiumTextContainer}>
                 <Text style={styles.premiumTitle}>Unlock Full QBank Access</Text>
                 <Text style={styles.premiumDesc}>
-                  Upgrade to Premium to practice NEET/INI-CET, custom filters, and all 330+ questions.
+                  Get STROMA Membership to practice NEET/INI-CET, custom filters, and all 330+ questions.
                 </Text>
               </View>
             </Card.Content>
