@@ -79,6 +79,33 @@ const getPremiumTypeFromEntitlement = (entitlement) => {
   return "yearly"; // fallback
 };
 
+/**
+ * Resolve a referral code for a user. Creates + persists one if missing.
+ * Returns the code immediately; Firestore writes are fire-and-forget.
+ */
+const resolveReferralCode = (uid, username, existingCode) => {
+  if (existingCode) {
+    setDoc(
+      doc(db, "referralCodes", existingCode),
+      { ownerUid: uid, ownerName: username },
+      { merge: true },
+    ).catch(() => {});
+    return existingCode;
+  }
+
+  const referralCode = generateReferralCode(username);
+  Promise.all([
+    setDoc(doc(db, "users", uid), { referralCode }, { merge: true }),
+    setDoc(doc(db, "referralCodes", referralCode), {
+      ownerUid: uid,
+      ownerName: username,
+    }),
+  ]).catch((err) => {
+    console.warn("Failed to generate and save referralCode:", err.message);
+  });
+  return referralCode;
+};
+
 const sanitizeReadItemVersions = (value) => {
   if (!value || typeof value !== "object") return {};
 
@@ -746,27 +773,11 @@ export const AppProvider = ({ children }) => {
               "User",
             );
 
-            // Automatically generate a referral code if missing
-            let referralCode = data.referralCode;
-            if (!referralCode) {
-              referralCode = generateReferralCode(username);
-              const batch = [
-                updateDoc(doc(db, "users", firebaseUser.uid), { referralCode }),
-                setDoc(doc(db, "referralCodes", referralCode), {
-                  ownerUid: firebaseUser.uid,
-                  ownerName: username,
-                })
-              ];
-              Promise.all(batch).catch((err) => {
-                console.warn("Failed to generate and save referralCode:", err.message);
-              });
-            } else {
-              // Self-healing: ensure referralCodes mapping registry exists
-              setDoc(doc(db, "referralCodes", referralCode), {
-                ownerUid: firebaseUser.uid,
-                ownerName: username,
-              }, { merge: true }).catch(() => {});
-            }
+            const referralCode = resolveReferralCode(
+              firebaseUser.uid,
+              username,
+              data.referralCode,
+            );
 
             let finalPremiumStatus = premiumStatus;
             let finalPremiumExpiryDate = data.premiumExpiryDate || null;
@@ -838,12 +849,14 @@ export const AppProvider = ({ children }) => {
           } catch (err) {
             console.warn("Firestore fetch failed/timed out, using auth claims:", err?.message);
             let cachedUsername = null;
+            let cachedReferralCode = null;
             try {
               const cachedUserStr = await AsyncStorage.getItem("user");
               if (cachedUserStr) {
                 const cachedUser = JSON.parse(cachedUserStr);
                 if (cachedUser?.uid === firebaseUser.uid) {
                   cachedUsername = cachedUser.username;
+                  cachedReferralCode = cachedUser.referralCode || null;
                 }
               }
               const cachedAccountState = await AsyncStorage.getItem(
@@ -862,17 +875,27 @@ export const AppProvider = ({ children }) => {
               }
             } catch (_) {}
 
+            const fallbackUsername = resolveDisplayUsername(
+              cachedUsername,
+              firebaseUser.displayName,
+              "User",
+            );
+            const referralCode =
+              cachedReferralCode ||
+              resolveReferralCode(
+                firebaseUser.uid,
+                fallbackUsername,
+                null,
+              );
+
             const userData = {
               uid: firebaseUser.uid,
               email: firebaseUser.email,
-              username: resolveDisplayUsername(
-                cachedUsername,
-                firebaseUser.displayName,
-                "User",
-              ),
+              username: fallbackUsername,
               isPremium: claimsPremium,
               isAdmin: claimsAdmin,
               pushToken: null,
+              referralCode,
             };
 
             setUser(userData);
@@ -1652,23 +1675,44 @@ export const AppProvider = ({ children }) => {
         });
     }
 
-    
-    setUser(userData);
+    // Merge with any user already painted by onAuthStateChanged so sparse
+    // LoginScreen payloads (no referralCode / isAdmin) cannot wipe them.
+    let mergedReferralCode = userData.referralCode || null;
+    setUser((prev) => {
+      if (prev?.uid === userData.uid) {
+        mergedReferralCode =
+          userData.referralCode || prev.referralCode || null;
+        return {
+          ...prev,
+          ...userData,
+          referralCode: mergedReferralCode,
+          isAdmin: userData.isAdmin ?? prev.isAdmin,
+          pushToken: userData.pushToken ?? prev.pushToken ?? null,
+          premiumType: userData.premiumType ?? prev.premiumType,
+        };
+      }
+      return userData;
+    });
     if (userData.isPremium !== undefined) {
       setAccountPremium(Boolean(userData.isPremium));
     }
 
-    // If onAuthStateChanged didn't hydrate (e.g. device conflict resolved
-    // via LoginScreen modal), fetch learning progress from cloud now.
-    if (!cloudHydratedRef.current && userData.uid) {
+    // Hydrate learning (if needed) and always attach referralCode when missing.
+    // LoginScreen builds a minimal user object; onAuthStateChanged may race and
+    // lose if login() overwrites it without these fields.
+    const needsLearningHydrate = !cloudHydratedRef.current && !!userData.uid;
+    const needsReferral = !!userData.uid && !mergedReferralCode;
+
+    if (needsLearningHydrate || needsReferral) {
       try {
         const userDocRef = doc(db, "users", userData.uid);
         const userDoc = await Promise.race([
           getDoc(userDocRef),
           timeoutPromise(5000),
         ]);
-        if (userDoc.exists()) {
-          const data = userDoc.data();
+        const data = userDoc.exists() ? userDoc.data() : {};
+
+        if (needsLearningHydrate && userDoc.exists()) {
           const cachedAccountRaw = await loadLocalLearningSnapshot(
             userData.uid,
           );
@@ -1684,18 +1728,45 @@ export const AppProvider = ({ children }) => {
           const cloudState = hydrateStoredState(mergedLearningState);
           await persistLearningLocally(userData.uid, cloudState);
         }
-        cloudHydratedRef.current = true;
-        syncAllAnnotations(userData.uid);
-        syncAllHighlights(userData.uid);
+
+        if (needsReferral) {
+          const username =
+            userData.username || data.username || "User";
+          const referralCode = resolveReferralCode(
+            userData.uid,
+            username,
+            data.referralCode,
+          );
+          setUser((current) =>
+            current && current.uid === userData.uid
+              ? {
+                  ...current,
+                  referralCode: current.referralCode || referralCode,
+                  isAdmin:
+                    current.isAdmin === true || data.isAdmin === true,
+                }
+              : current,
+          );
+        }
+
+        if (needsLearningHydrate) {
+          cloudHydratedRef.current = true;
+          syncAllAnnotations(userData.uid);
+          syncAllHighlights(userData.uid);
+        }
       } catch (err) {
         console.warn("Cloud hydration during login failed:", err?.message);
-        try {
-          const cached = await AsyncStorage.getItem(getAccountStateKey(userData.uid));
-          if (cached) hydrateStoredState(JSON.parse(cached));
-        } catch (_) {}
-        cloudHydratedRef.current = true;
-        syncAllAnnotations(userData.uid);
-        syncAllHighlights(userData.uid);
+        if (needsLearningHydrate) {
+          try {
+            const cached = await AsyncStorage.getItem(
+              getAccountStateKey(userData.uid),
+            );
+            if (cached) hydrateStoredState(JSON.parse(cached));
+          } catch (_) {}
+          cloudHydratedRef.current = true;
+          syncAllAnnotations(userData.uid);
+          syncAllHighlights(userData.uid);
+        }
       }
     }
   };

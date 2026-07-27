@@ -225,6 +225,8 @@ const LoginScreen = () => {
       const claimsPremium = tokenResult.claims.isPremium === true;
 
       let premiumStatus = claimsPremium;
+      let referralCode = null;
+      let isAdmin = false;
       try {
         const userDoc = await Promise.race([
           getDoc(doc(db, "users", user.uid)),
@@ -232,7 +234,10 @@ const LoginScreen = () => {
         ]);
 
         if (userDoc.exists()) {
-          premiumStatus = userDoc.data().isPremium === true || claimsPremium;
+          const data = userDoc.data();
+          premiumStatus = data.isPremium === true || claimsPremium;
+          referralCode = data.referralCode || null;
+          isAdmin = data.isAdmin === true;
         } else {
           await setDoc(doc(db, "users", user.uid), {
             email: user.email,
@@ -250,6 +255,8 @@ const LoginScreen = () => {
         email: user.email,
         username: user.displayName || "Google User",
         isPremium: premiumStatus,
+        isAdmin,
+        referralCode,
       };
 
       // Intercept: check device conflict before allowing in
@@ -313,6 +320,8 @@ const LoginScreen = () => {
       const appleEmail = appleCredential.email || user.email || "";
 
       let premiumStatus = claimsPremium;
+      let referralCode = null;
+      let isAdmin = false;
       try {
         const userDocRef = doc(db, "users", user.uid);
         const userDoc = await Promise.race([
@@ -321,7 +330,10 @@ const LoginScreen = () => {
         ]);
 
         if (userDoc.exists()) {
-          premiumStatus = userDoc.data().isPremium === true || claimsPremium;
+          const data = userDoc.data();
+          premiumStatus = data.isPremium === true || claimsPremium;
+          referralCode = data.referralCode || null;
+          isAdmin = data.isAdmin === true;
         } else {
           await setDoc(userDocRef, {
             email: appleEmail,
@@ -340,6 +352,8 @@ const LoginScreen = () => {
         email: appleEmail,
         username: appleDisplayName || user.displayName || "Apple User",
         isPremium: premiumStatus,
+        isAdmin,
+        referralCode,
       };
 
       await checkDeviceConflict(user, userData);
@@ -410,14 +424,21 @@ const LoginScreen = () => {
         const claimsPremium = tokenResult.claims.isPremium === true;
 
         let premiumStatus = claimsPremium;
+        let referralCode = null;
+        let isAdmin = false;
         try {
           const userDoc = await Promise.race([
             getDoc(doc(db, "users", user.uid)),
             timeoutPromise(2000),
           ]);
-          premiumStatus = userDoc.exists()
-            ? userDoc.data().isPremium === true || claimsPremium
-            : claimsPremium;
+          if (userDoc.exists()) {
+            const data = userDoc.data();
+            premiumStatus = data.isPremium === true || claimsPremium;
+            referralCode = data.referralCode || null;
+            isAdmin = data.isAdmin === true;
+          } else {
+            premiumStatus = claimsPremium;
+          }
         } catch (err) {
           console.warn("Firestore unavailable during login:", err.message);
         }
@@ -428,6 +449,8 @@ const LoginScreen = () => {
           email,
           username: displayName,
           isPremium: premiumStatus,
+          isAdmin,
+          referralCode,
         };
 
         // Intercept: check device conflict before allowing in
