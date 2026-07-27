@@ -16,12 +16,11 @@ import {
 
 const STORAGE_KEY = "@stroma/themePreference";
 
-/** @typedef {'light' | 'dark'} ThemePreference */
+/** @typedef {'light' | 'dark' | 'system'} ThemePreference */
 /** @typedef {'light' | 'dark'} ColorScheme */
 
 const ThemeContext = createContext(null);
 
-/** One-shot OS scheme for migrating legacy "system" / unknown values only. */
 function safeSystemScheme() {
   try {
     return Appearance.getColorScheme() === "dark" ? "dark" : "light";
@@ -31,22 +30,24 @@ function safeSystemScheme() {
 }
 
 /**
- * Normalize any stored value to light|dark so live users never crash or stick on "system".
- * - light/dark: keep
- * - "system" (legacy live preference): one-shot snapshot of current OS scheme, then pin
- * - null / missing / corrupt: default light (matches first paint)
+ * Normalize stored value to light|dark|system.
+ * Unknown / corrupt values default to light (matches first paint).
  */
 function normalizePreference(stored) {
-  if (stored === "light" || stored === "dark") return stored;
-  if (stored === "system") return safeSystemScheme();
+  if (stored === "light" || stored === "dark" || stored === "system") {
+    return stored;
+  }
   return "light";
 }
 
 export function ThemeProvider({ children }) {
-  // First paint always light until storage hydrates — avoids dark-first flashes
-  // and reduces risk during OTA first-launch.
+  // First paint always light until storage hydrates (avoids dark-first flashes
+  // and reduces risk during OTA first-launch).
   const [preference, setPreferenceState] = useState(
     /** @type {ThemePreference} */ ("light"),
+  );
+  const [systemScheme, setSystemScheme] = useState(
+    /** @type {ColorScheme} */ (safeSystemScheme()),
   );
   const [hydrated, setHydrated] = useState(false);
 
@@ -56,22 +57,10 @@ export function ThemeProvider({ children }) {
       try {
         const stored = await AsyncStorage.getItem(STORAGE_KEY);
         if (cancelled) return;
-
-        const next = normalizePreference(stored);
-        setPreferenceState(next);
-
-        // Rewrite storage when migrating off "system" / invalid values so future
-        // loads never re-enter the legacy path.
-        if (stored !== next) {
-          try {
-            await AsyncStorage.setItem(STORAGE_KEY, next);
-          } catch (e) {
-            console.warn("Failed to migrate theme preference:", e?.message);
-          }
-        }
+        setPreferenceState(normalizePreference(stored));
       } catch (e) {
         console.warn("Failed to load theme preference:", e?.message);
-        // Load failed — stay on light (initial state); do not throw.
+        // Load failed: stay on light (initial state); do not throw.
       } finally {
         if (!cancelled) setHydrated(true);
       }
@@ -81,8 +70,15 @@ export function ThemeProvider({ children }) {
     };
   }, []);
 
+  useEffect(() => {
+    const subscription = Appearance.addChangeListener(({ colorScheme }) => {
+      setSystemScheme(colorScheme === "dark" ? "dark" : "light");
+    });
+    return () => subscription.remove();
+  }, []);
+
   const setPreference = useCallback(async (next) => {
-    if (next !== "light" && next !== "dark") return;
+    if (next !== "light" && next !== "dark" && next !== "system") return;
     setPreferenceState(next);
     try {
       await AsyncStorage.setItem(STORAGE_KEY, next);
@@ -91,8 +87,8 @@ export function ThemeProvider({ children }) {
     }
   }, []);
 
-  // Preference is always light|dark after hydration; scheme === preference.
-  const scheme = preference;
+  const scheme =
+    preference === "system" ? systemScheme : /** @type {ColorScheme} */ (preference);
   const colors = useMemo(() => getAppColors(scheme), [scheme]);
   const paperTheme = useMemo(() => getPaperTheme(scheme), [scheme]);
   const navigationTheme = useMemo(() => getNavigationTheme(scheme), [scheme]);

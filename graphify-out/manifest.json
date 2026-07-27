@@ -296,8 +296,8 @@
     "hash": "54936b9b06f3ffedf69217c6f0accca5"
   },
   "D:\\The App\\scripts\\attach-pdf-to-video.js": {
-    "mtime": 1784901525.1435943,
-    "hash": "4f27e3ba8943901cb5fa77c0b2eea505"
+    "mtime": 1785148495.2177658,
+    "hash": "dad24a75485418aed45f5f4e303fafc2"
   },
   "D:\\The App\\scripts\\audit_colors.js": {
     "mtime": 1772547735.8824155,
@@ -488,16 +488,16 @@
     "hash": "5384ee746b28f1977190d63ea93cc1e2"
   },
   "D:\\The App\\src\\components\\ReadingView.js": {
-    "mtime": 1785071400.6216078,
-    "hash": "66cb95a9737dfc948aac139a0abf2239"
+    "mtime": 1785072029.3088093,
+    "hash": "882af34ccf1d26e2ec25eb54ab0d5dc2"
   },
   "D:\\The App\\src\\components\\ReferralAnnouncementDialog.js": {
-    "mtime": 1784991390.395384,
-    "hash": "5b4fdf576e6d5c64dda6b661e57f15fa"
+    "mtime": 1785161583.9598627,
+    "hash": "1b851c0850d80fde8393aa387869c762"
   },
   "D:\\The App\\src\\components\\ThemeModePill.js": {
-    "mtime": 1785071400.4550793,
-    "hash": "2f714964db5a4a54cb44f6da830e01ec"
+    "mtime": 1785071504.0687332,
+    "hash": "a07716bdcfa35ffba96971983763c5cc"
   },
   "D:\\The App\\src\\components\\UpdateBottomSheet.js": {
     "mtime": 1784224587.4038665,
@@ -600,20 +600,20 @@
     "hash": "586b8b3dbd67b4fce9bbeb3e36a253fc"
   },
   "D:\\The App\\src\\screens\\NotificationsScreen.js": {
-    "mtime": 1784274924.8199327,
-    "hash": "4228af5cf2546549ef5c29e859bac9d8"
+    "mtime": 1785161583.88528,
+    "hash": "0dfe08b6e6017e61d677f4ab4a15e727"
   },
   "D:\\The App\\src\\screens\\PaywallScreen.js": {
-    "mtime": 1784224587.3799367,
-    "hash": "fde8814dec81618d7ebe39c5e3c57993"
+    "mtime": 1785161584.15765,
+    "hash": "9e34a1a868056a73e202e49ec34696c7"
   },
   "D:\\The App\\src\\screens\\ProfileScreen.js": {
-    "mtime": 1785071418.7967842,
-    "hash": "0872db6f7d6d9b718feae84c6cd01254"
+    "mtime": 1785162409.501746,
+    "hash": "d1279f4b337401a1ddf03bc87eb35e23"
   },
   "D:\\The App\\src\\screens\\PYQCreateScreen.js": {
-    "mtime": 1784225592.3945198,
-    "hash": "ab03e39c72c8275cd23e1f8f29d3796e"
+    "mtime": 1785161583.88528,
+    "hash": "76e6a739445f2a916938625c3009ff52"
   },
   "D:\\The App\\src\\screens\\PYQPracticeScreen.js": {
     "mtime": 1784224587.3871617,
@@ -700,8 +700,8 @@
     "hash": "0ecf8ebc4f00c5d3b2a84af658fb8004"
   },
   "D:\\The App\\src\\styles\\ThemeContext.js": {
-    "mtime": 1785071418.8760571,
-    "hash": "6efadbc8afdff36913e692c5614b7aee"
+    "mtime": 1785162392.5205166,
+    "hash": "d5bb5d28fde09a612ff7b02fd816da57"
   },
   "D:\\The App\\src\\styles\\useThemedStyles.js": {
     "mtime": 1784220279.988786,
@@ -784,8 +784,8 @@
     "hash": "5b0fefdb07f48da3f6019e4d429b0580"
   },
   "D:\\The App\\docs\\privacy.html": {
-    "mtime": 1776931500.240169,
-    "hash": "301611da67c4f29e59fc4a4704d6a60c"
+    "mtime": 1785161583.8842795,
+    "hash": "625e8545f9312e918ee7d15aa7a59742"
   },
   "D:\\The App\\docs\\purposeful-image-placement.md": {
     "mtime": 1774754386.8025944,

@@ -8,17 +8,26 @@ import {
   Alert,
   Share,
   Modal,
+  Platform,
+  Clipboard,
 } from "react-native";
-import { Text, Avatar, Card, Divider, ActivityIndicator, TextInput, Button } from "react-native-paper";
+import {
+  Text,
+  Avatar,
+  Card,
+  Divider,
+  ActivityIndicator,
+  TextInput,
+  Button,
+} from "react-native-paper";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { signOut, deleteUser } from "firebase/auth";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
 import { AppContext } from "../context/AppContext";
-import { theme } from '../styles/theme';
-import { useThemedStyles } from '../styles/useThemedStyles';
-import { useAppTheme } from '../styles/ThemeContext';
+import { useThemedStyles } from "../styles/useThemedStyles";
+import { useAppTheme } from "../styles/ThemeContext";
 import Constants from "expo-constants";
 import {
   enableScreenCaptureProtection,
@@ -28,7 +37,13 @@ import {
 const APPEARANCE_OPTIONS = [
   { value: "light", label: "Light", icon: "wb-sunny" },
   { value: "dark", label: "Dark", icon: "nights-stay" },
+  { value: "system", label: "System", icon: "settings-brightness" },
 ];
+
+const IOS_STORE_URL = "https://apps.apple.com/app/id6478051744";
+const ANDROID_STORE_URL =
+  "https://play.google.com/store/apps/details?id=com.communitymed.app";
+const ANDROID_MARKET_URL = "market://details?id=com.communitymed.app";
 
 const ProfileScreen = () => {
   const { styles, colors } = useThemedStyles(createStyles);
@@ -52,6 +67,16 @@ const ProfileScreen = () => {
   const [isEditingName, setIsEditingName] = useState(false);
   const [newName, setNewName] = useState("");
   const [isSavingName, setIsSavingName] = useState(false);
+
+  const displayName = user?.username || user?.displayName || "STROMA User";
+  const initials =
+    displayName
+      .split(" ")
+      .filter(Boolean)
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2) || "S";
 
   const handleStartEditName = () => {
     setNewName(displayName);
@@ -83,14 +108,11 @@ const ProfileScreen = () => {
     };
   }, []);
 
-  // Helper function to calculate subscription expiry display
   const getSubscriptionExpiryDisplay = () => {
-    // If premiumType is "lifetime", show "Lifetime"
     if (premiumType === "lifetime") {
       return "Lifetime";
     }
 
-    // If subscriptionExpiry exists and is a valid date
     if (subscriptionExpiry) {
       const expiryDate = new Date(subscriptionExpiry);
       if (!Number.isNaN(expiryDate.getTime())) {
@@ -100,27 +122,28 @@ const ProfileScreen = () => {
 
         if (diffDays < 0) {
           return "Expired";
-        } else if (diffDays < 30) {
-          return `${diffDays} day${diffDays !== 1 ? "s" : ""}`;
-        } else {
-          const months = Math.ceil(diffDays / 30);
-          return `${months} month${months !== 1 ? "s" : ""}`;
         }
+        if (diffDays < 30) {
+          return `${diffDays} day${diffDays !== 1 ? "s" : ""} left`;
+        }
+        const months = Math.ceil(diffDays / 30);
+        return `${months} month${months !== 1 ? "s" : ""} left`;
       }
     }
 
-    // If isPremium is true but no explicit type/expiry, default to "Lifetime"
     if (isPremium) {
       return "Lifetime";
     }
 
-    // Not premium
-    return "—";
+    return "Not active";
   };
 
   const handleShareReferral = async () => {
     if (!user?.referralCode) {
-      Alert.alert("Error", "Your referral code is not ready yet. Please try again.");
+      Alert.alert(
+        "Error",
+        "Your referral code is not ready yet. Please try again.",
+      );
       return;
     }
 
@@ -133,15 +156,22 @@ const ProfileScreen = () => {
     }
   };
 
-  const displayName = user?.username || user?.displayName || "STROMA User";
-  const initials =
-    displayName
-      .split(" ")
-      .filter(Boolean)
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2) || "S";
+  const handleCopyReferral = () => {
+    if (!user?.referralCode) {
+      Alert.alert(
+        "Error",
+        "Your referral code is not ready yet. Please try again.",
+      );
+      return;
+    }
+    try {
+      Clipboard.setString(user.referralCode);
+      Alert.alert("Copied", "Referral code copied to clipboard.");
+    } catch (error) {
+      console.warn("Failed to copy referral code:", error?.message);
+      Alert.alert("Error", "Could not copy code. Try Share instead.");
+    }
+  };
 
   const handleLogout = () => {
     Alert.alert("Log Out", "Are you sure you want to log out?", [
@@ -185,37 +215,40 @@ const ProfileScreen = () => {
           text: "Delete",
           style: "destructive",
           onPress: async () => {
-            const user = auth.currentUser;
-            if (user) {
-              const uid = user.uid;
+            const currentUser = auth.currentUser;
+            if (currentUser) {
+              const uid = currentUser.uid;
               try {
-                // Delete user document from Firestore first
                 try {
                   await deleteDoc(doc(db, "users", uid));
                 } catch (e) {
                   console.error("Error deleting user document:", e);
                 }
-                
-                // Delete user from Firebase Auth
-                await deleteUser(user);
-                
-                // Call context logout
+
+                await deleteUser(currentUser);
                 logout();
-                
-                Alert.alert("Account Deleted", "Your account has been successfully deleted.");
-                
+
+                Alert.alert(
+                  "Account Deleted",
+                  "Your account has been successfully deleted.",
+                );
+
                 navigation.reset({
                   index: 0,
                   routes: [{ name: "Login" }],
                 });
               } catch (error) {
-                if (error.code === 'auth/requires-recent-login') {
+                if (error.code === "auth/requires-recent-login") {
                   Alert.alert(
                     "Re-authentication Required",
                     "For security reasons, please log out and log back in before deleting your account.",
                   );
                 } else {
-                  Alert.alert("Error", error.message || "Failed to delete account. Please try again.");
+                  Alert.alert(
+                    "Error",
+                    error.message ||
+                      "Failed to delete account. Please try again.",
+                  );
                 }
               }
             }
@@ -225,8 +258,17 @@ const ProfileScreen = () => {
     );
   };
 
-  const handleRateApp = () => {
-    Linking.openURL("market://details?id=com.communitymed.app");
+  const handleRateApp = async () => {
+    const primary =
+      Platform.OS === "ios" ? IOS_STORE_URL : ANDROID_MARKET_URL;
+    const fallback =
+      Platform.OS === "ios" ? IOS_STORE_URL : ANDROID_STORE_URL;
+    try {
+      const canOpen = await Linking.canOpenURL(primary);
+      await Linking.openURL(canOpen ? primary : fallback);
+    } catch (_) {
+      Linking.openURL(fallback);
+    }
   };
 
   const handleSendFeedback = () => {
@@ -247,39 +289,132 @@ const ProfileScreen = () => {
     navigation.navigate("AdminLibraryReview");
   };
 
+  const navigateToBookmarks = () => navigation.navigate("Bookmarks");
+  const navigateToLibrary = () =>
+    navigation.navigate("MainTabs", { screen: "Library" });
+  const navigateToDashboard = () =>
+    navigation.navigate("MainTabs", { screen: "Dashboard" });
+
   const articlesRead = readItems?.length || 0;
   const bookmarksCount = bookmarks?.length || 0;
   const progressPercent = Math.round((readingProgress || 0) * 100);
 
+  const progressStats = [
+    {
+      key: "streak",
+      icon: "local-fire-department",
+      color: colors.accent,
+      value: currentStreak,
+      label: "Day Streak",
+      onPress: navigateToDashboard,
+      a11y: "Day streak, open dashboard",
+    },
+    {
+      key: "score",
+      icon: "stars",
+      color: colors.secondary,
+      value: studyScore,
+      label: "Stroma Score",
+      onPress: navigateToDashboard,
+      a11y: "Stroma score, open dashboard",
+    },
+    {
+      key: "progress",
+      icon: "trending-up",
+      color: colors.chartGreen,
+      value: `${progressPercent}%`,
+      label: "Progress",
+      onPress: navigateToLibrary,
+      a11y: "Reading progress, open library",
+    },
+    {
+      key: "chapters",
+      icon: "menu-book",
+      color: colors.chartBlue,
+      value: articlesRead,
+      label: "Chapters",
+      onPress: navigateToLibrary,
+      a11y: "Chapters read, open library",
+    },
+    {
+      key: "bookmarks",
+      icon: "bookmark",
+      color: colors.chartPurple,
+      value: bookmarksCount,
+      label: "Bookmarks",
+      onPress: navigateToBookmarks,
+      a11y: "Bookmarks, open bookmarks list",
+    },
+  ];
+
+  const ActionRow = ({ icon, label, onPress, isLast }) => (
+    <>
+      <TouchableOpacity
+        style={styles.actionItem}
+        onPress={onPress}
+        accessibilityRole="button"
+        accessibilityLabel={label}
+      >
+        <View style={styles.actionIconBox}>
+          <MaterialIcons name={icon} size={20} color={colors.secondary} />
+        </View>
+        <Text style={styles.actionLabel}>{label}</Text>
+        <MaterialIcons
+          name="chevron-right"
+          size={20}
+          color={colors.textPlaceholder}
+        />
+      </TouchableOpacity>
+      {!isLast ? <Divider style={styles.actionDivider} /> : null}
+    </>
+  );
+
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.headerContent}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Identity */}
+        <View style={styles.identityCard}>
           <Avatar.Text
-            size={80}
+            size={72}
             label={initials}
             style={styles.avatar}
             labelStyle={styles.avatarLabel}
           />
-          <View style={styles.nameRow}>
-            <Text style={styles.userName}>{displayName}</Text>
-            <TouchableOpacity onPress={handleStartEditName} style={styles.editButton}>
-              <MaterialIcons name="edit" size={16} color="#FFFFFF" style={styles.editIcon} />
+          <View style={styles.identityText}>
+            <TouchableOpacity
+              style={styles.nameRow}
+              onPress={handleStartEditName}
+              accessibilityRole="button"
+              accessibilityLabel="Edit display name"
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Text style={styles.userName} numberOfLines={1}>
+                {displayName}
+              </Text>
+              <View style={styles.editButton}>
+                <MaterialIcons name="edit" size={16} color={colors.secondary} />
+              </View>
             </TouchableOpacity>
+            {user?.email ? (
+              <Text style={styles.userEmail} numberOfLines={1}>
+                {user.email}
+              </Text>
+            ) : null}
+            <Text style={styles.accountTypeHint}>
+              {user ? "Registered account" : "Guest account"}
+            </Text>
           </View>
-          <Text style={styles.userEmail}>{user?.email || ""}</Text>
         </View>
-      </View>
 
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Subscription Status Card */}
-        <Card style={styles.subscriptionCard}>
-          <Card.Content style={styles.subscriptionContent}>
-            <View style={styles.subscriptionLeft}>
+        {/* Membership */}
+        <Text style={styles.sectionTitle}>Membership</Text>
+        <Card style={styles.card} mode="elevated">
+          <Card.Content style={styles.membershipContent}>
+            <View style={styles.membershipTop}>
               <View
                 style={[
                   styles.premiumBadge,
@@ -287,142 +422,144 @@ const ProfileScreen = () => {
                 ]}
               >
                 <FontAwesome5
-                  name={isPremium ? "crown" : "crown"}
+                  name="crown"
                   size={16}
-                  color={isPremium ? "#FFD700" : theme.colors.textPlaceholder}
+                  color={isPremium ? "#EAB308" : colors.textPlaceholder}
                 />
               </View>
-              <View style={styles.subscriptionText}>
-                <Text style={styles.subscriptionTitle}>
+              <View style={styles.membershipText}>
+                <Text style={styles.membershipTitle}>
                   {isPremium ? "STROMA Member" : "Free Account"}
                 </Text>
-                <Text style={styles.subscriptionSubtitle}>
+                <Text style={styles.membershipSubtitle}>
                   {isPremium
                     ? "Enjoying all membership features"
-                    : "Get STROMA Membership to unlock all features"}
+                    : "Unlock all features with membership"}
                 </Text>
               </View>
             </View>
-            {!isPremium && (
+
+            <View style={styles.expiryRow}>
+              <Text style={styles.expiryLabel}>Status</Text>
+              <Text style={styles.expiryValue}>
+                {getSubscriptionExpiryDisplay()}
+              </Text>
+            </View>
+
+            {!isPremium ? (
               <TouchableOpacity
                 style={styles.upgradeButton}
                 onPress={handleUpgradePremium}
+                accessibilityRole="button"
+                accessibilityLabel="Get membership"
               >
                 <Text style={styles.upgradeButtonText}>Get Membership</Text>
               </TouchableOpacity>
-            )}
+            ) : null}
           </Card.Content>
         </Card>
 
-        {/* Learning Stats */}
-        <Text style={styles.sectionTitle}>📊 Learning Stats</Text>
-        <View style={styles.statsRow}>
-          <Card style={styles.statCard}>
-            <Card.Content style={styles.statContent}>
-              <MaterialIcons
-                name="local-fire-department"
-                size={28}
-                color={theme.colors.accent}
-              />
-              <Text style={styles.statValue}>{currentStreak}</Text>
-              <Text style={styles.statLabel}>Day Streak</Text>
-            </Card.Content>
-          </Card>
-
-          <Card style={styles.statCard}>
-            <Card.Content style={styles.statContent}>
-              <MaterialIcons
-                name="stars"
-                size={28}
-                color={theme.colors.secondary}
-              />
-              <Text style={styles.statValue}>{studyScore}</Text>
-              <Text style={styles.statLabel}>Stroma Score</Text>
-            </Card.Content>
-          </Card>
-
-          <Card style={styles.statCard}>
-            <Card.Content style={styles.statContent}>
-              <MaterialIcons
-                name="trending-up"
-                size={28}
-                color={theme.colors.chartGreen}
-              />
-              <Text style={styles.statValue}>{progressPercent}%</Text>
-              <Text style={styles.statLabel}>Progress</Text>
-            </Card.Content>
-          </Card>
-        </View>
-
-        {/* Activity Summary */}
-        <Text style={styles.sectionTitle}>📚 Activity Summary</Text>
-        <Card style={styles.activityCard}>
-          <Card.Content>
-            <View style={styles.activityRow}>
-              <View style={styles.activityItem}>
-                <Text style={styles.activityValue}>{articlesRead}</Text>
-                <Text style={styles.activityLabel}>Chapters Read</Text>
-              </View>
-              <View style={styles.activityDivider} />
-              <View style={styles.activityItem}>
-                <Text style={styles.activityValue}>{bookmarksCount}</Text>
-                <Text style={styles.activityLabel}>Bookmarks</Text>
-              </View>
+        {/* Progress at a glance (merged stats + activity) */}
+        <Text style={styles.sectionTitle}>Your Progress</Text>
+        <Card style={styles.card} mode="elevated">
+          <Card.Content style={styles.progressContent}>
+            <View style={styles.progressRow}>
+              {progressStats.slice(0, 3).map((stat, index) => (
+                <TouchableOpacity
+                  key={stat.key}
+                  style={[
+                    styles.progressCell,
+                    index < 2 && styles.progressCellBorderRight,
+                  ]}
+                  onPress={stat.onPress}
+                  accessibilityRole="button"
+                  accessibilityLabel={stat.a11y}
+                  activeOpacity={0.7}
+                >
+                  <MaterialIcons name={stat.icon} size={22} color={stat.color} />
+                  <Text style={styles.progressValue}>{stat.value}</Text>
+                  <Text style={styles.progressLabel}>{stat.label}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <View style={styles.progressRowDivider} />
+            <View style={styles.progressRow}>
+              {progressStats.slice(3).map((stat, index) => (
+                <TouchableOpacity
+                  key={stat.key}
+                  style={[
+                    styles.progressCellWide,
+                    index === 0 && styles.progressCellBorderRight,
+                  ]}
+                  onPress={stat.onPress}
+                  accessibilityRole="button"
+                  accessibilityLabel={stat.a11y}
+                  activeOpacity={0.7}
+                >
+                  <MaterialIcons name={stat.icon} size={22} color={stat.color} />
+                  <Text style={styles.progressValue}>{stat.value}</Text>
+                  <Text style={styles.progressLabel}>{stat.label}</Text>
+                </TouchableOpacity>
+              ))}
             </View>
           </Card.Content>
         </Card>
 
         {/* Refer & Earn */}
-        <Text style={styles.sectionTitle}>🎁 Refer & Earn</Text>
-        <Card style={styles.referralCard}>
+        <Text style={styles.sectionTitle}>Refer & Earn</Text>
+        <Card style={styles.card} mode="elevated">
           <Card.Content>
             <Text style={styles.referralSubtitle}>
-              Give friends 15% off STROMA Membership and get 30 days free when they join with your code!
+              Give friends 15% off STROMA Membership and get 30 days free when
+              they join with your code.
             </Text>
-            
+
             <View style={styles.referralCodeBox}>
               <View style={styles.codeContainer}>
                 <Text style={styles.codeLabel}>YOUR REFERRAL CODE</Text>
-                <Text style={styles.codeText}>{user?.referralCode || "—"}</Text>
+                <Text style={styles.codeText}>
+                  {user?.referralCode || "N/A"}
+                </Text>
               </View>
-              
+            </View>
+
+            <View style={styles.referralActions}>
+              <TouchableOpacity
+                style={styles.copyButton}
+                onPress={handleCopyReferral}
+                accessibilityRole="button"
+                accessibilityLabel="Copy referral code"
+              >
+                <MaterialIcons
+                  name="content-copy"
+                  size={18}
+                  color={colors.secondary}
+                />
+                <Text style={styles.copyButtonText}>Copy</Text>
+              </TouchableOpacity>
               <TouchableOpacity
                 style={styles.shareButton}
                 onPress={handleShareReferral}
+                accessibilityRole="button"
+                accessibilityLabel="Share referral code"
               >
-                <MaterialIcons name="share" size={20} color={theme.colors.surfacePrimary} />
+                <MaterialIcons
+                  name="share"
+                  size={18}
+                  color={colors.buttonText}
+                />
                 <Text style={styles.shareButtonText}>Share</Text>
               </TouchableOpacity>
             </View>
           </Card.Content>
         </Card>
 
-        {/* Account Info */}
-        <Text style={styles.sectionTitle}>👤 Account</Text>
-        <Card style={styles.accountCard}>
-          <Card.Content>
-            <View style={styles.accountRow}>
-              <Text style={styles.accountLabel}>Account Type</Text>
-              <Text style={styles.accountValue}>
-                {user ? "Registered" : "Guest"}
-              </Text>
-            </View>
-            <Divider style={styles.accountDivider} />
-            <View style={styles.accountRow}>
-              <Text style={styles.accountLabel}>Membership Expiry</Text>
-              <Text style={styles.accountValue}>
-                {getSubscriptionExpiryDisplay()}
-              </Text>
-            </View>
-          </Card.Content>
-        </Card>
-
         {/* Appearance */}
-        <Text style={styles.sectionTitle}>🎨 Appearance</Text>
-        <Card style={styles.actionsCard}>
+        <Text style={styles.sectionTitle}>Appearance</Text>
+        <Card style={styles.card} mode="elevated">
           <Card.Content style={styles.actionsContent}>
             <Text style={styles.appearanceIntro}>
-              Choose Light or Dark appearance.
+              Light, Dark, or match your device setting.
             </Text>
             <View style={styles.appearanceRow}>
               {APPEARANCE_OPTIONS.map((opt) => {
@@ -437,11 +574,14 @@ const ProfileScreen = () => {
                     onPress={() => setPreference(opt.value)}
                     accessibilityRole="button"
                     accessibilityState={{ selected }}
+                    accessibilityLabel={`${opt.label} appearance`}
                   >
                     <MaterialIcons
                       name={opt.icon}
-                      size={22}
-                      color={selected ? colors.secondary : colors.textTertiary}
+                      size={20}
+                      color={
+                        selected ? colors.secondary : colors.textTertiary
+                      }
                     />
                     <Text
                       style={[
@@ -458,115 +598,66 @@ const ProfileScreen = () => {
           </Card.Content>
         </Card>
 
-        {/* Quick Actions */}
-        <Text style={styles.sectionTitle}>⚙️ Quick Actions</Text>
-        <Card style={styles.actionsCard}>
+        {/* Support */}
+        <Text style={styles.sectionTitle}>Support</Text>
+        <Card style={styles.card} mode="elevated">
           <Card.Content style={styles.actionsContent}>
-            <TouchableOpacity style={styles.actionItem} onPress={handleRateApp}>
-              <View style={styles.actionIconBox}>
-                <MaterialIcons
-                  name="star-outline"
-                  size={20}
-                  color={theme.colors.secondary}
-                />
-              </View>
-              <Text style={styles.actionLabel}>Rate the App</Text>
-              <MaterialIcons
-                name="chevron-right"
-                size={20}
-                color={theme.colors.textPlaceholder}
-              />
-            </TouchableOpacity>
-
-            <Divider style={styles.actionDivider} />
-
-            <TouchableOpacity
-              style={styles.actionItem}
+            <ActionRow
+              icon="star-outline"
+              label="Rate the App"
+              onPress={handleRateApp}
+            />
+            <ActionRow
+              icon="feedback"
+              label="Send Feedback"
               onPress={handleSendFeedback}
-            >
-              <View style={styles.actionIconBox}>
-                <MaterialIcons
-                  name="feedback"
-                  size={20}
-                  color={theme.colors.secondary}
-                />
-              </View>
-              <Text style={styles.actionLabel}>Send Feedback</Text>
-              <MaterialIcons
-                name="chevron-right"
-                size={20}
-                color={theme.colors.textPlaceholder}
-              />
-            </TouchableOpacity>
-
-
-            <Divider style={styles.actionDivider} />
-
-            <TouchableOpacity
-              style={styles.actionItem}
+            />
+            <ActionRow
+              icon="privacy-tip"
+              label="Privacy Policy"
               onPress={handlePrivacyPolicy}
-            >
-              <View style={styles.actionIconBox}>
-                <MaterialIcons
-                  name="privacy-tip"
-                  size={20}
-                  color={theme.colors.secondary}
-                />
-              </View>
-              <Text style={styles.actionLabel}>Privacy Policy</Text>
-              <MaterialIcons
-                name="chevron-right"
-                size={20}
-                color={theme.colors.textPlaceholder}
-              />
-            </TouchableOpacity>
-
+              isLast={!user?.isAdmin}
+            />
             {user?.isAdmin ? (
-              <>
-                <Divider style={styles.actionDivider} />
-
-                <TouchableOpacity
-                  style={styles.actionItem}
-                  onPress={handleOpenAdminQueue}
-                >
-                  <View style={styles.actionIconBox}>
-                    <MaterialIcons
-                      name="fact-check"
-                      size={20}
-                      color={theme.colors.secondary}
-                    />
-                  </View>
-                  <Text style={styles.actionLabel}>Library Review Queue</Text>
-                  <MaterialIcons
-                    name="chevron-right"
-                    size={20}
-                    color={theme.colors.textPlaceholder}
-                  />
-                </TouchableOpacity>
-              </>
+              <ActionRow
+                icon="fact-check"
+                label="Library Review Queue"
+                onPress={handleOpenAdminQueue}
+                isLast
+              />
             ) : null}
           </Card.Content>
         </Card>
 
-        {/* Logout Button */}
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <MaterialIcons name="logout" size={20} color={theme.colors.error} />
+        {/* Account actions */}
+        <Text style={styles.sectionTitle}>Account</Text>
+        <TouchableOpacity
+          style={styles.logoutButton}
+          onPress={handleLogout}
+          accessibilityRole="button"
+          accessibilityLabel="Log out"
+          disabled={isLoggingOut}
+        >
+          <MaterialIcons name="logout" size={20} color={colors.textSecondary} />
           <Text style={styles.logoutText}>Log Out</Text>
         </TouchableOpacity>
 
-        {/* Delete Account Button */}
-        <TouchableOpacity style={styles.deleteAccountButton} onPress={handleDeleteAccount}>
-          <MaterialIcons name="delete-forever" size={20} color={theme.colors.error} />
+        <TouchableOpacity
+          style={styles.deleteAccountButton}
+          onPress={handleDeleteAccount}
+          accessibilityRole="button"
+          accessibilityLabel="Delete account"
+        >
           <Text style={styles.deleteAccountText}>Delete Account</Text>
         </TouchableOpacity>
 
-        {/* App Version */}
         <Text style={styles.version}>
           STROMA v{Constants.expoConfig?.version || "1.0.0"}
         </Text>
 
         <View style={styles.bottomPadding} />
       </ScrollView>
+
       <Modal
         visible={isEditingName}
         transparent
@@ -583,21 +674,25 @@ const ProfileScreen = () => {
               onChangeText={setNewName}
               style={styles.modalInput}
               outlineStyle={{ borderRadius: 10 }}
-              activeOutlineColor={theme.colors.primary}
+              activeOutlineColor={colors.secondary}
+              textColor={colors.inputText}
             />
             <View style={styles.modalButtons}>
               <Button
                 mode="outlined"
                 onPress={() => setIsEditingName(false)}
                 style={styles.modalButton}
-                textColor={theme.colors.textSecondary}
+                textColor={colors.textSecondary}
               >
                 Cancel
               </Button>
               <Button
                 mode="contained"
                 onPress={handleSaveName}
-                style={[styles.modalButton, { backgroundColor: theme.colors.primary }]}
+                style={[
+                  styles.modalButton,
+                  { backgroundColor: colors.secondary },
+                ]}
                 loading={isSavingName}
                 disabled={isSavingName || !newName.trim()}
               >
@@ -608,428 +703,423 @@ const ProfileScreen = () => {
         </View>
       </Modal>
 
-      {isLoggingOut && (
+      {isLoggingOut ? (
         <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={colors.secondary} />
           <Text style={styles.loadingText}>Logging out...</Text>
         </View>
-      )}
+      ) : null}
     </View>
   );
 };
 
-const createStyles = (colors) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.backgroundMain,
-  },
-  header: {
-    backgroundColor: colors.inverseSurface,
-    paddingTop: 56,
-    paddingBottom: 32,
-    paddingHorizontal: 20,
-  },
-  headerContent: {
-    alignItems: "center",
-  },
-  avatar: {
-    backgroundColor: colors.secondary,
-    marginBottom: 16,
-  },
-  avatarLabel: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: colors.onInverseSurface,
-  },
-  userName: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: colors.onInverseSurface,
-    marginBottom: 4,
-  },
-  userEmail: {
-    fontSize: 14,
-    color: colors.textPlaceholder,
-  },
-  scrollView: {
-    flex: 1,
-    marginTop: -16,
-  },
-  appearanceIntro: {
-    fontSize: 13,
-    color: colors.textSecondary,
-    marginBottom: 12,
-    lineHeight: 18,
-  },
-  appearanceRow: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  appearanceOption: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surfaceTertiary,
-    gap: 6,
-  },
-  appearanceOptionSelected: {
-    borderColor: colors.secondary,
-    backgroundColor: colors.primarySoft,
-  },
-  appearanceOptionLabel: {
-    fontSize: 13,
-    fontWeight: "500",
-    color: colors.textTertiary,
-  },
-  appearanceOptionLabelSelected: {
-    color: colors.secondary,
-    fontWeight: "700",
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.textTitle,
-    marginHorizontal: 20,
-    marginTop: 24,
-    marginBottom: 12,
-  },
-  subscriptionCard: {
-    marginHorizontal: 16,
-    backgroundColor: colors.surfacePrimary,
-    borderRadius: 16,
-    elevation: 2,
-  },
-  subscriptionContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 8,
-  },
-  subscriptionLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-  },
-  premiumBadge: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 14,
-  },
-  premiumActive: {
-    backgroundColor: "#FFF8DC",
-  },
-  premiumInactive: {
-    backgroundColor: colors.surfaceSecondary,
-  },
-  subscriptionText: {
-    flex: 1,
-  },
-  subscriptionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.textTitle,
-  },
-  subscriptionSubtitle: {
-    fontSize: 13,
-    color: colors.textSecondary,
-    marginTop: 2,
-  },
-  upgradeButton: {
-    backgroundColor: colors.secondary,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 20,
-  },
-  upgradeButtonText: {
-    color: colors.buttonText,
-    fontWeight: "600",
-    fontSize: 14,
-  },
-  statsRow: {
-    flexDirection: "row",
-    marginHorizontal: 16,
-    gap: 10,
-  },
-  statCard: {
-    flex: 1,
-    backgroundColor: colors.surfacePrimary,
-    borderRadius: 16,
-    elevation: 2,
-  },
-  statContent: {
-    alignItems: "center",
-    paddingVertical: 16,
-  },
-  statValue: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: colors.textTitle,
-    marginTop: 8,
-  },
-  statLabel: {
-    fontSize: 12,
-    color: colors.textSecondary,
-    marginTop: 4,
-  },
-  activityCard: {
-    marginHorizontal: 16,
-    backgroundColor: colors.surfacePrimary,
-    borderRadius: 16,
-    elevation: 2,
-  },
-  activityRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  activityItem: {
-    flex: 1,
-    alignItems: "center",
-    paddingVertical: 8,
-  },
-  activityDivider: {
-    width: 1,
-    height: 40,
-    backgroundColor: colors.surfaceSecondary,
-  },
-  activityValue: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: colors.textTitle,
-  },
-  activityLabel: {
-    fontSize: 13,
-    color: colors.textSecondary,
-    marginTop: 4,
-  },
-  accountCard: {
-    marginHorizontal: 16,
-    backgroundColor: colors.surfacePrimary,
-    borderRadius: 16,
-    elevation: 2,
-  },
-  accountRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 4,
-  },
-  accountLabel: {
-    fontSize: 14,
-    color: colors.textSecondary,
-  },
-  accountValue: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: colors.textTitle,
-  },
-  accountDivider: {
-    marginVertical: 12,
-    backgroundColor: colors.surfaceSecondary,
-  },
-  actionsCard: {
-    marginHorizontal: 16,
-    backgroundColor: colors.surfacePrimary,
-    borderRadius: 16,
-    elevation: 2,
-  },
-  actionsContent: {
-    paddingVertical: 4,
-  },
-  actionItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 14,
-  },
-  actionIconBox: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    backgroundColor: colors.primarySoft,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 14,
-  },
-  actionLabel: {
-    flex: 1,
-    fontSize: 15,
-    color: colors.textTitle,
-    fontWeight: "500",
-  },
-  actionDivider: {
-    marginVertical: 4,
-    backgroundColor: colors.surfaceSecondary,
-  },
-  logoutButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginHorizontal: 16,
-    marginTop: 24,
-    paddingVertical: 14,
-    backgroundColor: colors.errorLight,
-    borderRadius: 12,
-    gap: 8,
-  },
-  logoutText: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: colors.error,
-  },
-  deleteAccountButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginHorizontal: 16,
-    marginTop: 12,
-    paddingVertical: 14,
-    backgroundColor: "transparent",
-    borderWidth: 1,
-    borderColor: colors.errorLight,
-    borderRadius: 12,
-    gap: 8,
-  },
-  deleteAccountText: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: colors.error,
-  },
-  version: {
-    textAlign: "center",
-    color: colors.textPlaceholder,
-    fontSize: 12,
-    marginTop: 24,
-  },
-  bottomPadding: {
-    height: 40,
-  },
-  referralCard: {
-    marginHorizontal: 16,
-    marginVertical: 8,
-    borderRadius: 12,
-    backgroundColor: colors.surfacePrimary,
-    elevation: 2,
-    shadowColor: colors.textTitle,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-  },
-  referralSubtitle: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    marginBottom: 16,
-    lineHeight: 20,
-  },
-  referralCodeBox: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: colors.surfaceSecondary,
-    padding: 12,
-    borderRadius: 10,
-  },
-  codeContainer: {
-    flex: 1,
-  },
-  codeLabel: {
-    fontSize: 10,
-    color: colors.textPlaceholder,
-    fontWeight: "600",
-    marginBottom: 4,
-  },
-  codeText: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: colors.textTitle,
-    letterSpacing: 1,
-  },
-  shareButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.primary,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    gap: 6,
-  },
-  shareButtonText: {
-    color: colors.surfacePrimary,
-    fontWeight: "600",
-    fontSize: 14,
-  },
-  loadingOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(251, 252, 254, 0.85)",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1000,
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.primary,
-  },
-  nameRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    marginTop: 4,
-  },
-  editButton: {
-    padding: 4,
-    borderRadius: 4,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-  },
-  editIcon: {
-    opacity: 0.9,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 24,
-  },
-  modalContent: {
-    width: "100%",
-    maxWidth: 340,
-    backgroundColor: colors.surfacePrimary,
-    borderRadius: 16,
-    padding: 24,
-    elevation: 5,
-    shadowColor: colors.textTitle,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: colors.textTitle,
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  modalInput: {
-    marginBottom: 20,
-    backgroundColor: colors.surfacePrimary,
-  },
-  modalButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 12,
-  },
-  modalButton: {
-    flex: 1,
-    borderRadius: 10,
-  },
-});
+const createStyles = (colors) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.backgroundMain,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingTop: 16,
+    },
+    identityCard: {
+      marginHorizontal: 16,
+      padding: 20,
+      borderRadius: 16,
+      backgroundColor: colors.surfacePrimary,
+      flexDirection: "row",
+      alignItems: "center",
+      elevation: 2,
+      shadowColor: colors.shadow,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.08,
+      shadowRadius: 4,
+    },
+    avatar: {
+      backgroundColor: colors.secondary,
+    },
+    avatarLabel: {
+      fontSize: 26,
+      fontWeight: "bold",
+      color: colors.onPrimary,
+    },
+    identityText: {
+      flex: 1,
+      marginLeft: 16,
+      minWidth: 0,
+    },
+    nameRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+    },
+    userName: {
+      fontSize: 20,
+      fontWeight: "700",
+      color: colors.textTitle,
+      flexShrink: 1,
+    },
+    editButton: {
+      width: 32,
+      height: 32,
+      borderRadius: 8,
+      backgroundColor: colors.primarySoft,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    userEmail: {
+      fontSize: 13,
+      color: colors.textSecondary,
+      marginTop: 4,
+    },
+    accountTypeHint: {
+      fontSize: 12,
+      color: colors.textPlaceholder,
+      marginTop: 4,
+      fontWeight: "500",
+    },
+    sectionTitle: {
+      fontSize: 13,
+      fontWeight: "700",
+      color: colors.textTertiary,
+      letterSpacing: 0.4,
+      textTransform: "uppercase",
+      marginHorizontal: 20,
+      marginTop: 22,
+      marginBottom: 10,
+    },
+    card: {
+      marginHorizontal: 16,
+      backgroundColor: colors.surfacePrimary,
+      borderRadius: 16,
+      elevation: 2,
+    },
+    membershipContent: {
+      paddingVertical: 4,
+    },
+    membershipTop: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    premiumBadge: {
+      width: 44,
+      height: 44,
+      borderRadius: 12,
+      alignItems: "center",
+      justifyContent: "center",
+      marginRight: 14,
+    },
+    premiumActive: {
+      backgroundColor: colors.warningBackground,
+    },
+    premiumInactive: {
+      backgroundColor: colors.surfaceSecondary,
+    },
+    membershipText: {
+      flex: 1,
+    },
+    membershipTitle: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: colors.textTitle,
+    },
+    membershipSubtitle: {
+      fontSize: 13,
+      color: colors.textSecondary,
+      marginTop: 2,
+    },
+    expiryRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginTop: 14,
+      paddingTop: 12,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: colors.border,
+    },
+    expiryLabel: {
+      fontSize: 13,
+      color: colors.textSecondary,
+    },
+    expiryValue: {
+      fontSize: 13,
+      fontWeight: "600",
+      color: colors.textTitle,
+    },
+    upgradeButton: {
+      backgroundColor: colors.secondary,
+      paddingHorizontal: 20,
+      paddingVertical: 12,
+      borderRadius: 12,
+      marginTop: 14,
+      alignItems: "center",
+    },
+    upgradeButtonText: {
+      color: colors.buttonText,
+      fontWeight: "600",
+      fontSize: 14,
+    },
+    progressContent: {
+      paddingVertical: 4,
+      paddingHorizontal: 0,
+    },
+    progressRow: {
+      flexDirection: "row",
+      alignItems: "stretch",
+    },
+    progressRowDivider: {
+      height: StyleSheet.hairlineWidth,
+      backgroundColor: colors.border,
+    },
+    progressCell: {
+      flex: 1,
+      alignItems: "center",
+      paddingVertical: 14,
+      paddingHorizontal: 4,
+    },
+    progressCellWide: {
+      flex: 1,
+      alignItems: "center",
+      paddingVertical: 14,
+      paddingHorizontal: 4,
+    },
+    progressCellBorderRight: {
+      borderRightWidth: StyleSheet.hairlineWidth,
+      borderRightColor: colors.border,
+    },
+    progressValue: {
+      fontSize: 18,
+      fontWeight: "700",
+      color: colors.textTitle,
+      marginTop: 6,
+    },
+    progressLabel: {
+      fontSize: 11,
+      color: colors.textSecondary,
+      marginTop: 2,
+      textAlign: "center",
+    },
+    referralSubtitle: {
+      fontSize: 14,
+      color: colors.textSecondary,
+      marginBottom: 14,
+      lineHeight: 20,
+    },
+    referralCodeBox: {
+      backgroundColor: colors.surfaceSecondary,
+      padding: 14,
+      borderRadius: 12,
+      marginBottom: 12,
+    },
+    codeContainer: {
+      flex: 1,
+    },
+    codeLabel: {
+      fontSize: 10,
+      color: colors.textPlaceholder,
+      fontWeight: "600",
+      marginBottom: 4,
+      letterSpacing: 0.6,
+    },
+    codeText: {
+      fontSize: 20,
+      fontWeight: "700",
+      color: colors.textTitle,
+      letterSpacing: 1.5,
+    },
+    referralActions: {
+      flexDirection: "row",
+      gap: 10,
+    },
+    copyButton: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 6,
+      paddingVertical: 12,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.surfaceTertiary,
+    },
+    copyButtonText: {
+      color: colors.secondary,
+      fontWeight: "600",
+      fontSize: 14,
+    },
+    shareButton: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 6,
+      paddingVertical: 12,
+      borderRadius: 10,
+      backgroundColor: colors.primary,
+    },
+    shareButtonText: {
+      color: colors.buttonText,
+      fontWeight: "600",
+      fontSize: 14,
+    },
+    appearanceIntro: {
+      fontSize: 13,
+      color: colors.textSecondary,
+      marginBottom: 12,
+      lineHeight: 18,
+    },
+    appearanceRow: {
+      flexDirection: "row",
+      gap: 8,
+    },
+    appearanceOption: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: 12,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.surfaceTertiary,
+      gap: 6,
+    },
+    appearanceOptionSelected: {
+      borderColor: colors.secondary,
+      backgroundColor: colors.primarySoft,
+    },
+    appearanceOptionLabel: {
+      fontSize: 12,
+      fontWeight: "500",
+      color: colors.textTertiary,
+    },
+    appearanceOptionLabelSelected: {
+      color: colors.secondary,
+      fontWeight: "700",
+    },
+    actionsContent: {
+      paddingVertical: 4,
+    },
+    actionItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingVertical: 14,
+      minHeight: 48,
+    },
+    actionIconBox: {
+      width: 36,
+      height: 36,
+      borderRadius: 10,
+      backgroundColor: colors.primarySoft,
+      alignItems: "center",
+      justifyContent: "center",
+      marginRight: 14,
+    },
+    actionLabel: {
+      flex: 1,
+      fontSize: 15,
+      color: colors.textTitle,
+      fontWeight: "500",
+    },
+    actionDivider: {
+      marginVertical: 2,
+      backgroundColor: colors.border,
+    },
+    logoutButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      marginHorizontal: 16,
+      paddingVertical: 14,
+      backgroundColor: colors.surfacePrimary,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+      gap: 8,
+      minHeight: 48,
+    },
+    logoutText: {
+      fontSize: 15,
+      fontWeight: "600",
+      color: colors.textSecondary,
+    },
+    deleteAccountButton: {
+      alignItems: "center",
+      justifyContent: "center",
+      marginHorizontal: 16,
+      marginTop: 8,
+      paddingVertical: 12,
+      minHeight: 44,
+    },
+    deleteAccountText: {
+      fontSize: 14,
+      fontWeight: "500",
+      color: colors.error,
+    },
+    version: {
+      textAlign: "center",
+      color: colors.textPlaceholder,
+      fontSize: 12,
+      marginTop: 20,
+    },
+    bottomPadding: {
+      height: 40,
+    },
+    loadingOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: colors.overlay,
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 1000,
+    },
+    loadingText: {
+      marginTop: 16,
+      fontSize: 16,
+      fontWeight: "600",
+      color: colors.onPrimary,
+    },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: colors.overlay,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 24,
+    },
+    modalContent: {
+      width: "100%",
+      maxWidth: 340,
+      backgroundColor: colors.surfacePrimary,
+      borderRadius: 16,
+      padding: 24,
+      elevation: 5,
+      shadowColor: colors.shadow,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontWeight: "bold",
+      color: colors.textTitle,
+      marginBottom: 16,
+      textAlign: "center",
+    },
+    modalInput: {
+      marginBottom: 20,
+      backgroundColor: colors.inputBackground,
+    },
+    modalButtons: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      gap: 12,
+    },
+    modalButton: {
+      flex: 1,
+      borderRadius: 10,
+    },
+  });
 
 export default ProfileScreen;
