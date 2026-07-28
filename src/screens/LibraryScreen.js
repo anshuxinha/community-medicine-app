@@ -25,6 +25,7 @@ import {
 } from "../utils/contentRegistry";
 import { theme, useResponsive } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
+import { useUnlockOrientationOnFocus } from "../hooks/useUnlockOrientationOnFocus";
 import {
   enableScreenCaptureProtection,
   disableScreenCaptureProtection,
@@ -185,6 +186,9 @@ const LibraryScreen = (props) => {
   const [openMenuKey, setOpenMenuKey] = useState(null);
   const insets = useSafeAreaInsets();
   const { isTablet, horizontalPadding, contentMaxWidth } = useResponsive();
+
+  // Free rotation only while this tab is focused; re-lock portrait on blur.
+  useUnlockOrientationOnFocus();
 
   useEffect(() => {
     enableScreenCaptureProtection();

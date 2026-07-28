@@ -19,6 +19,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useThemedStyles } from '../styles/useThemedStyles';
 import { normalizeUpdatedSnippet } from "../utils/contentRegistry";
+import { ALL_ORIENTATIONS } from "../constants/orientations";
 import ThemeModePill from "./ThemeModePill";
 
 const stripBold = (text) => text.replace(/\*\*(.+?)\*\*/g, "$1");
@@ -1749,6 +1750,7 @@ const ReadingView = ({
         visible={noteModalVisible}
         transparent
         animationType="none"
+        supportedOrientations={ALL_ORIENTATIONS}
         onRequestClose={() => {
           setNoteModalVisible(false);
           setEditingAnnotation(null);
@@ -1811,6 +1813,7 @@ const ReadingView = ({
         visible={Boolean(fullscreenImage)}
         transparent
         animationType="fade"
+        supportedOrientations={ALL_ORIENTATIONS}
         onRequestClose={() => setFullscreenImage(null)}
       >
         <View style={styles.fullscreenBackdrop}>
@@ -2659,7 +2662,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   fullscreenViewport: {
     width: "100%",
-    height: SCREEN.height * 0.78,
+    height: "78%",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -2672,8 +2675,9 @@ const createStyles = (colors) => StyleSheet.create({
     justifyContent: "center",
   },
   fullscreenImage: {
-    width: SCREEN.width - 32,
-    height: SCREEN.height * 0.6,
+    width: "100%",
+    maxWidth: "100%",
+    height: "60%",
   },
   viewerControls: {
     flexDirection: "row",
