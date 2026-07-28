@@ -555,7 +555,8 @@ const PYQPracticeScreen = ({ route, navigation }) => {
                 mode="contained"
                 onPress={() => handleSubmitTest(false)}
                 style={styles.submitButton}
-                buttonColor="#000000"
+                buttonColor={colors.inverseSurface}
+                textColor={colors.onInverseSurface}
               >
                 Submit Module
               </Button>
@@ -586,7 +587,8 @@ const PYQPracticeScreen = ({ route, navigation }) => {
             onPress={() => setConfirmSubmitVisible(true)}
             style={styles.examSubmitBelowButton}
             contentStyle={{ paddingVertical: 4 }}
-            buttonColor="#000000"
+            buttonColor={colors.inverseSurface}
+            textColor={colors.onInverseSurface}
           >
             Submit Test
           </Button>
@@ -815,12 +817,10 @@ const createStyles = (colors) => StyleSheet.create({
     flex: 1,
     marginHorizontal: 6,
     borderRadius: 10,
-    backgroundColor: colors.textTitle,
   },
   examSubmitBelowButton: {
     marginTop: 12,
     borderRadius: 10,
-    backgroundColor: colors.textTitle,
     marginHorizontal: 6,
   },
 
