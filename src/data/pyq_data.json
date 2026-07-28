@@ -237,7 +237,7 @@
     "page": 6,
     "correctAnswer": "b",
     "explanation": "p-value is the probability of rejecting a null hypothesis when it is true. The p-value is the criterion or significance level (α), below which an outcome can be said to be statistically significant. From this, we can also deduce that the p-value is the probability that a null hypothesis will be rejected even when it is true, thereby making a type I error.",
-    "image": "image_p7_Im0.jpg"
+    "image": null
   },
   {
     "id": "aiims_2017_q16",
@@ -253,7 +253,7 @@
     "page": 6,
     "correctAnswer": "a",
     "explanation": "In the given scenario, absolute risk reduction (ARR) is 1% and relative risk reduction (RRR) is 0.1. Let us reconstruct the design table in the following way: Relative risk (RR) is given as a/(a+b) ÷ c/(c+d). RR = 1603/15225 ÷ 1804/15225 = 0.106/0.118 = 0.89 ≈ 0.90. Relative risk reduction (RRR) = 1 – Relative risk. In this scenario, RRR = 1 – 0.9 = 0.1 or 10%. Incidence of a disease is the absolute risk of contracting it. Absolute risk rate of the group using new drug = a/(a+b) = 1603/15225 = 0.106 or 10.6% ≈ 11%. Absolute risk rate of the group using placebo = c/(c+d) = 1804/15225 = 0.118 or 11.8% ≈ 12%. Absolute risk reduction (ARR) is the difference in the absolute risk rates between the placebo and the drug. In this scenario, ARR = 12% - 11% = 1%. Health hazard (+) Health hazard (-) Total New drug 1603 (a) 13622 (b) 15225 (a + b) Place bo 1804 (c) 13421 (d) 15225 (c+ d )",
-    "image": "image_p7_Im0.jpg"
+    "image": null
   },
   {
     "id": "aiims_2017_q17",
@@ -317,7 +317,7 @@
     "page": 8,
     "correctAnswer": "c",
     "explanation": "From the given clinical scenario, it can be easily inferred that the child has pneumonia. The treatment for pneumonia for a child between 2 months and 5 years of age is oral amoxicillin and home care advice. The following image gives the IMNCI classification for cough/difficulty in breathing in children.",
-    "image": "image_p8_Im0.jpg"
+    "image": null
   },
   {
     "id": "aiims_2017_q21",
@@ -333,7 +333,7 @@
     "page": 8,
     "correctAnswer": "c",
     "explanation": "Disease 1- the cases have been almost the same so it has to be endemic. Disease 2- there is an alarming increase in the number of cases. It has to be an epidemic. Disease 3- the number of cases has decreased without any explanation so it has to be sporadic. Epidemic refers to the occurrence of a disease in excess of expected frequency. A pandemic is an epidemic affecting a large population over a large geographical area crossing international boundaries. An endemic disease is a regularly occurring disease in a population in expected frequency without a ny importation from outside. Sporadic diseases present as scattered cases of infection without relation temporally/spatially.",
-    "image": "image_p8_Im0.jpg"
+    "image": null
   },
   {
     "id": "aiims_2017_q22",
@@ -445,7 +445,7 @@
     "page": 20,
     "correctAnswer": "c",
     "explanation": "Vaccine vial monitors (VVM) are the only heat-sensitive indicator of vaccine viability that are routinely used in vaccines throughout the supply chain. VVM records cumulative heat exposure through a gradual change in color. If the color of the inner s quare is the same or is darker than the outer circle, the vaccine has been exposed to too much temperature and should be discarded.",
-    "image": "image_p20_Im0.jpg"
+    "image": null
   },
   {
     "id": "aiims_2018_q6",
@@ -621,7 +621,7 @@
     "page": 23,
     "correctAnswer": "b",
     "explanation": "The given scenario is an example of an endemic disease. Endemic diseases are those that have a constant presence and /or usual prevalence of a disease or i nfectious agent in a population within a geographic area. Epidemic refers to an increase, often sudden, in the number of cases of a disease above what is normally expected in that population in that area. Outbreak carries the same definition of an epidemic, but is often used for a more limited geographic area. Sporadic diseases occur in a haphazard and irregular manner from time to time.",
-    "image": "image_p24_Im0.jpg"
+    "image": null
   },
   {
     "id": "aiims_2018_q17",
@@ -733,7 +733,7 @@
     "page": 26,
     "correctAnswer": "a",
     "explanation": "The freeze damage to vaccines is detected by Shake test.  A frozen vaccine is used as a control vial and the vial suspected to be damaged by freezing is taken as the test vial.  Both are shaken after thawing and the rate of sedimentation is compared.  If the rate of sedimentation in test vial is slower than the control vial, then it is usable and has not been damaged.  Some of the most widely used vaccines are freeze-sensitive. Examples: Diphtheria, Tetanus, P ertussis, Liquid Haemophilus influenza type b (Hib), Hepatitis B.",
-    "image": "image_p26_Im0.jpg"
+    "image": null
   },
   {
     "id": "aiims_2018_q24",
@@ -989,7 +989,7 @@
     "page": 44,
     "correctAnswer": "a",
     "explanation": "Preparation of malaria slides is the responsibility of health worker male (HWM), not ASHA. Roles and responsibilities of ASHA: A. Health education: The ASHA provides information and awareness to the community regarding nutrition, basic sanitation and hygienic practices, healthy living and working conditions, and timely utilization of health and family welfare services. B. Maternal and child health:  Facilitate utilization of health services such as immunization, antenatal and postnatal checkup a nd supplementary nutrition, sanitation and other services provided by the government.  Provide counseling to women on birth preparedness, safe delivery, breastfeeding and c omplementary feeding, immunization, contraception, and prevention of common infections.  Escort/accompany pregnant women and children requiring treatment or admission to the n earest health center.  Upon graded training, provide newborn care and management of common childhood illnesses. C. Primary care:  Provide primary care for minor ailments like diarrhea and fever and provide first aid for injuries.  Provide DOTS under RNTCP.  Depot holder of essential provisions such as oral rehydration therapy, iron and folic acid tablets, chloroquine, disposable delivery kits, oral pills, condoms, etc. D. Sanitation:  Work with village health and sanitation committee to create a comprehensive village health plan.  Promote the construction of household toilets under total sanitation campaign E. Notification: ASHA will inform births, deaths, and any disease outbreaks to the sub-center or P HC.",
-    "image": "image_p45_Im0.jpg"
+    "image": null
   },
   {
     "id": "aiims_2019_q8",
@@ -1053,7 +1053,7 @@
     "page": 45,
     "correctAnswer": "a",
     "explanation": "The Laqshya initiative launched recently by the government of India refers to initiative for labor room quality improvement. There is enough evidence to show that improving the quality of care in labor rooms, especially on the day of birth, is central to maternal and neonatal survival.  Laqshya is expected to improve the quality of care that is being provided to the pregnant mother in the labor room and maternity operation theatres, thereby preventing the undesirable adverse outcomes associated with childbirth.  This initiative will be implemented in government medical colleges (MCs) besides district h ospitals (DHs), and high delivery load sub-district hospitals (SDHs) and community health centers (CHCs).  The initiative plans to conduct quality certification of labor rooms and also incentivize facilities a chieving the targets outlined.  The goal of this initiative is to reduce preventable maternal and new-born mortality, morbidity, a nd stillbirths associated with the care around delivery in the labor room and maternity OT and ensure respectful maternity care.",
-    "image": "image_p45_Im0.jpg"
+    "image": null
   },
   {
     "id": "aiims_2019_q12",
@@ -1085,7 +1085,7 @@
     "page": 46,
     "correctAnswer": "b",
     "explanation": "Blinding does not eliminate confounding factors. Blinding is done to eliminate the bias (such as subject bias, observer bias, or investigator bias). A confounding factor is defined as the one associated with both exposure and disease and is d istributed unequally in study and control groups.  For example, a prospective study is being conducted to know the effect of alcohol on the development of lung cancer.  However, individuals who drink alcohol are most likely to smoke. So, smoking is associated with the exposure. Also, smoking is an independent causative factor for lung cancer. Thus, smoking is a confounding factor.  In the above example, if the study is conducted without eliminating the confounding factor, then the result may falsely suggest that alcohol is a causative factor for lung cancer. Techniques to eliminate confounding factors include  Randomization  Matching  Stratified randomization  Restriction Randomization is the random allocation of the participants in experimental studies (Ex.randomized control trial) into the study group and control group. Matching, which is usually done in analytical studies (for example, case–control and cohort studies), is the process where the participants in two groups are matched based on factors such as age, gender, race, smoking status, etc. to eliminate the potential confounders. Stratified randomization, which is also known as prestratification or blocking, is the process that combines both randomization and matching techniques. In this method, the participants are first grouped into subgroups which internally match with potential confounding factors such as age, race, gender, etc. An equal number of participants form each subgroup are then allocated to the study and control groups. Restriction: This method restricts the study to only those participants with particular characteristics. For example, a study can be restricted to participants of only one gender, race, age group, geographical area, disease severity, etc., thus eliminating the potential confounders.",
-    "image": "image_p46_Im0.jpg"
+    "image": null
   },
   {
     "id": "aiims_2019_q14",
@@ -1197,7 +1197,7 @@
     "page": 48,
     "correctAnswer": "b",
     "explanation": "This boy should receive 2 doses of vaccine on days 0 &amp; 3 as he has received a prior course of post-exposure prophylaxis (PEP) > 3 months ago. Management of a new dog bite in a previously immunized individual with either pre-exposure p rophylaxis (PrEP) or post-exposure prophylaxis (PEP) is as follows:  Category I: Wound treatment only  Category II/ III:  Wound treatment with soap and running water for 15 min and apply antiseptic  Receive Anti-rabies vaccine (ARV) 2 doses ID (0.1 ml, 1 site)/ 2 doses IM (1 VIAL, 1 site) on days 0 and 3. *Note: In developing countries like India, the vaccination status of animals alone, doesn't play a significant role in determining the initiation of prophylaxis in humans.",
-    "image": "image_p49_Im0.jpg"
+    "image": null
   },
   {
     "id": "aiims_2019_q21",
@@ -2109,7 +2109,7 @@
     "page": 93,
     "correctAnswer": "a",
     "explanation": "Approximately 68% of a normal distribution falls within ±1 standard deviations of the mean. This is as per the empirical rule of a normal distribution. Approximately 95% of the distribution falls within ±2 standard deviations of the mean. Approximately 99.7% of the distribution falls within ±3 standard deviations of the mean.",
-    "image": "image_p92_Im0.jpg"
+    "image": null
   },
   {
     "id": "neet_2019_q7",
@@ -2189,7 +2189,7 @@
     "page": 95,
     "correctAnswer": "d",
     "explanation": "In controlled tipping, one acre of land is required by the trench method to be practiced for a population of 10,000. It is also known as a sanitary landfill. It is the most satisfactory method of refuse disposal where suitable land is available. In this method, waste material is placed in a trench or other prepared area. Then, it is adequately compacted and covered with earth at the end of the day. Methods used in controlled tipping are:  Trench method: Done in places where level ground is available  Ramp method: Well suited where the terrain is moderately sloping  Area method: Used for filling land depressions, disused quarries, and clay pits",
-    "image": "image_p96_Im0.jpg"
+    "image": null
   },
   {
     "id": "neet_2019_q12",
@@ -2365,7 +2365,7 @@
     "page": 98,
     "correctAnswer": "a",
     "explanation": "Line graphs or line diagrams are the best way to plot the changes in the incidence of a disease in a given area over time.",
-    "image": "image_p97_Im0.jpg"
+    "image": null
   },
   {
     "id": "neet_2019_q23",
@@ -2813,7 +2813,7 @@
     "page": 123,
     "correctAnswer": "d",
     "explanation": "The Quantity to Order (QO) or the reorder quantity of medicines to be placed at each order i nterval is calculated using the reorder formula as given below: QO = CA x (LT + PP) = CA x Rf where QO is the quantity to order, CA is average consumption in a month, LT is lead time, PP is procurement period and Rf is the reorder factor. Reorder factor (Rf) is the sum of lead time (LT) and procurement period (PP). Lead time (LT) is the time between the initiation of a purchase order and receipt at the warehouse from the supplier. The procurement period (PP) covers the time until the next regular order will be placed. In the given question, lead time (LT) and procurement period (PP) are 1 month each. Average consumption (CA) in a month = (40 tablets of amlodipine + 10 tablets of lisinopril) x 30 days = 1500 tablets Reorder factor (Rf) = LT + PP = 1 + 1 = 2 Since these patients got transferred from another center there is no safety stock for them at present at the facility. So in order to prevent stockouts for them, an extra number of tablets must be ordered, which makes 1600 tablets with a reorder factor (Rf) of 2 the correct option. Factors determining the reorder formula are:  Average consumption or demand of the drug (CA) in a month  Supplier Lead time (LT): is the time between initiation of a purchase order and receipt at the warehouse from the supplier.  Safety stock (SS): is the stock that should always be on hand to prevent stockouts. The safety stock level and reorder level will be the same if consumption and lead times are predictable and stable.  Procurement period (PP): it covers the time until the next regular order will be placed. In a scheduled system this is in multiples of one month and in a perpetual system, it is counted in days or weeks. Note: Quantity ordered (QO) + Safety Stock (SS) must cover the time until the next order is received, which is given by the Reorder factor (Rf) = Procurement Period (PP) + Lead Time (LT).  Reorder level: is the quantity of remaining stock that should trigger a reorder of the item. In a basic purchasing formula, reorder level is calculated by multiplying the average lead time by the average consumption of the drug during the lead time.  Maximum stock level: is the same as the target stock level, which is required to satisfy demand until the next order is received.  Stock position: is the sum of stock on hand (working and safety stock) and stock on order, minus a ny stock back-ordered to clients.",
-    "image": "image_p124_Im0.jpg"
+    "image": null
   },
   {
     "id": "ini-cet_2021_q4",
@@ -2973,7 +2973,7 @@
     "page": 127,
     "correctAnswer": "c",
     "explanation": "Flow cytometry results are typically presented by two-dimensional dot plots or one-dimensional histograms. Histograms compare only a single parameter. A large number of events detected at one particular intensity will be displayed as a spike on the histogram. They are fast to read and easy to understand. Dot plots can compare 2 or more parameters simultaneously on a 2D scatterplot. Each distinct e vent is represented as a single dot and events with similar intensities will cluster together in the same region on the scatter plot. They are a more complex, illustrative representation of data. Pie charts and bar diagrams are used for representing qualitative data. A line diagram is used to show the trend of events or changes over passage of time.",
-    "image": "image_p127_Im0.jpg"
+    "image": null
   },
   {
     "id": "ini-cet_2021_q14",
@@ -3021,7 +3021,7 @@
     "page": 128,
     "correctAnswer": "a",
     "explanation": "The age standardized mortality ratio (SMR) is an indicator of the death rate of a population a djusted to a standard age distribution. It is obtained by indirect standardization and cannot be used to compare multiple groups with different age structures. Standardized death rate (SDR) obtained by direct standardization enables comparisons of mortality rates between populations with different age compositions by eliminating the confounding effect caused by variations in age structures (Options C and D). This adjustment process can also account for factors such as sex, race, and parity. Standardization can be achieved through two methods: direct or indirect. In both cases, a standard population is selected as a reference, characterized by known numbers in each age and sex group. The direct method of standardization requires age-specific death rates (ASDR) along with the corresponding subgroup sizes. By applying these rates to the standard population, the expected deaths across all age groups can be calculated assuming that both populations share the same age-specific death rates. Dividing the total expected deaths by the standard population yields the SDR. The calculated standardized death rate in direct standardization can be compared with different population groups with different age group compositions. The table below shows the calculation of age-specific death rates per 1000 population for a sub-population: Crude death rate = 64/7500 = 8.533 per 1000 population. Applying ASDR to the standard population, we can get the SDR SDR per 1000 population = (212/23500) x 1000 = 9.021 Indirect standardization allows adjustment when age-specific rates are either unavailable or unstable due to small numbers. Examples of indirect standardization methods include standardized mortality ratio (SMR), life table analysis, survival analysis, regression analysis, and multivariate analysis. SMR estimates expected deaths, assuming that the study group experiences the same death rates as a standard population. The table below shows the calculation of the standardized mortality ratio for a study group population. SMR = Observed deaths / Expected deaths x 100 = (65/59.85) x 100= 108.6 If the SMR exceeds 100, it indicates that the study group population carries a higher mortality risk compared to the overall population. However, it's important to note that the SMR cannot be directly compared to other groups with different age compositions. Age(yea rs ) Mid-year populati on Deaths in the yea r ASD R Standard populati on Expected deat hs 0-15 2000 10 5 6000 30 15-45 4000 24 6 12000 72 >45 1500 30 20 5500 110 Total 7500 64 23500 212 Age(yea rs ) National population death ra tes per 1000 Study group populati on Observed dea ths Expected deat hs 0-15 3.0 1200 * 3.6 15-45 6.5 2500 * 16.25 >45 10 4000 * 40 Total 65 59.85",
-    "image": "image_p128_Im0.jpg"
+    "image": null
   },
   {
     "id": "ini-cet_2021_q17",
@@ -3085,7 +3085,7 @@
     "page": 129,
     "correctAnswer": "d",
     "explanation": "An increase in the incidence of non-communicable diseases over a few years is described as a secular trend. The secular trend describes the occurrence of disease over a prolonged period, usually years. Even though it may have short-term fluctuations, there is a tendency of the disease occurrence to change consistently in a particular direction or a definite movement in one direction. Examples of the secular trend include coronary heart disease, lung cancer, and diabetes, which have shown a consistent upward trend in incidence as well as prevalence, in developed countries. Similarly, there has been a consistent decline in the diseases such as tuberculosis, typhoid fever, diphtheria, and polio. Other options: Option A: Seasonal trends reflect seasonal changes in disease occurrence following changes in environmental conditions that enhance the ability of the agent to replicate or be transmitted. For example, measles (usually occurs in early spring), varicella, etc. Non-infectious conditions like hay fever and snake bites may also show seasonal variations. Option B: Cyclic trend is shown by some diseases that occur in cycles spread over short periods of time which may be, days, weeks, months, or years. Examples include the influenza pandemic, which is known to occur at intervals of every 7–10 years due to antigenic variations. Option C: Periodic fluctuations include both seasonal and cyclic trends.",
-    "image": "image_p128_Im0.jpg"
+    "image": null
   },
   {
     "id": "ini-cet_2021_q21",
@@ -3581,7 +3581,7 @@
     "page": 171,
     "correctAnswer": "b",
     "explanation": "A broken vaccine vial is disposed of in a puncture-proof blue bin, according to biomedical waste m anagement (BMW). According to BMW, broken or discarded contaminated glass materials such as vials, ampules, etc a re disposed of in boxes marked with blue color. It is then disinfected either by washing with detergent, autoclaving, or microwaving and sent for recycling. The methods used for treatment and disposal of healthcare waste are:  Incineration: This is a dry oxidation process done using high temperatures.  Chemical disinfection: Chemicals are added to waste to kill or inactivate the microorganisms.  Wet and dry thermal treatment: Shredded infectious waste is exposed to high temperature, high-pressure steam and it resembles an autoclave sterilization process.  Microwave irradiation: Microorganisms are killed using high-frequency microwave.  Land disposal.  Inertization: Waste is mixed with cement and other substances before disposal to reduce toxicity.",
-    "image": "image_p172_Im0.jpg"
+    "image": null
   },
   {
     "id": "ini-cet_2022_q9",
@@ -3645,7 +3645,7 @@
     "page": 172,
     "correctAnswer": "c",
     "explanation": "She can use the pentavalent vaccine and discard the MR vaccine. According to the open vial policy, the pentavalent vaccine can be reused, whereas MR can not be reused. Open vial policy was implemented to allow the reuse of partially used multidose vials under the U niversal Immunization Program (UIP) for up to 28 days if certain conditions are met. This was implemented to reduce vaccine wastage. It applies only to DPT, TT, hepatitis B, oral polio vaccine (OPV), liquid pentavalent, PCV, injectable IPV, inactivated Japanese encephalitis (JE) vaccine, and rotavirus vaccine. It does not apply to Measles/MR and BCG vaccines. Note: Open vial policy does not apply to rotavirus vaccine with VVM on cap, it a pplies only to new rotavirus vaccine with VVM on label.",
-    "image": "image_p172_Im0.jpg"
+    "image": null
   },
   {
     "id": "ini-cet_2022_q13",
@@ -3693,7 +3693,7 @@
     "page": 173,
     "correctAnswer": "d",
     "explanation": "The correct statements drawn from the values given in the table are 3 and 4. An odds ratio is a measure of the association between an exposure and an outcome. It represents the odds that an outcome will occur given a particular exposure in comparison to the odds of the outcome occurring in the absence of that exposure. An odds ratio of 1 indicates that the risk factor is not related to the disease. An odds ratio of less than 1 indicates that a person with the disease is less likely to have been exposed to the factor, implying that the factor may be a protective factor against the disease. An odds ratio greater than 1 indicates that the odds ratio is significant, and the factor can be a scertained as a risk factor. The p-value is the probability of obtaining a result at least as extreme as the one that was actually observed in the biological or clinical experiment. A p-value of less than 0.05 indicates that the test result is statistically significant. Other options: Statement 1: Female population is at greater risk of developing blindness is a false statement; since the odds ratio is <1, the female population will be at lesser risk of developing blindness than the male population. Statement 2: People dwelling in rural areas are at increased risk of developing blindness is also false; a p-value of >0.05 means that this association is not statistically significant.",
-    "image": "image_p173_Im0.jpg"
+    "image": null
   },
   {
     "id": "ini-cet_2022_q16",
@@ -3741,7 +3741,7 @@
     "page": 174,
     "correctAnswer": "b",
     "explanation": "The correct statements are 1 and 2. Vaccine vial monitors (VVM) are heat-sensitive indicators routinely used to monitor heat exposure of the vaccine and determine vaccine viability as the vaccine vial moves across the supply chain. It records cumulative heat exposure through a gradual change in color. If the color of the inner square is the same or is darker than the outer circle, it indicates that the vaccine has been exposed to high temperatures and should be discarded. A VVM can be used to assess vaccine potency and not vaccine efficacy. Vaccine potency is the a bility of the vaccine to provide adequate immunity to the patient. Vaccine potency is irreversibly lost when the vaccine is exposed to unfavorable temperatures; hence, VVM indicating heat exposure can be used to assess whether the vaccine potency is likely to be intact or not. Vaccine efficacy, on the other hand, is a measure of the immunity conferred by the vaccine or the ability of the vaccine to prevent the disease in a vaccinated person under ideal conditions, such as clinical trials. The term vaccine efficacy is used in relation to findings of clinical trials, whereas the term vaccine potency is used for regular usage of the vaccine. Vaccine efficacy is determined only during clinical trials, whereas vaccine potency is tested for every batch of the vaccine that is manufactured. There are currently 4 types of VVMs; they are chosen to match the heat sensitivity of the vaccines based on the VVM number:  VVM 30: High stability  VVM 14: Medium stability  VVM 7: Moderate stability  VVM 2: Least stable Purpose of VVMs:  Ensures that vaccines damaged by heat are not administered.  Decision on which vaccines to be kept after a cold chain break occurs, minimizing unnecessary vaccine wastage.  Decision on which vaccine is to be used first. Vaccines showing significant heat exposure should be used before those that show lower heat exposure, even if their expiry date is longer. The expiry date of a vaccine cannot be relaxed even if VVM is in an acceptable range. Expired vaccines must be discarded. The expiry date of a vaccine cannot be determined using a VVM as it does not monitor the vaccine components. It only ensures that the vaccines have been exposed to the required temperatures and are viable for use. There are two different locations for VVMs:  On the label of the vaccine: The vaccine vial, once opened, can be kept for subsequent i mmunization sessions for up to 28 days, regardless of the formulation of the product.  In a location other than on the label (e.g., cap or neck of ampoule): The vaccine vial, once opened should be discarded at the end of the immunization session or within six hours of opening, whichever comes first, regardless of the formulation of the product.",
-    "image": "image_p174_Im0.jpg"
+    "image": null
   },
   {
     "id": "ini-cet_2022_q19",
@@ -3773,7 +3773,7 @@
     "page": 175,
     "correctAnswer": "c",
     "explanation": "Attributable risk (AR) describes the extent of outcome (lung cancer) that can be attributed to e xposure (smoking). In the given scenario, an AR of 90% means that 90% of lung cancer cases among smokers are attributable to smoking. Therefore, 90% cases of lung cancer can be eliminated in smokers if smoking is eliminated. AR is the difference in incidence rates of disease between an exposed group and an unexposed group. AR is indicative of the extent of the disease attributed to the exposure. It also refers to the amount of disease that could be eliminated in the exposed persons if the exposure is controlled or eliminated. It also helps to determine the impact a successful preventive or public health program might have in case the exposure to cause is reduced or eliminated. Population-attributable risk (PAR) is the difference in the incidence of disease in the total population and the incidence of disease among those not exposed to the supposed cause. PAR is useful in providing an estimate of the amount by which the disease could be reduced in that whole population if the suspected factor was eliminated or modified. For example, a PAR of 90% in the context of smoking and lung cancer means that 90% cases of lung cancer in the population can be attributed to smoking. Relative risk is defined as the ratio of incidence of the disease (outcome) among exposed and unexposed groups. It helps in establishing the association between a cause and a disease. However, it does not help in assessing the extent of the cause bringing about the disease (outcome).",
-    "image": "image_p174_Im0.jpg"
+    "image": null
   },
   {
     "id": "ini-cet_2022_q21",
@@ -3789,7 +3789,7 @@
     "page": 175,
     "correctAnswer": "d",
     "explanation": "The measures that are taken to prevent disasters from causing emergencies or to lessen the likely e ffects of emergencies are part of disaster mitigation. Disaster mitigation measures aim to reduce the vulnerability of the system. It complements d isaster preparedness and response activities and includes measures taken to lessen the likely effects of emergencies. Some of these measures are:  Flood mitigation  Land-use planning  Improved building codes  Reduction and protection of vulnerable populations or structures. Other options: Option A - Disaster response includes activities such as rescue and first aid, field care, triage and tagging that form a part of the emergency care needed in the first few hours after a disaster. Option B - Disaster reconstruction is a part of the recovery phase after a disaster. Option C - Disaster rehabilitation refers to measures that lead to the restoration of pre-disaster conditions. These measures include water supply restoration, food safety, basic sanitation, personal hygiene, and vector control. The disaster management cycle is given below:",
-    "image": "image_p174_Im0.jpg"
+    "image": null
   },
   {
     "id": "ini-cet_2022_q22",
@@ -3933,7 +3933,7 @@
     "page": 178,
     "correctAnswer": "a",
     "explanation": "The image given below shows artemisinin-based combination therapy (ACT), which is used in the treatment of falciparum malaria. ACT consists of artesunate given for 3 days and sulphadoxine-pyrimethamine given for 1 day. It is s upplied by the government of India under the national vector-borne disease control program (NVDCP). It is given to all confirmed cases of Plasmodium falciparum infection, found positive by microscopy or rapid diagnostic tests. Primaquine with dose of 0.75 mg/kg of body weight is given on day 2 along with it. Artemether-lumefantrine is used for the treatment of falciparum malaria in the northeastern states of India. This drug is not given in pregnancy and in children less than 5 kg of body weight.",
-    "image": "image_p178_Im0.jpg"
+    "image": "image_p178_Im1.jpg"
   },
   {
     "id": "ini-cet_2022_q31",
@@ -3949,7 +3949,7 @@
     "page": 179,
     "correctAnswer": "b",
     "explanation": "According to the Anemia Mukt Bharat Abhiyaan, pregnant women with mild and moderate anemia is treated with  Two iron and folic acid tablets (60 mg elemental iron and 500 mcg folic acid) daily, orally given by the health provider during the ANC contact  Parenteral iron (IV iron sucrose or ferric carboxy maltose [FCM]) may be considered as the first line of management in pregnant women who are detected to be anemic late in pregnancy or in whom compliance is likely to be low (high chance of loss to follow-up) Anemia Mukt Bharat Abhiyaan: This is an initiative that aims to strengthen the existing mechanisms and foster newer strategies for tackling anemia. It focuses on seven target beneficiary groups, through seven interventions and seven institutional mechanisms. Interventions:  Prophylactic iron and folic acid supplementation.  Deworming.  Intensified Hemoglobin Testing (T4 strategy).  Treatment of anemia (including advanced clinical management like Intravenous Iron Therapy [Ferric Carboxymaltose] for severe cases).  Information and Communication campaign (BCC/Talk) focusing on behaviors like delayed cord clamping and dietary counseling.  Mandatory provision of IFA-fortified food in all government-funded health programs.  \"Eating Right\" approach: Promotion of daily consumption of diversified, iron-rich locally available foods, and addressing non-nutritional causes of anemia in endemic pockets (malaria, hemoglobinopathies, and fluorosis). Beneficiaries:  Low Birth Weight (LBW) babies (0–6 months)  Children, 6-59 months of age  Children, 5-10 years of age  Adolescent girls and boys, 10-19 years of age  Women of reproductive age, 15-49 years of age  Pregnant women  Lactating mothers, 0-6 months Institutions through which activities are carried out:  Intra-Ministerial Coordination  National Anemia Mukt Bharat Abhiyaan Unit  National Centre of Excellence and Advanced Research on Anemia Control (NCEAR-A)  Convergence with other Ministries  Strengthening Supply Chain and Logistics  Unified Anemia Mukt Bharat Abhiyaan Portal  Digitally integrated Monitoring & Evaluation (M&E) framework Community medicine NEET 2022 Question 1: The average life expectancy for a woman in Japan is 87 years. Due to recent advances in testing for cervical cancer, there is an increase in life expectancy by 15 years. The healthcare utility value is 0.8. Which of the following can be calculated from the parameters given? a) HALE b) DALY c) DFLE d) QALY Question 2: You are working in a primary health center (PHC) situated in a high seismic zone. Which of the following will you do as part of preparedness for an emergency? a) 1, 2, 3, 4 b) 2, 3, 4 c) 1, 2, 3 d) 1, 2, 4 Question 3: Although many animals are implicated in the spread of rabies, dogs are the most common ones. Also, it usually affects children in developing countries. Knowing this, what is the most cost-effective and logical way to reduce the incidence of rabies? a) Testing all the dogs for rabies b) Reduce stray dog population and vaccinate all dogs c) Increase the laboratory facilities d) Increase capacity of healthcare workers for surveillance Question 4: Which of the following steps is not included in STEP approach of WHO? a) Therapeutic assessment b) Physical assessment c) Psychological assessment d) Behavioral assessment Question 5: A male patient diagnosed with tuberculosis took complete treatment. Sputum examination was done after the completion of the intensive and the continuation phases. It was found to be negative. What is the status of the patient? a) Cured b) Treatment completed c) Lost to follow up d) Treatment failed Question 6: A cohort study was conducted with drinkers and non-drinkers of green tea to study its effect on diabetes mellitus. The risk ratio was found to be 0.84. Which of the following statements is correct? a) Green tea reduces the risk of diabetes b) Green tea increases the risk of diabetes c) Data insufficient to establish causal association d) The value (0.85) tends to be close to 1, hence there is no effect Question 7: Which statement refers best to the criteria for starting an urban community health center? a) Caters to a population of 1-1.5 lakh b) Referral centre for 2- 3 primary health centers c) No sub-district and district hospitals present in the area d) Should have a 100-bed facility in metro cities Question 8: How is a broken vaccine vial disposed, according to biomedical waste management? a) Puncture proof blue bin b) White container c) Yellow container d) Red container Question 9: In an urban area in the state of Madhya Pradesh, a primigravida goes for institutional delivery after being motivated by an ASHA worker. What are the benefits they will receive (in terms of money in rupees) under the Janani Suraksha Yojana? a) 1000 for mother and 400 for ASHA b) 1400 for mother and 600 for ASHA c) 600 for mother and 400 for ASHA d) 400 for mother and 600 for ASHA Question 10: Which of the following agency provides seed and manure in applied nutrition programs in schools? a) CARE b) UNDP c) UNICEF d) WHO Question 11: Many children from a particular community coming to a hospital were detected to have acute lymphoblastic leukemia (ALL). It was assumed that it is due to the presence of cytotoxic waste in the water of that community. If a case-control study has to be done to find whether the chemical and ALL are associated, what will be taken as the control? a) Children from the area exposed, but unaffected with the disease b) Children from the area not exposed and affected with the disease c) Children coming to your OPD, who do not have the disease d) All children with ALL irrespective of exposure status Question 12: An auxiliary nurse midwife has to conduct a vaccination camp in a village. She received 2 open vials, one of which is a pentavalent vaccine and the other is an MR vaccine. What can she do regarding the utilization of these vials? a) Use MR vaccine and discard pentavalent vaccine b) Use pentavalent vaccine and discard MR vaccine c) Use both d) Discard both Answer Key Question No. Correct Option 1 d 2 c 3 b 4 a 5 a 6 a 7 d 8 a 9 a 10 c 11 c 12 b Detailed Explanations",
-    "image": "image_p178_Im0.jpg"
+    "image": null
   },
   {
     "id": "neet_2023_q1",
@@ -4237,7 +4237,7 @@
     "page": 231,
     "correctAnswer": "b",
     "explanation": "Mantel-Haenszel method is used to calculate adjusted odds ratio during stratified analysis. It is not a test to detect normalcy of data. A plot histogram and a box whisker plot are visual methods to assess if a given set of data is d istributed normally. A normal distribution curve is an example of a plot histogram. Sometimes just the visual representation of the data might not be enough to tell whether the data is normally distributed. This is where Shapiro-Wilk test comes in. It examines how closely a given set of data fits a normal distribution. The sample data is first ordered and standardized. An assessment is then made how the sample quantiles fit the standard normal quantiles. Shapiro-Wilk test is commonly used on small samples. Stratified analysis of the data is done to reduce confounding. In such a scenario, multiple odds ratios are obtained — one for each stratum of the data. These have to be combined to give an adjusted odds ratio. This represents the effect of the exposure adjusted for the confounding factor. Mantel-Haenszel method is used for this purpose.",
-    "image": "image_p230_Im0.jpg"
+    "image": null
   },
   {
     "id": "ini-cet_2023_q4",
@@ -4253,7 +4253,7 @@
     "page": 231,
     "correctAnswer": "d",
     "explanation": "The bands used for confidence interval in the Kaplan-Meier survival curve are Hall-Wellner bands. When using standard statistical software, at each point in time, the upper and lower limits of the confidence interval are also obtained. Hall-Wellner bands, Gill bands, and Nair's Equal Precision confidence bands are used for this purpose. Kaplan-Meier plot is a graphical representation of the number of people surviving during a given length of time. Often there are two or more groups represented in the plot, such as those treated versus those not treated. The graph often has a number of steps as the number of people surviving is a discrete variable. The image given below shows a Kaplan-Meier plot. The dotted lines represent the upper and lower limits of the 95% confidence interval.",
-    "image": "image_p230_Im0.jpg"
+    "image": null
   },
   {
     "id": "ini-cet_2023_q5",
@@ -4829,7 +4829,7 @@
     "page": 270,
     "correctAnswer": "c",
     "explanation": "JSSK stands for Janani Shishu Suraksha Karyakram. It is an initiative by the Indian government a imed at reducing maternal and infant mortality. The provisions of JSSK include:  Free transport  Free treatment  Free drugs and consumables  Free diagnostics and diet  Free and cashless delivery  Free C-Section  Free provision of blood Note: Previously under JSSK, the free entitlements were provided only for sick newborns till 30 days after birth. Now it is expanded to cover infants also.",
-    "image": null
+    "image": "image_p270_Im1.jpg"
   },
   {
     "id": "neet_2024_q4",
@@ -4861,7 +4861,7 @@
     "page": 271,
     "correctAnswer": "b",
     "explanation": "This study involves a quantitative variable, i.e., blood cholesterol, and compares the before and a fter results of the same group. Hence, a paired T-test is used. Tests of significance are used to check for significant association between two or more variables. E xamples are the student to-test, Paired t-test, Chi-square test, ANOVA, and Fischer-exact test. McNemar's test is a non-parametric test for analysing paired nominal data. This test examines the marginal homogeneity of two dichotomous variables using a 2 x 2 contingency table. One independent variable with two dependent groups and one nominal variable with two categories (dichotomous) are needed for the test.",
-    "image": "image_p272_Im0.jpg"
+    "image": null
   },
   {
     "id": "neet_2024_q6",
@@ -4909,7 +4909,7 @@
     "page": 273,
     "correctAnswer": "a",
     "explanation": "The line B here represents the death rate. Line A represents the Birth rate Line C represents the Total population",
-    "image": "image_p274_Im0.jpg"
+    "image": "image_p272_Im1.jpg"
   },
   {
     "id": "neet_2024_q9",
@@ -4989,7 +4989,7 @@
     "page": 274,
     "correctAnswer": "d",
     "explanation": "The index that is calculated using the given indicators such as life expectancy at birth, mean and expected years of schooling, and the per capita income is the Human Developmental Index (HDI). Human Development Index (HDI) is defined as a composite index focusing on three basic d imensions of human development. It assesses abilities  To lead a healthy long life - measured by life expectancy at birth  To acquire knowledge- measured by mean years of schooling  To achieve a decent standard of living- measured by gross national income per capita Hence the 3 dimension indices used to calculate the human development index are as follows life expectancy index, education index, and gross national index. Other options: Option A- Physical Quality of Life Index (PQLI) uses three indicators which include infant mortality, life expectancy at age one, and literacy rate. Option B- Multidimensional Poverty Index (MPI) - It is an international measure of acute multidimensional poverty by capturing the acute deprivations in health, education, and living standards that a person faces simultaneously. It is assessed using 3 dimensions and 10 indicators which are as follows:  Health - Nutrition and child mortality  Education- Years of schooling and school attendance  Standard of living -  Cooking fuel  Sanitation  Drinking water  Electricity  Housing  Assets Option C- Disability-adjusted life years (DALY): It is the amount of time lost due to ill health. It is e xpressed as the number of years lost due to ill-health, disability, or early death. The components of DALY are:  Years of life lost due to premature death  Years lived with disability (YLD)  Years lived in a state less than full health",
-    "image": "image_p274_Im0.jpg"
+    "image": null
   },
   {
     "id": "neet_2024_q14",
@@ -5117,7 +5117,7 @@
     "page": 277,
     "correctAnswer": "b",
     "explanation": "The correct sequence of the phases of the demographic cycle is High stationary → Early expanding → Late expanding → Low stationary → Declining. India is currently in the \"late expanding\" stage which is the third stage in the demographic cycle where declining death rates and declining birth rates are seen. Another important concept of the demographic cycle is the demographic gap which is the difference between birth rate and death rate. The demographic gap is maximum in the early-expanding phase, characterized by a high birth rate and low death rate. As the demography of the country transitions to the late-expanding phase, both birth rate and death rate falls causing a decreasing demographic gap. Although the birth rate is falling in the late-expanding phase, it is still higher than the death rate, which causes the population to increase.",
-    "image": "image_p276_Im0.jpg"
+    "image": null
   },
   {
     "id": "neet_2024_q22",
@@ -5133,7 +5133,7 @@
     "page": 277,
     "correctAnswer": "a",
     "explanation": "The clinical scenario is suggestive of epidemic dropsy. Paper chromatography test is used to identify the presence of toxic alkaloids from Argemone mexicana seeds that adulterate mustard oil. Epidemic dropsy is caused by the toxic compound sanguinarine, which is present in argemone oil extracted from argemone seeds. It is commonly used as an adulterant in mustard oil. Epidemic dropsy results in sudden onset of swelling of lower limbs, diarrhea, and breathlessness. S ome patients may develop hypersecretory glaucoma. It can lead to death due to cardiac failure. Adulteration with argemone oil can be detected by the following tests:  Paper chromatography - most sensitive test  Nitric acid test",
-    "image": "image_p276_Im0.jpg"
+    "image": null
   },
   {
     "id": "neet_2024_q23",
@@ -5149,7 +5149,7 @@
     "page": 277,
     "correctAnswer": "b",
     "explanation": "The early neonatal mortality rate here would be 18 per 1,000 live births. It can be calculated as shown: The neonatal mortality rate (NMR) refers to the rate of deaths within the first 28 days of life. It is calculated using the following parameters:  Early neonatal deaths- death in the first 7 days of life  Late neonatal deaths - after 7th day but before 28th completed day of life",
-    "image": "image_p276_Im0.jpg"
+    "image": null
   },
   {
     "id": "neet_2024_q24",
@@ -5165,7 +5165,7 @@
     "page": 278,
     "correctAnswer": "a",
     "explanation": "From the given clinical features, the most likely disease is visceral leishmaniasis or Kala azar caused by Leishmania donovani, and the vector is a female Phlebotomus sandfly. A patient from Bihar presenting with fever, weight loss, and hepatosplenomegaly with a smear examination showing anemia, thrombocytopenia, and hypergammaglobulinemia point towards the diagnosis. Leishmaniasis is transmitted by the bite of an infected female Phlebotomus sandfly. In India, it is endemic to Bihar, West Bengal, Jharkhand, and Uttar Pradesh. Patients present with high fever, hepatosplenomegaly, weight loss, and emaciation. The skin becomes dry, rough, and darkly pigmented. There is anemia, leukopenia, and thrombocytopenia. The parasite exists in 2 forms:  Amstigote form (also called LD bodies)- It is seen within macrophages and contains a kinetoplast.  Promastigote form- It is the infective form in the sandfly. The kinetoplast is seen at the anterior e nd. Kinetoplast are non-nuclear DNA present in addition to nucleus. They consist of blepharoplast a nd parabasal body. Flagellum originates near the kinetoplast. Diagnosis of kala-azar is mainly by demonstration of amastigotes within macrophages in tissue a spirates such as blood smears, bone marrow, splenic, or lymph node aspirate. It is the gold standard for diagnosis. The image below shows amastigotes located intracellularly within macrophages. Treatment is with a pentavalent antimonial compound. In Bihar, there is resistance to antimony so amphotericin-B-deoxycholate or miltefosine is preferred. In human beings, different species of Leishmania can cause the following diseases:  Visceral leishmaniasis, or kala-azar,  Cutaneous leishmaniasis,  Mucocutaneous leishmaniasis, and  Diffuse cutaneous leishmaniasis. The life cycle of Lesihmania is shown below. Other options: Option B: The Aedes mosquito is the vector for diseases such as dengue, chikungunya, and Zika virus, none of which fit the clinical profile of visceral leishmaniasis. Option C: Mites are vectors for diseases such as scrub typhus, which typically presents with fever a nd an eschar, but it does not explain the massive splenomegaly or hematologic findings seen in this case. Option D: Ixodid ticks are vectors for tick-borne diseases such as Lyme disease and babesiosis. T hese conditions do not present with the clinical features observed in this patient.",
-    "image": "image_p279_Im0.jpg"
+    "image": null
   },
   {
     "id": "neet_2024_q25",
@@ -5197,7 +5197,7 @@
     "page": 278,
     "correctAnswer": "a",
     "explanation": "Weekly Iron Folic Acid Supplementation is included in School Heath Programme not monthly IFA tablets for all children. The Weekly Iron Folic Acid Supplementation (WIFS) program is a school health program that provides iron and folic acid (IFA) tablets which aims to reduce the prevalence of anemia in school going children. The school health programs are managed by the primary health center (PHC). The School Health Committee (1961) in India recommended that the school health services should be a part of the general health services administered through PHCs. Formation of school health committees at the village, block, district, state, and national levels was recommended. The National School Health Council was created as an advisory and coordinating body. PHCs provide the following school health services:  Screening and general assessments for  Anemia/nutritional status  Visual acuity and hearing problems  Dental check-up  Physical disabilities  Learning disorders and behavior problems  Basic medicines for common ailments  Immunization  Micronutrient management (vitamin A, iron, and folic acid)  Deworming  Mid-day meal  Provison of sanitary napkins Note: National Programme for Mid-Day Meal in Schools has recently been renamed Pradhan M antri Poshan Shakti Nirman (PM POSHAN).",
-    "image": "image_p279_Im0.jpg"
+    "image": null
   },
   {
     "id": "neet_2024_q27",
@@ -5229,7 +5229,7 @@
     "page": 279,
     "correctAnswer": "d",
     "explanation": "For standards of ventilation, CO2 content of air is the paramater used to calculate fresh air supply of 3000 cubic feet per person per hour which was advocated by De Chaumont. Ventilation involves the quality control of incoming air but not quality control of outgoing air. It a lso involves the replacement of vitiated air(air with decreased oxygen content) by a supply of fresh outdoor air. It aims to provide a comfortable thermal environment and reduce the risk of infections. Fresh air supply of f 3000 cubic feet per person per hour is a good standard for air requirement. It is observed that the amount of CO2 due to respiration is not more than 2 parts in 1000 parts of air, then the air in the room is considered fresh.",
-    "image": "image_p279_Im0.jpg"
+    "image": null
   },
   {
     "id": "neet_2024_q29",
@@ -5261,7 +5261,7 @@
     "page": 280,
     "correctAnswer": "a",
     "explanation": "The Sanchol cholera vaccine is a bivalent vaccine given in 2 liquid doses orally to children >=1 year of age. The Sanchol cholera vaccine is a bivalent oral cholera vaccine (OCV) that targets both Vibrio cholerae O1 and Vibrio cholerae O139 serogroups, which are the primary causes of cholera outbreaks. It is designed to provide immunity by stimulating the production of antibodies in the intestines, the site of infection. Key Features of the Sanchol Vaccine: Bivalent Nature: The vaccine protects against two strains of the cholera bacterium: O1, which is responsible for most global cholera cases, and O139 which is seen in South Asia. Dosing Schedule: The Sanchol vaccine is administered in two oral doses. The doses are given 14 days apart for children aged 1 year and above as well as adults. This two-dose regimen is essential for achieving effective immunity. The vaccine is provided in liquid form, making it easy to administer. It does not require any special preparation, such as mixing with a bicarbonate buffer, which is needed for some older cholera vaccines. Age Recommendation: The vaccine is recommended for individuals aged 1 year and older. It is particularly useful in endemic regions or during outbreaks to prevent the spread of the disease. Efficacy and Duration: Sanchol has been shown to provide significant protection against cholera for up to 3-5 years after vaccination, although booster doses may be required in areas with ongoing transmission. The vaccine is widely used in mass vaccination campaigns, especially in areas prone to cholera outbreaks, such as refugee camps or regions with poor sanitation. It has been a critical tool in reducing the incidence of cholera in many endemic areas.",
-    "image": "image_p279_Im0.jpg"
+    "image": null
   },
   {
     "id": "neet_2024_q31",
