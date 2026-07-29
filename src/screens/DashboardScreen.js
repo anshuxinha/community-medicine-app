@@ -39,6 +39,7 @@ import {
 
 const DASHBOARD_NEW_BADGES_STORAGE_KEY = "dashboardNewBadgesSeen:v1";
 const REFERRAL_ANNOUNCEMENT_STORAGE_KEY = "referralAnnouncementSeen:v1";
+const SEARCH_FEATURE_TIP_STORAGE_KEY = "searchFeatureTipSeen:v1";
 
 const UpdateDownloadIndicator = () => {
   const { styles, colors } = useThemedStyles(createStyles);
@@ -177,6 +178,7 @@ const DashboardScreen = ({ navigation }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [seenNewBadges, setSeenNewBadges] = useState({});
   const [referralAnnouncementVisible, setReferralAnnouncementVisible] = useState(false);
+  const [searchTipEligible, setSearchTipEligible] = useState(false);
   const [displayedProgressPercent, setDisplayedProgressPercent] = useState(
     () => progressToPercent(readingProgress),
   );
@@ -305,6 +307,56 @@ const DashboardScreen = ({ navigation }) => {
     await dismissReferralAnnouncement();
     navigation.navigate("Profile");
   };
+
+  // One-time premium-only coachmark for global search (never again after dismiss).
+  useEffect(() => {
+    let mounted = true;
+    let showTimer = null;
+
+    if (!isPremium) {
+      setSearchTipEligible(false);
+      return () => {
+        mounted = false;
+      };
+    }
+
+    const checkSearchTip = async () => {
+      try {
+        const seen = await AsyncStorage.getItem(SEARCH_FEATURE_TIP_STORAGE_KEY);
+        if (mounted && !seen) {
+          showTimer = setTimeout(() => {
+            if (mounted) setSearchTipEligible(true);
+          }, 900);
+        }
+      } catch (error) {
+        console.warn("Failed to check search feature tip status:", error?.message);
+      }
+    };
+
+    checkSearchTip();
+
+    return () => {
+      mounted = false;
+      if (showTimer) clearTimeout(showTimer);
+    };
+  }, [isPremium]);
+
+  const dismissSearchFeatureTip = useCallback(async () => {
+    setSearchTipEligible(false);
+    try {
+      await AsyncStorage.setItem(SEARCH_FEATURE_TIP_STORAGE_KEY, "true");
+    } catch (error) {
+      console.warn("Failed to save search feature tip status:", error?.message);
+    }
+  }, []);
+
+  const searchTipVisible =
+    searchTipEligible && isPremium && !referralAnnouncementVisible;
+
+  const openSearch = useCallback(() => {
+    void dismissSearchFeatureTip();
+    navigation.navigate("Search");
+  }, [dismissSearchFeatureTip, navigation]);
 
   useEffect(() => {
     let mounted = true;
@@ -479,15 +531,20 @@ const DashboardScreen = ({ navigation }) => {
           <Text style={styles.appName}>STROMA</Text>
           <View style={styles.topBarActions}>
             <TouchableOpacity
-              onPress={() => navigation.navigate("Search")}
-              style={styles.iconBtn}
+              onPress={openSearch}
+              style={[
+                styles.iconBtn,
+                searchTipVisible && styles.iconBtnHighlighted,
+              ]}
               accessibilityRole="button"
               accessibilityLabel="Search"
             >
               <MaterialIcons
                 name="search"
                 size={26}
-                color={colors.textTitle}
+                color={
+                  searchTipVisible ? colors.secondary : colors.textTitle
+                }
               />
             </TouchableOpacity>
             <TouchableOpacity
@@ -504,6 +561,37 @@ const DashboardScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
         </View>
+
+        {searchTipVisible ? (
+          <View
+            style={styles.searchTipWrap}
+            accessibilityRole="text"
+            accessibilityLabel="New: Search Library, Gems, Museum, and Videos from here"
+          >
+            <View style={styles.searchTipArrow} />
+            <View style={styles.searchTipContent}>
+              <View style={styles.searchTipIconBadge}>
+                <MaterialIcons name="search" size={18} color={colors.onPrimary} />
+              </View>
+              <View style={styles.searchTipTextCol}>
+                <Text style={styles.searchTipTitle}>New: Global Search</Text>
+                <Text style={styles.searchTipBody}>
+                  Tap the search icon to find Library, Gems, Museum, and Videos in
+                  one place.
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={dismissSearchFeatureTip}
+                style={styles.searchTipClose}
+                accessibilityRole="button"
+                accessibilityLabel="Dismiss search tip"
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              >
+                <MaterialIcons name="close" size={18} color={colors.onPrimary} />
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : null}
 
         {/* Greeting */}
         <View style={styles.headerSection}>
@@ -820,6 +908,80 @@ const createStyles = (colors) => StyleSheet.create({
     justifyContent: "center",
     borderRadius: 20,
     backgroundColor: colors.surfaceSecondary,
+  },
+  iconBtnHighlighted: {
+    backgroundColor: colors.primaryLight,
+    borderWidth: 1.5,
+    borderColor: colors.secondary,
+  },
+  searchTipWrap: {
+    alignSelf: "flex-end",
+    maxWidth: 320,
+    width: "100%",
+    marginBottom: 8,
+    marginTop: 2,
+    zIndex: 10,
+  },
+  searchTipArrow: {
+    alignSelf: "flex-end",
+    marginRight: 52,
+    width: 0,
+    height: 0,
+    borderLeftWidth: 8,
+    borderRightWidth: 8,
+    borderBottomWidth: 8,
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderBottomColor: colors.secondary,
+  },
+  searchTipContent: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    backgroundColor: colors.secondary,
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingLeft: 12,
+    paddingRight: 8,
+    shadowColor: colors.shadow,
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 4,
+  },
+  searchTipIconBadge: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255,255,255,0.18)",
+    marginRight: 10,
+    marginTop: 1,
+  },
+  searchTipTextCol: {
+    flex: 1,
+    paddingRight: 4,
+  },
+  searchTipTitle: {
+    color: colors.onPrimary,
+    fontSize: 14,
+    fontWeight: "800",
+    marginBottom: 4,
+  },
+  searchTipBody: {
+    color: colors.onPrimary,
+    fontSize: 12,
+    lineHeight: 17,
+    opacity: 0.95,
+  },
+  searchTipClose: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255,255,255,0.18)",
+    marginLeft: 2,
   },
   headerSection: {
     marginBottom: 24,
