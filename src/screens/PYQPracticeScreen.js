@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useContext, useRef, useCallback } from "react";
 import {
   View,
   StyleSheet,
@@ -21,6 +21,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 import { theme, useResponsive } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
 import { AppContext } from "../context/AppContext";
@@ -98,31 +99,34 @@ const PYQPracticeScreen = ({ route, navigation }) => {
   const startTimeRef = useRef(Date.now());
   const actualDurationRef = useRef(0);
 
-  // Back handler to warn user before exiting
-  useEffect(() => {
-    const backAction = () => {
-      if (testFinished) {
-        navigation.goBack();
+  // Only intercept hardware back while this screen is focused.
+  // When a Related Gem opens Reading on top, back should pop Reading
+  // and return here without prompting to end the module.
+  useFocusEffect(
+    useCallback(() => {
+      const backAction = () => {
+        if (testFinished) {
+          navigation.goBack();
+          return true;
+        }
+        Alert.alert(
+          "Exit Practice?",
+          "Are you sure you want to exit? Your current progress will be lost.",
+          [
+            { text: "Cancel", onPress: () => null, style: "cancel" },
+            { text: "Exit", onPress: () => navigation.goBack() },
+          ]
+        );
         return true;
-      }
-      Alert.alert(
-        "Exit Practice?",
-        "Are you sure you want to exit? Your current progress will be lost.",
-        [
-          { text: "Cancel", onPress: () => null, style: "cancel" },
-          { text: "Exit", onPress: () => navigation.goBack() },
-        ]
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
       );
-      return true;
-    };
-
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
-
-    return () => backHandler.remove();
-  }, [testFinished]);
+      return () => backHandler.remove();
+    }, [testFinished, navigation])
+  );
 
   // Load bookmarks on mount
   useEffect(() => {
