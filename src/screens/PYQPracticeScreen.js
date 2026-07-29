@@ -54,7 +54,7 @@ const RelatedGemsBlock = ({ question, navigation, isPremium, styles, colors }) =
         <Text style={styles.relatedGemsHeader}>Related Gems</Text>
       </View>
       <Text style={styles.relatedGemsHint}>
-        Open a high-yield card linked to this MCQ (like Pearls in Marrow).
+        Open a high-yield Study Gem linked to this MCQ.
       </Text>
       <View style={styles.relatedGemsChips}>
         {gems.map((gem) => (
