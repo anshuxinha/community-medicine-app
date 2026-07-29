@@ -12,6 +12,35 @@ const REVIEW_PROMPT_RESET_VERSION = "2026-05-04-review-flow-fix";
 /** In-memory guard so rapid fullscreen toggles cannot stack Alerts. */
 let videoPromptInFlight = false;
 
+/** Opens the global feedback modal (registered by ReviewFeedbackModal). */
+let openFeedbackFormHandler = null;
+
+/**
+ * Register the UI that shows the post-"Not Really" feedback form.
+ * @param {(handlers: { onSoftDismiss?: () => void }) => void} handler
+ * @returns {() => void} unregister
+ */
+export function registerOpenFeedbackForm(handler) {
+  openFeedbackFormHandler = handler;
+  return () => {
+    if (openFeedbackFormHandler === handler) {
+      openFeedbackFormHandler = null;
+    }
+  };
+}
+
+/**
+ * @param {{ onSoftDismiss?: () => void }} [handlers]
+ */
+function showFeedbackForm(handlers = {}) {
+  if (typeof openFeedbackFormHandler === "function") {
+    openFeedbackFormHandler(handlers);
+    return;
+  }
+  // Modal not mounted yet; still run soft-dismiss side effects.
+  handlers.onSoftDismiss?.();
+}
+
 /**
  * Evaluate whether to show the in-app review pre-prompt.
  *
@@ -161,7 +190,8 @@ function showPrePrompt(handlers = {}) {
         text: "Not Really",
         style: "cancel",
         onPress: () => {
-          onSoftDismiss?.();
+          // Ask for improvement feedback; soft-dismiss runs after submit/skip.
+          showFeedbackForm({ onSoftDismiss });
         },
       },
       {
@@ -180,8 +210,8 @@ function showFiveStarPrompt(handlers = {}) {
   const { onSoftDismiss, onReviewed } = handlers;
 
   Alert.alert(
-    "Rate STROMA",
-    "Would you like to leave a 5-star review?",
+    "Leave a 5-star review ⭐⭐⭐⭐⭐",
+    "If you're enjoying STROMA, please tap all 5 stars in the store. A 5-star rating helps other students find us. Thank you!",
     [
       {
         text: "Maybe Later",
@@ -191,7 +221,7 @@ function showFiveStarPrompt(handlers = {}) {
         },
       },
       {
-        text: "Review Now",
+        text: "Review Now ⭐⭐⭐⭐⭐",
         onPress: () => {
           void requestNativeReview().finally(() => {
             onReviewed?.();

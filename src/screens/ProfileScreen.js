@@ -289,6 +289,10 @@ const ProfileScreen = () => {
     navigation.navigate("AdminLibraryReview");
   };
 
+  const handleOpenAdminFeedback = () => {
+    navigation.navigate("AdminAppFeedback");
+  };
+
   const navigateToBookmarks = () => navigation.navigate("Bookmarks");
   const navigateToLibrary = () =>
     navigation.navigate("MainTabs", { screen: "Library" });
@@ -619,12 +623,19 @@ const ProfileScreen = () => {
               isLast={!user?.isAdmin}
             />
             {user?.isAdmin ? (
-              <ActionRow
-                icon="fact-check"
-                label="Library Review Queue"
-                onPress={handleOpenAdminQueue}
-                isLast
-              />
+              <>
+                <ActionRow
+                  icon="fact-check"
+                  label="Library Review Queue"
+                  onPress={handleOpenAdminQueue}
+                />
+                <ActionRow
+                  icon="inbox"
+                  label="App Feedback"
+                  onPress={handleOpenAdminFeedback}
+                  isLast
+                />
+              </>
             ) : null}
           </Card.Content>
         </Card>

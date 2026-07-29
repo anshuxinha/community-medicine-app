@@ -10,6 +10,7 @@ import { ThemeProvider, useAppTheme } from "./src/styles/ThemeContext";
 import ErrorBoundary from "./src/components/ErrorBoundary";
 import { scheduleAllNotifications } from "./src/services/notificationService";
 import UpdateBottomSheet from "./src/components/UpdateBottomSheet";
+import ReviewFeedbackModal from "./src/components/ReviewFeedbackModal";
 import { paperTheme as fallbackPaperTheme } from "./src/styles/theme";
 
 // Create Android notification channel at module level so incoming FCM pushes
@@ -39,6 +40,7 @@ function ThemedApp() {
     <PaperProvider theme={paperTheme || fallbackPaperTheme}>
       <AppNavigator />
       <UpdateBottomSheet />
+      <ReviewFeedbackModal />
     </PaperProvider>
   );
 }

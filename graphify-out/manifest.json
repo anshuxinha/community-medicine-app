@@ -1,7 +1,7 @@
 {
   "D:\\The App\\App.js": {
-    "mtime": 1784642894.3355474,
-    "hash": "3f993d1f314dd3e26cd85cfe5d65403e"
+    "mtime": 1785328661.4054308,
+    "hash": "b980cbe3d7f15a83cfec46c483b8aef5"
   },
   "D:\\The App\\ast_extract.py": {
     "mtime": 1778159580.4395475,
@@ -296,7 +296,7 @@
     "hash": "54936b9b06f3ffedf69217c6f0accca5"
   },
   "D:\\The App\\scripts\\attach-pdf-to-video.js": {
-    "mtime": 1785148495.2177658,
+    "mtime": 1785312236.391701,
     "hash": "dad24a75485418aed45f5f4e303fafc2"
   },
   "D:\\The App\\scripts\\audit_colors.js": {
@@ -484,16 +484,16 @@
     "hash": "97abdb8fd522462f616d41d6c847c9b9"
   },
   "D:\\The App\\src\\components\\GestureVideoPlayer.js": {
-    "mtime": 1784647481.9275472,
-    "hash": "5384ee746b28f1977190d63ea93cc1e2"
+    "mtime": 1785315357.9846227,
+    "hash": "63448821979e26da5a7f96834c8a56e7"
   },
   "D:\\The App\\src\\components\\ReadingView.js": {
     "mtime": 1785261868.4735892,
     "hash": "2ae879543efef9620eeffe1d2f63b428"
   },
-  "D:\\The App\\src\\components\\ReferralAnnouncementDialog.js": {
-    "mtime": 1785161583.9598627,
-    "hash": "1b851c0850d80fde8393aa387869c762"
+  "D:\\The App\\src\\components\\ReviewFeedbackModal.js": {
+    "mtime": 1785328661.2858431,
+    "hash": "6cda1c79053ba2aa054cfbdb767bc13c"
   },
   "D:\\The App\\src\\components\\ThemeModePill.js": {
     "mtime": 1785071504.0687332,
@@ -506,10 +506,6 @@
   "D:\\The App\\src\\components\\UpdateDetailDialog.js": {
     "mtime": 1784224587.404996,
     "hash": "4fadb95037efde41a14f28a3579242ae"
-  },
-  "D:\\The App\\src\\components\\__tests__\\ReferralAnnouncementDialog.test.js": {
-    "mtime": 1781158199.0258079,
-    "hash": "ac1f784a770aee7f89428ecbfc7b0604"
   },
   "D:\\The App\\src\\config\\firebase.js": {
     "mtime": 1772355531.2110212,
@@ -552,8 +548,12 @@
     "hash": "ed6a4dcad62cc836e6bd88d75b237a96"
   },
   "D:\\The App\\src\\navigation\\AppNavigator.js": {
-    "mtime": 1785306236.9583707,
-    "hash": "bd8d0247a751489304ede1b111ed485e"
+    "mtime": 1785328691.7067833,
+    "hash": "594f41a0eed997de69c8b3c928b6ea57"
+  },
+  "D:\\The App\\src\\screens\\AdminAppFeedbackScreen.js": {
+    "mtime": 1785328691.6271667,
+    "hash": "3985c046149770d396cc6e1e862df33d"
   },
   "D:\\The App\\src\\screens\\AdminLibraryReviewScreen.js": {
     "mtime": 1784224587.3295302,
@@ -572,8 +572,8 @@
     "hash": "54d95e35abd81c66cfcfb4d05ddcd448"
   },
   "D:\\The App\\src\\screens\\DashboardScreen.js": {
-    "mtime": 1785308027.1485045,
-    "hash": "94a669a7c59abc7a2b600ea5e21e2bdf"
+    "mtime": 1785313608.1814804,
+    "hash": "81cc88afcf3c9e2f88f33c7cbef2d2bd"
   },
   "D:\\The App\\src\\screens\\DietarySurveyScreen.js": {
     "mtime": 1784225615.114561,
@@ -616,8 +616,8 @@
     "hash": "c185159ec839caaec3e1a6b0906b7ed1"
   },
   "D:\\The App\\src\\screens\\ProfileScreen.js": {
-    "mtime": 1785162409.501746,
-    "hash": "d1279f4b337401a1ddf03bc87eb35e23"
+    "mtime": 1785328691.7211251,
+    "hash": "b29c32493c80e5cebf5a47cd4df171b1"
   },
   "D:\\The App\\src\\screens\\PYQCreateScreen.js": {
     "mtime": 1785161583.88528,
@@ -636,8 +636,8 @@
     "hash": "aa29b713796c9603117dc605dfd351aa"
   },
   "D:\\The App\\src\\screens\\SearchScreen.js": {
-    "mtime": 1785306331.0520484,
-    "hash": "a8d839e5a58b7ababa284cb3aa9f2443"
+    "mtime": 1785313571.7960963,
+    "hash": "d45303e211973f06aa1864e04ce36dd8"
   },
   "D:\\The App\\src\\screens\\SESCalculatorScreen.js": {
     "mtime": 1784225615.121064,
@@ -652,8 +652,8 @@
     "hash": "f6eb550b80214139a46a94ea196fe185"
   },
   "D:\\The App\\src\\screens\\VideosScreen.js": {
-    "mtime": 1785306129.5978832,
-    "hash": "956088d00e3f64fd8cb89bad198e8833"
+    "mtime": 1785315333.2904637,
+    "hash": "4ef03018feceacfc2a508bf33557441d"
   },
   "D:\\The App\\src\\screens\\VirtualMuseumScreen.js": {
     "mtime": 1785306236.9107902,
@@ -674,6 +674,10 @@
   "D:\\The App\\src\\services\\couponService.js": {
     "mtime": 1781113444.0410633,
     "hash": "c28598e82ecfac5b2dbd51f5ad724698"
+  },
+  "D:\\The App\\src\\services\\feedbackService.js": {
+    "mtime": 1785328638.3409991,
+    "hash": "0b56bd7e73c00e7ce5b4a31d7d108093"
   },
   "D:\\The App\\src\\services\\highlightService.js": {
     "mtime": 1777659005.6232884,
@@ -740,8 +744,8 @@
     "hash": "c376126678c3aca1c263cbff9c33696c"
   },
   "D:\\The App\\src\\utils\\reviewPrompt.js": {
-    "mtime": 1777871530.6764872,
-    "hash": "bd619f447007710e25ee5b530d182902"
+    "mtime": 1785328661.4084296,
+    "hash": "f6e0144fd5e9f2d726d658c053214391"
   },
   "D:\\The App\\src\\utils\\screenCaptureProtection.js": {
     "mtime": 1780371717.8520322,

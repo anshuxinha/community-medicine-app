@@ -44,6 +44,8 @@ const getBookmarksScreen = () => require("../screens/BookmarksScreen").default;
 const getSearchScreen = () => require("../screens/SearchScreen").default;
 const getAdminLibraryReviewScreen = () =>
   require("../screens/AdminLibraryReviewScreen").default;
+const getAdminAppFeedbackScreen = () =>
+  require("../screens/AdminAppFeedbackScreen").default;
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -273,6 +275,11 @@ const AppNavigator = () => {
               name="AdminLibraryReview"
               getComponent={getAdminLibraryReviewScreen}
               options={{ title: "Library Review Queue" }}
+            />
+            <Stack.Screen
+              name="AdminAppFeedback"
+              getComponent={getAdminAppFeedbackScreen}
+              options={{ title: "App Feedback" }}
             />
           </>
         )}
