@@ -383,6 +383,8 @@ const VideosScreen = ({ navigation, route }) => {
 
   const maxWatchRatioRef = useRef(0);
   const wasEffectiveFullscreenRef = useRef(false);
+  /** True if the open session ever entered effective fullscreen. */
+  const everFullscreenRef = useRef(false);
   const reviewPromptTimerRef = useRef(null);
   const selectedVideoIdRef = useRef(null);
 
@@ -411,6 +413,23 @@ const VideosScreen = ({ navigation, route }) => {
       void maybePromptReviewAfterVideo(videoId);
     }, VIDEO_REVIEW_PROMPT_DELAY_MS);
   }, []);
+
+  const exitPlayerFullscreen = useCallback(() => {
+    setPlayerFullscreen(false);
+    // Landscape keeps effective fullscreen true until portrait; nudge portrait
+    // so the UI can leave the expanded player and fire the review prompt.
+    if (isLandscape) {
+      ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP)
+        .catch(() => {})
+        .finally(() => {
+          setTimeout(() => {
+            if (selectedVideoIdRef.current) {
+              ScreenOrientation.unlockAsync().catch(() => {});
+            }
+          }, 700);
+        });
+    }
+  }, [isLandscape]);
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener("change", ({ window }) => {
@@ -534,6 +553,7 @@ const VideosScreen = ({ navigation, route }) => {
     setPlaybackLoading(false);
     maxWatchRatioRef.current = 0;
     wasEffectiveFullscreenRef.current = false;
+    everFullscreenRef.current = false;
     // Do not clear reviewPromptTimerRef here: closePlayerModal may have just
     // scheduled a prompt for the video being closed.
   }, [selectedVideo]);
@@ -543,6 +563,7 @@ const VideosScreen = ({ navigation, route }) => {
     const isFs = Boolean(selectedVideo && effectivePlayerFullscreen);
     if (isFs) {
       wasEffectiveFullscreenRef.current = true;
+      everFullscreenRef.current = true;
       return;
     }
 
@@ -657,6 +678,7 @@ const VideosScreen = ({ navigation, route }) => {
     const videoId = selectedVideoIdRef.current;
     const maxRatio = maxWatchRatioRef.current;
     const wasFullscreen =
+      everFullscreenRef.current ||
       wasEffectiveFullscreenRef.current ||
       playerFullscreen ||
       effectivePlayerFullscreen;
@@ -667,8 +689,9 @@ const VideosScreen = ({ navigation, route }) => {
     setPlaybackLoading(false);
     setSelectedVideo(null);
     wasEffectiveFullscreenRef.current = false;
+    everFullscreenRef.current = false;
 
-    // Closing the modal while (or after) fullscreen still counts as exit.
+    // Closing after a fullscreen session still counts as leaving fullscreen.
     if (wasFullscreen) {
       maybeScheduleVideoReviewPrompt(videoId, maxRatio);
     }
@@ -1327,8 +1350,9 @@ const VideosScreen = ({ navigation, route }) => {
         statusBarTranslucent={effectivePlayerFullscreen}
         navigationBarTranslucent={effectivePlayerFullscreen}
         onRequestClose={() => {
-          if (playerFullscreen && !isLandscape) {
-            setPlayerFullscreen(false);
+          // First back leaves fullscreen (incl. landscape). Second closes.
+          if (effectivePlayerFullscreen) {
+            exitPlayerFullscreen();
             return;
           }
           closePlayerModal();
@@ -1417,6 +1441,11 @@ const VideosScreen = ({ navigation, route }) => {
                   isFullscreen={effectivePlayerFullscreen}
                   isDark={isDark}
                   onWatchProgress={handleWatchProgress}
+                  fallbackDuration={
+                    Number.isFinite(Number(selectedVideo?.duration))
+                      ? Number(selectedVideo.duration)
+                      : 0
+                  }
                   style={[
                     styles.player,
                     {
@@ -1425,22 +1454,7 @@ const VideosScreen = ({ navigation, route }) => {
                   ]}
                   onFullscreenPress={() => {
                     if (effectivePlayerFullscreen) {
-                      setPlayerFullscreen(false);
-                      // Landscape keeps effective fullscreen true; briefly lock
-                      // portrait so the UI can shrink, then unlock for auto-rotate.
-                      if (isLandscape) {
-                        ScreenOrientation.lockAsync(
-                          ScreenOrientation.OrientationLock.PORTRAIT_UP,
-                        )
-                          .catch(() => {})
-                          .finally(() => {
-                            setTimeout(() => {
-                              if (selectedVideo) {
-                                ScreenOrientation.unlockAsync().catch(() => {});
-                              }
-                            }, 700);
-                          });
-                      }
+                      exitPlayerFullscreen();
                       return;
                     }
                     setPlayerFullscreen(true);

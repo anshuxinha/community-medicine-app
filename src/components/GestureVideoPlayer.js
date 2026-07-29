@@ -60,6 +60,8 @@ const GestureVideoPlayer = ({
   isFullscreen = false,
   onFullscreenPress,
   onWatchProgress,
+  /** Optional catalog duration (seconds) when player duration is not ready yet. */
+  fallbackDuration = 0,
   isDark = true,
 }) => {
   const insets = useSafeAreaInsets();
@@ -116,15 +118,37 @@ const GestureVideoPlayer = ({
     currentTime: player.currentTime,
   });
 
-  const duration = player.duration || 0;
+  const playerDuration =
+    Number.isFinite(player.duration) && player.duration > 0
+      ? player.duration
+      : 0;
+  const catalogDuration =
+    Number.isFinite(fallbackDuration) && fallbackDuration > 0
+      ? fallbackDuration
+      : 0;
+  const duration = playerDuration || catalogDuration;
   durationRef.current = duration;
+
+  const reportWatchProgress = useCallback(
+    (timeSec, durationSec) => {
+      if (!onWatchProgress) return;
+      const d =
+        Number.isFinite(durationSec) && durationSec > 0
+          ? durationSec
+          : durationRef.current;
+      if (!(d > 0) || !Number.isFinite(d) || !Number.isFinite(timeSec)) return;
+      // Ignore bogus HLS live-style durations.
+      if (d > 60 * 60 * 12) return;
+      const ratio = Math.min(1, Math.max(0, timeSec / d));
+      onWatchProgress(ratio);
+    },
+    [onWatchProgress],
+  );
 
   // Report watch ratio so parents can gate review prompts on max progress.
   useEffect(() => {
-    if (!onWatchProgress || !(duration > 0)) return;
-    const ratio = Math.min(1, Math.max(0, (currentTime || 0) / duration));
-    onWatchProgress(ratio);
-  }, [currentTime, duration, onWatchProgress]);
+    reportWatchProgress(currentTime || 0, duration);
+  }, [currentTime, duration, reportWatchProgress]);
 
   const refreshTracks = useCallback(() => {
     try {
@@ -135,7 +159,19 @@ const GestureVideoPlayer = ({
     }
   }, [player]);
 
-  useEventListenerSafe(player, "sourceLoad", refreshTracks);
+  const onSourceLoad = useCallback(
+    (payload) => {
+      refreshTracks();
+      const loadedDuration = payload?.duration;
+      if (Number.isFinite(loadedDuration) && loadedDuration > 0) {
+        durationRef.current = loadedDuration;
+        reportWatchProgress(player.currentTime || 0, loadedDuration);
+      }
+    },
+    [player, refreshTracks, reportWatchProgress],
+  );
+
+  useEventListenerSafe(player, "sourceLoad", onSourceLoad);
   useEventListenerSafe(player, "videoTrackChange", () => {
     try {
       const current = player.videoTrack;
