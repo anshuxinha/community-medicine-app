@@ -70,13 +70,10 @@ import {
   enableScreenCaptureProtection,
   disableScreenCaptureProtection,
 } from "../utils/screenCaptureProtection";
-import { maybePromptReviewAfterVideo } from "../utils/reviewPrompt";
 import GestureVideoPlayer from "../components/GestureVideoPlayer";
 
 const { width } = Dimensions.get("window");
 const SEEN_VIDEO_IDS_STORAGE_KEY = "seenVideoIds:v1";
-const VIDEO_REVIEW_WATCH_THRESHOLD = 0.9;
-const VIDEO_REVIEW_PROMPT_DELAY_MS = 500;
 
 const FreeLabel = () => {
   const { styles, colors } = useThemedStyles(createStyles);
@@ -381,11 +378,6 @@ const VideosScreen = ({ navigation, route }) => {
   const [seenVideoIds, setSeenVideoIds] = useState({});
   const [windowSize, setWindowSize] = useState(() => Dimensions.get("window"));
 
-  const maxWatchRatioRef = useRef(0);
-  const wasEffectiveFullscreenRef = useRef(false);
-  /** True if the open session ever entered effective fullscreen. */
-  const everFullscreenRef = useRef(false);
-  const reviewPromptTimerRef = useRef(null);
   const selectedVideoIdRef = useRef(null);
 
   const isLandscape = windowSize.width > windowSize.height;
@@ -394,30 +386,10 @@ const VideosScreen = ({ navigation, route }) => {
 
   selectedVideoIdRef.current = selectedVideo?.id ?? null;
 
-  const handleWatchProgress = useCallback((ratio) => {
-    if (typeof ratio !== "number" || Number.isNaN(ratio)) return;
-    if (ratio > maxWatchRatioRef.current) {
-      maxWatchRatioRef.current = ratio;
-    }
-  }, []);
-
-  const maybeScheduleVideoReviewPrompt = useCallback((videoId, maxRatio) => {
-    if (!videoId || !(maxRatio >= VIDEO_REVIEW_WATCH_THRESHOLD)) {
-      return;
-    }
-    if (reviewPromptTimerRef.current) {
-      clearTimeout(reviewPromptTimerRef.current);
-    }
-    reviewPromptTimerRef.current = setTimeout(() => {
-      reviewPromptTimerRef.current = null;
-      void maybePromptReviewAfterVideo(videoId);
-    }, VIDEO_REVIEW_PROMPT_DELAY_MS);
-  }, []);
-
   const exitPlayerFullscreen = useCallback(() => {
     setPlayerFullscreen(false);
     // Landscape keeps effective fullscreen true until portrait; nudge portrait
-    // so the UI can leave the expanded player and fire the review prompt.
+    // so the UI can leave the expanded player layout.
     if (isLandscape) {
       ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP)
         .catch(() => {})
@@ -551,46 +523,7 @@ const VideosScreen = ({ navigation, route }) => {
     setPlaybackUri(null);
     setPlaybackError(null);
     setPlaybackLoading(false);
-    maxWatchRatioRef.current = 0;
-    wasEffectiveFullscreenRef.current = false;
-    everFullscreenRef.current = false;
-    // Do not clear reviewPromptTimerRef here: closePlayerModal may have just
-    // scheduled a prompt for the video being closed.
   }, [selectedVideo]);
-
-  // Prompt for review when leaving effective fullscreen after ≥90% watched.
-  useEffect(() => {
-    const isFs = Boolean(selectedVideo && effectivePlayerFullscreen);
-    if (isFs) {
-      wasEffectiveFullscreenRef.current = true;
-      everFullscreenRef.current = true;
-      return;
-    }
-
-    if (
-      wasEffectiveFullscreenRef.current &&
-      selectedVideo?.id &&
-      maxWatchRatioRef.current >= VIDEO_REVIEW_WATCH_THRESHOLD
-    ) {
-      maybeScheduleVideoReviewPrompt(
-        selectedVideo.id,
-        maxWatchRatioRef.current,
-      );
-    }
-    wasEffectiveFullscreenRef.current = false;
-  }, [
-    effectivePlayerFullscreen,
-    selectedVideo?.id,
-    maybeScheduleVideoReviewPrompt,
-  ]);
-
-  useEffect(() => {
-    return () => {
-      if (reviewPromptTimerRef.current) {
-        clearTimeout(reviewPromptTimerRef.current);
-      }
-    };
-  }, []);
 
   // Resolve short-lived (or open) HLS URL when a video is opened.
   useEffect(() => {
@@ -675,26 +608,11 @@ const VideosScreen = ({ navigation, route }) => {
   };
 
   const closePlayerModal = () => {
-    const videoId = selectedVideoIdRef.current;
-    const maxRatio = maxWatchRatioRef.current;
-    const wasFullscreen =
-      everFullscreenRef.current ||
-      wasEffectiveFullscreenRef.current ||
-      playerFullscreen ||
-      effectivePlayerFullscreen;
-
     setPlayerFullscreen(false);
     setPlaybackUri(null);
     setPlaybackError(null);
     setPlaybackLoading(false);
     setSelectedVideo(null);
-    wasEffectiveFullscreenRef.current = false;
-    everFullscreenRef.current = false;
-
-    // Closing after a fullscreen session still counts as leaving fullscreen.
-    if (wasFullscreen) {
-      maybeScheduleVideoReviewPrompt(videoId, maxRatio);
-    }
   };
 
   const userEmail = user?.email?.toLowerCase();
@@ -1440,7 +1358,6 @@ const VideosScreen = ({ navigation, route }) => {
                   posterUri={selectedVideo?.thumbnailUrl || null}
                   isFullscreen={effectivePlayerFullscreen}
                   isDark={isDark}
-                  onWatchProgress={handleWatchProgress}
                   fallbackDuration={
                     Number.isFinite(Number(selectedVideo?.duration))
                       ? Number(selectedVideo.duration)

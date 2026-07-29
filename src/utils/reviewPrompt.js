@@ -1,4 +1,4 @@
-import { Alert, InteractionManager, Linking, Platform } from "react-native";
+import { Alert, Linking, Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as StoreReview from "expo-store-review";
 
@@ -6,11 +6,7 @@ const STORAGE_KEY_HAS_SHOWN = "reviewPrompt_hasShown";
 const STORAGE_KEY_HAS_RATED = "reviewPrompt_hasRated";
 const STORAGE_KEY_LAST_PROGRESS = "reviewPrompt_lastProgress";
 const STORAGE_KEY_RESET_VERSION = "reviewPrompt_resetVersion";
-const STORAGE_KEY_VIDEO_PROMPTED_IDS = "reviewPrompt_videoPromptedIds";
 const REVIEW_PROMPT_RESET_VERSION = "2026-05-04-review-flow-fix";
-
-/** In-memory guard so rapid fullscreen toggles cannot stack Alerts. */
-let videoPromptInFlight = false;
 
 /** Opens the global feedback modal (registered by ReviewFeedbackModal). */
 let openFeedbackFormHandler = null;
@@ -54,7 +50,7 @@ function showFeedbackForm(handlers = {}) {
  * every installed user so fixed review flows can become eligible again.
  *
  * Soft dismiss permanently suppresses the Library path (hasShown).
- * Only an actual store/native review sets hasRated (stops video prompts too).
+ * Only an actual store/native review sets hasRated.
  *
  * @param {number} readingProgress - 0-1 fraction (same as Dashboard bar)
  */
@@ -103,76 +99,6 @@ export async function maybePromptReview(readingProgress) {
     );
   } catch (err) {
     console.warn("reviewPrompt: evaluation failed", err?.message);
-  }
-}
-
-/**
- * Video path: prompt after the user exits fullscreen having watched ≥90%.
- *
- * Soft dismiss records the video id only (ask again on other videos).
- * Soft dismiss does NOT set global hasShown, so Library soft-dismiss alone
- * cannot block video prompts.
- * Review Now sets hasRated (and hasShown) so all future video prompts stop.
- * Same video is never re-prompted after a successful show.
- *
- * @param {string} videoId
- */
-export async function maybePromptReviewAfterVideo(videoId) {
-  if (!videoId || videoPromptInFlight) {
-    return;
-  }
-
-  try {
-    const [rawHasRated, rawResetVersion, rawVideoIds] =
-      await AsyncStorage.multiGet([
-        STORAGE_KEY_HAS_RATED,
-        STORAGE_KEY_RESET_VERSION,
-        STORAGE_KEY_VIDEO_PROMPTED_IDS,
-      ]);
-
-    const shouldResetPrompt =
-      rawResetVersion[1] !== REVIEW_PROMPT_RESET_VERSION;
-    if (shouldResetPrompt) {
-      await AsyncStorage.multiSet([
-        [STORAGE_KEY_HAS_SHOWN, "false"],
-        [STORAGE_KEY_LAST_PROGRESS, "0"],
-        [STORAGE_KEY_RESET_VERSION, REVIEW_PROMPT_RESET_VERSION],
-      ]);
-    }
-
-    // Only Review Now sets hasRated. Library soft-dismiss only sets hasShown,
-    // so those users remain eligible for the video prompt until they rate.
-    if (!shouldResetPrompt && rawHasRated[1] === "true") {
-      return;
-    }
-
-    const promptedIds = parseVideoPromptedIds(
-      shouldResetPrompt ? null : rawVideoIds[1],
-    );
-    if (promptedIds.includes(String(videoId))) {
-      return;
-    }
-
-    // Mark before showing so FS flicker cannot double-prompt this video.
-    videoPromptInFlight = true;
-    await markVideoPrompted(videoId, promptedIds);
-
-    // Modal teardown / rotation can swallow immediate Alerts on Android.
-    InteractionManager.runAfterInteractions(() => {
-      setTimeout(() => {
-        showPrePrompt({
-          onSoftDismiss: () => {
-            videoPromptInFlight = false;
-          },
-          onReviewed: () => {
-            videoPromptInFlight = false;
-          },
-        });
-      }, 350);
-    });
-  } catch (err) {
-    videoPromptInFlight = false;
-    console.warn("reviewPrompt: video evaluation failed", err?.message);
   }
 }
 
@@ -278,32 +204,5 @@ async function markAsRated() {
     await AsyncStorage.setItem(STORAGE_KEY_HAS_RATED, "true");
   } catch (err) {
     console.warn("reviewPrompt: failed to persist hasRated", err?.message);
-  }
-}
-
-function parseVideoPromptedIds(raw) {
-  if (!raw) return [];
-  try {
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    return parsed.map(String).filter(Boolean);
-  } catch (_err) {
-    return [];
-  }
-}
-
-async function markVideoPrompted(videoId, existingIds) {
-  const id = String(videoId);
-  const next = existingIds.includes(id) ? existingIds : [...existingIds, id];
-  try {
-    await AsyncStorage.setItem(
-      STORAGE_KEY_VIDEO_PROMPTED_IDS,
-      JSON.stringify(next),
-    );
-  } catch (err) {
-    console.warn(
-      "reviewPrompt: failed to persist video prompted ids",
-      err?.message,
-    );
   }
 }
