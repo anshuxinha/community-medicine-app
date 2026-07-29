@@ -235,7 +235,7 @@
     "id": "aiims_2017_q12",
     "exam": "AIIMS 2017",
     "q_num": 12,
-    "question": "Match the following declarations to their significance.",
+    "question": "Match the following declarations to their significance.\n\nI. Geneva\nII. Oslo\nIII. Tokyo\nIV. Helsinki\n\nA. Guidelines for physicians concerning torture and other cruel, inhuman or degrading treatment or punishment in relation to detainment or imprisonment\nB. Set of ethical principles directed to the medical community for human experimentation\nC. Physician's dedication to the humanitarian goals of medicine\nD. Statement on therapeutic abortion",
     "options": [
       "I – A, II – B, III – C, IV – D",
       "I - C, II - D, III - A, IV - B",
@@ -244,7 +244,7 @@
     ],
     "page": 5,
     "correctAnswer": "b",
-    "explanation": "Declarati on Significance Geneva Physician’s dedication to the humanitarian goals of medici ne. Oslo Statement on therapeutic abo rtion . Declarati on Significance Tokyo Guidelines for physicians con cerning torture and other cru el, inhuman or degrading tre atment or punishment in rela tion to detainment or impris onment. Helsinki Set of ethical principles direc ted to the medical community for human experimentation.",
+    "explanation": "Correct match: I - C, II - D, III - A, IV - B.\n\n• Geneva: Physician's dedication to the humanitarian goals of medicine.\n• Oslo: Statement on therapeutic abortion.\n• Tokyo: Guidelines for physicians concerning torture and other cruel, inhuman or degrading treatment or punishment in relation to detainment or imprisonment.\n• Helsinki: Set of ethical principles directed to the medical community for human experimentation.",
     "image": null
   },
   {
@@ -1130,22 +1130,6 @@
         "contentKey": "gems:section_5:gem_5"
       }
     ]
-  },
-  {
-    "id": "aiims_2019_q5",
-    "exam": "AIIMS 2019",
-    "q_num": 5,
-    "question": "A study was conducted to assess the effect of an intervention for certain disease. The p values for two similar studies A and B with 95% confidence limits, was found to be 0.02 and 0.001 respectively using interventions \"X\" and \"Y\" with a control group. Based on preliminary analysis, the result may be interpreted as:",
-    "options": [
-      "If A, B and C are correct",
-      "If A and C are correct",
-      "If B and D are correct",
-      "If all (A, B, C and D) are correct"
-    ],
-    "page": 43,
-    "correctAnswer": "b",
-    "explanation": "Statements A and C are correct. The p-value of study A with intervention X at 95% confidence interval is 0.02. The p-value of study B with intervention Y at 95% confidence interval is 0.001 The probability (p) values of both the studies are less than 0.05 (level of significance - α(alpha)). Therefore, both studies A, and B are significant, thus, rejecting the null hypothesis. However, study B has a lower p-value compared to study A, which suggests that the study B with i intervention Y is more significant and precise than study A with intervention X.",
-    "image": null
   },
   {
     "id": "aiims_2019_q6",
@@ -3431,7 +3415,7 @@
     "id": "ini-cet_2021_q1",
     "exam": "INI-CET 2021",
     "q_num": 1,
-    "question": "Select the correct option regarding Mobile Medical Units (MMUs).",
+    "question": "Select the correct option regarding Mobile Medical Units (MMUs).\n\n1. MMUs can be run by the Government or by an external agency\n2. Drugs and medical supplies are always provided by the Government\n3. MMUs provide primary care for common diseases, RCH services, screening tests, and referral as required\n4. An external agency operating an MMU must also always supply the drugs and medical consumables",
     "options": [
       "Only 1",
       "1 and 2",
@@ -3440,7 +3424,7 @@
     ],
     "page": 123,
     "correctAnswer": "c",
-    "explanation": "Statements 1, 2, and 3 are correct. MMUs can be run by either Government or an external agency, but the drugs and medical supplies are to be provided always by Government only. Mobile Medical Units (MMU) is a major initiative under NRHM to provide a range of health care services for people living in remote, inaccessible, un-served, and underserved areas in both rural as well as urban areas, with the aim of taking healthcare services to the doorsteps of such people. There are 3 models of operationalizing MMUs:  Government operated MMU  Operation of MMU on outsourcing basis by an external agency but capital expenditure, drugs, a nd supplies provided by Government.  Outsourcing by an external agency which provides both capital expenditure and operational e xpenditure. However, drugs and supplies are to be provided by Government. MMUs provide primary care services for common diseases (communicable and non-communicable), RCH services, screening tests, and referral to higher facilities and specialists as required. Clinical services are provided by a Medical Officer and team, and mobilization and outreach services are provided by ANMs and ASHA.",
+    "explanation": "Statements 1, 2, and 3 are correct.\n\nMobile Medical Units (MMU) under NRHM take healthcare to remote, inaccessible, unserved, and underserved areas. There are three operational models: (1) Government-operated MMU; (2) outsourced operation with capital expenditure, drugs, and supplies from Government; (3) outsourcing with capital and operational expenditure by the agency, but drugs and supplies still provided by Government. Thus statement 4 is false: drugs and medical supplies are always provided by Government only.\n\nMMUs provide primary care for common communicable and non-communicable diseases, RCH services, screening, and referral to higher facilities.",
     "image": null
   },
   {
@@ -3495,7 +3479,7 @@
     "id": "ini-cet_2021_q4",
     "exam": "INI-CET 2021",
     "q_num": 4,
-    "question": "Match the following STI kit colors and their use:",
+    "question": "Match the following STI kit colors and their use:\n\nA. Grey (Kit 1)\nB. Green (Kit 2)\nC. White (Kit 3)\nD. Blue (Kit 4)\n\n1. Vaginal discharge / vaginitis\n2. Non-herpetic genital ulcer if allergic to penicillin\n3. Non-herpetic genital ulcers\n4. Urethral discharge, cervical discharge, ano-rectal discharge, painful scrotal swelling",
     "options": [
       "A-4, B-3, C-2, D-1",
       "A-4, B-1, C-3, D-2",
@@ -3504,7 +3488,7 @@
     ],
     "page": 124,
     "correctAnswer": "b",
-    "explanation": "The correct match is A-4, B-1, C-3, D-2 The National Aids Control Organization (NACO) has provided color-coded kits for the syndromic m anagement of sexually transmitted diseases: Kit Syndrome/s Kit 1(Grey) Urethral dischargeCervical di schargeAno -rectal dischargeP ainful scrotal swelling Kit 2 (Green) Vaginal discharge/ Vaginitis Kit 3 (White) Non-herpetic genital ulcers Kit 4(Blue) Non-herpetic genital ulcers if allergic to penicillin Kit 5(Red) Herpetic genital ulcers Kit 6 (Yellow) Lower abdominal pain Kit 7(Black) Inguinal bubo Kit 8(Brown) Anorectal discharge syndrom e\n\n[RELATED_GEM]section_8:gem_5|STI Syndromic Approach (Color Kits)[/RELATED_GEM]",
+    "explanation": "The correct match is A-4, B-1, C-3, D-2.\n\nNACO colour-coded kits for syndromic management of STIs:\n• Kit 1 (Grey): Urethral discharge, cervical discharge, ano-rectal discharge, painful scrotal swelling\n• Kit 2 (Green): Vaginal discharge / vaginitis\n• Kit 3 (White): Non-herpetic genital ulcers\n• Kit 4 (Blue): Non-herpetic genital ulcers if allergic to penicillin\n• Kit 5 (Red): Herpetic genital ulcers\n• Kit 6 (Yellow): Lower abdominal pain\n• Kit 7 (Black): Inguinal bubo\n• Kit 8 (Brown): Anorectal discharge syndrome\n\n[RELATED_GEM]section_8:gem_5|STI Syndromic Approach (Color Kits)[/RELATED_GEM]",
     "image": null,
     "relatedGems": [
       {
@@ -4252,46 +4236,6 @@
     ]
   },
   {
-    "id": "ini-cet_2022_q2",
-    "exam": "INI-CET 2022",
-    "q_num": 2,
-    "question": "India is a country with different cultures and diverse languages. Which of the following steps should a physician take to address the patient for better outcomes?",
-    "options": [
-      "1, 2",
-      "2, 3",
-      "3, 4",
-      "1, 4"
-    ],
-    "page": 169,
-    "correctAnswer": "d",
-    "explanation": "Steps 1, 2, and 3 are done as part of preparedness for an emergency by someone working in a PHCs ituated in a high seismic zone. Emergency preparedness refers to long-term development activities that strengthen the capacity of f a country to effectively manage all kinds of emergencies. It involves the following steps:  Disaster preparedness by making sure all financial and other resources are available  Increase public awareness through campaigns and loudspeakers  Conduct a simulation for the disaster and assess the response  Evaluate the risk of disaster  Information sessions coordination with news media  Adopt standards and regulations Disaster risk management is a systematic process using administrative decisions, policies, and s trategies to lessen the impacts of natural hazards and disasters. The steps are:  Response - This includes activities such as:  Search, rescue, and first aid: This step is important since the organized relief services will be able to o address only a small fraction of demand after a major disaster.  Field care: This includes making health care available regardless of facilities and operating status.  Triage: Classifying the injured based on the severity of the injuries and chances of survival with medical intervention.  Tagging: Tags with name, age, triage category, diagnosis and treatment are put for identification p urposes.  Identification of the dead: The dead bodies should be shifted from the disaster site to the m ortuary.  Rehabilitation - This includes measures that lead to the restoration of pre-disaster conditions. These measures include water supply restoration, food safety, basic sanitation, personal hygiene, and vector control.  Mitigation - This includes measures to prevent disasters from causing emergencies or to lessen the likely effects of emergencies. Some of them are flood mitigation, land use planning, improved building codes, and the reduction and protection of vulnerable populations or structures.  Preparedness - This is a program that aims at strengthening the capacity of a country to manage a ll types of emergencies efficiently. Its objective is to ensure that appropriate measurements are taken for the relief and rehabilitation of disaster victims. Some measures that should be followed by all in case of an emergency include:  Avoiding telephone use, unless it is to call for help  Listen to and carry out the radio or loudspeaker broadcast messages  Carry out the official instructions given over the radio or by loudspeaker  Keep a family emergency kit ready Note: Vaccination of the general population post-disaster against typhoid, cholera, and tetanus is not recommended.",
-    "image": null
-  },
-  {
-    "id": "ini-cet_2022_q3",
-    "exam": "INI-CET 2022",
-    "q_num": 3,
-    "question": "5-year-old Ram and 3-year-old Sham are Rama Devi's sons. Sham developed a rash, but R ama Devi ignored it, assuming it to be an allergy. After 3 days, Ram also developed a rash along with a fever. Out of fear, Rama Devi took Ram to the primary health center (PHC). The healthcare workers at the PHC suspected it to be measles. Choose all correct options from among the following:",
-    "options": [
-      "1 and 4 are correct",
-      "1 only is correct",
-      "1, 2, 3 and 4 are correct",
-      "1 and 3 are correct"
-    ],
-    "page": 169,
-    "correctAnswer": "c",
-    "explanation": "Reducing the stray dog population and vaccinating all dogs is the most cost-effective and logical w ay to reduce the incidence of rabies. The Animal Birth Control initiative from the Government of India is directed towards this goal. Rabies is a highly fatal viral disease caused by Lyssavirus type 1, affecting the central nervous system. Dogs are considered the major source of rabies infection. Thus immunization of dogs at the age of 3-4 months and booster doses at regular intervals is recommended to control rabies. The type of vaccines used are:  BPL inactivated nervous tissue vaccine - it is a single-dose vaccine. Booster is advised after 6 months and subsequently every year.  Modified live virus vaccine - it is also a single-dose vaccine and a booster is given every 3 years. Other methods to control rabies include:  Registration and licensing of all domestic dogs  The immediate killing of dogs and cats bitten by rabid animals  6 months quarantine for imported dogs  Educating people regarding dog care and prevention of rabies. Note: Strengthening laboratory facilities and surveillance are also the methods used to reduce the incidence according to the National Rabies Control Program (NRCP) Humans get infected after a deep bite or scratch by an infected animal. The transmission also occurs when the saliva of the infected dog comes into direct contact with human mucosa or fresh skin wounds. Rabies in man is also known as hydrophobia. The clinical features usually begin as prodromal symptoms like headache, and fever followed by neurological symptoms. The patients usually present with confusion, hallucination, irritability, hydrophobia, aerophobia, and muscle spasms. They also present with symptoms of autonomic dysfunction such as hypersalivation, lacrimation, cardiac arrhythmias, etc. Laboratory tests for rabies include:  Fluorescent antibody test is a highly reliable and best test for rapid detection of rabies antigen in the infected specimens  Microscopic examination of the brain tissue to demonstrate Negri bodies.\n\n[RELATED_GEM]section_10:gem_1|PHC, CHC & Subcentre Norms[/RELATED_GEM]",
-    "image": null,
-    "relatedGems": [
-      {
-        "sectionId": "section_10",
-        "gemId": "gem_1",
-        "title": "PHC, CHC & Subcentre Norms",
-        "contentKey": "gems:section_10:gem_1"
-      }
-    ]
-  },
-  {
     "id": "ini-cet_2022_q4",
     "exam": "INI-CET 2022",
     "q_num": 4,
@@ -4623,7 +4567,7 @@
     "id": "ini-cet_2022_q22",
     "exam": "INI-CET 2022",
     "q_num": 22,
-    "question": "Which of the following statements are true regarding drugs used in anti-tubercular treatment?",
+    "question": "Which of the following statements are true regarding drugs used in anti-tubercular treatment?\n\nA. Isoniazid inhibits mycolic acid synthesis\nB. Pyrazinamide is a potent hepatic enzyme inducer\nC. Bedaquiline acts by inhibiting mycolic acid synthesis\nD. Bedaquiline inhibits mycobacterial ATP synthase",
     "options": [
       "A, B, C, D",
       "B, C",
@@ -4632,14 +4576,14 @@
     ],
     "page": 175,
     "correctAnswer": "d",
-    "explanation": "Isoniazid inhibits mycolic acid synthesis and Bedaquiline inhibits ATP synthase. Other options: Pyrazinamide is not an enzyme inducer. Pyrazinamide is converted into its active form pyrazinoic a cid. Pyrazinoic acid disrupts mycobacterial cell membrane metabolism and transport functions. Amongst the anti-tubercular drugs, rifampicin is an enzyme inducer. Rifampicin can be used in treatment of meningococcal carriers, prophylaxis in contacts with Haemophilus influezae type b, and serious staphylococcal infections.",
+    "explanation": "A and D are correct.\n\nIsoniazid inhibits mycolic acid synthesis. Bedaquiline inhibits mycobacterial ATP synthase. Pyrazinamide is not an enzyme inducer; it is converted to pyrazinoic acid, which disrupts mycobacterial cell membrane metabolism and transport. Among first-line anti-tubercular drugs, rifampicin is the classic enzyme inducer. Rifampicin is also used for meningococcal carriers, prophylaxis in Haemophilus influenzae type b contacts, and some serious staphylococcal infections.",
     "image": null
   },
   {
     "id": "ini-cet_2022_q23",
     "exam": "INI-CET 2022",
     "q_num": 23,
-    "question": "Which of the following criteria should be satisfied to start MDT?",
+    "question": "Which of the following criteria should be satisfied to start MDT?\n\n1. Hypopigmented (pale) skin patch with definite sensory loss\n2. Hypopigmented skin patch without sensory loss\n3. Thickened or enlarged peripheral nerve with sensory loss and/or weakness of muscles supplied by that nerve\n4. Family history of leprosy alone",
     "options": [
       "1,4",
       "1,3",
@@ -4648,14 +4592,14 @@
     ],
     "page": 175,
     "correctAnswer": "b",
-    "explanation": "To start multidrug therapy (MDT), the criteria that should be satisfied are a hypopigmented patch with sensory loss and peripheral nerve thickening with sensory loss. Leprosy (Hansen's disease) is a chronic infectious disease caused by Mycobacterium leprae. It mainly affects the skin and peripheral nerves. The disease has two polar forms, lepromatous leprosy, and tuberculoid leprosy, lying at the two ends of a long spectrum of the disease. Leprosy is diagnosed by the detection of at least one of the following cardinal signs:  Definite loss of sensation in a pale hypopigmented patch  Thickened or enlarged peripheral nerve, with loss of sensation and/or weakness of the muscles s upplied by that nerve (statement 2)  Presence of acid-fast bacilli in a slit-skin smear. However, a skin smear is not a prerequisite for implementing MDT. Since MDT has been i ntroduced, many procedures have been simplified, so that leprosy patients can be detected by health workers in the field and MDT can be immediately started.",
+    "explanation": "Statements 1 and 3 are correct criteria for diagnosing leprosy and starting multidrug therapy (MDT).\n\nLeprosy (Hansen's disease) is a chronic infectious disease caused by Mycobacterium leprae, mainly affecting skin and peripheral nerves. Diagnosis is by detection of at least one of the cardinal signs:\n• Definite loss of sensation in a pale hypopigmented patch\n• Thickened or enlarged peripheral nerve with loss of sensation and/or weakness of the muscles supplied\n• Presence of acid-fast bacilli in a slit-skin smear\n\nA hypopigmented patch without sensory loss, or family history alone, is not sufficient to start MDT.",
     "image": null
   },
   {
     "id": "ini-cet_2022_q24",
     "exam": "INI-CET 2022",
     "q_num": 24,
-    "question": "Match the following stages with their relevant descriptions.",
+    "question": "Match the following stages with their relevant descriptions.\n\n1. Stage of susceptibility (pre-pathogenesis)\n2. Stage of subclinical disease\n3. Stage of clinical disease\n4. Stage of disability or death\n\na. Secondary and tertiary prevention are applicable; begins with onset of clinical symptoms\nb. Pathological changes occur without the individual being aware; includes incubation or latency period\nc. Tertiary prevention including rehabilitation measures to limit residual disability\nd. Interaction of agent, host and environment; primary prevention is applicable",
     "options": [
       "1-c, 2-d, 3-a, 4-d",
       "1-d, 2-b, 3-a, 4-c",
@@ -4664,7 +4608,7 @@
     ],
     "page": 176,
     "correctAnswer": "b",
-    "explanation": "The correct match is 1-d, 2-b, 3-a, and 4-c. Natural history of disease refers to the progression of a disease in an individual over time, in the a bsence of treatment. It has two phases, a period of pre-pathogenesis and a period of pathogenesis. The period of pre-pathogenesis is before the onset of disease in humans. An interaction between the agent, host and the environment occurs in this phase before the pathogenesis. It starts with appropriate exposure to or accumulation of factors sufficient for the disease process to begin in a susceptible host. The exposure is a microorganism in an infectious disease. For lung cancer, it is any factor that initiates the process, such as asbestos fibres or components in tobacco smoke. Primary prevention (health promotion and specific protection) is applicable in this period. The period of pathogenesis starts after the disease process has been triggered and pathological changes occur without the individual being aware of it. It begins with the entry of the organism till recovery, death, or disability. The subclinical or asymptomatic period between exposure and onset of symptoms is called the incubation period for infectious diseases, and the latency period for chronic diseases. The onset of clinical symptoms is the beginning of the clinical stage of the disease. Secondary (halting of the disease process) and tertiary prevention (measures to limit disability) are applicable in this period. Rehabilitation has been defined as the use of medical, social, educational, and vocational m easures for training the individual to the highest possible level of functional ability. It is a part of tertiary prevention like providing callipers for walking patients and arranging schooling after being affected by polio.",
+    "explanation": "The correct match is 1-d, 2-b, 3-a, and 4-c.\n\nNatural history of disease is the progression of a disease in an individual over time in the absence of treatment. It has a period of pre-pathogenesis and a period of pathogenesis.\n\n• Pre-pathogenesis (stage of susceptibility): interaction between agent, host, and environment before disease onset in man. Primary prevention (health promotion and specific protection) applies.\n• Subclinical disease: pathological changes begin without the person being aware. Incubation period (infectious) or latency period (chronic) falls here.\n• Clinical disease: onset of clinical symptoms. Secondary prevention (early diagnosis and treatment) and tertiary prevention apply.\n• Disability or death: residual disability or fatal outcome. Rehabilitation is a tertiary prevention measure (medical, social, educational, vocational).",
     "image": null
   },
   {
@@ -4687,7 +4631,7 @@
     "id": "ini-cet_2022_q26",
     "exam": "INI-CET 2022",
     "q_num": 26,
-    "question": "Match the following scientists with their discoveries:",
+    "question": "Match the following scientists with their discoveries:\n\n1. Walter Reed\n2. Edward Jenner\n3. James Lind\n\na. Prevention of scurvy by intake of citrus fruits\nb. Yellow fever is transmitted by the Aedes mosquito\nc. Smallpox vaccination",
     "options": [
       "1-a, 2-b, 3-a",
       "1-b, 2-a, 3-c",
@@ -4696,7 +4640,7 @@
     ],
     "page": 176,
     "correctAnswer": "d",
-    "explanation": "The correctly matched pairs are as follows:  Walter Reed showed that yellow fever is transmitted by the Aedes mosquito.  Edward Jenner - smallpox vaccination  James Lind - prevention of scurvy by intake of citrus fruits Scientist/ Doctor Achievements Susruta Father of Indian SurgeryFath er of Plastic and Cosmetic Su rgeryAuthor of “Sushruta Sa mhita” Hippocrates First True EpidemiologistFat her of MedicineAuthor of “Ai rs, Water and Place” Charaka Father of Indian MedicineAu thor of “Charaka Samhita” Avicenna Author of “Canon of Medicine ” and “The Book on Healing” Andreas Vesalius Father of Modern AnatomyA uthor of “Fabrica” Hammurabi Author of “Babylonian Code of Hammurabi” John Snow Father of Epidemiology Louis Pasteur Robert Koch / Ferdinand Cohn Father of Bacteriology Samuel Hahnemann Father of Homeopathy",
+    "explanation": "The correctly matched pairs are 1-b, 2-c, 3-a.\n\n• Walter Reed showed that yellow fever is transmitted by the Aedes mosquito.\n• Edward Jenner introduced smallpox vaccination.\n• James Lind demonstrated prevention of scurvy by intake of citrus fruits.",
     "image": null
   },
   {
@@ -4727,7 +4671,7 @@
     "id": "ini-cet_2022_q28",
     "exam": "INI-CET 2022",
     "q_num": 28,
-    "question": "A child presents with a dog bite from a street dog. On examination, an abrasion of 1.5 cm is present, with slight oozing. Which of the following statements are correct?",
+    "question": "A child presents with a dog bite from a street dog. On examination, an abrasion of 1.5 cm is present, with slight oozing. Which of the following statements are correct?\n\n1. This is category III exposure\n2. Immediate wound washing with soap and water under running water for about 15 minutes is indicated\n3. Rabies immunoglobulin (RIG) is indicated\n4. No anti-rabies vaccine is required because bleeding is slight\n5. The wound should be tightly sutured immediately\n6. Anti-rabies vaccine should be given as post-exposure prophylaxis",
     "options": [
       "2, 3, 5, 6",
       "1, 2, 5, 6",
@@ -4736,7 +4680,7 @@
     ],
     "page": 177,
     "correctAnswer": "d",
-    "explanation": "A child presenting with abrasion with slight oozing after a dog bite comes under category III. The correct statements are 1, 2, 3, and 6. The following measures should be taken immediately to stop the contraction of rabies:  Cleansing: The most important step in the prevention of rabies is washing the affected area with p lenty of soap and water under a running tap for 15 minutes. This is a standard procedure that minimizes the contraction of rabies.  Chemical treatment: After washing and drying the wound, disinfectants like povidone-iodine and s pirit can be applied.  Suturing: Bite wounds are not sutured generally. If suturing is unavoidable, rabies i mmunoglobulin should be infiltrated in the depth and around the wound, and suturing should be delayed by a few hours.  In unavoidable situations, minimal loose sutures may be applied to arrest bleeding.  Other measures: Local antibiotics and tetanus toxoids should be given. Different wound categories for post-exposure prophylaxis: Post-exposure prophylaxis regimen for rabies: Intramuscular regimen: In this regimen, 1 ml or 0.5 ml of vaccine is injected into the deltoid in patients with category II and III wounds.  Essen regimen: A 5-dose regimen in which 1 dose of vaccine is given on days 0, 3, 7, 14, and 28.  Zagreb regimen: A 4-dose multisite regimen in which 2 doses of vaccine are given on day , followed by 1 dose on days 7 and 21. Intradermal regimen: In this regimen, 0.1 ml of injection is given at 2 sites on days 0, 3, 7, and 28. Equine Rabies Immunoglobulin at a dose of 40 IU/kg (a maximum of 3000 IU) body weight is given once. It is given to all Category III bites and also Category II bites in the case of immune-compromised persons. Categories of wound Post-exposure prophylaxis Category I- touching or feedi ng animals, licks on intact skin None Category II- nibbling of unco vered skin, minor scratches, or abrasionswithout bleeding Immediate vaccination andlo cal treatment of the wound Category III- single or multip le transdermal bites or scratc hes, licks on broken skin cont acts with bats Immediate vaccination anda dministration of rabiesimmu noglobulin; localtreatment of the wound",
+    "explanation": "A child with abrasion and slight oozing after a dog bite comes under category III. Correct statements are 1, 2, 3, and 6.\n\nImmediate measures to prevent rabies:\n• Cleansing: wash the area thoroughly with soap and plenty of water under a running tap for about 15 minutes.\n• Chemical treatment: after washing and drying, apply a disinfectant such as povidone-iodine or spirit.\n• Suturing: bite wounds are generally not sutured. If unavoidable, infiltrate RIG in and around the wound and delay suturing.\n• Local antibiotics and tetanus toxoid as indicated.\n\nWound categories (post-exposure prophylaxis):\n• Category I: touching or feeding animals, licks on intact skin - no PEP\n• Category II: nibbling of uncovered skin, minor scratches or abrasions without bleeding - vaccine + local treatment\n• Category III: single or multiple transdermal bites or scratches, licks on broken skin, contamination of mucous membrane with saliva, or exposures to bats - vaccine + RIG + local treatment\n\nSlight oozing from an abrasion still counts as category III (broken skin / bleeding).",
     "image": null
   },
   {
@@ -5573,7 +5517,7 @@
     "id": "ini-cet_2024_q4",
     "exam": "INI-CET 2024",
     "q_num": 4,
-    "question": "Arrange the steps of the experimental study :",
+    "question": "Arrange the steps of the experimental study:\n\nA. Blinding\nB. Randomization\nC. Defining inclusion and exclusion criteria\nD. Statistical analysis",
     "options": [
       "C - B - A - D",
       "C - A - B - D",
@@ -5582,7 +5526,7 @@
     ],
     "page": 255,
     "correctAnswer": "a",
-    "explanation": "C - B - A - D is the correct order of steps in an experimental study. Defining inclusion and exclusion criteria → Randomization → Blinding → Statistical analysis Phases of experimental study: 1. Planning phase  Literature review  Trial design  Protocol  Budget, funding  Approvals - ethics, collaborating institutes, funding agencies, sponsors 2. Preparatory phase  Organization, staffing  Delegation, responsibility, and accountability  Standardization of protocols, training, data management, privacy  Pilot testing, quality control 3. Operational phase  Selection of target population  Choosing a sample study population  Eligibility screen: Exclusion and inclusion criteria  Informed consent  Subject registration, baseline evaluations  Randomization  Blinding  Conduct a study on the groups allocated  Follow-ups, evaluation protocol  Exit plan, termination point  Trial monitoring 4. Analysis phase  Preliminary clarifications  Initial Data Analysis, definitive analysis  Statistical inference 5. Conclusion  Validity, interpretation  Writing reports, manuscripts, dissemination Randomization is the random allocation of the participants into the study and control groups in the experimental studies. Blinding is done after randomization to reduce the possibility of bias, such as subject variation bias (due to participants), observer bias, and evaluation bias (by the investigator).",
+    "explanation": "C - B - A - D is the correct order: defining inclusion and exclusion criteria -> randomization -> blinding -> statistical analysis.\n\nIn the operational phase of an experimental study, eligibility screening (inclusion/exclusion) comes first, then subject registration and baseline evaluation, then randomization into study and control groups, then blinding to reduce bias, conduct of the intervention, follow-up, and finally analysis phase with statistical inference.\n\nRandomization is random allocation of participants into study and control groups. Blinding is done after randomization to reduce subject, observer, and evaluation bias.",
     "image": null
   },
   {
@@ -5869,7 +5813,7 @@
     "id": "neet_2024_q6",
     "exam": "NEET 2024",
     "q_num": 6,
-    "question": "A case-control study is conducted on the association between intake of Vitamin C and the o ccurrence of respiratory illness. What is the order in which the following steps are conducted?",
+    "question": "A case-control study is conducted on the association between intake of Vitamin C and the occurrence of respiratory illness. What is the order in which the following steps are conducted?\n\n1. Measurement of exposure\n2. Matching\n3. Selecting case and control groups\n4. Analysis",
     "options": [
       "3-2-1-4",
       "1-2-3-4",
@@ -5878,7 +5822,7 @@
     ],
     "page": 271,
     "correctAnswer": "a",
-    "explanation": "The correct order of steps in this case-control study is: Selecting case and control groups (3) -> M atching (2) -> Measurement of exposure (1) -> Analysis (4) Case-Control Studies are also called retrospective studies. This study proceeds from effect to cause and is done after the exposure and outcome have occurred. They focus on diseases or health problems that have already developed. They are less time-consuming and have no risk of attrition because they do not require follow-up. There are four basic steps in conducting a case-control study:  Selection of cases and controls  Matching- This is done to ensure comparability between cases and controls. Controls are selected such that they are similar to cases with respect to certain pertinent selected variables that influence the disease outcome.  Measurement of exposure - This is obtained by interviews, questionnaires, or study of the past r ecords of cases.  Analysis in the form of exposure rates, risk ratio, and odds ratio.\n\n[RELATED_GEM]section_5:gem_4|Study Designs & Trial Phases[/RELATED_GEM]",
+    "explanation": "The correct order is: selecting case and control groups (3) -> matching (2) -> measurement of exposure (1) -> analysis (4).\n\nCase-control studies are retrospective studies that proceed from effect to cause after exposure and outcome have occurred. Basic steps:\n• Selection of cases and controls\n• Matching to ensure comparability on selected variables that influence disease outcome\n• Measurement of exposure (interviews, questionnaires, past records)\n• Analysis (exposure rates, odds ratio, risk measures)\n\n[RELATED_GEM]section_5:gem_4|Study Designs & Trial Phases[/RELATED_GEM]",
     "image": null,
     "relatedGems": [
       {
@@ -5925,7 +5869,7 @@
     "id": "neet_2024_q9",
     "exam": "NEET 2024",
     "q_num": 9,
-    "question": "In a sudden onset disaster, the 'recovery' phase consists of which of the following?",
+    "question": "In a sudden onset disaster, the 'recovery' phase consists of which of the following?\n\ni. Mitigation\nii. Response\niii. Rehabilitation\niv. Preparedness",
     "options": [
       "i, ii, iii and iv",
       "ii, iii and iv only",
@@ -5934,7 +5878,7 @@
     ],
     "page": 273,
     "correctAnswer": "c",
-    "explanation": "In disaster management, the recovery phase consists of response and rehabilitation. Disaster preparedness refers to long-term development activities that strengthen the capacity of a c ountry to manage all kinds of emergencies effectively.  Response - This includes activities such as:  Triage: Classifying the injured based on the severity of the injuries and chances of survival with medical intervention.  Tagging: Tags with name, age, triage category, diagnosis and treatment are put for identification p urposes.  Identification of the dead: The dead bodies should be shifted from the disaster site to the m ortuary.  Rehabilitation - This includes measures that lead to the restoration of pre-disaster conditions. These measures include water supply restoration, food safety, basic sanitation, personal hygiene, and vector control.  Mitigation - This includes measures to prevent disasters from causing emergencies or to lessen the likely effects of emergencies. Some of them are flood mitigation, land use planning, improved building codes, and the reduction and protection of vulnerable populations or structures.  Preparedness - This is a program that aims at strengthening the capacity of a country to manage a ll types of emergencies efficiently. Its objective is to ensure that appropriate measurements are taken for the relief and rehabilitation of disaster victims. Some measures that should be followed by all in case of an emergency include:  Avoiding telephone use, unless it is to call for help  Listen to and carry out the radio or loudspeaker broadcast messages  Carry out the official instructions given over the radio or by loudspeaker  Keep a family emergency kit ready Note: Vaccination of the general population post-disaster against typhoid, cholera, and tetanus is not recommended.\n\n[RELATED_GEM]section_10:gem_2|Disaster Management Cycle & Triage[/RELATED_GEM]",
+    "explanation": "In disaster management, the recovery phase consists of response and rehabilitation (ii and iii only).\n\n• Response: search and rescue, first aid, field care, triage, tagging, and identification of the dead.\n• Rehabilitation: restoration of pre-disaster conditions such as water supply, food safety, basic sanitation, personal hygiene, and vector control.\n• Mitigation: measures to prevent disasters from causing emergencies or to lessen their effects (flood mitigation, land-use planning, building codes).\n• Preparedness: long-term capacity building so a country can manage emergencies efficiently.\n\nNote: mass vaccination of the general population after a disaster against typhoid, cholera, and tetanus is not recommended.\n\n[RELATED_GEM]section_10:gem_2|Disaster Management Cycle & Triage[/RELATED_GEM]",
     "image": null,
     "relatedGems": [
       {
@@ -6363,7 +6307,7 @@
     "id": "neet_2024_q33",
     "exam": "NEET 2024",
     "q_num": 33,
-    "question": "Which of the following are components of the physical quality of life index (PQLI)?",
+    "question": "Which of the following are components of the physical quality of life index (PQLI)?\n\n1. Infant mortality rate\n2. Life expectancy at birth\n3. Literacy rate\n4. Life expectancy at age 1 year\n5. Per capita income",
     "options": [
       "1,3 and 5",
       "2 and 5",
@@ -6372,7 +6316,7 @@
     ],
     "page": 280,
     "correctAnswer": "d",
-    "explanation": "Infant mortality rate, literacy rate, and life expectancy at 1 year of age are the components of the physical quality of life index (PQLI).",
+    "explanation": "Infant mortality rate, literacy rate, and life expectancy at 1 year of age are the components of the physical quality of life index (PQLI). Life expectancy at birth and per capita income are not PQLI components (per capita income is used in indices such as HDI, not PQLI).",
     "image": null
   }
 ]
