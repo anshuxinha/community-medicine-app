@@ -25,16 +25,62 @@ import { theme, useResponsive } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
 import { AppContext } from "../context/AppContext";
 import { PYQ_IMAGES } from "../data/pyq_images_map";
+import {
+  getRelatedGemsForQuestion,
+  readingParamsForGem,
+  stripRelatedGemTags,
+} from "../utils/relatedGems";
 
 const STORAGE_ATTEMPTS_KEY = "pyq_attempts_v1";
 const STORAGE_BOOKMARKS_KEY = "pyq_bookmarks_v1";
 const WINDOW_WIDTH = Dimensions.get("window").width;
 
+const RelatedGemsBlock = ({ question, navigation, isPremium, styles, colors }) => {
+  const gems = getRelatedGemsForQuestion(question);
+  if (!gems.length) return null;
+
+  const openGem = (gem) => {
+    if (!isPremium) {
+      navigation.navigate("Paywall");
+      return;
+    }
+    navigation.navigate("Reading", readingParamsForGem(gem));
+  };
+
+  return (
+    <View style={styles.relatedGemsWrap}>
+      <View style={styles.relatedGemsHeaderRow}>
+        <MaterialCommunityIcons name="diamond-stone" size={18} color={colors.primary} />
+        <Text style={styles.relatedGemsHeader}>Related Gems</Text>
+      </View>
+      <Text style={styles.relatedGemsHint}>
+        Open a high-yield card linked to this MCQ (like Pearls in Marrow).
+      </Text>
+      <View style={styles.relatedGemsChips}>
+        {gems.map((gem) => (
+          <TouchableOpacity
+            key={gem.contentKey}
+            style={styles.relatedGemChip}
+            onPress={() => openGem(gem)}
+            activeOpacity={0.75}
+          >
+            <MaterialCommunityIcons name="book-open-page-variant" size={16} color={colors.primary} />
+            <Text style={styles.relatedGemChipText} numberOfLines={2}>
+              {gem.title}
+            </Text>
+            <MaterialIcons name="chevron-right" size={18} color={colors.primary} />
+          </TouchableOpacity>
+        ))}
+      </View>
+    </View>
+  );
+};
+
 const PYQPracticeScreen = ({ route, navigation }) => {
   const { styles, colors } = useThemedStyles(createStyles);
 
   const { questions, mode, title } = route.params;
-  const { completeDailyGoal } = useContext(AppContext);
+  const { completeDailyGoal, isPremium } = useContext(AppContext);
   const { isTablet, horizontalPadding, contentMaxWidth } = useResponsive();
 
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -381,7 +427,16 @@ const PYQPracticeScreen = ({ route, navigation }) => {
 
                   <View style={styles.explanationSection}>
                     <Text style={styles.explanationHeader}>Detailed Explanation</Text>
-                    <Text style={styles.explanationText}>{questions[reviewIdx].explanation}</Text>
+                    <Text style={styles.explanationText}>
+                      {stripRelatedGemTags(questions[reviewIdx].explanation)}
+                    </Text>
+                    <RelatedGemsBlock
+                      question={questions[reviewIdx]}
+                      navigation={navigation}
+                      isPremium={isPremium}
+                      styles={styles}
+                      colors={colors}
+                    />
                   </View>
                 </ScrollView>
               )}
@@ -530,7 +585,16 @@ const PYQPracticeScreen = ({ route, navigation }) => {
                   {selectedOpt === currentQ.correctAnswer ? "Correct Answer!" : "Incorrect"}
                 </Text>
               </View>
-              <Text style={styles.explanationBodyText}>{currentQ.explanation}</Text>
+              <Text style={styles.explanationBodyText}>
+                {stripRelatedGemTags(currentQ.explanation)}
+              </Text>
+              <RelatedGemsBlock
+                question={currentQ}
+                navigation={navigation}
+                isPremium={isPremium}
+                styles={styles}
+                colors={colors}
+              />
             </Card.Content>
           </Card>
         )}
@@ -797,6 +861,52 @@ const createStyles = (colors) => StyleSheet.create({
     fontSize: 14,
     color: colors.textSecondary,
     lineHeight: 21,
+  },
+  relatedGemsWrap: {
+    marginTop: 14,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
+  relatedGemsHeaderRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginBottom: 4,
+  },
+  relatedGemsHeader: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: colors.textTitle,
+    marginLeft: 6,
+  },
+  relatedGemsHint: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    marginBottom: 10,
+    lineHeight: 17,
+  },
+  relatedGemsChips: {
+    gap: 8,
+  },
+  relatedGemChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.primary + "12",
+    borderWidth: 1,
+    borderColor: colors.primary + "33",
+    borderRadius: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    gap: 8,
+  },
+  relatedGemChipText: {
+    flex: 1,
+    fontSize: 13,
+    fontWeight: "600",
+    color: colors.primaryDark || colors.primary,
+    lineHeight: 18,
+    marginLeft: 6,
   },
   footerContainer: {
     padding: 16,
