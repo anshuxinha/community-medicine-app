@@ -461,7 +461,7 @@ const PaywallScreen = ({ navigation }) => {
             />
           </View>
           <Text variant="displaySmall" style={styles.title}>
-            Get STROMA Membership
+            STROMA Membership
           </Text>
         </View>
 
@@ -632,7 +632,7 @@ const PaywallScreen = ({ navigation }) => {
               disabled={isPurchasing}
               onPress={handlePurchase}
             >
-              {appliedCoupon ? "Get Discounted Price" : "Get STROMA Membership"}
+              {appliedCoupon ? "Get Discounted Price" : "Get Membership"}
             </Button>
 
             <View style={styles.footerLinks}>
