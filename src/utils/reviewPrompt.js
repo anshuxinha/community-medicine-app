@@ -221,7 +221,7 @@ function showFiveStarPrompt(handlers = {}) {
         },
       },
       {
-        text: "Review Now ⭐⭐⭐⭐⭐",
+        text: "Review Now",
         onPress: () => {
           void requestNativeReview().finally(() => {
             onReviewed?.();
