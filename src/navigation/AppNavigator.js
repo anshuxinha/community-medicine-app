@@ -41,6 +41,7 @@ const getGemsScreen = () => require("../screens/GemsScreen").default;
 const getNotificationsScreen = () => require("../screens/NotificationsScreen").default;
 const getProfileScreen = () => require("../screens/ProfileScreen").default;
 const getBookmarksScreen = () => require("../screens/BookmarksScreen").default;
+const getSearchScreen = () => require("../screens/SearchScreen").default;
 const getAdminLibraryReviewScreen = () =>
   require("../screens/AdminLibraryReviewScreen").default;
 
@@ -262,6 +263,11 @@ const AppNavigator = () => {
               name="Bookmarks"
               getComponent={getBookmarksScreen}
               options={{ title: "Bookmarks" }}
+            />
+            <Stack.Screen
+              name="Search"
+              getComponent={getSearchScreen}
+              options={{ title: "Search" }}
             />
             <Stack.Screen
               name="AdminLibraryReview"

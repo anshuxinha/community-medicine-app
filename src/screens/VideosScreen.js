@@ -49,6 +49,7 @@ import {
   formatDuration,
   formatPublishedDate,
   getVideoCategories,
+  isVideoFree,
   resolvePlaybackSource,
   subscribeToVideos,
 } from "../services/videoService";
@@ -66,15 +67,6 @@ import GestureVideoPlayer from "../components/GestureVideoPlayer";
 
 const { width } = Dimensions.get("window");
 const SEEN_VIDEO_IDS_STORAGE_KEY = "seenVideoIds:v1";
-
-const isVideoFree = (video) => {
-  if (!video) return false;
-  return (
-    video.title === "Nutrition: Overview and Protein" ||
-    video.title === "Nutrition: Overview" ||
-    video.title === "Protein"
-  );
-};
 
 const FreeLabel = () => {
   const { styles, colors } = useThemedStyles(createStyles);
@@ -352,7 +344,7 @@ const getDoubtTime = (createdAt) => {
   return isNaN(t) ? 0 : t;
 };
 
-const VideosScreen = ({ navigation }) => {
+const VideosScreen = ({ navigation, route }) => {
   const { styles, colors, isDark } = useThemedStyles(createStyles);
 
   const { isPremium, user, studyScore, setStudyScore } = useContext(AppContext);
@@ -1051,6 +1043,24 @@ const VideosScreen = ({ navigation }) => {
   }, [user, user?.uid, videosRetryKey]);
 
   const categories = useMemo(() => getVideoCategories(videos), [videos]);
+
+  // Deep-open a video from global search (or other callers).
+  useEffect(() => {
+    const openVideoId = route?.params?.openVideoId;
+    if (!openVideoId || !videos.length) return;
+
+    const match = videos.find((video) => String(video.id) === String(openVideoId));
+    if (!match) return;
+
+    if (!isPremium && !isVideoFree(match)) {
+      navigation.getParent()?.navigate("Paywall");
+    } else {
+      markVideoSeen(match.id);
+      setSelectedVideo(match);
+    }
+
+    navigation.setParams?.({ openVideoId: undefined });
+  }, [route?.params?.openVideoId, videos, isPremium, navigation]);
 
   const filteredVideos = useMemo(() => {
     let list = videos;

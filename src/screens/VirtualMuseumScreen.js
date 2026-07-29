@@ -12,7 +12,7 @@ import {
 import { Text, Card, Chip, Divider } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { MUSEUM_ITEMS, CATEGORIES, FREE_CATEGORY } from "../data/museumData";
 import { AppContext } from "../context/AppContext";
 import { theme } from '../styles/theme';
@@ -27,15 +27,21 @@ const MAX_ZOOM = 3;
 const ZOOM_STEP = 0.5;
 
 // Individual card component to manage its own image loading state
-const MuseumCard = ({ item }) => {
+const MuseumCard = ({ item, initiallyExpanded = false }) => {
   const { styles, colors } = useThemedStyles(createStyles);
 
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(initiallyExpanded);
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
   const [viewerVisible, setViewerVisible] = useState(false);
   const [zoomScale, setZoomScale] = useState(MIN_ZOOM);
   const { width, height } = useWindowDimensions();
+
+  useEffect(() => {
+    if (initiallyExpanded) {
+      setExpanded(true);
+    }
+  }, [initiallyExpanded]);
 
   useEffect(() => {
     if (!viewerVisible) {
@@ -213,7 +219,9 @@ const VirtualMuseumScreen = () => {
 
   const { isPremium, isScreenCapturePrevented } = useContext(AppContext);
   const navigation = useNavigation();
+  const route = useRoute();
   const [activeCategory, setActiveCategory] = useState(FREE_CATEGORY);
+  const [focusItemId, setFocusItemId] = useState(null);
 
   const handleCategoryPress = (cat) => {
     if (!isPremium && cat !== FREE_CATEGORY && cat !== "All") {
@@ -222,6 +230,29 @@ const VirtualMuseumScreen = () => {
     }
     setActiveCategory(cat);
   };
+
+  // Deep-open a spotter from global search.
+  useEffect(() => {
+    const paramId = route?.params?.focusItemId;
+    if (paramId == null) return;
+
+    const match = MUSEUM_ITEMS.find(
+      (item) => String(item.id) === String(paramId),
+    );
+    if (!match) {
+      navigation.setParams?.({ focusItemId: undefined });
+      return;
+    }
+
+    if (!isPremium && match.category !== FREE_CATEGORY) {
+      navigation.replace("Paywall");
+      return;
+    }
+
+    setActiveCategory(match.category || "All");
+    setFocusItemId(String(match.id));
+    navigation.setParams?.({ focusItemId: undefined });
+  }, [route?.params?.focusItemId, isPremium, navigation]);
 
   const filtered =
     activeCategory === "All"
@@ -279,7 +310,11 @@ const VirtualMuseumScreen = () => {
         </View>
 
         {filtered.map((item) => (
-          <MuseumCard key={item.id} item={item} />
+          <MuseumCard
+            key={item.id}
+            item={item}
+            initiallyExpanded={focusItemId === String(item.id)}
+          />
         ))}
       </ScrollView>
     </SafeAreaView>

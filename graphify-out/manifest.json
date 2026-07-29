@@ -488,8 +488,8 @@
     "hash": "5384ee746b28f1977190d63ea93cc1e2"
   },
   "D:\\The App\\src\\components\\ReadingView.js": {
-    "mtime": 1785072029.3088093,
-    "hash": "882af34ccf1d26e2ec25eb54ab0d5dc2"
+    "mtime": 1785261868.4735892,
+    "hash": "2ae879543efef9620eeffe1d2f63b428"
   },
   "D:\\The App\\src\\components\\ReferralAnnouncementDialog.js": {
     "mtime": 1785161583.9598627,
@@ -515,6 +515,10 @@
     "mtime": 1772355531.2110212,
     "hash": "b6d28a52efa63c1ccfa616dabffb7bd9"
   },
+  "D:\\The App\\src\\constants\\orientations.js": {
+    "mtime": 1785261854.9955852,
+    "hash": "28aff4aa2aa407d8be48e8aed5bb252a"
+  },
   "D:\\The App\\src\\context\\AppContext.js": {
     "mtime": 1785163296.6940963,
     "hash": "ac7fdcfbbe3dcf0ce8ec9c3cc0527db6"
@@ -536,16 +540,20 @@
     "hash": "364c13199d54f90055491311383d0e28"
   },
   "D:\\The App\\src\\data\\pyq_images_map.js": {
-    "mtime": 1783146206.0782347,
-    "hash": "9e05274fdadb4f26b4684b6738a33e0b"
+    "mtime": 1785266322.336642,
+    "hash": "d9067b25bb9242dad8d52e9eb6096abb"
   },
   "D:\\The App\\src\\hooks\\useSessionEnforcer.js": {
     "mtime": 1776915623.531863,
     "hash": "f486f262d18f04ca01c8458ba191645d"
   },
+  "D:\\The App\\src\\hooks\\useUnlockOrientationOnFocus.js": {
+    "mtime": 1785261854.9955852,
+    "hash": "ed6a4dcad62cc836e6bd88d75b237a96"
+  },
   "D:\\The App\\src\\navigation\\AppNavigator.js": {
-    "mtime": 1784220308.793162,
-    "hash": "baffd5065809aaac8ef92463a2cc4470"
+    "mtime": 1785306236.9583707,
+    "hash": "bd8d0247a751489304ede1b111ed485e"
   },
   "D:\\The App\\src\\screens\\AdminLibraryReviewScreen.js": {
     "mtime": 1784224587.3295302,
@@ -564,8 +572,8 @@
     "hash": "54d95e35abd81c66cfcfb4d05ddcd448"
   },
   "D:\\The App\\src\\screens\\DashboardScreen.js": {
-    "mtime": 1784650264.7376685,
-    "hash": "838615cc1ec9d93109663b1d6487a5f5"
+    "mtime": 1785306236.9583707,
+    "hash": "ae050f41bc5f35befb4d126b2226ef1c"
   },
   "D:\\The App\\src\\screens\\DietarySurveyScreen.js": {
     "mtime": 1784225615.114561,
@@ -580,7 +588,7 @@
     "hash": "aa3688842ec7c1abad4f7b83e2894bf8"
   },
   "D:\\The App\\src\\screens\\LibraryScreen.js": {
-    "mtime": 1784226075.386181,
+    "mtime": 1785264158.489263,
     "hash": "67e9ce8c20616a74c8605f27fa98925a"
   },
   "D:\\The App\\src\\screens\\LoginScreen.js": {
@@ -604,8 +612,8 @@
     "hash": "0dfe08b6e6017e61d677f4ab4a15e727"
   },
   "D:\\The App\\src\\screens\\PaywallScreen.js": {
-    "mtime": 1785161584.15765,
-    "hash": "9e34a1a868056a73e202e49ec34696c7"
+    "mtime": 1785304531.5281937,
+    "hash": "c185159ec839caaec3e1a6b0906b7ed1"
   },
   "D:\\The App\\src\\screens\\ProfileScreen.js": {
     "mtime": 1785162409.501746,
@@ -616,20 +624,20 @@
     "hash": "76e6a739445f2a916938625c3009ff52"
   },
   "D:\\The App\\src\\screens\\PYQPracticeScreen.js": {
-    "mtime": 1784224587.3871617,
-    "hash": "b71eaeca965db905c2689d6af817ebf5"
+    "mtime": 1785303036.805771,
+    "hash": "d66ea14d2112b0803574bb1b9e3b371b"
   },
   "D:\\The App\\src\\screens\\QuizScreen.js": {
     "mtime": 1784220348.7577372,
     "hash": "f968241eb8b01706ae26202300310ee9"
   },
   "D:\\The App\\src\\screens\\ReadingScreen.js": {
-    "mtime": 1784650236.0549412,
-    "hash": "7334b57e6139f8b2ad08fb4e79065303"
+    "mtime": 1785261855.052948,
+    "hash": "aa29b713796c9603117dc605dfd351aa"
   },
   "D:\\The App\\src\\screens\\SearchScreen.js": {
-    "mtime": 1784226107.9777696,
-    "hash": "bdb60cc409364edefa0887fd83aa1014"
+    "mtime": 1785306213.1977608,
+    "hash": "6997b4354e629219c499d773d37f28da"
   },
   "D:\\The App\\src\\screens\\SESCalculatorScreen.js": {
     "mtime": 1784225615.121064,
@@ -644,12 +652,12 @@
     "hash": "f6eb550b80214139a46a94ea196fe185"
   },
   "D:\\The App\\src\\screens\\VideosScreen.js": {
-    "mtime": 1784647510.4421847,
-    "hash": "4436256d49cdcc33978612ceec1d9529"
+    "mtime": 1785306129.5978832,
+    "hash": "956088d00e3f64fd8cb89bad198e8833"
   },
   "D:\\The App\\src\\screens\\VirtualMuseumScreen.js": {
-    "mtime": 1784225570.202634,
-    "hash": "9c33d8d80ad66de2bbb67e4ae7da4ac2"
+    "mtime": 1785306236.9107902,
+    "hash": "85e036d542014d90e6550707cdbea1e2"
   },
   "D:\\The App\\src\\screens\\__tests__\\NFHSTrendsScreen.test.js": {
     "mtime": 1780386057.1180468,
@@ -684,8 +692,8 @@
     "hash": "56519b4570084501320ba552e4a31d5b"
   },
   "D:\\The App\\src\\services\\videoService.js": {
-    "mtime": 1784607395.4320846,
-    "hash": "652f11e2b8565546aa6edde083a5436e"
+    "mtime": 1785306109.616561,
+    "hash": "3fbcd595cc23a382d09487c40d571289"
   },
   "D:\\The App\\src\\services\\__tests__\\couponService.test.js": {
     "mtime": 1778607110.6518483,
@@ -715,6 +723,10 @@
     "mtime": 1776915497.5873566,
     "hash": "3173bec75bf9e2ad87bedbd9cf0360eb"
   },
+  "D:\\The App\\src\\utils\\globalSearch.js": {
+    "mtime": 1785306109.662628,
+    "hash": "bd07cc4f96a27b588982132c56bc2eac"
+  },
   "D:\\The App\\src\\utils\\progressPresentation.js": {
     "mtime": 1784650210.305622,
     "hash": "211921205c1af08b837fb3d8b3d58f3b"
@@ -722,6 +734,10 @@
   "D:\\The App\\src\\utils\\referralUtils.js": {
     "mtime": 1781108061.3430338,
     "hash": "ef7349ebd62efad7fab7b42ce9a2bb76"
+  },
+  "D:\\The App\\src\\utils\\relatedGems.js": {
+    "mtime": 1785300544.3570468,
+    "hash": "c376126678c3aca1c263cbff9c33696c"
   },
   "D:\\The App\\src\\utils\\reviewPrompt.js": {
     "mtime": 1777871530.6764872,
@@ -983,6 +999,10 @@
     "mtime": 1782917911.195024,
     "hash": "d27edf5c80a4874451590af48687ada7"
   },
+  "D:\\The App\\assets\\pyq_images\\image_p178_Im1.jpg": {
+    "mtime": 1782999346.2606945,
+    "hash": "99710b68d207ea54ef92338d3d886822"
+  },
   "D:\\The App\\assets\\pyq_images\\image_p1_Im0.jpg": {
     "mtime": 1782917911.05406,
     "hash": "165d0951ba1ecacaebf7d251a4944dbf"
@@ -1015,9 +1035,17 @@
     "mtime": 1782917911.074089,
     "hash": "567ef9781c7897b4ffeadb299baf1d63"
   },
+  "D:\\The App\\assets\\pyq_images\\image_p270_Im1.jpg": {
+    "mtime": 1782917911.2611709,
+    "hash": "5366876fabf1173ca97ac06026fc35ad"
+  },
   "D:\\The App\\assets\\pyq_images\\image_p272_Im0.jpg": {
     "mtime": 1783139966.9101884,
     "hash": "b9115630012f1350ae19dcff3ed6472c"
+  },
+  "D:\\The App\\assets\\pyq_images\\image_p272_Im1.jpg": {
+    "mtime": 1783140029.1085696,
+    "hash": "044029ecdf4842007ddee878eeff370f"
   },
   "D:\\The App\\assets\\pyq_images\\image_p274_Im0.jpg": {
     "mtime": 1782917911.2662313,

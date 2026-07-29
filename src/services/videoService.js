@@ -9,6 +9,16 @@ export const VIDEO_CATEGORIES = {
   cases: { id: "cases", label: "Case Discussions" },
 };
 
+/** Free sample lectures available without premium. */
+export const isVideoFree = (video) => {
+  if (!video) return false;
+  return (
+    video.title === "Nutrition: Overview and Protein" ||
+    video.title === "Nutrition: Overview" ||
+    video.title === "Protein"
+  );
+};
+
 const DEFAULT_PULL_ZONE =
   process.env.EXPO_PUBLIC_BUNNY_PULL_ZONE_HOSTNAME ||
   "vz-d73e181a-404.b-cdn.net";

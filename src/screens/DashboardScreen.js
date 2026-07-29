@@ -477,16 +477,32 @@ const DashboardScreen = ({ navigation }) => {
             />
           </TouchableOpacity>
           <Text style={styles.appName}>STROMA</Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("Bookmarks")}
-            style={styles.iconBtn}
-          >
-            <MaterialIcons
-              name="bookmark-border"
-              size={26}
-              color={colors.textTitle}
-            />
-          </TouchableOpacity>
+          <View style={styles.topBarActions}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Search")}
+              style={styles.iconBtn}
+              accessibilityRole="button"
+              accessibilityLabel="Search"
+            >
+              <MaterialIcons
+                name="search"
+                size={26}
+                color={colors.textTitle}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Bookmarks")}
+              style={styles.iconBtn}
+              accessibilityRole="button"
+              accessibilityLabel="Bookmarks"
+            >
+              <MaterialIcons
+                name="bookmark-border"
+                size={26}
+                color={colors.textTitle}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Greeting */}
@@ -791,6 +807,11 @@ const createStyles = (colors) => StyleSheet.create({
     fontWeight: "bold",
     color: colors.textTitle,
     letterSpacing: 2,
+  },
+  topBarActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
   },
   iconBtn: {
     width: 40,
