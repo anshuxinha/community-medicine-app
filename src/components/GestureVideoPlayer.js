@@ -59,6 +59,7 @@ const GestureVideoPlayer = ({
   style,
   isFullscreen = false,
   onFullscreenPress,
+  onWatchProgress,
   isDark = true,
 }) => {
   const insets = useSafeAreaInsets();
@@ -117,6 +118,13 @@ const GestureVideoPlayer = ({
 
   const duration = player.duration || 0;
   durationRef.current = duration;
+
+  // Report watch ratio so parents can gate review prompts on max progress.
+  useEffect(() => {
+    if (!onWatchProgress || !(duration > 0)) return;
+    const ratio = Math.min(1, Math.max(0, (currentTime || 0) / duration));
+    onWatchProgress(ratio);
+  }, [currentTime, duration, onWatchProgress]);
 
   const refreshTracks = useCallback(() => {
     try {

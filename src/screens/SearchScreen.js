@@ -523,6 +523,7 @@ const SearchScreen = ({ navigation }) => {
               keyExtractor={(item) => `${item.type}:${item.id}:${item.contentKey || item.subtitle || ""}`}
               renderItem={renderResult}
               keyboardShouldPersistTaps="handled"
+              style={styles.resultsList}
               contentContainerStyle={styles.listContainer}
               ItemSeparatorComponent={() => <View style={styles.separator} />}
               ListEmptyComponent={
@@ -573,18 +574,24 @@ const createStyles = (colors) =>
       alignSelf: "center",
     },
     chipList: {
+      // FlatList base styles use flexShrink: 1; without flexShrink: 0 the chip
+      // row is compressed when Library (or any tab) has many results below.
       flexGrow: 0,
+      flexShrink: 0,
       marginBottom: 8,
     },
     categoryList: {
       gap: 8,
       paddingRight: 8,
       paddingBottom: 4,
+      alignItems: "center",
     },
     filterChip: {
       backgroundColor: colors.surfacePrimary,
       borderColor: colors.border,
       borderRadius: 20,
+      height: 36,
+      justifyContent: "center",
     },
     filterChipSelected: {
       backgroundColor: colors.primaryLight,
@@ -595,13 +602,19 @@ const createStyles = (colors) =>
       color: colors.textSecondary,
       fontWeight: "600",
       fontSize: 14,
+      lineHeight: 18,
+      marginVertical: 0,
     },
     filterChipTextSelected: {
       color: colors.primary,
       fontWeight: "bold",
     },
+    resultsList: {
+      flex: 1,
+    },
     listContainer: {
       paddingBottom: 32,
+      flexGrow: 1,
     },
     resultRow: {
       flexDirection: "row",
