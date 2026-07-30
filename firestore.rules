@@ -1,26 +1,88 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-      // Allow admin to list users for push token collection
-      allow read: if request.auth != null && request.auth.token.isAdmin == true;
+    // Package A: own-user field allowlist (premium fields still client-writable
+    // until Package B server authority). Cross-user premium grant removed.
+    // isAdmin is never client-writable (claims / Admin SDK only).
+    function isSignedIn() {
+      return request.auth != null;
+    }
 
-      // Allow any user to update another user's document ONLY to reward a referral
-      allow update: if request.auth != null 
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['totalReferrals', 'premiumExpiryDate', 'isPremium'])
-        && request.resource.data.isPremium == true
-        && (
-          (resource.data.totalReferrals == null && request.resource.data.totalReferrals == 1)
-          || (request.resource.data.totalReferrals != null && request.resource.data.totalReferrals == resource.data.totalReferrals + 1)
-        );
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdminToken() {
+      return isSignedIn() && request.auth.token.isAdmin == true;
+    }
+
+    // Fields the mobile client is allowed to create/update on users/{uid}.
+    // Keep in sync with LoginScreen, AppContext, couponService, notificationService.
+    function userClientKeys() {
+      return [
+        'email',
+        'createdAt',
+        'username',
+        'appleUser',
+        'currentDeviceId',
+        'referralCode',
+        'referredByCode',
+        'referredByUid',
+        'totalReferrals',
+        // Premium: temporary until Package B (RevenueCat webhook / claims)
+        'isPremium',
+        'premiumUpdatedAt',
+        'premiumSource',
+        'premiumType',
+        'premiumPlan',
+        'premiumExpiryDate',
+        'appliedCoupon',
+        // Push + notifications
+        'pushToken',
+        'pushTokenUpdatedAt',
+        'pushTokenPlatform',
+        'videoNotificationsEnabled',
+        'videoNotificationsUpdatedAt',
+        // Learning progress
+        'readItems',
+        'readItemVersions',
+        'bookmarks',
+        'currentStreak',
+        'lastReadDate',
+        'dailyReadHistory',
+        'studyScore',
+        'deviceStates',
+        'syncedAt'
+      ];
+    }
+
+    function onlyUserClientKeys() {
+      return request.resource.data.keys().hasOnly(userClientKeys());
+    }
+
+    function onlyUserClientKeyDiff() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(userClientKeys());
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdminToken();
+
+      // Full-doc key check on create (new docs must not include isAdmin, etc.).
+      allow create: if isOwner(userId) && onlyUserClientKeys();
+
+      // Diff-only on update so pre-existing fields (e.g. legacy isAdmin set via
+      // console) are preserved; clients still cannot change non-allowlisted keys.
+      allow update: if isOwner(userId) && onlyUserClientKeyDiff();
+
+      allow delete: if isOwner(userId);
 
       match /highlights/{contentKey} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
+        allow read, write: if isOwner(userId);
       }
 
       match /annotations/{contentKey} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
+        allow read, write: if isOwner(userId);
       }
     }
 
