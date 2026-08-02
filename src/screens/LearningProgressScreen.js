@@ -242,7 +242,7 @@ const LearningProgressScreen = ({ navigation }) => {
           </Card.Content>
         </Card>
 
-        <Text style={styles.sectionTitle}>NMC theory papers</Text>
+        <Text style={styles.sectionTitle}>Theory Papers</Text>
         {paperProgress.map((paper) => {
           const barColor = colorForToken(colors, paper.colorToken);
           return (
