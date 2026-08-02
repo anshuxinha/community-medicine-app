@@ -12,6 +12,8 @@
 | Review bundles | `D:\The App\dist\library_chapter_reviews\` |
 | Library update workflow | `D:\The App\docs\library-update-review-workflow.md` |
 | Publish one leaf override | `python scripts/publish_library_override.py <leafId> --reason "..."` |
+| Bulk Park gap scan | `py -3 scripts/scan_park_library_gaps.py` → `dist/park_gap_scans/latest.md` |
+| Park topic seeds | `scripts/data/park_chapter_topic_seeds.json` |
 
 ## On report approval (ship path)
 

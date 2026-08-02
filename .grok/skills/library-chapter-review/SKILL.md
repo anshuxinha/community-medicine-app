@@ -49,6 +49,24 @@ Read `references/paths.md`. Critical paths:
 | PYQs | `D:\IGIMS\Major Tests & Question Papers\categorized_questions_report.md` |
 | Rubric | `references/quality-rubric.md` |
 | SN/LAQ/EXAMTIP tags | `references/tag-format.md` |
+| Bulk Park gap scan | `scripts/scan_park_library_gaps.py` → `dist/park_gap_scans/latest.md` |
+
+## Bulk Park gap scan (before multi-chapter deep review)
+
+To **rank** Library chapters by large Park coverage gaps (thin text + missing high-yield topics), run:
+
+```bash
+py -3 scripts/scan_park_library_gaps.py
+py -3 scripts/scan_park_library_gaps.py --chapters 6,16,22,23
+py -3 scripts/scan_park_library_gaps.py --no-firebase
+```
+
+- Report-only; does not edit Library content.
+- Read `dist/park_gap_scans/latest.md` (critical/large first).
+- Then run `/library-chapter-review <id>` only on top offenders.
+- Seeds: `scripts/data/park_chapter_topic_seeds.json`. Optional aliases: `scripts/data/park_topic_aliases.json`.
+- Needs `pypdf` or `pdfplumber` (`py -3 -m pip install pypdf`).
+- Bands: **critical** ≥55, **large** ≥30, **moderate** ≥18 (thin Library text is boosted).
 
 ## Step 0 — Resolve chapter and load bundle
 
