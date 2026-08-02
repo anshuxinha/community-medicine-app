@@ -52,7 +52,12 @@ service cloud.firestore {
         'dailyReadHistory',
         'studyScore',
         'deviceStates',
-        'syncedAt'
+        'syncedAt',
+        // Learning profile / onboarding (NMC paper focus)
+        'onboardingCompleted',
+        'learnerRole',
+        'trainingYear',
+        'preferredPaperFocus'
       ];
     }
 

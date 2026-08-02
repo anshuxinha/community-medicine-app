@@ -4,6 +4,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
 import { Text, Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -29,35 +30,45 @@ const OnboardingScreen = ({ navigation, route }) => {
   );
   const [saving, setSaving] = useState(false);
 
+  const leaveScreen = () => {
+    if (isEdit) {
+      navigation.goBack();
+    } else if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "MainTabs" }],
+      });
+    }
+  };
+
   const finish = async (skipped = false) => {
     setSaving(true);
     try {
+      const nextRole = skipped ? user?.learnerRole || "other" : role;
       await updateLearningProfile({
         onboardingCompleted: true,
-        learnerRole: skipped ? user?.learnerRole || "other" : role,
+        learnerRole: nextRole,
         preferredPaperFocus: skipped
           ? user?.preferredPaperFocus || "all"
           : paperFocus,
         trainingYear: skipped
           ? user?.trainingYear ?? null
-          : role === "md_resident"
+          : nextRole === "md_resident"
             ? trainingYear
             : null,
       });
+      leaveScreen();
     } catch (err) {
       console.warn("Onboarding save failed:", err?.message);
+      Alert.alert(
+        "Could not save",
+        "Your choices were saved on this device, but cloud sync failed. Check your connection and try again.",
+        [{ text: "OK", onPress: leaveScreen }],
+      );
     } finally {
       setSaving(false);
-      if (isEdit) {
-        navigation.goBack();
-      } else if (navigation.canGoBack()) {
-        navigation.goBack();
-      } else {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "MainTabs" }],
-        });
-      }
     }
   };
 

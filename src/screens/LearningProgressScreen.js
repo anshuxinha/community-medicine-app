@@ -194,9 +194,7 @@ const LearningProgressScreen = ({ navigation }) => {
           <View style={styles.heroTextCol}>
             <Text style={styles.heroTitle}>Learning progress</Text>
             <Text style={styles.heroSub}>{roleSubtitle}</Text>
-            <Text style={styles.heroHint}>
-              Progress uses NMC theory papers (not a specific university table).
-            </Text>
+            <Text style={styles.heroHint}>Progress uses NMC guidelines</Text>
           </View>
         </View>
 

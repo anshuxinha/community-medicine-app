@@ -1920,7 +1920,9 @@ export const AppProvider = ({ children }) => {
   };
 
   const updateLearningProfile = async (profile = {}) => {
-    if (!user?.uid) return;
+    if (!user?.uid) {
+      throw new Error("Not signed in");
+    }
 
     const next = {
       onboardingCompleted:
@@ -1941,29 +1943,19 @@ export const AppProvider = ({ children }) => {
           : user.preferredPaperFocus || "all",
     };
 
-    try {
-      await updateDoc(doc(db, "users", user.uid), next);
-    } catch (err) {
-      // First-time users may only have a partial doc; merge write.
-      try {
-        await setDoc(doc(db, "users", user.uid), next, { merge: true });
-      } catch (err2) {
-        console.warn("Failed to save learning profile:", err2?.message);
-        throw err2;
-      }
-    }
-
+    // Optimistic local update so Profile reflects changes even if the network is slow.
+    const mergedLocal = { ...user, ...next };
     setUser((prev) => (prev ? { ...prev, ...next } : prev));
     try {
-      const storedUser = await AsyncStorage.getItem("user");
-      if (storedUser) {
-        const parsed = JSON.parse(storedUser);
-        await AsyncStorage.setItem(
-          "user",
-          JSON.stringify({ ...parsed, ...next }),
-        );
-      }
+      await AsyncStorage.setItem("user", JSON.stringify(mergedLocal));
     } catch (_) {}
+
+    try {
+      await setDoc(doc(db, "users", user.uid), next, { merge: true });
+    } catch (err) {
+      console.warn("Failed to save learning profile to cloud:", err?.message);
+      throw err;
+    }
   };
 
   return (

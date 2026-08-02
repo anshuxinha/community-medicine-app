@@ -606,7 +606,7 @@ const DashboardScreen = ({ navigation }) => {
           <Card.Title
             title="Learning Progress"
             titleStyle={styles.cardTitle}
-            subtitle="NMC 4 papers · Tap for details"
+            subtitle="Tap for details"
             subtitleStyle={styles.progressCardSubtitle}
             right={() => (
               <MaterialIcons
