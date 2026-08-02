@@ -460,8 +460,10 @@ const PaywallScreen = ({ navigation }) => {
               resizeMode="contain"
             />
           </View>
-          <Text variant="displaySmall" style={styles.title}>
-            STROMA Membership
+          <Text style={styles.brandEyebrow}>STROMA</Text>
+          <Text style={styles.heroTitle}>Unlock everything</Text>
+          <Text style={styles.heroSub}>
+            Full library, videos, offline, and ad-free prep
           </Text>
         </View>
 
@@ -757,11 +759,31 @@ const createStyles = (colors) => StyleSheet.create({
     position: "absolute",
     top: "30%",
   },
-  title: {
-    color: colors.textTitle,
-    fontFamily: Platform.OS === "ios" ? "Georgia" : "serif",
-    fontSize: 28, // Reduced from 32
+  brandEyebrow: {
+    color: colors.secondary,
+    fontSize: 12,
+    fontWeight: "700",
+    letterSpacing: 2.5,
+    textTransform: "uppercase",
+    marginBottom: 6,
     textAlign: "center",
+  },
+  heroTitle: {
+    color: colors.textTitle,
+    fontSize: 28,
+    fontWeight: "700",
+    letterSpacing: -0.5,
+    textAlign: "center",
+  },
+  heroSub: {
+    color: colors.textBody,
+    fontSize: 15,
+    fontWeight: "400",
+    textAlign: "center",
+    marginTop: 6,
+    opacity: 0.85,
+    lineHeight: 22,
+    paddingHorizontal: 16,
   },
   featuresList: {
     marginBottom: 12, // Reduced from 16
