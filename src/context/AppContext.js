@@ -380,6 +380,7 @@ export const AppProvider = ({ children }) => {
   const [accountPremium, setAccountPremium] = useState(false);
   const [revenueCatPremium, setRevenueCatPremium] = useState(false);
   const [contentRegistryVersion, setContentRegistryVersion] = useState(0);
+  const [lastOpenedContentKey, setLastOpenedContentKey] = useState(null);
   
   const [isScreenCapturePrevented, setIsScreenCapturePrevented] =
     useState(false);
@@ -796,7 +797,19 @@ export const AppProvider = ({ children }) => {
               pushToken: data.pushToken || null,
               referralCode,
               premiumType: fetchedPremiumType,
+              onboardingCompleted: data.onboardingCompleted === true,
+              learnerRole: data.learnerRole || null,
+              trainingYear:
+                typeof data.trainingYear === "number" ? data.trainingYear : null,
+              preferredPaperFocus: data.preferredPaperFocus || "all",
             };
+
+            try {
+              const lastKey = await AsyncStorage.getItem(
+                `lastOpenedContentKey:${firebaseUser.uid}`,
+              );
+              if (lastKey) setLastOpenedContentKey(lastKey);
+            } catch (_) {}
 
             // Merge top-level cloud + deviceStates + local cache so a sparse
             // cloud doc cannot wipe richer progress after cache paint.
@@ -888,6 +901,25 @@ export const AppProvider = ({ children }) => {
                 null,
               );
 
+            let cachedLearningProfile = {};
+            try {
+              const cachedUserStr = await AsyncStorage.getItem("user");
+              if (cachedUserStr) {
+                const cachedUser = JSON.parse(cachedUserStr);
+                if (cachedUser?.uid === firebaseUser.uid) {
+                  cachedLearningProfile = {
+                    onboardingCompleted: cachedUser.onboardingCompleted === true,
+                    learnerRole: cachedUser.learnerRole || null,
+                    trainingYear:
+                      typeof cachedUser.trainingYear === "number"
+                        ? cachedUser.trainingYear
+                        : null,
+                    preferredPaperFocus: cachedUser.preferredPaperFocus || "all",
+                  };
+                }
+              }
+            } catch (_) {}
+
             const userData = {
               uid: firebaseUser.uid,
               email: firebaseUser.email,
@@ -896,6 +928,7 @@ export const AppProvider = ({ children }) => {
               isAdmin: claimsAdmin,
               pushToken: null,
               referralCode,
+              ...cachedLearningProfile,
             };
 
             setUser(userData);
@@ -1267,10 +1300,24 @@ export const AppProvider = ({ children }) => {
   const readingProgress =
     totalItems === 0 ? 0 : Math.min(effectiveReadCount / totalItems, 1);
 
+  const recordContentOpened = (contentKey) => {
+    if (!contentKey || typeof contentKey !== "string") return;
+    setLastOpenedContentKey(contentKey);
+    const uid = userRef.current?.uid;
+    if (uid) {
+      void AsyncStorage.setItem(
+        `lastOpenedContentKey:${uid}`,
+        contentKey,
+      ).catch(() => {});
+    }
+  };
+
   const markAsRead = ({ itemTitle, contentKey, contentSignature }) => {
     if (!itemTitle || !contentKey || !contentSignature) {
       return { didComplete: false };
     }
+
+    recordContentOpened(contentKey);
 
     const prev = learningStateRef.current;
     if (prev.readItemVersions?.[contentKey] === contentSignature) {
@@ -1872,7 +1919,52 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  
+  const updateLearningProfile = async (profile = {}) => {
+    if (!user?.uid) return;
+
+    const next = {
+      onboardingCompleted:
+        profile.onboardingCompleted !== undefined
+          ? Boolean(profile.onboardingCompleted)
+          : user.onboardingCompleted === true,
+      learnerRole:
+        profile.learnerRole !== undefined
+          ? profile.learnerRole
+          : user.learnerRole || null,
+      trainingYear:
+        profile.trainingYear !== undefined
+          ? profile.trainingYear
+          : user.trainingYear ?? null,
+      preferredPaperFocus:
+        profile.preferredPaperFocus !== undefined
+          ? profile.preferredPaperFocus
+          : user.preferredPaperFocus || "all",
+    };
+
+    try {
+      await updateDoc(doc(db, "users", user.uid), next);
+    } catch (err) {
+      // First-time users may only have a partial doc; merge write.
+      try {
+        await setDoc(doc(db, "users", user.uid), next, { merge: true });
+      } catch (err2) {
+        console.warn("Failed to save learning profile:", err2?.message);
+        throw err2;
+      }
+    }
+
+    setUser((prev) => (prev ? { ...prev, ...next } : prev));
+    try {
+      const storedUser = await AsyncStorage.getItem("user");
+      if (storedUser) {
+        const parsed = JSON.parse(storedUser);
+        await AsyncStorage.setItem(
+          "user",
+          JSON.stringify({ ...parsed, ...next }),
+        );
+      }
+    } catch (_) {}
+  };
 
   return (
     <AppContext.Provider
@@ -1890,6 +1982,8 @@ export const AppProvider = ({ children }) => {
         dailyReadHistory,
         markAsRead,
         markAsUnread,
+        recordContentOpened,
+        lastOpenedContentKey,
         isBookmarked,
         toggleBookmark,
         saveHighlight,
@@ -1905,6 +1999,7 @@ export const AppProvider = ({ children }) => {
         logout,
         upgradeToPremium,
         updateUsername,
+        updateLearningProfile,
         isScreenCapturePrevented,
       }}
     >

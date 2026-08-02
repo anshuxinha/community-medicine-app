@@ -1,5 +1,11 @@
 import React, { useContext, useState, useEffect, useMemo, useCallback } from "react";
-import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import {
   Text,
   List,
@@ -14,6 +20,7 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRoute } from "@react-navigation/native";
 import { AppContext } from "../context/AppContext";
 import {
   CONTENT_SECTIONS,
@@ -29,6 +36,11 @@ import {
   enableScreenCaptureProtection,
   disableScreenCaptureProtection,
 } from "../utils/screenCaptureProtection";
+import {
+  NMC_PAPERS,
+  getPrimaryPaperForChapterId,
+  getPaperMeta,
+} from "../data/nmcCurriculum";
 
 const SECTION_ID_ICON_MAP = {
   "theory:27": "clipboard-text-search-outline",
@@ -173,15 +185,23 @@ const LibraryScreen = (props) => {
   const { styles, colors } = useThemedStyles(createStyles);
 
   const { navigation } = props;
+  const route = useRoute();
   const {
     readItemVersions,
     markAsUnread,
     isPremium,
     isScreenCapturePrevented,
     contentRegistryVersion,
+    user,
   } = useContext(AppContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeSection, setActiveSection] = useState("theory");
+  const initialPaper =
+    route?.params?.paperFilter ||
+    (user?.preferredPaperFocus && user.preferredPaperFocus !== "all"
+      ? String(user.preferredPaperFocus)
+      : "all");
+  const [paperFilter, setPaperFilter] = useState(String(initialPaper));
   const [openMenuKey, setOpenMenuKey] = useState(null);
   const insets = useSafeAreaInsets();
   const { isTablet, horizontalPadding, contentMaxWidth } = useResponsive();
@@ -193,6 +213,13 @@ const LibraryScreen = (props) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (route?.params?.paperFilter != null) {
+      setPaperFilter(String(route.params.paperFilter));
+      setActiveSection("theory");
+    }
+  }, [route?.params?.paperFilter]);
+
   const currentTopics = useMemo(
     () =>
       activeSection === "theory"
@@ -200,11 +227,50 @@ const LibraryScreen = (props) => {
         : CONTENT_SECTIONS.practical,
     [activeSection, contentRegistryVersion],
   );
-  const filteredTopics = currentTopics.filter(
-    (topic) =>
-      !searchQuery.trim() ||
-      findFirstMatchingItemOrSub(topic, searchQuery.trim()) !== null,
-  );
+
+  const filteredTopics = useMemo(() => {
+    let topics = currentTopics;
+    if (activeSection === "theory" && paperFilter !== "all") {
+      const paperId = Number(paperFilter);
+      topics = topics.filter(
+        (topic) => getPrimaryPaperForChapterId(topic.id) === paperId,
+      );
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim();
+      topics = topics.filter(
+        (topic) => findFirstMatchingItemOrSub(topic, q) !== null,
+      );
+    }
+    return topics;
+  }, [currentTopics, activeSection, paperFilter, searchQuery]);
+
+  /** FlatList data: chapters or paper group headers when Theory + All */
+  const listData = useMemo(() => {
+    if (
+      activeSection !== "theory" ||
+      paperFilter !== "all" ||
+      searchQuery.trim()
+    ) {
+      return filteredTopics.map((item) => ({ type: "chapter", item }));
+    }
+
+    const rows = [];
+    NMC_PAPERS.forEach((paper) => {
+      const chapters = filteredTopics.filter(
+        (topic) => getPrimaryPaperForChapterId(topic.id) === paper.id,
+      );
+      if (chapters.length === 0) return;
+      rows.push({
+        type: "header",
+        paperId: paper.id,
+        title: paper.title,
+        domains: paper.domains,
+      });
+      chapters.forEach((item) => rows.push({ type: "chapter", item }));
+    });
+    return rows;
+  }, [activeSection, paperFilter, searchQuery, filteredTopics]);
 
   const getMenuKey = (item) => `${activeSection}:${item.id}`;
 
@@ -446,7 +512,10 @@ const LibraryScreen = (props) => {
         <View style={styles.segmentedButtonsContainer}>
           <SegmentedButtons
             value={activeSection}
-            onValueChange={setActiveSection}
+            onValueChange={(value) => {
+              setActiveSection(value);
+              if (value === "practical") setPaperFilter("all");
+            }}
             buttons={[
               {
                 value: "theory",
@@ -463,11 +532,69 @@ const LibraryScreen = (props) => {
           />
         </View>
 
+        {activeSection === "theory" ? (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.paperChipRow}
+            style={styles.paperChipScroll}
+          >
+            {[
+              { id: "all", label: "All" },
+              ...NMC_PAPERS.map((p) => ({
+                id: String(p.id),
+                label: `Paper ${p.roman}`,
+              })),
+            ].map((chip) => {
+              const selected = paperFilter === chip.id;
+              return (
+                <TouchableOpacity
+                  key={chip.id}
+                  style={[
+                    styles.paperChip,
+                    selected && {
+                      backgroundColor: colors.primarySoft,
+                      borderColor: colors.secondary,
+                    },
+                  ]}
+                  onPress={() => setPaperFilter(chip.id)}
+                  activeOpacity={0.85}
+                >
+                  <Text
+                    style={[
+                      styles.paperChipText,
+                      selected && { color: colors.primary, fontWeight: "700" },
+                    ]}
+                  >
+                    {chip.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        ) : null}
+
         <FlatList
-          data={filteredTopics}
-          keyExtractor={(item) => item.id}
+          data={listData}
+          keyExtractor={(row, index) =>
+            row.type === "header"
+              ? `header-${row.paperId}`
+              : `chapter-${row.item.id}-${index}`
+          }
           style={styles.list}
-          renderItem={({ item }) => {
+          renderItem={({ item: row }) => {
+            if (row.type === "header") {
+              return (
+                <View style={styles.paperHeaderBlock}>
+                  <Text style={styles.paperHeaderTitle}>{row.title}</Text>
+                  <Text style={styles.paperHeaderDomains} numberOfLines={2}>
+                    {row.domains}
+                  </Text>
+                </View>
+              );
+            }
+
+            const item = row.item;
             const itemStatus = getItemStatus(
               item,
               activeSection,
@@ -479,12 +606,18 @@ const LibraryScreen = (props) => {
               item.title,
             );
             const menuKey = getMenuKey(item);
+            const primaryPaper =
+              activeSection === "theory"
+                ? getPrimaryPaperForChapterId(item.id)
+                : null;
+            const paperMeta = primaryPaper ? getPaperMeta(primaryPaper) : null;
             return (
               <List.Item
                 title={item.title}
                 titleNumberOfLines={3}
                 titleStyle={styles.listItemTitle}
                 style={styles.listItem}
+                onPress={() => openItem(item, itemStatus)}
                 description={() => {
                   if (searchQuery.trim().length > 0) {
                     return (
@@ -526,6 +659,13 @@ const LibraryScreen = (props) => {
                         onPress={() => setOpenMenuKey(menuKey)}
                       >
                         {item.id === "1" && !isPremium && <FreeLabel />}
+                        {paperMeta ? (
+                          <View style={styles.paperPill}>
+                            <Text style={styles.paperPillText}>
+                              P{paperMeta.roman}
+                            </Text>
+                          </View>
+                        ) : null}
                         <StatusMark status={itemStatus} />
                       </TouchableOpacity>
                     }
@@ -549,8 +689,6 @@ const LibraryScreen = (props) => {
                     ) : null}
                   </Menu>
                 )}
-                onPress={() => openItem(item, itemStatus)}
-                style={styles.listItem}
               />
             );
           }}
@@ -615,7 +753,58 @@ const createStyles = (colors) => StyleSheet.create({
   },
   segmentedButtonsContainer: {
     paddingHorizontal: 16,
-    marginBottom: 12,
+    marginBottom: 8,
+  },
+  paperChipScroll: {
+    maxHeight: 44,
+    marginBottom: 8,
+  },
+  paperChipRow: {
+    paddingHorizontal: 16,
+    gap: 8,
+    alignItems: "center",
+  },
+  paperChip: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    backgroundColor: colors.surfacePrimary,
+  },
+  paperChipText: {
+    fontSize: 13,
+    color: colors.textSecondary,
+    fontWeight: "600",
+  },
+  paperHeaderBlock: {
+    paddingHorizontal: 16,
+    paddingTop: 14,
+    paddingBottom: 6,
+    backgroundColor: colors.backgroundMain,
+  },
+  paperHeaderTitle: {
+    fontSize: 14,
+    fontWeight: "800",
+    color: colors.primary,
+  },
+  paperHeaderDomains: {
+    fontSize: 11,
+    color: colors.textTertiary,
+    marginTop: 2,
+    lineHeight: 15,
+  },
+  paperPill: {
+    backgroundColor: colors.primarySoft,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+    marginRight: 6,
+  },
+  paperPillText: {
+    fontSize: 10,
+    fontWeight: "800",
+    color: colors.primary,
   },
   list: {
     flex: 1,
@@ -641,9 +830,10 @@ const createStyles = (colors) => StyleSheet.create({
     marginTop: 2,
   },
   rightSlot: {
-    minWidth: 56,
-    alignItems: "flex-end",
-    justifyContent: "center",
+    minWidth: 72,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
     alignSelf: "center",
     marginRight: 8,
     paddingVertical: 6,

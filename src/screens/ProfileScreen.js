@@ -64,6 +64,20 @@ const ProfileScreen = () => {
     logout,
     updateUsername,
   } = React.useContext(AppContext);
+
+  const roleLabel = (() => {
+    if (user?.learnerRole === "md_resident") return "MD resident";
+    if (user?.learnerRole === "faculty") return "Faculty";
+    if (user?.learnerRole === "ug") return "UG / Intern";
+    if (user?.learnerRole === "other") return "Other";
+    return "Not set";
+  })();
+
+  const paperFocusLabel = (() => {
+    const f = user?.preferredPaperFocus;
+    if (!f || f === "all") return "All papers";
+    return `Paper ${f}`;
+  })();
   const [isEditingName, setIsEditingName] = useState(false);
   const [newName, setNewName] = useState("");
   const [isSavingName, setIsSavingName] = useState(false);
@@ -413,6 +427,46 @@ const ProfileScreen = () => {
             </Text>
           </View>
         </View>
+
+        {/* Learning profile */}
+        <Text style={styles.sectionTitle}>Learning profile</Text>
+        <Card style={styles.card} mode="elevated">
+          <Card.Content>
+            <View style={styles.expiryRow}>
+              <Text style={styles.expiryLabel}>Role</Text>
+              <Text style={styles.expiryValue}>{roleLabel}</Text>
+            </View>
+            <View style={styles.expiryRow}>
+              <Text style={styles.expiryLabel}>Paper focus</Text>
+              <Text style={styles.expiryValue}>{paperFocusLabel}</Text>
+            </View>
+            <View style={styles.expiryRow}>
+              <Text style={styles.expiryLabel}>Training year</Text>
+              <Text style={styles.expiryValue}>
+                {user?.trainingYear ? `Year ${user.trainingYear}` : "Not set"}
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={[styles.upgradeButton, { marginTop: 8 }]}
+              onPress={() =>
+                navigation.navigate("Onboarding", { edit: true })
+              }
+              accessibilityRole="button"
+              accessibilityLabel="Edit learning profile"
+            >
+              <Text style={styles.upgradeButtonText}>Edit learning profile</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{ marginTop: 12, alignItems: "center" }}
+              onPress={() => navigation.navigate("LearningProgress")}
+              accessibilityRole="button"
+            >
+              <Text style={{ color: colors.secondary, fontWeight: "700" }}>
+                Open learning progress
+              </Text>
+            </TouchableOpacity>
+          </Card.Content>
+        </Card>
 
         {/* Membership */}
         <Text style={styles.sectionTitle}>Membership</Text>

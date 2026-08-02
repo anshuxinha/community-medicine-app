@@ -35,6 +35,10 @@ import {
   progressToPercent,
   setLastSeenReadingProgress,
 } from "../utils/progressPresentation";
+import {
+  computeProgressByPaper,
+  getNextIncompleteLeaf,
+} from "../utils/learningProgress";
 
 const DASHBOARD_NEW_BADGES_STORAGE_KEY = "dashboardNewBadgesSeen:v1";
 const SEARCH_FEATURE_TIP_STORAGE_KEY = "searchFeatureTipSeen:v1";
@@ -171,8 +175,17 @@ const UpdateDownloadIndicator = () => {
 const DashboardScreen = ({ navigation }) => {
   const { styles, colors } = useThemedStyles(createStyles);
 
-  const { readingProgress, currentStreak, studyScore, user, refreshFromCloud, isPremium } =
-    useContext(AppContext);
+  const {
+    readingProgress,
+    currentStreak,
+    studyScore,
+    user,
+    refreshFromCloud,
+    isPremium,
+    readItemVersions,
+    lastOpenedContentKey,
+    contentRegistryVersion,
+  } = useContext(AppContext);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [seenNewBadges, setSeenNewBadges] = useState({});
   const [searchTipEligible, setSearchTipEligible] = useState(false);
@@ -307,6 +320,29 @@ const DashboardScreen = ({ navigation }) => {
   }, []);
 
   const searchTipVisible = searchTipEligible && isPremium;
+
+  const paperProgress = React.useMemo(
+    () => computeProgressByPaper(readItemVersions),
+    [readItemVersions, contentRegistryVersion],
+  );
+
+  const nextLeaf = React.useMemo(
+    () =>
+      getNextIncompleteLeaf(readItemVersions, {
+        preferredContentKey: lastOpenedContentKey,
+      }),
+    [readItemVersions, lastOpenedContentKey, contentRegistryVersion],
+  );
+
+  const paperColor = React.useCallback(
+    (token) => {
+      if (token === "secondary") return colors.secondary;
+      if (token === "success") return colors.successStrong || colors.success;
+      if (token === "warning") return colors.warningStrong || colors.warning;
+      return colors.primary;
+    },
+    [colors],
+  );
 
   const openSearch = useCallback(() => {
     void dismissSearchFeatureTip();
@@ -561,11 +597,25 @@ const DashboardScreen = ({ navigation }) => {
 
         <UpdateDownloadIndicator />
 
-        <Card style={styles.progressCard}>
+        <Card
+          style={styles.progressCard}
+          onPress={() => navigation.navigate("LearningProgress")}
+          accessibilityRole="button"
+          accessibilityLabel={`Learning progress ${displayedProgressPercent} percent. Open details.`}
+        >
           <Card.Title
             title="Learning Progress"
             titleStyle={styles.cardTitle}
-            subtitleStyle={{ color: theme.colors.textTitle }}
+            subtitle="NMC 4 papers · Tap for details"
+            subtitleStyle={styles.progressCardSubtitle}
+            right={() => (
+              <MaterialIcons
+                name="chevron-right"
+                size={26}
+                color={colors.textTertiary}
+                style={{ marginRight: 12 }}
+              />
+            )}
           />
           <Card.Content>
             <View style={styles.progressTrack}>
@@ -596,6 +646,31 @@ const DashboardScreen = ({ navigation }) => {
                 {`${displayedProgressPercent}% Completed`}
               </Text>
             </View>
+            <View style={styles.paperMiniRow}>
+              {paperProgress.map((paper) => (
+                <View key={paper.paperId} style={styles.paperMiniCol}>
+                  <View style={styles.paperMiniTrack}>
+                    <View
+                      style={[
+                        styles.paperMiniFill,
+                        {
+                          width: `${paper.percent}%`,
+                          backgroundColor: paperColor(paper.colorToken),
+                        },
+                      ]}
+                    />
+                  </View>
+                  <Text style={styles.paperMiniLabel}>
+                    P{paper.roman} · {paper.percent}%
+                  </Text>
+                </View>
+              ))}
+            </View>
+            <Text style={styles.nextTopicLine} numberOfLines={1}>
+              {nextLeaf
+                ? `Next: ${nextLeaf.title}`
+                : "All theory topics complete"}
+            </Text>
           </Card.Content>
         </Card>
 
@@ -1053,6 +1128,40 @@ const createStyles = (colors) => StyleSheet.create({
     color: colors.textSecondary,
     fontWeight: "600",
     marginLeft: "auto",
+  },
+  progressCardSubtitle: {
+    color: colors.textTertiary,
+    fontSize: 12,
+  },
+  paperMiniRow: {
+    flexDirection: "row",
+    marginTop: 14,
+    gap: 8,
+  },
+  paperMiniCol: {
+    flex: 1,
+  },
+  paperMiniTrack: {
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: colors.surfaceSecondary,
+    overflow: "hidden",
+  },
+  paperMiniFill: {
+    height: "100%",
+    borderRadius: 3,
+  },
+  paperMiniLabel: {
+    fontSize: 10,
+    color: colors.textTertiary,
+    marginTop: 4,
+    fontWeight: "600",
+  },
+  nextTopicLine: {
+    marginTop: 12,
+    fontSize: 13,
+    color: colors.secondary,
+    fontWeight: "600",
   },
   statsRow: {
     flexDirection: "row",

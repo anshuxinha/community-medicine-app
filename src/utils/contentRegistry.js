@@ -1,5 +1,6 @@
 import baseMockData from "../data/mockData.json";
 import basePracticalData from "../data/practical.json";
+import { getPrimaryPaperForChapterId } from "../data/nmcCurriculum";
 
 const cloneDeep = (value) => JSON.parse(JSON.stringify(value));
 
@@ -129,6 +130,30 @@ const buildSections = (approvedOverrides = []) => {
   return { theory, practical: basePracticalData, cloned: true };
 };
 
+/**
+ * Walk content tree while tracking the root chapter id for NMC paper mapping.
+ * Leaves only are visited (nodes with subsections are containers).
+ */
+export const walkContentItemsWithRoot = (
+  items,
+  section,
+  visitor,
+  rootChapterId = null,
+) => {
+  if (!Array.isArray(items)) return;
+  items.forEach((item) => {
+    const currentRoot =
+      rootChapterId !== null && rootChapterId !== undefined
+        ? String(rootChapterId)
+        : String(item.id);
+    if (Array.isArray(item.subsections) && item.subsections.length > 0) {
+      walkContentItemsWithRoot(item.subsections, section, visitor, currentRoot);
+      return;
+    }
+    visitor(item, section, currentRoot);
+  });
+};
+
 const rebuildDerivedIndexes = () => {
   LEAF_CONTENT_ENTRIES.splice(0, LEAF_CONTENT_ENTRIES.length);
   VALID_CONTENT_KEYS.clear();
@@ -137,16 +162,19 @@ const rebuildDerivedIndexes = () => {
   CONTENT_ENTRIES_BY_TITLE.clear();
 
   Object.entries(CONTENT_SECTIONS).forEach(([section, items]) => {
-    walkContentItems(items, section, (item, activeSection) => {
-      if (Array.isArray(item.subsections) && item.subsections.length > 0) {
-        return;
-      }
+    walkContentItemsWithRoot(items, section, (item, activeSection, rootChapterId) => {
+      const primaryPaper =
+        activeSection === "theory"
+          ? getPrimaryPaperForChapterId(rootChapterId)
+          : null;
 
       const entry = {
         key: getContentKey(activeSection, item.id),
         section: activeSection,
         id: String(item.id),
         title: item.title || "",
+        rootChapterId: String(rootChapterId),
+        primaryPaper,
         recentlyUpdated: item.recentlyUpdated === true,
         signature: getContentSignature(item),
         item,

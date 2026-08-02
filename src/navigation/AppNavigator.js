@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
@@ -46,6 +46,9 @@ const getAdminLibraryReviewScreen = () =>
   require("../screens/AdminLibraryReviewScreen").default;
 const getAdminAppFeedbackScreen = () =>
   require("../screens/AdminAppFeedbackScreen").default;
+const getLearningProgressScreen = () =>
+  require("../screens/LearningProgressScreen").default;
+const getOnboardingScreen = () => require("../screens/OnboardingScreen").default;
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -126,12 +129,32 @@ const PremiumGuard = ({ navigation, route }) => {
 const AppNavigator = () => {
   const { user } = React.useContext(AppContext);
   const { colors, navigationTheme } = useAppTheme();
+  const onboardingPromptedRef = useRef(false);
 
   useSessionEnforcer();
 
   useEffect(() => {
     setupNotificationTapHandler(navigationRef);
   }, []);
+
+  // One-time onboarding after login for users who have not completed it.
+  useEffect(() => {
+    if (!user?.uid) {
+      onboardingPromptedRef.current = false;
+      return;
+    }
+    if (user.onboardingCompleted === true) return;
+    if (onboardingPromptedRef.current) return;
+    if (!navigationRef.isReady()) return;
+
+    onboardingPromptedRef.current = true;
+    const timer = setTimeout(() => {
+      try {
+        navigationRef.navigate("Onboarding");
+      } catch (_) {}
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [user?.uid, user?.onboardingCompleted]);
 
   if (user === undefined) {
     return (
@@ -280,6 +303,20 @@ const AppNavigator = () => {
               name="AdminAppFeedback"
               getComponent={getAdminAppFeedbackScreen}
               options={{ title: "App Feedback" }}
+            />
+            <Stack.Screen
+              name="LearningProgress"
+              getComponent={getLearningProgressScreen}
+              options={{ title: "Learning Progress" }}
+            />
+            <Stack.Screen
+              name="Onboarding"
+              getComponent={getOnboardingScreen}
+              options={{
+                headerShown: false,
+                presentation: "modal",
+                gestureEnabled: true,
+              }}
             />
           </>
         )}
