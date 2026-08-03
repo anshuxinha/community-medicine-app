@@ -1,22 +1,32 @@
+import argparse
 import json
 import os
 import uuid
 import re
 import time
-import requests  # type: ignore
 from datetime import datetime, timezone
-from bs4 import BeautifulSoup  # type: ignore
-from typing import List, Dict, Any, Optional
+from pathlib import Path
+from typing import List, Dict, Any, Optional, Set, Tuple
+
+try:
+    import requests  # type: ignore
+except ImportError:  # seed-only path does not need requests
+    requests = None  # type: ignore
 
 OLLAMA_API_KEY = os.environ.get("OLLAMA_API_KEY")
-if not OLLAMA_API_KEY:
-    raise ValueError("OLLAMA_API_KEY environment variable is not set")
 
 OLLAMA_API_URL = "https://ollama.com/api/chat"
 OLLAMA_MODEL = "gemma4:31b-cloud"
 
 MAX_RETRIES = 2
 RETRY_DELAY_SECONDS = 5
+
+ROOT = Path(__file__).resolve().parents[1]
+DATA_DIR = ROOT / "src" / "data"
+UPDATES_PATH = DATA_DIR / "updates.json"
+ARCHIVE_PATH = DATA_DIR / "updates_archive.json"
+FEED_COLLECTION = "appContent"
+FEED_DOC_ID = "updatesFeed"
 
 
 def _extract_candidate_text(payload: Dict[str, Any]) -> Optional[str]:
@@ -26,7 +36,7 @@ def _extract_candidate_text(payload: Dict[str, Any]) -> Optional[str]:
     return content if isinstance(content, str) else None
 
 
-def _error_message_from_response(response: requests.Response) -> str:
+def _error_message_from_response(response: Any) -> str:
     try:
         payload = response.json()
         error_obj = payload.get("error", {})
@@ -117,8 +127,250 @@ def call_ollama(prompt: str) -> Optional[Any]:
 
 
 
-def fetch_health_updates():
+def _load_service_account_info() -> Optional[Dict[str, Any]]:
+    raw_json = os.environ.get("FIREBASE_SERVICE_ACCOUNT_JSON")
+    if raw_json:
+        # Env may hold raw JSON or a filesystem path
+        if raw_json.strip().startswith("{"):
+            try:
+                return json.loads(raw_json)
+            except json.JSONDecodeError as exc:
+                print(f"FIREBASE_SERVICE_ACCOUNT_JSON is invalid JSON: {exc}")
+                return None
+        if os.path.exists(raw_json):
+            try:
+                with open(raw_json, "r", encoding="utf-8") as file:
+                    return json.load(file)
+            except Exception as exc:
+                print(f"Could not read FIREBASE_SERVICE_ACCOUNT_JSON path: {exc}")
+                return None
+
+    credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+    if credentials_path and os.path.exists(credentials_path):
+        try:
+            with open(credentials_path, "r", encoding="utf-8") as file:
+                return json.load(file)
+        except Exception as exc:
+            print(f"Could not read GOOGLE_APPLICATION_CREDENTIALS: {exc}")
+            return None
+
+    local_path = ROOT / "serviceAccountKey.json"
+    if local_path.exists():
+        try:
+            with open(local_path, "r", encoding="utf-8") as file:
+                return json.load(file)
+        except Exception as exc:
+            print(f"Could not read serviceAccountKey.json: {exc}")
+            return None
+    return None
+
+
+def _build_months_map(
+    archive: Dict[str, List[Dict[str, Any]]],
+    current_month_key: str,
+    current_items: List[Dict[str, Any]],
+    current_year: str,
+) -> Dict[str, List[Dict[str, Any]]]:
+    """Full months map for the current calendar year (no per-month item cap)."""
+    months: Dict[str, List[Dict[str, Any]]] = {}
+    for key, items in archive.items():
+        if not str(key).startswith(current_year):
+            continue
+        if not isinstance(items, list):
+            continue
+        months[key] = list(items)
+    if current_items:
+        months[current_month_key] = list(current_items)
+
+    for key, items in list(months.items()):
+        # Dedup by link within month
+        seen: Set[str] = set()
+        deduped: List[Dict[str, Any]] = []
+        for item in items:
+            link = item.get("link")
+            if link:
+                if link in seen:
+                    continue
+                seen.add(link)
+            deduped.append(item)
+        deduped.sort(key=lambda x: x.get("date", ""), reverse=True)
+        months[key] = deduped
+    return months
+
+
+def _all_links_from_months(months: Dict[str, List[Dict[str, Any]]]) -> Set[str]:
+    links: Set[str] = set()
+    for items in months.values():
+        for item in items:
+            link = item.get("link")
+            if link:
+                links.add(link)
+    return links
+
+
+def publish_updates_feed(
+    months: Dict[str, List[Dict[str, Any]]],
+    *,
+    notify_items: Optional[List[Dict[str, Any]]] = None,
+    allow_notify: bool = True,
+) -> bool:
+    """Upsert appContent/updatesFeed. Optionally push for notify_items only."""
+    sa = _load_service_account_info()
+    if not sa:
+        print(
+            "No Firebase credentials found; skipping Firestore publish. "
+            "Set FIREBASE_SERVICE_ACCOUNT_JSON or place serviceAccountKey.json."
+        )
+        return False
+
+    try:
+        import firebase_admin
+        from firebase_admin import credentials, firestore
+    except ImportError:
+        print("firebase_admin not installed; skipping Firestore publish.")
+        return False
+
+    if not firebase_admin._apps:
+        firebase_admin.initialize_app(credentials.Certificate(sa))
+    db = firestore.client()
+    ref = db.collection(FEED_COLLECTION).document(FEED_DOC_ID)
+
+    prev_snap = ref.get()
+    prev_months: Dict[str, List[Dict[str, Any]]] = {}
+    if prev_snap.exists:
+        prev_data = prev_snap.to_dict() or {}
+        raw_months = prev_data.get("months") or {}
+        if isinstance(raw_months, dict):
+            prev_months = {
+                k: (v if isinstance(v, list) else [])
+                for k, v in raw_months.items()
+            }
+
+    payload = {
+        "months": months,
+        "updatedAt": datetime.now(timezone.utc).isoformat(),
+        "version": 1,
+    }
+    ref.set(payload, merge=True)
+    total = sum(len(v) for v in months.values())
+    print(
+        f"Published updates feed to {FEED_COLLECTION}/{FEED_DOC_ID} "
+        f"({len(months)} months, {total} items)."
+    )
+
+    if not allow_notify or not notify_items:
+        return True
+
+    # Only notify for items whose links were not already in the previous feed
+    prev_links = _all_links_from_months(prev_months)
+    truly_new = [
+        item
+        for item in notify_items
+        if item.get("link") and item.get("link") not in prev_links
+    ]
+    if not truly_new:
+        print("No brand-new feed links to notify about.")
+        return True
+
+    _notify_new_updates(truly_new)
+    return True
+
+
+def _notify_new_updates(new_items: List[Dict[str, Any]]) -> None:
+    """One Expo broadcast for this run (single item or digest)."""
+    try:
+        from push_notifications import fetch_push_tokens, send_push_notifications
+    except ImportError:
+        # Same directory when run as script
+        import sys
+
+        scripts_dir = str(Path(__file__).resolve().parent)
+        if scripts_dir not in sys.path:
+            sys.path.insert(0, scripts_dir)
+        try:
+            from push_notifications import fetch_push_tokens, send_push_notifications
+        except ImportError as exc:
+            print(f"Could not import push_notifications: {exc}")
+            return
+
+    tokens = fetch_push_tokens()
+    if not tokens:
+        print("No push tokens; skipping notification.")
+        return
+
+    # Newest first
+    items = sorted(new_items, key=lambda x: x.get("date", ""), reverse=True)
+    if len(items) == 1:
+        item = items[0]
+        title = (item.get("title") or "New public health update")[:80]
+        body = (item.get("summary") or "Open the Updates tab for details.")[:160]
+    else:
+        first = items[0].get("title") or "New update"
+        title = f"{len(items)} new public health updates"
+        body = f"{first} and {len(items) - 1} more."
+        if len(body) > 160:
+            body = body[:157] + "..."
+
+    print(f"Sending push for {len(items)} new update(s) to {len(tokens)} tokens...")
+    send_push_notifications(tokens, title, body, "Updates")
+
+
+def seed_feed_from_local(*, notify: bool = False) -> None:
+    """Publish local updates.json + updates_archive.json without scraping."""
+    existing_updates: List[Dict[str, Any]] = []
+    if UPDATES_PATH.exists():
+        try:
+            with open(UPDATES_PATH, "r", encoding="utf-8") as f:
+                existing_updates = json.load(f)
+        except Exception as e:
+            print(f"Error loading updates.json: {e}")
+
+    archive: Dict[str, List[Dict[str, Any]]] = {}
+    if ARCHIVE_PATH.exists():
+        try:
+            with open(ARCHIVE_PATH, "r", encoding="utf-8") as f:
+                archive = json.load(f)
+        except Exception as e:
+            print(f"Error loading updates_archive.json: {e}")
+
+    now = datetime.now(timezone.utc)
+    current_month_key = now.strftime("%Y-%m")
+    current_year = str(now.year)
+    months = _build_months_map(archive, current_month_key, existing_updates, current_year)
+    if not months:
+        print("No local updates to seed.")
+        return
+    publish_updates_feed(months, notify_items=None, allow_notify=notify)
+    print("Seed complete.")
+
+
+def load_local_update_files() -> Tuple[List[Dict[str, Any]], Dict[str, List[Dict[str, Any]]]]:
+    existing_updates: List[Dict[str, Any]] = []
+    if UPDATES_PATH.exists():
+        try:
+            with open(UPDATES_PATH, "r", encoding="utf-8") as f:
+                existing_updates = json.load(f)
+        except Exception as e:
+            print(f"Error loading existing updates: {e}")
+
+    archive: Dict[str, List[Dict[str, Any]]] = {}
+    if ARCHIVE_PATH.exists():
+        try:
+            with open(ARCHIVE_PATH, "r", encoding="utf-8") as f:
+                archive = json.load(f)
+        except Exception as e:
+            print(f"Error loading archive: {e}")
+    return existing_updates, archive
+
+
+def fetch_health_updates(*, publish: bool = True, notify: bool = True):
     """Fetches real updates from the Government of India PIB feed for MoHFW."""
+    if not OLLAMA_API_KEY:
+        raise ValueError("OLLAMA_API_KEY environment variable is not set")
+    if requests is None:
+        raise ImportError("requests is required to scrape PIB updates")
+    from bs4 import BeautifulSoup  # type: ignore
+
     # Force English (lang=1) and Delhi region (reg=3) to get consistent results
     url = "https://www.pib.gov.in/allRel.aspx?reg=3&lang=1"
     headers = {
@@ -126,29 +378,11 @@ def fetch_health_updates():
         "Referer": "https://www.pib.gov.in/indexd.aspx"
     }
     
-    output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'src', 'data')
-    output_path = os.path.join(output_dir, 'updates.json')
-    archive_path = os.path.join(output_dir, 'updates_archive.json')
-    
-    MAX_UPDATES_TO_KEEP = 10
-    
-    # ── Load existing current-month updates ──
-    existing_updates: List[Dict[str, Any]] = []
-    if os.path.exists(output_path):
-        try:
-            with open(output_path, 'r', encoding='utf-8') as f:
-                existing_updates = json.load(f)
-        except Exception as e:
-            print(f"Error loading existing updates: {e}")
-    
-    # ── Load archive ──
-    archive: Dict[str, List[Dict[str, Any]]] = {}
-    if os.path.exists(archive_path):
-        try:
-            with open(archive_path, 'r', encoding='utf-8') as f:
-                archive = json.load(f)
-        except Exception as e:
-            print(f"Error loading archive: {e}")
+    output_dir = str(DATA_DIR)
+    output_path = str(UPDATES_PATH)
+    archive_path = str(ARCHIVE_PATH)
+
+    existing_updates, archive = load_local_update_files()
     
     # ── Monthly rotation ──
     now = datetime.now(timezone.utc)
@@ -463,26 +697,64 @@ def fetch_health_updates():
         else:
             final_current.append(u)
 
-    # Keep only the most recent MAX_UPDATES_TO_KEEP for current month
-    final_current = final_current[:MAX_UPDATES_TO_KEEP]
-    
+    # No per-month item cap: keep every current-month update.
+    final_current.sort(key=lambda x: x.get("date", ""), reverse=True)
+
+    # Newly scraped items this run (used for push; not full archive backfill)
+    newly_scraped = list(updates)
+
     # Check if anything changed
-    if final_current == existing_updates and not archive_changed:
+    if final_current == existing_updates and not archive_changed and not newly_scraped:
         print("No new updates detected. Exiting.")
         return
 
     # Output to File
     os.makedirs(output_dir, exist_ok=True)
-    
+
     if archive_changed:
-        with open(archive_path, 'w', encoding='utf-8') as f:
+        with open(archive_path, "w", encoding="utf-8") as f:
             json.dump(archive, f, indent=4)
         print(f"Successfully updated archive at {archive_path}")
 
-    with open(output_path, 'w', encoding='utf-8') as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         json.dump(final_current, f, indent=4)
-        
+
     print(f"Successfully saved {len(final_current)} current updates to {output_path}")
 
+    months = _build_months_map(archive, current_month_key, final_current, current_year)
+    if publish:
+        publish_updates_feed(
+            months,
+            notify_items=newly_scraped if notify else None,
+            allow_notify=notify and bool(newly_scraped),
+        )
+
+
 if __name__ == "__main__":
-    fetch_health_updates()
+    parser = argparse.ArgumentParser(
+        description="Fetch PIB health updates, write local JSON, publish Firestore feed."
+    )
+    parser.add_argument(
+        "--seed-only",
+        action="store_true",
+        help="Publish local updates.json + archive to Firestore without scraping (no push).",
+    )
+    parser.add_argument(
+        "--no-publish",
+        action="store_true",
+        help="Skip Firestore publish (local JSON only).",
+    )
+    parser.add_argument(
+        "--no-notify",
+        action="store_true",
+        help="Skip Expo push even when new items are scraped.",
+    )
+    args = parser.parse_args()
+
+    if args.seed_only:
+        seed_feed_from_local(notify=False)
+    else:
+        fetch_health_updates(
+            publish=not args.no_publish,
+            notify=not args.no_notify,
+        )

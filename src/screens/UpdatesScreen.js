@@ -4,6 +4,7 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { Text, Card, Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -12,8 +13,8 @@ import { AppContext } from "../context/AppContext";
 import { theme, useResponsive } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
 import UpdateDetailDialog from "../components/UpdateDetailDialog";
-import currentUpdates from "../data/updates.json";
-import archiveData from "../data/updates_archive.json";
+import useUpdatesFeed from "../hooks/useUpdatesFeed";
+import { monthsToYearIndexMap } from "../services/updatesService";
 
 const MONTH_NAMES = [
   "January", "February", "March", "April",
@@ -37,6 +38,7 @@ const UpdatesScreen = ({ navigation }) => {
   const [selectedUpdate, setSelectedUpdate] = useState(null);
   const [dialogVisible, setDialogVisible] = useState(false);
   const { isTablet, horizontalPadding, contentMaxWidth } = useResponsive();
+  const { months, loading } = useUpdatesFeed();
 
   useEffect(() => {
     if (!isPremium) {
@@ -44,51 +46,15 @@ const UpdatesScreen = ({ navigation }) => {
     }
   }, [isPremium, navigation]);
 
+  // Build a map: monthIndex -> updates[]
+  const monthData = useMemo(
+    () => monthsToYearIndexMap(months, currentYear),
+    [months, currentYear],
+  );
+
   if (!isPremium) {
     return null;
   }
-
-
-  // Build a map: monthIndex -> updates[]
-  const monthData = useMemo(() => {
-    const map = {};
-
-    // Archive data (keyed by "YYYY-MM")
-    for (const [key, updates] of Object.entries(archiveData)) {
-      const [yearStr, monthStr] = key.split("-");
-      if (parseInt(yearStr, 10) !== currentYear) continue;
-      const mIdx = parseInt(monthStr, 10) - 1;
-      if (mIdx >= 0 && mIdx < 12) {
-        map[mIdx] = (map[mIdx] || []).concat(updates);
-      }
-    }
-
-    // Process all live updates.json (in case they haven't been archived yet)
-    currentUpdates.forEach((u) => {
-      const d = u.date || "";
-      let mIdx = currentMonthIndex; // default to current month if no date info
-      if (d.length >= 7) {
-        const [yearStr, monthStr] = d.split("-");
-        if (parseInt(yearStr, 10) !== currentYear) return;
-        mIdx = parseInt(monthStr, 10) - 1;
-      }
-      if (mIdx >= 0 && mIdx < 12) {
-        map[mIdx] = (map[mIdx] || []).concat(u);
-      }
-    });
-
-    // Deduplicate within each month by link
-    for (const mIdx of Object.keys(map)) {
-      const seen = new Set();
-      map[mIdx] = map[mIdx].filter((u) => {
-        if (!u.link || seen.has(u.link)) return false;
-        seen.add(u.link);
-        return true;
-      });
-    }
-
-    return map;
-  }, [currentYear, currentMonthIndex]);
 
   const showUpdateDialog = (update) => {
     setSelectedUpdate(update);
@@ -185,6 +151,12 @@ const UpdatesScreen = ({ navigation }) => {
         {/* Header */}
         <Text style={styles.header}>Updates Archive</Text>
         <Text style={styles.subHeader}>{currentYear}</Text>
+        {loading ? (
+          <ActivityIndicator
+            color={colors.secondary}
+            style={{ marginVertical: 8 }}
+          />
+        ) : null}
 
         {/* Month Grid */}
         <Card style={styles.gridCard}>{renderMonthGrid()}</Card>

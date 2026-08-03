@@ -19,8 +19,6 @@ import * as Updates from "expo-updates";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import recentUpdates from "../data/updates.json";
-import archiveData from "../data/updates_archive.json";
 import publicHealthDays from "../data/publicHealthDays.json";
 import { AppContext } from "../context/AppContext";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -28,6 +26,8 @@ import DrawerMenu from "../components/DrawerMenu";
 import UpdateDetailDialog from "../components/UpdateDetailDialog";
 import { scheduleAllNotifications } from "../services/notificationService";
 import { auth } from "../config/firebase";
+import useUpdatesFeed from "../hooks/useUpdatesFeed";
+import { pickDashboardUpdates } from "../services/updatesService";
 import { theme, useResponsive } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
 import {
@@ -479,52 +479,11 @@ const DashboardScreen = ({ navigation }) => {
     return new Date().toLocaleDateString(undefined, options);
   };
 
-  const visibleUpdates = React.useMemo(() => {
-    const getYearMonthString = (date) => {
-      const yyyy = date.getFullYear();
-      const mm = String(date.getMonth() + 1).padStart(2, "0");
-      return `${yyyy}-${mm}`;
-    };
-
-    const getPreviousYearMonthString = (date) => {
-      const prevDate = new Date(date.getFullYear(), date.getMonth() - 1, 1);
-      const yyyy = prevDate.getFullYear();
-      const mm = String(prevDate.getMonth() + 1).padStart(2, "0");
-      return `${yyyy}-${mm}`;
-    };
-
-    const getUpdatesForMonth = (monthKey) => {
-      // 1. Check recentUpdates (updates.json)
-      const recent = recentUpdates.filter(
-        (u) =>
-          u.category !== "Academic Content Update" &&
-          u.date &&
-          u.date.startsWith(monthKey)
-      );
-      if (recent.length > 0) {
-        return recent;
-      }
-      // 2. Check updates_archive.json
-      const archived = archiveData[monthKey] || [];
-      return archived.filter((u) => u.category !== "Academic Content Update");
-    };
-
-    const now = new Date();
-    const currentMonthKey = getYearMonthString(now);
-    const previousMonthKey = getPreviousYearMonthString(now);
-
-    let updates = getUpdatesForMonth(currentMonthKey);
-    if (updates.length === 0) {
-      updates = getUpdatesForMonth(previousMonthKey);
-    }
-    if (updates.length === 0) {
-      // Fallback: if both are empty, show all non-academic updates from recentUpdates
-      updates = recentUpdates.filter(
-        (u) => u.category !== "Academic Content Update"
-      );
-    }
-    return updates;
-  }, []);
+  const { months: updatesMonths } = useUpdatesFeed();
+  const visibleUpdates = React.useMemo(
+    () => pickDashboardUpdates(updatesMonths, { maxItems: 5 }),
+    [updatesMonths],
+  );
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -859,7 +818,7 @@ const DashboardScreen = ({ navigation }) => {
                 {update.title}
               </Text>
               <Text variant="bodyMedium" style={styles.updateSummary}>
-                {update.summary.length > 100
+                {update.summary && update.summary.length > 100
                   ? `${update.summary.substring(0, 100)}...`
                   : update.summary}
               </Text>
