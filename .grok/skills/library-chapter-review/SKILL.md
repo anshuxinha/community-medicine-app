@@ -15,7 +15,7 @@ metadata:
   short-description: "QA Library chapters vs Park + PYQs (SN/LAQ + Exam Tip)"
 ---
 
-# /library-chapter-review — Library chapter accuracy & exam quality
+# /library-chapter-review: Library chapter accuracy & exam quality
 
 Review one Library chapter for an **MD Community Medicine resident** exam prep standard: factual accuracy, academic structure, PYQ coverage, fixed SN/LAQ colour tags, and **exam-ready new content** (depth + Exam Tip).
 
@@ -36,7 +36,7 @@ Examples:
 
 **Default mode: report only.** Do not edit `mockData.json`, commit, push, or publish Firebase overrides until the user **approves** the report (e.g. “apply”, “approve”, “ship it”, “do the fixes”).
 
-**On approval (mandatory ship path):** apply content → **git commit + git push** → **Firebase `libraryContentOverrides` for every changed leaf**. **Do not** run `eas update` unless required for non-override reasons — and if it is required, **ask the user first**.
+**On approval (mandatory ship path):** apply content → **git commit + git push** → **Firebase `libraryContentOverrides` for every changed leaf**. **Do not** run `eas update` unless required for non-override reasons: and if it is required, **ask the user first**.
 
 ## Fixed paths
 
@@ -68,7 +68,7 @@ py -3 scripts/scan_park_library_gaps.py --no-firebase
 - Needs `pypdf` or `pdfplumber` (`py -3 -m pip install pypdf`).
 - Bands: **critical** ≥55, **large** ≥30, **moderate** ≥18 (thin Library text is boosted).
 
-## Step 0 — Resolve chapter and load bundle
+## Step 0: Resolve chapter and load bundle
 
 Run from app root (`D:\The App`):
 
@@ -78,9 +78,9 @@ python .grok/skills/library-chapter-review/scripts/load_chapter_bundle.py "<chap
 
 Optional flags:
 
-- `--no-firebase` — mockData only (if offline / no service account)
-- `--no-pdf-text` — skip PDF text extract (path match only)
-- `--out <dir>` — custom output root
+- `--no-firebase`: mockData only (if offline / no service account)
+- `--no-pdf-text`: skip PDF text extract (path match only)
+- `--out <dir>`: custom output root
 
 The script prints JSON with `bundleDir`. Then:
 
@@ -93,7 +93,7 @@ If Park PDF matching fails, list available files under Park Split and retry by n
 
 If Firebase fails, say so clearly and continue with mockData (note reduced confidence for leaves that may be overridden in production).
 
-## Step 1 — Audience & quality bar
+## Step 1: Audience & quality bar
 
 Apply `references/quality-rubric.md`.
 
@@ -106,7 +106,7 @@ Depth = MD theory exam, not UG one-liners and not textbook chapter rewrites.
 
 **When proposing or applying any new content**, the draft must be something a final-year MD Community Medicine resident could write from under exam conditions for that question type (see Step 3a and rubric §C).
 
-## Step 2 — Accuracy audit (vs Park + official sources)
+## Step 2: Accuracy audit (vs Park + official sources)
 
 For each leaf:
 
@@ -119,22 +119,44 @@ For each leaf:
    - If not certain after search: label `NEEDS_AGENT_VERIFY` in the **report only** and **do not** invent a correction. Then **you** (the agent) must resolve it with further official sources before any apply, or **omit** the claim. Never pass uncertainty to the app reader.
 4. Never use coaching blogs or random MCQ sites as sole authority for factual updates.
 
-### Live content is paid product — never offload verification to the reader
+### Live content is paid product: never offload verification to the reader
 
 Residents pay for **finished, trustworthy Library text**. All of the following are **forbidden** in any text that will be written to `mockData.json`, Firebase overrides, SN/LAQ bodies, headings, or Exam Tips:
 
-- “Verify latest circular / schedule / guideline”
-- “Confirm for your exam year / exam sitting”
-- “Check MoHFW yourself” / “readers should verify”
-- “Content below may be outdated — verify”
-- Soft hedges that dump work on the reader: “commonly taught; confirm locally”, “name year only if verified”, “cite current version in viva; do not invent…”
+- "Verify latest circular / schedule / guideline"
+- "Confirm for your exam year / exam sitting"
+- "Check MoHFW yourself" / "readers should verify"
+- "Content below may be outdated; verify"
+- Soft hedges that dump work on the reader: "commonly taught; confirm locally", "name year only if verified", "cite current version in viva; do not invent…"
 - Leaving `NEEDS_HUMAN_VERIFY` / `NEEDS_AGENT_VERIFY` tokens in live content
 
-**Allowed:** factual statements the agent has already checked (e.g. “JE vaccine in endemic districts only” from the official NIS).  
-**Allowed in Exam Tips only:** how to **structure the answer** (order of headings, tables to draw) — not “go verify this fact”.  
-**If a figure cannot be verified:** omit it or use qualitative wording the agent can defend — never tell the reader to verify.
+**Allowed:** factual statements the agent has already checked (e.g. "JE vaccine in endemic districts only" from the official NIS).
+**Allowed in Exam Tips only:** how to **structure the answer** (order of headings, tables to draw), not "go verify this fact".
+**If a figure cannot be verified:** omit it or use qualitative wording the agent can defend. Never tell the reader to verify.
 
-## Step 3 — PYQ coverage map
+### Live prose voice: no textbook name-dropping, no em-dashes
+
+Park (and other textbooks) are **agent-side references** for accuracy audits and the **review report**. They are not branding for the app reader.
+
+**Forbidden in live Library text** (bodies, headings, tags, Exam Tips, `mockData`, Firebase overrides):
+
+1. **Textbook name spam**
+   - Do **not** write: "Park", "Park-aligned", "Park framing", "Park notes", "Park says", "as per Park", "Park (edition)", "According to Park", "Park-aligned steps", "Meaning (Park)", "DEFINITION (Park)", "Open with Park's definition", "to link Park", or similar.
+   - Do **not** stamp every heading or definition with a textbook name.
+   - **Prefer zero** textbook author names in a leaf. Standard definitions stand alone as exam-ready fact.
+   - **Rare exception only:** if a definition is inseparable from a named authority that examiners expect as the **cited source of a legal or WHO/MoHFW wording**, prefer the **official authority** (WHO, MoHFW, Act name). Do not use "Park" as that authority label in live text.
+   - Keep all "Park coverage: full|partial|absent" and "Sources used: Park Ch.N…" notes **only in the review report**, never in drafts that ship.
+
+2. **Em-dashes (hard ban in live content and in skill-generated drafts)**
+   - Never use Unicode U+2014 (em dash). Write the code point, not the character, in docs when naming the ban.
+   - Never use HTML entities `&mdash;`, `&#8212;`, `&#x2014;`.
+   - Never use markdown/plain substitutes meant as em-dashes (e.g. `---` as a dash in prose, or ` -- ` between clauses).
+   - **Use instead:** a period and new sentence; a comma, colon, or semicolon; parentheses for asides; a regular hyphen only for true compound words (e.g. `well-known`, `cost-effectiveness`).
+   - This matches the global no-em-dashes house rule and applies to all proposed and shipped Library prose.
+
+**Pre-flight (mandatory before apply/ship):** search each changed leaf for `Park`, `park-aligned`, U+2014 em-dash, and ` -- `. Fail ship if any hit remains in live text (case-insensitive for Park, except incidental words that are not the textbook, which should not appear).
+
+## Step 3: PYQ coverage map
 
 Using `pyqs.json`:
 
@@ -150,7 +172,7 @@ For each **LQ** and **SN** (MCQs optional summary only):
 - For `partial` / `missing`: produce a **full draft block** (not a skeleton only) per Step 3a
 - Prefer surgical additions over whole-chapter rewrites
 
-## Step 3a — Writing new content (mandatory for every gap fill)
+## Step 3a: Writing new content (mandatory for every gap fill)
 
 Whenever the review **proposes** or **applies** new/expanded text for a PYQ gap:
 
@@ -163,12 +185,12 @@ Whenever the review **proposes** or **applies** new/expanded text for a PYQ gap:
 
 Full rules: `references/quality-rubric.md` §C1–C2.
 
-### Park gaps — fill, don’t invent
+### Park gaps: fill, don’t invent
 
 1. Use **Park** as primary when the chapter covers the topic.
 2. If Park is **brief or silent** but the PYQ is standard MD material, **fill the gap** using standard Community Medicine knowledge.
 3. **Cross-verify** definitions, programme names, and any numbers against good sources (official MoHFW/WHO/ICMR/NCDC/NHM pages; consistent textbook principles). Record sources in the **report** (not in live Library prose).
-4. **Do not hallucinate.** No invented rates, years, doses, or “latest” claims. If a figure cannot be verified after official-source search: **omit it** from proposed live text. Use `NEEDS_AGENT_VERIFY` only inside the review report as a task for the agent/user before apply — **never** in app-facing content.
+4. **Do not hallucinate.** No invented rates, years, doses, or “latest” claims. If a figure cannot be verified after official-source search: **omit it** from proposed live text. Use `NEEDS_AGENT_VERIFY` only inside the review report as a task for the agent/user before apply: **never** in app-facing content.
 5. In the report, for each addition note: `Park coverage: full | partial | absent` and `Sources used: …`.
 6. Drafts under “Proposed content additions” must already be **reader-ready**: no verify-yourself language. The agent does the verification work before drafting.
 
@@ -186,19 +208,21 @@ The tip must tell the reader **how to frame the answer in the exam** (heading or
 
 **Forbidden in Exam Tip text:** mark-count or type-prefix artifacts such as `SN (5)`, `LAQ (10)`, `LAQ (10–15)`, `SN HDI (5)`, `5 marks`, `10 marks`, or leading `LAQ/SN on …:`. Question type is already shown by the SN/LAQ badges; the tip is framing only.
 
-Also place the matching `[SN]…[/SN]` and/or `[LAQ]…[/LAQ]` tag(s) above the section when tagging that topic — **each tag on its own line, each followed by a blank line** (never stack tags on adjacent lines; the text-table heuristic will turn them into a purple 2-column table).
+Also place the matching `[SN]…[/SN]` and/or `[LAQ]…[/LAQ]` tag(s) above the section when tagging that topic: **each tag on its own line, each followed by a blank line** (never stack tags on adjacent lines; the text-table heuristic will turn them into a purple 2-column table).
 
 ### Draft quality gate before including in report or applying
 
 - [ ] Matches SN vs LAQ depth above
 - [ ] Opens with definition/framework as required
 - [ ] No unverified statistics
-- [ ] Ends with `[EXAMTIP]…[/EXAMTIP]`
+- [ ] Ends with Exam Tip (`> **EXAM TIP:** …` preferred)
 - [ ] Precise medical English; no AI filler
+- [ ] **No textbook name-dropping** ("Park", "Park-aligned", etc.) in live draft text
+- [ ] **No em-dashes** (U+2014) or ` -- ` clause dashes
 
 In **report-only** mode, write these full drafts under “Proposed content additions” so apply is copy-paste ready.
 
-## Step 4 — SN / LAQ / EXAMTIP colour tags
+## Step 4: SN / LAQ / EXAMTIP colour tags
 
 Use the **fixed** format in `references/tag-format.md` only:
 
@@ -217,7 +241,7 @@ Use the **fixed** format in `references/tag-format.md` only:
 Rules:
 
 1. SN/LAQ: one full line per tag, immediately above the answering section.
-2. **Always leave a blank line after SN/LAQ tag block(s)** before the section heading/body — otherwise `ReadingView` text-table preprocessing can turn `[SN]…` + title into a fake 2-column table.
+2. **Always leave a blank line after SN/LAQ tag block(s)** before the section heading/body: otherwise `ReadingView` text-table preprocessing can turn `[SN]…` + title into a fake 2-column table.
 3. Align titles with PYQ wording when possible.
 4. Both SN and LAQ tags allowed if a section serves both.
 5. Exam tip: one full line at the **end** of each new/expanded exam block (prefer `> **EXAM TIP:** …` and a blank line before it). Must render as a box, never as raw `[EXAMTIP]…` body text. **No** `SN (5)` / `LAQ (10)` mark-count prefixes.
@@ -226,7 +250,7 @@ Rules:
 
 If `ReadingView.js` lacks SN/LAQ/EXAMTIP block styles **or** still folds exam tags into text-tables, restore parser + styles from `references/tag-format.md` before applying tags to live content.
 
-## Step 5 — Academic quality (non-factual)
+## Step 5: Academic quality (non-factual)
 
 Check and note:
 
@@ -237,7 +261,7 @@ Check and note:
 - Missing Exam Tip on newly proposed blocks
 - Encoding glitches / OCR junk
 
-## Step 6 — Write the report
+## Step 6: Write the report
 
 Write `bundleDir/review_report.md` with this structure:
 
@@ -273,7 +297,7 @@ Write `bundleDir/review_report.md` with this structure:
 (exact insertion snippets)
 
 ## Proposed content additions (PYQ gaps)
-(for each missing/partial: **full MD-exam draft** per Step 3a — not outline-only;
+(for each missing/partial: **full MD-exam draft** per Step 3a: not outline-only;
  include Park coverage + sources used; end each draft with [EXAMTIP]…[/EXAMTIP])
 
 ## Optional apply plan
@@ -282,29 +306,29 @@ Write `bundleDir/review_report.md` with this structure:
 
 Also give the user a short in-chat summary with the bundle path and top findings. End report-only runs by asking whether to **approve and ship** (apply + commit + push + Firebase overrides).
 
-## Step 7 — Apply + ship (when user approves the report)
+## Step 7: Apply + ship (when user approves the report)
 
 **Trigger:** User approves the report or explicitly asks to apply/ship (e.g. “apply all fixes”, “approve”, “publish”, “do it”). Partial apply is allowed if they name a subset.
 
-### 7a — Content apply
+### 7a: Content apply
 
 1. Edit the **effective** leaf content in `src/data/mockData.json` (respect override-backed text as the baseline when merging).
 2. Insert SN/LAQ tags and full new blocks that pass Step 3a (depth + verified gap-fill + Exam Tip).
-3. Surgical edits only — no drive-by refactors.
-4. **Pre-flight:** grep applied text for forbidden reader-offload phrases (`verify latest`, `exam year`, `confirm yourself`, `NEEDS_`, “commonly taught; confirm”, etc.) and remove them before ship.
-5. Live text must be **authoritative finished prose** — verification is the agent’s job before publish, not the subscriber’s.
+3. Surgical edits only: no drive-by refactors.
+4. **Pre-flight:** grep applied text for forbidden reader-offload phrases (`verify latest`, `exam year`, `confirm yourself`, `NEEDS_`, "commonly taught; confirm", etc.), **textbook name-dropping** (`Park`, `park-aligned`), and **em-dashes** (U+2014, ` -- `). Remove all hits before ship.
+5. Live text must be **authoritative finished prose**. Verification is the agent's job before publish, not the subscriber's.
 
-### 7b — Git commit + push (**always** on approval)
+### 7b: Git commit + push (**always** on approval)
 
 Do this for every approved apply that changes repo files (at minimum `mockData.json`; include skill/docs only if this session changed them for the same work):
 
 1. `git status` / `git diff` / `git log -5 --oneline` (parallel) per repo commit rules.
 2. Stage **only** files that belong to this library-review apply (never unrelated dirty files: graphify-out, unrelated scripts, secrets).
 3. Commit with a clear message (why: chapter id + what shipped).
-4. **`git push`** to the tracked remote branch (usually `origin/main`) — **required** on approval so GitHub matches what production overrides ship against.
+4. **`git push`** to the tracked remote branch (usually `origin/main`): **required** on approval so GitHub matches what production overrides ship against.
 5. Never force-push unless the user explicitly requests it.
 
-### 7c — Firebase overrides (**always** on approval)
+### 7c: Firebase overrides (**always** on approval)
 
 Publish **every changed leaf** to Firestore `libraryContentOverrides`:
 
@@ -316,7 +340,7 @@ python scripts/publish_library_override.py <leafId> --reason "ChN library review
 - Confirm each response: `ok: true`, `status: "active"`, sensible `contentLen`.
 - Overrides make content visible in the app **without** a native rebuild (app merges active/approved overrides at runtime).
 
-### 7d — EAS Update (**ask first** — never auto-run)
+### 7d: EAS Update (**ask first**: never auto-run)
 
 Library **body text** for overridden leaves does **not** need `eas update`.
 
@@ -328,7 +352,7 @@ Library **body text** for overridden leaves does **not** need `eas update`.
 
 If unsure whether OTA is required, **ask** rather than publish OTA. If they approve OTA, follow `Agents.md` EAS protocol (commit + push already done in 7b; then channel/branch checks, `--branch main`, `--clear-cache` as per project EAS docs).
 
-### 7e — Close-out message
+### 7e: Close-out message
 
 After ship, report:
 
@@ -353,16 +377,18 @@ After ship, report:
 - [ ] Every proposed new SN/LAQ block is MD-exam depth for its type
 - [ ] Park gaps filled only with non-hallucinated, cross-verified material (sources noted **in the report**)
 - [ ] Every new/expanded exam block ends with Exam Tip
-- [ ] No reader-offload / “verify yourself” language in proposed live content
+- [ ] No reader-offload / "verify yourself" language in proposed live content
+- [ ] No "Park" / textbook name-dropping in proposed live content
+- [ ] No em-dashes in proposed live content
 - [ ] `review_report.md` written under the bundle directory
 - [ ] No live content mutation unless user approved
 
 ### On approval (additional)
 
 - [ ] `mockData.json` (and related apply files) updated
-- [ ] Pre-flight: no reader-offload phrases in shipped text
+- [ ] Pre-flight: no reader-offload phrases, no textbook name-dropping, no em-dashes in shipped text
 - [ ] **Git commit completed**
 - [ ] **Git push completed** to remote tracking branch
 - [ ] **Firebase overrides published** (`status: active`) for **every** changed leaf
-- [ ] **EAS update not run** unless required — and if required, **user asked first**
+- [ ] **EAS update not run** unless required: and if required, **user asked first**
 - [ ] Close-out summary given to user

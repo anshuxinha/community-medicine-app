@@ -546,7 +546,7 @@ def main() -> None:
 
     # Human-readable index
     lines = [
-        f"# Chapter review bundle — {chapter.get('title')} (id={chapter_id})",
+        f"# Chapter review bundle: {chapter.get('title')} (id={chapter_id})",
         "",
         f"- Generated: {manifest['generatedAt']}",
         f"- Park chapter: {park_num}",

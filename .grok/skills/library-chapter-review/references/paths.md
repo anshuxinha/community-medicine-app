@@ -22,7 +22,7 @@ When the user approves a chapter review report:
 1. Apply fixes to `mockData.json` leaves.
 2. **Git commit + push** (related files only).
 3. **Firebase override** every changed leaf (`status: active`).
-4. **Ask before `eas update`** — only if renderer/app JS (not leaf text) must ship; leaf overrides alone do not need OTA.
+4. **Ask before `eas update`**: only if renderer/app JS (not leaf text) must ship; leaf overrides alone do not need OTA.
 
 ## Park PDF naming (examples)
 

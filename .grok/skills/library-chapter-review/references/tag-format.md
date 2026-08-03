@@ -28,9 +28,9 @@ Use **exactly** these markers in Library content (one full line each), same fami
 
 ## Exam Tip box
 
-Place at the **end** of every **new or substantially expanded** SN/LAQ content block. Brief only — how to frame the answer in the exam, not a second content dump.
+Place at the **end** of every **new or substantially expanded** SN/LAQ content block. Brief only: how to frame the answer in the exam, not a second content dump.
 
-### Preferred (portable — works even without a JS OTA)
+### Preferred (portable: works even without a JS OTA)
 
 ```text
 > **EXAM TIP:** Open with WHO definition → 6–8 bullets on classification + features → one India/programme line. Skip history essays.
@@ -42,7 +42,7 @@ Place at the **end** of every **new or substantially expanded** SN/LAQ content b
 
 Older app builds still render this as a blockquote box; newer builds map it to the dedicated indigo **EXAM TIP** badge box.
 
-### Alternate (newer builds only — avoid for live content until renderer is confirmed)
+### Alternate (newer builds only: avoid for live content until renderer is confirmed)
 
 ```text
 [EXAMTIP]Open with WHO definition → 6–8 bullets on classification + features → one India/programme line.[/EXAMTIP]
@@ -67,7 +67,7 @@ Older app builds still render this as a blockquote box; newer builds map it to t
 ## Placement rules
 
 1. Put SN/LAQ tags on their **own line**, immediately **above** the section that answers that PYQ.
-2. **Blank line after every individual SN/LAQ tag line** — including between two consecutive tags. Required so the text-table heuristic never treats `[SN]A[/SN]` + `[SN]B[/SN]` or `[SN]…` + title as a 2-column table.
+2. **Blank line after every individual SN/LAQ tag line**: including between two consecutive tags. Required so the text-table heuristic never treats `[SN]A[/SN]` + `[SN]B[/SN]` or `[SN]…` + title as a 2-column table.
 3. Topic title inside SN/LAQ tags should match the PYQ wording closely (or a clear shortened form).
 4. One tag per discrete exam topic. Prefer multiple SN tags over one vague LAQ tag.
 5. Do **not** nest tags. Do **not** put other markup inside the tag body.
@@ -99,7 +99,7 @@ LEVELS OF PREVENTION & MODES OF INTERVENTION
 2. Map blockquotes starting with `**EXAM TIP:**` / `EXAM TIP:` to `exam_tip` as well.
 3. **Skip** `preprocessTextTables` entirely when content contains exam markup tags.
 4. **Exclude** exam-markup lines from `parseTextTable` (never convert `[SN]`/`[LAQ]` + heading into a markdown table).
-5. Render exam tips as an indigo left-border box with an **EXAM TIP** badge — never as raw `[EXAMTIP]…` body text.
+5. Render exam tips as an indigo left-border box with an **EXAM TIP** badge: never as raw `[EXAMTIP]…` body text.
 
 If those styles or exclusions are missing, restore them from this file before publishing tagged content.
 
