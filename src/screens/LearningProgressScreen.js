@@ -26,6 +26,7 @@ import {
   getUpdatedSegmentsForItem,
 } from "../utils/contentRegistry";
 import { DEFAULT_DAILY_GOAL } from "../data/nmcCurriculum";
+import { isResidentModeEnabled } from "../utils/residentMode";
 
 const colorForToken = (colors, token) => {
   if (token === "secondary") return colors.secondary;
@@ -69,6 +70,7 @@ const LearningProgressScreen = ({ navigation }) => {
   } = useContext(AppContext);
 
   const overallPercent = progressToPercent(readingProgress);
+  const residentMode = isResidentModeEnabled(user);
 
   const paperProgress = useMemo(
     () => computeProgressByPaper(readItemVersions),
@@ -93,7 +95,9 @@ const LearningProgressScreen = ({ navigation }) => {
   const maxActivity = Math.max(1, ...activity.map((d) => d.count));
 
   const preferredPaper =
-    user?.preferredPaperFocus && user.preferredPaperFocus !== "all"
+    residentMode &&
+    user?.preferredPaperFocus &&
+    user.preferredPaperFocus !== "all"
       ? Number(user.preferredPaperFocus)
       : null;
 
@@ -112,6 +116,7 @@ const LearningProgressScreen = ({ navigation }) => {
   );
 
   const roleSubtitle = useMemo(() => {
+    if (!residentMode) return "Library progress";
     if (user?.learnerRole === "faculty") return "Faculty path · NMC 4 papers";
     if (user?.learnerRole === "ug") return "UG path · core concepts first";
     if (user?.learnerRole === "md_resident") {
@@ -120,16 +125,16 @@ const LearningProgressScreen = ({ navigation }) => {
         : "MD path · NMC 4 papers";
     }
     return "NMC paper map · Library progress";
-  }, [user?.learnerRole, user?.trainingYear]);
+  }, [residentMode, user?.learnerRole, user?.trainingYear]);
 
   const recommended = useMemo(() => {
-    if (!user?.trainingYear) return [];
+    if (!residentMode || !user?.trainingYear) return [];
     return getRecommendedChaptersForYear(
       user.trainingYear,
       readItemVersions,
       6,
     );
-  }, [user?.trainingYear, readItemVersions, contentRegistryVersion]);
+  }, [residentMode, user?.trainingYear, readItemVersions, contentRegistryVersion]);
 
   const openLeaf = useCallback(
     (entry) => {
@@ -242,86 +247,100 @@ const LearningProgressScreen = ({ navigation }) => {
           </Card.Content>
         </Card>
 
-        <Text style={styles.sectionTitle}>Theory Papers</Text>
-        {paperProgress.map((paper) => {
-          const barColor = colorForToken(colors, paper.colorToken);
-          return (
-            <TouchableOpacity
-              key={paper.paperId}
-              activeOpacity={0.85}
-              onPress={() => openPaperInLibrary(paper.paperId)}
-            >
-              <Card style={styles.paperCard}>
-                <Card.Content>
-                  <View style={styles.paperHeader}>
-                    <View
-                      style={[
-                        styles.paperBadge,
-                        { backgroundColor: colors.primarySoft },
-                      ]}
-                    >
-                      <Text style={[styles.paperBadgeText, { color: colors.primary }]}>
-                        P{paper.roman}
-                      </Text>
-                    </View>
-                    <View style={styles.paperTitleCol}>
-                      <Text style={styles.paperTitle}>{paper.shortTitle}</Text>
-                      <Text style={styles.paperDomains} numberOfLines={2}>
-                        {paper.domains}
-                      </Text>
-                    </View>
-                    <View style={styles.paperRight}>
-                      <Text style={styles.paperPercent}>{paper.percent}%</Text>
-                      <Text style={styles.paperStatus}>
-                        {getPaperStatusLabel(paper.fraction)}
-                      </Text>
-                    </View>
-                  </View>
-                  <ProgressBar
-                    progress={paper.fraction}
-                    color={barColor}
-                    style={styles.paperBar}
-                  />
-                  <Text style={styles.paperMeta}>
-                    {paper.read} of {paper.total} topics · Tap to open in Library
-                  </Text>
-                </Card.Content>
-              </Card>
-            </TouchableOpacity>
-          );
-        })}
-
-        {recommended.length > 0 ? (
+        {residentMode ? (
           <>
-            <Text style={styles.sectionTitle}>
-              Year {user.trainingYear} recommendations
-            </Text>
-            <Card style={styles.card}>
-              <Card.Content>
-                {recommended.map(({ chapter, paper, completion }) => (
-                  <TouchableOpacity
-                    key={String(chapter.id)}
-                    style={styles.recRow}
-                    onPress={() => openPaperInLibrary(paper)}
-                    activeOpacity={0.8}
-                  >
-                    <View style={styles.recTextCol}>
-                      <Text style={styles.recTitle} numberOfLines={2}>
-                        {chapter.title}
+            <Text style={styles.sectionTitle}>Theory Papers</Text>
+            {paperProgress.map((paper) => {
+              const barColor = colorForToken(colors, paper.colorToken);
+              return (
+                <TouchableOpacity
+                  key={paper.paperId}
+                  activeOpacity={0.85}
+                  onPress={() => openPaperInLibrary(paper.paperId)}
+                >
+                  <Card style={styles.paperCard}>
+                    <Card.Content>
+                      <View style={styles.paperHeader}>
+                        <View
+                          style={[
+                            styles.paperBadge,
+                            { backgroundColor: colors.primarySoft },
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.paperBadgeText,
+                              { color: colors.primary },
+                            ]}
+                          >
+                            P{paper.roman}
+                          </Text>
+                        </View>
+                        <View style={styles.paperTitleCol}>
+                          <Text style={styles.paperTitle}>
+                            {paper.shortTitle}
+                          </Text>
+                          <Text style={styles.paperDomains} numberOfLines={2}>
+                            {paper.domains}
+                          </Text>
+                        </View>
+                        <View style={styles.paperRight}>
+                          <Text style={styles.paperPercent}>
+                            {paper.percent}%
+                          </Text>
+                          <Text style={styles.paperStatus}>
+                            {getPaperStatusLabel(paper.fraction)}
+                          </Text>
+                        </View>
+                      </View>
+                      <ProgressBar
+                        progress={paper.fraction}
+                        color={barColor}
+                        style={styles.paperBar}
+                      />
+                      <Text style={styles.paperMeta}>
+                        {paper.read} of {paper.total} topics · Tap to open in
+                        Library
                       </Text>
-                      <Text style={styles.recMeta}>
-                        Paper {paper} · {completion.percent}%
-                      </Text>
-                    </View>
-                    <MaterialIcons
-                      name="chevron-right"
-                      size={22}
-                      color={colors.textTertiary}
-                    />
-                  </TouchableOpacity>
-                ))}
-              </Card.Content>
-            </Card>
+                    </Card.Content>
+                  </Card>
+                </TouchableOpacity>
+              );
+            })}
+
+            {recommended.length > 0 ? (
+              <>
+                <Text style={styles.sectionTitle}>
+                  Year {user.trainingYear} recommendations
+                </Text>
+                <Card style={styles.card}>
+                  <Card.Content>
+                    {recommended.map(({ chapter, paper, completion }) => (
+                      <TouchableOpacity
+                        key={String(chapter.id)}
+                        style={styles.recRow}
+                        onPress={() => openPaperInLibrary(paper)}
+                        activeOpacity={0.8}
+                      >
+                        <View style={styles.recTextCol}>
+                          <Text style={styles.recTitle} numberOfLines={2}>
+                            {chapter.title}
+                          </Text>
+                          <Text style={styles.recMeta}>
+                            Paper {paper} · {completion.percent}%
+                          </Text>
+                        </View>
+                        <MaterialIcons
+                          name="chevron-right"
+                          size={22}
+                          color={colors.textTertiary}
+                        />
+                      </TouchableOpacity>
+                    ))}
+                  </Card.Content>
+                </Card>
+              </>
+            ) : null}
           </>
         ) : null}
 

@@ -5,6 +5,7 @@ import {
   FlatList,
   TouchableOpacity,
   ScrollView,
+  Switch,
 } from "react-native";
 import {
   Text,
@@ -41,6 +42,7 @@ import {
   getPrimaryPaperForChapterId,
   getPaperMeta,
 } from "../data/nmcCurriculum";
+import { isResidentModeEnabled } from "../utils/residentMode";
 
 const SECTION_ID_ICON_MAP = {
   "theory:27": "clipboard-text-search-outline",
@@ -193,9 +195,12 @@ const LibraryScreen = (props) => {
     isScreenCapturePrevented,
     contentRegistryVersion,
     user,
+    setResidentMode,
   } = useContext(AppContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeSection, setActiveSection] = useState("theory");
+  const residentMode = isResidentModeEnabled(user);
+  const [residentModeSaving, setResidentModeSaving] = useState(false);
   const initialPaper =
     route?.params?.paperFilter ||
     (user?.preferredPaperFocus && user.preferredPaperFocus !== "all"
@@ -214,11 +219,27 @@ const LibraryScreen = (props) => {
   }, []);
 
   useEffect(() => {
+    if (!residentMode) return;
     if (route?.params?.paperFilter != null) {
       setPaperFilter(String(route.params.paperFilter));
       setActiveSection("theory");
     }
-  }, [route?.params?.paperFilter]);
+  }, [route?.params?.paperFilter, residentMode]);
+
+  const handleResidentModeToggle = async (value) => {
+    if (residentModeSaving || !setResidentMode) return;
+    setResidentModeSaving(true);
+    try {
+      await setResidentMode(value);
+      if (!value) {
+        setPaperFilter("all");
+      }
+    } catch (err) {
+      console.warn("Resident mode toggle failed:", err?.message);
+    } finally {
+      setResidentModeSaving(false);
+    }
+  };
 
   const currentTopics = useMemo(
     () =>
@@ -230,7 +251,11 @@ const LibraryScreen = (props) => {
 
   const filteredTopics = useMemo(() => {
     let topics = currentTopics;
-    if (activeSection === "theory" && paperFilter !== "all") {
+    if (
+      residentMode &&
+      activeSection === "theory" &&
+      paperFilter !== "all"
+    ) {
       const paperId = Number(paperFilter);
       topics = topics.filter(
         (topic) => getPrimaryPaperForChapterId(topic.id) === paperId,
@@ -243,11 +268,12 @@ const LibraryScreen = (props) => {
       );
     }
     return topics;
-  }, [currentTopics, activeSection, paperFilter, searchQuery]);
+  }, [currentTopics, activeSection, paperFilter, searchQuery, residentMode]);
 
-  /** FlatList data: chapters or paper group headers when Theory + All */
+  /** FlatList data: chapters or paper group headers when Theory + All + resident mode */
   const listData = useMemo(() => {
     if (
+      !residentMode ||
       activeSection !== "theory" ||
       paperFilter !== "all" ||
       searchQuery.trim()
@@ -270,7 +296,7 @@ const LibraryScreen = (props) => {
       chapters.forEach((item) => rows.push({ type: "chapter", item }));
     });
     return rows;
-  }, [activeSection, paperFilter, searchQuery, filteredTopics]);
+  }, [residentMode, activeSection, paperFilter, searchQuery, filteredTopics]);
 
   const getMenuKey = (item) => `${activeSection}:${item.id}`;
 
@@ -532,7 +558,32 @@ const LibraryScreen = (props) => {
           />
         </View>
 
-        {activeSection === "theory" ? (
+        <View
+          style={styles.residentModeRow}
+          accessibilityRole="switch"
+          accessibilityState={{ checked: residentMode }}
+          accessibilityLabel="Resident Mode"
+        >
+          <View style={styles.residentModeTextCol}>
+            <Text style={styles.residentModeTitle}>Resident Mode</Text>
+            <Text style={styles.residentModeHint}>
+              NMC paper layout for MD exams
+            </Text>
+          </View>
+          <Switch
+            value={residentMode}
+            onValueChange={handleResidentModeToggle}
+            disabled={residentModeSaving || !user?.uid}
+            trackColor={{
+              false: colors.borderStrong,
+              true: colors.primaryMuted || colors.primaryLight,
+            }}
+            thumbColor={residentMode ? colors.secondary : colors.surfacePrimary}
+            ios_backgroundColor={colors.borderStrong}
+          />
+        </View>
+
+        {activeSection === "theory" && residentMode ? (
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -607,7 +658,7 @@ const LibraryScreen = (props) => {
             );
             const menuKey = getMenuKey(item);
             const primaryPaper =
-              activeSection === "theory"
+              residentMode && activeSection === "theory"
                 ? getPrimaryPaperForChapterId(item.id)
                 : null;
             const paperMeta = primaryPaper ? getPaperMeta(primaryPaper) : null;
@@ -754,6 +805,32 @@ const createStyles = (colors) => StyleSheet.create({
   segmentedButtonsContainer: {
     paddingHorizontal: 16,
     marginBottom: 8,
+  },
+  residentModeRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    marginBottom: 4,
+    marginHorizontal: 16,
+    borderRadius: 12,
+    backgroundColor: colors.surfacePrimary,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
+  },
+  residentModeTextCol: {
+    flex: 1,
+    paddingRight: 12,
+  },
+  residentModeTitle: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: colors.textTitle,
+  },
+  residentModeHint: {
+    fontSize: 12,
+    color: colors.textTertiary,
+    marginTop: 2,
   },
   paperChipScroll: {
     maxHeight: 44,

@@ -39,6 +39,7 @@ import {
   computeProgressByPaper,
   getNextIncompleteLeaf,
 } from "../utils/learningProgress";
+import { isResidentModeEnabled } from "../utils/residentMode";
 
 const DASHBOARD_NEW_BADGES_STORAGE_KEY = "dashboardNewBadgesSeen:v1";
 const SEARCH_FEATURE_TIP_STORAGE_KEY = "searchFeatureTipSeen:v1";
@@ -320,6 +321,8 @@ const DashboardScreen = ({ navigation }) => {
   }, []);
 
   const searchTipVisible = searchTipEligible && isPremium;
+
+  const residentMode = isResidentModeEnabled(user);
 
   const paperProgress = React.useMemo(
     () => computeProgressByPaper(readItemVersions),
@@ -646,26 +649,28 @@ const DashboardScreen = ({ navigation }) => {
                 {`${displayedProgressPercent}% Completed`}
               </Text>
             </View>
-            <View style={styles.paperMiniRow}>
-              {paperProgress.map((paper) => (
-                <View key={paper.paperId} style={styles.paperMiniCol}>
-                  <View style={styles.paperMiniTrack}>
-                    <View
-                      style={[
-                        styles.paperMiniFill,
-                        {
-                          width: `${paper.percent}%`,
-                          backgroundColor: paperColor(paper.colorToken),
-                        },
-                      ]}
-                    />
+            {residentMode ? (
+              <View style={styles.paperMiniRow}>
+                {paperProgress.map((paper) => (
+                  <View key={paper.paperId} style={styles.paperMiniCol}>
+                    <View style={styles.paperMiniTrack}>
+                      <View
+                        style={[
+                          styles.paperMiniFill,
+                          {
+                            width: `${paper.percent}%`,
+                            backgroundColor: paperColor(paper.colorToken),
+                          },
+                        ]}
+                      />
+                    </View>
+                    <Text style={styles.paperMiniLabel}>
+                      P{paper.roman} · {paper.percent}%
+                    </Text>
                   </View>
-                  <Text style={styles.paperMiniLabel}>
-                    P{paper.roman} · {paper.percent}%
-                  </Text>
-                </View>
-              ))}
-            </View>
+                ))}
+              </View>
+            ) : null}
             <Text style={styles.nextTopicLine} numberOfLines={1}>
               {nextLeaf
                 ? `Next: ${nextLeaf.title}`

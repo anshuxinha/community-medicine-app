@@ -802,6 +802,10 @@ export const AppProvider = ({ children }) => {
               trainingYear:
                 typeof data.trainingYear === "number" ? data.trainingYear : null,
               preferredPaperFocus: data.preferredPaperFocus || "all",
+              residentMode:
+                typeof data.residentMode === "boolean"
+                  ? data.residentMode
+                  : undefined,
             };
 
             try {
@@ -915,6 +919,10 @@ export const AppProvider = ({ children }) => {
                         ? cachedUser.trainingYear
                         : null,
                     preferredPaperFocus: cachedUser.preferredPaperFocus || "all",
+                    residentMode:
+                      typeof cachedUser.residentMode === "boolean"
+                        ? cachedUser.residentMode
+                        : undefined,
                   };
                 }
               }
@@ -1943,6 +1951,13 @@ export const AppProvider = ({ children }) => {
           : user.preferredPaperFocus || "all",
     };
 
+    // Preserve explicit Resident Mode toggle unless caller sets it.
+    if (typeof profile.residentMode === "boolean") {
+      next.residentMode = profile.residentMode;
+    } else if (typeof user.residentMode === "boolean") {
+      next.residentMode = user.residentMode;
+    }
+
     // Optimistic local update so Profile reflects changes even if the network is slow.
     const mergedLocal = { ...user, ...next };
     setUser((prev) => (prev ? { ...prev, ...next } : prev));
@@ -1954,6 +1969,25 @@ export const AppProvider = ({ children }) => {
       await setDoc(doc(db, "users", user.uid), next, { merge: true });
     } catch (err) {
       console.warn("Failed to save learning profile to cloud:", err?.message);
+      throw err;
+    }
+  };
+
+  const setResidentMode = async (enabled) => {
+    if (!user?.uid) {
+      throw new Error("Not signed in");
+    }
+    const value = Boolean(enabled);
+    const next = { residentMode: value };
+    const mergedLocal = { ...user, ...next };
+    setUser((prev) => (prev ? { ...prev, ...next } : prev));
+    try {
+      await AsyncStorage.setItem("user", JSON.stringify(mergedLocal));
+    } catch (_) {}
+    try {
+      await setDoc(doc(db, "users", user.uid), next, { merge: true });
+    } catch (err) {
+      console.warn("Failed to save residentMode:", err?.message);
       throw err;
     }
   };
@@ -1992,6 +2026,7 @@ export const AppProvider = ({ children }) => {
         upgradeToPremium,
         updateUsername,
         updateLearningProfile,
+        setResidentMode,
         isScreenCapturePrevented,
       }}
     >
