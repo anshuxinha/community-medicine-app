@@ -36,6 +36,56 @@ import { TextInput } from "react-native-paper";
 import { logEvent } from "firebase/analytics";
 import { analytics } from "../config/firebase";
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const hasPremiumEntitlement = (customerInfo) =>
+  customerInfo?.entitlements?.active?.Premium != null;
+
+/**
+ * UPI Autopay (especially PhonePe) often creates a mandate before the first
+ * charge settles. purchasePackage may return without an active entitlement.
+ * Sync Play purchases and poll CustomerInfo briefly so delayed activation still unlocks.
+ */
+const resolvePremiumAfterPurchase = async (initialInfo) => {
+  if (hasPremiumEntitlement(initialInfo)) {
+    return initialInfo;
+  }
+  if (!Purchases) {
+    return initialInfo;
+  }
+
+  try {
+    if (typeof Purchases.syncPurchasesForResult === "function") {
+      const { customerInfo } = await Purchases.syncPurchasesForResult();
+      if (hasPremiumEntitlement(customerInfo)) {
+        return customerInfo;
+      }
+    } else if (typeof Purchases.syncPurchases === "function") {
+      await Purchases.syncPurchases();
+    }
+  } catch (err) {
+    console.warn("[RevenueCat] sync after purchase failed:", err?.message);
+  }
+
+  // ~20s total: covers common PhonePe / Play first-debit lag without freezing forever.
+  for (let attempt = 0; attempt < 8; attempt++) {
+    await sleep(2500);
+    try {
+      if (typeof Purchases.invalidateCustomerInfoCache === "function") {
+        await Purchases.invalidateCustomerInfoCache();
+      }
+      const info = await Purchases.getCustomerInfo();
+      if (hasPremiumEntitlement(info)) {
+        return info;
+      }
+    } catch (err) {
+      console.warn("[RevenueCat] poll getCustomerInfo failed:", err?.message);
+    }
+  }
+
+  return initialInfo;
+};
+
 // Default plan metadata (prices are fetched from RevenueCat)
 const PLAN_METADATA = [
   {
@@ -350,12 +400,23 @@ const PaywallScreen = ({ navigation }) => {
         return;
       }
 
-      const { customerInfo } = await Purchases.purchasePackage(pkg);
-      const hasPremium = customerInfo?.entitlements?.active?.Premium != null;
+      const { customerInfo: purchaseInfo } =
+        await Purchases.purchasePackage(pkg);
+      // UPI Autopay (PhonePe) often creates a mandate before the first charge
+      // settles. Sync + poll so delayed Play/RC activation still unlocks premium.
+      const customerInfo = await resolvePremiumAfterPurchase(purchaseInfo);
+      const hasPremium = hasPremiumEntitlement(customerInfo);
       if (!hasPremium) {
-        throw new Error(
-          "Purchase completed, but premium entitlement was not activated yet. Please tap Restore Purchases.",
+        logCouponEvent("purchase_pending_no_entitlement", {
+          plan: selectedPlan,
+          coupon: appliedCoupon?.code || null,
+        });
+        Alert.alert(
+          "Payment still processing",
+          "Your UPI Autopay mandate may be set up, but the first charge has not completed yet. Premium unlocks automatically once Google Play confirms payment. Wait a few minutes, then tap Restore Purchases. If nothing was deducted, cancel the mandate in PhonePe and try again.",
+          [{ text: "OK" }],
         );
+        return;
       }
 
       // If a custom app coupon was applied, increment its usage or process referral
@@ -385,7 +446,7 @@ const PaywallScreen = ({ navigation }) => {
       });
 
       Alert.alert(
-        "🎉 Welcome to STROMA Membership!",
+        "Welcome to STROMA Membership!",
         "Your membership is now active. Enjoy full access to STROMA.",
         [{ text: "Start Learning", onPress: () => navigation.goBack() }],
       );
@@ -394,9 +455,15 @@ const PaywallScreen = ({ navigation }) => {
         Purchases &&
         error.code === Purchases.PURCHASES_ERROR_CODE.PAYMENT_PENDING_ERROR
       ) {
+        // Best-effort sync so a later debit can unlock without reinstall.
+        try {
+          if (typeof Purchases.syncPurchases === "function") {
+            await Purchases.syncPurchases();
+          }
+        } catch (_) {}
         Alert.alert(
-          "Purchase Pending",
-          "Your transaction is pending approval or verification (such as Ask to Buy or bank authentication). Your access will be automatically unlocked once the transaction is completed.",
+          "Payment pending",
+          "Google Play is still confirming this payment (common with PhonePe UPI Autopay). Premium unlocks automatically once the charge succeeds. Keep the app open or reopen it in a few minutes, then use Restore Purchases if needed.",
           [{ text: "OK" }],
         );
       } else if (!error.userCancelled) {
@@ -416,12 +483,43 @@ const PaywallScreen = ({ navigation }) => {
         );
         return;
       }
+      // Android pending UPI charges often need an explicit store sync first.
+      try {
+        if (typeof Purchases.syncPurchasesForResult === "function") {
+          const { customerInfo: synced } =
+            await Purchases.syncPurchasesForResult();
+          if (hasPremiumEntitlement(synced)) {
+            const premiumEntitlement = synced.entitlements.active.Premium;
+            await upgradeToPremium({
+              premiumSource: "restore",
+              premiumExpiryDate: premiumEntitlement?.expirationDate || null,
+            });
+            Alert.alert("Success", "Your purchases were restored!");
+            return;
+          }
+        } else if (typeof Purchases.syncPurchases === "function") {
+          await Purchases.syncPurchases();
+        }
+      } catch (syncErr) {
+        console.warn("[RevenueCat] restore sync failed:", syncErr?.message);
+      }
+
+      if (typeof Purchases.invalidateCustomerInfoCache === "function") {
+        await Purchases.invalidateCustomerInfoCache();
+      }
       const customerInfo = await Purchases.restorePurchases();
-      if (customerInfo?.entitlements?.active?.["Premium"] !== undefined) {
-        await upgradeToPremium({ premiumSource: "restore" });
+      if (hasPremiumEntitlement(customerInfo)) {
+        const premiumEntitlement = customerInfo.entitlements.active.Premium;
+        await upgradeToPremium({
+          premiumSource: "restore",
+          premiumExpiryDate: premiumEntitlement?.expirationDate || null,
+        });
         Alert.alert("Success", "Your purchases were restored!");
       } else {
-        Alert.alert("Notice", "No active STROMA Membership found.");
+        Alert.alert(
+          "Notice",
+          "No active STROMA Membership found yet. If you just paid via UPI, wait a few minutes for Google Play to confirm the charge, then try Restore again.",
+        );
       }
     } catch (e) {
       Alert.alert("Error restoring purchases", e.message);

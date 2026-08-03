@@ -44,6 +44,9 @@ import { isResidentModeEnabled } from "../utils/residentMode";
 const DASHBOARD_NEW_BADGES_STORAGE_KEY = "dashboardNewBadgesSeen:v1";
 const SEARCH_FEATURE_TIP_STORAGE_KEY = "searchFeatureTipSeen:v1";
 
+const OTA_RELOAD_TIMEOUT_MS = 10000;
+const OTA_RELOAD_SETTLE_MS = 3000;
+
 const UpdateDownloadIndicator = () => {
   const { styles, colors } = useThemedStyles(createStyles);
 
@@ -55,16 +58,49 @@ const UpdateDownloadIndicator = () => {
   const [phase, setPhase] = useState("idle"); // idle | checking | downloading | applying | error
   const [errorMessage, setErrorMessage] = useState(null);
   const checkedRef = React.useRef(false);
+  const installingRef = React.useRef(false);
 
   const installNow = React.useCallback(async () => {
+    // Guard: reloadAsync can hang; never stack multiple attempts.
+    if (installingRef.current) return;
+    installingRef.current = true;
     setPhase("applying");
     setErrorMessage(null);
     try {
-      await Updates.reloadAsync();
-    } catch (error) {
+      // Paint "Installing…" before native reload; calling reload in the same
+      // tick as the press can hang on some Android devices.
+      await new Promise((resolve) => setTimeout(resolve, 150));
+
+      await Promise.race([
+        Updates.reloadAsync(),
+        new Promise((_, reject) =>
+          setTimeout(
+            () => reject(new Error("RELOAD_TIMEOUT")),
+            OTA_RELOAD_TIMEOUT_MS,
+          ),
+        ),
+      ]);
+
+      // reloadAsync resolves immediately before the actual reload. If JS is
+      // still alive after a short settle window, the native reload never ran.
+      await new Promise((resolve) =>
+        setTimeout(resolve, OTA_RELOAD_SETTLE_MS),
+      );
       setPhase("error");
-      setErrorMessage("Couldn't apply the update. Please close the app fully and open it again.");
+      setErrorMessage(
+        "Update is ready, but the app did not refresh. Close the app fully and open it again.",
+      );
+    } catch (error) {
+      const isTimeout = error?.message === "RELOAD_TIMEOUT";
+      setPhase("error");
+      setErrorMessage(
+        isTimeout
+          ? "Update is ready, but the app did not refresh. Close the app fully and open it again."
+          : "Couldn't apply the update. Please close the app fully and open it again.",
+      );
       console.warn("Updates.reloadAsync failed:", error);
+    } finally {
+      installingRef.current = false;
     }
   }, []);
 
@@ -146,7 +182,7 @@ const UpdateDownloadIndicator = () => {
           {errorMessage
             ? errorMessage
             : showApplying
-              ? "Almost done — the app will refresh shortly."
+              ? "Almost done. The app will refresh shortly."
               : showReady
                 ? "A new version is ready. Tap below to install it now."
                 : "Please keep the app open while we finish downloading."}

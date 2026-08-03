@@ -85,6 +85,18 @@ const getPremiumTypeFromEntitlement = (entitlement) => {
 };
 
 /**
+ * Apply RevenueCat CustomerInfo to local premium state.
+ * Returns { hasPremium, premiumType, expiresDate } for callers that need them.
+ */
+const extractPremiumFromCustomerInfo = (info) => {
+  const hasPremium = hasRevenueCatPremiumEntitlement(info);
+  const premiumEntitlement = info?.entitlements?.active?.Premium;
+  const expiresDate = premiumEntitlement?.expirationDate || null;
+  const premiumType = getPremiumTypeFromEntitlement(premiumEntitlement);
+  return { hasPremium, premiumType, expiresDate };
+};
+
+/**
  * Resolve a referral code for a user. Creates + persists one if missing.
  * Returns the code immediately; Firestore writes are fire-and-forget.
  */
@@ -1635,46 +1647,102 @@ export const AppProvider = ({ children }) => {
     Purchases.configure({ apiKey: rcApiKey });
 
     Purchases.addCustomerInfoUpdateListener((info) => {
-      const hasPremium = hasRevenueCatPremiumEntitlement(info);
+      const { hasPremium, premiumType: pType, expiresDate } =
+        extractPremiumFromCustomerInfo(info);
       setRevenueCatPremium(hasPremium);
-      const premiumEntitlement = info?.entitlements?.active?.Premium;
-      const expiresDate = premiumEntitlement?.expirationDate;
-      const pType = getPremiumTypeFromEntitlement(premiumEntitlement);
-      setSubscriptionExpiry(expiresDate || null);
+      setSubscriptionExpiry(expiresDate);
       if (pType) {
         setPremiumType(pType);
       }
       if (hasPremium) {
-        persistPremiumAccess({ 
+        persistPremiumAccess({
           premiumSource: "revenuecat_listener",
           premiumType: pType || "monthly",
-          premiumExpiryDate: expiresDate || null,
+          premiumExpiryDate: expiresDate,
         });
       }
     });
 
     Purchases.getCustomerInfo()
       .then((info) => {
-        const hasPremium = hasRevenueCatPremiumEntitlement(info);
+        const { hasPremium, premiumType: pType, expiresDate } =
+          extractPremiumFromCustomerInfo(info);
         setRevenueCatPremium(hasPremium);
-        const premiumEntitlement = info?.entitlements?.active?.Premium;
-        const expiresDate = premiumEntitlement?.expirationDate;
-        const pType = getPremiumTypeFromEntitlement(premiumEntitlement);
-        setSubscriptionExpiry(expiresDate || null);
+        setSubscriptionExpiry(expiresDate);
         if (pType) {
           setPremiumType(pType);
         }
         if (hasPremium) {
-          persistPremiumAccess({ 
+          persistPremiumAccess({
             premiumSource: "revenuecat_initial_check",
             premiumType: pType || "monthly",
-            premiumExpiryDate: expiresDate || null,
+            premiumExpiryDate: expiresDate,
           });
         }
       })
       .catch((err) => {
         console.warn("RevenueCat getCustomerInfo failed:", err.message);
       });
+
+    // UPI Autopay (PhonePe) often settles after the user leaves the app.
+    // RC does not push CustomerInfo; re-sync on every foreground.
+    let prevAppState = AppState.currentState;
+    const refreshRevenueCatOnForeground = async () => {
+      try {
+        let info = null;
+        if (
+          Platform.OS === "android" &&
+          typeof Purchases.syncPurchasesForResult === "function"
+        ) {
+          try {
+            const result = await Purchases.syncPurchasesForResult();
+            info = result?.customerInfo || null;
+          } catch (syncErr) {
+            console.warn(
+              "RevenueCat syncPurchases on foreground failed:",
+              syncErr?.message,
+            );
+          }
+        }
+        if (!info) {
+          if (typeof Purchases.invalidateCustomerInfoCache === "function") {
+            await Purchases.invalidateCustomerInfoCache();
+          }
+          info = await Purchases.getCustomerInfo();
+        }
+        const { hasPremium, premiumType: pType, expiresDate } =
+          extractPremiumFromCustomerInfo(info);
+        setRevenueCatPremium(hasPremium);
+        setSubscriptionExpiry(expiresDate);
+        if (pType) {
+          setPremiumType(pType);
+        }
+        if (hasPremium) {
+          void persistPremiumAccess({
+            premiumSource: "revenuecat_foreground",
+            premiumType: pType || "monthly",
+            premiumExpiryDate: expiresDate,
+          });
+        }
+      } catch (err) {
+        console.warn("RevenueCat foreground refresh failed:", err?.message);
+      }
+    };
+
+    const onAppStateChange = (nextAppState) => {
+      if (
+        prevAppState.match(/inactive|background/) &&
+        nextAppState === "active"
+      ) {
+        void refreshRevenueCatOnForeground();
+      }
+      prevAppState = nextAppState;
+    };
+    const appStateSub = AppState.addEventListener("change", onAppStateChange);
+
+    return () => {
+      appStateSub.remove();
+    };
   }, []);
 
   // Sync RevenueCat identity when user logs in
