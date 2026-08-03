@@ -137,23 +137,41 @@ const AppNavigator = () => {
     setupNotificationTapHandler(navigationRef);
   }, []);
 
-  // One-time onboarding after login for users who have not completed it.
+  // One-time onboarding after login. Never re-prompt once completed on device
+  // (OTA remounts reset refs; sparse cloud docs used to re-open this screen).
   useEffect(() => {
     if (!user?.uid) {
       onboardingPromptedRef.current = false;
       return;
     }
-    if (user.onboardingCompleted === true) return;
+    if (user.onboardingCompleted === true) {
+      onboardingPromptedRef.current = true;
+      return;
+    }
     if (onboardingPromptedRef.current) return;
     if (!navigationRef.isReady()) return;
 
-    onboardingPromptedRef.current = true;
-    const timer = setTimeout(() => {
+    let cancelled = false;
+    const timer = setTimeout(async () => {
       try {
+        const {
+          getLocalOnboardingCompleted,
+        } = require("../utils/onboardingStorage");
+        const localDone = await getLocalOnboardingCompleted(user.uid);
+        if (cancelled) return;
+        if (localDone) {
+          onboardingPromptedRef.current = true;
+          return;
+        }
+        if (onboardingPromptedRef.current) return;
+        onboardingPromptedRef.current = true;
         navigationRef.navigate("Onboarding");
       } catch (_) {}
     }, 600);
-    return () => clearTimeout(timer);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, [user?.uid, user?.onboardingCompleted]);
 
   if (user === undefined) {

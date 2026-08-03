@@ -47,6 +47,11 @@ import { syncAllAnnotations } from "../services/annotationService";
 import { syncAllHighlights } from "../services/highlightService";
 import { generateReferralCode } from "../utils/referralUtils";
 import { claimReferralRewards } from "../services/couponService";
+import {
+  getLocalOnboardingCompleted,
+  setLocalOnboardingCompleted,
+  resolveOnboardingCompleted,
+} from "../utils/onboardingStorage";
 
 let Purchases;
 let GoogleSignin;
@@ -788,6 +793,26 @@ export const AppProvider = ({ children }) => {
               setSubscriptionExpiry(finalPremiumExpiryDate);
             }
 
+            const localOnboardingDone = await getLocalOnboardingCompleted(
+              firebaseUser.uid,
+            );
+            const onboardingCompleted = resolveOnboardingCompleted(
+              data.onboardingCompleted,
+              localOnboardingDone,
+            );
+
+            // Heal durable local flag + backfill cloud if device already finished.
+            if (onboardingCompleted) {
+              void setLocalOnboardingCompleted(firebaseUser.uid);
+              if (data.onboardingCompleted !== true) {
+                void setDoc(
+                  doc(db, "users", firebaseUser.uid),
+                  { onboardingCompleted: true },
+                  { merge: true },
+                ).catch(() => {});
+              }
+            }
+
             const userData = {
               uid: firebaseUser.uid,
               email: firebaseUser.email,
@@ -797,7 +822,7 @@ export const AppProvider = ({ children }) => {
               pushToken: data.pushToken || null,
               referralCode,
               premiumType: fetchedPremiumType,
-              onboardingCompleted: data.onboardingCompleted === true,
+              onboardingCompleted,
               learnerRole: data.learnerRole || null,
               trainingYear:
                 typeof data.trainingYear === "number" ? data.trainingYear : null,
@@ -911,8 +936,14 @@ export const AppProvider = ({ children }) => {
               if (cachedUserStr) {
                 const cachedUser = JSON.parse(cachedUserStr);
                 if (cachedUser?.uid === firebaseUser.uid) {
+                  const localOnboardingDone = await getLocalOnboardingCompleted(
+                    firebaseUser.uid,
+                  );
                   cachedLearningProfile = {
-                    onboardingCompleted: cachedUser.onboardingCompleted === true,
+                    onboardingCompleted: resolveOnboardingCompleted(
+                      cachedUser.onboardingCompleted,
+                      localOnboardingDone,
+                    ),
                     learnerRole: cachedUser.learnerRole || null,
                     trainingYear:
                       typeof cachedUser.trainingYear === "number"
@@ -1965,10 +1996,18 @@ export const AppProvider = ({ children }) => {
       await AsyncStorage.setItem("user", JSON.stringify(mergedLocal));
     } catch (_) {}
 
+    if (next.onboardingCompleted === true) {
+      await setLocalOnboardingCompleted(user.uid);
+    }
+
     try {
       await setDoc(doc(db, "users", user.uid), next, { merge: true });
     } catch (err) {
       console.warn("Failed to save learning profile to cloud:", err?.message);
+      // Local + dedicated flag already saved; do not re-prompt after OTA.
+      if (next.onboardingCompleted === true) {
+        return;
+      }
       throw err;
     }
   };

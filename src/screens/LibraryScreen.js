@@ -567,7 +567,7 @@ const LibraryScreen = (props) => {
           <View style={styles.residentModeTextCol}>
             <Text style={styles.residentModeTitle}>Resident Mode</Text>
             <Text style={styles.residentModeHint}>
-              NMC paper layout for MD exams
+              NMC curriculum for MD exams
             </Text>
           </View>
           <Switch
