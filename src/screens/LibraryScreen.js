@@ -116,13 +116,18 @@ const getExcerptAroundMatch = (text, query) => {
   return { prefix, match, suffix };
 };
 
+const itemMatchesQuery = (item, normalizedQuery) =>
+  Boolean(
+    item &&
+      normalizedQuery &&
+      ((item.title && item.title.toLowerCase().includes(normalizedQuery)) ||
+        (item.content && item.content.toLowerCase().includes(normalizedQuery))),
+  );
+
 const findFirstMatchingItemOrSub = (item, query) => {
   if (!item || !query) return null;
   const normalizedQuery = query.toLowerCase();
-  if (
-    (item.title && item.title.toLowerCase().includes(normalizedQuery)) ||
-    (item.content && item.content.toLowerCase().includes(normalizedQuery))
-  ) {
+  if (itemMatchesQuery(item, normalizedQuery)) {
     return item;
   }
   if (Array.isArray(item.subsections) && item.subsections.length > 0) {
@@ -132,6 +137,20 @@ const findFirstMatchingItemOrSub = (item, query) => {
     }
   }
   return null;
+};
+
+/** Prefer a readable leaf for in-chapter jump; null if only a parent title matched. */
+const findFirstMatchingLeaf = (item, query) => {
+  if (!item || !query) return null;
+  const normalizedQuery = query.toLowerCase();
+  if (Array.isArray(item.subsections) && item.subsections.length > 0) {
+    for (const sub of item.subsections) {
+      const matched = findFirstMatchingLeaf(sub, query);
+      if (matched) return matched;
+    }
+    return null;
+  }
+  return itemMatchesQuery(item, normalizedQuery) ? item : null;
 };
 
 const SearchExcerpt = ({ item, searchQuery }) => {
@@ -305,6 +324,34 @@ const LibraryScreen = (props) => {
   const openItem = useCallback(
     (item, itemStatus) => {
       const isFree = item.id === "1" || item.title === "Man and Medicine";
+      const q = searchQuery.trim();
+
+      // Search: open the first matching leaf so Reading can jump to the term.
+      if (q) {
+        const leaf = findFirstMatchingLeaf(item, q);
+        if (leaf) {
+          const leafStatus = getItemStatus(
+            leaf,
+            activeSection,
+            readItemVersions,
+          );
+          const readingParams = buildReadingParams(
+            leaf,
+            activeSection,
+            leafStatus,
+            q,
+          );
+          if (isFree) {
+            navigation.navigate("Reading", readingParams);
+          } else {
+            navigation.navigate("PremiumGuard", {
+              destination: "Reading",
+              readingParams,
+            });
+          }
+          return;
+        }
+      }
 
       if (item.subsections) {
         const subTopicsParams = {
@@ -328,7 +375,7 @@ const LibraryScreen = (props) => {
         item,
         activeSection,
         itemStatus,
-        searchQuery.trim(),
+        q,
       );
       if (isFree) {
         navigation.navigate("Reading", readingParams);
@@ -339,7 +386,7 @@ const LibraryScreen = (props) => {
         });
       }
     },
-    [activeSection, navigation, searchQuery],
+    [activeSection, navigation, readItemVersions, searchQuery],
   );
 
   const handleMarkUnread = (item) => {

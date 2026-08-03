@@ -805,6 +805,8 @@ const ReadingView = ({
   const viewportHeightRef = useRef(0);
   const contentHeightRef = useRef(0);
   const blockYMapRef = useRef({});
+  const scrollViewRef = useRef(null);
+  const didScrollToSearchRef = useRef(false);
 
   const highlightSet = useMemo(
     () =>
@@ -821,7 +823,9 @@ const ReadingView = ({
     setScrollProgress(0);
     viewportHeightRef.current = 0;
     contentHeightRef.current = 0;
-  }, [content, title]);
+    blockYMapRef.current = {};
+    didScrollToSearchRef.current = false;
+  }, [content, title, searchTerms]);
 
   const rotateImage = (rotationKey, delta) => {
     if (!rotationKey) {
@@ -1001,6 +1005,7 @@ const ReadingView = ({
       viewportHeightRef.current,
       contentHeightRef.current,
     );
+    tryScrollToSearchMatch();
   };
 
   // -- Search term helpers ------------------------------------------------
@@ -1010,6 +1015,59 @@ const ReadingView = ({
     if (!normalizedSearchTerm || !text) return false;
     return text.toLowerCase().includes(normalizedSearchTerm);
   };
+
+  const blockMatchesSearch = useCallback(
+    (block) => {
+      if (!normalizedSearchTerm || !block) return false;
+      if (block.text && blockContainsSearch(block.text)) return true;
+      if (
+        Array.isArray(block.items) &&
+        block.items.some((item) => blockContainsSearch(item))
+      ) {
+        return true;
+      }
+      if (block.type === "table") {
+        const headers = block.headers || [];
+        const rows = block.rows || [];
+        if (headers.some((h) => blockContainsSearch(String(h || "")))) {
+          return true;
+        }
+        for (const row of rows) {
+          if (
+            Array.isArray(row) &&
+            row.some((cell) => blockContainsSearch(String(cell || "")))
+          ) {
+            return true;
+          }
+        }
+      }
+      if (block.caption && blockContainsSearch(block.caption)) return true;
+      if (block.purpose && blockContainsSearch(block.purpose)) return true;
+      return false;
+    },
+    [normalizedSearchTerm],
+  );
+
+  const firstSearchBlockIndex = useMemo(() => {
+    if (!normalizedSearchTerm) return -1;
+    for (let i = 0; i < mergedBlocks.length; i += 1) {
+      if (blockMatchesSearch(mergedBlocks[i])) return i;
+    }
+    return -1;
+  }, [mergedBlocks, normalizedSearchTerm, blockMatchesSearch]);
+
+  const tryScrollToSearchMatch = useCallback(() => {
+    if (didScrollToSearchRef.current) return;
+    if (firstSearchBlockIndex < 0) return;
+    const y = blockYMapRef.current[firstSearchBlockIndex];
+    if (typeof y !== "number" || !scrollViewRef.current) return;
+    didScrollToSearchRef.current = true;
+    const targetY = Math.max(0, y - 24);
+    // Layout can still settle one frame after onLayout; small delay keeps the match in view.
+    setTimeout(() => {
+      scrollViewRef.current?.scrollTo({ y: targetY, animated: true });
+    }, 60);
+  }, [firstSearchBlockIndex]);
 
   const renderFormattedText = (text, baseStyle = null, highlightSearch = true) => {
     if (!text) return null;
@@ -1110,7 +1168,7 @@ const ReadingView = ({
           <View
             key={index}
             style={[highlighted ? styles.highlightBlock : null, userHighlighted ? styles.userHighlightBlock : null]}
-            onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
+            
           >
             {renderFormattedText(block.text, styles.h1)}
           </View>
@@ -1129,7 +1187,7 @@ const ReadingView = ({
           <View
             key={index}
             style={[highlighted ? styles.highlightBlock : null, userHighlighted ? styles.userHighlightBlock : null]}
-            onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
+            
           >
             {renderFormattedText(block.text, styles.h2)}
           </View>
@@ -1145,7 +1203,7 @@ const ReadingView = ({
           <View
             key={index}
             style={styles.tableTitleBlock}
-            onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
+            
           >
             {renderFormattedText(block.text, styles.tableTitleText)}
           </View>
@@ -1155,7 +1213,7 @@ const ReadingView = ({
           <View
             key={index}
             style={styles.referenceBlock}
-            onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
+            
           >
             {renderFormattedText(block.text, styles.referenceText)}
           </View>
@@ -1165,7 +1223,7 @@ const ReadingView = ({
           <View
             key={index}
             style={styles.examSnBlock}
-            onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
+            
           >
             <Text style={styles.examSnBadge} selectable={false}>
               SN
@@ -1178,7 +1236,7 @@ const ReadingView = ({
           <View
             key={index}
             style={styles.examLaqBlock}
-            onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
+            
           >
             <Text style={styles.examLaqBadge} selectable={false}>
               LAQ
@@ -1191,7 +1249,7 @@ const ReadingView = ({
           <View
             key={index}
             style={styles.examTipBlock}
-            onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
+            
           >
             <Text style={styles.examTipBadge} selectable={false}>
               EXAM TIP
@@ -1209,7 +1267,7 @@ const ReadingView = ({
           <View
             key={index}
             style={[styles.blockquoteContainer, highlighted ? styles.highlightBlock : null, { marginVertical: 4 }]}
-            onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
+            
           >
             {hasSearchMatch && !isHighlightMode ? (
               renderFormattedText(block.text, styles.blockquoteText, true)
@@ -1247,7 +1305,7 @@ const ReadingView = ({
           <View
             key={index}
             style={[highlighted ? styles.highlightBlock : null, { marginVertical: 4 }]}
-            onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
+            
           >
             {hasSearchMatch && !isHighlightMode ? (
               renderFormattedText(block.text, baseStyle, true)
@@ -1275,7 +1333,7 @@ const ReadingView = ({
       }
       case "bullets":
         return (
-          <View key={index} style={styles.bulletGroup} onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}>
+          <View key={index} style={styles.bulletGroup} >
             {block.items.map((item, itemIndex) => {
               const highlighted = shouldHighlightText(item);
               const hlKey = `${index}:b${itemIndex}`;
@@ -1310,7 +1368,7 @@ const ReadingView = ({
         );
       case "nested_bullets":
         return (
-          <View key={index} style={styles.nestedBulletGroup} onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}>
+          <View key={index} style={styles.nestedBulletGroup} >
             {block.items.map((item, itemIndex) => {
               const highlighted = shouldHighlightText(item);
               const hlKey = `${index}:b${itemIndex}`;
@@ -1479,7 +1537,7 @@ const ReadingView = ({
           <View
             key={index}
             style={styles.questionBlock}
-            onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
+            
           >
             {renderFormattedText(cleanedQuestion, styles.questionText)}
           </View>
@@ -1493,7 +1551,7 @@ const ReadingView = ({
           <View
             key={index}
             style={styles.tableScrollContainer}
-            onLayout={(e) => { blockYMapRef.current[index] = e.nativeEvent.layout.y; }}
+            
           >
             <ScrollView
               horizontal
@@ -1568,7 +1626,16 @@ const ReadingView = ({
     const tappable = isAnnotationMode && block.type !== "spacing";
 
     return (
-      <View key={`block-wrapper-${index}`}>
+      <View
+        key={`block-wrapper-${index}`}
+        onLayout={(e) => {
+          // Y relative to ScrollView content (wrapper is a direct content child).
+          blockYMapRef.current[index] = e.nativeEvent.layout.y;
+          if (index === firstSearchBlockIndex) {
+            tryScrollToSearchMatch();
+          }
+        }}
+      >
         <Pressable
           disabled={!tappable}
           onPress={() => handleBlockPress(index)}
@@ -1645,6 +1712,7 @@ const ReadingView = ({
 
       {/* ── Content ── */}
       <ScrollView
+        ref={scrollViewRef}
         style={styles.scroll}
         contentContainerStyle={[
           styles.scrollContent,
@@ -2717,6 +2785,7 @@ const createStyles = (colors) => StyleSheet.create({
   searchTermMatch: {
     color: colors.secondary,
     fontWeight: "700",
+    backgroundColor: colors.highlightBg,
   },
 });
 
