@@ -1546,7 +1546,15 @@ const ReadingView = ({
       case "table": {
         const { headers, rows } = block;
         const minColumnWidth = 120;
-        const totalTableWidth = headers.length * minColumnWidth;
+        // Match scrollContent paddingHorizontal: 20 on each side
+        const contentPad = 40;
+        const availableWidth = SCREEN.width - contentPad;
+        const colCount = Math.max(headers.length, 1);
+        const naturalWidth = colCount * minColumnWidth;
+        // Stretch to full content width when columns would leave empty space;
+        // keep min width + horizontal scroll when the table is wider than the screen.
+        const tableWidth = Math.max(naturalWidth, availableWidth);
+        const columnWidth = tableWidth / colCount;
         return (
           <View
             key={index}
@@ -1555,14 +1563,14 @@ const ReadingView = ({
           >
             <ScrollView
               horizontal
-              showsHorizontalScrollIndicator={true}
-              contentContainerStyle={{ width: totalTableWidth }}
+              showsHorizontalScrollIndicator={tableWidth > availableWidth}
+              contentContainerStyle={{ width: tableWidth }}
             >
-              <View style={[styles.tableContainer, { width: totalTableWidth }]}>
+              <View style={[styles.tableContainer, { width: tableWidth }]}>
                 {/* Header row */}
                 <View style={styles.tableHeaderRow}>
                   {headers.map((h, hi) => (
-                    <View key={hi} style={[styles.tableCell, styles.tableHeaderCell, hi < headers.length - 1 && styles.tableCellBorderRight]}>
+                    <View key={hi} style={[styles.tableCell, styles.tableHeaderCell, { width: columnWidth }, hi < headers.length - 1 && styles.tableCellBorderRight]}>
                       {renderFormattedText(h, styles.tableHeaderText)}
                     </View>
                   ))}
@@ -1574,7 +1582,7 @@ const ReadingView = ({
                     style={[styles.tableRow, ri % 2 === 1 && styles.tableRowAlt]}
                   >
                     {headers.map((_, ci) => (
-                      <View key={ci} style={[styles.tableCell, ci < headers.length - 1 && styles.tableCellBorderRight]}>
+                      <View key={ci} style={[styles.tableCell, { width: columnWidth }, ci < headers.length - 1 && styles.tableCellBorderRight]}>
                         {renderFormattedText(row[ci] ?? "", styles.tableCellText)}
                       </View>
                     ))}
@@ -2440,7 +2448,7 @@ const createStyles = (colors) => StyleSheet.create({
   tableCell: {
     paddingHorizontal: 10,
     paddingVertical: 8,
-    width: 120,
+    // width set inline per table (full content width when it fits; min 120 when scrolling)
   },
   tableHeaderCell: {
     paddingVertical: 10,
