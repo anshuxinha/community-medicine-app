@@ -1,1 +1,23 @@
-[]
+[
+    {
+        "id": "5616427b-2aea-4121-99b1-b05262687968",
+        "date": "2026-08-05",
+        "title": "NJORT Deployed for Chandipura Virus Outbreak in Gujarat and Rajasthan",
+        "summary": "The Union Ministry of Health and Family Welfare has deployed a National Joint Outbreak Response Team (NJORT) to Gujarat and Rajasthan to manage the Chandipura Virus Disease (CHPV) outbreak. The multidisciplinary team includes experts from NCDC, ICMR, and the Department of Animal Husbandry and Dairying (DAHD). The response involves the activation of the NCDC Public Health Emergency Operations Centre (PHEOC) and continuous surveillance via the Integrated Disease Surveillance Programme (IDSP). Objectives include investigating transmission dynamics, clinical spectrum, epidemiology, and vector surveillance to guide evidence-based public health interventions.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2294690"
+    },
+    {
+        "id": "c8ebdd79-0839-40a1-b4d7-352e476322b0",
+        "date": "2026-08-04",
+        "title": "NFHS-6 Fact Sheet Indicators Finalized for Data Harmonization",
+        "summary": "The Technical Advisory Committee (TAC) has finalized the indicators for the National Family Health Survey (NFHS-6, 2023-24) National and State/UT Fact Sheets. In line with the Government of India's Data Harmonization initiative, the TAC focused on key health and family welfare indicators to reduce inconsistencies across official data sources. Notably, anaemia estimates will be released based on ICMR's 'Gold Standard' survey. The TAC included representatives from MoWCD, MoSPI, NITI Aayog, and the Office of the Registrar General & Census Commissioner of India.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2294277"
+    },
+    {
+        "id": "1f54897d-18aa-407e-9bc1-6792384b13c7",
+        "date": "2026-08-04",
+        "title": "ICMR i-DRONE Initiative Reduces TB Diagnosis Time and Cost",
+        "summary": "An ICMR study on the i-DRONE initiative in Yadadri-Bhuvanagiri district, Telangana, demonstrates that drone-assisted transport of TB sputum samples significantly improves diagnostic efficiency in remote areas. In collaboration with AIIMS Bibinagar and the National TB Elimination Programme (NTEP), the median turnaround time for diagnosis was reduced from 15 days to 5 days. Furthermore, mean out-of-pocket expenditure for patients decreased drastically from approximately \u20b99,451 to \u20b991, enhancing timely access to diagnostic services.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2294274"
+    }
+]
