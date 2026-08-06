@@ -6,21 +6,21 @@ description: >
   D:\Study Related\Books\Park Split and MD Community Medicine PYQs in
   categorized_questions_report.md. Tags SN/LAQ sections with fixed colour
   markers, requires MD-exam-depth new content with Exam Tip boxes, inserts
-  list-only mnemonics sparingly (finite 4–9 item exam lists only; no I RECALL
-  framework), places SN/LAQ tags only above answering sections (never a tag
-  dump before overview), fills Park gaps only with verified knowledge, flags
-  outdated facts only when verified from official sources, and suggests PYQ
-  content gaps. Use when the user runs /library-chapter-review,
+  list-only hybrid mnemonics sparingly (finite 4–10 item exam lists only; no
+  I RECALL framework), places SN/LAQ tags only above answering sections (never
+  a tag dump before overview), fills Park gaps only with verified knowledge,
+  flags outdated facts only when verified from official sources, and suggests
+  PYQ content gaps. Use when the user runs /library-chapter-review,
   /chapter-review, "review library chapter", "check chapter accuracy",
   "audit Park chapter", or asks to quality-check a specific Library chapter
   for MD exam prep.
 metadata:
-  short-description: "QA Library chapters vs Park + PYQs (SN/LAQ + Exam Tip + list mnemonics)"
+  short-description: "QA Library chapters vs Park + PYQs (SN/LAQ + Exam Tip + hybrid list mnemonics)"
 ---
 
 # /library-chapter-review: Library chapter accuracy & exam quality
 
-Review one Library chapter for an **MD Community Medicine resident** exam prep standard: factual accuracy, academic structure, PYQ coverage, fixed SN/LAQ colour tags (only above real sections), **exam-ready new content** (depth + Exam Tip), and **optional list-only mnemonics** where a finite high-yield list must be memorized.
+Review one Library chapter for an **MD Community Medicine resident** exam prep standard: factual accuracy, academic structure, PYQ coverage, fixed SN/LAQ colour tags (only above real sections), **exam-ready new content** (depth + Exam Tip), and **optional hybrid list-only mnemonics** where a finite high-yield list (typically **4–10 items**) must be memorized.
 
 ## Usage
 
@@ -52,7 +52,7 @@ Read `references/paths.md`. Critical paths:
 | PYQs | `D:\IGIMS\Major Tests & Question Papers\categorized_questions_report.md` |
 | Rubric | `references/quality-rubric.md` |
 | SN/LAQ/EXAMTIP tags | `references/tag-format.md` |
-| Mnemonics (list-only) | `references/mnemonics.md` |
+| Mnemonics (hybrid list-only, 4–10 items) | `references/mnemonics.md` |
 | Bulk Park gap scan | `scripts/scan_park_library_gaps.py` → `dist/park_gap_scans/latest.md` |
 
 ## Bulk Park gap scan (before multi-chapter deep review)
@@ -226,16 +226,15 @@ Also place the matching `[SN]…[/SN]` and/or `[LAQ]…[/LAQ]` tag(s) **immediat
 
 **Forbidden tag placement:** a dump of many SN/LAQ tags at the **start of the leaf before `OVERVIEW` / definitions**. Tags live only next to the content they mark. If no section exists yet, **create the section** from Park/official sources, then tag it.
 
-### Mnemonics (list-only; no I RECALL)
+### Mnemonics (hybrid list-only; no I RECALL)
 
 Apply `references/mnemonics.md`. Rules in short:
 
-1. **Only** for finite high-yield lists residents must memorize (typically about **4–9 items**, e.g. 5–6 fixed limbs). Not for narrative, definitions, or every section.
-2. **Do not use the I RECALL framework.** Prefer simple accurate methods: acronym/acrostic, initialism, chunking, or a classic CM teaching mnemonic when already standard and correct.
+1. **Only** for finite high-yield lists residents must memorize (typically **4–10 ordered items**; classic fixed lists of 5–7 are ideal). Not for narrative, definitions, or every section.
+2. **House method = hybrid:** prefer classic CM mnemonics when already standard and accurate; else acronym/acrostic when letters map cleanly; else initialism; chunk long lists rather than one bloated cue. **Do not use the I RECALL framework.**
 3. **Place** after the list/table it encodes and **before** Exam Tip.
 4. **Remove** weak, forced, or list-less mnemonics on apply.
 5. **Never** invent facts to force a phrase. Prefer no mnemonic over a bad one.
-6. If the user has not chosen a house method yet, omit new mnemonics or list candidate lists in the report only.
 
 Default live format (when a mnemonic is warranted):
 
@@ -253,7 +252,7 @@ Default live format (when a mnemonic is warranted):
 - [ ] Opens with definition/framework as required
 - [ ] No unverified statistics
 - [ ] SN/LAQ tags sit **only** above answering sections (no pre-overview tag dump)
-- [ ] Mnemonics only for finite high-yield lists (or none); no I RECALL scoring required
+- [ ] Mnemonics only for finite high-yield lists of **4–10 items** when warranted (hybrid method; or none); no I RECALL
 - [ ] Mnemonic (if any) sits after the list and **before** Exam Tip
 - [ ] Ends with Exam Tip (`> **EXAM TIP:** …` preferred)
 - [ ] Precise medical English; no AI filler
@@ -303,7 +302,7 @@ Check and note:
 - Weak LAQ scaffolding (lists without definitions/frameworks)
 - Missing Exam Tip on newly proposed blocks
 - **Tag placement:** no SN/LAQ dump before overview; tags only above answering sections
-- **Mnemonics (list-only):** only for finite high-yield lists (~4–9 items); remove forced/weak/list-less mnemonics; no I RECALL framework (see `references/mnemonics.md`)
+- **Mnemonics (hybrid list-only):** only for finite high-yield lists (**4–10 items**); remove forced/weak/list-less mnemonics; no I RECALL framework (see `references/mnemonics.md`)
 - **Acronyms:** first use in each leaf is `Full Name (ACRONYM)`; no bare unexplained programme/disease initialisms
 - Encoding glitches / OCR junk
 

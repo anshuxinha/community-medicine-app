@@ -66,7 +66,7 @@ Older app builds still render this as a blockquote box; newer builds map it to t
 
 ## Mnemonics (not a coloured tag)
 
-Mnemonics are **not** SN/LAQ/EXAMTIP colour tags. Use plain markdown **only after a finite high-yield list** they encode (see `mnemonics.md`). Prefer no mnemonic over a forced one. **No I RECALL framework.**
+Mnemonics are **not** SN/LAQ/EXAMTIP colour tags. Use plain markdown **only after a finite high-yield list of 4–10 items** (hybrid method in `mnemonics.md`). Prefer no mnemonic over a forced one. **No I RECALL framework.**
 
 ```text
 **Mnemonic:** WORD
@@ -108,7 +108,7 @@ LEVELS OF PREVENTION & MODES OF INTERVENTION
 > **EXAM TIP:** Define prevention → table of 4 levels × mode of intervention + example each → link to national programmes → close with “levels are complementary”. For short notes: definition + 4 levels with one example each.
 ```
 
-Optional mnemonic only if the list is a high-yield finite set worth memorizing (after the list, before Exam Tip). Prefer no mnemonic over a forced one. See `mnemonics.md`.
+Optional mnemonic only if the list is a high-yield finite set of **4–10 items** (hybrid method; after the list, before Exam Tip). Prefer no mnemonic over a forced one. See `mnemonics.md`.
 
 ## Renderer (do not regress)
 

@@ -1,17 +1,31 @@
-# Library mnemonics (list-only, sparingly)
+# Library mnemonics (hybrid, list-only)
 
 Mnemonics are **optional aids for finite exam lists**, not decoration and not a substitute for understanding.
 
-**Do not use the I RECALL framework** (or any mandatory multi-letter quality rubric from external videos) unless the user later selects a specific method after discussion.
+**Do not use the I RECALL framework.**
+
+## House method: hybrid (locked)
+
+Apply methods in this order for each candidate list:
+
+1. **Classic inherited** if a standard Community Medicine teaching mnemonic already exists and is factually accurate.
+2. **Acronym / acrostic** if first letters form a real word (or clean pronounceable cue) without distorting item names.
+3. **Initialism** if no clean word forms without filler or wrong key words.
+4. **Chunking** if the list is long: prefer two short cues over one 12-letter soup.
+5. **Link / mini-story** only when sequence matters and shorter methods fail; keep it tight and clinical.
+
+Prefer **no mnemonic** over a forced, inaccurate, or slogan-like cue.
 
 ## When to add a mnemonic (hard gates)
 
 Add or propose a mnemonic **only if all** are true:
 
-1. There is a **finite list** the resident must often memorize for SN/LAQ/viva (typically **about 4–9 ordered items**; classic fixed lists of 5–6 are ideal).
-2. The list is **high-yield** for MD Community Medicine theory (criteria limbs, fixed steps, named components, warning-sign lists, programme pillars that are actually examined as lists).
+1. There is a **finite list** the resident must often memorize for SN/LAQ/viva (**4–10 ordered items**; classic fixed lists of 5–7 are ideal).
+2. The list is **high-yield** for MD Community Medicine theory (criteria limbs, fixed steps, named components, warning-sign lists, programme pillars examined as lists).
 3. A table or numbered list alone is not enough for rapid recall, **or** a standard/classic teaching mnemonic already exists and is accurate.
 4. The mapping is **factually correct** (no invented items to force a phrase).
+
+Lists with **fewer than 4** items: usually skip (plain bullets are enough). Lists with **more than 10** items: chunk into smaller groups or skip a single mega-mnemonic.
 
 ### Do **not** add mnemonics for
 
@@ -21,21 +35,18 @@ Add or propose a mnemonic **only if all** are true:
 - Unverified numbers, doses, or programme years
 - Vague lifestyle slogans that are not a real exam list
 
-## Preferred methods (pick what fits the list)
+## Method reference
 
-Use the **simplest accurate** method. Prefer classic medical teaching mnemonics when they are already standard and correct.
+| Method | Best for | Notes |
+|--------|----------|--------|
+| **Acronym / acrostic** | Ordered criteria or fixed limbs | First letters form a real word when possible |
+| **Initialism** | Short fixed sets | Letters only when a word will not form cleanly |
+| **Classic inherited** | Where already universal in CM | Prefer when accurate |
+| **Chunking** | Longer lists (toward 8–10+) | Two short groups beat one bloated cue |
+| **Link / mini-story** | Processes with sequence | Rare; keep short and accurate |
+| **Peg / loci** | Rarely for Library body text | Usually too heavy |
 
-| Method | Best for | Example pattern |
-|--------|----------|-----------------|
-| **Acronym / acrostic** | Ordered criteria or fixed limbs | First letters form a real word or pronounceable cue |
-| **Initialism** | Short fixed sets | Letters only when a word will not form without distortion |
-| **Peg / number rhyme** | Numbered steps (3–7) | Only if clearer than a plain numbered list |
-| **Chunking** | Long lists | Split into 2 short chunks rather than one 12-letter soup |
-| **Link / story** | Processes with sequence | Short chain of vivid images; keep clinical accuracy |
-| **Loci (memory palace)** | Rare; viva-heavy multi-list | Usually too heavy for Library body text |
-| **Standard inherited mnemonics** | Where already universal in CM | e.g. classic warning-sign lists if accurate |
-
-**Default preference for this app:** acronym/acrostic or clean initialism on a **named list**, placed after the list. Avoid witty but unlinked phrases. Avoid Hindi/hinglish unless it is already a standard local teaching mnemonic and remains clear in English exams.
+Avoid Hindi/hinglish unless it is already a standard local teaching mnemonic and remains clear in English exams.
 
 ## Placement
 
@@ -74,7 +85,7 @@ If the answering section does not exist yet, **create the section** from Park/of
 
 | Verdict | Action |
 |---------|--------|
-| Accurate classic list mnemonic next to a real list | Keep |
+| Accurate classic or clean hybrid list mnemonic next to a real 4–10 item list | Keep |
 | Factually wrong | Fix or remove (**critical/major**) |
 | Forced, weak, or not attached to a list | **Remove** |
 | Decorative / slogan | **Remove** |
@@ -84,13 +95,11 @@ If the answering section does not exist yet, **create the section** from Park/of
 ```markdown
 ## Proposed / revised mnemonics
 ### <topic> (leaf <id>)
-- List items (ordered): …
-- Method: acronym | initialism | chunking | classic | other
+- List items (ordered, count in 4–10): …
+- Method: classic | acronym | initialism | chunking | link | other
 - Draft: **Mnemonic:** …
 - Action: add | replace | remove
 ```
-
-If the user has **not yet chosen** a house mnemonic method, propose list candidates in the report **without** inventing low-quality cues, or omit new mnemonics until method choice is confirmed.
 
 ## Voice rules
 

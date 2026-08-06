@@ -43,7 +43,7 @@ Must include, in order:
 1. **Definition** (1–2 lines). Prefer plain standard wording. Cite **WHO / MoHFW / statute** only when that authority is part of the exam answer; never label definitions "Park" in live text.
 2. **Core body**: 6–12 high-yield bullets (or a short table + bullets). Cover classification, mechanism/features, advantages/limitations, or steps as the topic demands.
 3. **India / programme hook** where relevant (national programme, NFHS/SRS figure, legal act, institutional example).
-4. **Mnemonic (I RECALL)** when the body has a finite high-yield recall list (criteria, steps, limbs). Place after the list; format and gates in `mnemonics.md`. Skip with report rationale if Important/Relevant fails.
+4. **Mnemonic (hybrid list-only)** only when the body has a finite high-yield list of **4–10 items**. Place after the list; format and gates in `mnemonics.md`. Prefer no mnemonic over a forced one.
 5. **Closing exam line** only if it adds marks (e.g. one high-yield contrast or “remember” point).
 6. **Exam tip** (`> **EXAM TIP:** …` preferred): brief framing (structure order, what not to miss). See `tag-format.md`. **No mark-count prefixes** (`SN (5)`, `LAQ (10)`, etc.).
 
@@ -57,7 +57,7 @@ Must include, in order:
 2. **Framework or classification** (prefer a markdown table or numbered levels).
 3. **Elaboration** of each major limb with examples a resident can expand under time pressure.
 4. **National / programme context** (India-specific schemes, indicators, recent renames) when the topic allows.
-5. **Mnemonic (I RECALL)** for each major classification/steps list that is exam-recall heavy (after the list; see `mnemonics.md`). Not required for pure essay narrative limbs.
+5. **Mnemonic (hybrid list-only)** for major classification/steps lists of **4–10 items** when exam-recall heavy (after the list; see `mnemonics.md`). Not required for pure essay narrative limbs or short 2–3 item sets.
 6. **Conclusion**: 2–4 lines tying concept to public-health practice or exam “so what”.
 7. **Exam tip** (`> **EXAM TIP:** …` preferred): how to frame the long answer (recommended heading sequence). **No invented mark splits** (`LAQ (10)`, `10 marks`, etc.).
 
@@ -89,7 +89,7 @@ Park chapter PDFs are the **primary** reference but are not exhaustive for every
 |-------|-------------|
 | Section hierarchy | Clear ALL-CAPS or equivalent section heads; scannable bullets |
 | Definitions first | Exam answers open with definition/authority |
-| Mnemonics | **List-only** (`mnemonics.md`): only for finite high-yield lists (~4–9 items). No I RECALL framework. Prefer acronym/acrostic/classic CM mnemonics. After list, before Exam Tip. Remove forced/weak/list-less mnemonics |
+| Mnemonics | **Hybrid list-only** (`mnemonics.md`): only for finite high-yield lists (**4–10 items**). No I RECALL. Prefer classic CM, then acronym/acrostic, then initialism/chunking. After list, before Exam Tip. Remove forced/weak/list-less mnemonics |
 | Formulas | Correct formula + units + multiplier + when to use |
 | Exam Tip | Every new SN/LAQ block ends with Exam Tip (brief framing only: not a second essay) |
 | Redundancy | Duplicate blocks across subsections noted; don’t rewrite whole chapter unless asked |
@@ -104,7 +104,7 @@ Park chapter PDFs are the **primary** reference but are not exhaustive for every
 | Tables | Prefer markdown tables for multi-column comparisons when ReadingView supports them |
 | Length | SN-depth ~½–1 page equivalent; LAQ scaffolds deeper without essay padding |
 | Exam Tip tone | Imperative, brief ("Open with definition → table of … → 5 India points → close with …"). No textbook name-drops, no em-dashes |
-| Mnemonic tone | Only next to real lists; clear letter expansions; accurate over clever. Prefer ≤9 items. No em-dashes |
+| Mnemonic tone | Only next to real lists; clear letter expansions; accurate over clever. Prefer **4–10 items**. No em-dashes |
 | Textbook names | Zero "Park" / "Park-aligned" in live prose; report-only attribution |
 | Em-dashes | Forbidden in live Library text (use period/comma/colon/parentheses) |
 
