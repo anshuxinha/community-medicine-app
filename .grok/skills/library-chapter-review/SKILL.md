@@ -5,19 +5,21 @@ description: >
   libraryContentOverrides + mockData) against Park textbook PDFs in
   D:\Study Related\Books\Park Split and MD Community Medicine PYQs in
   categorized_questions_report.md. Tags SN/LAQ sections with fixed colour
-  markers, requires MD-exam-depth new content with Exam Tip boxes, fills
-  Park gaps only with verified knowledge, flags outdated facts only when
-  verified from official sources, and suggests PYQ content gaps. Use when
-  the user runs /library-chapter-review, /chapter-review, "review library
-  chapter", "check chapter accuracy", "audit Park chapter", or asks to
-  quality-check a specific Library chapter for MD exam prep.
+  markers, requires MD-exam-depth new content with Exam Tip boxes, inserts
+  high-yield mnemonics using the I RECALL technique (Important, Relevant,
+  Emotional, Contrasting, Associable, Linked, Lean) at appropriate list
+  sites, fills Park gaps only with verified knowledge, flags outdated facts
+  only when verified from official sources, and suggests PYQ content gaps.
+  Use when the user runs /library-chapter-review, /chapter-review, "review
+  library chapter", "check chapter accuracy", "audit Park chapter", or asks
+  to quality-check a specific Library chapter for MD exam prep.
 metadata:
-  short-description: "QA Library chapters vs Park + PYQs (SN/LAQ + Exam Tip)"
+  short-description: "QA Library chapters vs Park + PYQs (SN/LAQ + Exam Tip + mnemonics)"
 ---
 
 # /library-chapter-review: Library chapter accuracy & exam quality
 
-Review one Library chapter for an **MD Community Medicine resident** exam prep standard: factual accuracy, academic structure, PYQ coverage, fixed SN/LAQ colour tags, and **exam-ready new content** (depth + Exam Tip).
+Review one Library chapter for an **MD Community Medicine resident** exam prep standard: factual accuracy, academic structure, PYQ coverage, fixed SN/LAQ colour tags, **exam-ready new content** (depth + Exam Tip), and **I RECALL mnemonics** on high-yield recall lists.
 
 ## Usage
 
@@ -49,6 +51,7 @@ Read `references/paths.md`. Critical paths:
 | PYQs | `D:\IGIMS\Major Tests & Question Papers\categorized_questions_report.md` |
 | Rubric | `references/quality-rubric.md` |
 | SN/LAQ/EXAMTIP tags | `references/tag-format.md` |
+| Mnemonics (I RECALL) | `references/mnemonics.md` |
 | Bulk Park gap scan | `scripts/scan_park_library_gaps.py` → `dist/park_gap_scans/latest.md` |
 
 ## Bulk Park gap scan (before multi-chapter deep review)
@@ -210,11 +213,35 @@ The tip must tell the reader **how to frame the answer in the exam** (heading or
 
 Also place the matching `[SN]…[/SN]` and/or `[LAQ]…[/LAQ]` tag(s) above the section when tagging that topic: **each tag on its own line, each followed by a blank line** (never stack tags on adjacent lines; the text-table heuristic will turn them into a purple 2-column table).
 
+### Mnemonics (I RECALL) on high-yield lists
+
+Whenever a new/expanded SN/LAQ block (or an existing leaf section under review) has a **finite high-yield recall list** (criteria, steps, classification limbs, classic differentials, programme components), apply `references/mnemonics.md`:
+
+1. **Decide if a mnemonic is worth making** (Important + Relevant). Skip low-stakes or pure narrative.
+2. **Draft with I RECALL**: Important, Relevant, Emotional, Contrasting, Associable, Linked to the topic, Lean (prefer ≤9 items).
+3. **Place** the mnemonic **after the list/table it encodes and before the Exam Tip** (Format A in `mnemonics.md`).
+4. **Appraise existing** mnemonics in the leaf: keep, revise, or remove per the same checklist. Fix factually wrong ones as accuracy findings.
+5. **Never** invent facts to force a clever phrase. Never dump a mnemonic on every paragraph.
+
+Default live format:
+
+```text
+**Mnemonic:** WORD
+- W: …
+- O: …
+- R: …
+- D: …
+```
+
+Full rules, anti-patterns, and report scoring: `references/mnemonics.md`.
+
 ### Draft quality gate before including in report or applying
 
 - [ ] Matches SN vs LAQ depth above
 - [ ] Opens with definition/framework as required
 - [ ] No unverified statistics
+- [ ] High-yield recall lists have an **I RECALL** mnemonic (or an explicit report note why none fits)
+- [ ] Mnemonic sits after the list and **before** Exam Tip when present
 - [ ] Ends with Exam Tip (`> **EXAM TIP:** …` preferred)
 - [ ] Precise medical English; no AI filler
 - [ ] **No textbook name-dropping** ("Park", "Park-aligned", etc.) in live draft text
@@ -259,6 +286,7 @@ Check and note:
 - Contradictions between leaves of the same chapter
 - Weak LAQ scaffolding (lists without definitions/frameworks)
 - Missing Exam Tip on newly proposed blocks
+- **Mnemonics (I RECALL):** for each high-yield list, is there a mnemonic? Does it pass Important / Relevant / Emotional / Contrasting / Associable / Linked / Lean? Propose add / replace / remove (see `references/mnemonics.md`)
 - Encoding glitches / OCR junk
 
 ## Step 6: Write the report
@@ -274,7 +302,7 @@ Write `bundleDir/review_report.md` with this structure:
 - PYQ chapter mapping
 
 ## Executive summary
-(2–5 sentences + counts: critical/major/minor/tag/pyq_gap/verify)
+(2–5 sentences + counts: critical/major/minor/tag/pyq_gap/verify/mnemonic_add/mnemonic_revise/mnemonic_remove)
 
 ## Accuracy findings
 ### [critical|major|minor] <title>
@@ -298,7 +326,12 @@ Write `bundleDir/review_report.md` with this structure:
 
 ## Proposed content additions (PYQ gaps)
 (for each missing/partial: **full MD-exam draft** per Step 3a: not outline-only;
- include Park coverage + sources used; end each draft with [EXAMTIP]…[/EXAMTIP])
+ include Park coverage + sources used; include I RECALL mnemonic after high-yield lists when warranted;
+ end each draft with Exam Tip)
+
+## Proposed / revised mnemonics
+(for each: leaf id, use moment, ordered items, full **Mnemonic:** draft, I RECALL self-score, action add|replace|remove;
+ see `references/mnemonics.md`)
 
 ## Optional apply plan
 (ordered surgical edits; do not apply unless user **approves** the report)
@@ -313,10 +346,11 @@ Also give the user a short in-chat summary with the bundle path and top findings
 ### 7a: Content apply
 
 1. Edit the **effective** leaf content in `src/data/mockData.json` (respect override-backed text as the baseline when merging).
-2. Insert SN/LAQ tags and full new blocks that pass Step 3a (depth + verified gap-fill + Exam Tip).
-3. Surgical edits only: no drive-by refactors.
-4. **Pre-flight:** grep applied text for forbidden reader-offload phrases (`verify latest`, `exam year`, `confirm yourself`, `NEEDS_`, "commonly taught; confirm", etc.), **textbook name-dropping** (`Park`, `park-aligned`), and **em-dashes** (U+2014, ` -- `). Remove all hits before ship.
-5. Live text must be **authoritative finished prose**. Verification is the agent's job before publish, not the subscriber's.
+2. Insert SN/LAQ tags and full new blocks that pass Step 3a (depth + verified gap-fill + I RECALL mnemonics on high-yield lists + Exam Tip).
+3. Apply approved mnemonic add/replace/remove actions from the report (placement: after list, before Exam Tip).
+4. Surgical edits only: no drive-by refactors.
+5. **Pre-flight:** grep applied text for forbidden reader-offload phrases (`verify latest`, `exam year`, `confirm yourself`, `NEEDS_`, "commonly taught; confirm", etc.), **textbook name-dropping** (`Park`, `park-aligned`), and **em-dashes** (U+2014, ` -- `). Remove all hits before ship.
+6. Live text must be **authoritative finished prose**. Verification is the agent's job before publish, not the subscriber's.
 
 ### 7b: Git commit + push (**always** on approval)
 
@@ -377,6 +411,9 @@ After ship, report:
 - [ ] Every proposed new SN/LAQ block is MD-exam depth for its type
 - [ ] Park gaps filled only with non-hallucinated, cross-verified material (sources noted **in the report**)
 - [ ] Every new/expanded exam block ends with Exam Tip
+- [ ] High-yield recall lists covered by I RECALL mnemonics (or explicit skip rationale in report)
+- [ ] Existing weak/wrong mnemonics appraised (keep / revise / remove)
+- [ ] Proposed mnemonics section present when any mnemonic work applies
 - [ ] No reader-offload / "verify yourself" language in proposed live content
 - [ ] No "Park" / textbook name-dropping in proposed live content
 - [ ] No em-dashes in proposed live content

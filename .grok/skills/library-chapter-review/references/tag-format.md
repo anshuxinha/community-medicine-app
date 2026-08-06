@@ -64,6 +64,22 @@ Older app builds still render this as a blockquote box; newer builds map it to t
 6. Avoid leading labels like `SN:`, `LAQ:`, or `LAQ/SN on …:` unless they are necessary clinical wording inside the frame.
 7. **Never** tell the reader to verify circulars, schedules, or programme facts (“check latest MoHFW…”, “confirm for your exam year”). Exam Tips structure the answer; the body text must already be verified.
 
+## Mnemonics (not a coloured tag)
+
+Mnemonics are **not** SN/LAQ/EXAMTIP colour tags. Use plain markdown after the list they encode:
+
+```text
+**Mnemonic:** WORD
+- W: key concept
+- O: …
+```
+
+Full **I RECALL** quality gates and when to insert: `mnemonics.md`.
+
+**Order inside an exam section:** SN/LAQ tags → heading/body/list → **Mnemonic** → Exam Tip.
+
+Do **not** invent a `[MNEMONIC]…[/MNEMONIC]` colour tag unless ReadingView is updated in a separate, approved change.
+
 ## Placement rules
 
 1. Put SN/LAQ tags on their **own line**, immediately **above** the section that answers that PYQ.
@@ -73,7 +89,8 @@ Older app builds still render this as a blockquote box; newer builds map it to t
 5. Do **not** nest tags. Do **not** put other markup inside the tag body.
 6. If a section serves **both** SN and LAQ, place SN then LAQ **each followed by a blank line**, then the heading.
 7. Optional: after tags + blank line, keep the existing ALL-CAPS section heading so navigation stays clear.
-8. Exam tip: prefer `> **EXAM TIP:** …` on its own line at the **end** of the section (blank line before it).
+8. Mnemonic: after the high-yield list it encodes; before Exam Tip (`mnemonics.md`).
+9. Exam tip: prefer `> **EXAM TIP:** …` on its own line at the **end** of the section (blank line before it).
 
 ### Example
 
@@ -88,8 +105,16 @@ LEVELS OF PREVENTION & MODES OF INTERVENTION
 - Secondary Prevention: ...
 - Tertiary Prevention: ...
 
+**Mnemonic:** PREVENT ladder (4 rungs: Primordial → Primary → Secondary → Tertiary)
+- Primordial: stop risk factors from appearing
+- Primary: stop disease from starting
+- Secondary: catch and treat early
+- Tertiary: limit disability / rehab
+
 > **EXAM TIP:** Define prevention → table of 4 levels × mode of intervention + example each → link to national programmes → close with “levels are complementary”. For short notes: definition + 4 levels with one example each.
 ```
+
+Placement order matters more than this sample phrase: **list → Mnemonic → Exam Tip**. Real reviews must still pass full I RECALL in `mnemonics.md`.
 
 ## Renderer (do not regress)
 
