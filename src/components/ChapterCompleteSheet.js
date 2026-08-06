@@ -10,12 +10,26 @@ import {
   TextInput,
   View,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Text, Button, Dialog, Portal } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { theme } from "../styles/theme";
 import { useThemedStyles } from "../styles/useThemedStyles";
 import { progressToPercent } from "../utils/progressPresentation";
 import { FEEDBACK_MESSAGE_MAX_LENGTH } from "../services/feedbackService";
+
+const REVIEW_CTA_COPY_INDEX_KEY = "chapterComplete_reviewCtaCopyIndex";
+
+const REVIEW_CTA_VARIANTS = [
+  {
+    title: "Another chapter conquered.",
+    cta: "Tap 5 stars and leave a review. Your win helps STROMA grow.",
+  },
+  {
+    title: "You just made progress.",
+    cta: "If we helped, please give us a 5 star review.",
+  },
+];
 
 /**
  * Chapter completion sheet with optional in-sheet app review CTA.
@@ -56,6 +70,7 @@ const ChapterCompleteSheet = ({
   const [submitting, setSubmitting] = useState(false);
   const [reviewBusy, setReviewBusy] = useState(false);
   const [ctaHiddenLocally, setCtaHiddenLocally] = useState(false);
+  const [reviewCopyIndex, setReviewCopyIndex] = useState(0);
 
   useEffect(() => {
     if (!visible) {
@@ -72,7 +87,35 @@ const ChapterCompleteSheet = ({
       tension: 80,
       useNativeDriver: true,
     }).start();
+
+    // Alternate review CTA copy each time the sheet is shown.
+    let cancelled = false;
+    void (async () => {
+      try {
+        const raw = await AsyncStorage.getItem(REVIEW_CTA_COPY_INDEX_KEY);
+        const last = Number(raw);
+        const next =
+          Number.isFinite(last) && last >= 0
+            ? (Math.floor(last) + 1) % REVIEW_CTA_VARIANTS.length
+            : 0;
+        if (!cancelled) {
+          setReviewCopyIndex(next);
+        }
+        await AsyncStorage.setItem(REVIEW_CTA_COPY_INDEX_KEY, String(next));
+      } catch {
+        if (!cancelled) {
+          setReviewCopyIndex(0);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [visible, scaleAnim]);
+
+  const reviewCopy =
+    REVIEW_CTA_VARIANTS[reviewCopyIndex] || REVIEW_CTA_VARIANTS[0];
 
   const prevPct = progressToPercent(previousProgress);
   const nextPct = progressToPercent(nextProgress);
@@ -198,12 +241,12 @@ const ChapterCompleteSheet = ({
             {showCta ? (
               <View style={[styles.reviewBlock, { borderColor: colors.border }]}>
                 <Text style={[styles.reviewPrompt, { color: colors.textTitle }]}>
-                  Enjoying STROMA?
+                  {reviewCopy.title}
                 </Text>
                 <Text
                   style={[styles.reviewHint, { color: colors.textSecondary }]}
                 >
-                  Tap a star to rate the app
+                  {reviewCopy.cta}
                 </Text>
                 <View style={styles.starsRow}>
                   {[1, 2, 3, 4, 5].map((star) => {
@@ -438,15 +481,18 @@ const createStyles = (colors) =>
       alignItems: "center",
     },
     reviewPrompt: {
-      fontSize: 14,
+      fontSize: 15,
       fontWeight: "700",
       textAlign: "center",
+      paddingHorizontal: 4,
     },
     reviewHint: {
-      fontSize: 12,
-      marginTop: 2,
-      marginBottom: 8,
+      fontSize: 13,
+      lineHeight: 18,
+      marginTop: 4,
+      marginBottom: 10,
       textAlign: "center",
+      paddingHorizontal: 4,
     },
     starsRow: {
       flexDirection: "row",
