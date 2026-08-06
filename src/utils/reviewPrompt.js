@@ -10,8 +10,11 @@ const STORAGE_KEY_RESET_VERSION = "reviewPrompt_resetVersion";
 const REVIEW_PROMPT_RESET_VERSION = "2026-08-06-chapter-complete-retest";
 
 const ANDROID_PACKAGE = "com.communitymed.app";
+/** HTTPS listing: works with package-visibility https queries in the manifest. */
 const ANDROID_PLAY_WEB_URL = `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE}`;
 const ANDROID_MARKET_URL = `market://details?id=${ANDROID_PACKAGE}`;
+/** Opens the Play write-review surface when supported by the store app. */
+const ANDROID_PLAY_REVIEW_URL = `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE}&showAllReviews=true`;
 
 /** Opens the global feedback modal (registered by ReviewFeedbackModal). */
 let openFeedbackFormHandler = null;
@@ -81,7 +84,7 @@ export async function ensureReviewPromptMigrated() {
 /**
  * Whether the user has already completed the 5-star native review path.
  * Play/App Store APIs do not report stars submitted; we treat "tapped 5 and
- * launched the in-app review SDK" as rated so the CTA can stop showing.
+ * launched the review flow" as rated so the CTA can stop showing.
  *
  * State is device-local AsyncStorage (not tied to Firebase user id).
  * @returns {Promise<boolean>}
@@ -137,7 +140,6 @@ export async function maybePromptReview(readingProgress) {
     const rawTrackedProgress = shouldResetPrompt ? "0" : rawLastProgress[1];
 
     if (shouldResetPrompt) {
-      // Also clears hasRated so the chapter-complete star CTA can reappear.
       await resetReviewPromptState();
     }
 
@@ -221,52 +223,56 @@ function showFiveStarPrompt(handlers = {}) {
 }
 
 /**
- * Launch platform in-app review (Play In-App Review / StoreKit) when available.
- * Falls back to the public store listing URL.
+ * Try Play / App Store in-app review, then always open the store listing for
+ * explicit user taps (5-star CTA).
  *
- * Callers that show a modal must dismiss it first and await waitForUiSettle()
- * before this, or the native review UI often never appears on Android.
+ * Why store always opens after: `StoreReview.requestReview()` often resolves
+ * successfully without showing any UI (Play quota / policy). Returning early
+ * on that promise left users with no dialog and no store page.
  *
- * @param {{ markRated?: boolean, preferStoreListing?: boolean }} [options]
- *   When markRated is true (default for the 5-star CTA), persist hasRated so
- *   the chapter-complete CTA stops showing. Store SDKs do not confirm stars.
- *   preferStoreListing: skip in-app API and open the store page (rare).
+ * Callers that show a modal must dismiss it first and await waitForUiSettle().
+ *
+ * @param {{ markRated?: boolean, openStoreListing?: boolean }} [options]
+ *   openStoreListing defaults true for user-initiated rate actions.
  */
 export async function requestNativeStoreReview(options = {}) {
   const markRated = options.markRated !== false;
-  const preferStoreListing = options.preferStoreListing === true;
+  const openStoreListing = options.openStoreListing !== false;
 
   try {
-    if (!preferStoreListing) {
-      // Always attempt the native flow first when the platform reports support.
-      // hasAction can be true while the dialog still fails (quota / overlay);
-      // we still try, then fall back to the store page only if the API rejects.
-      let available = false;
-      try {
-        available = await StoreReview.hasAction();
-      } catch (_err) {
-        available = false;
+    // 1) Prefer native in-app review when the module reports support.
+    //    Do not use hasAction() alone: it is true merely if playStoreUrl is set.
+    let nativeAvailable = false;
+    try {
+      if (typeof StoreReview.isAvailableAsync === "function") {
+        nativeAvailable = await StoreReview.isAvailableAsync();
       }
+    } catch (err) {
+      console.warn("reviewPrompt: isAvailableAsync failed", err?.message);
+      nativeAvailable = false;
+    }
 
-      if (available) {
-        try {
-          await StoreReview.requestReview();
-          // Success path: requestReview resolves even when the OS decides not
-          // to show UI (quota). That is expected; we still mark rated for CTA.
-          return;
-        } catch (err) {
-          console.warn(
-            "reviewPrompt: requestReview threw, falling back to store",
-            err?.message,
-          );
-        }
+    if (nativeAvailable) {
+      try {
+        await StoreReview.requestReview();
+      } catch (err) {
+        console.warn(
+          "reviewPrompt: requestReview threw",
+          err?.message,
+        );
       }
     }
 
-    await openStoreReviewPage();
+    // 2) Always open the store listing for explicit rate CTAs so the user
+    //    always sees a review surface even when the OS suppresses the native UI.
+    if (openStoreListing) {
+      await openStoreReviewPage();
+    }
   } catch (err) {
     console.warn("reviewPrompt: native review request failed", err?.message);
-    await openStoreReviewPage();
+    if (openStoreListing) {
+      await openStoreReviewPage();
+    }
   } finally {
     await markAsShown();
     if (markRated) {
@@ -275,8 +281,22 @@ export async function requestNativeStoreReview(options = {}) {
   }
 }
 
+/**
+ * Open the public store listing. Prefer HTTPS Play URL (manifest allows
+ * https VIEW intents). Do not gate on canOpenURL for market:// (often false
+ * under Android package visibility).
+ * @returns {Promise<boolean>} true if openURL was invoked without throw
+ */
 async function openStoreReviewPage() {
   const candidates = [];
+
+  if (Platform.OS === "android") {
+    candidates.push(
+      ANDROID_PLAY_REVIEW_URL,
+      ANDROID_PLAY_WEB_URL,
+      ANDROID_MARKET_URL,
+    );
+  }
 
   try {
     const fromExpo = StoreReview.storeUrl?.();
@@ -287,33 +307,21 @@ async function openStoreReviewPage() {
     // ignore
   }
 
-  if (Platform.OS === "android") {
-    candidates.push(ANDROID_MARKET_URL, ANDROID_PLAY_WEB_URL);
-  }
-
   const seen = new Set();
   for (const url of candidates) {
     if (!url || seen.has(url)) continue;
     seen.add(url);
     try {
-      const supported = await Linking.canOpenURL(url);
-      if (supported) {
-        await Linking.openURL(url);
-        return;
-      }
+      // Do not require canOpenURL: it is unreliable for market:// and some
+      // Play hosts. Try openURL directly (same pattern as Profile Rate App).
+      await Linking.openURL(url);
+      return true;
     } catch (err) {
       console.warn("reviewPrompt: openURL failed for", url, err?.message);
     }
   }
 
-  // Last resort: try Play web URL without canOpenURL (some devices lie).
-  if (Platform.OS === "android") {
-    try {
-      await Linking.openURL(ANDROID_PLAY_WEB_URL);
-    } catch (err) {
-      console.warn("reviewPrompt: final store open failed", err?.message);
-    }
-  }
+  return false;
 }
 
 async function markAsShown() {

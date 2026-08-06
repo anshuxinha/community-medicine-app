@@ -441,8 +441,13 @@ const ReadingScreen = ({ route, navigation }) => {
     // Dismiss our dialog before launching Play/App Store review. The native
     // review UI often never appears while a Paper Dialog / Portal is focused.
     setCelebration(null);
-    await waitForUiSettle(450);
-    await requestNativeStoreReview({ markRated: true });
+    await waitForUiSettle(500);
+    // Tries in-app review, then always opens the Play listing so the user
+    // never gets a silent no-op when Google suppresses the native sheet.
+    await requestNativeStoreReview({
+      markRated: true,
+      openStoreListing: true,
+    });
   }, []);
 
   const handleSubmitLowRatingFeedback = useCallback(
