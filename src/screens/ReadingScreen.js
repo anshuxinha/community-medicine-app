@@ -29,6 +29,7 @@ import {
   saveHighlights,
 } from "../services/highlightService";
 import {
+  ensureReviewPromptMigrated,
   getHasRatedFiveStarReview,
   requestNativeStoreReview,
   waitForUiSettle,
@@ -109,11 +110,14 @@ const ReadingScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     let mounted = true;
-    void getHasRatedFiveStarReview().then((hasRated) => {
+    void (async () => {
+      // One-time version bump clears hasRated so retest CTA can show again.
+      await ensureReviewPromptMigrated();
+      const hasRated = await getHasRatedFiveStarReview();
       if (mounted) {
         setShowReviewCta(!hasRated);
       }
-    });
+    })();
     return () => {
       mounted = false;
     };

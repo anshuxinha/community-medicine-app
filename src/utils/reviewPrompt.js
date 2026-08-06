@@ -6,7 +6,8 @@ const STORAGE_KEY_HAS_SHOWN = "reviewPrompt_hasShown";
 const STORAGE_KEY_HAS_RATED = "reviewPrompt_hasRated";
 const STORAGE_KEY_LAST_PROGRESS = "reviewPrompt_lastProgress";
 const STORAGE_KEY_RESET_VERSION = "reviewPrompt_resetVersion";
-const REVIEW_PROMPT_RESET_VERSION = "2026-05-04-review-flow-fix";
+/** Bump to re-show the chapter-complete review CTA for all devices once. */
+const REVIEW_PROMPT_RESET_VERSION = "2026-08-06-chapter-complete-retest";
 
 const ANDROID_PACKAGE = "com.communitymed.app";
 const ANDROID_PLAY_WEB_URL = `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE}`;
@@ -41,13 +42,53 @@ function showFeedbackForm(handlers = {}) {
 }
 
 /**
+ * Clear local review CTA flags (device AsyncStorage, not cloud).
+ * Used for admin retesting and one-time version migrations.
+ * @returns {Promise<void>}
+ */
+export async function resetReviewPromptState() {
+  try {
+    await AsyncStorage.multiSet([
+      [STORAGE_KEY_HAS_SHOWN, "false"],
+      [STORAGE_KEY_HAS_RATED, "false"],
+      [STORAGE_KEY_LAST_PROGRESS, "0"],
+      [STORAGE_KEY_RESET_VERSION, REVIEW_PROMPT_RESET_VERSION],
+    ]);
+  } catch (err) {
+    console.warn("reviewPrompt: failed to reset state", err?.message);
+  }
+}
+
+/**
+ * One-time migration when REVIEW_PROMPT_RESET_VERSION changes.
+ * Clears hasRated so the chapter-complete 5-star CTA can show again.
+ * @returns {Promise<boolean>} true if a reset was applied
+ */
+export async function ensureReviewPromptMigrated() {
+  try {
+    const rawVersion = await AsyncStorage.getItem(STORAGE_KEY_RESET_VERSION);
+    if (rawVersion === REVIEW_PROMPT_RESET_VERSION) {
+      return false;
+    }
+    await resetReviewPromptState();
+    return true;
+  } catch (err) {
+    console.warn("reviewPrompt: migration failed", err?.message);
+    return false;
+  }
+}
+
+/**
  * Whether the user has already completed the 5-star native review path.
  * Play/App Store APIs do not report stars submitted; we treat "tapped 5 and
  * launched the in-app review SDK" as rated so the CTA can stop showing.
+ *
+ * State is device-local AsyncStorage (not tied to Firebase user id).
  * @returns {Promise<boolean>}
  */
 export async function getHasRatedFiveStarReview() {
   try {
+    await ensureReviewPromptMigrated();
     const raw = await AsyncStorage.getItem(STORAGE_KEY_HAS_RATED);
     return raw === "true";
   } catch (err) {
@@ -96,11 +137,8 @@ export async function maybePromptReview(readingProgress) {
     const rawTrackedProgress = shouldResetPrompt ? "0" : rawLastProgress[1];
 
     if (shouldResetPrompt) {
-      await AsyncStorage.multiSet([
-        [STORAGE_KEY_HAS_SHOWN, "false"],
-        [STORAGE_KEY_LAST_PROGRESS, "0"],
-        [STORAGE_KEY_RESET_VERSION, REVIEW_PROMPT_RESET_VERSION],
-      ]);
+      // Also clears hasRated so the chapter-complete star CTA can reappear.
+      await resetReviewPromptState();
     }
 
     const lastProgressTracked = Number(rawTrackedProgress) || 0;

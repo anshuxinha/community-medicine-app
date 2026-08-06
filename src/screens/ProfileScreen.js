@@ -33,6 +33,7 @@ import {
   enableScreenCaptureProtection,
   disableScreenCaptureProtection,
 } from "../utils/screenCaptureProtection";
+import { resetReviewPromptState } from "../utils/reviewPrompt";
 
 const APPEARANCE_OPTIONS = [
   { value: "light", label: "Light", icon: "wb-sunny" },
@@ -305,6 +306,33 @@ const ProfileScreen = () => {
 
   const handleOpenAdminFeedback = () => {
     navigation.navigate("AdminAppFeedback");
+  };
+
+  const handleResetReviewCta = () => {
+    Alert.alert(
+      "Reset review CTA?",
+      "Clears the local 5-star review flags on this device so the chapter-complete stars show again. Does not remove Play Store reviews.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Reset",
+          onPress: async () => {
+            try {
+              await resetReviewPromptState();
+              Alert.alert(
+                "Reset done",
+                "Finish any library chapter to see the 5-star CTA again on this device.",
+              );
+            } catch (err) {
+              Alert.alert(
+                "Reset failed",
+                err?.message || "Could not clear review flags.",
+              );
+            }
+          },
+        },
+      ],
+    );
   };
 
   const navigateToBookmarks = () => navigation.navigate("Bookmarks");
@@ -687,6 +715,11 @@ const ProfileScreen = () => {
                   icon="inbox"
                   label="App Feedback"
                   onPress={handleOpenAdminFeedback}
+                />
+                <ActionRow
+                  icon="refresh"
+                  label="Reset Review CTA (this device)"
+                  onPress={handleResetReviewCta}
                   isLast
                 />
               </>
