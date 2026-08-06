@@ -66,7 +66,7 @@ Older app builds still render this as a blockquote box; newer builds map it to t
 
 ## Mnemonics (not a coloured tag)
 
-Mnemonics are **not** SN/LAQ/EXAMTIP colour tags. Use plain markdown after the list they encode:
+Mnemonics are **not** SN/LAQ/EXAMTIP colour tags. Use plain markdown **only after a finite high-yield list** they encode (see `mnemonics.md`). Prefer no mnemonic over a forced one. **No I RECALL framework.**
 
 ```text
 **Mnemonic:** WORD
@@ -74,23 +74,23 @@ Mnemonics are **not** SN/LAQ/EXAMTIP colour tags. Use plain markdown after the l
 - O: …
 ```
 
-Full **I RECALL** quality gates and when to insert: `mnemonics.md`.
-
-**Order inside an exam section:** SN/LAQ tags → heading/body/list → **Mnemonic** → Exam Tip.
+**Order inside an exam section:** SN/LAQ tags → heading/body/list → **optional Mnemonic** → Exam Tip.
 
 Do **not** invent a `[MNEMONIC]…[/MNEMONIC]` colour tag unless ReadingView is updated in a separate, approved change.
 
 ## Placement rules
 
 1. Put SN/LAQ tags on their **own line**, immediately **above** the section that answers that PYQ.
-2. **Blank line after every individual SN/LAQ tag line**: including between two consecutive tags. Required so the text-table heuristic never treats `[SN]A[/SN]` + `[SN]B[/SN]` or `[SN]…` + title as a 2-column table.
-3. Topic title inside SN/LAQ tags should match the PYQ wording closely (or a clear shortened form).
-4. One tag per discrete exam topic. Prefer multiple SN tags over one vague LAQ tag.
-5. Do **not** nest tags. Do **not** put other markup inside the tag body.
-6. If a section serves **both** SN and LAQ, place SN then LAQ **each followed by a blank line**, then the heading.
-7. Optional: after tags + blank line, keep the existing ALL-CAPS section heading so navigation stays clear.
-8. Mnemonic: after the high-yield list it encodes; before Exam Tip (`mnemonics.md`).
-9. Exam tip: prefer `> **EXAM TIP:** …` on its own line at the **end** of the section (blank line before it).
+2. **Never** open a leaf with a long dump of SN/LAQ tags before `OVERVIEW` / definitions.
+3. **Blank line after every individual SN/LAQ tag line**: including between two consecutive tags. Required so the text-table heuristic never treats `[SN]A[/SN]` + `[SN]B[/SN]` or `[SN]…` + title as a 2-column table.
+4. Topic title inside SN/LAQ tags should match the PYQ wording closely (or a clear shortened form).
+5. One tag per discrete exam topic. Prefer multiple SN tags over one vague LAQ tag.
+6. Do **not** nest tags. Do **not** put other markup inside the tag body.
+7. If a section serves **both** SN and LAQ, place SN then LAQ **each followed by a blank line**, then the heading.
+8. Optional: after tags + blank line, keep the existing ALL-CAPS section heading so navigation stays clear.
+9. If the section is missing, create it from verified sources, then place the tag above it.
+10. Mnemonic (if any): after the list it encodes; before Exam Tip (`mnemonics.md`).
+11. Exam tip: prefer `> **EXAM TIP:** …` on its own line at the **end** of the section (blank line before it).
 
 ### Example
 
@@ -105,16 +105,10 @@ LEVELS OF PREVENTION & MODES OF INTERVENTION
 - Secondary Prevention: ...
 - Tertiary Prevention: ...
 
-**Mnemonic:** PREVENT ladder (4 rungs: Primordial → Primary → Secondary → Tertiary)
-- Primordial: stop risk factors from appearing
-- Primary: stop disease from starting
-- Secondary: catch and treat early
-- Tertiary: limit disability / rehab
-
 > **EXAM TIP:** Define prevention → table of 4 levels × mode of intervention + example each → link to national programmes → close with “levels are complementary”. For short notes: definition + 4 levels with one example each.
 ```
 
-Placement order matters more than this sample phrase: **list → Mnemonic → Exam Tip**. Real reviews must still pass full I RECALL in `mnemonics.md`.
+Optional mnemonic only if the list is a high-yield finite set worth memorizing (after the list, before Exam Tip). Prefer no mnemonic over a forced one. See `mnemonics.md`.
 
 ## Renderer (do not regress)
 

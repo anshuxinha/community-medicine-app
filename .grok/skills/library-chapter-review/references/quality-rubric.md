@@ -89,7 +89,7 @@ Park chapter PDFs are the **primary** reference but are not exhaustive for every
 |-------|-------------|
 | Section hierarchy | Clear ALL-CAPS or equivalent section heads; scannable bullets |
 | Definitions first | Exam answers open with definition/authority |
-| Mnemonics | Use **I RECALL** (`mnemonics.md`): Important, Relevant, Emotional, Contrasting, Associable, Linked, Lean. Insert after high-yield lists (before Exam Tip). Flag wrong mnemonics as accuracy issues; revise weak ones; remove low-value noise |
+| Mnemonics | **List-only** (`mnemonics.md`): only for finite high-yield lists (~4–9 items). No I RECALL framework. Prefer acronym/acrostic/classic CM mnemonics. After list, before Exam Tip. Remove forced/weak/list-less mnemonics |
 | Formulas | Correct formula + units + multiplier + when to use |
 | Exam Tip | Every new SN/LAQ block ends with Exam Tip (brief framing only: not a second essay) |
 | Redundancy | Duplicate blocks across subsections noted; don’t rewrite whole chapter unless asked |
@@ -104,7 +104,7 @@ Park chapter PDFs are the **primary** reference but are not exhaustive for every
 | Tables | Prefer markdown tables for multi-column comparisons when ReadingView supports them |
 | Length | SN-depth ~½–1 page equivalent; LAQ scaffolds deeper without essay padding |
 | Exam Tip tone | Imperative, brief ("Open with definition → table of … → 5 India points → close with …"). No textbook name-drops, no em-dashes |
-| Mnemonic tone | Topic-linked cue + clear letter expansions; vivid is good, inaccurate is not. Prefer ≤9 items. No em-dashes |
+| Mnemonic tone | Only next to real lists; clear letter expansions; accurate over clever. Prefer ≤9 items. No em-dashes |
 | Textbook names | Zero "Park" / "Park-aligned" in live prose; report-only attribution |
 | Em-dashes | Forbidden in live Library text (use period/comma/colon/parentheses) |
 
@@ -124,8 +124,9 @@ Park chapter PDFs are the **primary** reference but are not exhaustive for every
 - Mass-rewrite style when a surgical fix suffices.
 - Apply content, Firebase overrides, commit, or push without explicit user **approval of the report** (approval then triggers the full ship path in SKILL.md Step 7).
 - Ship new SN/LAQ text without an Exam Tip box.
-- Ship high-yield ordered lists with no I RECALL consideration (must add mnemonic, or document why skipped).
-- Force a mnemonic onto every paragraph or invent facts to make a phrase work.
+- Force a mnemonic onto every paragraph, definition, or short 2-item set.
+- Invent facts to make a mnemonic phrase work.
+- Dump SN/LAQ tags before chapter overview instead of above answering sections.
 - Pad answers with generic AI filler that would not earn MD theory marks.
 - Put "verify latest…", "confirm for your exam year", or similar **reader-offload** wording into live Library content (including Exam Tips).
 - Put "Park", "Park-aligned", "as per Park", or other textbook name-drops into live Library content.

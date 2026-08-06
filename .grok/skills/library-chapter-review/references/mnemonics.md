@@ -1,166 +1,100 @@
-# Library mnemonics (I RECALL technique)
+# Library mnemonics (list-only, sparingly)
 
-Source technique: *How to Make Better Mnemonics!* (Memorable Psychiatry and Neurology) — video framework **I RECALL**. Use this when proposing or applying Library content so high-yield lists stick for MD theory exams (SN/LAQ/viva), not as decoration.
+Mnemonics are **optional aids for finite exam lists**, not decoration and not a substitute for understanding.
 
-Mnemonics are a **stepping stone**, not a substitute for understanding. The ones residents remember best are clear, situation-linked, and lean.
+**Do not use the I RECALL framework** (or any mandatory multi-letter quality rubric from external videos) unless the user later selects a specific method after discussion.
 
-## I RECALL checklist (every proposed mnemonic must pass)
+## When to add a mnemonic (hard gates)
 
-| Letter | Criterion | Meaning for Library reviews |
-|--------|-----------|-----------------------------|
-| **I** | **Important** | Only for high-yield exam material (definitions criteria, classic lists, steps, classifications, differential pivots). Skip trivia and low-stakes lists. Use sparingly: like a highlighter, not a yellow page. |
-| **R** | **Relevant** | Maps to a real use moment: SN/LAQ write-up, viva, or standard clinical/public-health decision. Prefer near-term exam/practice use over “lifetime knowledge” fluff. |
-| **E** | **Emotional** | Prefer vivid, amusing, surprising, or slightly provocative imagery over dry labels. If the phrase feels boring, rewrite it. |
-| **C** | **Contrasting** | Distinct from other mnemonics in the same chapter/domain. Avoid overused shells that collide across topics (especially generic `ABCDE`, `PQRST`, or endless same-letter lists unless the domain already owns that shell). |
-| **A** | **Associable** | Each letter/word must map to the **key** concept word, not a filler adjective. Prefer “Renal” over “Acute…” when renal failure is the point. Avoid muddying the same letter for multiple unrelated items when possible. Thesaurus synonyms are allowed when they stay clinically accurate (e.g. hepatic ↔ liver). |
-| **L** | **Linked** | The mnemonic itself must cue the **topic** under exam stress (embed the disease/drug/programme/concept in the phrase or acronym: e.g. topic word as the acronym when it fits). Purely arbitrary phrases with no topic hook fail this gate. |
-| **L** | **Lean** | As long as needed, no longer. Prefer **≤9 items**. Lists of 10+ only when the material truly demands it (e.g. fixed canonical series you cannot drop). Split into two lean mnemonics rather than one bloated one when possible. |
+Add or propose a mnemonic **only if all** are true:
 
-### Hard gates (fail → do not ship)
+1. There is a **finite list** the resident must often memorize for SN/LAQ/viva (typically **about 4–9 ordered items**; classic fixed lists of 5–6 are ideal).
+2. The list is **high-yield** for MD Community Medicine theory (criteria limbs, fixed steps, named components, warning-sign lists, programme pillars that are actually examined as lists).
+3. A table or numbered list alone is not enough for rapid recall, **or** a standard/classic teaching mnemonic already exists and is accurate.
+4. The mapping is **factually correct** (no invented items to force a phrase).
 
-1. Wrong clinical/public-health mapping (letter stands for the wrong item).
-2. Invented facts to force a clever phrase.
-3. Not linked to the topic (unrelated witty sentence the resident cannot cue from the question stem).
-4. Purely decorative: topic is not high-yield or has no clear exam use moment.
-5. Collides with another mnemonic already in the same leaf for a different list (confusable shells).
+### Do **not** add mnemonics for
 
-### Soft preferences
+- Definitions, narrative epidemiology, or long prose
+- Every section “for completeness”
+- Forced letter-glue on trial names or weak 2–3 item sets
+- Unverified numbers, doses, or programme years
+- Vague lifestyle slogans that are not a real exam list
 
-- Prefer **acronyms / acrostics** whose whole word links to the topic (`TRAUMA` for PTSD-style criteria lists) over random sentences.
-- Prefer **name-embedded** cues when the stem is a programme, act, index, or named method.
-- Prefer **one mnemonic per discrete list**, placed next to that list.
-- Keep Hindi/hinglish only if it is already a local high-yield tradition **and** letters remain associable for English exam wording; otherwise use clear English.
-- Never use em-dashes in mnemonic expansions (house rule). Use colons, commas, or hyphens in compounds only.
+## Preferred methods (pick what fits the list)
 
-## When to insert (during `/library-chapter-review`)
+Use the **simplest accurate** method. Prefer classic medical teaching mnemonics when they are already standard and correct.
 
-Add or propose a mnemonic when **all** of the following hold:
+| Method | Best for | Example pattern |
+|--------|----------|-----------------|
+| **Acronym / acrostic** | Ordered criteria or fixed limbs | First letters form a real word or pronounceable cue |
+| **Initialism** | Short fixed sets | Letters only when a word will not form without distortion |
+| **Peg / number rhyme** | Numbered steps (3–7) | Only if clearer than a plain numbered list |
+| **Chunking** | Long lists | Split into 2 short chunks rather than one 12-letter soup |
+| **Link / story** | Processes with sequence | Short chain of vivid images; keep clinical accuracy |
+| **Loci (memory palace)** | Rare; viva-heavy multi-list | Usually too heavy for Library body text |
+| **Standard inherited mnemonics** | Where already universal in CM | e.g. classic warning-sign lists if accurate |
 
-1. The block is (or will be) an SN/LAQ answerable list, criteria set, steps, classification limbs, or classic compare list.
-2. Residents routinely need ordered recall under time pressure.
-3. No accurate mnemonic already exists for that list in the leaf (or the existing one fails I RECALL / is factually wrong).
-4. You can write a version that passes every I RECALL letter above.
+**Default preference for this app:** acronym/acrostic or clean initialism on a **named list**, placed after the list. Avoid witty but unlinked phrases. Avoid Hindi/hinglish unless it is already a standard local teaching mnemonic and remains clear in English exams.
 
-**Do not** force a mnemonic onto:
+## Placement
 
-- Narrative history, single definitions, long prose without a finite list
-- Unverified statistics or time-sensitive numbers
-- Topics where a table/framework is the better exam tool and a mnemonic adds nothing
+1. Put the mnemonic **immediately after the list or table it encodes**.
+2. Put it **before** the Exam Tip when both exist.
+3. **Never** dump a `MNEMONICS` index at the chapter start, and never invent mnemonics with no adjacent list.
+4. Prefer one mnemonic per list; do not stack three mnemonics on one short note.
 
-## Placement in live Library text
-
-### Preferred: immediately after the list it encodes, before Exam Tip
-
-Order inside an exam block:
-
-1. `[SN]` / `[LAQ]` tags (each on its own line + blank line)
-2. Heading + definition/framework body
-3. The list / table / steps
-4. **Mnemonic block** (this file)
-5. `> **EXAM TIP:** …`
-
-### Format A (default: portable, matches Exam Tip family)
-
-One blockquote line for the cue phrase, then plain expansion bullets (not inside the tip):
+### Format (live text)
 
 ```text
-**Mnemonic:** TRAUMA
-- T: Trauma / exposure
-- R: Re-experiencing (intrusions)
-- A: Avoidance
-- U: Unable to function (negative mood/cognition, disability)
-- M: Month or longer duration
-- A: Arousal / hyperarousal
+**Mnemonic:** WORD
+- W: key item one
+- O: key item two
+- R: key item three
+- D: key item four
 ```
 
-Alternate single-line form when the expansion is short (colon or parentheses only; never an em-dash):
+Short form when expansion is obvious:
 
 ```text
-**Mnemonic:** DM-MAM (IMNCI major conditions): Diarrhoea, Malnutrition, Measles, ARI/pneumonia, Malaria
+**Mnemonic:** WORD: item1, item2, item3, item4
 ```
 
-### Format B (chapter “MNEMONICS” section)
+No em-dashes. Expand topic acronyms on first use elsewhere in the leaf per the skill voice rules.
 
-If a leaf already has a `MNEMONICS` heading (ReadingView treats it as a section head), append there **and** keep a short cue next to the primary list when the list is far from that section:
+## Tag placement (related structural rule)
 
-```text
-MNEMONICS
+SN/LAQ tags belong **only immediately above the section that answers that question**.
 
-- PTSD criteria: TRAUMA
-  - T: Trauma / exposure
-  - R: Re-experiencing
-  - A: Avoidance
-  - U: Unable to function
-  - M: Month or longer
-  - A: Arousal
-```
+**Forbidden:** a block of many `[SN]`/`[LAQ]` tags at the start of the leaf before `OVERVIEW` / definitions (question dump).
 
-### Format C (inline after a bullet list)
+If the answering section does not exist yet, **create the section** from Park/official sources, then place the tag above it.
 
-```text
-- Item one
-- Item two
-- Item three
-(Mnemonic: WORD → expansion in order)
-```
-
-Use Format A for new review-written blocks. Use B/C only when matching an existing leaf style.
-
-## Appraisal of existing mnemonics (Step 5)
-
-When auditing a leaf:
+## Appraisal of existing mnemonics
 
 | Verdict | Action |
 |---------|--------|
-| Passes I RECALL + factually correct | Keep; optional polish for associability/lean |
-| Factually wrong | **critical/major**: fix or remove |
-| Important topic but weak (not linked, not emotional, bloated, letter collision) | Propose **revised** mnemonic in report; apply on approval |
-| Low-importance or no use moment | Propose **removal** (Important gate) |
-| Overused shell colliding with another list | Rewrite for Contrast + Link |
+| Accurate classic list mnemonic next to a real list | Keep |
+| Factually wrong | Fix or remove (**critical/major**) |
+| Forced, weak, or not attached to a list | **Remove** |
+| Decorative / slogan | **Remove** |
 
-In the **report**, score each kept/proposed mnemonic against I RECALL (one line: `I✓ R✓ E~ C✓ A✓ L✓ L✓` style is fine).
-
-## Writing workflow (agent)
-
-1. Extract the ordered list of items the resident must recall.
-2. Drop any item that is not needed for the exam use moment (Important + Relevant + Lean).
-3. Build candidates that are **Linked** to the topic word/name first; only then optimize emotion/contrast.
-4. Check each letter for **Associable** key words; swap synonyms if needed without changing medical meaning.
-5. Read it aloud: if it is dull, boost **Emotional** imagery without breaking accuracy.
-6. Ensure it does not collide with other mnemonics in the same chapter (**Contrasting**).
-7. Cap length (**Lean**).
-8. Place with Format A after the list, before Exam Tip.
-9. Note in the report: items covered, I RECALL self-score, and why the cue is linked to the topic.
-
-## Report section (required when any mnemonic work applies)
+## Report section (when any mnemonic work applies)
 
 ```markdown
 ## Proposed / revised mnemonics
 ### <topic> (leaf <id>)
-- Use moment: SN | LAQ | viva | clinical
-- Items (ordered): …
-- Draft:
-  **Mnemonic:** …
-  - …
-- I RECALL: I / R / E / C / A / L(linked) / L(lean)
-- Action: add | replace existing | remove existing
+- List items (ordered): …
+- Method: acronym | initialism | chunking | classic | other
+- Draft: **Mnemonic:** …
+- Action: add | replace | remove
 ```
 
-## Anti-patterns (from the source technique)
+If the user has **not yet chosen** a house mnemonic method, propose list candidates in the report **without** inventing low-quality cues, or omit new mnemonics until method choice is confirmed.
 
-| Anti-pattern | Fix |
-|--------------|-----|
-| Mnemonic for everything (yellow highlighter page) | Keep only high-yield lists |
-| Lifetime-risk lists when the decision is near-term | Reframe items to the actual exam/clinical question |
-| Dry “three Xs” with no imagery | Add vivid linked image/word |
-| Same ABCDE shell for unrelated topics | Unique, topic-linked phrase |
-| Letter stands for a weak adjective, not the key noun | Re-letter from the key word |
-| Clever phrase with no topic hook | Embed topic name/concept in the cue |
-| 12+ item dump when list can split | Split or cut non-essential items |
+## Voice rules
 
-## Voice rules (same as rest of skill)
-
-- No textbook name-dropping (“Park”) in live mnemonic text.
-- No em-dashes (U+2014) or ` -- ` clause dashes.
-- No “verify yourself” / reader-offload language.
-- No invented rates, years, doses, or programme facts to force a rhyme.
+- No textbook name-dropping (“Park”) in live mnemonic text
+- No em-dashes (U+2014) or ` -- ` clause dashes
+- No reader-offload language
+- No invented facts to force a rhyme or letter

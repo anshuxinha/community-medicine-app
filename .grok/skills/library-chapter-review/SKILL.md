@@ -6,20 +6,21 @@ description: >
   D:\Study Related\Books\Park Split and MD Community Medicine PYQs in
   categorized_questions_report.md. Tags SN/LAQ sections with fixed colour
   markers, requires MD-exam-depth new content with Exam Tip boxes, inserts
-  high-yield mnemonics using the I RECALL technique (Important, Relevant,
-  Emotional, Contrasting, Associable, Linked, Lean) at appropriate list
-  sites, fills Park gaps only with verified knowledge, flags outdated facts
-  only when verified from official sources, and suggests PYQ content gaps.
-  Use when the user runs /library-chapter-review, /chapter-review, "review
-  library chapter", "check chapter accuracy", "audit Park chapter", or asks
-  to quality-check a specific Library chapter for MD exam prep.
+  list-only mnemonics sparingly (finite 4–9 item exam lists only; no I RECALL
+  framework), places SN/LAQ tags only above answering sections (never a tag
+  dump before overview), fills Park gaps only with verified knowledge, flags
+  outdated facts only when verified from official sources, and suggests PYQ
+  content gaps. Use when the user runs /library-chapter-review,
+  /chapter-review, "review library chapter", "check chapter accuracy",
+  "audit Park chapter", or asks to quality-check a specific Library chapter
+  for MD exam prep.
 metadata:
-  short-description: "QA Library chapters vs Park + PYQs (SN/LAQ + Exam Tip + mnemonics)"
+  short-description: "QA Library chapters vs Park + PYQs (SN/LAQ + Exam Tip + list mnemonics)"
 ---
 
 # /library-chapter-review: Library chapter accuracy & exam quality
 
-Review one Library chapter for an **MD Community Medicine resident** exam prep standard: factual accuracy, academic structure, PYQ coverage, fixed SN/LAQ colour tags, **exam-ready new content** (depth + Exam Tip), and **I RECALL mnemonics** on high-yield recall lists.
+Review one Library chapter for an **MD Community Medicine resident** exam prep standard: factual accuracy, academic structure, PYQ coverage, fixed SN/LAQ colour tags (only above real sections), **exam-ready new content** (depth + Exam Tip), and **optional list-only mnemonics** where a finite high-yield list must be memorized.
 
 ## Usage
 
@@ -51,7 +52,7 @@ Read `references/paths.md`. Critical paths:
 | PYQs | `D:\IGIMS\Major Tests & Question Papers\categorized_questions_report.md` |
 | Rubric | `references/quality-rubric.md` |
 | SN/LAQ/EXAMTIP tags | `references/tag-format.md` |
-| Mnemonics (I RECALL) | `references/mnemonics.md` |
+| Mnemonics (list-only) | `references/mnemonics.md` |
 | Bulk Park gap scan | `scripts/scan_park_library_gaps.py` → `dist/park_gap_scans/latest.md` |
 
 ## Bulk Park gap scan (before multi-chapter deep review)
@@ -221,19 +222,22 @@ The tip must tell the reader **how to frame the answer in the exam** (heading or
 
 **Forbidden in Exam Tip text:** mark-count or type-prefix artifacts such as `SN (5)`, `LAQ (10)`, `LAQ (10–15)`, `SN HDI (5)`, `5 marks`, `10 marks`, or leading `LAQ/SN on …:`. Question type is already shown by the SN/LAQ badges; the tip is framing only.
 
-Also place the matching `[SN]…[/SN]` and/or `[LAQ]…[/LAQ]` tag(s) above the section when tagging that topic: **each tag on its own line, each followed by a blank line** (never stack tags on adjacent lines; the text-table heuristic will turn them into a purple 2-column table).
+Also place the matching `[SN]…[/SN]` and/or `[LAQ]…[/LAQ]` tag(s) **immediately above the answering section** when tagging that topic: **each tag on its own line, each followed by a blank line** (never stack tags on adjacent lines; the text-table heuristic will turn them into a purple 2-column table).
 
-### Mnemonics (I RECALL) on high-yield lists
+**Forbidden tag placement:** a dump of many SN/LAQ tags at the **start of the leaf before `OVERVIEW` / definitions**. Tags live only next to the content they mark. If no section exists yet, **create the section** from Park/official sources, then tag it.
 
-Whenever a new/expanded SN/LAQ block (or an existing leaf section under review) has a **finite high-yield recall list** (criteria, steps, classification limbs, classic differentials, programme components), apply `references/mnemonics.md`:
+### Mnemonics (list-only; no I RECALL)
 
-1. **Decide if a mnemonic is worth making** (Important + Relevant). Skip low-stakes or pure narrative.
-2. **Draft with I RECALL**: Important, Relevant, Emotional, Contrasting, Associable, Linked to the topic, Lean (prefer ≤9 items).
-3. **Place** the mnemonic **after the list/table it encodes and before the Exam Tip** (Format A in `mnemonics.md`).
-4. **Appraise existing** mnemonics in the leaf: keep, revise, or remove per the same checklist. Fix factually wrong ones as accuracy findings.
-5. **Never** invent facts to force a clever phrase. Never dump a mnemonic on every paragraph.
+Apply `references/mnemonics.md`. Rules in short:
 
-Default live format:
+1. **Only** for finite high-yield lists residents must memorize (typically about **4–9 items**, e.g. 5–6 fixed limbs). Not for narrative, definitions, or every section.
+2. **Do not use the I RECALL framework.** Prefer simple accurate methods: acronym/acrostic, initialism, chunking, or a classic CM teaching mnemonic when already standard and correct.
+3. **Place** after the list/table it encodes and **before** Exam Tip.
+4. **Remove** weak, forced, or list-less mnemonics on apply.
+5. **Never** invent facts to force a phrase. Prefer no mnemonic over a bad one.
+6. If the user has not chosen a house method yet, omit new mnemonics or list candidate lists in the report only.
+
+Default live format (when a mnemonic is warranted):
 
 ```text
 **Mnemonic:** WORD
@@ -243,15 +247,14 @@ Default live format:
 - D: …
 ```
 
-Full rules, anti-patterns, and report scoring: `references/mnemonics.md`.
-
 ### Draft quality gate before including in report or applying
 
 - [ ] Matches SN vs LAQ depth above
 - [ ] Opens with definition/framework as required
 - [ ] No unverified statistics
-- [ ] High-yield recall lists have an **I RECALL** mnemonic (or an explicit report note why none fits)
-- [ ] Mnemonic sits after the list and **before** Exam Tip when present
+- [ ] SN/LAQ tags sit **only** above answering sections (no pre-overview tag dump)
+- [ ] Mnemonics only for finite high-yield lists (or none); no I RECALL scoring required
+- [ ] Mnemonic (if any) sits after the list and **before** Exam Tip
 - [ ] Ends with Exam Tip (`> **EXAM TIP:** …` preferred)
 - [ ] Precise medical English; no AI filler
 - [ ] **Acronyms expanded on first use** in each leaf (`Full Name (ACRONYM)`), then short form OK
@@ -278,13 +281,15 @@ Use the **fixed** format in `references/tag-format.md` only:
 
 Rules:
 
-1. SN/LAQ: one full line per tag, immediately above the answering section.
-2. **Always leave a blank line after SN/LAQ tag block(s)** before the section heading/body: otherwise `ReadingView` text-table preprocessing can turn `[SN]…` + title into a fake 2-column table.
-3. Align titles with PYQ wording when possible.
-4. Both SN and LAQ tags allowed if a section serves both.
-5. Exam tip: one full line at the **end** of each new/expanded exam block (prefer `> **EXAM TIP:** …` and a blank line before it). Must render as a box, never as raw `[EXAMTIP]…` body text. **No** `SN (5)` / `LAQ (10)` mark-count prefixes.
-6. In the report, list **proposed tag insertions** as exact before/after snippets (file leaf id + surrounding lines).
-7. Do not invent alternate colours or markup.
+1. SN/LAQ: one full line per tag, immediately above the answering section (heading + body for that PYQ).
+2. **Never** place a block of SN/LAQ tags before chapter `OVERVIEW` / opening definitions as a “question index.”
+3. **Always leave a blank line after every SN/LAQ tag line** before the next tag or heading/body: otherwise `ReadingView` text-table preprocessing can turn `[SN]…` + title into a fake 2-column table.
+4. Align titles with PYQ wording when possible.
+5. Both SN and LAQ tags allowed if a section serves both.
+6. If the answering section is missing, create it from verified sources, then tag it.
+7. Exam tip: one full line at the **end** of each new/expanded exam block (prefer `> **EXAM TIP:** …` and a blank line before it). Must render as a box, never as raw `[EXAMTIP]…` body text. **No** `SN (5)` / `LAQ (10)` mark-count prefixes.
+8. In the report, list **proposed tag insertions** as exact before/after snippets (file leaf id + surrounding lines).
+9. Do not invent alternate colours or markup.
 
 If `ReadingView.js` lacks SN/LAQ/EXAMTIP block styles **or** still folds exam tags into text-tables, restore parser + styles from `references/tag-format.md` before applying tags to live content.
 
@@ -297,7 +302,8 @@ Check and note:
 - Contradictions between leaves of the same chapter
 - Weak LAQ scaffolding (lists without definitions/frameworks)
 - Missing Exam Tip on newly proposed blocks
-- **Mnemonics (I RECALL):** for each high-yield list, is there a mnemonic? Does it pass Important / Relevant / Emotional / Contrasting / Associable / Linked / Lean? Propose add / replace / remove (see `references/mnemonics.md`)
+- **Tag placement:** no SN/LAQ dump before overview; tags only above answering sections
+- **Mnemonics (list-only):** only for finite high-yield lists (~4–9 items); remove forced/weak/list-less mnemonics; no I RECALL framework (see `references/mnemonics.md`)
 - **Acronyms:** first use in each leaf is `Full Name (ACRONYM)`; no bare unexplained programme/disease initialisms
 - Encoding glitches / OCR junk
 
@@ -338,12 +344,12 @@ Write `bundleDir/review_report.md` with this structure:
 
 ## Proposed content additions (PYQ gaps)
 (for each missing/partial: **full MD-exam draft** per Step 3a: not outline-only;
- include Park coverage + sources used; include I RECALL mnemonic after high-yield lists when warranted;
+ include Park coverage + sources used; list-only mnemonic after a finite high-yield list only when warranted;
  end each draft with Exam Tip)
 
 ## Proposed / revised mnemonics
-(for each: leaf id, use moment, ordered items, full **Mnemonic:** draft, I RECALL self-score, action add|replace|remove;
- see `references/mnemonics.md`)
+(for each: leaf id, ordered list items, method, full **Mnemonic:** draft or removal, action add|replace|remove;
+ see `references/mnemonics.md`. Prefer omit if no clean list mnemonic)
 
 ## Optional apply plan
 (ordered surgical edits; do not apply unless user **approves** the report)
@@ -358,8 +364,8 @@ Also give the user a short in-chat summary with the bundle path and top findings
 ### 7a: Content apply
 
 1. Edit the **effective** leaf content in `src/data/mockData.json` (respect override-backed text as the baseline when merging).
-2. Insert SN/LAQ tags and full new blocks that pass Step 3a (depth + verified gap-fill + I RECALL mnemonics on high-yield lists + Exam Tip).
-3. Apply approved mnemonic add/replace/remove actions from the report (placement: after list, before Exam Tip).
+2. Insert SN/LAQ tags **only above answering sections** (never pre-overview dumps) and full new blocks that pass Step 3a (depth + verified gap-fill + optional list-only mnemonics + Exam Tip).
+3. Apply approved mnemonic add/replace/remove actions (list-only; after list, before Exam Tip). Remove weak or list-less mnemonics.
 4. Surgical edits only: no drive-by refactors.
 5. **Pre-flight:** grep applied text for forbidden reader-offload phrases (`verify latest`, `exam year`, `confirm yourself`, `NEEDS_`, "commonly taught; confirm", etc.), **textbook name-dropping** (`Park`, `park-aligned`), and **em-dashes** (U+2014, ` -- `). Remove all hits before ship. Confirm **acronyms expand on first use** in each changed leaf.
 6. Live text must be **authoritative finished prose**. Verification is the agent's job before publish, not the subscriber's.
@@ -431,9 +437,9 @@ After ship, report:
 - [ ] Every proposed new SN/LAQ block is MD-exam depth for its type
 - [ ] Park gaps filled only with non-hallucinated, cross-verified material (sources noted **in the report**)
 - [ ] Every new/expanded exam block ends with Exam Tip
-- [ ] High-yield recall lists covered by I RECALL mnemonics (or explicit skip rationale in report)
-- [ ] Existing weak/wrong mnemonics appraised (keep / revise / remove)
-- [ ] Proposed mnemonics section present when any mnemonic work applies
+- [ ] SN/LAQ tags only above answering sections (no pre-overview tag dump)
+- [ ] Mnemonics only for finite high-yield lists when warranted; weak/list-less ones removed or proposed for removal
+- [ ] No I RECALL framework required; method per `mnemonics.md`
 - [ ] No reader-offload / "verify yourself" language in proposed live content
 - [ ] No "Park" / textbook name-dropping in proposed live content
 - [ ] No em-dashes in proposed live content
