@@ -371,8 +371,16 @@ python scripts/publish_library_override.py <leafId> --reason "ChN library review
 ```
 
 - Repeat for each leaf id (e.g. `3-1` … `3-6`).
-- Confirm each response: `ok: true`, `status: "active"`, sensible `contentLen`.
+- Confirm each response: `ok: true`, `status: "active"`, sensible `contentLen`, **`markAsNew: false`** (default).
 - Overrides make content visible in the app **without** a native rebuild (app merges active/approved overrides at runtime).
+
+**Progress / NEW badge (mandatory for this skill):**
+
+- Library chapter review is a **silent quality edit**. Do **not** pass `--mark-as-new`.
+- Do **not** set `recentlyUpdated: true` on mockData leaves for review applies.
+- Do **not** fill `updatedSegments` unless the user explicitly wants a NEW badge and in-app highlight for a product announcement.
+- Default publish payload uses `markAsNew: false` so users who already read the chapter **keep their progress and checkmark** (no NEW reset).
+- Only use `python scripts/publish_library_override.py <leafId> --mark-as-new ...` if the user explicitly asks to announce the change as a Library update.
 
 ### 7d: EAS Update (**ask first**: never auto-run)
 

@@ -186,6 +186,8 @@ const AdminLibraryReviewScreen = () => {
         proposalId: selectedSuggestion.proposalId,
         proposedContent: editedContent,
         updatedSegments: selectedSuggestion.updatedSegments || [],
+        // Admin-approved product updates should surface as NEW until re-read.
+        markAsNew: true,
         status: "active",
         summaryReason: editedReason,
         sourceUpdates: selectedSuggestion.sourceUpdates || [],

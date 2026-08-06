@@ -40,6 +40,15 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("library_id", help="Library leaf id, e.g. 2")
     parser.add_argument("--reason", default="", help="summaryReason for override")
+    parser.add_argument(
+        "--mark-as-new",
+        action="store_true",
+        help=(
+            "Flag the leaf as recentlyUpdated so the app shows a NEW badge and "
+            "requires re-read. Default is silent (library chapter review quality "
+            "edits preserve user progress)."
+        ),
+    )
     args = parser.parse_args()
     library_id = str(args.library_id)
 
@@ -77,6 +86,9 @@ def main() -> None:
         "proposalId": f"override-{library_id}-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}",
         "proposedContent": content,
         "updatedSegments": [],
+        # Default silent: do not reset Library progress / show NEW.
+        # Pass --mark-as-new only for intentional product update announcements.
+        "markAsNew": bool(args.mark_as_new),
         "status": "active",
         "summaryReason": reason,
         "sourceUpdates": [{"title": "publish_library_override.py", "type": "manual_override"}],
@@ -96,6 +108,7 @@ def main() -> None:
                 "contentLen": len(data_out.get("proposedContent") or ""),
                 "approvedAt": data_out.get("approvedAt"),
                 "proposalId": data_out.get("proposalId"),
+                "markAsNew": data_out.get("markAsNew"),
             },
             indent=2,
         )

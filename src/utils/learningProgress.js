@@ -7,10 +7,11 @@ import {
 import {
   LEAF_CONTENT_ENTRIES,
   CONTENT_SECTIONS,
+  isEntryReadForProgress,
 } from "./contentRegistry";
 
 export const isLeafRead = (entry, readItemVersions = {}) =>
-  !!entry && readItemVersions?.[entry.key] === entry.signature;
+  isEntryReadForProgress(entry, readItemVersions);
 
 export const getTheoryLeaves = () =>
   LEAF_CONTENT_ENTRIES.filter((entry) => entry.section === "theory");

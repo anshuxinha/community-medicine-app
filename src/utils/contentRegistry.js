@@ -96,14 +96,28 @@ const applyOverrideToTheory = (theoryItems, override) => {
     targetItem.title = override.libraryTitle;
   }
 
-  targetItem.recentlyUpdated = true;
-  targetItem.updatedSegments = Array.isArray(override.updatedSegments)
+  const updatedSegments = Array.isArray(override.updatedSegments)
     ? override.updatedSegments
     : [];
+  const hasHighlightSegments = updatedSegments.some(
+    (segment) => String(segment || "").trim().length > 0,
+  );
+  // Silent quality edits (library chapter review) set markAsNew: false and omit
+  // highlight segments so progress / NEW badge are not reset. Intentional product
+  // updates set markAsNew: true and/or non-empty updatedSegments.
+  if (override.markAsNew === false) {
+    targetItem.recentlyUpdated = false;
+  } else if (override.markAsNew === true || hasHighlightSegments) {
+    targetItem.recentlyUpdated = true;
+  } else {
+    targetItem.recentlyUpdated = false;
+  }
+  targetItem.updatedSegments = updatedSegments;
   targetItem.overrideMetadata = {
     proposalId: override.proposalId || null,
     approvedAt: override.approvedAt || null,
     approvedBy: override.approvedBy || null,
+    markAsNew: targetItem.recentlyUpdated === true,
   };
 };
 
@@ -225,6 +239,29 @@ export const isItemReadCurrent = (readItemVersions, section, item) =>
   getReadVersionForItem(readItemVersions, section, item) ===
   getContentSignature(item);
 
+/**
+ * Whether a leaf counts as completed for progress / checkmarks.
+ * Signature match always counts. A stale signature still counts when the leaf
+ * is not flagged recentlyUpdated (silent content quality edits). Flagged NEW
+ * leaves require a re-read to match the new signature.
+ */
+export const isEntryReadForProgress = (entry, readItemVersions = {}) => {
+  if (!entry) return false;
+  const stored = readItemVersions?.[entry.key];
+  if (typeof stored !== "string" || !stored) return false;
+  if (stored === entry.signature) return true;
+  return entry.recentlyUpdated !== true;
+};
+
+export const isItemReadForProgress = (readItemVersions, section, item) => {
+  if (!item) return false;
+  const key = getContentKey(section, item.id);
+  const stored = readItemVersions?.[key];
+  if (typeof stored !== "string" || !stored) return false;
+  if (stored === getContentSignature(item)) return true;
+  return item?.recentlyUpdated !== true;
+};
+
 export const isItemPendingUpdate = (readItemVersions, section, item) =>
   item?.recentlyUpdated === true && !isItemReadCurrent(readItemVersions, section, item);
 
@@ -248,13 +285,13 @@ export const getItemStatus = (item, section, readItemVersions) => {
     return "updated";
   }
 
-  return isItemReadCurrent(readItemVersions, section, item) ? "read" : "none";
+  return isItemReadForProgress(readItemVersions, section, item) ? "read" : "none";
 };
 
 export const getEffectiveReadCount = (readItemVersions = {}) =>
   LEAF_CONTENT_ENTRIES.reduce(
     (count, entry) =>
-      readItemVersions?.[entry.key] === entry.signature ? count + 1 : count,
+      isEntryReadForProgress(entry, readItemVersions) ? count + 1 : count,
     0,
   );
 
@@ -281,7 +318,7 @@ export const getNextUnreadLeafEntry = (contentKey, readItemVersions = {}) => {
 
   for (let i = from; i < LEAF_CONTENT_ENTRIES.length; i += 1) {
     const entry = LEAF_CONTENT_ENTRIES[i];
-    if (readItemVersions?.[entry.key] !== entry.signature) {
+    if (!isEntryReadForProgress(entry, readItemVersions)) {
       return entry;
     }
   }
@@ -292,7 +329,7 @@ export const getNextUnreadLeafEntry = (contentKey, readItemVersions = {}) => {
 export const getReadTitles = (readItemVersions = {}) =>
   [...CONTENT_ENTRIES_BY_TITLE.entries()]
     .filter(([, entries]) =>
-      entries.some((entry) => readItemVersions?.[entry.key] === entry.signature),
+      entries.some((entry) => isEntryReadForProgress(entry, readItemVersions)),
     )
     .map(([title]) => title);
 
