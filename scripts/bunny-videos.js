@@ -303,6 +303,9 @@ const upsertVideoDoc = async (db, config, video, options = {}) => {
   return {
     id: video.guid,
     isNew,
+    // True when the Firestore doc was already flagged isNew (e.g. prior sync
+    // without --notify-new). Used so a later --notify-new pass can still push.
+    existingIsNew: existing.isNew === true,
     wasNotified: Boolean(existing.notifiedAt),
     payload,
   };
@@ -331,6 +334,9 @@ const getExpoPushTokens = async (db) => {
 
 const sendVideoPushNotification = async (db, video, customBody) => {
   const tokens = await getExpoPushTokens(db);
+  console.log(
+    `Sending video push for "${video.title}" to ${tokens.length} Expo token(s)...`,
+  );
   if (tokens.length === 0) return 0;
 
   const body = customBody || (video.description ? `${video.title} - ${video.description}` : video.title);
@@ -346,6 +352,7 @@ const sendVideoPushNotification = async (db, video, customBody) => {
   }));
 
   let accepted = 0;
+  let ticketErrors = 0;
 
   for (let index = 0; index < messages.length; index += 100) {
     const chunk = messages.slice(index, index + 100);
@@ -374,6 +381,7 @@ const sendVideoPushNotification = async (db, video, customBody) => {
           accepted += 1;
           return;
         }
+        ticketErrors += 1;
         const token = chunk[ticketIndex]?.to || "unknown";
         console.warn(
           `Expo push ticket error for ${token}:`,
@@ -387,6 +395,10 @@ const sendVideoPushNotification = async (db, video, customBody) => {
       accepted += chunk.length;
       console.warn("Could not parse Expo push response:", parseError?.message);
     }
+  }
+
+  if (ticketErrors > 0) {
+    console.warn(`Expo accepted ${accepted}; ${ticketErrors} ticket error(s).`);
   }
 
   return accepted;
@@ -442,6 +454,7 @@ const syncVideos = async (db, config, options) => {
   let page = 1;
   let syncedCount = 0;
   let notifiedCount = 0;
+  let notifyTargets = 0;
   let isFirstVideo = true;
 
   while (true) {
@@ -467,9 +480,27 @@ const syncVideos = async (db, config, options) => {
       isFirstVideo = false;
       syncedCount += 1;
 
-      if (notifyNew && result.isNew && !result.wasNotified) {
+      // Notify when never pushed before and either:
+      // - Firestore doc was created on this run, or
+      // - doc already exists with isNew (prior sync without a successful notify).
+      // Previously only result.isNew was checked, so re-running --notify-new
+      // after a silent first sync skipped the push entirely.
+      const shouldNotify =
+        notifyNew &&
+        !result.wasNotified &&
+        (result.isNew || result.existingIsNew);
+
+      if (shouldNotify) {
+        notifyTargets += 1;
+        console.log(
+          `Notify target: ${result.payload.title} (${result.isNew ? "created this run" : "existing isNew, never notified"})`,
+        );
         notifiedCount += await sendVideoPushNotification(db, result.payload, customMessage);
         await markNotified(db, result.id);
+      } else if (notifyNew && result.isNew) {
+        console.log(
+          `Skipped notify for ${result.payload.title}: already has notifiedAt.`,
+        );
       }
     }
 
@@ -479,7 +510,9 @@ const syncVideos = async (db, config, options) => {
 
   console.log(`Synced ${syncedCount} Bunny video(s) to Firestore.`);
   if (notifyNew) {
-    console.log(`Sent ${notifiedCount} Expo push notification(s).`);
+    console.log(
+      `Notify targets: ${notifyTargets}. Sent ${notifiedCount} Expo push notification(s).`,
+    );
   }
 };
 
