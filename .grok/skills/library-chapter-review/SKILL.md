@@ -137,7 +137,7 @@ Residents pay for **finished, trustworthy Library text**. All of the following a
 **Allowed in Exam Tips only:** how to **structure the answer** (order of headings, tables to draw), not "go verify this fact".
 **If a figure cannot be verified:** omit it or use qualitative wording the agent can defend. Never tell the reader to verify.
 
-### Live prose voice: no textbook name-dropping, no em-dashes
+### Live prose voice: no textbook name-dropping, no em-dashes, expand acronyms on first use
 
 Park (and other textbooks) are **agent-side references** for accuracy audits and the **review report**. They are not branding for the app reader.
 
@@ -157,7 +157,17 @@ Park (and other textbooks) are **agent-side references** for accuracy audits and
    - **Use instead:** a period and new sentence; a comma, colon, or semicolon; parentheses for asides; a regular hyphen only for true compound words (e.g. `well-known`, `cost-effectiveness`).
    - This matches the global no-em-dashes house rule and applies to all proposed and shipped Library prose.
 
-**Pre-flight (mandatory before apply/ship):** search each changed leaf for `Park`, `park-aligned`, U+2014 em-dash, and ` -- `. Fail ship if any hit remains in live text (case-insensitive for Park, except incidental words that are not the textbook, which should not appear).
+3. **Acronyms: expand on first use (mandatory in every leaf)**
+   - The **first time** an acronym or initialism appears in a leaf, write the **full expanded form** with the acronym in parentheses, then use the short form freely after.
+   - **Format:** `Full Name (ACRONYM)` on first use. Examples: `Group A β-haemolytic Streptococcus (GAS)`, `National Programme for Prevention and Control of Non-Communicable Diseases (NP-NCD)`, `Body Mass Index (BMI)`, `World Health Organization (WHO)`.
+   - Apply to medical, programme, legal, and technical acronyms a resident might not instantly expand (e.g. GAS, RHD, NPCDCS, NP-NCD, DASH, STEPS, COTPA, NPPCD, RPwD, VIA, HPV, TIA, RTA, HDL, LDL).
+   - **Per-leaf rule:** expand on first use **within each leaf** (readers open leaves separately). One-leaf chapters expand once at first appearance in that leaf.
+   - **Do not** open a section with a bare acronym the body never expands (e.g. “GAS pharyngitis” with no prior expansion).
+   - **Exceptions:** SI units (`mmHg`, `mg/dL`, `kg`, `cm`) and pure formula symbols already defined in context. Still expand programme and disease acronyms.
+   - **Audit existing text** during review: flag bare first-use acronyms as clarity findings and fix on apply.
+   - **Pre-flight on apply:** spot-check high-yield acronyms in changed leaves; first occurrence must be `Expanded (ACRONYM)` form.
+
+**Pre-flight (mandatory before apply/ship):** search each changed leaf for `Park`, `park-aligned`, U+2014 em-dash, and ` -- `. Fail ship if any hit remains in live text (case-insensitive for Park, except incidental words that are not the textbook, which should not appear). Also confirm first-use expansions for major acronyms introduced in that leaf.
 
 ## Step 3: PYQ coverage map
 
@@ -244,6 +254,7 @@ Full rules, anti-patterns, and report scoring: `references/mnemonics.md`.
 - [ ] Mnemonic sits after the list and **before** Exam Tip when present
 - [ ] Ends with Exam Tip (`> **EXAM TIP:** …` preferred)
 - [ ] Precise medical English; no AI filler
+- [ ] **Acronyms expanded on first use** in each leaf (`Full Name (ACRONYM)`), then short form OK
 - [ ] **No textbook name-dropping** ("Park", "Park-aligned", etc.) in live draft text
 - [ ] **No em-dashes** (U+2014) or ` -- ` clause dashes
 
@@ -287,6 +298,7 @@ Check and note:
 - Weak LAQ scaffolding (lists without definitions/frameworks)
 - Missing Exam Tip on newly proposed blocks
 - **Mnemonics (I RECALL):** for each high-yield list, is there a mnemonic? Does it pass Important / Relevant / Emotional / Contrasting / Associable / Linked / Lean? Propose add / replace / remove (see `references/mnemonics.md`)
+- **Acronyms:** first use in each leaf is `Full Name (ACRONYM)`; no bare unexplained programme/disease initialisms
 - Encoding glitches / OCR junk
 
 ## Step 6: Write the report
@@ -349,7 +361,7 @@ Also give the user a short in-chat summary with the bundle path and top findings
 2. Insert SN/LAQ tags and full new blocks that pass Step 3a (depth + verified gap-fill + I RECALL mnemonics on high-yield lists + Exam Tip).
 3. Apply approved mnemonic add/replace/remove actions from the report (placement: after list, before Exam Tip).
 4. Surgical edits only: no drive-by refactors.
-5. **Pre-flight:** grep applied text for forbidden reader-offload phrases (`verify latest`, `exam year`, `confirm yourself`, `NEEDS_`, "commonly taught; confirm", etc.), **textbook name-dropping** (`Park`, `park-aligned`), and **em-dashes** (U+2014, ` -- `). Remove all hits before ship.
+5. **Pre-flight:** grep applied text for forbidden reader-offload phrases (`verify latest`, `exam year`, `confirm yourself`, `NEEDS_`, "commonly taught; confirm", etc.), **textbook name-dropping** (`Park`, `park-aligned`), and **em-dashes** (U+2014, ` -- `). Remove all hits before ship. Confirm **acronyms expand on first use** in each changed leaf.
 6. Live text must be **authoritative finished prose**. Verification is the agent's job before publish, not the subscriber's.
 
 ### 7b: Git commit + push (**always** on approval)
@@ -425,13 +437,14 @@ After ship, report:
 - [ ] No reader-offload / "verify yourself" language in proposed live content
 - [ ] No "Park" / textbook name-dropping in proposed live content
 - [ ] No em-dashes in proposed live content
+- [ ] Acronyms expanded on first use in proposed live content (per leaf)
 - [ ] `review_report.md` written under the bundle directory
 - [ ] No live content mutation unless user approved
 
 ### On approval (additional)
 
 - [ ] `mockData.json` (and related apply files) updated
-- [ ] Pre-flight: no reader-offload phrases, no textbook name-dropping, no em-dashes in shipped text
+- [ ] Pre-flight: no reader-offload phrases, no textbook name-dropping, no em-dashes, acronyms expanded on first use in shipped text
 - [ ] **Git commit completed**
 - [ ] **Git push completed** to remote tracking branch
 - [ ] **Firebase overrides published** (`status: active`) for **every** changed leaf

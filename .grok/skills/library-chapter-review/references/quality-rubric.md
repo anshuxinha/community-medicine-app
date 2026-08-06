@@ -99,6 +99,7 @@ Park chapter PDFs are the **primary** reference but are not exhaustive for every
 | Check | Expectation |
 |-------|-------------|
 | Clarity | Precise medical English; no AI fluff |
+| Acronyms | **First use in each leaf:** `Full Name (ACRONYM)`; short form only after that. Never open a topic with a bare unexplained acronym (e.g. bare `GAS` without Group A β-haemolytic Streptococcus). Expand programme, disease, legal, and technical initialisms. SI units and pure formula symbols may stay short. |
 | Consistency | Same term for same concept throughout (e.g. HWC vs Ayushman Arogya Mandir: state current official name if tagging updates) |
 | Tables | Prefer markdown tables for multi-column comparisons when ReadingView supports them |
 | Length | SN-depth ~½–1 page equivalent; LAQ scaffolds deeper without essay padding |
@@ -129,3 +130,4 @@ Park chapter PDFs are the **primary** reference but are not exhaustive for every
 - Put "verify latest…", "confirm for your exam year", or similar **reader-offload** wording into live Library content (including Exam Tips).
 - Put "Park", "Park-aligned", "as per Park", or other textbook name-drops into live Library content.
 - Use em-dashes (U+2014) or ` -- ` clause dashes in live Library content.
+- Introduce bare acronyms without a prior full-form expansion in that leaf.
