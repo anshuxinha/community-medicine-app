@@ -31,6 +31,7 @@ import {
 import {
   getHasRatedFiveStarReview,
   requestNativeStoreReview,
+  waitForUiSettle,
 } from "../utils/reviewPrompt";
 import { submitAppFeedback } from "../services/feedbackService";
 
@@ -432,8 +433,12 @@ const ReadingScreen = ({ route, navigation }) => {
   }, [celebration, navigation]);
 
   const handleRateFiveStars = useCallback(async () => {
-    await requestNativeStoreReview({ markRated: true });
     setShowReviewCta(false);
+    // Dismiss our dialog before launching Play/App Store review. The native
+    // review UI often never appears while a Paper Dialog / Portal is focused.
+    setCelebration(null);
+    await waitForUiSettle(450);
+    await requestNativeStoreReview({ markRated: true });
   }, []);
 
   const handleSubmitLowRatingFeedback = useCallback(

@@ -1,4 +1,4 @@
-import { Alert, Linking } from "react-native";
+import { Alert, InteractionManager, Linking, Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as StoreReview from "expo-store-review";
 
@@ -7,6 +7,10 @@ const STORAGE_KEY_HAS_RATED = "reviewPrompt_hasRated";
 const STORAGE_KEY_LAST_PROGRESS = "reviewPrompt_lastProgress";
 const STORAGE_KEY_RESET_VERSION = "reviewPrompt_resetVersion";
 const REVIEW_PROMPT_RESET_VERSION = "2026-05-04-review-flow-fix";
+
+const ANDROID_PACKAGE = "com.communitymed.app";
+const ANDROID_PLAY_WEB_URL = `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE}`;
+const ANDROID_MARKET_URL = `market://details?id=${ANDROID_PACKAGE}`;
 
 /** Opens the global feedback modal (registered by ReviewFeedbackModal). */
 let openFeedbackFormHandler = null;
@@ -33,7 +37,6 @@ function showFeedbackForm(handlers = {}) {
     openFeedbackFormHandler(handlers);
     return;
   }
-  // Modal not mounted yet; still run soft-dismiss side effects.
   handlers.onSoftDismiss?.();
 }
 
@@ -51,6 +54,20 @@ export async function getHasRatedFiveStarReview() {
     console.warn("reviewPrompt: failed to read hasRated", err?.message);
     return false;
   }
+}
+
+/**
+ * Wait until interactions finish, then an extra frame for modals to unmount.
+ * Native in-app review often fails silently while a Paper Dialog is still up.
+ * @param {number} [extraMs]
+ * @returns {Promise<void>}
+ */
+export function waitForUiSettle(extraMs = 400) {
+  return new Promise((resolve) => {
+    InteractionManager.runAfterInteractions(() => {
+      setTimeout(resolve, extraMs);
+    });
+  });
 }
 
 /**
@@ -100,7 +117,6 @@ export async function maybePromptReview(readingProgress) {
       });
     }
 
-    // Always update the tracked progress
     await AsyncStorage.setItem(
       STORAGE_KEY_LAST_PROGRESS,
       String(currentPercent),
@@ -124,7 +140,6 @@ function showPrePrompt(handlers = {}) {
         text: "Not Really",
         style: "cancel",
         onPress: () => {
-          // Ask for improvement feedback; soft-dismiss runs after submit/skip.
           showFeedbackForm({ onSoftDismiss });
         },
       },
@@ -171,20 +186,46 @@ function showFiveStarPrompt(handlers = {}) {
  * Launch platform in-app review (Play In-App Review / StoreKit) when available.
  * Falls back to the public store listing URL.
  *
- * @param {{ markRated?: boolean }} [options]
+ * Callers that show a modal must dismiss it first and await waitForUiSettle()
+ * before this, or the native review UI often never appears on Android.
+ *
+ * @param {{ markRated?: boolean, preferStoreListing?: boolean }} [options]
  *   When markRated is true (default for the 5-star CTA), persist hasRated so
  *   the chapter-complete CTA stops showing. Store SDKs do not confirm stars.
+ *   preferStoreListing: skip in-app API and open the store page (rare).
  */
 export async function requestNativeStoreReview(options = {}) {
   const markRated = options.markRated !== false;
+  const preferStoreListing = options.preferStoreListing === true;
 
   try {
-    const available = await StoreReview.hasAction();
-    if (available) {
-      await StoreReview.requestReview();
-    } else {
-      await openStoreReviewPage();
+    if (!preferStoreListing) {
+      // Always attempt the native flow first when the platform reports support.
+      // hasAction can be true while the dialog still fails (quota / overlay);
+      // we still try, then fall back to the store page only if the API rejects.
+      let available = false;
+      try {
+        available = await StoreReview.hasAction();
+      } catch (_err) {
+        available = false;
+      }
+
+      if (available) {
+        try {
+          await StoreReview.requestReview();
+          // Success path: requestReview resolves even when the OS decides not
+          // to show UI (quota). That is expected; we still mark rated for CTA.
+          return;
+        } catch (err) {
+          console.warn(
+            "reviewPrompt: requestReview threw, falling back to store",
+            err?.message,
+          );
+        }
+      }
     }
+
+    await openStoreReviewPage();
   } catch (err) {
     console.warn("reviewPrompt: native review request failed", err?.message);
     await openStoreReviewPage();
@@ -197,12 +238,43 @@ export async function requestNativeStoreReview(options = {}) {
 }
 
 async function openStoreReviewPage() {
-  const storeUrl = StoreReview.storeUrl?.();
-  if (!storeUrl) return;
+  const candidates = [];
 
-  const supported = await Linking.canOpenURL(storeUrl);
-  if (supported) {
-    await Linking.openURL(storeUrl);
+  try {
+    const fromExpo = StoreReview.storeUrl?.();
+    if (fromExpo) {
+      candidates.push(fromExpo);
+    }
+  } catch (_err) {
+    // ignore
+  }
+
+  if (Platform.OS === "android") {
+    candidates.push(ANDROID_MARKET_URL, ANDROID_PLAY_WEB_URL);
+  }
+
+  const seen = new Set();
+  for (const url of candidates) {
+    if (!url || seen.has(url)) continue;
+    seen.add(url);
+    try {
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+        return;
+      }
+    } catch (err) {
+      console.warn("reviewPrompt: openURL failed for", url, err?.message);
+    }
+  }
+
+  // Last resort: try Play web URL without canOpenURL (some devices lie).
+  if (Platform.OS === "android") {
+    try {
+      await Linking.openURL(ANDROID_PLAY_WEB_URL);
+    } catch (err) {
+      console.warn("reviewPrompt: final store open failed", err?.message);
+    }
   }
 }
 

@@ -87,9 +87,11 @@ const ChapterCompleteSheet = ({
     if (star === 5) {
       setSelectedStars(5);
       setReviewBusy(true);
+      setCtaHiddenLocally(true);
       try {
+        // Parent dismisses this sheet first, then launches native review.
+        // Do not keep the dialog open; it blocks Play In-App Review on Android.
         await onRateFiveStars?.();
-        setCtaHiddenLocally(true);
       } catch (err) {
         console.warn("ChapterCompleteSheet: 5-star review failed", err?.message);
       } finally {
@@ -118,19 +120,16 @@ const ChapterCompleteSheet = ({
         rating: selectedStars,
         message: trimmed,
       });
-      Alert.alert(
-        "Thank you",
-        "Your feedback was sent. We use every note to improve STROMA.",
-      );
       setSelectedStars(0);
       setFeedbackText("");
+      // Close the progress report after a successful feedback submit.
+      onDismiss?.();
     } catch (err) {
       console.warn("ChapterCompleteSheet: feedback failed", err?.message);
       Alert.alert(
         "Could not send",
         err?.message || "Something went wrong. Please try again.",
       );
-    } finally {
       setSubmitting(false);
     }
   };
