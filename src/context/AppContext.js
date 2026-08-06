@@ -31,7 +31,6 @@ import {
 import * as Notifications from "expo-notifications";
 import { theme } from "../styles/theme";
 import { triggerStreakMilestone } from "../services/notificationService";
-import { maybePromptReview } from "../utils/reviewPrompt";
 import {
   VALID_MASTER_TITLES,
   VALID_CONTENT_KEYS,
@@ -1473,19 +1472,8 @@ export const AppProvider = ({ children }) => {
     }
   }, [currentStreak]);
 
-  // Evaluate in-app review pre-prompt when reading progress changes.
-  // Delay so chapter-complete celebration can show first without an Alert collision.
-  useEffect(() => {
-    if (!(readingProgress > 0)) {
-      return undefined;
-    }
-
-    const timer = setTimeout(() => {
-      maybePromptReview(readingProgress);
-    }, 2500);
-
-    return () => clearTimeout(timer);
-  }, [readingProgress]);
+  // In-app review CTA lives on ChapterCompleteSheet (progress report).
+  // Legacy Alert-based maybePromptReview is no longer auto-fired here.
 
   const markAsUnread = (contentRefs = []) => {
     const refsToClear = contentRefs.filter((ref) => ref?.contentKey);

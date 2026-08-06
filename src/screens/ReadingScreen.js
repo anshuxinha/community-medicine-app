@@ -4,7 +4,6 @@ import * as Speech from "expo-speech";
 import ReadingView from "../components/ReadingView";
 import ChapterCompleteSheet from "../components/ChapterCompleteSheet";
 import { AppContext } from "../context/AppContext";
-import { theme } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
 import { useUnlockOrientationOnFocus } from "../hooks/useUnlockOrientationOnFocus";
 import { buildSpeechChunks, buildSpeechText } from "../utils/tts";
@@ -29,6 +28,11 @@ import {
   subscribeHighlights,
   saveHighlights,
 } from "../services/highlightService";
+import {
+  getHasRatedFiveStarReview,
+  requestNativeStoreReview,
+} from "../utils/reviewPrompt";
+import { submitAppFeedback } from "../services/feedbackService";
 
 const isFreeLibraryItem = (item) =>
   String(item?.id) === "1" || item?.title === "Man and Medicine";
@@ -90,6 +94,8 @@ const ReadingScreen = ({ route, navigation }) => {
     isScreenCapturePrevented,
     contentRegistryVersion,
     user,
+    readingProgress,
+    currentStreak,
   } = useContext(AppContext);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const speechSessionRef = useRef(0);
@@ -98,6 +104,19 @@ const ReadingScreen = ({ route, navigation }) => {
   const [annotations, setAnnotations] = useState([]);
   const [userHighlights, setUserHighlights] = useState({});
   const [celebration, setCelebration] = useState(null);
+  const [showReviewCta, setShowReviewCta] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    void getHasRatedFiveStarReview().then((hasRated) => {
+      if (mounted) {
+        setShowReviewCta(!hasRated);
+      }
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const currentEntry = useMemo(
     () => getCurrentContentEntry(route.params),
@@ -340,28 +359,46 @@ const ReadingScreen = ({ route, navigation }) => {
       return;
     }
 
+    // Gems still update progress silently; no celebration sheet.
+    if (isGem) {
+      markAsRead({
+        itemTitle: effectiveTitle,
+        contentKey: effectiveContentKey,
+        contentSignature: effectiveContentSignature,
+      });
+      return;
+    }
+
     const result = markAsRead({
       itemTitle: effectiveTitle,
       contentKey: effectiveContentKey,
       contentSignature: effectiveContentSignature,
     });
 
-    if (!result?.didComplete || isGem) {
-      return;
-    }
-
+    // Always show the progress report when the user finishes reading in this
+    // session, including updated library-review leaves (often markAsRead already
+    // ran on open) and revisit re-completions (didComplete false).
+    const versionsForNext =
+      result?.readItemVersions || readItemVersions || {};
     const nextEntry = getNextUnreadLeafEntry(
-      result.contentKey,
-      result.readItemVersions || {},
+      result?.contentKey || effectiveContentKey,
+      versionsForNext,
     );
+
+    const previousProgress = result?.didComplete
+      ? result.previousProgress || 0
+      : readingProgress || 0;
+    const nextProgress = result?.didComplete
+      ? result.nextProgress || 0
+      : readingProgress || 0;
 
     triggerCompleteHaptic();
     setCelebration({
-      title: result.itemTitle || effectiveTitle,
-      previousProgress: result.previousProgress || 0,
-      nextProgress: result.nextProgress || 0,
-      currentStreak: result.currentStreak || 0,
-      showStreakChip: Boolean(result.streakIncremented),
+      title: result?.itemTitle || effectiveTitle,
+      previousProgress,
+      nextProgress,
+      currentStreak: result?.currentStreak ?? currentStreak ?? 0,
+      showStreakChip: Boolean(result?.didComplete && result?.streakIncremented),
       nextEntry,
     });
   };
@@ -393,6 +430,21 @@ const ReadingScreen = ({ route, navigation }) => {
       readingParams,
     });
   }, [celebration, navigation]);
+
+  const handleRateFiveStars = useCallback(async () => {
+    await requestNativeStoreReview({ markRated: true });
+    setShowReviewCta(false);
+  }, []);
+
+  const handleSubmitLowRatingFeedback = useCallback(
+    async ({ rating, message }) => {
+      await submitAppFeedback(message, {
+        source: "chapter_complete_rating",
+        rating,
+      });
+    },
+    [],
+  );
 
   const handleSpeak = () => {
     if (isSpeaking) {
@@ -459,6 +511,9 @@ const ReadingScreen = ({ route, navigation }) => {
         }
         onBackToLibrary={handleBackToLibrary}
         onDismiss={dismissCelebration}
+        showReviewCta={showReviewCta}
+        onRateFiveStars={handleRateFiveStars}
+        onSubmitLowRatingFeedback={handleSubmitLowRatingFeedback}
       />
     </View>
   );

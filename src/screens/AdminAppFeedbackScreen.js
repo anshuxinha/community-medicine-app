@@ -211,7 +211,15 @@ const AdminAppFeedbackScreen = () => {
                         <Text style={styles.cardMeta}>
                           {formatWhen(item.createdAt)} · {item.platform || "?"} · v
                           {item.appVersion || "?"}
+                          {item.source ? ` · ${item.source}` : ""}
                         </Text>
+                        {typeof item.rating === "number" ? (
+                          <Text style={styles.ratingLine}>
+                            {"★".repeat(Math.min(5, Math.max(0, item.rating)))}
+                            {"☆".repeat(Math.max(0, 5 - item.rating))}
+                            {` (${item.rating}/5)`}
+                          </Text>
+                        ) : null}
                       </View>
                       <Chip
                         compact
@@ -380,6 +388,12 @@ const createStyles = (colors) =>
       marginTop: 2,
       fontSize: 12,
       color: colors.textTertiary,
+    },
+    ratingLine: {
+      marginTop: 4,
+      fontSize: 13,
+      fontWeight: "600",
+      color: colors.warningStrong || colors.warningText || colors.textSecondary,
     },
     message: {
       fontSize: 15,

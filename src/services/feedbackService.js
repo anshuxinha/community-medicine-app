@@ -11,11 +11,11 @@ export const APP_FEEDBACK_COLLECTION = "appFeedback";
 export const FEEDBACK_MESSAGE_MAX_LENGTH = 2000;
 
 /**
- * Submit improvement feedback from the review "Not Really" path.
+ * Submit improvement feedback (review prompt or chapter-complete stars).
  * Writes to Firestore for the admin in-app queue (no mail client).
  *
  * @param {string} message
- * @param {{ source?: string }} [options]
+ * @param {{ source?: string, rating?: number }} [options]
  * @returns {Promise<string>} new document id
  */
 export async function submitAppFeedback(message, options = {}) {
@@ -39,7 +39,16 @@ export async function submitAppFeedback(message, options = {}) {
     Constants.nativeAppVersion ||
     "unknown";
 
-  const docRef = await addDoc(collection(db, APP_FEEDBACK_COLLECTION), {
+  const ratingRaw = options.rating;
+  const rating =
+    typeof ratingRaw === "number" &&
+    Number.isFinite(ratingRaw) &&
+    ratingRaw >= 1 &&
+    ratingRaw <= 5
+      ? Math.round(ratingRaw)
+      : null;
+
+  const payload = {
     message: trimmed,
     userId: currentUser.uid,
     userEmail: currentUser.email || null,
@@ -49,7 +58,13 @@ export async function submitAppFeedback(message, options = {}) {
     source: options.source || "review_prompt_negative",
     status: "new",
     createdAt: serverTimestamp(),
-  });
+  };
+
+  if (rating !== null) {
+    payload.rating = rating;
+  }
+
+  const docRef = await addDoc(collection(db, APP_FEEDBACK_COLLECTION), payload);
 
   return docRef.id;
 }

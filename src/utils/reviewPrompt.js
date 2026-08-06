@@ -1,4 +1,4 @@
-import { Alert, Linking, Platform } from "react-native";
+import { Alert, Linking } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as StoreReview from "expo-store-review";
 
@@ -38,19 +38,27 @@ function showFeedbackForm(handlers = {}) {
 }
 
 /**
- * Evaluate whether to show the in-app review pre-prompt.
+ * Whether the user has already completed the 5-star native review path.
+ * Play/App Store APIs do not report stars submitted; we treat "tapped 5 and
+ * launched the in-app review SDK" as rated so the CTA can stop showing.
+ * @returns {Promise<boolean>}
+ */
+export async function getHasRatedFiveStarReview() {
+  try {
+    const raw = await AsyncStorage.getItem(STORAGE_KEY_HAS_RATED);
+    return raw === "true";
+  } catch (err) {
+    console.warn("reviewPrompt: failed to read hasRated", err?.message);
+    return false;
+  }
+}
+
+/**
+ * Evaluate whether to show the legacy Alert in-app review pre-prompt.
  *
- * Uses the same readingProgress value displayed on the Dashboard
- * progress bar (0-1 fraction), converted to an integer percentage.
- *
- * Trigger: first time percentage >= 1% AND has increased by at least
- *          1 percentage point since the last evaluation.
- *
- * REVIEW_PROMPT_RESET_VERSION resets the local prompt counters once for
- * every installed user so fixed review flows can become eligible again.
- *
- * Soft dismiss permanently suppresses the Library path (hasShown).
- * Only an actual store/native review sets hasRated.
+ * Prefer the chapter-complete sheet CTA (`ChapterCompleteSheet`). This
+ * function is retained for optional call sites but no longer auto-fires
+ * from AppContext after progress changes.
  *
  * @param {number} readingProgress - 0-1 fraction (same as Dashboard bar)
  */
@@ -149,7 +157,7 @@ function showFiveStarPrompt(handlers = {}) {
       {
         text: "Review Now",
         onPress: () => {
-          void requestNativeReview().finally(() => {
+          void requestNativeStoreReview({ markRated: true }).finally(() => {
             onReviewed?.();
           });
         },
@@ -159,13 +167,18 @@ function showFiveStarPrompt(handlers = {}) {
   );
 }
 
-async function requestNativeReview() {
-  try {
-    if (Platform.OS === "android") {
-      await openStoreReviewPage();
-      return;
-    }
+/**
+ * Launch platform in-app review (Play In-App Review / StoreKit) when available.
+ * Falls back to the public store listing URL.
+ *
+ * @param {{ markRated?: boolean }} [options]
+ *   When markRated is true (default for the 5-star CTA), persist hasRated so
+ *   the chapter-complete CTA stops showing. Store SDKs do not confirm stars.
+ */
+export async function requestNativeStoreReview(options = {}) {
+  const markRated = options.markRated !== false;
 
+  try {
     const available = await StoreReview.hasAction();
     if (available) {
       await StoreReview.requestReview();
@@ -177,7 +190,9 @@ async function requestNativeReview() {
     await openStoreReviewPage();
   } finally {
     await markAsShown();
-    await markAsRated();
+    if (markRated) {
+      await markAsRated();
+    }
   }
 }
 
@@ -199,7 +214,7 @@ async function markAsShown() {
   }
 }
 
-async function markAsRated() {
+export async function markAsRated() {
   try {
     await AsyncStorage.setItem(STORAGE_KEY_HAS_RATED, "true");
   } catch (err) {
