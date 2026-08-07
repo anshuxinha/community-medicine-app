@@ -11,7 +11,7 @@ import {
   View,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Text, Button, Dialog, Portal } from "react-native-paper";
+import { Text, Dialog, Portal } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { theme } from "../styles/theme";
 import { useThemedStyles } from "../styles/useThemedStyles";
@@ -377,41 +377,70 @@ const ChapterCompleteSheet = ({
           </Dialog.Content>
 
           {showNavActions ? (
-            <Dialog.Actions style={styles.actions}>
-              <Button
+            <View
+              style={[styles.actions, { borderTopColor: colors.border }]}
+            >
+              <Pressable
                 onPress={onBackToLibrary || onDismiss}
-                textColor={colors.textSecondary}
-                style={styles.btnSecondary}
-                labelStyle={styles.btnLabelSecondary}
+                accessibilityRole="button"
+                accessibilityLabel="Back to library"
+                style={({ pressed }) => [
+                  styles.btnSecondary,
+                  {
+                    borderColor: colors.borderStrong,
+                    backgroundColor: colors.surfaceSecondary,
+                    opacity: pressed ? 0.85 : 1,
+                  },
+                ]}
               >
-                Library
-              </Button>
+                <Text
+                  style={[
+                    styles.btnLabelSecondary,
+                    { color: colors.textSecondary },
+                  ]}
+                  numberOfLines={1}
+                >
+                  Back to Library
+                </Text>
+              </Pressable>
               {nextChapterTitle && onNextChapter ? (
-                <Button
-                  mode="contained"
+                <Pressable
                   onPress={onNextChapter}
-                  style={[
+                  accessibilityRole="button"
+                  accessibilityLabel={`Next chapter: ${nextChapterTitle}`}
+                  style={({ pressed }) => [
                     styles.btnPrimary,
-                    { backgroundColor: colors.secondary },
+                    {
+                      backgroundColor: colors.secondary,
+                      opacity: pressed ? 0.9 : 1,
+                    },
                   ]}
-                  labelStyle={styles.btnLabelPrimary}
                 >
-                  Next
-                </Button>
+                  <Text style={styles.btnLabelPrimary}>Next</Text>
+                  <MaterialIcons
+                    name="arrow-forward"
+                    size={18}
+                    color={theme.colors.onPrimary}
+                    style={styles.btnPrimaryIcon}
+                  />
+                </Pressable>
               ) : (
-                <Button
-                  mode="contained"
+                <Pressable
                   onPress={onDismiss}
-                  style={[
+                  accessibilityRole="button"
+                  accessibilityLabel="Continue"
+                  style={({ pressed }) => [
                     styles.btnPrimary,
-                    { backgroundColor: colors.secondary },
+                    {
+                      backgroundColor: colors.secondary,
+                      opacity: pressed ? 0.9 : 1,
+                    },
                   ]}
-                  labelStyle={styles.btnLabelPrimary}
                 >
-                  Continue
-                </Button>
+                  <Text style={styles.btnLabelPrimary}>Continue</Text>
+                </Pressable>
               )}
-            </Dialog.Actions>
+            </View>
           ) : null}
         </KeyboardAvoidingView>
       </Dialog>
@@ -458,7 +487,7 @@ const createStyles = (colors) =>
     },
     content: {
       paddingTop: 4,
-      paddingBottom: 8,
+      paddingBottom: 4,
       alignItems: "center",
     },
     iconContainer: {
@@ -606,25 +635,46 @@ const createStyles = (colors) =>
       color: theme.colors.onPrimary,
     },
     actions: {
-      paddingHorizontal: 14,
-      paddingBottom: 14,
-      paddingTop: 4,
-      flexWrap: "wrap",
-      justifyContent: "flex-end",
-      gap: 4,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+      marginTop: 8,
+      paddingTop: 16,
+      paddingHorizontal: 16,
+      paddingBottom: 18,
+      borderTopWidth: StyleSheet.hairlineWidth,
     },
     btnSecondary: {
-      marginRight: 4,
+      flex: 1,
+      minHeight: 46,
+      borderRadius: 12,
+      borderWidth: 1,
+      paddingHorizontal: 10,
+      alignItems: "center",
+      justifyContent: "center",
     },
     btnLabelSecondary: {
       fontWeight: "600",
+      fontSize: 13,
+      textAlign: "center",
     },
     btnPrimary: {
+      flex: 1,
+      minHeight: 46,
       borderRadius: 12,
+      paddingHorizontal: 12,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 6,
+    },
+    btnPrimaryIcon: {
+      marginLeft: 0,
     },
     btnLabelPrimary: {
       fontWeight: "700",
       fontSize: 14,
+      color: theme.colors.onPrimary,
     },
   });
 
