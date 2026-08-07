@@ -11,7 +11,7 @@ import {
   View,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Text, Dialog, Portal } from "react-native-paper";
+import { Text, Button, Dialog, Portal } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { theme } from "../styles/theme";
 import { useThemedStyles } from "../styles/useThemedStyles";
@@ -40,10 +40,17 @@ const REVIEW_CTA_VARIANTS = [
  *  - previousProgress / nextProgress (0–1)
  *  - currentStreak
  *  - showStreakChip
+ *  - nextChapterTitle
+ *  - onNextChapter
+ *  - onBackToLibrary
  *  - onDismiss
  *  - showReviewCta
  *  - onRateFiveStars
  *  - onSubmitLowRatingFeedback ({ rating, message }) => Promise
+ *
+ * Library / Next actions only show after the user has already completed the
+ * 5-star path once (showReviewCta false). They stay hidden while stars or the
+ * 1–4 star feedback form are visible.
  */
 const ChapterCompleteSheet = ({
   visible,
@@ -52,6 +59,9 @@ const ChapterCompleteSheet = ({
   nextProgress = 0,
   currentStreak = 0,
   showStreakChip = false,
+  nextChapterTitle = null,
+  onNextChapter,
+  onBackToLibrary,
   onDismiss,
   showReviewCta = false,
   onRateFiveStars,
@@ -73,6 +83,7 @@ const ChapterCompleteSheet = ({
       setFeedbackText("");
       setSubmitting(false);
       setReviewBusy(false);
+      setCtaHiddenLocally(false);
       return;
     }
     Animated.spring(scaleAnim, {
@@ -115,8 +126,12 @@ const ChapterCompleteSheet = ({
   const nextPct = progressToPercent(nextProgress);
   const progressLabel =
     nextPct > prevPct ? `${prevPct}% → ${nextPct}%` : `${nextPct}%`;
-  const showCta = Boolean(showReviewCta) && !ctaHiddenLocally;
+  // Treat non-true showReviewCta (false or null while loading) as "no stars".
+  const showCta = showReviewCta === true && !ctaHiddenLocally;
   const showFeedbackForm = selectedStars >= 1 && selectedStars <= 4;
+  // Nav only after the user already left a 5-star review once; never during
+  // the star CTA, 1–4 feedback form, or while rating state is still loading.
+  const showNavActions = showReviewCta === false && !showFeedbackForm;
 
   const handleStarPress = async (star) => {
     if (reviewBusy || submitting) return;
@@ -182,15 +197,22 @@ const ChapterCompleteSheet = ({
       <Dialog visible={visible} onDismiss={onDismiss} style={styles.dialog}>
         <View style={styles.accentBar} />
 
-        <Pressable
-          onPress={onDismiss}
-          hitSlop={10}
-          accessibilityRole="button"
-          accessibilityLabel="Close progress report"
-          style={styles.closeBtn}
-        >
-          <MaterialIcons name="close" size={22} color={colors.textSecondary} />
-        </Pressable>
+        <View style={styles.topBar}>
+          <View style={styles.topBarSpacer} />
+          <Pressable
+            onPress={onDismiss}
+            hitSlop={10}
+            accessibilityRole="button"
+            accessibilityLabel="Close progress report"
+            style={styles.closeBtn}
+          >
+            <MaterialIcons
+              name="close"
+              size={22}
+              color={colors.textSecondary}
+            />
+          </Pressable>
+        </View>
 
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -353,6 +375,44 @@ const ChapterCompleteSheet = ({
               </View>
             ) : null}
           </Dialog.Content>
+
+          {showNavActions ? (
+            <Dialog.Actions style={styles.actions}>
+              <Button
+                onPress={onBackToLibrary || onDismiss}
+                textColor={colors.textSecondary}
+                style={styles.btnSecondary}
+                labelStyle={styles.btnLabelSecondary}
+              >
+                Library
+              </Button>
+              {nextChapterTitle && onNextChapter ? (
+                <Button
+                  mode="contained"
+                  onPress={onNextChapter}
+                  style={[
+                    styles.btnPrimary,
+                    { backgroundColor: colors.secondary },
+                  ]}
+                  labelStyle={styles.btnLabelPrimary}
+                >
+                  Next
+                </Button>
+              ) : (
+                <Button
+                  mode="contained"
+                  onPress={onDismiss}
+                  style={[
+                    styles.btnPrimary,
+                    { backgroundColor: colors.secondary },
+                  ]}
+                  labelStyle={styles.btnLabelPrimary}
+                >
+                  Continue
+                </Button>
+              )}
+            </Dialog.Actions>
+          ) : null}
         </KeyboardAvoidingView>
       </Dialog>
     </Portal>
@@ -378,11 +438,18 @@ const createStyles = (colors) =>
       height: 5,
       backgroundColor: colors.secondary,
     },
+    topBar: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "flex-end",
+      paddingTop: 8,
+      paddingHorizontal: 8,
+      minHeight: 40,
+    },
+    topBarSpacer: {
+      flex: 1,
+    },
     closeBtn: {
-      position: "absolute",
-      top: 12,
-      right: 10,
-      zIndex: 2,
       width: 36,
       height: 36,
       borderRadius: 18,
@@ -390,8 +457,8 @@ const createStyles = (colors) =>
       justifyContent: "center",
     },
     content: {
-      paddingTop: 20,
-      paddingBottom: 16,
+      paddingTop: 4,
+      paddingBottom: 8,
       alignItems: "center",
     },
     iconContainer: {
@@ -537,6 +604,27 @@ const createStyles = (colors) =>
       fontSize: 14,
       fontWeight: "700",
       color: theme.colors.onPrimary,
+    },
+    actions: {
+      paddingHorizontal: 14,
+      paddingBottom: 14,
+      paddingTop: 4,
+      flexWrap: "wrap",
+      justifyContent: "flex-end",
+      gap: 4,
+    },
+    btnSecondary: {
+      marginRight: 4,
+    },
+    btnLabelSecondary: {
+      fontWeight: "600",
+    },
+    btnPrimary: {
+      borderRadius: 12,
+    },
+    btnLabelPrimary: {
+      fontWeight: "700",
+      fontSize: 14,
     },
   });
 

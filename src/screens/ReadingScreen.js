@@ -12,6 +12,7 @@ import {
   getContentSignature,
   getCurrentContentEntry,
   getItemStatus,
+  getNextUnreadLeafEntry,
   getUpdatedSegmentsForItem,
 } from "../utils/contentRegistry";
 import { getTopicIllustrations } from "../services/topicIllustrations";
@@ -34,6 +35,26 @@ import {
   waitForUiSettle,
 } from "../utils/reviewPrompt";
 import { submitAppFeedback } from "../services/feedbackService";
+
+const isFreeLibraryItem = (item) =>
+  String(item?.id) === "1" || item?.title === "Man and Medicine";
+
+const buildReadingParamsFromEntry = (entry) => {
+  const item = entry?.item || {};
+  const section = entry.section;
+  const status = "none";
+  return {
+    id: item.id,
+    title: item.title,
+    content: item.content || "# No Content\n\nThis topic has no content yet.",
+    quizzes: item.quizzes,
+    section,
+    contentKey: entry.key || getContentKey(section, item.id),
+    contentSignature: entry.signature || getContentSignature(item),
+    updatedSegments: getUpdatedSegmentsForItem(item),
+    showUpdateHighlights: status === "updated",
+  };
+};
 
 const triggerCompleteHaptic = () => {
   try {
@@ -85,7 +106,8 @@ const ReadingScreen = ({ route, navigation }) => {
   const [annotations, setAnnotations] = useState([]);
   const [userHighlights, setUserHighlights] = useState({});
   const [celebration, setCelebration] = useState(null);
-  const [showReviewCta, setShowReviewCta] = useState(false);
+  // null = not loaded yet (avoids flashing Library/Next before hasRated resolves)
+  const [showReviewCta, setShowReviewCta] = useState(null);
 
   useEffect(() => {
     let mounted = true;
@@ -101,6 +123,22 @@ const ReadingScreen = ({ route, navigation }) => {
       mounted = false;
     };
   }, []);
+
+  // Re-check when the progress report opens so admin "Reset Review CTA"
+  // applies without leaving the reading screen.
+  useEffect(() => {
+    if (!celebration) return;
+    let mounted = true;
+    void (async () => {
+      const hasRated = await getHasRatedFiveStarReview();
+      if (mounted) {
+        setShowReviewCta(!hasRated);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, [celebration]);
 
   const currentEntry = useMemo(
     () => getCurrentContentEntry(route.params),
@@ -362,6 +400,13 @@ const ReadingScreen = ({ route, navigation }) => {
     // Always show the progress report when the user finishes reading in this
     // session, including updated library-review leaves (often markAsRead already
     // ran on open) and revisit re-completions (didComplete false).
+    const versionsForNext =
+      result?.readItemVersions || readItemVersions || {};
+    const nextEntry = getNextUnreadLeafEntry(
+      result?.contentKey || effectiveContentKey,
+      versionsForNext,
+    );
+
     const previousProgress = result?.didComplete
       ? result.previousProgress || 0
       : readingProgress || 0;
@@ -376,12 +421,37 @@ const ReadingScreen = ({ route, navigation }) => {
       nextProgress,
       currentStreak: result?.currentStreak ?? currentStreak ?? 0,
       showStreakChip: Boolean(result?.didComplete && result?.streakIncremented),
+      nextEntry,
     });
   };
 
   const dismissCelebration = useCallback(() => {
     setCelebration(null);
   }, []);
+
+  const handleBackToLibrary = useCallback(() => {
+    setCelebration(null);
+    navigation.navigate("MainTabs", { screen: "Library" });
+  }, [navigation]);
+
+  const handleNextChapter = useCallback(() => {
+    const nextEntry = celebration?.nextEntry;
+    setCelebration(null);
+    if (!nextEntry?.item) {
+      return;
+    }
+
+    const readingParams = buildReadingParamsFromEntry(nextEntry);
+    if (isFreeLibraryItem(nextEntry.item)) {
+      navigation.replace("Reading", readingParams);
+      return;
+    }
+
+    navigation.replace("PremiumGuard", {
+      destination: "Reading",
+      readingParams,
+    });
+  }, [celebration, navigation]);
 
   const handleRateFiveStars = useCallback(async () => {
     setShowReviewCta(false);
@@ -466,6 +536,11 @@ const ReadingScreen = ({ route, navigation }) => {
         nextProgress={celebration?.nextProgress}
         currentStreak={celebration?.currentStreak}
         showStreakChip={celebration?.showStreakChip}
+        nextChapterTitle={celebration?.nextEntry?.title || null}
+        onNextChapter={
+          celebration?.nextEntry ? handleNextChapter : undefined
+        }
+        onBackToLibrary={handleBackToLibrary}
         onDismiss={dismissCelebration}
         showReviewCta={showReviewCta}
         onRateFiveStars={handleRateFiveStars}
