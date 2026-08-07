@@ -16,7 +16,7 @@ except ImportError:  # seed-only path does not need requests
 OLLAMA_API_KEY = os.environ.get("OLLAMA_API_KEY")
 
 OLLAMA_API_URL = "https://ollama.com/api/chat"
-OLLAMA_MODEL = "gemma4:31b-cloud"
+OLLAMA_MODEL = "minimax-m3:cloud"
 
 MAX_RETRIES = 2
 RETRY_DELAY_SECONDS = 5
@@ -88,9 +88,10 @@ def call_ollama(prompt: str) -> Optional[Any]:
                         {"role": "user", "content": prompt}
                     ],
                     "stream": False,
+                    "think": "max",
                     "options": {"temperature": 0.1},
                 },
-                timeout=120
+                timeout=180
             )
 
             if response.status_code == 200:
