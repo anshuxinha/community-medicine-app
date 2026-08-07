@@ -11,7 +11,7 @@ import {
   View,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Text, Button, Dialog, Portal } from "react-native-paper";
+import { Text, Dialog, Portal } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { theme } from "../styles/theme";
 import { useThemedStyles } from "../styles/useThemedStyles";
@@ -40,9 +40,6 @@ const REVIEW_CTA_VARIANTS = [
  *  - previousProgress / nextProgress (0–1)
  *  - currentStreak
  *  - showStreakChip
- *  - nextChapterTitle
- *  - onNextChapter
- *  - onBackToLibrary
  *  - onDismiss
  *  - showReviewCta
  *  - onRateFiveStars
@@ -55,9 +52,6 @@ const ChapterCompleteSheet = ({
   nextProgress = 0,
   currentStreak = 0,
   showStreakChip = false,
-  nextChapterTitle = null,
-  onNextChapter,
-  onBackToLibrary,
   onDismiss,
   showReviewCta = false,
   onRateFiveStars,
@@ -187,6 +181,16 @@ const ChapterCompleteSheet = ({
     <Portal>
       <Dialog visible={visible} onDismiss={onDismiss} style={styles.dialog}>
         <View style={styles.accentBar} />
+
+        <Pressable
+          onPress={onDismiss}
+          hitSlop={10}
+          accessibilityRole="button"
+          accessibilityLabel="Close progress report"
+          style={styles.closeBtn}
+        >
+          <MaterialIcons name="close" size={22} color={colors.textSecondary} />
+        </Pressable>
 
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -349,38 +353,6 @@ const ChapterCompleteSheet = ({
               </View>
             ) : null}
           </Dialog.Content>
-
-          <Dialog.Actions style={styles.actions}>
-            <Button
-              onPress={onBackToLibrary || onDismiss}
-              textColor={colors.textSecondary}
-              style={styles.btnSecondary}
-              labelStyle={styles.btnLabelSecondary}
-            >
-              Library
-            </Button>
-            {nextChapterTitle && onNextChapter ? (
-              <Button
-                mode="contained"
-                onPress={onNextChapter}
-                icon="arrow-forward"
-                contentStyle={{ flexDirection: "row-reverse" }}
-                style={[styles.btnPrimary, { backgroundColor: colors.secondary }]}
-                labelStyle={styles.btnLabelPrimary}
-              >
-                Next
-              </Button>
-            ) : (
-              <Button
-                mode="contained"
-                onPress={onDismiss}
-                style={[styles.btnPrimary, { backgroundColor: colors.secondary }]}
-                labelStyle={styles.btnLabelPrimary}
-              >
-                Continue
-              </Button>
-            )}
-          </Dialog.Actions>
         </KeyboardAvoidingView>
       </Dialog>
     </Portal>
@@ -406,9 +378,20 @@ const createStyles = (colors) =>
       height: 5,
       backgroundColor: colors.secondary,
     },
+    closeBtn: {
+      position: "absolute",
+      top: 12,
+      right: 10,
+      zIndex: 2,
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      alignItems: "center",
+      justifyContent: "center",
+    },
     content: {
       paddingTop: 20,
-      paddingBottom: 4,
+      paddingBottom: 16,
       alignItems: "center",
     },
     iconContainer: {
@@ -554,27 +537,6 @@ const createStyles = (colors) =>
       fontSize: 14,
       fontWeight: "700",
       color: theme.colors.onPrimary,
-    },
-    actions: {
-      paddingHorizontal: 14,
-      paddingBottom: 14,
-      paddingTop: 4,
-      flexWrap: "wrap",
-      justifyContent: "flex-end",
-      gap: 4,
-    },
-    btnSecondary: {
-      marginRight: 4,
-    },
-    btnLabelSecondary: {
-      fontWeight: "600",
-    },
-    btnPrimary: {
-      borderRadius: 12,
-    },
-    btnLabelPrimary: {
-      fontWeight: "700",
-      fontSize: 14,
     },
   });
 
