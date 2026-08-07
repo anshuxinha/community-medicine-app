@@ -344,6 +344,42 @@ def _is_safe_line_replacement(original_line: str, replacement_line: str) -> bool
     return bool(original_shape and replacement_shape and original_shape in replacement_shape)
 
 
+def _sensitive_token_set(line: str) -> set:
+    return {match.group(0).lower() for match in UPDATE_SENSITIVE_TOKEN_RE.finditer(line or "")}
+
+
+def _proper_name_tokens(line: str) -> set:
+    """Acronyms and multi-capital programme-like tokens (NTEP, Ayushman Bharat, ICD-11)."""
+    tokens = set()
+    for match in re.finditer(r"\b[A-Z]{2,}(?:[-/][A-Z0-9]+)*\b", line or ""):
+        tokens.add(match.group(0).upper())
+    for match in re.finditer(r"\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3}\b", line or ""):
+        tokens.add(match.group(0).lower())
+    return tokens
+
+
+def _is_high_yield_change(original_line: str, replacement_line: str) -> bool:
+    """
+    Accept only surgical, exam-relevant updates: numbers/years/units/money,
+    programme names/acronyms, or targets. Reject pure rewording / style edits.
+    """
+    original = _normalize_whitespace(original_line)
+    replacement = _normalize_whitespace(replacement_line)
+    if not original or not replacement or original == replacement:
+        return False
+
+    original_tokens = _sensitive_token_set(original)
+    replacement_tokens = _sensitive_token_set(replacement)
+    if original_tokens != replacement_tokens:
+        return True
+
+    if _proper_name_tokens(original) != _proper_name_tokens(replacement):
+        return True
+
+    # Same facts, different wording only: low yield.
+    return False
+
+
 def _is_heading_like(line: str) -> bool:
     normalized = _normalize_whitespace(line)
     if not normalized:
@@ -564,6 +600,48 @@ def _write_firestore_document(
     return True
 
 
+def _list_firestore_documents(
+    access_token: str,
+    collection_name: str,
+    page_size: int = 300,
+) -> List[Dict[str, Any]]:
+    """List collection documents as {id, ...fields}."""
+    documents: List[Dict[str, Any]] = []
+    page_token: Optional[str] = None
+
+    while True:
+        params: Dict[str, Any] = {"pageSize": page_size}
+        if page_token:
+            params["pageToken"] = page_token
+        response = requests.get(
+            f"{FIRESTORE_API_ROOT}/{collection_name}",
+            headers={"Authorization": f"Bearer {access_token}"},
+            params=params,
+            timeout=30,
+        )
+        if response.status_code != 200:
+            print(
+                f"Failed to list Firestore collection {collection_name} "
+                f"({response.status_code}): {response.text[:200]}"
+            )
+            break
+
+        payload = response.json()
+        for doc in payload.get("documents", []) or []:
+            name = str(doc.get("name", ""))
+            doc_id = name.rsplit("/", 1)[-1] if name else ""
+            fields = doc.get("fields", {}) or {}
+            row = {key: _from_firestore_value(value) for key, value in fields.items()}
+            row["id"] = doc_id
+            documents.append(row)
+
+        page_token = payload.get("nextPageToken")
+        if not page_token:
+            break
+
+    return documents
+
+
 def sync_review_bundle_to_firestore(review_bundle: Dict[str, Any]) -> None:
     access_token = _get_firestore_access_token()
     if not access_token:
@@ -571,61 +649,146 @@ def sync_review_bundle_to_firestore(review_bundle: Dict[str, Any]) -> None:
 
     proposals = review_bundle.get("proposals", [])
     synced = 0
+    skipped = 0
+    superseded = 0
+    active_queue_ids = set()
+
+    existing_docs = _list_firestore_documents(access_token, REVIEW_QUEUE_COLLECTION)
+    pending_by_library: Dict[str, List[Dict[str, Any]]] = {}
+    for doc in existing_docs:
+        library_id = str(doc.get("libraryId", "")).strip()
+        if not library_id:
+            continue
+        pending_by_library.setdefault(library_id, []).append(doc)
 
     for proposal in proposals:
         proposal_id = str(proposal.get("proposalId", "")).strip()
-        if not proposal_id:
+        library_id = str(proposal.get("libraryId", "")).strip()
+        if not proposal_id or not library_id:
             continue
+
+        queue_doc_id = make_queue_document_id(library_id)
+        active_queue_ids.add(queue_doc_id)
 
         existing = _fetch_firestore_document(
             access_token,
             REVIEW_QUEUE_COLLECTION,
-            proposal_id,
+            queue_doc_id,
         ) or {}
 
-        payload = {
-            "proposalId": proposal_id,
-            "status": existing.get("status", proposal.get("status", "pending")),
-            "libraryId": str(proposal.get("libraryId", "")),
-            "libraryTitle": proposal.get("libraryTitle", ""),
-            "rootChapterId": str(proposal.get("rootChapterId", "")),
-            "rootChapterTitle": proposal.get("rootChapterTitle", ""),
-            "aggregateRelevanceScore": int(proposal.get("aggregateRelevanceScore", 0)),
-            "summaryReason": existing.get(
-                "summaryReason",
-                proposal.get("summaryReason", ""),
-            ),
-            "sourceUpdates": proposal.get("sourceUpdates", []),
-            "changes": proposal.get("changes", []),
-            "originalContent": proposal.get("originalContent", ""),
-            "proposedContent": existing.get(
-                "proposedContent",
-                proposal.get("proposedContent", ""),
-            ),
-            "updatedSegments": proposal.get("updatedSegments", []),
-            "diff": proposal.get("diff", ""),
-            "generatedAt": review_bundle.get("generatedAt", ""),
-            "windowStart": review_bundle.get("windowStart", ""),
-            "windowEnd": review_bundle.get("windowEnd", ""),
-            "model": review_bundle.get("model", ""),
-            "sourceUpdateCount": int(review_bundle.get("sourceUpdateCount", 0)),
-            "sourceReviewWindow": (
-                f"{review_bundle.get('windowStart', '')} to "
-                f"{review_bundle.get('windowEnd', '')}"
-            ).strip(),
-            "approvedAt": existing.get("approvedAt"),
-            "approvedBy": existing.get("approvedBy"),
-            "lastEditedAt": existing.get("lastEditedAt"),
-            "editedBy": existing.get("editedBy"),
-        }
+        existing_status = str(existing.get("status", "")).strip().lower()
+        # Never reopen an already-approved/superseded/deleted queue slot with a clone.
+        if existing_status in {"approved", "superseded", "deleted"}:
+            existing_proposed = _normalize_whitespace(str(existing.get("proposedContent", "")))
+            new_proposed = _normalize_whitespace(str(proposal.get("proposedContent", "")))
+            if existing_status == "approved" and existing_proposed == new_proposed:
+                skipped += 1
+                continue
+            if existing_status in {"superseded", "deleted"} and existing_proposed == new_proposed:
+                skipped += 1
+                continue
+
+        # If admin already edited the pending draft and content is unchanged, keep their edit.
+        preserve_admin_edit = (
+            existing_status == "pending"
+            and existing.get("lastEditedAt")
+            and _normalize_whitespace(str(existing.get("proposedContent", "")))
+            == _normalize_whitespace(str(proposal.get("proposedContent", "")))
+        )
+
+        # Same pending content already in the stable queue slot: refresh metadata only lightly.
+        same_pending = (
+            existing_status == "pending"
+            and _normalize_whitespace(str(existing.get("originalContent", "")))
+            == _normalize_whitespace(str(proposal.get("originalContent", "")))
+            and _normalize_whitespace(str(existing.get("proposedContent", "")))
+            == _normalize_whitespace(str(proposal.get("proposedContent", "")))
+        )
+
+        if same_pending and not existing.get("lastEditedAt"):
+            # Avoid noisy rewrites; still touch generatedAt so operators know the run ran.
+            payload = {
+                **existing,
+                "proposalId": proposal_id,
+                "status": "pending",
+                "generatedAt": review_bundle.get("generatedAt", ""),
+                "windowStart": review_bundle.get("windowStart", ""),
+                "windowEnd": review_bundle.get("windowEnd", ""),
+                "model": review_bundle.get("model", ""),
+                "sourceUpdateCount": int(review_bundle.get("sourceUpdateCount", 0)),
+                "sourceReviewWindow": (
+                    f"{review_bundle.get('windowStart', '')} to "
+                    f"{review_bundle.get('windowEnd', '')}"
+                ).strip(),
+            }
+        else:
+            payload = {
+                "proposalId": proposal_id,
+                "status": "pending" if existing_status != "pending" else existing.get("status", "pending"),
+                "libraryId": library_id,
+                "libraryTitle": proposal.get("libraryTitle", ""),
+                "rootChapterId": str(proposal.get("rootChapterId", "")),
+                "rootChapterTitle": proposal.get("rootChapterTitle", ""),
+                "aggregateRelevanceScore": int(proposal.get("aggregateRelevanceScore", 0)),
+                "summaryReason": proposal.get("summaryReason", ""),
+                "sourceUpdates": proposal.get("sourceUpdates", []),
+                "changes": proposal.get("changes", []),
+                "originalContent": proposal.get("originalContent", ""),
+                "proposedContent": (
+                    existing.get("proposedContent", proposal.get("proposedContent", ""))
+                    if preserve_admin_edit
+                    else proposal.get("proposedContent", "")
+                ),
+                "updatedSegments": proposal.get("updatedSegments", []),
+                "diff": proposal.get("diff", ""),
+                "generatedAt": review_bundle.get("generatedAt", ""),
+                "windowStart": review_bundle.get("windowStart", ""),
+                "windowEnd": review_bundle.get("windowEnd", ""),
+                "model": review_bundle.get("model", ""),
+                "sourceUpdateCount": int(review_bundle.get("sourceUpdateCount", 0)),
+                "sourceReviewWindow": (
+                    f"{review_bundle.get('windowStart', '')} to "
+                    f"{review_bundle.get('windowEnd', '')}"
+                ).strip(),
+                "approvedAt": existing.get("approvedAt") if existing_status == "approved" else None,
+                "approvedBy": existing.get("approvedBy") if existing_status == "approved" else None,
+                "lastEditedAt": existing.get("lastEditedAt") if preserve_admin_edit else None,
+                "editedBy": existing.get("editedBy") if preserve_admin_edit else None,
+            }
+            # New material pending proposal always reopens as pending.
+            if existing_status != "pending" or not same_pending:
+                payload["status"] = "pending"
+                if not preserve_admin_edit:
+                    payload["approvedAt"] = None
+                    payload["approvedBy"] = None
 
         if _write_firestore_document(
             access_token,
             REVIEW_QUEUE_COLLECTION,
-            proposal_id,
+            queue_doc_id,
             payload,
         ):
             synced += 1
+
+        # Supersede legacy/date-prefixed duplicates for the same library leaf.
+        for legacy in pending_by_library.get(library_id, []):
+            legacy_id = str(legacy.get("id", "")).strip()
+            if not legacy_id or legacy_id == queue_doc_id:
+                continue
+            if str(legacy.get("status", "")).strip().lower() not in {"pending", ""}:
+                continue
+            if _write_firestore_document(
+                access_token,
+                REVIEW_QUEUE_COLLECTION,
+                legacy_id,
+                {
+                    **{k: v for k, v in legacy.items() if k != "id"},
+                    "status": "superseded",
+                    "supersededBy": queue_doc_id,
+                    "supersededAt": review_bundle.get("generatedAt", ""),
+                },
+            ):
+                superseded += 1
 
     meta_payload = {
         "generatedAt": review_bundle.get("generatedAt", ""),
@@ -634,9 +797,15 @@ def sync_review_bundle_to_firestore(review_bundle: Dict[str, Any]) -> None:
         "model": review_bundle.get("model", ""),
         "sourceUpdateCount": int(review_bundle.get("sourceUpdateCount", 0)),
         "proposalCount": int(review_bundle.get("proposalCount", 0)),
+        "syncedCount": synced,
+        "skippedDuplicateCount": skipped,
+        "supersededLegacyCount": superseded,
     }
     _write_firestore_document(access_token, "libraryReviewMeta", "latest", meta_payload)
-    print(f"Synced {synced} review proposal(s) to Firestore collection {REVIEW_QUEUE_COLLECTION}.")
+    print(
+        f"Synced {synced} review proposal(s) to {REVIEW_QUEUE_COLLECTION} "
+        f"(skipped {skipped} duplicate/already-applied; superseded {superseded} legacy docs)."
+    )
 
 
 def flatten_leaf_items(items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -869,22 +1038,23 @@ RULES:
 2. Omit lines that remain accurate enough for an exam-oriented textbook.
 3. Only propose a change if the source clearly indicates an official update that should be incorporated into a Community Medicine reference.
 4. Ignore ceremonial statements, generic speeches, political praise, and projections that are not formal policy/programme/guideline changes.
-5. For each accepted change, return:
+5. HIGH-YIELD ONLY. Propose a change only when a concrete fact changes: year, number, percentage, money amount, dose/schedule, eligibility criterion, official target/deadline, programme/scheme name, or guideline version. Never suggest rewording, tone, grammar, synonym swaps, or reordering for style.
+6. For each accepted change, return:
    {{
      "original": "exact original line from input",
      "replacement": "corrected line in the same concise style",
-     "reason": "very short reason mentioning what changed",
+     "reason": "very short reason naming the exact fact that changed",
      "quote_from_source": "short exact quote proving the change",
      "confidence": 100,
      "source_title": "title of PIB update",
      "source_link": "PIB URL",
      "source_date": "YYYY-MM-DD"
    }}
-6. Preserve the chapter's wording style. Keep replacements tight and factual.
-7. Do NOT invent new bullets or paragraphs. Anchor every change to an existing line.
-8. Prefer minimal token-level corrections for years, targets, benefits, criteria, programme names, schedules, or official deadlines.
-9. If unsure, do not guess.
-10. Only output changes with confidence 95 or higher.
+7. Preserve the chapter's wording style. Keep replacements tight and factual.
+8. Do NOT invent new bullets or paragraphs. Anchor every change to an existing line.
+9. Prefer minimal token-level corrections for years, targets, benefits, criteria, programme names, schedules, or official deadlines. Change as few words as possible.
+10. If unsure, do not guess. Empty array is better than a low-yield edit.
+11. Only output changes with confidence 95 or higher.
 
 Claim lines to verify:
 {json.dumps(claim_lines, ensure_ascii=False, indent=2)}
@@ -964,6 +1134,9 @@ def apply_corrections(
             leading_whitespace = matched_line[: len(matched_line) - len(matched_line.lstrip())]
             replacement_line = f"{leading_whitespace}{replacement}"
 
+        if not _is_high_yield_change(matched_line, replacement_line):
+            continue
+
         updated_content = updated_content.replace(matched_line, replacement_line, 1)
         used_originals.add(original)
         applied.append(
@@ -971,6 +1144,8 @@ def apply_corrections(
                 **correction,
                 "matched_line": matched_line.strip(),
                 "replacement_line": replacement_line.strip(),
+                "originalLine": matched_line.strip(),
+                "replacementLine": replacement_line.strip(),
             }
         )
 
@@ -986,6 +1161,12 @@ def build_unified_diff(original: str, proposed: str) -> str:
         lineterm="",
     )
     return "\n".join(diff_lines)
+
+
+def make_queue_document_id(library_id: str) -> str:
+    """One stable queue document per library leaf (prevents daily duplicate admin items)."""
+    safe_id = re.sub(r"[^A-Za-z0-9._-]+", "_", str(library_id).strip())
+    return f"lib-{safe_id}"
 
 
 def make_proposal_id(item_id: str, proposed_text: str) -> str:
@@ -1088,6 +1269,17 @@ def generate_review_bundle() -> Dict[str, Any]:
 
         proposed_content, applied_corrections = apply_corrections(item["content"], all_corrections)
         if proposed_content == item["content"] or not applied_corrections:
+            continue
+
+        # Skip if every applied change is low-yield (defensive; apply_corrections already filters).
+        if not any(
+            _is_high_yield_change(
+                change.get("matched_line", ""),
+                change.get("replacement_line", ""),
+            )
+            for change in applied_corrections
+        ):
+            print(f"  Skipping {item['id']}: no high-yield factual changes.")
             continue
 
         proposal_id = make_proposal_id(item["id"], proposed_content)

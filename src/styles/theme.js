@@ -130,15 +130,15 @@ export const darkColors = {
   onInverseSurface: "#F9FAFB",
 
   success: "#4ADE80",
-  successStrong: "#86EFAC",
+  successStrong: "#BBF7D0",
   successSoft: "#14532D",
   warning: "#FBBF24",
   warningBackground: "#422006",
   warningText: "#FDE68A",
   warningStrong: "#FCD34D",
   error: "#F87171",
-  errorLight: "#450A0A",
-  errorStrong: "#FCA5A5",
+  errorLight: "#7F1D1D",
+  errorStrong: "#FECACA",
 
   textTitle: "#F9FAFB",
   textPrimary: "#F3F4F6",

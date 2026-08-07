@@ -1,8 +1,9 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
   Linking,
   Modal,
+  Platform,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -51,6 +52,42 @@ const STATUS_TONES = {
   pending: { backgroundColor: "#FEF3C7", textColor: "#92400E" },
   approved: { backgroundColor: "#DCFCE7", textColor: "#166534" },
   superseded: { backgroundColor: "#E5E7EB", textColor: "#374151" },
+};
+
+const changeOriginalText = (change) =>
+  change?.matched_line ||
+  change?.originalLine ||
+  change?.original ||
+  "";
+
+const changeReplacementText = (change) =>
+  change?.replacementLine ||
+  change?.replacement_line ||
+  change?.replacement ||
+  "";
+
+const applyChangesToOriginal = (originalContent, changes) => {
+  let content = originalContent || "";
+  (changes || []).forEach((change) => {
+    const matched = String(changeOriginalText(change) || "").trim();
+    const replacement = String(changeReplacementText(change) || "");
+    if (!matched) return;
+
+    const lines = content.split("\n");
+    let replaced = false;
+    const nextLines = lines.map((line) => {
+      if (replaced) return line;
+      if (line.trim() !== matched) return line;
+      replaced = true;
+      const leading = (line.match(/^\s*/) || [""])[0];
+      const body = replacement.replace(/^\s*/, "");
+      return `${leading}${body}`;
+    });
+    if (replaced) {
+      content = nextLines.join("\n");
+    }
+  });
+  return content;
 };
 
 /**
@@ -109,8 +146,11 @@ const AdminLibraryReviewScreen = () => {
   const [loading, setLoading] = useState(true);
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
   const [editedContent, setEditedContent] = useState("");
-  const [editedReason, setEditedReason] = useState("");
+  const [editedChanges, setEditedChanges] = useState([]);
   const [saving, setSaving] = useState(false);
+  const proposedScrollRef = useRef(null);
+  const firstChangeOffsetY = useRef(null);
+  const didAutoScrollRef = useRef(false);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -121,7 +161,7 @@ const AdminLibraryReviewScreen = () => {
             id: itemDoc.id,
             ...itemDoc.data(),
           }))
-          .filter((item) => item.status !== "deleted")
+          .filter((item) => item.status !== "deleted" && item.status !== "superseded")
           .sort(
             (left, right) =>
               getSortValue(right.generatedAt) - getSortValue(left.generatedAt),
@@ -139,31 +179,147 @@ const AdminLibraryReviewScreen = () => {
     return () => unsubscribe();
   }, []);
 
-  const pendingSuggestions = useMemo(
-    () => suggestions.filter((item) => item.status === "pending"),
-    [suggestions],
-  );
+  // One visible pending item per libraryId (newest wins) so the queue never looks duplicated.
+  const pendingSuggestions = useMemo(() => {
+    const pending = suggestions.filter((item) => item.status === "pending");
+    const byLibrary = new Map();
+    pending.forEach((item) => {
+      const key = String(item.libraryId || item.id);
+      const existing = byLibrary.get(key);
+      if (
+        !existing ||
+        getSortValue(item.generatedAt) >= getSortValue(existing.generatedAt)
+      ) {
+        byLibrary.set(key, item);
+      }
+    });
+    return Array.from(byLibrary.values()).sort(
+      (left, right) =>
+        getSortValue(right.generatedAt) - getSortValue(left.generatedAt),
+    );
+  }, [suggestions]);
 
   const openEditor = (suggestion) => {
+    const changes = Array.isArray(suggestion.changes)
+      ? suggestion.changes.map((change) => ({ ...change }))
+      : [];
     setSelectedSuggestion(suggestion);
-    setEditedContent(suggestion.proposedContent || "");
-    setEditedReason(suggestion.summaryReason || "");
+    setEditedChanges(changes);
+    setEditedContent(
+      suggestion.proposedContent ||
+        applyChangesToOriginal(suggestion.originalContent || "", changes),
+    );
+    firstChangeOffsetY.current = null;
+    didAutoScrollRef.current = false;
   };
 
   const closeEditor = () => {
     setSelectedSuggestion(null);
     setEditedContent("");
-    setEditedReason("");
+    setEditedChanges([]);
+    firstChangeOffsetY.current = null;
+    didAutoScrollRef.current = false;
   };
+
+  const updateChangeReplacement = useCallback(
+    (index, nextReplacement) => {
+      setEditedChanges((prev) => {
+        const next = prev.map((change, changeIndex) => {
+          if (changeIndex !== index) return change;
+          return {
+            ...change,
+            replacementLine: nextReplacement,
+            replacement_line: nextReplacement,
+            replacement: nextReplacement,
+          };
+        });
+        const base = selectedSuggestion?.originalContent || "";
+        setEditedContent(applyChangesToOriginal(base, next));
+        return next;
+      });
+    },
+    [selectedSuggestion?.originalContent],
+  );
+
+  const updateProposedLine = useCallback(
+    (lineIndex, nextLineText) => {
+      setEditedContent((prev) => {
+        const lines = String(prev || "").split("\n");
+        const previousLine = lines[lineIndex] ?? "";
+        lines[lineIndex] = nextLineText;
+        const nextContent = lines.join("\n");
+
+        setEditedChanges((prevChanges) =>
+          prevChanges.map((change) => {
+            const currentReplacement = changeReplacementText(change).trim();
+            if (currentReplacement && currentReplacement === previousLine.trim()) {
+              return {
+                ...change,
+                replacementLine: nextLineText,
+                replacement_line: nextLineText,
+                replacement: nextLineText,
+              };
+            }
+            return change;
+          }),
+        );
+
+        return nextContent;
+      });
+    },
+    [],
+  );
+
+  const proposedLineRows = useMemo(() => {
+    const lines = String(editedContent || "").split("\n");
+    const changedSet = new Set(
+      (editedChanges || [])
+        .map((change) => changeReplacementText(change).trim())
+        .filter(Boolean),
+    );
+    return lines.map((text, index) => ({
+      index,
+      text,
+      isChanged: changedSet.has(text.trim()),
+    }));
+  }, [editedContent, editedChanges]);
+
+  const firstChangedLineIndex = useMemo(
+    () => proposedLineRows.findIndex((row) => row.isChanged),
+    [proposedLineRows],
+  );
+
+  useEffect(() => {
+    if (
+      !selectedSuggestion ||
+      didAutoScrollRef.current ||
+      firstChangeOffsetY.current == null ||
+      !proposedScrollRef.current
+    ) {
+      return;
+    }
+    const timer = setTimeout(() => {
+      proposedScrollRef.current?.scrollTo({
+        y: Math.max(0, firstChangeOffsetY.current - 24),
+        animated: true,
+      });
+      didAutoScrollRef.current = true;
+    }, 120);
+    return () => clearTimeout(timer);
+  }, [selectedSuggestion, proposedLineRows]);
 
   const handleSaveDraft = async () => {
     if (!selectedSuggestion) return;
     setSaving(true);
 
     try {
+      const updatedSegments = editedChanges
+        .map((change) => changeReplacementText(change).trim())
+        .filter(Boolean);
       await updateDoc(doc(db, "libraryReviewSuggestions", selectedSuggestion.id), {
         proposedContent: editedContent,
-        summaryReason: editedReason,
+        changes: editedChanges,
+        updatedSegments,
         lastEditedAt: serverTimestamp(),
         editedBy: user?.email || "admin",
       });
@@ -180,16 +336,19 @@ const AdminLibraryReviewScreen = () => {
 
     try {
       const approvedAt = new Date().toISOString();
+      const updatedSegments = editedChanges
+        .map((change) => changeReplacementText(change).trim())
+        .filter(Boolean);
       const overridePayload = {
         libraryId: selectedSuggestion.libraryId,
         libraryTitle: selectedSuggestion.libraryTitle,
         proposalId: selectedSuggestion.proposalId,
         proposedContent: editedContent,
-        updatedSegments: selectedSuggestion.updatedSegments || [],
+        updatedSegments,
         // Admin-approved product updates should surface as NEW until re-read.
         markAsNew: true,
         status: "active",
-        summaryReason: editedReason,
+        summaryReason: selectedSuggestion.summaryReason || "",
         sourceUpdates: selectedSuggestion.sourceUpdates || [],
         approvedAt,
         approvedBy: user?.email || "admin",
@@ -202,7 +361,8 @@ const AdminLibraryReviewScreen = () => {
 
       await updateDoc(doc(db, "libraryReviewSuggestions", selectedSuggestion.id), {
         proposedContent: editedContent,
-        summaryReason: editedReason,
+        changes: editedChanges,
+        updatedSegments,
         status: "approved",
         approvedAt,
         approvedBy: user?.email || "admin",
@@ -283,11 +443,14 @@ const AdminLibraryReviewScreen = () => {
   };
 
   const renderChangeItem = (change, index) => {
-    const original = change.originalLine || change.original || "";
-    const replacement = change.replacementLine || change.replacement || "";
+    const original = changeOriginalText(change);
+    const replacement = changeReplacementText(change);
     return (
       <View key={index} style={styles.changeItem}>
         <Text style={styles.changeLabel}>Change {index + 1}</Text>
+        {change.reason ? (
+          <Text style={styles.changeReasonText}>{change.reason}</Text>
+        ) : null}
         <View style={styles.changeDiffRow}>
           <View style={styles.changeOld}>
             <Text style={styles.changePrefixOld}>−</Text>
@@ -297,9 +460,20 @@ const AdminLibraryReviewScreen = () => {
           </View>
           <View style={styles.changeNew}>
             <Text style={styles.changePrefixNew}>+</Text>
-            <Text style={styles.changeTextNew} selectable>
-              {replacement}
-            </Text>
+            <View style={styles.changeNewInputWrap}>
+              <TextInput
+                mode="flat"
+                dense
+                multiline
+                value={replacement}
+                onChangeText={(text) => updateChangeReplacement(index, text)}
+                style={styles.changeTextNewInput}
+                underlineColor="transparent"
+                activeUnderlineColor="transparent"
+                textColor={colors.successStrong}
+                selectionColor={colors.success}
+              />
+            </View>
           </View>
         </View>
       </View>
@@ -455,20 +629,18 @@ const AdminLibraryReviewScreen = () => {
             style={styles.modalScroll}
             contentContainerStyle={styles.modalScrollContent}
             keyboardShouldPersistTaps="handled"
+            nestedScrollEnabled
           >
             <Text style={styles.dialogLabel}>Summary reason</Text>
-            <TextInput
-              mode="outlined"
-              value={editedReason}
-              onChangeText={setEditedReason}
-              multiline
-              style={styles.input}
-            />
+            <View style={styles.reasonReadonly}>
+              <Text style={styles.reasonReadonlyText}>
+                {selectedSuggestion?.summaryReason || "No summary reason provided."}
+              </Text>
+            </View>
 
-            <Text style={styles.dialogLabel}>Line Changes</Text>
-            {Array.isArray(selectedSuggestion?.changes) &&
-            selectedSuggestion.changes.length > 0 ? (
-              selectedSuggestion.changes.map(renderChangeItem)
+            <Text style={styles.dialogLabel}>Line changes (green text is editable)</Text>
+            {editedChanges.length > 0 ? (
+              editedChanges.map(renderChangeItem)
             ) : (
               <Text style={styles.noChangesText}>
                 No exact line changes recorded. The proposed content is a full replacement.
@@ -476,13 +648,57 @@ const AdminLibraryReviewScreen = () => {
             )}
 
             <Text style={styles.dialogLabel}>Proposed content (editable)</Text>
-            <TextInput
-              mode="outlined"
-              value={editedContent}
-              onChangeText={setEditedContent}
-              multiline
-              style={styles.contentInput}
-            />
+            <Text style={styles.proposedHint}>
+              Changed lines are highlighted. Nested scroll stays inside this box.
+            </Text>
+            <View style={styles.proposedFrame}>
+              <ScrollView
+                ref={proposedScrollRef}
+                style={styles.proposedScroll}
+                contentContainerStyle={styles.proposedScrollContent}
+                nestedScrollEnabled
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator
+                persistentScrollbar={Platform.OS === "android"}
+              >
+                {proposedLineRows.map((row) => (
+                  <View
+                    key={`proposed-line-${row.index}`}
+                    style={[
+                      styles.proposedLineRow,
+                      row.isChanged ? styles.proposedLineChanged : null,
+                    ]}
+                    onLayout={(event) => {
+                      if (
+                        row.index === firstChangedLineIndex &&
+                        firstChangeOffsetY.current == null
+                      ) {
+                        firstChangeOffsetY.current = event.nativeEvent.layout.y;
+                      }
+                    }}
+                  >
+                    {row.isChanged ? (
+                      <TextInput
+                        mode="flat"
+                        dense
+                        multiline
+                        value={row.text}
+                        onChangeText={(text) => updateProposedLine(row.index, text)}
+                        style={styles.proposedLineInput}
+                        underlineColor="transparent"
+                        activeUnderlineColor="transparent"
+                        textColor={colors.successStrong}
+                        selectionColor={colors.success}
+                      />
+                    ) : (
+                      <Text style={styles.proposedLineText} selectable>
+                        {row.text.length ? row.text : " "}
+                      </Text>
+                    )}
+                  </View>
+                ))}
+              </ScrollView>
+            </View>
           </ScrollView>
 
           {/* Fixed bottom actions */}
@@ -667,12 +883,68 @@ const createStyles = (colors) => StyleSheet.create({
     fontWeight: "700",
     fontSize: 15,
   },
-  input: {
-    backgroundColor: colors.surfacePrimary,
+  reasonReadonly: {
+    backgroundColor: colors.surfaceSecondary,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
   },
-  contentInput: {
-    minHeight: 180,
+  reasonReadonlyText: {
+    color: colors.textSecondary,
+    lineHeight: 20,
+    fontSize: 14,
+  },
+  proposedHint: {
+    marginTop: -2,
+    marginBottom: 8,
+    color: colors.textTertiary,
+    fontSize: 12,
+    lineHeight: 16,
+  },
+  // Inset frame so nested scrollbar is not glued to the outer modal edge.
+  proposedFrame: {
+    borderWidth: 1.5,
+    borderColor: colors.borderStrong,
+    borderRadius: 12,
     backgroundColor: colors.surfacePrimary,
+    marginRight: 18,
+    marginBottom: 8,
+    overflow: "hidden",
+  },
+  proposedScroll: {
+    maxHeight: 320,
+  },
+  proposedScrollContent: {
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    paddingRight: 14,
+  },
+  proposedLineRow: {
+    borderRadius: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    marginBottom: 2,
+  },
+  proposedLineChanged: {
+    backgroundColor: colors.successSoft,
+    borderWidth: 1,
+    borderColor: colors.success,
+  },
+  proposedLineText: {
+    color: colors.textPrimary,
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  proposedLineInput: {
+    backgroundColor: "transparent",
+    fontSize: 13,
+    lineHeight: 20,
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+    margin: 0,
+    minHeight: 22,
   },
   noChangesText: {
     color: colors.textSecondary,
@@ -687,7 +959,7 @@ const createStyles = (colors) => StyleSheet.create({
     backgroundColor: colors.surfacePrimary,
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: colors.surfaceSecondary,
+    borderColor: colors.border,
   },
   changeLabel: {
     fontSize: 12,
@@ -695,7 +967,14 @@ const createStyles = (colors) => StyleSheet.create({
     color: colors.textTertiary,
     paddingHorizontal: 12,
     paddingTop: 8,
-    paddingBottom: 4,
+    paddingBottom: 2,
+  },
+  changeReasonText: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    paddingHorizontal: 12,
+    paddingBottom: 6,
+    lineHeight: 16,
   },
   changeDiffRow: {
     paddingHorizontal: 8,
@@ -703,8 +982,11 @@ const createStyles = (colors) => StyleSheet.create({
   },
   changeOld: {
     flexDirection: "row",
+    alignItems: "flex-start",
     backgroundColor: colors.errorLight,
     borderRadius: 6,
+    borderWidth: 1,
+    borderColor: colors.error,
     padding: 8,
     marginBottom: 4,
   },
@@ -714,31 +996,44 @@ const createStyles = (colors) => StyleSheet.create({
     fontSize: 14,
     marginRight: 6,
     width: 16,
+    marginTop: 1,
   },
   changeTextOld: {
     flex: 1,
-    color: "#991B1B",
+    color: colors.errorStrong,
     fontSize: 13,
     lineHeight: 19,
+    fontWeight: "600",
   },
   changeNew: {
     flexDirection: "row",
+    alignItems: "flex-start",
     backgroundColor: colors.successSoft,
     borderRadius: 6,
+    borderWidth: 1,
+    borderColor: colors.success,
     padding: 8,
   },
   changePrefixNew: {
-    color: "#166534",
+    color: colors.successStrong,
     fontWeight: "700",
     fontSize: 14,
     marginRight: 6,
     width: 16,
+    marginTop: 1,
   },
-  changeTextNew: {
+  changeNewInputWrap: {
     flex: 1,
-    color: "#14532D",
+  },
+  changeTextNewInput: {
+    backgroundColor: "transparent",
     fontSize: 13,
     lineHeight: 19,
+    fontWeight: "600",
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+    margin: 0,
+    minHeight: 22,
   },
 });
 

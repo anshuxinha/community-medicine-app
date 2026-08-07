@@ -6,6 +6,8 @@
   - Uses the Ollama chat API with `minimax-m3:cloud` (`think: "max"`)
   - Reads recent PIB-derived updates from `src/data/updates.json`
   - Scores likely affected Library topics in `src/data/mockData.json`
+  - Stages **high-yield** surgical edits only (years, numbers, targets, programme names, etc.; no rewording)
+  - Syncs one stable Firestore queue doc per Library leaf (`lib-{libraryId}`) and supersedes legacy duplicates
   - Stages proposed edits instead of changing the app Library live
 
 ## Review artifacts
