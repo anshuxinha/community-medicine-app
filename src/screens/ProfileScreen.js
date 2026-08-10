@@ -286,10 +286,8 @@ const ProfileScreen = () => {
     }
   };
 
-  const handleSendFeedback = () => {
-    Linking.openURL(
-      "mailto:anshuxinha@gmail.com?subject=STROMA%20App%20Feedback",
-    );
+  const handleOpenSupport = () => {
+    navigation.navigate("Support");
   };
 
   const handlePrivacyPolicy = () => {
@@ -694,9 +692,9 @@ const ProfileScreen = () => {
               onPress={handleRateApp}
             />
             <ActionRow
-              icon="feedback"
-              label="Send Feedback"
-              onPress={handleSendFeedback}
+              icon="support-agent"
+              label="Support"
+              onPress={handleOpenSupport}
             />
             <ActionRow
               icon="privacy-tip"

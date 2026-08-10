@@ -49,6 +49,7 @@ const getAdminAppFeedbackScreen = () =>
 const getLearningProgressScreen = () =>
   require("../screens/LearningProgressScreen").default;
 const getOnboardingScreen = () => require("../screens/OnboardingScreen").default;
+const getSupportScreen = () => require("../screens/SupportScreen").default;
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -301,6 +302,11 @@ const AppNavigator = () => {
               name="Profile"
               getComponent={getProfileScreen}
               options={{ title: "My Profile" }}
+            />
+            <Stack.Screen
+              name="Support"
+              getComponent={getSupportScreen}
+              options={{ title: "Support" }}
             />
             <Stack.Screen
               name="Bookmarks"

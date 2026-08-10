@@ -40,9 +40,9 @@ const BASE_MENU_ITEMS = [
     iconLib: "material",
   },
   {
-    icon: "feedback",
-    label: "Send Feedback",
-    action: "feedback",
+    icon: "support-agent",
+    label: "Support",
+    screen: "Support",
     iconLib: "material",
   },
   {
@@ -140,11 +140,6 @@ const DrawerMenu = ({ visible, onClose, user }) => {
       switch (item.action) {
         case "rate":
           Linking.openURL("market://details?id=com.communitymed.app");
-          break;
-        case "feedback":
-          Linking.openURL(
-            "mailto:anshuxinha@gmail.com?subject=STROMA%20App%20Feedback",
-          );
           break;
         case "privacy":
           Linking.openURL("https://community-med-app.web.app/privacy");
