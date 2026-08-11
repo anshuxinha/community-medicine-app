@@ -123,6 +123,46 @@ describe('couponService', () => {
 
       await expect(validateCoupon('SAVE10', 'monthly')).rejects.toThrow('This coupon is not applicable to the selected plan.');
     });
+
+    test('accepts a valid referral code from the referralCodes registry', async () => {
+      // 1) coupons/{code} missing  2) referralCodes/{code} present
+      getDoc
+        .mockResolvedValueOnce({ exists: () => false })
+        .mockResolvedValueOnce({
+          exists: () => true,
+          data: () => ({ ownerUid: 'referrer-uid-1', ownerName: 'Referrer' }),
+        });
+
+      const result = await validateCoupon('K3H9M2PA', 'yearly');
+      expect(result.isReferral).toBe(true);
+      expect(result.code).toBe('K3H9M2PA');
+      expect(result.referrerUid).toBe('referrer-uid-1');
+      expect(result.type).toBe('percentage');
+      expect(result.value).toBe(15);
+    });
+
+    test('rejects own referral code', async () => {
+      getDoc
+        .mockResolvedValueOnce({ exists: () => false })
+        .mockResolvedValueOnce({
+          exists: () => true,
+          data: () => ({ ownerUid: 'self-uid', ownerName: 'Me' }),
+        });
+
+      await expect(validateCoupon('MYCODE12', 'yearly', 'self-uid')).rejects.toThrow(
+        'You cannot use your own referral code.',
+      );
+    });
+
+    test('rejects unknown codes that are neither coupons nor referrals', async () => {
+      getDoc
+        .mockResolvedValueOnce({ exists: () => false })
+        .mockResolvedValueOnce({ exists: () => false });
+
+      await expect(validateCoupon('NOPE1234', 'yearly')).rejects.toThrow(
+        'Invalid coupon code.',
+      );
+    });
   });
 
   describe('incrementCouponUsage', () => {

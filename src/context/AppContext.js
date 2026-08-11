@@ -96,29 +96,61 @@ const extractPremiumFromCustomerInfo = (info) => {
 };
 
 /**
- * Resolve a referral code for a user. Creates + persists one if missing.
- * Returns the code immediately; Firestore writes are fire-and-forget.
+ * Resolve a stable referral code for a user.
+ * Preference order:
+ * 1) existing code on users/{uid}
+ * 2) any referralCodes entry owned by this uid (heals missing user field)
+ * 3) deterministic generate + await persist to users + referralCodes
  */
-const resolveReferralCode = (uid, username, existingCode) => {
-  if (existingCode) {
+const resolveReferralCode = async (uid, username, existingCode) => {
+  if (!uid) return existingCode || null;
+
+  const healRegistry = (code) => {
+    if (!code) return;
     setDoc(
-      doc(db, "referralCodes", existingCode),
-      { ownerUid: uid, ownerName: username },
+      doc(db, "referralCodes", code),
+      { ownerUid: uid, ownerName: username || "User" },
       { merge: true },
     ).catch(() => {});
+  };
+
+  if (existingCode) {
+    healRegistry(existingCode);
     return existingCode;
   }
 
-  const referralCode = generateReferralCode(username);
-  Promise.all([
-    setDoc(doc(db, "users", uid), { referralCode }, { merge: true }),
-    setDoc(doc(db, "referralCodes", referralCode), {
-      ownerUid: uid,
-      ownerName: username,
-    }),
-  ]).catch((err) => {
-    console.warn("Failed to generate and save referralCode:", err.message);
-  });
+  // Recover a code previously written only to the registry
+  try {
+    const ownedQuery = query(
+      collection(db, "referralCodes"),
+      where("ownerUid", "==", uid),
+    );
+    const ownedSnap = await getDocs(ownedQuery);
+    if (!ownedSnap.empty) {
+      const recovered = ownedSnap.docs[0].id;
+      setDoc(doc(db, "users", uid), { referralCode: recovered }, { merge: true }).catch(
+        () => {},
+      );
+      healRegistry(recovered);
+      return recovered;
+    }
+  } catch (err) {
+    console.warn("Failed to look up owned referral code:", err?.message);
+  }
+
+  // Deterministic from uid: same user always gets the same code even before write lands
+  const referralCode = generateReferralCode(username, uid);
+  try {
+    await Promise.all([
+      setDoc(doc(db, "users", uid), { referralCode }, { merge: true }),
+      setDoc(doc(db, "referralCodes", referralCode), {
+        ownerUid: uid,
+        ownerName: username || "User",
+      }),
+    ]);
+  } catch (err) {
+    console.warn("Failed to generate and save referralCode:", err?.message);
+  }
   return referralCode;
 };
 
@@ -790,7 +822,7 @@ export const AppProvider = ({ children }) => {
               "User",
             );
 
-            const referralCode = resolveReferralCode(
+            const referralCode = await resolveReferralCode(
               firebaseUser.uid,
               username,
               data.referralCode,
@@ -935,11 +967,11 @@ export const AppProvider = ({ children }) => {
             );
             const referralCode =
               cachedReferralCode ||
-              resolveReferralCode(
+              (await resolveReferralCode(
                 firebaseUser.uid,
                 fallbackUsername,
                 null,
-              );
+              ));
 
             let cachedLearningProfile = {};
             try {
@@ -1874,7 +1906,7 @@ export const AppProvider = ({ children }) => {
         if (needsReferral) {
           const username =
             userData.username || data.username || "User";
-          const referralCode = resolveReferralCode(
+          const referralCode = await resolveReferralCode(
             userData.uid,
             username,
             data.referralCode,

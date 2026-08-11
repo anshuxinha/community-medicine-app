@@ -589,54 +589,58 @@ const ProfileScreen = () => {
           </Card.Content>
         </Card>
 
-        {/* Refer & Earn */}
-        <Text style={styles.sectionTitle}>Refer & Earn</Text>
-        <Card style={styles.card} mode="elevated">
-          <Card.Content>
-            <Text style={styles.referralSubtitle}>
-              Give friends 15% off STROMA Membership and get 30 days free when
-              they join with your code.
-            </Text>
-
-            <View style={styles.referralCodeBox}>
-              <View style={styles.codeContainer}>
-                <Text style={styles.codeLabel}>YOUR REFERRAL CODE</Text>
-                <Text style={styles.codeText}>
-                  {user?.referralCode || "N/A"}
+        {/* Refer & Earn — premium members only */}
+        {isPremium ? (
+          <>
+            <Text style={styles.sectionTitle}>Refer & Earn</Text>
+            <Card style={styles.card} mode="elevated">
+              <Card.Content>
+                <Text style={styles.referralSubtitle}>
+                  Give friends Yearly STROMA for ₹999 and get 30 days free when
+                  they join with your code.
                 </Text>
-              </View>
-            </View>
 
-            <View style={styles.referralActions}>
-              <TouchableOpacity
-                style={styles.copyButton}
-                onPress={handleCopyReferral}
-                accessibilityRole="button"
-                accessibilityLabel="Copy referral code"
-              >
-                <MaterialIcons
-                  name="content-copy"
-                  size={18}
-                  color={colors.secondary}
-                />
-                <Text style={styles.copyButtonText}>Copy</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.shareButton}
-                onPress={handleShareReferral}
-                accessibilityRole="button"
-                accessibilityLabel="Share referral code"
-              >
-                <MaterialIcons
-                  name="share"
-                  size={18}
-                  color={colors.buttonText}
-                />
-                <Text style={styles.shareButtonText}>Share</Text>
-              </TouchableOpacity>
-            </View>
-          </Card.Content>
-        </Card>
+                <View style={styles.referralCodeBox}>
+                  <View style={styles.codeContainer}>
+                    <Text style={styles.codeLabel}>YOUR REFERRAL CODE</Text>
+                    <Text style={styles.codeText}>
+                      {user?.referralCode || "N/A"}
+                    </Text>
+                  </View>
+                </View>
+
+                <View style={styles.referralActions}>
+                  <TouchableOpacity
+                    style={styles.copyButton}
+                    onPress={handleCopyReferral}
+                    accessibilityRole="button"
+                    accessibilityLabel="Copy referral code"
+                  >
+                    <MaterialIcons
+                      name="content-copy"
+                      size={18}
+                      color={colors.secondary}
+                    />
+                    <Text style={styles.copyButtonText}>Copy</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.shareButton}
+                    onPress={handleShareReferral}
+                    accessibilityRole="button"
+                    accessibilityLabel="Share referral code"
+                  >
+                    <MaterialIcons
+                      name="share"
+                      size={18}
+                      color={colors.buttonText}
+                    />
+                    <Text style={styles.shareButtonText}>Share</Text>
+                  </TouchableOpacity>
+                </View>
+              </Card.Content>
+            </Card>
+          </>
+        ) : null}
 
         {/* Appearance */}
         <Text style={styles.sectionTitle}>Appearance</Text>
