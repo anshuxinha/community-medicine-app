@@ -112,9 +112,11 @@ service cloud.firestore {
 
     match /videoDoubts/{doubtId} {
       allow read: if request.auth != null;
+      // New comments are auto-approved. under_review kept for older clients / admin disapprove.
       allow create: if request.auth != null
         && request.resource.data.userId == request.auth.uid
-        && request.resource.data.status == "under_review";
+        && (request.resource.data.status == "approved"
+            || request.resource.data.status == "under_review");
       allow delete: if request.auth != null
         && (request.auth.token.isAdmin == true || resource.data.userId == request.auth.uid);
       allow update: if request.auth != null

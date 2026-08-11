@@ -766,7 +766,8 @@ const VideosScreen = ({ navigation, route }) => {
           authorPushToken: user.pushToken || null,
           userStromaScore: studyScore,
           text: doubtText,
-          status: "under_review",
+          // Auto-approved: visible immediately. Admins are notified via Cloud Function.
+          status: "approved",
           createdAt: serverTimestamp(),
           upvotedBy: [],
           replies: [],

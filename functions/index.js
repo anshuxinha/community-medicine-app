@@ -1,5 +1,7 @@
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { setGlobalOptions } = require("firebase-functions/v2");
+// 1st-gen Firestore triggers: no Eventarc bootstrap required for first deploy.
+const functionsV1 = require("firebase-functions/v1");
 const admin = require("firebase-admin");
 const { signUrl } = require("./bunnyToken");
 
@@ -8,6 +10,226 @@ setGlobalOptions({ region: "us-central1" });
 if (!admin.apps.length) {
   admin.initializeApp();
 }
+
+const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
+
+// Known admin emails (same list as client isAdmin fallbacks in VideosScreen).
+const ADMIN_EMAILS = ["anshuxinha@gmail.com", "kaushikeec@gmail.com"];
+
+const isValidExpoPushToken = (token) =>
+  typeof token === "string" &&
+  (token.startsWith("ExponentPushToken[") ||
+    token.startsWith("ExpoPushToken["));
+
+/**
+ * Collect Expo push tokens for all admin accounts.
+ * Sources: users where isAdmin == true, plus known admin emails via Auth.
+ * @param {string|null} excludeUid - skip this user (e.g. comment author)
+ * @returns {Promise<string[]>}
+ */
+async function getAdminPushTokens(excludeUid = null) {
+  const db = admin.firestore();
+  const tokens = new Set();
+  const seenUids = new Set();
+
+  const addUserDoc = (uid, data) => {
+    if (!uid || (excludeUid && uid === excludeUid)) return;
+    if (seenUids.has(uid)) return;
+    seenUids.add(uid);
+    if (isValidExpoPushToken(data?.pushToken)) {
+      tokens.add(data.pushToken);
+    }
+  };
+
+  try {
+    const adminSnap = await db
+      .collection("users")
+      .where("isAdmin", "==", true)
+      .get();
+    adminSnap.forEach((docSnap) => addUserDoc(docSnap.id, docSnap.data()));
+  } catch (err) {
+    console.warn("getAdminPushTokens isAdmin query failed:", err?.message);
+  }
+
+  for (const email of ADMIN_EMAILS) {
+    try {
+      const userRecord = await admin.auth().getUserByEmail(email);
+      if (seenUids.has(userRecord.uid)) continue;
+      if (excludeUid && userRecord.uid === excludeUid) continue;
+      const userDoc = await db.collection("users").doc(userRecord.uid).get();
+      addUserDoc(userRecord.uid, userDoc.exists ? userDoc.data() : {});
+    } catch (err) {
+      // Auth user may not exist yet.
+      console.warn(`getAdminPushTokens email ${email}:`, err?.message);
+    }
+  }
+
+  return [...tokens];
+}
+
+/**
+ * Send Expo push messages (batches of 100).
+ * @param {Array<object>} messages
+ * @returns {Promise<number>} accepted ticket count (best effort)
+ */
+async function sendExpoPushMessages(messages) {
+  if (!messages.length) return 0;
+
+  let accepted = 0;
+  for (let i = 0; i < messages.length; i += 100) {
+    const chunk = messages.slice(i, i + 100);
+    try {
+      const response = await fetch(EXPO_PUSH_URL, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Accept-encoding": "gzip, deflate",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(chunk),
+      });
+      if (!response.ok) {
+        const body = await response.text();
+        console.warn(`Expo push failed ${response.status}:`, body);
+        continue;
+      }
+      try {
+        const payload = await response.json();
+        const tickets = Array.isArray(payload?.data) ? payload.data : [];
+        tickets.forEach((ticket) => {
+          if (ticket?.status === "ok") accepted += 1;
+          else {
+            console.warn(
+              "Expo push ticket error:",
+              ticket?.message || ticket?.details?.error || ticket,
+            );
+          }
+        });
+        if (tickets.length === 0) accepted += chunk.length;
+      } catch {
+        accepted += chunk.length;
+      }
+    } catch (err) {
+      console.warn("Expo push request error:", err?.message);
+    }
+  }
+  return accepted;
+}
+
+/**
+ * Notify admins of a new video comment (videoDoubts create).
+ */
+exports.onVideoDoubtCreated = functionsV1
+  .region("us-central1")
+  .firestore.document("videoDoubts/{doubtId}")
+  .onCreate(async (snap, context) => {
+    const data = snap.data() || {};
+    const doubtId = context.params.doubtId;
+    const authorUid = data.userId || null;
+    const username = data.username || data.userEmail || "Someone";
+    const text = String(data.text || "").trim();
+    const preview =
+      text.length > 120 ? `${text.slice(0, 117)}...` : text || "(no text)";
+    const videoId = data.videoId || null;
+
+    let videoTitle = "a video";
+    if (videoId) {
+      try {
+        const videoSnap = await admin
+          .firestore()
+          .collection("videos")
+          .doc(String(videoId))
+          .get();
+        if (videoSnap.exists && videoSnap.data()?.title) {
+          videoTitle = String(videoSnap.data().title);
+        }
+      } catch (err) {
+        console.warn("onVideoDoubtCreated video lookup:", err?.message);
+      }
+    }
+
+    const tokens = await getAdminPushTokens(authorUid);
+    if (tokens.length === 0) {
+      console.log("onVideoDoubtCreated: no admin push tokens");
+      return null;
+    }
+
+    const messages = tokens.map((token) => ({
+      to: token,
+      sound: "default",
+      priority: "high",
+      title: "New video comment",
+      body: `${username} on ${videoTitle}: ${preview}`,
+      channelId: "default",
+      data: {
+        screen: "Videos",
+        type: "admin_video_comment",
+        videoId,
+        doubtId,
+      },
+    }));
+
+    const accepted = await sendExpoPushMessages(messages);
+    console.log(
+      `onVideoDoubtCreated: notified ${accepted}/${tokens.length} admin token(s)`,
+    );
+    return null;
+  });
+
+/**
+ * Notify admins when app feedback is submitted (review prompt / chapter stars).
+ */
+exports.onAppFeedbackCreated = functionsV1
+  .region("us-central1")
+  .firestore.document("appFeedback/{feedbackId}")
+  .onCreate(async (snap, context) => {
+    const data = snap.data() || {};
+    const feedbackId = context.params.feedbackId;
+    const authorUid = data.userId || null;
+    const username = data.username || data.userEmail || "Someone";
+    const message = String(data.message || "").trim();
+    const preview =
+      message.length > 120
+        ? `${message.slice(0, 117)}...`
+        : message || "(no message)";
+    const rating =
+      typeof data.rating === "number" && Number.isFinite(data.rating)
+        ? Math.round(data.rating)
+        : null;
+    const source = data.source || "app_feedback";
+
+    const ratingLabel = rating != null ? `${rating}/5 stars` : "feedback";
+    const title = "New app feedback";
+    const body = `${username} (${ratingLabel}): ${preview}`;
+
+    const tokens = await getAdminPushTokens(authorUid);
+    if (tokens.length === 0) {
+      console.log("onAppFeedbackCreated: no admin push tokens");
+      return null;
+    }
+
+    const messages = tokens.map((token) => ({
+      to: token,
+      sound: "default",
+      priority: "high",
+      title,
+      body,
+      channelId: "default",
+      data: {
+        screen: "AdminAppFeedback",
+        type: "admin_app_feedback",
+        feedbackId,
+        source,
+        rating,
+      },
+    }));
+
+    const accepted = await sendExpoPushMessages(messages);
+    console.log(
+      `onAppFeedbackCreated: notified ${accepted}/${tokens.length} admin token(s)`,
+    );
+    return null;
+  });
 
 const FREE_VIDEO_TITLES = new Set([
   "Nutrition: Overview and Protein",
