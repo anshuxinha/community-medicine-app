@@ -341,7 +341,9 @@ def seed_feed_from_local(*, notify: bool = False) -> None:
     if not months:
         print("No local updates to seed.")
         return
-    publish_updates_feed(months, notify_items=None, allow_notify=notify)
+    published = publish_updates_feed(months, notify_items=None, allow_notify=notify)
+    if not published:
+        raise SystemExit("Firestore publish failed; live Updates feed was not written.")
     print("Seed complete.")
 
 
@@ -724,11 +726,16 @@ def fetch_health_updates(*, publish: bool = True, notify: bool = True):
 
     months = _build_months_map(archive, current_month_key, final_current, current_year)
     if publish:
-        publish_updates_feed(
+        published = publish_updates_feed(
             months,
             notify_items=newly_scraped if notify else None,
             allow_notify=notify and bool(newly_scraped),
         )
+        if not published:
+            raise SystemExit(
+                "Firestore publish failed; live Updates feed was not written. "
+                "Fix credentials and re-run."
+            )
 
 
 if __name__ == "__main__":

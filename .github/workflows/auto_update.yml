@@ -35,8 +35,7 @@ jobs:
           # Required so updates land in Firestore (app reads remote feed first).
           FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
           GOOGLE_CLOUD_PROJECT: community-med-app
-        # Default: scrape + publish feed + Expo push for brand-new links only.
-        # Do not also run push_notifications.py below (would double-notify).
+        # Scrape + publish Firestore feed + Expo push for brand-new links only.
         run: python scripts/fetch_updates.py
 
       - name: Run Library Verification Review
@@ -46,52 +45,18 @@ jobs:
           GOOGLE_CLOUD_PROJECT: community-med-app
         run: python scripts/verify_mock_data.py
 
+      # Keep bundled JSON in git as scrape dedup + offline fallback seed.
+      # Do not OTA: the app reads appContent/updatesFeed from Firestore first.
       - name: Commit and Push Changes
-        id: commit_changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add src/data/updates.json src/data/updates_archive.json
 
-          # Check if there are any changes to commit
           if git diff --staged --quiet; then
-            echo "has_changes=false" >> "$GITHUB_OUTPUT"
             echo "No changes to commit"
           else
-            git commit -m "Auto-update national health guidelines and explainer images"
+            git commit -m "Auto-update national health guidelines"
             git pull --rebase origin main
             git push origin main
-            echo "has_changes=true" >> "$GITHUB_OUTPUT"
           fi
-
-      - name: Check Expo Token
-        id: expo_token_check
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: |
-          if [ -z "$EXPO_TOKEN" ]; then
-            echo "has_token=false" >> "$GITHUB_OUTPUT"
-            echo "EXPO_TOKEN not set; OTA publish will be skipped."
-          else
-            echo "has_token=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Set up Node
-        if: ${{ steps.commit_changes.outputs.has_changes == 'true' && steps.expo_token_check.outputs.has_token == 'true' }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-
-      - name: Install JS Dependencies
-        if: ${{ steps.commit_changes.outputs.has_changes == 'true' && steps.expo_token_check.outputs.has_token == 'true' }}
-        run: npm ci
-
-      # OTA still ships bundled JSON as offline fallback; live feed is Firestore.
-      - name: Publish OTA Update
-        if: ${{ steps.commit_changes.outputs.has_changes == 'true' && steps.expo_token_check.outputs.has_token == 'true' }}
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-          EXPO_PUBLIC_RC_API_KEY: ${{ secrets.EXPO_PUBLIC_RC_API_KEY }}
-          EXPO_PUBLIC_RC_API_KEY_IOS: ${{ secrets.EXPO_PUBLIC_RC_API_KEY_IOS }}
-          EXPO_PUBLIC_RC_API_KEY_ANDROID: ${{ secrets.EXPO_PUBLIC_RC_API_KEY_ANDROID }}
-        run: npx eas-cli update --channel production --message "Daily dashboard guideline updates" --non-interactive
