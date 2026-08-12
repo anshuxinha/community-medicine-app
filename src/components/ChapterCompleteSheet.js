@@ -50,7 +50,8 @@ const REVIEW_CTA_VARIANTS = [
  *
  * Library / Next actions only show after the user has already completed the
  * 5-star path once (showReviewCta false). They stay hidden while stars or the
- * 1–4 star feedback form are visible.
+ * 1–4 star feedback form are visible. The close (X) control is also hidden
+ * while the rating system is on screen.
  */
 const ChapterCompleteSheet = ({
   visible,
@@ -197,22 +198,24 @@ const ChapterCompleteSheet = ({
       <Dialog visible={visible} onDismiss={onDismiss} style={styles.dialog}>
         <View style={styles.accentBar} />
 
-        <View style={styles.topBar}>
-          <View style={styles.topBarSpacer} />
-          <Pressable
-            onPress={onDismiss}
-            hitSlop={10}
-            accessibilityRole="button"
-            accessibilityLabel="Close progress report"
-            style={styles.closeBtn}
-          >
-            <MaterialIcons
-              name="close"
-              size={22}
-              color={colors.textSecondary}
-            />
-          </Pressable>
-        </View>
+        {!showCta ? (
+          <View style={styles.topBar}>
+            <View style={styles.topBarSpacer} />
+            <Pressable
+              onPress={onDismiss}
+              hitSlop={10}
+              accessibilityRole="button"
+              accessibilityLabel="Close progress report"
+              style={styles.closeBtn}
+            >
+              <MaterialIcons
+                name="close"
+                size={22}
+                color={colors.textSecondary}
+              />
+            </Pressable>
+          </View>
+        ) : null}
 
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
