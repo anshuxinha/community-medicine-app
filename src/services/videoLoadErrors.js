@@ -195,9 +195,10 @@ export const buildVideoSupportMailto = (errorInfo, extras = {}) => {
       `Error code: ${errorInfo?.code || "unknown"}`,
       errorInfo?.detail ? `Detail: ${errorInfo.detail}` : null,
       "",
-      `Device: ${device.deviceLine}`,
-      `App version: ${device.appVersion}`,
-      extras.userEmail ? `Account: ${extras.userEmail}` : null,
+      "Device / steps:",
+      `- Device: ${device.deviceLine}`,
+      `- App version: ${device.appVersion}`,
+      extras.userEmail ? `- Account: ${extras.userEmail}` : null,
       "",
     ]
       .filter((line) => line !== null)
