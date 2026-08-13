@@ -899,5 +899,113 @@
         "aspectRatio": 1.35
       }
     ]
+  },
+  {
+    "contentKey": "theory:28-1",
+    "section": "theory",
+    "topicId": "28-1",
+    "topicTitle": "Introduction to Health Research",
+    "images": [
+      {
+        "id": "rm-health-research-domains",
+        "fileName": "rm_health_research_domains.png",
+        "alt": "Four domains of health research: biomedical, clinical, epidemiological, and health systems",
+        "caption": "",
+        "purpose": "Compresses the object-by-level grid used to classify a health research question.",
+        "anchorText": "DOMAINS OF HEALTH RESEARCH",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:28-2",
+    "section": "theory",
+    "topicId": "28-2",
+    "topicTitle": "Literature Search, Research Questions, Objectives, and Hypotheses",
+    "images": [
+      {
+        "id": "rm-finer-criteria",
+        "fileName": "rm_finer_criteria.png",
+        "alt": "FINER criteria for selecting a research problem: Feasible, Interesting, Novel, Ethical, Relevant",
+        "caption": "",
+        "purpose": "Turns the high-yield FINER list into a single recall board.",
+        "anchorText": "FINER CRITERIA",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:28-4",
+    "section": "theory",
+    "topicId": "28-4",
+    "topicTitle": "Sample Size and Sampling in Research",
+    "images": [
+      {
+        "id": "rm-sampling-methods",
+        "fileName": "rm_sampling_methods.png",
+        "alt": "Probability versus non-probability sampling methods used in health research",
+        "caption": "",
+        "purpose": "Separates sampling families that residents commonly mix in viva and protocol writing.",
+        "anchorText": "TYPES OF SAMPLING",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:28-5",
+    "section": "theory",
+    "topicId": "28-5",
+    "topicTitle": "Qualitative Research",
+    "images": [
+      {
+        "id": "rm-qualitative-methods",
+        "fileName": "rm_qualitative_methods.png",
+        "alt": "Qualitative methods map: focus group, interviews, observation, participatory tools, document review",
+        "caption": "",
+        "purpose": "Shows which qualitative tool answers which kind of research question.",
+        "anchorText": "QUALITATIVE METHODS",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:28-7",
+    "section": "theory",
+    "topicId": "28-7",
+    "topicTitle": "Ethics in Health Research",
+    "images": [
+      {
+        "id": "rm-ethics-consent",
+        "fileName": "rm_ethics_consent.png",
+        "alt": "Informed consent process: information, comprehension, voluntariness, documentation, plus ethics committee review",
+        "caption": "",
+        "purpose": "Compresses the ICMR 2017 consent process and ethics-committee gate into one board.",
+        "anchorText": "INFORMED CONSENT",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:28-8",
+    "section": "theory",
+    "topicId": "28-8",
+    "topicTitle": "Protocol, Thesis, Paper, and Critical Appraisal",
+    "images": [
+      {
+        "id": "rm-imrad-thesis",
+        "fileName": "rm_imrad_thesis.png",
+        "alt": "IMRAD structure of a research report: Introduction, Methods, Results, Discussion",
+        "caption": "",
+        "purpose": "Gives the exam-standard skeleton for thesis and paper writing.",
+        "anchorText": "IMRAD FORMAT",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
   }
 ]

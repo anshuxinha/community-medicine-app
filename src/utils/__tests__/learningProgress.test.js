@@ -37,6 +37,7 @@ describe("nmcCurriculum coverage", () => {
     const list = getChaptersForPaper(1);
     expect(list).toContain("1");
     expect(list).toContain("26");
+    expect(list).toContain("28");
     expect(getPrimaryPaperForChapterId("7")).toBe(2);
   });
 });

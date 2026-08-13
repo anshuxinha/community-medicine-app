@@ -45,6 +45,7 @@ import {
 import { isResidentModeEnabled } from "../utils/residentMode";
 
 const SECTION_ID_ICON_MAP = {
+  "theory:28": "microscope",
   "theory:27": "clipboard-text-search-outline",
   "practical:2": "home-heart",
   "practical:3": "clipboard-text-search-outline",
@@ -435,6 +436,7 @@ const LibraryScreen = (props) => {
     )
       return "earth";
     if (loweredTitle.includes("biostatistics")) return "chart-bar";
+    if (loweredTitle.includes("research methodology")) return "microscope";
     if (
       loweredTitle.includes("health program") ||
       loweredTitle.includes("programmes") ||
