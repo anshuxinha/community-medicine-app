@@ -144,8 +144,8 @@
     "hash": "597e6f363323f1f82a50df6e3fcd71de"
   },
   "D:\\The App\\functions\\index.js": {
-    "mtime": 1784607395.4320846,
-    "hash": "42cf115acd01075a3d7254f99984dc00"
+    "mtime": 1786428660.9956522,
+    "hash": "83332ba20b5f6425feb1e23b0482181d"
   },
   "D:\\The App\\scratch\\analyze_trends.py": {
     "mtime": 1783704747.112139,
@@ -170,6 +170,10 @@
   "D:\\The App\\scratch\\compare_all_data.py": {
     "mtime": 1783704845.674785,
     "hash": "4d1db8e754adffb86690f629da00daad"
+  },
+  "D:\\The App\\scratch\\confirm_minimax.py": {
+    "mtime": 1786085391.3357089,
+    "hash": "f622448d6b68bce2b520844d93a9dec6"
   },
   "D:\\The App\\scratch\\debug_file.py": {
     "mtime": 1783704724.677261,
@@ -235,6 +239,14 @@
     "mtime": 1780033181.0323775,
     "hash": "0040d014dc636d0a84420475618367c1"
   },
+  "D:\\The App\\scratch\\ollama_free_smoke.py": {
+    "mtime": 1786084904.5346112,
+    "hash": "e40273b5717c0aa67d825653d9e1e2d3"
+  },
+  "D:\\The App\\scratch\\ollama_realistic_smoke.py": {
+    "mtime": 1786084981.3002222,
+    "hash": "5f52acd0ca6229377ebe0fe6249d3f0b"
+  },
   "D:\\The App\\scratch\\parse-bunny-dump.js": {
     "mtime": 1780033181.032891,
     "hash": "ac7cc8809ce437a954c8714b441fcc24"
@@ -296,8 +308,8 @@
     "hash": "54936b9b06f3ffedf69217c6f0accca5"
   },
   "D:\\The App\\scripts\\attach-pdf-to-video.js": {
-    "mtime": 1785312236.391701,
-    "hash": "dad24a75485418aed45f5f4e303fafc2"
+    "mtime": 1786019731.7280447,
+    "hash": "cff637272c78b88166f153ea9f7f7c7a"
   },
   "D:\\The App\\scripts\\audit_colors.js": {
     "mtime": 1772547735.8824155,
@@ -308,8 +320,8 @@
     "hash": "d2356a6192520e31f73a149eeed2931b"
   },
   "D:\\The App\\scripts\\bunny-videos.js": {
-    "mtime": 1784901525.1445968,
-    "hash": "c376cf3c08a108ae59ce19778d172043"
+    "mtime": 1786019299.489607,
+    "hash": "365f06118eb8bbb6857f07b1732f68f0"
   },
   "D:\\The App\\scripts\\check-firestore-gem.js": {
     "mtime": 1778661542.9656944,
@@ -344,8 +356,8 @@
     "hash": "113e41920f0703cdd6ac12124ca636c4"
   },
   "D:\\The App\\scripts\\fetch_updates.py": {
-    "mtime": 1783581370.5221336,
-    "hash": "838ac104e6da3223377e156367f2f1f3"
+    "mtime": 1786554571.4535365,
+    "hash": "5e5a9181298654ab4f17ca085566fd43"
   },
   "D:\\The App\\scripts\\fix_broken_color_props.js": {
     "mtime": 1784212218.394447,
@@ -391,9 +403,13 @@
     "mtime": 1784305546.8587046,
     "hash": "7702ac7fd46ad488cec729e06cedf02f"
   },
+  "D:\\The App\\scripts\\publish-video.js": {
+    "mtime": 1786019731.7280447,
+    "hash": "2ce0197181b901f1166424dac0236bee"
+  },
   "D:\\The App\\scripts\\publish_library_override.py": {
-    "mtime": 1784304331.0982354,
-    "hash": "03f9653cae3ed1920e163b56838f22c3"
+    "mtime": 1785993256.8294716,
+    "hash": "95dabb5768f2c114b4a05e46692a7a70"
   },
   "D:\\The App\\scripts\\push_notifications.py": {
     "mtime": 1783233662.8135293,
@@ -410,6 +426,14 @@
   "D:\\The App\\scripts\\reset_devices.js": {
     "mtime": 1776771290.9485075,
     "hash": "f024e7b721a3c582829bc7b05c03a814"
+  },
+  "D:\\The App\\scripts\\scan_park_library_gaps.py": {
+    "mtime": 1785702368.9102066,
+    "hash": "c94455610820d870a327f5ed1b350ad0"
+  },
+  "D:\\The App\\scripts\\seed-updates-feed.js": {
+    "mtime": 1785775511.889063,
+    "hash": "bf1e0a59b3713803a975661c13c05a61"
   },
   "D:\\The App\\scripts\\set_admin.js": {
     "mtime": 1777560719.6075256,
@@ -464,16 +488,16 @@
     "hash": "f121d6dd8a36a478123857fe8eb498c8"
   },
   "D:\\The App\\scripts\\verify_mock_data.py": {
-    "mtime": 1783581377.52156,
-    "hash": "7b541f09d0e63992235c558b48f8fef0"
+    "mtime": 1786087629.222253,
+    "hash": "32517568403ee6eeadf3f71a1d7bf33f"
   },
   "D:\\The App\\src\\components\\ChapterCompleteSheet.js": {
-    "mtime": 1784650305.996749,
-    "hash": "3bafc95066756a75ace874f0c9e87808"
+    "mtime": 1786553925.823565,
+    "hash": "7e9cf23ce2c59ceb9765567c2c0eb894"
   },
   "D:\\The App\\src\\components\\DrawerMenu.js": {
-    "mtime": 1784274890.529977,
-    "hash": "78cb0fdf2888c736027ce356907d5c58"
+    "mtime": 1786340384.025283,
+    "hash": "c91d7df91ff5022b342420121edccfe2"
   },
   "D:\\The App\\src\\components\\DropdownPicker.js": {
     "mtime": 1784224587.3982556,
@@ -484,12 +508,12 @@
     "hash": "97abdb8fd522462f616d41d6c847c9b9"
   },
   "D:\\The App\\src\\components\\GestureVideoPlayer.js": {
-    "mtime": 1785315357.9846227,
-    "hash": "63448821979e26da5a7f96834c8a56e7"
+    "mtime": 1786638419.1732469,
+    "hash": "760d535491918ec6ff80f7f09a870037"
   },
   "D:\\The App\\src\\components\\ReadingView.js": {
-    "mtime": 1785261868.4735892,
-    "hash": "2ae879543efef9620eeffe1d2f63b428"
+    "mtime": 1785772933.9932604,
+    "hash": "3ede417b9d80b9073154664dd05336d9"
   },
   "D:\\The App\\src\\components\\ReviewFeedbackModal.js": {
     "mtime": 1785328661.2858431,
@@ -516,8 +540,8 @@
     "hash": "28aff4aa2aa407d8be48e8aed5bb252a"
   },
   "D:\\The App\\src\\context\\AppContext.js": {
-    "mtime": 1785163296.6940963,
-    "hash": "ac7fdcfbbe3dcf0ce8ec9c3cc0527db6"
+    "mtime": 1786463875.2091372,
+    "hash": "f4ef89c8679f4ec5508594c7538a1923"
   },
   "D:\\The App\\src\\data\\defaultTopicIllustrations.js": {
     "mtime": 1775143847.0992994,
@@ -535,6 +559,10 @@
     "mtime": 1783703853.1712928,
     "hash": "364c13199d54f90055491311383d0e28"
   },
+  "D:\\The App\\src\\data\\nmcCurriculum.js": {
+    "mtime": 1785698369.7617745,
+    "hash": "e76935040aff034b5f2d5cf3a24d4aed"
+  },
   "D:\\The App\\src\\data\\pyq_images_map.js": {
     "mtime": 1785266322.336642,
     "hash": "d9067b25bb9242dad8d52e9eb6096abb"
@@ -547,17 +575,21 @@
     "mtime": 1785261854.9955852,
     "hash": "ed6a4dcad62cc836e6bd88d75b237a96"
   },
+  "D:\\The App\\src\\hooks\\useUpdatesFeed.js": {
+    "mtime": 1785775127.4745152,
+    "hash": "cc9a10b9fc4d6e5c67642d1b34ae488c"
+  },
   "D:\\The App\\src\\navigation\\AppNavigator.js": {
-    "mtime": 1785328691.7067833,
-    "hash": "594f41a0eed997de69c8b3c928b6ea57"
+    "mtime": 1786340384.0262837,
+    "hash": "cfc25b4fa821d4d6109853ecf27c79bd"
   },
   "D:\\The App\\src\\screens\\AdminAppFeedbackScreen.js": {
-    "mtime": 1785328691.6271667,
-    "hash": "3985c046149770d396cc6e1e862df33d"
+    "mtime": 1785991999.3510604,
+    "hash": "6323263c1e2163889bbee676d9689e4f"
   },
   "D:\\The App\\src\\screens\\AdminLibraryReviewScreen.js": {
-    "mtime": 1784224587.3295302,
-    "hash": "27b610cc1d40afbd782e8d6e8e28e352"
+    "mtime": 1786087909.7936497,
+    "hash": "80d14ed54db2687d8d2bc31c7f5330a1"
   },
   "D:\\The App\\src\\screens\\AnthropometryScreen.js": {
     "mtime": 1784225615.1075914,
@@ -572,8 +604,8 @@
     "hash": "54d95e35abd81c66cfcfb4d05ddcd448"
   },
   "D:\\The App\\src\\screens\\DashboardScreen.js": {
-    "mtime": 1785313608.1814804,
-    "hash": "81cc88afcf3c9e2f88f33c7cbef2d2bd"
+    "mtime": 1785775351.1839488,
+    "hash": "6e03d1334122cbc6fab06695dbfeedee"
   },
   "D:\\The App\\src\\screens\\DietarySurveyScreen.js": {
     "mtime": 1784225615.114561,
@@ -587,9 +619,13 @@
     "mtime": 1784224587.3576026,
     "hash": "aa3688842ec7c1abad4f7b83e2894bf8"
   },
+  "D:\\The App\\src\\screens\\LearningProgressScreen.js": {
+    "mtime": 1785733611.5855398,
+    "hash": "7802f83ff634ab49a274508a5599e0fd"
+  },
   "D:\\The App\\src\\screens\\LibraryScreen.js": {
-    "mtime": 1785264158.489263,
-    "hash": "67e9ce8c20616a74c8605f27fa98925a"
+    "mtime": 1785739098.5335658,
+    "hash": "de82bc7b6e88363e9e696fc5a5d25471"
   },
   "D:\\The App\\src\\screens\\LoginScreen.js": {
     "mtime": 1785163280.5808306,
@@ -611,13 +647,17 @@
     "mtime": 1785161583.88528,
     "hash": "0dfe08b6e6017e61d677f4ab4a15e727"
   },
+  "D:\\The App\\src\\screens\\OnboardingScreen.js": {
+    "mtime": 1785699485.5823512,
+    "hash": "2956bf762db89ed2c808141c469d2e5c"
+  },
   "D:\\The App\\src\\screens\\PaywallScreen.js": {
-    "mtime": 1785304531.5281937,
-    "hash": "c185159ec839caaec3e1a6b0906b7ed1"
+    "mtime": 1785735429.0961113,
+    "hash": "d1c493bfcba8ba07ff8341d1f8cfc804"
   },
   "D:\\The App\\src\\screens\\ProfileScreen.js": {
-    "mtime": 1785328691.7211251,
-    "hash": "b29c32493c80e5cebf5a47cd4df171b1"
+    "mtime": 1786463874.876671,
+    "hash": "e069a1d38026be21c4242213cb64dc9b"
   },
   "D:\\The App\\src\\screens\\PYQCreateScreen.js": {
     "mtime": 1785161583.88528,
@@ -632,8 +672,8 @@
     "hash": "f968241eb8b01706ae26202300310ee9"
   },
   "D:\\The App\\src\\screens\\ReadingScreen.js": {
-    "mtime": 1785261855.052948,
-    "hash": "aa29b713796c9603117dc605dfd351aa"
+    "mtime": 1786083075.9438987,
+    "hash": "d85f1a935ca72f70fa58b3e2d01c6a8c"
   },
   "D:\\The App\\src\\screens\\SearchScreen.js": {
     "mtime": 1785313571.7960963,
@@ -647,13 +687,17 @@
     "mtime": 1784226108.0246305,
     "hash": "ab2f084fae8903b86b44dfb3f2af2bb0"
   },
+  "D:\\The App\\src\\screens\\SupportScreen.js": {
+    "mtime": 1786340384.0302837,
+    "hash": "6d1d8cf6e6f506d78467e93ed67ed9e6"
+  },
   "D:\\The App\\src\\screens\\UpdatesScreen.js": {
-    "mtime": 1784224587.3947444,
-    "hash": "f6eb550b80214139a46a94ea196fe185"
+    "mtime": 1785775288.6954691,
+    "hash": "96d33ddfc494e3d7308314f70f563680"
   },
   "D:\\The App\\src\\screens\\VideosScreen.js": {
-    "mtime": 1785315333.2904637,
-    "hash": "4ef03018feceacfc2a508bf33557441d"
+    "mtime": 1786638484.8153043,
+    "hash": "5d3a5dd55320cf42b1f31144a3b62e6c"
   },
   "D:\\The App\\src\\screens\\VirtualMuseumScreen.js": {
     "mtime": 1785306236.9107902,
@@ -676,8 +720,8 @@
     "hash": "c28598e82ecfac5b2dbd51f5ad724698"
   },
   "D:\\The App\\src\\services\\feedbackService.js": {
-    "mtime": 1785328638.3409991,
-    "hash": "0b56bd7e73c00e7ce5b4a31d7d108093"
+    "mtime": 1785991880.4566033,
+    "hash": "7e0173db182bae2e3e93d37bc01355fc"
   },
   "D:\\The App\\src\\services\\highlightService.js": {
     "mtime": 1777659005.6232884,
@@ -691,25 +735,29 @@
     "mtime": 1778664278.3496735,
     "hash": "ea8466bc88791dd4c6ebedcee902c58a"
   },
+  "D:\\The App\\src\\services\\updatesService.js": {
+    "mtime": 1785775127.4745152,
+    "hash": "396eaa92d76fe768fd6f2abdecb055f6"
+  },
   "D:\\The App\\src\\services\\videoLoadErrors.js": {
-    "mtime": 1784644401.476598,
-    "hash": "56519b4570084501320ba552e4a31d5b"
+    "mtime": 1786638378.8291337,
+    "hash": "ac67bb256204ba074c3b75b9b7a06071"
   },
   "D:\\The App\\src\\services\\videoService.js": {
     "mtime": 1785306109.616561,
     "hash": "3fbcd595cc23a382d09487c40d571289"
   },
   "D:\\The App\\src\\services\\__tests__\\couponService.test.js": {
-    "mtime": 1778607110.6518483,
-    "hash": "16e7bf9a994393346b79b9ca095d5023"
+    "mtime": 1786464140.0135055,
+    "hash": "666e4248e1b609b3e019d4019e824231"
   },
   "D:\\The App\\src\\services\\__tests__\\topicIllustrations.test.js": {
     "mtime": 1778646220.8562944,
     "hash": "34c2be6fa56708b10839c0dff74bbdd9"
   },
   "D:\\The App\\src\\styles\\theme.js": {
-    "mtime": 1784792579.0562034,
-    "hash": "0ecf8ebc4f00c5d3b2a84af658fb8004"
+    "mtime": 1786087806.9308388,
+    "hash": "c68f1b49c72db283e927298db89ef1b7"
   },
   "D:\\The App\\src\\styles\\ThemeContext.js": {
     "mtime": 1785162442.7906754,
@@ -720,8 +768,8 @@
     "hash": "aeeb25e31f8c2b1e8ab34083cf63308a"
   },
   "D:\\The App\\src\\utils\\contentRegistry.js": {
-    "mtime": 1784650210.305622,
-    "hash": "5db94425a80be8aecf2bc70ac1173f56"
+    "mtime": 1785993204.0143225,
+    "hash": "7c1d925de447ccb1c63354fd3397b4de"
   },
   "D:\\The App\\src\\utils\\deviceUtils.js": {
     "mtime": 1776915497.5873566,
@@ -731,21 +779,33 @@
     "mtime": 1785306331.1362023,
     "hash": "239648fbbaef3026562ee16324fea4c2"
   },
+  "D:\\The App\\src\\utils\\learningProgress.js": {
+    "mtime": 1785993203.9006617,
+    "hash": "ba56499826ddddda28d3b85d22f7b9d0"
+  },
+  "D:\\The App\\src\\utils\\onboardingStorage.js": {
+    "mtime": 1785734535.5422063,
+    "hash": "5d565782124990413b9517a6cb27f828"
+  },
   "D:\\The App\\src\\utils\\progressPresentation.js": {
     "mtime": 1784650210.305622,
     "hash": "211921205c1af08b837fb3d8b3d58f3b"
   },
   "D:\\The App\\src\\utils\\referralUtils.js": {
-    "mtime": 1781108061.3430338,
-    "hash": "ef7349ebd62efad7fab7b42ce9a2bb76"
+    "mtime": 1786463941.3213525,
+    "hash": "cd3babfa9685b34a073883d6a4b9b16b"
   },
   "D:\\The App\\src\\utils\\relatedGems.js": {
     "mtime": 1785300544.3570468,
     "hash": "c376126678c3aca1c263cbff9c33696c"
   },
+  "D:\\The App\\src\\utils\\residentMode.js": {
+    "mtime": 1785733497.8147352,
+    "hash": "85c1ce7f7ebd468a199a848218db9d1b"
+  },
   "D:\\The App\\src\\utils\\reviewPrompt.js": {
-    "mtime": 1785328661.4084296,
-    "hash": "f6e0144fd5e9f2d726d658c053214391"
+    "mtime": 1785995566.6212327,
+    "hash": "fea56bc703815ecf9157206e6e42963c"
   },
   "D:\\The App\\src\\utils\\screenCaptureProtection.js": {
     "mtime": 1780371717.8520322,
@@ -759,16 +819,36 @@
     "mtime": 1784650282.931558,
     "hash": "985dc88ff91debb96b26431b81f41c0e"
   },
+  "D:\\The App\\src\\utils\\__tests__\\contentRegistry.silentUpdate.test.js": {
+    "mtime": 1785993256.761871,
+    "hash": "5028237339496633bacd64b3352b3a9a"
+  },
+  "D:\\The App\\src\\utils\\__tests__\\learningProgress.test.js": {
+    "mtime": 1785698369.7617745,
+    "hash": "77b8b37cc9152f326742f6765919f60e"
+  },
+  "D:\\The App\\src\\utils\\__tests__\\onboardingStorage.test.js": {
+    "mtime": 1785734555.4803152,
+    "hash": "00e01d55470d7f096e2cda9914532a90"
+  },
   "D:\\The App\\src\\utils\\__tests__\\progressPresentation.test.js": {
     "mtime": 1784650282.931558,
     "hash": "035440e518221f9db9a58e3cb9736f87"
   },
+  "D:\\The App\\src\\utils\\__tests__\\referralUtils.test.js": {
+    "mtime": 1786463941.3180087,
+    "hash": "5ff244734b42120aad170d352a4f26cd"
+  },
+  "D:\\The App\\src\\utils\\__tests__\\residentMode.test.js": {
+    "mtime": 1785733497.8167405,
+    "hash": "b8935f5468f84c945de7fa34750fcffc"
+  },
   "D:\\The App\\AGENTS.md": {
-    "mtime": 1784725297.409278,
+    "mtime": 1785916675.9318168,
     "hash": "c98a113eb85a05795abeb6b7c86d1e66"
   },
   "D:\\The App\\CLAUDE.md": {
-    "mtime": 1784725297.409278,
+    "mtime": 1785916675.930818,
     "hash": "647acf6cd82f26b312d239ac41668627"
   },
   "D:\\The App\\COUPON_SETUP.md": {
@@ -796,8 +876,8 @@
     "hash": "3dd6c34e0688a13866f251afd525c666"
   },
   "D:\\The App\\docs\\library-update-review-workflow.md": {
-    "mtime": 1783579224.3160555,
-    "hash": "b978bb720ee1a90212eb4a18b30f06e0"
+    "mtime": 1786087909.683311,
+    "hash": "4c7ad3545c536494b85fb08e45a39be8"
   },
   "D:\\The App\\docs\\play_store_metadata.md": {
     "mtime": 1772355533.364325,

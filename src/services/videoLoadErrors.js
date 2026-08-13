@@ -5,7 +5,41 @@
  * Firebase / client errors are normalized via mapVideoLoadError().
  */
 
+import { Platform } from "react-native";
+import Constants from "expo-constants";
+import * as Device from "expo-device";
+
 export const VIDEO_SUPPORT_EMAIL = "anshuxinha@gmail.com";
+
+/** Sync snapshot for support emails and error screens. */
+export const getSupportDeviceSnapshot = () => {
+  const osLabel =
+    Platform.OS === "ios"
+      ? `iOS ${Platform.Version}`
+      : Platform.OS === "android"
+        ? `Android ${Platform.Version}`
+        : String(Platform.OS || "unknown");
+  const model = Device.modelName || Device.deviceName || null;
+  const appVersion =
+    Constants.expoConfig?.version ||
+    Constants.nativeAppVersion ||
+    "unknown";
+  const nativeBuild =
+    Constants.nativeBuildVersion ||
+    Constants.expoConfig?.ios?.buildNumber ||
+    Constants.expoConfig?.android?.versionCode ||
+    null;
+  const versionLine = nativeBuild
+    ? `${appVersion} (${nativeBuild})`
+    : String(appVersion);
+
+  return {
+    deviceLine: model ? `${model} (${osLabel})` : osLabel,
+    osLabel,
+    model,
+    appVersion: versionLine,
+  };
+};
 
 /** @typedef {{ code: string, title: string, message: string, fix: string, contactSupport: boolean }} VideoLoadErrorInfo */
 
@@ -148,7 +182,8 @@ export const mapVideoLoadError = (error, context = {}) => {
   return { ...getVideoLoadErrorInfo("VIDEOS_UNKNOWN"), detail };
 };
 
-export const buildVideoSupportMailto = (errorInfo) => {
+export const buildVideoSupportMailto = (errorInfo, extras = {}) => {
+  const device = getSupportDeviceSnapshot();
   const subject = encodeURIComponent(
     `STROMA Videos error ${errorInfo?.code || "VIDEOS_UNKNOWN"}`,
   );
@@ -160,8 +195,9 @@ export const buildVideoSupportMailto = (errorInfo) => {
       `Error code: ${errorInfo?.code || "unknown"}`,
       errorInfo?.detail ? `Detail: ${errorInfo.detail}` : null,
       "",
-      "Device / steps:",
-      "- ",
+      `Device: ${device.deviceLine}`,
+      `App version: ${device.appVersion}`,
+      extras.userEmail ? `Account: ${extras.userEmail}` : null,
       "",
     ]
       .filter((line) => line !== null)

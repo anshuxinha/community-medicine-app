@@ -62,6 +62,7 @@ import {
 } from "../services/videoService";
 import {
   buildVideoSupportMailto,
+  getSupportDeviceSnapshot,
   mapVideoLoadError,
   VIDEO_SUPPORT_EMAIL,
 } from "../services/videoLoadErrors";
@@ -72,7 +73,7 @@ import {
 } from "../utils/screenCaptureProtection";
 import GestureVideoPlayer from "../components/GestureVideoPlayer";
 
-const { width } = Dimensions.get("window");
+const TABLET_SHORTEST_SIDE = 600;
 const SEEN_VIDEO_IDS_STORAGE_KEY = "seenVideoIds:v1";
 
 const FreeLabel = () => {
@@ -286,9 +287,13 @@ const EmptyState = ({ isFiltered }) => {
 
 const VideosLoadErrorState = ({ errorInfo, onRetry }) => {
   const { styles, colors } = useThemedStyles(createStyles);
+  const { user } = useContext(AppContext);
+  const device = getSupportDeviceSnapshot();
 
   const openSupport = () => {
-    const url = buildVideoSupportMailto(errorInfo);
+    const url = buildVideoSupportMailto(errorInfo, {
+      userEmail: user?.email,
+    });
     Linking.openURL(url).catch(() => {
       Alert.alert(
         "Contact support",
@@ -316,6 +321,11 @@ const VideosLoadErrorState = ({ errorInfo, onRetry }) => {
           {errorInfo.detail}
         </Text>
       ) : null}
+      <Text style={styles.errorDeviceText} selectable>
+        {device.deviceLine}
+        {" · v"}
+        {device.appVersion}
+      </Text>
       <View style={styles.errorActions}>
         {typeof onRetry === "function" ? (
           <Pressable style={styles.errorPrimaryBtn} onPress={onRetry}>
@@ -372,36 +382,32 @@ const VideosScreen = ({ navigation, route }) => {
   const [fullscreenPdf, setFullscreenPdf] = useState(false);
   const [pdfOpenedFromList, setPdfOpenedFromList] = useState(false);
   const [playerFullscreen, setPlayerFullscreen] = useState(false);
+  const [forceInline, setForceInline] = useState(false);
   const [playbackUri, setPlaybackUri] = useState(null);
   const [playbackLoading, setPlaybackLoading] = useState(false);
   const [playbackError, setPlaybackError] = useState(null);
   const [seenVideoIds, setSeenVideoIds] = useState({});
   const [windowSize, setWindowSize] = useState(() => Dimensions.get("window"));
 
-  const selectedVideoIdRef = useRef(null);
-
   const isLandscape = windowSize.width > windowSize.height;
-  // Device landscape always expands the player so rotation feels natural.
-  const effectivePlayerFullscreen = playerFullscreen || isLandscape;
-
-  selectedVideoIdRef.current = selectedVideo?.id ?? null;
+  const isTablet =
+    Math.min(windowSize.width, windowSize.height) >= TABLET_SHORTEST_SIDE;
+  // Phones: landscape expands the player. Tablets stay inline so landscape
+  // iPads keep a close control. forceInline lets minimize stick in landscape.
+  const effectivePlayerFullscreen =
+    playerFullscreen || (!isTablet && isLandscape && !forceInline);
 
   const exitPlayerFullscreen = useCallback(() => {
     setPlayerFullscreen(false);
-    // Landscape keeps effective fullscreen true until portrait; nudge portrait
-    // so the UI can leave the expanded player layout.
     if (isLandscape) {
-      ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP)
-        .catch(() => {})
-        .finally(() => {
-          setTimeout(() => {
-            if (selectedVideoIdRef.current) {
-              ScreenOrientation.unlockAsync().catch(() => {});
-            }
-          }, 700);
-        });
+      setForceInline(true);
     }
   }, [isLandscape]);
+
+  const enterPlayerFullscreen = useCallback(() => {
+    setForceInline(false);
+    setPlayerFullscreen(true);
+  }, []);
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener("change", ({ window }) => {
@@ -520,6 +526,7 @@ const VideosScreen = ({ navigation, route }) => {
     setFullscreenPdf(false);
     setPdfOpenedFromList(false);
     setPlayerFullscreen(false);
+    setForceInline(false);
     setPlaybackUri(null);
     setPlaybackError(null);
     setPlaybackLoading(false);
@@ -609,6 +616,7 @@ const VideosScreen = ({ navigation, route }) => {
 
   const closePlayerModal = () => {
     setPlayerFullscreen(false);
+    setForceInline(false);
     setPlaybackUri(null);
     setPlaybackError(null);
     setPlaybackLoading(false);
@@ -1315,7 +1323,7 @@ const VideosScreen = ({ navigation, route }) => {
               <IconButton
                 icon="fullscreen"
                 iconColor={theme.colors.textTitle}
-                onPress={() => setPlayerFullscreen(true)}
+                onPress={enterPlayerFullscreen}
               />
             </View>
           )}
@@ -1328,8 +1336,9 @@ const VideosScreen = ({ navigation, route }) => {
             <View
               style={[
                 styles.videoPlayerContainer,
-                effectivePlayerFullscreen &&
-                  styles.videoPlayerContainerFullscreen,
+                effectivePlayerFullscreen
+                  ? styles.videoPlayerContainerFullscreen
+                  : { height: windowSize.width * (9 / 16) },
                 {
                   backgroundColor: isDark ? "#000000" : "#FFFFFF",
                 },
@@ -1370,12 +1379,13 @@ const VideosScreen = ({ navigation, route }) => {
                       backgroundColor: isDark ? "#000000" : "#FFFFFF",
                     },
                   ]}
+                  onClose={closePlayerModal}
                   onFullscreenPress={() => {
                     if (effectivePlayerFullscreen) {
                       exitPlayerFullscreen();
                       return;
                     }
-                    setPlayerFullscreen(true);
+                    enterPlayerFullscreen();
                   }}
                 />
               ) : (
@@ -1827,6 +1837,12 @@ const createStyles = (colors) => StyleSheet.create({
     color: colors.textTitle,
     fontVariant: ["tabular-nums"],
   },
+  errorDeviceText: {
+    marginTop: 8,
+    fontSize: 12,
+    color: colors.textSecondary,
+    textAlign: "center",
+  },
   errorDetailText: {
     marginTop: 10,
     fontSize: 11,
@@ -1896,7 +1912,6 @@ const createStyles = (colors) => StyleSheet.create({
   },
   videoPlayerContainer: {
     width: "100%",
-    height: width * (9 / 16),
     backgroundColor: "#000000",
   },
   videoPlayerContainerFullscreen: {

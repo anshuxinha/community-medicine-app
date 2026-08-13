@@ -49,6 +49,61 @@ const trackHeightLabel = (track) => {
   return `${h}p`;
 };
 
+/** Keep signed-query tokens when resolving a relative HLS variant path. */
+const resolveHlsUri = (relativeOrAbsolute, masterUri) => {
+  const resolved = new URL(relativeOrAbsolute, masterUri);
+  const master = new URL(masterUri);
+  if (!resolved.search && master.search) {
+    resolved.search = master.search;
+  }
+  return resolved.href;
+};
+
+/** Parse a master HLS playlist into unique height → variant URI entries. */
+const parseHlsVariants = async (masterUri) => {
+  if (!masterUri) return [];
+  const res = await fetch(masterUri);
+  if (!res.ok) return [];
+  const text = await res.text();
+  const lines = text.split(/\r?\n/);
+  const variants = [];
+  const seen = new Set();
+  for (let i = 0; i < lines.length - 1; i += 1) {
+    const line = lines[i];
+    if (!line.startsWith("#EXT-X-STREAM-INF") || !line.includes("RESOLUTION")) {
+      continue;
+    }
+    const resMatch = line.match(/RESOLUTION=(\d+)x(\d+)/i);
+    const next = (lines[i + 1] || "").trim();
+    if (!resMatch || !next || next.startsWith("#")) continue;
+    const height = Number(resMatch[2]);
+    if (!height || seen.has(height)) continue;
+    let uri;
+    try {
+      uri = resolveHlsUri(next, masterUri);
+    } catch (_e) {
+      continue;
+    }
+    seen.add(height);
+    variants.push({ height, uri, label: `${height}p` });
+  }
+  variants.sort((a, b) => b.height - a.height);
+  return variants;
+};
+
+const resolveTrackVariantUri = (masterUri, track) => {
+  if (!masterUri || !track) return null;
+  const id = String(track.id || "").trim();
+  if (id.includes(".m3u8") || id.includes("/")) {
+    try {
+      return resolveHlsUri(id, masterUri);
+    } catch (_e) {
+      return null;
+    }
+  }
+  return null;
+};
+
 /**
  * YouTube-inspired expo-video player: dark tap overlay, controls above a thin
  * purple seeker, mute / quality / speed / fullscreen on the action row.
@@ -59,6 +114,7 @@ const GestureVideoPlayer = ({
   style,
   isFullscreen = false,
   onFullscreenPress,
+  onClose,
   onWatchProgress,
   /** Optional catalog duration (seconds) when player duration is not ready yet. */
   fallbackDuration = 0,
@@ -79,8 +135,11 @@ const GestureVideoPlayer = ({
   const [qualityMenuOpen, setQualityMenuOpen] = useState(false);
   const [qualityLabel, setQualityLabel] = useState("Auto");
   const [videoTracks, setVideoTracks] = useState([]);
+  const [hlsVariants, setHlsVariants] = useState([]);
 
   const lastTapRef = useRef({ t: 0, side: null });
+  const masterUriRef = useRef(sourceUri);
+  const userPausedRef = useRef(false);
   const longPressTimerRef = useRef(null);
   const rateBoostRef = useRef(false);
   const baseRateRef = useRef(1);
@@ -105,6 +164,7 @@ const GestureVideoPlayer = ({
     p.timeUpdateEventInterval = 0.25;
     p.loop = false;
     p.preservesPitch = true;
+    p.play();
   });
 
   const { isPlaying } = useEvent(player, "playingChange", {
@@ -182,6 +242,8 @@ const GestureVideoPlayer = ({
   });
 
   useEffect(() => {
+    masterUriRef.current = sourceUri;
+    userPausedRef.current = false;
     setShowPoster(Boolean(posterUri));
     setPlaybackRate(1);
     baseRateRef.current = 1;
@@ -190,7 +252,31 @@ const GestureVideoPlayer = ({
     setQualityMenuOpen(false);
     setQualityLabel("Auto");
     setVideoTracks([]);
+    setHlsVariants([]);
+
+    if (!sourceUri) return undefined;
+    let cancelled = false;
+    parseHlsVariants(sourceUri)
+      .then((variants) => {
+        if (!cancelled) setHlsVariants(variants);
+      })
+      .catch(() => {
+        if (!cancelled) setHlsVariants([]);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [sourceUri, posterUri]);
+
+  useEffect(() => {
+    if (status !== "readyToPlay") return;
+    if (userPausedRef.current || player.playing) return;
+    try {
+      player.play();
+    } catch (_e) {
+      // ignore
+    }
+  }, [status, player]);
 
   useEffect(() => {
     return () => {
@@ -242,8 +328,10 @@ const GestureVideoPlayer = ({
 
   const togglePlay = useCallback(() => {
     if (player.playing) {
+      userPausedRef.current = true;
       player.pause();
     } else {
+      userPausedRef.current = false;
       player.play();
     }
     revealControls();
@@ -275,19 +363,38 @@ const GestureVideoPlayer = ({
   );
 
   const selectQuality = useCallback(
-    (track) => {
-      try {
-        // null / undefined → auto (adaptive)
-        player.videoTrack = track || null;
-        setQualityLabel(track ? trackHeightLabel(track) : "Auto");
+    (option) => {
+      const masterUri = masterUriRef.current;
+      const nextUri = option?.uri || masterUri;
+      const nextLabel = option?.label || "Auto";
+      if (!nextUri) {
+        showHud({ type: "quality", label: "Unavailable", side: "center" });
+        setQualityMenuOpen(false);
+        revealControls();
+        return;
+      }
+
+      const applySwap = async () => {
+        const time = player.currentTime || 0;
+        const wasPlaying = player.playing;
+        await player.replaceAsync({ uri: nextUri, contentType: "hls" });
+        if (time > 0) {
+          player.currentTime = time;
+        }
+        if (wasPlaying || !userPausedRef.current) {
+          player.play();
+        }
+        setQualityLabel(nextLabel);
+        showHud({ type: "quality", label: nextLabel, side: "center" });
+      };
+
+      applySwap().catch(() => {
         showHud({
           type: "quality",
-          label: track ? trackHeightLabel(track) : "Auto",
+          label: "Couldn't change quality",
           side: "center",
         });
-      } catch (_e) {
-        showHud({ type: "quality", label: "N/A", side: "center" });
-      }
+      });
       setQualityMenuOpen(false);
       revealControls();
     },
@@ -539,15 +646,33 @@ const GestureVideoPlayer = ({
     (controlsVisible || !isPlaying || isScrubbing || menuOpen) && !hasError;
 
   const qualityOptions = useMemo(() => {
-    const sorted = [...videoTracks].sort(
-      (a, b) => (b?.size?.height || 0) - (a?.size?.height || 0),
-    );
-    return [{ key: "auto", track: null, label: "Auto" }, ...sorted.map((t) => ({
-      key: t.id || trackHeightLabel(t),
-      track: t,
-      label: trackHeightLabel(t),
-    }))];
-  }, [videoTracks]);
+    if (hlsVariants.length > 0) {
+      return [
+        { key: "auto", uri: null, label: "Auto" },
+        ...hlsVariants.map((variant) => ({
+          key: String(variant.height),
+          uri: variant.uri,
+          label: variant.label,
+        })),
+      ];
+    }
+
+    const fromTracks = [...videoTracks]
+      .map((track) => {
+        const uri = resolveTrackVariantUri(masterUriRef.current, track);
+        if (!uri) return null;
+        return {
+          key: track.id || trackHeightLabel(track),
+          uri,
+          label: trackHeightLabel(track),
+          height: track?.size?.height || 0,
+        };
+      })
+      .filter(Boolean)
+      .sort((a, b) => (b.height || 0) - (a.height || 0));
+
+    return [{ key: "auto", uri: null, label: "Auto" }, ...fromTracks];
+  }, [hlsVariants, videoTracks]);
 
   return (
     <View
@@ -561,8 +686,7 @@ const GestureVideoPlayer = ({
         <VideoView
           style={StyleSheet.absoluteFill}
           player={player}
-          // cover in fullscreen fills edges (crops slightly); contain otherwise
-          contentFit={isFullscreen ? "cover" : "contain"}
+          contentFit="contain"
           nativeControls={false}
           allowsFullscreen={false}
           onFirstFrameRender={() => {
@@ -576,7 +700,7 @@ const GestureVideoPlayer = ({
         <Image
           source={{ uri: posterUri }}
           style={[styles.poster, { backgroundColor: canvasBg }]}
-          resizeMode={isFullscreen ? "cover" : "contain"}
+          resizeMode="contain"
         />
       ) : null}
 
@@ -681,7 +805,7 @@ const GestureVideoPlayer = ({
                       return (
                         <Pressable
                           key={opt.key}
-                          onPress={() => selectQuality(opt.track)}
+                          onPress={() => selectQuality(opt)}
                           style={[
                             styles.chip,
                             selected && styles.chipSelected,
@@ -810,6 +934,23 @@ const GestureVideoPlayer = ({
           </View>
         </View>
       ) : null}
+
+      {typeof onClose === "function" && isFullscreen ? (
+        <Pressable
+          onPress={onClose}
+          hitSlop={12}
+          style={[
+            styles.closeHit,
+            {
+              top: Math.max(insets.top, 8),
+              left: Math.max(insets.left, 8),
+            },
+          ]}
+          accessibilityLabel="Close video"
+        >
+          <MaterialIcons name="close" size={24} color="#FFFFFF" />
+        </Pressable>
+      ) : null}
     </View>
   );
 };
@@ -841,6 +982,13 @@ const styles = StyleSheet.create({
   },
   poster: {
     ...StyleSheet.absoluteFillObject,
+  },
+  closeHit: {
+    position: "absolute",
+    zIndex: 20,
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: "rgba(0,0,0,0.45)",
   },
   tapOverlay: {
     ...StyleSheet.absoluteFillObject,
