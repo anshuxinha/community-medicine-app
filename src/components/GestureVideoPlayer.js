@@ -773,7 +773,14 @@ const GestureVideoPlayer = ({
           </View>
 
           <View
-            style={[styles.bottomChrome, { paddingBottom: 6 + bottomSafe }]}
+            style={[
+              styles.bottomChrome,
+              {
+                paddingBottom: 6 + bottomSafe,
+                paddingLeft: isFullscreen ? Math.max(insets.left, 8) : 0,
+                paddingRight: isFullscreen ? Math.max(insets.right, 8) : 0,
+              },
+            ]}
           >
             {(speedMenuOpen || qualityMenuOpen) && (
               <View style={styles.chipRow} pointerEvents="box-none">

@@ -73,7 +73,6 @@ import {
 } from "../utils/screenCaptureProtection";
 import GestureVideoPlayer from "../components/GestureVideoPlayer";
 
-const TABLET_SHORTEST_SIDE = 600;
 const SEEN_VIDEO_IDS_STORAGE_KEY = "seenVideoIds:v1";
 
 const FreeLabel = () => {
@@ -382,30 +381,34 @@ const VideosScreen = ({ navigation, route }) => {
   const [fullscreenPdf, setFullscreenPdf] = useState(false);
   const [pdfOpenedFromList, setPdfOpenedFromList] = useState(false);
   const [playerFullscreen, setPlayerFullscreen] = useState(false);
-  const [forceInline, setForceInline] = useState(false);
   const [playbackUri, setPlaybackUri] = useState(null);
   const [playbackLoading, setPlaybackLoading] = useState(false);
   const [playbackError, setPlaybackError] = useState(null);
   const [seenVideoIds, setSeenVideoIds] = useState({});
   const [windowSize, setWindowSize] = useState(() => Dimensions.get("window"));
+  const [sensorLandscape, setSensorLandscape] = useState(false);
 
-  const isLandscape = windowSize.width > windowSize.height;
-  const isTablet =
-    Math.min(windowSize.width, windowSize.height) >= TABLET_SHORTEST_SIDE;
-  // Phones: landscape expands the player. Tablets stay inline so landscape
-  // iPads keep a close control. forceInline lets minimize stick in landscape.
-  const effectivePlayerFullscreen =
-    playerFullscreen || (!isTablet && isLandscape && !forceInline);
+  const isLandscape =
+    windowSize.width > windowSize.height || sensorLandscape;
+  // Rotate to landscape always opens the player fullscreen. Portrait stays
+  // inline unless the user taps the fullscreen control. Close X still exits.
+  const effectivePlayerFullscreen = playerFullscreen || isLandscape;
 
   const exitPlayerFullscreen = useCallback(() => {
     setPlayerFullscreen(false);
-    if (isLandscape) {
-      setForceInline(true);
-    }
+    if (!isLandscape) return;
+    // Nudge portrait so the inline player can show; unlock so rotate still
+    // re-enters fullscreen.
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP)
+      .catch(() => {})
+      .finally(() => {
+        setTimeout(() => {
+          ScreenOrientation.unlockAsync().catch(() => {});
+        }, 700);
+      });
   }, [isLandscape]);
 
   const enterPlayerFullscreen = useCallback(() => {
-    setForceInline(false);
     setPlayerFullscreen(true);
   }, []);
 
@@ -414,6 +417,27 @@ const VideosScreen = ({ navigation, route }) => {
       setWindowSize(window);
     });
     return () => subscription?.remove?.();
+  }, []);
+
+  useEffect(() => {
+    const isLandscapeOrientation = (orientation) =>
+      orientation === ScreenOrientation.Orientation.LANDSCAPE_LEFT ||
+      orientation === ScreenOrientation.Orientation.LANDSCAPE_RIGHT;
+
+    ScreenOrientation.getOrientationAsync()
+      .then((orientation) => {
+        setSensorLandscape(isLandscapeOrientation(orientation));
+      })
+      .catch(() => {});
+
+    const sub = ScreenOrientation.addOrientationChangeListener((event) => {
+      setSensorLandscape(
+        isLandscapeOrientation(event?.orientationInfo?.orientation),
+      );
+    });
+    return () => {
+      ScreenOrientation.removeOrientationChangeListener(sub);
+    };
   }, []);
 
   // Hide OS notification/status bar in video fullscreen / landscape.
@@ -526,7 +550,6 @@ const VideosScreen = ({ navigation, route }) => {
     setFullscreenPdf(false);
     setPdfOpenedFromList(false);
     setPlayerFullscreen(false);
-    setForceInline(false);
     setPlaybackUri(null);
     setPlaybackError(null);
     setPlaybackLoading(false);
@@ -616,7 +639,6 @@ const VideosScreen = ({ navigation, route }) => {
 
   const closePlayerModal = () => {
     setPlayerFullscreen(false);
-    setForceInline(false);
     setPlaybackUri(null);
     setPlaybackError(null);
     setPlaybackLoading(false);
@@ -1329,7 +1351,14 @@ const VideosScreen = ({ navigation, route }) => {
           )}
 
           <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            behavior={
+              effectivePlayerFullscreen
+                ? undefined
+                : Platform.OS === "ios"
+                  ? "padding"
+                  : "height"
+            }
+            enabled={!effectivePlayerFullscreen}
             style={{ flex: 1 }}
             keyboardVerticalOffset={Platform.OS === "ios" ? 44 : 0}
           >
@@ -1338,7 +1367,12 @@ const VideosScreen = ({ navigation, route }) => {
                 styles.videoPlayerContainer,
                 effectivePlayerFullscreen
                   ? styles.videoPlayerContainerFullscreen
-                  : { height: windowSize.width * (9 / 16) },
+                  : {
+                      height: Math.min(
+                        windowSize.width * (9 / 16),
+                        windowSize.height * 0.42,
+                      ),
+                    },
                 {
                   backgroundColor: isDark ? "#000000" : "#FFFFFF",
                 },
