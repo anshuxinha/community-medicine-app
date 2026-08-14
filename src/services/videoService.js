@@ -10,13 +10,14 @@ export const VIDEO_CATEGORIES = {
 };
 
 /** Free sample lectures available without premium. */
+const FREE_VIDEO_TITLES = new Set([
+  "Doll and Hill Criteria of Causality",
+  "Doll and Hill Criteria",
+]);
+
 export const isVideoFree = (video) => {
   if (!video) return false;
-  return (
-    video.title === "Nutrition: Overview and Protein" ||
-    video.title === "Nutrition: Overview" ||
-    video.title === "Protein"
-  );
+  return FREE_VIDEO_TITLES.has(String(video.title));
 };
 
 const DEFAULT_PULL_ZONE =

@@ -232,9 +232,8 @@ exports.onAppFeedbackCreated = functionsV1
   });
 
 const FREE_VIDEO_TITLES = new Set([
-  "Nutrition: Overview and Protein",
-  "Nutrition: Overview",
-  "Protein",
+  "Doll and Hill Criteria of Causality",
+  "Doll and Hill Criteria",
 ]);
 
 const PLAYBACK_TTL_SECONDS = 4 * 60 * 60; // 4 hours

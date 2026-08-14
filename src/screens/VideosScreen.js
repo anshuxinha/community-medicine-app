@@ -1126,8 +1126,15 @@ const VideosScreen = ({ navigation, route }) => {
     if (selectedCategory !== "all") {
       list = videos.filter((video) => video.category === selectedCategory);
     }
+    if (!isPremium) {
+      return [...list].sort((left, right) => {
+        const leftFree = isVideoFree(left) ? 1 : 0;
+        const rightFree = isVideoFree(right) ? 1 : 0;
+        return rightFree - leftFree;
+      });
+    }
     return list;
-  }, [selectedCategory, videos]);
+  }, [selectedCategory, videos, isPremium]);
 
   const displayedVideos = useMemo(() => filteredVideos.slice(0, visibleCount), [filteredVideos, visibleCount]);
 
