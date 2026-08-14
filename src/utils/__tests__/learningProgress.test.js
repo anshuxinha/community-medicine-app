@@ -37,8 +37,15 @@ describe("nmcCurriculum coverage", () => {
     const list = getChaptersForPaper(1);
     expect(list).toContain("1");
     expect(list).toContain("26");
-    expect(list).toContain("28");
+    expect(list).not.toContain("28");
     expect(getPrimaryPaperForChapterId("7")).toBe(2);
+    expect(getPrimaryPaperForChapterId("28")).toBe(3);
+  });
+
+  it("places Research Methodology on paper III", () => {
+    const list = getChaptersForPaper(3);
+    expect(list).toContain("28");
+    expect(getPrimaryPaperForChapterId("28")).toBe(3);
   });
 });
 
