@@ -20,7 +20,7 @@ C28_1 = r"""
 OVERVIEW OF THE CHAPTER
 Research is an integral part of academic work, innovation, and the development of health services. A good deal of research is already done in medical colleges and programme offices, yet much of it is not need-based and does not reach the expected standard of scientific method. The work ought to be directed towards major public health problems.
 
-What is research? Why is it done? How is it done? What makes it good? These are the questions this chapter answers. Study designs are dealt with under Epidemiology, and tests of significance under Biostatistics. The concern here is the nature of enquiry itself.
+What is research? Why is it done? How is it done? What makes it good? These are the questions this chapter answers. The nature of enquiry comes first. Classification of designs, and the tests that follow from the scale of the data, are written out in full later in this chapter so that a protocol can be completed from these pages.
 
 A clinical story makes the point. A medical officer at an antiretroviral therapy (ART) centre notices that many patients diagnosed with human immunodeficiency virus (HIV) at primary health centres never report for treatment. He wonders whether weekly telephone reminders might help. With a colleague he compares two districts: one in which counsellors give reminders, and one in which they do not. After six months, registration within one month of diagnosis is 90 percent in the intervention district and 70 percent in the comparison district. The State AIDS Control Society then takes telephone reminders into routine service. The officer did not merely have an idea. He pursued the idea with a method, and the method produced evidence that could change policy.
 
@@ -39,7 +39,7 @@ Redman and Mory: systematised efforts to gain new knowledge.
 
 Clifford Woody: defining and redefining problems, formulating hypotheses or suggesting solutions, collecting, organising and evaluating data, making deductions, and carefully testing the conclusions.
 
-In brief: research is the systematic collection, analysis and interpretation of data to answer a certain question or solve a problem. It is characterised by originality, by investigation as a primary objective, and by the potential to produce results that are sufficiently general to add to the stock of knowledge, theoretical or practical.
+Working definition: research is the systematic collection, analysis and interpretation of data to answer a certain question or solve a problem. It is characterised by originality, by investigation as a primary objective, and by the potential to produce results that are sufficiently general to add to the stock of knowledge, theoretical or practical.
 
 Discovery is seeing what everybody has seen and thinking what nobody has thought. James Austin distinguished four varieties of chance in discovery: blind luck (Chance I); an investigator who already believes an idea and acts to prove it (Chance II: Ehrlich and Salvarsan, Epstein and Barr); chance that favours a prepared mind (Chance III: Fleming's penicillin, made usable by Florey and Chain); and chance that comes from persistence plus lateral thinking (Chance IV). Invention is different. It is the creation of a material thing (a drug, a gadget, a machine) that did not exist before.
 
@@ -82,7 +82,34 @@ The OECD grouping is close: pure basic, strategic basic, applied, and experiment
 Other categories, not mutually exclusive, are historical, correlational, causal-comparative, content analysis, quantitative (inferential and experimental), qualitative (including opinion and attitude work by participatory rural appraisal), biomedical, behavioural, health service, survey, conceptual (concerned with an abstract idea or theory), one-time versus longitudinal, field versus laboratory, simulation, and translational.
 
 GENERIC STEPS IN CONDUCTING QUANTITATIVE RESEARCH
-Quantitative research is a systematic process of collecting, analysing and interpreting data to answer a question or to solve a problem. Systematic means that the work is not a haphazard chain of activities. Epidemiologic designs (descriptive, analytical, experimental) sit at the core; they are taught under Epidemiology. The same staircase, with small changes, serves qualitative and mixed-methods work.
+Quantitative research is a systematic process of collecting, analysing and interpreting data to answer a question or to solve a problem. Systematic means that the work is not a haphazard chain of activities. Epidemiologic designs sit at the core. They are classified here so that the staircase has a design, not only a slogan. The same staircase, with small changes, serves qualitative and mixed-methods work.
+
+CLASSIFICATION OF STUDY DESIGNS
+Epidemiological studies are of two main kinds. The usual sequence is descriptive, then analytical, then experimental.
+
+Observational studies allow nature to take its course. The investigator measures and does not intervene.
+- Descriptive studies formulate a hypothesis.
+- Analytical studies test a hypothesis.
+  - Ecological or correlational: the unit is a population.
+  - Cross-sectional (prevalence survey, snapshot): the unit is an individual.
+  - Case-control, including nested case-control: the unit is an individual.
+  - Case series: the unit is an individual; there is no comparison group of the non-diseased.
+  - Cohort (prospective, retrospective, or mixed): the unit is an individual.
+
+Experimental studies confirm a hypothesis. The investigator tries to change a determinant or the course of a disease.
+- Randomised controlled trial and clinical trial: the unit is the patient or case.
+- Field trial: the unit is a healthy person.
+- Community trial: the unit is a community.
+
+Special forms include migration studies (environment versus genes) and knowledge–attitude–practice studies (first used in India for family planning).
+
+Hierarchy of evidence for causality, strongest to weakest: systematic review or meta-analysis of randomised trials; randomised controlled trial; prospective (concurrent) cohort; retrospective (historical) cohort; case-control; cross-sectional; ecological; case series or case report. A well-conducted observational study may outrank a poorly conducted trial. Prospective cohort ranks above retrospective cohort because time order and measurement of exposure are usually stronger.
+
+Evidence-based medicine is the use of those findings for decisions about care. David Sackett is named as its father. The evidence-based pyramid, from highest clinical relevance to lowest, is: meta-analysis; systematic review; randomised controlled trial; prospective cohort; retrospective cohort; case-control; case series; case report; ideas, editorials, opinions; animal research; in-vitro work.
+
+Descriptive epidemiology studies the distribution of a disease or health-related characteristic and the features with which it seems to be associated. It is the design of first resort when a disease is new and there is no etiological hypothesis. Its procedures are: define the population; define the disease; describe it by time, place and person; compare with known indices; formulate a hypothesis.
+
+The working details of case-control and cohort analysis (odds ratio, relative risk, matching) remain in the Epidemiology chapter as worked designs. The classification and the hierarchy above are what a research protocol must name.
 
 The generic steps are these.
 
@@ -92,7 +119,7 @@ The generic steps are these.
 4. Define the study variables and write operational definitions.
 5. Choose the study population (reference, accessible, sample) and the sampling method.
 6. Collect the data (sources, tools, field procedure).
-7. Present the data (tables and figures; the craft of presentation is treated under Biostatistics).
+7. Present the data (tables and figures; the rules are written with data management).
 8. Analyse the data with tests that match the scale and the design.
 9. Interpret the findings: chance versus bias, statistical versus clinical meaning, association versus causation. Interpretation is taken up again with the report.
 10. Disseminate: protocol becomes thesis, paper, and briefing of users. Without this step the process is incomplete.
@@ -128,7 +155,7 @@ Problems commonly met by researchers include lack of scientific training in meth
 CONCLUSION
 Research in medicine is scientific enquiry. It begins with a problem in practice or in a programme, is placed in a domain, and is carried through a cycle of questions, methods, resources and use of results. Its justification is a possible change in practice or policy, and a reader who can also judge the evidence of others.
 
-> **EXAM TIP:** Begin with a short definition (Kerlinger or the brief working definition) → distinguish discovery from invention if asked → Weatherall types with one example each → the 2 by 2 domains grid → the health-systems cycle as questions and steps. Close on change of practice or policy. Leave designs and p-values to the other chapters.
+> **EXAM TIP:** Begin with a short definition (Kerlinger or the brief working definition) → distinguish discovery from invention if asked → Weatherall types → domains grid → observational versus experimental designs with the unit of study and the evidence hierarchy → health-systems cycle. Close on change of practice or policy.
 """
 
 
@@ -306,19 +333,71 @@ Qualitative ideas (satisfaction, stigma, empowerment) need indicators taken from
 
 National programme indicators (fully immunised child, treatment success, institutional delivery) already have operational definitions. A dissertation that invents a private definition cannot be compared with the National Family Health Survey or with programme reports.
 
-TYPES OF DATA, IN BRIEF
-Data on a variable are commonly collected in one of two forms. This is not the same distinction as quantitative versus qualitative approaches to research.
+TYPES OF DATA AND SCALES OF MEASUREMENT
+Data on a variable are commonly collected in one of two forms. This is not the same distinction as quantitative versus qualitative *approaches* to research. A qualitative study can still record a few numbers. A quantitative survey still uses categorical items. Here we mean the nature of the recorded value.
 
-Qualitative (categorical) data place people in categories. Gender (male, female, transgender) is nominal: order is not meaningful. Nutritional status (undernutrition, normal, overweight, obese) is ordinal: order matters. Categorical data are summarised as proportions.
+Classification by nature of the data
 
-Quantitative (numerical) data are measurements or counts. Temperature in °F is continuous. Number of days of absence from work is discrete. Numerical data are summarised as mean or median.
+Qualitative (categorical, discrete) data. There is no notion of magnitude that can be measured with a ruler. The attribute is named or counted. It sits on a nominal or ordinal scale. There is no true value “in between” two categories. Examples: ABO blood group, gender, religion, colour, parity recorded as 0, 1, 2, obesity as present or absent.
 
-A continuous measurement can be collapsed into categories for ease of understanding (systolic pressure into normal, high-normal, hypertension). The collapse must be decided in the protocol, with named cut-offs, not after seeing which grouping gives a small P.
+Quantitative (continuous, dimensional) data. The characteristic has magnitude and is measured. It sits on a metric scale (interval or ratio). Values exist between any two readings. Examples: serum cholesterol, weight, height, mid-upper arm circumference, body mass index, age, platelet count, temperature in Celsius or Fahrenheit, blood pressure.
+
+Classification by number of values
+
+Dichotomous (binary): only two possible values. Rh positive or negative; diabetes present or absent; gender recorded as male or female.
+
+Polytomous: more than two values. ABO group; MUAC; blood sugar; BMI.
+
+Classification by role in the study (already named above as predictor and outcome) is completed by the controlled variable: the factor deliberately held unchanged (the same plant species if one is testing water).
+
+A continuous measurement can be collapsed into categories (systolic pressure into normal, high-normal, hypertension). The collapse must be decided in the protocol, with named cut-offs, not after seeing which grouping gives a small P.
+
+Scales of measurement (I.R.O.N.)
+
+Categorical scales, for qualitative variables:
+
+1. Nominal. Based on names. No order. HIV status, race, blood group, type of hospital, sex. The numbers assigned, if any, have no mathematical meaning. Addition and division are not done.
+
+2. Ordinal. There is a meaningful order or grade. Severity of anaemia (mild, moderate, severe); social class; Child–Pugh A (5 to 6), B (7 to 9), C (10 to 15); satisfied / very satisfied / dissatisfied. A Likert scale is an ordinal, usually bipolar, summative scale of attitude, commonly with 3, 5 or 7 steps (strongly agree to strongly disagree).
+
+Dimensional (metric) scales, for quantitative variables. Mean and standard deviation are worked only on interval or ratio data.
+
+3. Interval. Equal gaps between numbers, but no absolute zero and no true starting point. Temperature in Celsius or Fahrenheit: 0 °C is not “no temperature”, yet the gap from 10 to 20 is the same size as the gap from 40 to 50. Addition and subtraction are possible; multiplication and division as “twice as hot” are not.
+
+4. Ratio. The same equal gaps, and an absolute zero. Kelvin temperature, weight, height, age, MUAC, blood pressure, pulse rate, money. Ten kilograms is twice five. All ordinary mathematical operations are allowed.
+
+A good general rule, already stated, is to keep a continuous ratio or interval variable when the science allows it. Blood pressure in millimetres of mercury shows the size of change in every subject; “hypertensive versus normotensive” throws that magnitude away. Programme categories (low birth weight) and ordinal taste scales are the usual exceptions.
+
+The protocol must name the scale. The scale decides the summary (proportion versus mean) and the test.
 
 PLANNING THE MEASUREMENTS
 Measurement is the process by which investigators describe, explain and predict constructs that would otherwise remain abstract (Kaplan; Pedhazur and Schmelkin). Without it, observations stay unsystematic. An operational definition takes a variable from the theoretical to the concrete by stating the actual procedures used to measure or manipulate it. In a study of weight loss, “weight loss” might be operationalised as a decrease, in kilograms, below the person’s weight on a named starting date.
 
-Data are non-metric (attributes and categories: qualitative) or metric (amounts and distances: quantitative). Metric data allow magnitudes to be examined; non-metric data mainly describe and classify. A good general rule is to prefer a continuous variable when the science allows it. Blood pressure in millimetres of mercury shows the size of change in every subject; “hypertensive versus normotensive” throws that magnitude away. Exceptions exist (low birth weight as a programme category; an ordinal taste scale). The detail of the four scales, and the tests that sit on them, belong to Biostatistics. The protocol still has to name the scale, because the scale decides what may later be done with the numbers.
+Data are non-metric (attributes and categories: qualitative) or metric (amounts and distances: quantitative). Metric data allow magnitudes to be examined; non-metric data mainly describe and classify. A good general rule is to prefer a continuous variable when the science allows it. Blood pressure in millimetres of mercury shows the size of change in every subject; “hypertensive versus normotensive” throws that magnitude away. Exceptions exist (low birth weight as a programme category; an ordinal taste scale). The four scales are named above. The tests that sit on them are named next.
+
+CHOOSING A TEST OF SIGNIFICANCE
+Tests of significance give a P value: the probability that a difference as large as the one seen would appear by chance if the null hypothesis were true. They fall into two families.
+
+Parametric tests assume that the variable follows a normal (Gaussian) distribution in the population. They are used for quantitative data on an interval or ratio scale, and they compare means.
+- One group, paired readings: paired t-test (cholesterol before and after a drug; blood pressure before and after a trial).
+- Two independent groups: unpaired (Student) t-test (height of 20 boys versus 20 girls; birth weight with and without iron supplementation).
+- Three or more groups: analysis of variance (ANOVA, F test).
+- A Z-test is used in place of a t-test when the sample is large (n greater than 30).
+
+Non-parametric tests make no assumption of a normal distribution. They are used for qualitative data, and they compare proportions or ranks.
+- One group, nominal: McNemar’s test. One group, ordinal: Wilcoxon signed-rank (sign) test.
+- Two groups, nominal: chi-square. Two groups, ordinal: Wilcoxon rank-sum (Mann–Whitney).
+- Three or more groups, nominal: Kruskal–Wallis.
+
+Chi-square is a test of association between qualitative characteristics. It says whether an association is present, not how strong it is. Requirements: qualitative data, a random and reasonably large sample, a contingency table, and each expected cell frequency greater than 5. If an expected cell is below 5, Yates’s correction (subtract 0.5 from |O − E| before squaring) is applied, or Fisher’s exact test is used when the sample is small.
+
+Formula: chi-square = sum of (O − E)² / E. Degrees of freedom = (columns − 1) × (rows − 1). For a 2 × 2 table, d.f. = 1; the 5 percent critical value is 3.84. If the calculated value is smaller than 3.84, the null is not rejected.
+
+A worked 2 × 2. Vaccine A: 22 attacked, 68 not, total 90 (attack rate 24.4 percent). Vaccine B: 14 attacked, 72 not, total 86 (16.2 percent). Combined attack rate 36/176 = 20.4 percent. Expected attacked under A = 18.36; under B = 17.54. Chi-square = 1.79, d.f. = 1, which is below 3.84. The difference is not significant. Vaccine B is not shown to be superior.
+
+Special tests that a protocol may name: Cronbach’s alpha (internal consistency of a questionnaire); Kolmogorov–Smirnov (normality); Dixon Q (outliers); Cox proportional hazards (survival curves); Bland–Altman (a new test against a gold standard).
+
+P greater than 0.05: the null is not rejected. P less than 0.05: the null is rejected. Type I (alpha) error is rejecting a true null (false positive). Type II (beta) error is accepting a false null (false negative). Power is 1 − beta. In medical work a Type I error is usually treated as the more serious of the two. Confidence interval = mean ± Z × SE, where SE = SD / square root of n. The common 95 percent interval uses Z = 1.96 (often taught as 2 SE).
 
 Reliability is the degree to which a measurement is reproducible. Any obtained score has two parts: the true score, and measurement error (distortion from a poor tool, the situation, or a mistake in recording). Three ordinary sources of that error are:
 
@@ -370,7 +449,7 @@ Qualitative concepts (stigma, satisfaction, “empowerment”) are operationalis
 CONCLUSION
 Measurement in research is the passage from concept to observation. The protocol should name the variable, the unit, the operational rule, and the likely threats. Scales and tests come after that work is done.
 
-> **EXAM TIP:** Open with concept, variable, observational unit, observation, data (the systolic pressure example) → roles of variables → one fully written operational definition → validity versus reliability in two short columns → how the protocol will handle selection, information and confounding. Do not spend the answer on the normal curve.
+> **EXAM TIP:** Open with concept, variable, observational unit, observation → operational definition → nature of data and I.R.O.N. scales (mean and SD only on interval or ratio) → test map (paired t, unpaired t, ANOVA, chi-square, Mann–Whitney) and the expected-cell rule for chi-square → validity versus reliability.
 """
 
 
@@ -680,6 +759,36 @@ Double entry, or at least a 10 percent re-entry check, catches those errors. The
 
 Quality assurance is named in the protocol: double entry, a validated tool, blinding or random allocation in a trial, and the handling of data-entry mismatches.
 
+PRESENTATION OF DATA
+Data from experiments, records and surveys must be accurate and complete before they are shown. The first step is to sort them into characteristic groups. A presentation should be concise without losing what matters, easy to read, and able to define the problem. There are two main methods: tabulation, and drawing (charts and diagrams).
+
+Tabulation
+Tables are numbered in sequence and given a title. Column and row headings name the unit (height in cm, age in years). Data are ordered by size, time or alphabet. Footnotes explain exclusions and abbreviations.
+
+Simple tables show simple categories (year of admission and number of students). A frequency distribution table splits a variable into class intervals. The number of groups is ordinarily between 6 and 16, and should not exceed about 20 or fall below 5. Class intervals are kept equal throughout the table.
+
+Charts for qualitative data
+Bar chart. Used to compare the magnitude of frequencies in discrete or qualitative data. Bars may be vertical or horizontal, and are separated by a space of about half the bar width. A bar chart compares magnitudes. It does not show the relationship between two continuous variables (that is a scatter plot). Types: simple; multiple or compound (males and females by year); component or proportional (each bar split into parts).
+
+Pie (sector) diagram. Discrete qualitative characters (blood groups, causes of death). Angle of a sector = (class frequency / total) × 360 degrees.
+
+Pictogram. Pictures of a standard size stand for a stated number of cases. Used for a lay audience.
+
+Charts for quantitative data
+Histogram. An area diagram. Class intervals sit on the horizontal axis, frequencies on the vertical. The area of each rectangle follows the frequency.
+
+Frequency polygon. Mid-points of the histogram blocks joined by straight lines.
+
+Frequency curve. When observations are very many and intervals small, the polygon smooths into a curve.
+
+Line diagram. A frequency polygon against time. It shows a rising, falling or fluctuating trend (incidence over years). It is not a scatter plot of two variables.
+
+Ogive (cumulative frequency). Always rising. Locates percentiles, quartiles and the median. A “less than” ogive and a “greater than” ogive meet at the median.
+
+Scatter (dot) diagram. Two continuous variables. The vertical axis is usually the outcome. A cloud along a straight line suggests a linear relationship; no cloud suggests none. It shows strong or weak, positive or negative, correlation by eye.
+
+Other plots a protocol or thesis may need: stem-and-leaf; tree diagram of possible outcomes; box-and-whisker (the box holds the middle 50 percent; each whisker 25 percent; marked are minimum, Q1, median, Q3, maximum, and the interquartile range). Tertile, quartile, pentile, decile and centile (percentile) divide the series into 3, 4, 5, 10 or 100 parts. The median is the 50th centile. Percentile Px = (n + 1) × x / 100.
+
 COMPUTERS IN HEALTH RESEARCH
 Computers now sit in every stage, from the protocol to dissemination. This is the applied meaning of the undergraduate competency on computers in epidemiology.
 
@@ -696,7 +805,7 @@ The protocol should name the packages that will actually be used, and the tests 
 CONCLUSION
 Collection is experiencing, enquiry or examining. The instrument is written, translated and pre-tested. Entry is controlled. Computers are tools at each stage, not a substitute for a codebook and a locked cupboard.
 
-> **EXAM TIP:** Divide the answer into sources (primary, secondary) → the three families of collection → rules for a questionnaire (one idea, language, flow, what to avoid) → quality control and double entry → computers stage by stage (PubMed and sample-size software; EpiData; Epi Info or OpenEpi; journal systems). Mention ethics of data storage in one line.
+> **EXAM TIP:** Sources → three families of collection → questionnaire rules → processing (edit, code, master chart) → presentation (table rules; bar and pie for qualitative; histogram, line, scatter for quantitative; ogive for median) → computers stage by stage.
 """
 
 
@@ -873,7 +982,19 @@ For an analytical study, five questions:
 2. What is its confidence interval (precision)?
 3. What is the chance of a Type I error (P)?
 4. What systematic error remains (selection, measurement, confounding)?
-5. What is the utility: is the association likely to be causal (criteria taught under Epidemiology); if an intervention, is it acceptable, safe, and affordable?
+5. What is the utility: is the association likely to be causal (Bradford Hill criteria below); if an intervention, is it acceptable, safe, and affordable?
+
+Criteria of causal association (Bradford Hill), in the same order and sense as in the Epidemiology chapter:
+1. Temporal association. The cause precedes the effect. Order and the length of the interval both matter. This is the essential criterion. A concurrent cohort shows it best.
+2. Strength of association. Relative risk in a cohort; odds ratio in a case-control study.
+3. Specificity. One factor, one disease. The hardest and the weakest criterion.
+4. Consistency. The finding repeats in other places and by other hands.
+5. Biological plausibility. Anatomy or physiology can credit the link.
+6. Coherence. The association sits with other known facts.
+7. Dose–response (biological gradient). More exposure, more effect.
+8. Reversibility. Removing the cause lowers the risk (ex-smokers versus current smokers for lung cancer).
+
+A randomised trial is the strongest single study for causation. An ecological study is the weakest for testing a risk-factor link. Indirect association (high altitude and goitre, via iodine) must not be sold as direct cause.
 
 P says nothing about the strength of an association. A very small P with a relative risk of 1.05 is not a public health finding. Association is not causation until the causal criteria have been considered. Chance error is handled by the test and the interval. Bias is handled by the design and by an honest discussion.
 
