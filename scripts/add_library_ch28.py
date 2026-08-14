@@ -81,6 +81,24 @@ The OECD grouping is close: pure basic, strategic basic, applied, and experiment
 
 Other categories, not mutually exclusive, are historical, correlational, causal-comparative, content analysis, quantitative (inferential and experimental), qualitative (including opinion and attitude work by participatory rural appraisal), biomedical, behavioural, health service, survey, conceptual (concerned with an abstract idea or theory), one-time versus longitudinal, field versus laboratory, simulation, and translational.
 
+GENERIC STEPS IN CONDUCTING QUANTITATIVE RESEARCH
+Quantitative research is a systematic process of collecting, analysing and interpreting data to answer a question or to solve a problem. Systematic means that the work is not a haphazard chain of activities. Epidemiologic designs (descriptive, analytical, experimental) sit at the core; they are taught under Epidemiology. The same staircase, with small changes, serves qualitative and mixed-methods work.
+
+The generic steps are these.
+
+1. Select a topic, then narrow general curiosity to scientific curiosity. Quantitative work does not allow many aspects of a problem to be studied at once. If they are, each is studied superficially and the findings cannot be trusted.
+2. Search existing knowledge (review of literature). Google Scholar and PubMed are the usual tools. The point is to find the gap, not to decorate the protocol with references.
+3. Refine the research question until it names the variable and the population.
+4. Define the study variables and write operational definitions.
+5. Choose the study population (reference, accessible, sample) and the sampling method.
+6. Collect the data (sources, tools, field procedure).
+7. Present the data (tables and figures; the craft of presentation is treated under Biostatistics).
+8. Analyse the data with tests that match the scale and the design.
+9. Interpret the findings: chance versus bias, statistical versus clinical meaning, association versus causation. Interpretation is taken up again with the report.
+10. Disseminate: protocol becomes thesis, paper, and briefing of users. Without this step the process is incomplete.
+
+The health-systems cycle below asks the same questions in managerial language.
+
 HOW TO DO RESEARCH: STEPS IN HEALTH SYSTEMS RESEARCH
 Development of a health systems study is cyclical. The arrows run both ways. The usual questions, and the steps that answer them, are these.
 
@@ -152,7 +170,25 @@ Relevant. The problem should be a priority for the area, the region or the count
 
 Three broad kinds of question follow from the type of information sought. Some studies describe a health situation so that an intervention can be planned (magnitude, distribution, risk factors, utilisation, cost). Some evaluate an ongoing intervention (coverage, quality, acceptability, impact). Some define a problem in resources, policy or environment and analyse possible causes in order to find a solution.
 
-When several ideas compete, they may be ranked by a simple scoring grid or by Nominal Group Technique (NGT): silent generation of ideas, round-robin listing, clarification, and independent ranking.
+When several ideas compete, they may be ranked by a simple scoring grid (relevance, feasibility, novelty, ethics, local burden) or by Nominal Group Technique (NGT). NGT is a structured meeting, not a loose brainstorm.
+
+1. The facilitator states the task (for example, “priority research problems for this district this year”).
+2. Each member writes ideas in silence for a fixed time. There is no discussion yet.
+3. Ideas are listed in a round-robin, one from each person in turn, until the pool is empty. No criticism during listing.
+4. The list is clarified. Similar items may be merged, but only if the group agrees.
+5. Each member independently ranks or scores a fixed number of items.
+6. Scores are summed. The highest totals become the short list for a protocol.
+
+NGT reduces the effect of seniority. A professor’s first spoken idea does not swallow the meeting.
+
+PICO AND PEO
+FINER decides whether a question is worth asking. PICO and PEO decide whether it is written tightly enough to design.
+
+PICO is used when there is an intervention or a comparison: Population, Intervention (or Exposure), Comparison, Outcome. Example. In adults with type 2 diabetes attending this clinic (P), does brisk walking for at least one hour daily (I), compared with usual activity (C), reduce fasting blood sugar at twelve weeks (O)?
+
+PEO is used when there is no comparison arm: Population, Exposure, Outcome. Example. Among adolescents 10 to 19 years of age in village X (P), what is the prevalence of anaemia defined as haemoglobin below 12 g/dL (O) in relation to dietary iron intake (E)?
+
+A protocol that cannot fill these boxes still has a topic, not a question. PICO does not replace FINER. A beautifully structured PICO that is not feasible, not ethical, or not relevant should be dropped.
 
 [SN]Literature search in health research[/SN]
 
@@ -279,6 +315,21 @@ Quantitative (numerical) data are measurements or counts. Temperature in °F is 
 
 A continuous measurement can be collapsed into categories for ease of understanding (systolic pressure into normal, high-normal, hypertension). The collapse must be decided in the protocol, with named cut-offs, not after seeing which grouping gives a small P.
 
+PLANNING THE MEASUREMENTS
+Measurement is the process by which investigators describe, explain and predict constructs that would otherwise remain abstract (Kaplan; Pedhazur and Schmelkin). Without it, observations stay unsystematic. An operational definition takes a variable from the theoretical to the concrete by stating the actual procedures used to measure or manipulate it. In a study of weight loss, “weight loss” might be operationalised as a decrease, in kilograms, below the person’s weight on a named starting date.
+
+Data are non-metric (attributes and categories: qualitative) or metric (amounts and distances: quantitative). Metric data allow magnitudes to be examined; non-metric data mainly describe and classify. A good general rule is to prefer a continuous variable when the science allows it. Blood pressure in millimetres of mercury shows the size of change in every subject; “hypertensive versus normotensive” throws that magnitude away. Exceptions exist (low birth weight as a programme category; an ordinal taste scale). The detail of the four scales, and the tests that sit on them, belong to Biostatistics. The protocol still has to name the scale, because the scale decides what may later be done with the numbers.
+
+Reliability is the degree to which a measurement is reproducible. Any obtained score has two parts: the true score, and measurement error (distortion from a poor tool, the situation, or a mistake in recording). Three ordinary sources of that error are:
+
+1. Observer variability: skill, wording, or the way the question is put.
+2. Instrument variability: an old machine, a new reagent lot, a scale that has not been zeroed.
+3. Subject variability: mood, stress, time of day, a biological swing.
+
+Reliability is often summarised as a correlation; a coefficient of about 0.80 or higher is commonly taken as adequate. Ways of raising it: a standardised instrument, training and a written procedure, duplicate readings, calibration, and measuring under similar conditions.
+
+Validity of a measurement is the absence of bias in that measurement: it measures what it is intended to measure.
+
 THREATS TO VALIDITY, AND WHAT THE PROTOCOL DOES ABOUT THEM
 Validity of a measurement:
 - Face: the item looks relevant to those who use it.
@@ -302,7 +353,19 @@ Strategies that belong in the protocol, not in the discussion as an afterthought
 - Confounding: restriction, matching or randomisation in design; stratification or a multivariable model in analysis.
 - Loss to follow-up: plan for it, inflate the sample, and report it.
 
+Threat and answer, written into the protocol:
+
+| Threat | What it does | What the protocol does |
+|---|---|---|
+| Selection | The wrong people enter, or too many refuse | Frame, inclusion and exclusion, recorded response rate |
+| Information | Exposure or outcome is mis-measured | Standard tool, training, blinding where possible, pre-test |
+| Confounding | A third variable pretends to be the association | Restriction, matching or randomisation; later, stratification or a model |
+| Loss to follow-up | The people who stay are not the people who started | Extra sample, active tracing, report who was lost |
+| Observer / instrument / subject error | The number is noisy or biased | Calibration, duplicate reads, same time of day, written script |
+
 A pre-test of about one tenth of the planned sample, on people like the participants, is cheaper than a finished thesis whose main exposure was misunderstood.
+
+Qualitative concepts (stigma, satisfaction, “empowerment”) are operationalised by choosing indicators, often after a short formative phase or from a published scale. The indicator is named, scored, and justified. A single homemade item is not an operational definition.
 
 CONCLUSION
 Measurement in research is the passage from concept to observation. The protocol should name the variable, the unit, the operational rule, and the likely threats. Scales and tests come after that work is done.
@@ -332,6 +395,22 @@ ALPHA (Type I error): The chance of claiming a difference that does not exist. C
 [SN]Sample size determination[/SN]
 
 [LAQ]Sampling methods in health research[/LAQ]
+
+CHOOSING THE STUDY POPULATION
+In real life the investigator never has the whole population of interest. Three ideas must be kept apart.
+
+Reference population: all the units to which the findings are meant to apply. For “Does brisk walking for at least one hour daily reduce fasting blood sugar among adults with type 2 diabetes mellitus?”, the reference population could be all such patients in the world. The population need not be people. It may be schools, households or facilities. “What percentage of secondary schools in district X routinely procure iron and folic acid?” has schools as the reference population.
+
+Accessible population: the part the investigator can actually reach. Usually this is the patients of one clinic, or the villages of one block.
+
+Study sample: those who are actually enrolled. Some of the accessible population will refuse, some will not meet the inclusion rules.
+
+Inclusion criteria say who may enter. Exclusion criteria say who, among those included, must still be left out (too ill to walk, already in another trial). They are written before recruitment, not invented when a difficult participant appears.
+
+A sample represents the reference population only if the method of drawing it does. The grocery-shop analogy is useful. The shopkeeper shows a handful of grain. If the sack you take home has been mixed with a poorer lot, the handful was not representative. Enrolling only adolescents who attend an outpatient department, for a village prevalence of anaemia, will usually overestimate anaemia: the sick come to the clinic. Probability methods exist so that human choice does not make the handful unrepresentative.
+
+STANDARD ERROR, AND WHY n MATTERS
+If many random samples are drawn, their means (or proportions) form their own distribution. The standard error describes how widely those sample values scatter around the population value. A larger n narrows the standard error and therefore the confidence interval. That is the statistical reason for calculating n. It is not a reason for making n enormous so that a 2 mm Hg difference in blood pressure becomes “significant”. Interpretation of that distinction is taken up with the report.
 
 WHAT GOVERNS SAMPLE SIZE
 Adequacy depends on:
@@ -373,6 +452,11 @@ where v is the normal deviate for the two-sided significance level (1.96 at 5 pe
 
 A worked illustration. Mean birth weight 3000 g versus 3200 g, standard deviation 500 g in each district, 90 percent power, 5 percent two-sided significance:
 n = (1.28 + 1.96)² × (500² + 500²) / (200)² = 131 newborns in each district.
+
+Drop-out must be put back into n. If 384 is required and 20 percent are expected to be lost, n becomes 384 / 0.80 = 480.
+
+Two proportions (each group). Expected leaving rates among nurses in two regions, 30 percent and 15 percent, 90 percent power, 5 percent two-sided significance:
+n = (1.28 + 1.96)² × (30×70 + 15×85) / (30 − 15)² = 157 in each group.
 
 Cluster samples need a design effect (often 1.5 to 2 unless a local estimate exists). Ignoring clustering underestimates n. Qualitative samples are not powered with 4pq / L². They are built for diversity and continued until saturation.
 
@@ -447,11 +531,23 @@ Analysis may be content analysis with coding and indexing, discourse analysis, o
 
 QUALITATIVE METHODS
 Focus group discussion
-A moderated conversation with a small, relatively homogeneous group, commonly six to ten people who share a relevant experience (mothers of under-fives, patients recently started on tuberculosis treatment). A moderator and a note-taker work from a topic guide, not from a questionnaire. An hour to an hour and a half is usual. With consent the session is recorded and transcribed in the language of the discussion.
+A moderated conversation with a small, relatively homogeneous group, commonly six to ten people who share a relevant experience (mothers of under-fives, patients recently started on tuberculosis treatment). Mix strangers rather than a boss and subordinates in the same circle.
 
-Advantages often listed are: access to group norms and to the language people actually use; several views in one sitting; stimulation of memory by other speakers; a check of extreme individual claims by the group; relatively low cost; useful for generating items that a later survey can count; and acceptable to many communities when well introduced.
+How a group is run:
+1. Write a topic guide of six to ten open prompts, in the order the conversation should travel.
+2. Choose a place that is private enough to talk and ordinary enough that people will come.
+3. Invite with a clear purpose. Obtain consent for recording.
+4. Seat the group so that everyone sees the moderator. A note-taker sits aside.
+5. Open with the purpose, the rules (one voice at a time, disagreement is allowed, nothing leaves the room as a named quote without permission), and a warm question.
+6. Use the guide. Probe (“say more”, “an example”). Do not teach.
+7. Close by asking whether anything important was missed. Thank the group.
+8. Transcribe in the language of the discussion. Translate later, carefully.
 
-A good moderator listens more than speaking, keeps one or two voices from capturing the hour, stays neutral, and knows when to probe. Limits are obvious: dominant speakers, courtesy bias, and unsuitability for a very private disclosure. A focus group is not a vote and must not be reported as “63 percent of groups said…”.
+A good moderator listens more than speaking, keeps one or two voices from capturing the hour, stays neutral, and knows when to probe. Traits often listed: patience, a light hand with silence, no visible rank over the group, and the courage to stop a courtesy chorus.
+
+Advantages often listed are seven: access to group norms and to the language people actually use; several views in one sitting; stimulation of memory by other speakers; a check of extreme individual claims by the group; relatively low cost; useful for generating items that a later survey can count; and acceptable to many communities when well introduced.
+
+Limits are obvious: dominant speakers, courtesy bias, and unsuitability for a very private disclosure. A focus group is not a vote and must not be reported as “63 percent of groups said…”.
 
 In-depth interview
 One person, a private setting, an open guide, and probes. Best for illness experience, adherence, and household decisions. The sample is built for diversity (age, sex, caste, outcome), not for a percentage.
@@ -463,10 +559,35 @@ Observation
 Structured (a checklist) or unstructured field notes. It records what people do. Talk often sanitises practice. Advantages: better accuracy than questioning for visible behaviour, no refusal or recall error, and sometimes the only way to see the thing. Limits: time, too much to watch, a sample that may not represent, and difficulty in reaching the root of a behaviour. Observation may be direct or of traces left by behaviour; structured or unstructured; human or mechanical.
 
 Participatory inquiry
-Participation is treated as a moral right. Group methods (mapping, ranking, seasonal calendars, transect walks) help people organise to change a situation they themselves have named. The outsider facilitates. The common theme is interactive learning and structured analysis that still remains flexible. These methods have been used across health, agriculture and community development, and they bring disciplines together.
+Participation is treated as a moral right. The outsider facilitates. People produce the data themselves. Common participatory rural appraisal (PRA) tools, named so that a viva can be answered:
+
+- Social or resource map: the community draws the village, water points, lanes, and who lives where.
+- Wealth or well-being ranking: households are sorted by local criteria of poverty, not by an outsider’s income slab.
+- Seasonal calendar: months against work, illness, food, and cash, so that a “typical week” is not invented in the wrong season.
+- Transect walk: a walk across the settlement with local guides, noting what the map omitted.
+- Problem or preference ranking: stones or seeds voted onto named problems.
+- Daily activity clock: whose time a new clinic hour would actually steal.
+
+The common theme is interactive learning and structured analysis that still remains flexible. These methods have been used across health, agriculture and community development.
 
 Document review
 Minutes, stock registers, referral slips, diaries, media. Cheap triangulation.
+
+ANALYSIS OF QUALITATIVE DATA
+The purpose of qualitative analysis is to make sense of words and observations, not to produce a P value. The usual path is:
+
+1. Familiarisation. Read and re-read transcripts and notes. Listen again to a recording if something is unclear.
+2. Coding. Mark short stretches with a label that says what is happening (“side-effects”, “wage loss”, “clinic closed at noon”). Codes come from the data first (inductive). A few may be brought from the question (deductive).
+3. Categories. Codes that belong together are grouped.
+4. Themes. Categories are interpreted: what story do they tell about the question?
+5. Deviant cases. The interview that does not fit is not discarded. It tests the theme.
+6. Writing. Themes are presented with verbatim quotes, tagged by type of participant (ASHA, defaulted patient, medical officer), not by name.
+
+Content analysis, when used in this sense, is the disciplined counting or sorting of codes. Discourse analysis asks what people do with words (neutrality, resentment, professional jargon). Grounded theory, phenomenology and ethnography are named only if their procedures will actually be followed.
+
+Software (NVivo, Atlas.ti, or a careful spreadsheet) files the material. It does not decide a theme.
+
+Trustworthiness (Guba and Lincoln): credibility (member check, triangulation), transferability (thick description of setting), dependability (audit trail), confirmability (the investigator’s stance is declared). Triangulation may be of data, investigator, theory or method. Four poorly done methods are worse than one well executed.
 
 REPORTING
 Report themes with verbatim quotes tagged by type of participant, not by name. Describe the setting thickly enough for a reader to judge transferability. Keep an audit trail. State the investigator’s own stance (reflexivity). Do not convert talk into false precision.
@@ -497,6 +618,11 @@ DOUBLE DATA ENTRY: Two independent entries of the same forms, then a check of mi
 
 [LAQ]Data collection methods and data management in health research[/LAQ]
 
+SOURCES OF DATA
+Primary data are collected by the investigator for this study: interview, examination, observation, measurement. Secondary data already exist: case records, registers, Health Management Information System returns, the National Family Health Survey, published papers. Secondary data are cheaper and faster. They are limited by someone else’s definitions, missingness, and purpose. A protocol that uses secondary data must still say how completeness and identity will be handled, and whether the ethics committee has agreed.
+
+Usual sources of epidemiological data, used as a research list: census and civil registration; sample registration; notification; hospital and programme registers; surveys; and special studies. Computers in epidemiology (search, capture, entry, analysis, submission) are taken up at the end of this section.
+
 METHODS OF COLLECTION
 Three families cover almost all health research.
 
@@ -513,7 +639,37 @@ Avoid leading questions, double-barrelled questions, double negatives, jargon, a
 
 A tool that will be compared with an English original should be translated forward, reviewed by someone who knows the subject and the language, and translated back. The pre-test is done on people like the participants, not only on batchmates.
 
-Interviewing is a skill. The study is introduced, voluntariness is confirmed, probes stay neutral, the interviewer does not teach during the interview, and the closing is courteous. Start and end times are recorded. Bias enters here as easily as in the wording: tone, prompting, skipped items, social desirability (alcohol, sexual behaviour, vaccine refusal), recall, and the Hawthorne effect when people know they are watched. Training, supervision, a private setting, a short recall window, and, where literacy allows, self-administration are the ordinary remedies.
+INTERVIEW TYPES AND SKILLS
+Interviews may be structured (every wording fixed, as in a schedule), semi-structured (a guide with room to probe), or unstructured (a conversation around a theme). Structured interviews serve a prevalence survey. Semi-structured interviews serve most MD qualitative work. Unstructured interviews need an experienced investigator and a clear analytic plan.
+
+Skills that belong in the protocol as training, not as piety:
+- Introduce the study and confirm that participation is voluntary.
+- Ask one question at a time. Wait.
+- Probe without leading (“what happened then?”, not “you must have been angry”).
+- Do not teach, correct, or counsel until the interview is closed (unless safety requires it).
+- Record start and end times. Note interruptions.
+- Thank the person and say what will happen to the recording.
+
+BIAS IN COLLECTION
+Named types, so that the discussion can do more than say “bias was minimised”:
+- Interviewer bias: tone, prompting, skipped items. Train, supervise, use a script, and, where feasible, blind.
+- Social desirability: alcohol, sexual behaviour, vaccine refusal. Private setting, normalised wording, self-administration when literacy allows.
+- Recall bias: shorter windows, calendars, records.
+- Hawthorne effect: people change when watched. Longer observation, or unobtrusive measures.
+- Leading and loaded items: rewrite in the pre-test.
+- Non-response: those who refuse are often different. Report the rate and, if possible, who refused.
+
+Training, supervision, a private setting, a short recall window, and a pre-tested tool are the ordinary remedies.
+
+PROCESSING THE DATA
+Before a test is run, the forms are turned into an analysis file.
+
+1. Editing. Completeness, range, and internal sense are checked on the day of collection if possible (age 3 years and “married” is a query, not a data point).
+2. Coding. Closed items already have codes. Open items are given a codebook that is frozen after a sample of forms, not reinvented on the last day.
+3. Master chart. One row per participant, one column per variable, unique identity number in the first column.
+4. Data screening. Impossible values, duplicates, and missingness are listed. Decisions (correct, leave missing, exclude) are written down.
+5. Entry. EpiData or an equivalent with legal ranges. Double entry, or a 10 percent re-entry check.
+6. Lock. The analysis file is copied. Identifiers stay with the principal investigator.
 
 DATA MANAGEMENT
 The plan is written before the first form is filled.
@@ -589,6 +745,24 @@ The information is given in a language the person understands, with time to ask 
 
 Waiver of consent is exceptional (some retrospective reviews of de-identified records) and is granted by the committee, not assumed by the student. Re-consent is needed when the protocol or the risk changes in a material way. Permission from a community leader or a medical superintendent does not replace individual consent.
 
+SAMPLE CONSENT FORM (WORKED)
+A form has two declarations. The wording below is the shape examiners expect, to be printed in the local language and adapted to the study.
+
+Declaration by the participant
+By signing below, I (name) agree to take part in a research study entitled “(title)”.
+I declare that:
+- I have read this information and consent form and understand the contents (or it has been read to me).
+- I have had a chance to ask questions and they have been answered.
+- Taking part is voluntary. I have not been pressured.
+- I may leave the study at any time and will not lose any care I am entitled to.
+Signed at (place) on (date). Signature, or mark X if the person cannot sign, with an impartial witness.
+
+Declaration by the researcher
+I (name) declare that I explained this document; I encouraged questions and took time to answer them; I am satisfied that the person understands the study.
+Signed at (place) on (date).
+
+The information sheet that precedes the form carries the essential elements listed above. A signed form without that sheet is not informed consent.
+
 Privacy is kept by unique codes, locked forms, restricted access, and care with photographs and with qualitative quotes. Payment for time and travel is reimbursement. It is not a purchase of risk. Compensation for research-related injury is a duty in interventional work under Indian rules.
 
 ETHICS COMMITTEE
@@ -598,14 +772,31 @@ Composition, as used in examination answers: at least seven members; a chairpers
 
 The file submitted usually contains the protocol, the participant information sheet, consent forms in the local language, the tools, the investigators’ summaries of training, the CTRI number when the study is a trial, and the plan for insurance or compensation in a trial.
 
-More than minimal risk goes to a full meeting. Expedited review or exemption exists only as the committee’s standard operating procedure allows. Multicentre work may use single-review arrangements that are being developed nationally; the local site remains responsible for local context.
+Elements of the review (what the committee actually looks at): scientific merit and whether human participants are essential; risk and benefit; the consent process and the language of the sheet; selection of participants and safeguards for the vulnerable; privacy and data security; compensation for research-related harm; conflict of interest; and, for a trial, registration and insurance. A methodologically weak study that cannot answer its question is also ethically weak: people would be used to no purpose.
+
+The member secretary screens incoming work. Three paths are used:
+
+1. Exemption from review: less than minimal risk (some anonymous educational surveys).
+2. Expedited review: minimal risk (review of existing records, a minor change to an already approved protocol).
+3. Full committee review: more than minimal risk (blood, invasive tests, an intervention).
+
+The meeting may approve, approve with modifications, or reject. Approval is required before the first participant is approached. Multicentre work may use single-review arrangements that are being developed nationally; the local site remains responsible for local context.
 
 Observational dissertations in Indian medical colleges still require committee approval. They are not “only a survey” in the sense that exempts them.
 
 VULNERABLE GROUPS AND PUBLIC HEALTH RESEARCH
-Children, prisoners, institutionalised persons, very poor communities, subordinates in a hierarchy (students, employees), some tribal populations, pregnant women, the terminally ill, and persons with impaired cognition are not to be sampled merely because they are easy to reach. Extra justification and extra safeguards are required. Tribal work needs community-level processes as well as individual consent.
+The 2017 guidelines treat vulnerability as reduced ability to protect one’s own interests. Groups named there, and expected in an examination answer, include:
 
-Public health research (cluster trials, use of routine information systems, work in emergencies) has its own section in the 2017 guidelines. Altered or waived consent may be argued for some evaluations, but only with committee approval and with community engagement.
+- Children: parental or LAR permission plus assent when the child can understand. A dedicated ICMR guideline for children sits beside the 2017 general text.
+- Pregnant women and the foetus: extra justification; no convenience sampling of antenatal clinics for an unrelated question.
+- Persons with mental illness or cognitive impairment: capacity is assessed; a LAR acts when capacity is lacking.
+- Tribal communities: community-level processes as well as individual consent; the work should not deepen historic harm.
+- Hierarchical subordinates (students, employees, prisoners, institutionalised persons): they are easy to recruit and hard to refuse. That is the reason not to use them as a default sample.
+- The very poor, sex workers, sexual minorities, and the terminally ill: extra safeguards against inducement and against identification.
+
+They are not to be sampled merely because they sit in the next room. Extra justification and extra safeguards are required.
+
+Public health research (cluster trials, use of routine information systems, work in emergencies) has its own section in the 2017 guidelines. Altered or waived consent may be argued for some evaluations, but only with committee approval and with community engagement. Tuskegee and the wartime camp experiments are the reason this machinery exists. They need only a few lines in an answer; the 2017 principles and the consent process need the rest.
 
 CONCLUSION
 A Community Medicine dissertation that interviews village women without a local-language information sheet, or that treats an administrator’s letter as consent, fails ethically even if the statistics are faultless. The twelve principles, the consent process, and the committee are the three parts of a complete answer.
@@ -642,8 +833,10 @@ Introduction and rationale: why the problem matters, what is known, what gap rem
 Question, numbered objectives, and a hypothesis where the design needs one.
 Review of literature, arranged by theme or by objective, not as a list of papers in date order.
 Methods: design, setting, duration, population, inclusion and exclusion, sample size with formula and inputs, sampling, variables and operational definitions, tools, procedure, outcomes, analysis, quality assurance, ethics.
-Work plan (a Gantt chart of months against activities).
-Budget and its justification.
+Work plan (a Gantt chart of months against activities). Typical rows: ethics approval, pre-test, recruitment, follow-up, entry, analysis, writing. Typical columns: months 1 to 12. Shading shows when each row is active. Two activities that need the same person in the same week are a planning error, not a software error.
+
+Budget and its justification. Ordinary heads: personnel (investigator time, field worker, data entry); travel; consumables and investigations; equipment (only what the study must buy); contingency (a small stated percentage); overhead if the institution charges it. Each line has a quantity, a unit cost, and a sentence of justification. A budget that hides a laptop “for the study” when the college already has one will be asked about.
+
 Plan for use of the results (who will hear them).
 References in Vancouver form.
 Annexes: tools, consent forms, ethics undertaking, Clinical Trials Registry - India receipt if the study is a trial.
@@ -663,29 +856,78 @@ Discussion. What does it mean? Important findings are summarised and possible re
 
 References. Every resource cited in the text appears at the end, in Vancouver style.
 
+INTERPRETING THE STUDY FINDINGS
+A statistically significant result is not automatically a clinically useful one. Two teaching examples make the point.
+
+A 2 mm Hg difference in systolic pressure between drug A and drug B may become “significant” when each group grows from 100 to 300. The difference is still 2 mm Hg. The clinician has to say whether that difference matters.
+
+Conversely, a large difference in cure (30 percent versus 60 percent) may fail to reach P less than 0.05 when each group has only 20 patients, and become significant at 30 per group. The size of the effect was always large. The first study was under-powered.
+
+Hence interpretation asks more than “was P below 0.05?”
+
+For a descriptive study: give the point estimate with a confidence interval, not the point alone. The interval is the range in which the reference population value is likely to lie.
+
+For an analytical study, five questions:
+
+1. What is the measure of association (relative risk, odds ratio, difference of means)?
+2. What is its confidence interval (precision)?
+3. What is the chance of a Type I error (P)?
+4. What systematic error remains (selection, measurement, confounding)?
+5. What is the utility: is the association likely to be causal (criteria taught under Epidemiology); if an intervention, is it acceptable, safe, and affordable?
+
+P says nothing about the strength of an association. A very small P with a relative risk of 1.05 is not a public health finding. Association is not causation until the causal criteria have been considered. Chance error is handled by the test and the interval. Bias is handled by the design and by an honest discussion.
+
+Results state what was found. Discussion says what it means. Mixing the two is the commonest fault in a first draft.
+
 THE THESIS
-Most Indian universities expect, in something like this order: certificates and declaration; acknowledgements; contents; lists of tables and figures; abbreviations; introduction; review of literature; aims and objectives; material and methods; results; discussion; summary and conclusion; recommendations; references; annexures (tool, consent, ethics letter, an excerpt of the master chart).
+Most Indian universities expect, in something like this order. The purpose of each part is what matters.
+
+- Certificates, declaration, acknowledgements: who did the work and that it is the candidate’s.
+- Contents, lists of tables and figures, abbreviations: so a examiner can find a table without hunting.
+- Introduction: why this problem, here, now. Ends by pointing at the gap.
+- Review of literature: what is known, arranged by theme or by objective, including work that disagrees.
+- Aims and objectives: the numbered promises against which the rest will be judged.
+- Material and methods: enough to repeat the study. Past tense. The numbers actually achieved.
+- Results: what was found, in the order of the objectives. No interpretation.
+- Discussion: meaning, other studies, strengths, limits.
+- Summary and conclusion: a short close that answers the objectives and does not invent a new claim.
+- Recommendations: only what the data can support, written so that a programme officer could act.
+- References: Vancouver, every in-text number present.
+- Annexures: tool, consent, ethics letter, an excerpt of the master chart.
 
 Practical habits that save months: write the methods while the study is running; lock the analysis plan before looking at unexpected P values; keep dated copies of protocol amendments; show tables to the guide and the statistician before drafting the discussion.
 
 THE ARTICLE
 A paper is a conversion of the thesis, not a reduction of font size. The target journal’s instructions and word limit govern the draft. A structured abstract and Medical Subject Headings keywords help retrieval. Authorship follows the four ICMJE criteria (substantial contribution; drafting or critical revision; final approval; accountability). Gift authorship is misconduct. The ICMR Policy on Research Integrity and Publication Ethics (RIPE), 2019, is the Indian institutional reference for plagiarism, fabrication and authorship disputes. Journals that charge authors and skip genuine peer review are not a place to send, or to cite as if they were indexed science.
 
+A short checklist before submission:
+- Title represents the content and names the design when it helps.
+- Abstract covers objectives, design, subjects, setting, outcomes, results and a conclusion that does not outrun the data.
+- Introduction states the question or hypothesis and ties the literature to that question.
+- Methods describe design, sample, measurements, analysis and ethics in enough detail to repeat the work.
+- Results give numbers with the statements; tables are clear; no opinions in this section.
+- Discussion covers strengths and limits, brings past findings in, and does not generalise beyond the sample and the tool.
+- References are in the journal’s style and were actually read.
+- Terminology and units are uniform. The tone is that of a careful worker, not a salesman.
+
 [SN]Critical appraisal of a journal article[/SN]
 
 CRITICAL APPRAISAL
-Publication is not proof. The method decides how far the conclusion can be believed.
+Publication is not proof. The method decides how far the conclusion can be believed. Evaluation can be done by the author before submission, by peer reviewers, or by a reader who must decide whether to change practice. A qualitative impression (“the paper is good”) is weak. Walking the paper under nine headings is stronger.
 
-A working sequence for a resident, and for an examination short note:
-1. What was the question? Is it clear and important?
-2. What was the design? Can that design answer that question?
-3. Who was studied? Inclusion, sampling, response, and whether the sample resembles the reader’s setting.
-4. How were exposure and outcome measured? Was there blinding? What bias is likely?
-5. How was confounding handled?
-6. What are the results (effect size and confidence interval, not only P)?
-7. Do the conclusions stay inside the data, or do they run ahead of them?
-8. Who funded the work, and is a conflict of interest declared?
-9. Would this change practice or a programme here?
+1. Title: does it represent the content and the breadth of the study?
+2. Authors: are affiliations clear?
+3. Abstract: does it cover every component, with actual numbers, and without a conclusion larger than the study?
+4. Introduction and literature: is the question or hypothesis stated? Are key references present? Are concepts defined? Is the “big picture” given?
+5. Materials and methods (the heaviest heading): are variables, design, bias control, procedure, population, sample size, setting, and tests described, and are they appropriate?
+6. Results: do numbers accompany the statements? Are tables efficient and accurate? Is this section free of opinion?
+7. Discussion and conclusion: are pluses and minuses covered? Is the talk about this study? Do conclusions stay inside the design, the tool and the sample?
+8. References: a reasonable number, actually used, in standard form.
+9. General considerations: sections labelled, terms uniform, tone rigorous, writing clear.
+
+Then two practical questions. How would you use this paper in your own setting? What two suggestions would you send the author?
+
+A working sequence for a short note can still be the nine reader’s questions: question; design fit; who was studied; measurement and blinding; confounding; effect size and interval, not only P; whether conclusions stay inside the data; funding and conflict; whether practice here should change.
 
 Design-specific checklists (CONSORT, STROBE, CASP) are memory aids. In an examination a structured paragraph is worth more than the sentence “the study is good.”
 
