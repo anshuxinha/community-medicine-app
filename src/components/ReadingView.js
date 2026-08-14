@@ -14,6 +14,8 @@ import {
   ToastAndroid,
   Alert,
   KeyboardAvoidingView,
+  LayoutAnimation,
+  UIManager,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -21,6 +23,19 @@ import { useThemedStyles } from '../styles/useThemedStyles';
 import { normalizeUpdatedSnippet } from "../utils/contentRegistry";
 import { ALL_ORIENTATIONS } from "../constants/orientations";
 import ThemeModePill from "./ThemeModePill";
+import {
+  exerciseHeaderTitle,
+  hasExerciseMarkup,
+  isExerciseMarkupLine,
+  splitExerciseSegments,
+} from "../utils/libraryExerciseMarkup";
+
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 const stripBold = (text) => text.replace(/\*\*(.+?)\*\*/g, "$1");
 const normalizeAnchorText = (text = "") =>
@@ -73,8 +88,9 @@ const buildTableCellSet = (block) => {
 const isExamMarkupLine = (line = "") => {
   const t = String(line).trim();
   if (!t) return false;
-  if (/^\[(SN|LAQ|EXAMTIP|REF)\]/i.test(t)) return true;
-  if (/\[\/(SN|LAQ|EXAMTIP|REF)\]/i.test(t)) return true;
+  if (/^\[(SN|LAQ|EXAMTIP|REF|EX|ANS)\]/i.test(t)) return true;
+  if (/\[\/(SN|LAQ|EXAMTIP|REF|EX|ANS)\]/i.test(t)) return true;
+  if (isExerciseMarkupLine(t)) return true;
   return false;
 };
 
@@ -102,7 +118,7 @@ const parseTextTable = (lines, startIndex) => {
       break;
     }
     // MockData section keywords — structural headings, never table columns
-    if (/^(CORE CONCEPTS|FORMULAS AND CALCULATIONS|MNEMONICS|KEY POINTS|NOT APPLICABLE|OVERVIEW)\b/.test(line)) {
+    if (/^(CORE CONCEPTS|FORMULAS AND CALCULATIONS|MNEMONICS|KEY POINTS|NOT APPLICABLE|OVERVIEW|SOLVED EXERCISES)\b/.test(line)) {
       break;
     }
     // ALL-CAPS section titles are headings, not table column headers
@@ -229,10 +245,37 @@ const preprocessTextTables = (content) => {
   return newLines.join("\n");
 };
 
-const parseMarkdown = (content, { isGem = false } = {}) => {
-  // Library exam markup ([SN]/[LAQ]/[EXAMTIP]) must never go through the
+const parseMarkdown = (content, { isGem = false, skipExercises = false } = {}) => {
+  if (!skipExercises && hasExerciseMarkup(content)) {
+    const parts = splitExerciseSegments(content);
+    if (parts.some((part) => part.type === "exercise")) {
+      const nested = [];
+      parts.forEach((part) => {
+        if (part.type === "text") {
+          if (part.text && part.text.trim()) {
+            nested.push(
+              ...parseMarkdown(part.text, { isGem, skipExercises: true }),
+            );
+          }
+        } else {
+          nested.push({
+            type: "exercise",
+            id: part.id,
+            question: part.question,
+            answerBlocks: parseMarkdown(part.answer || "", {
+              isGem,
+              skipExercises: true,
+            }),
+          });
+        }
+      });
+      return nested;
+    }
+  }
+
+  // Library exam markup ([SN]/[LAQ]/[EXAMTIP]/[EX]) must never go through the
   // aggressive text-table heuristic — short tag lines + titles become fake tables.
-  const hasExamMarkup = /\[(?:SN|LAQ|EXAMTIP|REF)\]/i.test(content || "");
+  const hasExamMarkup = /\[(?:SN|LAQ|EXAMTIP|REF|EX|ANS)\]/i.test(content || "");
   const processedContent =
     isGem || hasExamMarkup ? content : preprocessTextTables(content);
   const lines = processedContent.split("\n");
@@ -786,6 +829,11 @@ const ReadingView = ({
     () => mergeBlocksWithIllustrations(blocks, illustrations),
     [blocks, illustrations],
   );
+  const [expandedExerciseId, setExpandedExerciseId] = useState(null);
+  const toggleExercise = useCallback((id) => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setExpandedExerciseId((prev) => (prev === id ? null : id));
+  }, []);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [imageRotationMap, setImageRotationMap] = useState({});
   const [fullscreenImage, setFullscreenImage] = useState(null);
@@ -1595,6 +1643,67 @@ const ReadingView = ({
       }
       case "spacing":
         return <View key={index} style={styles.spacing} />;
+      case "exercise": {
+        const expanded = expandedExerciseId === block.id;
+        const header = exerciseHeaderTitle(block.question);
+        const compactQuestion = String(block.question || "").replace(/\s+/g, " ").trim();
+        const showFullStem = header.replace(/\s+/g, " ").trim() !== compactQuestion;
+        return (
+          <View
+            key={index}
+            style={[
+              styles.exerciseCard,
+              expanded && styles.exerciseCardExpanded,
+            ]}
+          >
+            <TouchableOpacity
+              style={styles.exerciseHeader}
+              onPress={() => toggleExercise(block.id)}
+              activeOpacity={0.75}
+              accessibilityRole="button"
+              accessibilityState={{ expanded }}
+              accessibilityLabel={header}
+            >
+              <View
+                style={[
+                  styles.exerciseIconBox,
+                  expanded && styles.exerciseIconBoxActive,
+                ]}
+              >
+                <MaterialIcons
+                  name="quiz"
+                  size={20}
+                  color={expanded ? colors.onPrimary : colors.secondary}
+                />
+              </View>
+              <Text
+                style={[
+                  styles.exerciseTitle,
+                  expanded && styles.exerciseTitleActive,
+                ]}
+              >
+                {header}
+              </Text>
+              <MaterialIcons
+                name={expanded ? "expand-less" : "expand-more"}
+                size={24}
+                color={expanded ? colors.secondary : colors.textPlaceholder}
+              />
+            </TouchableOpacity>
+            {expanded ? (
+              <View style={styles.exerciseBody}>
+                {showFullStem ? (
+                  <Text style={styles.exerciseStem}>{block.question}</Text>
+                ) : null}
+                <Text style={styles.exerciseSolutionLabel}>Solution</Text>
+                {(block.answerBlocks || []).map((ansBlock, ansIdx) =>
+                  renderBlock(ansBlock, `${index}-ans-${ansIdx}`),
+                )}
+              </View>
+            ) : null}
+          </View>
+        );
+      }
       default:
         return null;
     }
@@ -2794,6 +2903,78 @@ const createStyles = (colors) => StyleSheet.create({
     color: colors.secondary,
     fontWeight: "700",
     backgroundColor: colors.highlightBg,
+  },
+
+  // ── Solved exercise accordion (Support-screen pattern) ──
+  exerciseCard: {
+    backgroundColor: colors.surfacePrimary,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: colors.border,
+    overflow: "hidden",
+    marginVertical: 8,
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  exerciseCardExpanded: {
+    borderColor: colors.primaryMuted || colors.secondary,
+    shadowOpacity: 0.1,
+    elevation: 3,
+  },
+  exerciseHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    minHeight: 64,
+  },
+  exerciseIconBox: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: colors.primarySoft,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+  },
+  exerciseIconBoxActive: {
+    backgroundColor: colors.secondary,
+  },
+  exerciseTitle: {
+    flex: 1,
+    fontSize: 15,
+    fontWeight: "600",
+    color: colors.textTitle,
+    lineHeight: 21,
+    paddingRight: 8,
+  },
+  exerciseTitleActive: {
+    color: colors.primaryDark || colors.primary,
+  },
+  exerciseBody: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    paddingTop: 0,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.border,
+  },
+  exerciseStem: {
+    marginTop: 12,
+    fontSize: 14,
+    lineHeight: 22,
+    color: colors.textTitle,
+  },
+  exerciseSolutionLabel: {
+    marginTop: 12,
+    marginBottom: 6,
+    fontSize: 11,
+    fontWeight: "700",
+    letterSpacing: 0.6,
+    textTransform: "uppercase",
+    color: colors.secondary,
   },
 });
 
