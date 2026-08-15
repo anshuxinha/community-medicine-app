@@ -17,7 +17,6 @@ import { ALL_ORIENTATIONS } from "../constants/orientations";
 import {
   FEEDBACK_KIND_VIDEO_REQUEST,
   FEEDBACK_MESSAGE_MAX_LENGTH,
-  VIDEO_REQUEST_CATEGORIES,
   VIDEO_REQUEST_SOURCE,
   VIDEO_REQUEST_TOPIC_MAX_LENGTH,
   buildVideoRequestMessage,
@@ -34,15 +33,11 @@ const VideoRequestModal = ({ visible, onClose }) => {
   const { styles, colors } = useThemedStyles(createStyles);
   const [topic, setTopic] = useState("");
   const [details, setDetails] = useState("");
-  const [categoryId, setCategoryId] = useState(
-    VIDEO_REQUEST_CATEGORIES[0].id,
-  );
   const [submitting, setSubmitting] = useState(false);
 
   const resetAndClose = () => {
     setTopic("");
     setDetails("");
-    setCategoryId(VIDEO_REQUEST_CATEGORIES[0].id);
     setSubmitting(false);
     onClose?.();
   };
@@ -62,13 +57,9 @@ const VideoRequestModal = ({ visible, onClose }) => {
       return;
     }
 
-    const category = VIDEO_REQUEST_CATEGORIES.find(
-      (item) => item.id === categoryId,
-    );
     const message = buildVideoRequestMessage({
       topic: trimmedTopic,
       details,
-      categoryLabel: category?.label,
     });
     if (message.length > FEEDBACK_MESSAGE_MAX_LENGTH) {
       Alert.alert(
@@ -84,7 +75,6 @@ const VideoRequestModal = ({ visible, onClose }) => {
         source: VIDEO_REQUEST_SOURCE,
         kind: FEEDBACK_KIND_VIDEO_REQUEST,
         topic: trimmedTopic,
-        requestedCategory: category?.id,
       });
       Alert.alert(
         "Request sent",
@@ -147,33 +137,6 @@ const VideoRequestModal = ({ visible, onClose }) => {
               autoFocus
               returnKeyType="next"
             />
-
-            <Text style={styles.fieldLabel}>Category</Text>
-            <View style={styles.chipRow}>
-              {VIDEO_REQUEST_CATEGORIES.map((item) => {
-                const selected = categoryId === item.id;
-                return (
-                  <Pressable
-                    key={item.id}
-                    style={[styles.chip, selected && styles.chipSelected]}
-                    onPress={() => setCategoryId(item.id)}
-                    disabled={submitting}
-                    accessibilityRole="button"
-                    accessibilityState={{ selected }}
-                    accessibilityLabel={item.label}
-                  >
-                    <Text
-                      style={[
-                        styles.chipLabel,
-                        selected && styles.chipLabelSelected,
-                      ]}
-                    >
-                      {item.label}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
 
             <Text style={styles.fieldLabel}>Details (optional)</Text>
             <TextInput
@@ -295,32 +258,6 @@ const createStyles = (colors) =>
       fontSize: 15,
       color: colors.inputText,
       marginBottom: 14,
-    },
-    chipRow: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      gap: 8,
-      marginBottom: 14,
-    },
-    chip: {
-      paddingHorizontal: 12,
-      paddingVertical: 7,
-      borderRadius: 16,
-      backgroundColor: colors.surfaceSecondary,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    chipSelected: {
-      backgroundColor: colors.primarySoft,
-      borderColor: colors.primary,
-    },
-    chipLabel: {
-      fontSize: 13,
-      fontWeight: "600",
-      color: colors.textSecondary,
-    },
-    chipLabelSelected: {
-      color: theme.colors.secondary,
     },
     detailsInput: {
       minHeight: 96,

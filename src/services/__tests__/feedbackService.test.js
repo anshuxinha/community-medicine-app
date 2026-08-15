@@ -33,6 +33,15 @@ describe("feedbackService helpers", () => {
     expect(buildVideoRequestMessage({ topic: "Bias" })).toBe("Topic: Bias");
   });
 
+  test("buildVideoRequestMessage supports topic and details without category", () => {
+    expect(
+      buildVideoRequestMessage({
+        topic: "Bias",
+        details: "Selection vs information.",
+      }),
+    ).toBe("Topic: Bias\n\nSelection vs information.");
+  });
+
   test("isVideoRequestItem detects kind and source", () => {
     expect(isVideoRequestItem({ kind: FEEDBACK_KIND_VIDEO_REQUEST })).toBe(
       true,
