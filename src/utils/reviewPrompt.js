@@ -5,9 +5,25 @@ import * as StoreReview from "expo-store-review";
 const STORAGE_KEY_HAS_SHOWN = "reviewPrompt_hasShown";
 const STORAGE_KEY_HAS_RATED = "reviewPrompt_hasRated";
 const STORAGE_KEY_LAST_PROGRESS = "reviewPrompt_lastProgress";
+const STORAGE_KEY_LAST_SHOWN_AT = "reviewPrompt_lastShownAt";
+const STORAGE_KEY_COPY_INDEX = "reviewRequest_copyIndex";
 const STORAGE_KEY_RESET_VERSION = "reviewPrompt_resetVersion";
-/** Bump to re-show the chapter-complete review CTA for all devices once. */
-const REVIEW_PROMPT_RESET_VERSION = "2026-08-06-chapter-complete-retest";
+const LEGACY_CHAPTER_COPY_INDEX_KEY = "chapterComplete_reviewCtaCopyIndex";
+/** Bump to re-show the standalone Review Request for all devices once. */
+const REVIEW_PROMPT_RESET_VERSION = "2026-08-15-review-request-5d";
+
+export const REVIEW_PROMPT_INTERVAL_MS = 5 * 24 * 60 * 60 * 1000;
+
+export const REVIEW_REQUEST_VARIANTS = [
+  {
+    title: "One tap helps the next student.",
+    body: "If STROMA is helping your prep, please leave a 5-star review. It is the single biggest way other Community Medicine students find us.",
+  },
+  {
+    title: "Did this earn 5 stars?",
+    body: "An honest 5-star rating takes a few seconds and keeps STROMA growing for MD students like you. Tap 5 if we earned it.",
+  },
+];
 
 const ANDROID_PACKAGE = "com.communitymed.app";
 /** HTTPS listing: works with package-visibility https queries in the manifest. */
@@ -16,8 +32,38 @@ const ANDROID_MARKET_URL = `market://details?id=${ANDROID_PACKAGE}`;
 /** Opens the Play write-review surface when supported by the store app. */
 const ANDROID_PLAY_REVIEW_URL = `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE}&showAllReviews=true`;
 
+function scopedKey(base, uid) {
+  const id = String(uid || "").trim();
+  return id ? `${base}:${id}` : base;
+}
+
+/**
+ * Pure eligibility check for the standalone Review Request.
+ * First show is due when lastShownAt is missing. After that, wait intervalMs
+ * unless the user already completed the 5-star path.
+ */
+export function isReviewRequestDue({
+  hasRated,
+  lastShownAt,
+  now,
+  intervalMs = REVIEW_PROMPT_INTERVAL_MS,
+} = {}) {
+  if (hasRated) return false;
+  const shownAt = Number(lastShownAt);
+  if (lastShownAt == null || lastShownAt === "" || !Number.isFinite(shownAt)) {
+    return true;
+  }
+  const clock = Number.isFinite(Number(now)) ? Number(now) : Date.now();
+  const interval = Number.isFinite(Number(intervalMs))
+    ? Number(intervalMs)
+    : REVIEW_PROMPT_INTERVAL_MS;
+  return clock - shownAt >= interval;
+}
+
 /** Opens the global feedback modal (registered by ReviewFeedbackModal). */
 let openFeedbackFormHandler = null;
+/** Opens the standalone Review Request modal (registered by ReviewRequestModal). */
+let openReviewRequestHandler = null;
 
 /**
  * Register the UI that shows the post-"Not Really" feedback form.
@@ -45,18 +91,46 @@ function showFeedbackForm(handlers = {}) {
 }
 
 /**
+ * Register the standalone Review Request UI.
+ * @param {(handlers: { uid?: string }) => void} handler
+ * @returns {() => void} unregister
+ */
+export function registerOpenReviewRequest(handler) {
+  openReviewRequestHandler = handler;
+  return () => {
+    if (openReviewRequestHandler === handler) {
+      openReviewRequestHandler = null;
+    }
+  };
+}
+
+function resetPairsForScope(uid) {
+  return [
+    [scopedKey(STORAGE_KEY_HAS_SHOWN, uid), "false"],
+    [scopedKey(STORAGE_KEY_HAS_RATED, uid), "false"],
+    [scopedKey(STORAGE_KEY_LAST_PROGRESS, uid), "0"],
+    [scopedKey(STORAGE_KEY_LAST_SHOWN_AT, uid), ""],
+    [scopedKey(STORAGE_KEY_COPY_INDEX, uid), ""],
+  ];
+}
+
+/**
  * Clear local review CTA flags (device AsyncStorage, not cloud).
  * Used for admin retesting and one-time version migrations.
+ * @param {string} [uid]
  * @returns {Promise<void>}
  */
-export async function resetReviewPromptState() {
+export async function resetReviewPromptState(uid) {
   try {
-    await AsyncStorage.multiSet([
-      [STORAGE_KEY_HAS_SHOWN, "false"],
-      [STORAGE_KEY_HAS_RATED, "false"],
-      [STORAGE_KEY_LAST_PROGRESS, "0"],
+    const pairs = [
+      ...resetPairsForScope(uid),
       [STORAGE_KEY_RESET_VERSION, REVIEW_PROMPT_RESET_VERSION],
-    ]);
+    ];
+    if (uid) {
+      pairs.push(...resetPairsForScope(undefined));
+    }
+    await AsyncStorage.multiSet(pairs);
+    await AsyncStorage.removeItem(LEGACY_CHAPTER_COPY_INDEX_KEY);
   } catch (err) {
     console.warn("reviewPrompt: failed to reset state", err?.message);
   }
@@ -64,16 +138,17 @@ export async function resetReviewPromptState() {
 
 /**
  * One-time migration when REVIEW_PROMPT_RESET_VERSION changes.
- * Clears hasRated so the chapter-complete 5-star CTA can show again.
+ * Clears hasRated so the Review Request can show again.
+ * @param {string} [uid]
  * @returns {Promise<boolean>} true if a reset was applied
  */
-export async function ensureReviewPromptMigrated() {
+export async function ensureReviewPromptMigrated(uid) {
   try {
     const rawVersion = await AsyncStorage.getItem(STORAGE_KEY_RESET_VERSION);
     if (rawVersion === REVIEW_PROMPT_RESET_VERSION) {
       return false;
     }
-    await resetReviewPromptState();
+    await resetReviewPromptState(uid);
     return true;
   } catch (err) {
     console.warn("reviewPrompt: migration failed", err?.message);
@@ -86,16 +161,104 @@ export async function ensureReviewPromptMigrated() {
  * Play/App Store APIs do not report stars submitted; we treat "tapped 5 and
  * launched the review flow" as rated so the CTA can stop showing.
  *
- * State is device-local AsyncStorage (not tied to Firebase user id).
+ * @param {string} [uid]
  * @returns {Promise<boolean>}
  */
-export async function getHasRatedFiveStarReview() {
+export async function getHasRatedFiveStarReview(uid) {
   try {
-    await ensureReviewPromptMigrated();
-    const raw = await AsyncStorage.getItem(STORAGE_KEY_HAS_RATED);
+    await ensureReviewPromptMigrated(uid);
+    const raw = await AsyncStorage.getItem(
+      scopedKey(STORAGE_KEY_HAS_RATED, uid),
+    );
     return raw === "true";
   } catch (err) {
     console.warn("reviewPrompt: failed to read hasRated", err?.message);
+    return false;
+  }
+}
+
+/**
+ * @param {string} [uid]
+ * @returns {Promise<boolean>}
+ */
+export async function shouldShowReviewRequest(uid) {
+  try {
+    await ensureReviewPromptMigrated(uid);
+    const hasRated = await getHasRatedFiveStarReview(uid);
+    const rawLastShown = await AsyncStorage.getItem(
+      scopedKey(STORAGE_KEY_LAST_SHOWN_AT, uid),
+    );
+    return isReviewRequestDue({
+      hasRated,
+      lastShownAt: rawLastShown,
+      now: Date.now(),
+    });
+  } catch (err) {
+    console.warn("reviewPrompt: shouldShowReviewRequest failed", err?.message);
+    return false;
+  }
+}
+
+/**
+ * @param {string} [uid]
+ * @returns {Promise<void>}
+ */
+export async function markReviewPromptShown(uid) {
+  try {
+    await AsyncStorage.setItem(
+      scopedKey(STORAGE_KEY_LAST_SHOWN_AT, uid),
+      String(Date.now()),
+    );
+  } catch (err) {
+    console.warn("reviewPrompt: failed to persist lastShownAt", err?.message);
+  }
+}
+
+/**
+ * Advance and persist the alternating Review Request copy index.
+ * @param {string} [uid]
+ * @returns {Promise<number>}
+ */
+export async function takeNextReviewCopyIndex(uid) {
+  try {
+    const key = scopedKey(STORAGE_KEY_COPY_INDEX, uid);
+    const raw = await AsyncStorage.getItem(key);
+    if (raw == null || raw === "") {
+      await AsyncStorage.setItem(key, "0");
+      return 0;
+    }
+    const last = Number(raw);
+    const next =
+      Number.isFinite(last) && last >= 0
+        ? (Math.floor(last) + 1) % REVIEW_REQUEST_VARIANTS.length
+        : 0;
+    await AsyncStorage.setItem(key, String(next));
+    return next;
+  } catch (err) {
+    console.warn("reviewPrompt: copy index failed", err?.message);
+    return 0;
+  }
+}
+
+/**
+ * Show the standalone Review Request when the 5-day clock allows it.
+ * Marks lastShownAt as soon as the modal handler is invoked.
+ * @param {string} [uid]
+ * @returns {Promise<boolean>}
+ */
+export async function maybeShowReviewRequest(uid) {
+  try {
+    if (!(await shouldShowReviewRequest(uid))) {
+      return false;
+    }
+    if (typeof openReviewRequestHandler !== "function") {
+      return false;
+    }
+    await markReviewPromptShown(uid);
+    openReviewRequestHandler({ uid });
+    return true;
+  } catch (err) {
+    console.warn("reviewPrompt: maybeShowReviewRequest failed", err?.message);
     return false;
   }
 }
@@ -117,7 +280,7 @@ export function waitForUiSettle(extraMs = 400) {
 /**
  * Evaluate whether to show the legacy Alert in-app review pre-prompt.
  *
- * Prefer the chapter-complete sheet CTA (`ChapterCompleteSheet`). This
+ * Prefer the standalone Review Request (`maybeShowReviewRequest`). This
  * function is retained for optional call sites but no longer auto-fires
  * from AppContext after progress changes.
  *
@@ -232,12 +395,13 @@ function showFiveStarPrompt(handlers = {}) {
  *
  * Callers that show a modal must dismiss it first and await waitForUiSettle().
  *
- * @param {{ markRated?: boolean, openStoreListing?: boolean }} [options]
+ * @param {{ markRated?: boolean, openStoreListing?: boolean, uid?: string }} [options]
  *   openStoreListing defaults true for user-initiated rate actions.
  */
 export async function requestNativeStoreReview(options = {}) {
   const markRated = options.markRated !== false;
   const openStoreListing = options.openStoreListing !== false;
+  const uid = options.uid;
 
   try {
     // 1) Prefer native in-app review when the module reports support.
@@ -274,9 +438,9 @@ export async function requestNativeStoreReview(options = {}) {
       await openStoreReviewPage();
     }
   } finally {
-    await markAsShown();
+    await markAsShown(uid);
     if (markRated) {
-      await markAsRated();
+      await markAsRated(uid);
     }
   }
 }
@@ -324,17 +488,17 @@ async function openStoreReviewPage() {
   return false;
 }
 
-async function markAsShown() {
+async function markAsShown(uid) {
   try {
-    await AsyncStorage.setItem(STORAGE_KEY_HAS_SHOWN, "true");
+    await AsyncStorage.setItem(scopedKey(STORAGE_KEY_HAS_SHOWN, uid), "true");
   } catch (err) {
     console.warn("reviewPrompt: failed to persist hasShown", err?.message);
   }
 }
 
-export async function markAsRated() {
+export async function markAsRated(uid) {
   try {
-    await AsyncStorage.setItem(STORAGE_KEY_HAS_RATED, "true");
+    await AsyncStorage.setItem(scopedKey(STORAGE_KEY_HAS_RATED, uid), "true");
   } catch (err) {
     console.warn("reviewPrompt: failed to persist hasRated", err?.message);
   }

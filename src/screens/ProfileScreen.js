@@ -309,17 +309,17 @@ const ProfileScreen = () => {
   const handleResetReviewCta = () => {
     Alert.alert(
       "Reset review CTA?",
-      "Clears the local 5-star review flags on this device so the chapter-complete stars show again. Does not remove Play Store reviews.",
+      "Clears the local 5-star review flags on this device so the Review Request can show again. Does not remove Play Store reviews.",
       [
         { text: "Cancel", style: "cancel" },
         {
           text: "Reset",
           onPress: async () => {
             try {
-              await resetReviewPromptState();
+              await resetReviewPromptState(user?.uid);
               Alert.alert(
                 "Reset done",
-                "Finish any library chapter to see the 5-star CTA again on this device.",
+                "Finish any library chapter to see the Review Request again on this device.",
               );
             } catch (err) {
               Alert.alert(

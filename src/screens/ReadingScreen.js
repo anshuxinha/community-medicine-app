@@ -29,12 +29,9 @@ import {
   saveHighlights,
 } from "../services/highlightService";
 import {
-  ensureReviewPromptMigrated,
-  getHasRatedFiveStarReview,
-  requestNativeStoreReview,
+  maybeShowReviewRequest,
   waitForUiSettle,
 } from "../utils/reviewPrompt";
-import { submitAppFeedback } from "../services/feedbackService";
 
 const isFreeLibraryItem = (item) =>
   String(item?.id) === "1" || item?.title === "Man and Medicine";
@@ -106,39 +103,19 @@ const ReadingScreen = ({ route, navigation }) => {
   const [annotations, setAnnotations] = useState([]);
   const [userHighlights, setUserHighlights] = useState({});
   const [celebration, setCelebration] = useState(null);
-  // null = not loaded yet (avoids flashing Library/Next before hasRated resolves)
-  const [showReviewCta, setShowReviewCta] = useState(null);
+  const prevCelebrationRef = useRef(null);
 
   useEffect(() => {
-    let mounted = true;
+    const wasOpen = prevCelebrationRef.current;
+    prevCelebrationRef.current = celebration;
+    if (!wasOpen || celebration) {
+      return;
+    }
     void (async () => {
-      // One-time version bump clears hasRated so retest CTA can show again.
-      await ensureReviewPromptMigrated();
-      const hasRated = await getHasRatedFiveStarReview();
-      if (mounted) {
-        setShowReviewCta(!hasRated);
-      }
+      await waitForUiSettle(500);
+      await maybeShowReviewRequest(user?.uid);
     })();
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  // Re-check when the progress report opens so admin "Reset Review CTA"
-  // applies without leaving the reading screen.
-  useEffect(() => {
-    if (!celebration) return;
-    let mounted = true;
-    void (async () => {
-      const hasRated = await getHasRatedFiveStarReview();
-      if (mounted) {
-        setShowReviewCta(!hasRated);
-      }
-    })();
-    return () => {
-      mounted = false;
-    };
-  }, [celebration]);
+  }, [celebration, user?.uid]);
 
   const currentEntry = useMemo(
     () => getCurrentContentEntry(route.params),
@@ -453,30 +430,6 @@ const ReadingScreen = ({ route, navigation }) => {
     });
   }, [celebration, navigation]);
 
-  const handleRateFiveStars = useCallback(async () => {
-    setShowReviewCta(false);
-    // Dismiss our dialog before launching Play/App Store review. The native
-    // review UI often never appears while a Paper Dialog / Portal is focused.
-    setCelebration(null);
-    await waitForUiSettle(500);
-    // Tries in-app review, then always opens the Play listing so the user
-    // never gets a silent no-op when Google suppresses the native sheet.
-    await requestNativeStoreReview({
-      markRated: true,
-      openStoreListing: true,
-    });
-  }, []);
-
-  const handleSubmitLowRatingFeedback = useCallback(
-    async ({ rating, message }) => {
-      await submitAppFeedback(message, {
-        source: "chapter_complete_rating",
-        rating,
-      });
-    },
-    [],
-  );
-
   const handleSpeak = () => {
     if (isSpeaking) {
       stopSpeech();
@@ -542,9 +495,6 @@ const ReadingScreen = ({ route, navigation }) => {
         }
         onBackToLibrary={handleBackToLibrary}
         onDismiss={dismissCelebration}
-        showReviewCta={showReviewCta}
-        onRateFiveStars={handleRateFiveStars}
-        onSubmitLowRatingFeedback={handleSubmitLowRatingFeedback}
       />
     </View>
   );
