@@ -9,8 +9,8 @@ const STORAGE_KEY_LAST_SHOWN_AT = "reviewPrompt_lastShownAt";
 const STORAGE_KEY_COPY_INDEX = "reviewRequest_copyIndex";
 const STORAGE_KEY_RESET_VERSION = "reviewPrompt_resetVersion";
 const LEGACY_CHAPTER_COPY_INDEX_KEY = "chapterComplete_reviewCtaCopyIndex";
-/** Bump to re-show the standalone Review Request for all devices once. */
-const REVIEW_PROMPT_RESET_VERSION = "2026-08-15-review-request-5d";
+/** Bump to wipe every account's Review CTA flags on each device once. */
+const REVIEW_PROMPT_RESET_VERSION = "2026-08-15-reset-all-accounts";
 
 export const REVIEW_PROMPT_INTERVAL_MS = 5 * 24 * 60 * 60 * 1000;
 
@@ -104,33 +104,32 @@ export function registerOpenReviewRequest(handler) {
   };
 }
 
-function resetPairsForScope(uid) {
-  return [
-    [scopedKey(STORAGE_KEY_HAS_SHOWN, uid), "false"],
-    [scopedKey(STORAGE_KEY_HAS_RATED, uid), "false"],
-    [scopedKey(STORAGE_KEY_LAST_PROGRESS, uid), "0"],
-    [scopedKey(STORAGE_KEY_LAST_SHOWN_AT, uid), ""],
-    [scopedKey(STORAGE_KEY_COPY_INDEX, uid), ""],
-  ];
+function isReviewCtaStorageKey(key) {
+  if (!key || key === STORAGE_KEY_RESET_VERSION) return false;
+  return (
+    key === LEGACY_CHAPTER_COPY_INDEX_KEY ||
+    key.startsWith("reviewPrompt_") ||
+    key.startsWith("reviewRequest_")
+  );
 }
 
 /**
- * Clear local review CTA flags (device AsyncStorage, not cloud).
- * Used for admin retesting and one-time version migrations.
- * @param {string} [uid]
+ * Clear Review CTA flags for every account on this device (AsyncStorage, not
+ * cloud). Used for admin retesting and one-time version migrations.
+ * @param {string} [_uid] unused; kept so existing call sites stay valid
  * @returns {Promise<void>}
  */
-export async function resetReviewPromptState(uid) {
+export async function resetReviewPromptState(_uid) {
   try {
-    const pairs = [
-      ...resetPairsForScope(uid),
-      [STORAGE_KEY_RESET_VERSION, REVIEW_PROMPT_RESET_VERSION],
-    ];
-    if (uid) {
-      pairs.push(...resetPairsForScope(undefined));
+    const allKeys = await AsyncStorage.getAllKeys();
+    const toRemove = allKeys.filter(isReviewCtaStorageKey);
+    if (toRemove.length > 0) {
+      await AsyncStorage.multiRemove(toRemove);
     }
-    await AsyncStorage.multiSet(pairs);
-    await AsyncStorage.removeItem(LEGACY_CHAPTER_COPY_INDEX_KEY);
+    await AsyncStorage.setItem(
+      STORAGE_KEY_RESET_VERSION,
+      REVIEW_PROMPT_RESET_VERSION,
+    );
   } catch (err) {
     console.warn("reviewPrompt: failed to reset state", err?.message);
   }
@@ -138,7 +137,7 @@ export async function resetReviewPromptState(uid) {
 
 /**
  * One-time migration when REVIEW_PROMPT_RESET_VERSION changes.
- * Clears hasRated so the Review Request can show again.
+ * Wipes every account's Review CTA flags on this device.
  * @param {string} [uid]
  * @returns {Promise<boolean>} true if a reset was applied
  */

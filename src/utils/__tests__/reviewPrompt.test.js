@@ -99,6 +99,16 @@ describe("reviewPrompt storage cadence", () => {
     await expect(shouldShowReviewRequest("user-a")).resolves.toBe(true);
   });
 
+  test("reset clears every account on the device", async () => {
+    await markAsRated("user-a");
+    await markAsRated("user-b");
+    await markReviewPromptShown("user-a");
+    await markReviewPromptShown("user-b");
+    await resetReviewPromptState("user-a");
+    await expect(shouldShowReviewRequest("user-a")).resolves.toBe(true);
+    await expect(shouldShowReviewRequest("user-b")).resolves.toBe(true);
+  });
+
   test("alternates copy index between the two variants", async () => {
     expect(REVIEW_REQUEST_VARIANTS).toHaveLength(2);
     await expect(takeNextReviewCopyIndex("user-a")).resolves.toBe(0);
