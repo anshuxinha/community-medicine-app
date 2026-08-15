@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  AppState,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -13,6 +14,7 @@ import {
 import { Text } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { ALL_ORIENTATIONS } from "../constants/orientations";
+import { AppContext } from "../context/AppContext";
 import {
   FEEDBACK_MESSAGE_MAX_LENGTH,
   submitAppFeedback,
@@ -20,6 +22,7 @@ import {
 import { theme } from "../styles/theme";
 import { useThemedStyles } from "../styles/useThemedStyles";
 import {
+  maybeShowReviewRequest,
   registerOpenReviewRequest,
   requestNativeStoreReview,
   REVIEW_REQUEST_VARIANTS,
@@ -28,11 +31,12 @@ import {
 } from "../utils/reviewPrompt";
 
 /**
- * Standalone Review Request. Shown after chapter complete when the 5-day
- * clock allows it, until the user taps 5 stars.
+ * Standalone Review Request. Shown when the user opens the app if the 5-day
+ * clock allows it, until they tap 5 stars.
  */
 const ReviewRequestModal = () => {
   const { styles, colors } = useThemedStyles(createStyles);
+  const { user } = useContext(AppContext);
   const [visible, setVisible] = useState(false);
   const [selectedStars, setSelectedStars] = useState(0);
   const [feedbackText, setFeedbackText] = useState("");
@@ -40,6 +44,35 @@ const ReviewRequestModal = () => {
   const [reviewBusy, setReviewBusy] = useState(false);
   const [copyIndex, setCopyIndex] = useState(0);
   const uidRef = useRef(undefined);
+  const visibleRef = useRef(false);
+
+  useEffect(() => {
+    visibleRef.current = visible;
+  }, [visible]);
+
+  useEffect(() => {
+    if (!user?.uid || user.onboardingCompleted !== true) {
+      return;
+    }
+
+    let cancelled = false;
+    const tryShow = async () => {
+      if (cancelled || visibleRef.current) return;
+      if (AppState.currentState !== "active") return;
+      await waitForUiSettle(600);
+      if (cancelled || visibleRef.current) return;
+      await maybeShowReviewRequest(user.uid);
+    };
+
+    void tryShow();
+    const sub = AppState.addEventListener("change", (next) => {
+      if (next === "active") void tryShow();
+    });
+    return () => {
+      cancelled = true;
+      sub.remove();
+    };
+  }, [user?.uid, user?.onboardingCompleted]);
 
   useEffect(() => {
     return registerOpenReviewRequest((handlers = {}) => {

@@ -241,7 +241,7 @@ export async function takeNextReviewCopyIndex(uid) {
 }
 
 /**
- * Show the standalone Review Request when the 5-day clock allows it.
+ * Show the standalone Review Request on app open when the 5-day clock allows it.
  * Marks lastShownAt as soon as the modal handler is invoked.
  * @param {string} [uid]
  * @returns {Promise<boolean>}

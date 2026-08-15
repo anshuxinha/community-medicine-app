@@ -1504,7 +1504,7 @@ export const AppProvider = ({ children }) => {
     }
   }, [currentStreak]);
 
-  // In-app review CTA is the standalone Review Request after chapter complete.
+  // In-app review CTA is the standalone Review Request on app open.
   // Legacy Alert-based maybePromptReview is no longer auto-fired here.
 
   const markAsUnread = (contentRefs = []) => {

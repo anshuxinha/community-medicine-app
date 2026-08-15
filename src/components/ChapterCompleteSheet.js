@@ -8,7 +8,7 @@ import { progressToPercent } from "../utils/progressPresentation";
 
 /**
  * Chapter completion sheet: progress, optional streak, Library / Next.
- * Review Request is a separate modal (`ReviewRequestModal`).
+ * Review Request is a separate app-open modal (`ReviewRequestModal`).
  *
  * Props:
  *  - visible

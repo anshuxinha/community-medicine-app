@@ -319,7 +319,7 @@ const ProfileScreen = () => {
               await resetReviewPromptState(user?.uid);
               Alert.alert(
                 "Reset done",
-                "Finish any library chapter to see the Review Request again on this device.",
+                "Force-close and reopen the app to see the Review Request again on this device.",
               );
             } catch (err) {
               Alert.alert(

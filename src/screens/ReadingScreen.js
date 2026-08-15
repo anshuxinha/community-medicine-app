@@ -28,11 +28,6 @@ import {
   subscribeHighlights,
   saveHighlights,
 } from "../services/highlightService";
-import {
-  maybeShowReviewRequest,
-  waitForUiSettle,
-} from "../utils/reviewPrompt";
-
 const isFreeLibraryItem = (item) =>
   String(item?.id) === "1" || item?.title === "Man and Medicine";
 
@@ -103,19 +98,6 @@ const ReadingScreen = ({ route, navigation }) => {
   const [annotations, setAnnotations] = useState([]);
   const [userHighlights, setUserHighlights] = useState({});
   const [celebration, setCelebration] = useState(null);
-  const prevCelebrationRef = useRef(null);
-
-  useEffect(() => {
-    const wasOpen = prevCelebrationRef.current;
-    prevCelebrationRef.current = celebration;
-    if (!wasOpen || celebration) {
-      return;
-    }
-    void (async () => {
-      await waitForUiSettle(500);
-      await maybeShowReviewRequest(user?.uid);
-    })();
-  }, [celebration, user?.uid]);
 
   const currentEntry = useMemo(
     () => getCurrentContentEntry(route.params),
