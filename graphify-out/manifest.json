@@ -144,8 +144,8 @@
     "hash": "597e6f363323f1f82a50df6e3fcd71de"
   },
   "D:\\The App\\functions\\index.js": {
-    "mtime": 1786428660.9956522,
-    "hash": "83332ba20b5f6425feb1e23b0482181d"
+    "mtime": 1786804524.82716,
+    "hash": "ce21daa8605353fcde4b76c4e98e4a5c"
   },
   "D:\\The App\\scratch\\analyze_trends.py": {
     "mtime": 1783704747.112139,
@@ -303,6 +303,10 @@
     "mtime": 1783704905.6948457,
     "hash": "61b90c6108687551f626bade0ff54880"
   },
+  "D:\\The App\\scripts\\add_library_ch28.py": {
+    "mtime": 1786685564.6549222,
+    "hash": "5af06cf930dfee1627beb56252653965"
+  },
   "D:\\The App\\scripts\\apply_staged_library_updates.py": {
     "mtime": 1777265229.3049736,
     "hash": "54936b9b06f3ffedf69217c6f0accca5"
@@ -367,9 +371,17 @@
     "mtime": 1784304894.978399,
     "hash": "c80482ea912116ba81db60cf39230fa6"
   },
+  "D:\\The App\\scripts\\generate-biostats-illustrations.js": {
+    "mtime": 1786735635.4082162,
+    "hash": "3c3da799a178752daa2c6c635cd0d043"
+  },
   "D:\\The App\\scripts\\generate-reading-illustrations.js": {
     "mtime": 1774758104.8590746,
     "hash": "014b0f6f589429da2857b0dbefee63a6"
+  },
+  "D:\\The App\\scripts\\generate-research-methodology-illustrations.js": {
+    "mtime": 1786644045.046149,
+    "hash": "c5100afd214bc670e2f3753acaaa4e18"
   },
   "D:\\The App\\scripts\\grant_lifetime_premium.js": {
     "mtime": 1775412414.646668,
@@ -491,6 +503,22 @@
     "mtime": 1786087629.222253,
     "hash": "32517568403ee6eeadf3f71a1d7bf33f"
   },
+  "D:\\The App\\scripts\\data\\biostats_depth\\apply_biostats_depth.py": {
+    "mtime": 1786731896.0617664,
+    "hash": "1f7d4a5005ae31c668793f5658fbf9fd"
+  },
+  "D:\\The App\\scripts\\data\\biostats_depth\\patch_illustration_seed.py": {
+    "mtime": 1786735698.9934807,
+    "hash": "b485df5e81177cc89a0d04b6a1e9d5d3"
+  },
+  "D:\\The App\\scripts\\data\\biostats_depth\\verify_inject.py": {
+    "mtime": 1786731928.686754,
+    "hash": "62253921182eac7feb2bc5f1270a39f2"
+  },
+  "D:\\The App\\scripts\\data\\biostats_depth\\verify_new_blocks.py": {
+    "mtime": 1786731947.0287924,
+    "hash": "55e5963fe3e00f018052e9deb1adfaf2"
+  },
   "D:\\The App\\src\\components\\ChapterCompleteSheet.js": {
     "mtime": 1786553925.823565,
     "hash": "7e9cf23ce2c59ceb9765567c2c0eb894"
@@ -508,12 +536,12 @@
     "hash": "97abdb8fd522462f616d41d6c847c9b9"
   },
   "D:\\The App\\src\\components\\GestureVideoPlayer.js": {
-    "mtime": 1786638419.1732469,
-    "hash": "760d535491918ec6ff80f7f09a870037"
+    "mtime": 1786640279.8127952,
+    "hash": "ee80de9ca72397fd02e0fb31ed09698c"
   },
   "D:\\The App\\src\\components\\ReadingView.js": {
-    "mtime": 1785772933.9932604,
-    "hash": "3ede417b9d80b9073154664dd05336d9"
+    "mtime": 1786730976.3599532,
+    "hash": "15e1b03c4da4934361f9bf5465b3d27f"
   },
   "D:\\The App\\src\\components\\ReviewFeedbackModal.js": {
     "mtime": 1785328661.2858431,
@@ -530,6 +558,10 @@
   "D:\\The App\\src\\components\\UpdateDetailDialog.js": {
     "mtime": 1784224587.404996,
     "hash": "4fadb95037efde41a14f28a3579242ae"
+  },
+  "D:\\The App\\src\\components\\VideoRequestModal.js": {
+    "mtime": 1786804590.2395334,
+    "hash": "ff42c3300f0bd710551588f97fffb639"
   },
   "D:\\The App\\src\\config\\firebase.js": {
     "mtime": 1772355531.2110212,
@@ -560,8 +592,8 @@
     "hash": "364c13199d54f90055491311383d0e28"
   },
   "D:\\The App\\src\\data\\nmcCurriculum.js": {
-    "mtime": 1785698369.7617745,
-    "hash": "e76935040aff034b5f2d5cf3a24d4aed"
+    "mtime": 1786730641.1171691,
+    "hash": "48afd3b073e22291b52cea352872d9cd"
   },
   "D:\\The App\\src\\data\\pyq_images_map.js": {
     "mtime": 1785266322.336642,
@@ -580,12 +612,12 @@
     "hash": "cc9a10b9fc4d6e5c67642d1b34ae488c"
   },
   "D:\\The App\\src\\navigation\\AppNavigator.js": {
-    "mtime": 1786340384.0262837,
-    "hash": "cfc25b4fa821d4d6109853ecf27c79bd"
+    "mtime": 1786804426.1599362,
+    "hash": "9f4f65d0e6940fe82e2ca1d7217b7fc0"
   },
   "D:\\The App\\src\\screens\\AdminAppFeedbackScreen.js": {
-    "mtime": 1785991999.3510604,
-    "hash": "6323263c1e2163889bbee676d9689e4f"
+    "mtime": 1786804524.82716,
+    "hash": "870675f9636ebb714942217291b11418"
   },
   "D:\\The App\\src\\screens\\AdminLibraryReviewScreen.js": {
     "mtime": 1786087909.7936497,
@@ -624,8 +656,8 @@
     "hash": "7802f83ff634ab49a274508a5599e0fd"
   },
   "D:\\The App\\src\\screens\\LibraryScreen.js": {
-    "mtime": 1785739098.5335658,
-    "hash": "de82bc7b6e88363e9e696fc5a5d25471"
+    "mtime": 1786644172.1677425,
+    "hash": "820dc6b7e7bae57ab74e7c0836bdd964"
   },
   "D:\\The App\\src\\screens\\LoginScreen.js": {
     "mtime": 1785163280.5808306,
@@ -656,8 +688,8 @@
     "hash": "d1c493bfcba8ba07ff8341d1f8cfc804"
   },
   "D:\\The App\\src\\screens\\ProfileScreen.js": {
-    "mtime": 1786463874.876671,
-    "hash": "e069a1d38026be21c4242213cb64dc9b"
+    "mtime": 1786804426.1599362,
+    "hash": "a22ebdae852d08d1968b86278f79290e"
   },
   "D:\\The App\\src\\screens\\PYQCreateScreen.js": {
     "mtime": 1785161583.88528,
@@ -696,8 +728,8 @@
     "hash": "96d33ddfc494e3d7308314f70f563680"
   },
   "D:\\The App\\src\\screens\\VideosScreen.js": {
-    "mtime": 1786638484.8153043,
-    "hash": "5d3a5dd55320cf42b1f31144a3b62e6c"
+    "mtime": 1786804316.6138754,
+    "hash": "505facc84b46009da449368adcf29ecd"
   },
   "D:\\The App\\src\\screens\\VirtualMuseumScreen.js": {
     "mtime": 1785306236.9107902,
@@ -720,8 +752,8 @@
     "hash": "c28598e82ecfac5b2dbd51f5ad724698"
   },
   "D:\\The App\\src\\services\\feedbackService.js": {
-    "mtime": 1785991880.4566033,
-    "hash": "7e0173db182bae2e3e93d37bc01355fc"
+    "mtime": 1786804254.9167018,
+    "hash": "5e00e35e709ef9543f94d2435689394c"
   },
   "D:\\The App\\src\\services\\highlightService.js": {
     "mtime": 1777659005.6232884,
@@ -740,16 +772,20 @@
     "hash": "396eaa92d76fe768fd6f2abdecb055f6"
   },
   "D:\\The App\\src\\services\\videoLoadErrors.js": {
-    "mtime": 1786638378.8291337,
-    "hash": "ac67bb256204ba074c3b75b9b7a06071"
+    "mtime": 1786639031.7185729,
+    "hash": "40d143c00def7e2392927cab8b8d7085"
   },
   "D:\\The App\\src\\services\\videoService.js": {
-    "mtime": 1785306109.616561,
-    "hash": "3fbcd595cc23a382d09487c40d571289"
+    "mtime": 1786735251.04007,
+    "hash": "8c76858074bd8592653a3dde5a5d4d52"
   },
   "D:\\The App\\src\\services\\__tests__\\couponService.test.js": {
     "mtime": 1786464140.0135055,
     "hash": "666e4248e1b609b3e019d4019e824231"
+  },
+  "D:\\The App\\src\\services\\__tests__\\feedbackService.test.js": {
+    "mtime": 1786804715.8621855,
+    "hash": "82b801c71106b58ed8e99e518aaff9d4"
   },
   "D:\\The App\\src\\services\\__tests__\\topicIllustrations.test.js": {
     "mtime": 1778646220.8562944,
@@ -782,6 +818,10 @@
   "D:\\The App\\src\\utils\\learningProgress.js": {
     "mtime": 1785993203.9006617,
     "hash": "ba56499826ddddda28d3b85d22f7b9d0"
+  },
+  "D:\\The App\\src\\utils\\libraryExerciseMarkup.js": {
+    "mtime": 1786730907.9515162,
+    "hash": "366716f4a92c5cd7983af7441ae2fe38"
   },
   "D:\\The App\\src\\utils\\onboardingStorage.js": {
     "mtime": 1785734535.5422063,
@@ -824,8 +864,12 @@
     "hash": "5028237339496633bacd64b3352b3a9a"
   },
   "D:\\The App\\src\\utils\\__tests__\\learningProgress.test.js": {
-    "mtime": 1785698369.7617745,
-    "hash": "77b8b37cc9152f326742f6765919f60e"
+    "mtime": 1786730641.1171691,
+    "hash": "cea20e55d9e59d0b08de705e0b6857d3"
+  },
+  "D:\\The App\\src\\utils\\__tests__\\libraryExerciseMarkup.test.js": {
+    "mtime": 1786730907.9515162,
+    "hash": "c2671446518927ad90edefaceb54b2df"
   },
   "D:\\The App\\src\\utils\\__tests__\\onboardingStorage.test.js": {
     "mtime": 1785734555.4803152,
@@ -898,6 +942,82 @@
   "D:\\The App\\scratch\\pdf_text.txt": {
     "mtime": 1783704693.1305602,
     "hash": "672a0cf539ab4e08e7bed3918e01201e"
+  },
+  "D:\\The App\\scripts\\data\\biostats_depth\\26-1.md": {
+    "mtime": 1786733150.2011569,
+    "hash": "8100b85c723fcaf8e6156cb3200cefb3"
+  },
+  "D:\\The App\\scripts\\data\\biostats_depth\\26-2.md": {
+    "mtime": 1786731173.480744,
+    "hash": "fead5ed0c1d37020f65eae0908d79a43"
+  },
+  "D:\\The App\\scripts\\data\\biostats_depth\\26-3.md": {
+    "mtime": 1786733121.8022437,
+    "hash": "9f773ba90b1410d43b6fbedb03feb51e"
+  },
+  "D:\\The App\\scripts\\data\\biostats_depth\\26-4.md": {
+    "mtime": 1786733150.2011569,
+    "hash": "b841c673709c81c5615321449829719e"
+  },
+  "D:\\The App\\scripts\\data\\biostats_depth\\26-5.md": {
+    "mtime": 1786733121.8012433,
+    "hash": "1d62b400edda3889389d37c7fac990a4"
+  },
+  "D:\\The App\\scripts\\data\\biostats_depth\\26-6.md": {
+    "mtime": 1786733121.8022437,
+    "hash": "4ef7b59e89a144b9ab51c9eaa6052501"
+  },
+  "D:\\The App\\scripts\\data\\biostats_depth\\26-7.md": {
+    "mtime": 1786733121.8012433,
+    "hash": "a1690fc7f2ded8cf2506ed5f9719f330"
+  },
+  "D:\\The App\\scripts\\data\\biostats_depth\\26-8.md": {
+    "mtime": 1786733150.2011569,
+    "hash": "a060e85bc6d4dcd700f0928196a3cdd9"
+  },
+  "D:\\The App\\scripts\\data\\biostats_depth\\26-9.md": {
+    "mtime": 1786731461.2678044,
+    "hash": "dc5408bc961005e8edbd2955760b8474"
+  },
+  "D:\\The App\\scripts\\data\\biostats_depth\\ex_26-1.md": {
+    "mtime": 1786733121.8022437,
+    "hash": "7546dc0874f9db320c123dd001b9f553"
+  },
+  "D:\\The App\\scripts\\data\\biostats_depth\\ex_26-2.md": {
+    "mtime": 1786731571.9247785,
+    "hash": "f866e43eadb90cb703ea56d11874c90a"
+  },
+  "D:\\The App\\scripts\\data\\biostats_depth\\ex_26-3.md": {
+    "mtime": 1786731665.403381,
+    "hash": "f91920ccb1d4177d205809c0e3b837c1"
+  },
+  "D:\\The App\\scripts\\data\\biostats_depth\\ex_26-4.md": {
+    "mtime": 1786731519.5760932,
+    "hash": "26f4fc898cc65c08efb8c7d7cd4ebceb"
+  },
+  "D:\\The App\\scripts\\data\\biostats_depth\\ex_26-5.md": {
+    "mtime": 1786731715.5758173,
+    "hash": "caff2748edcfe9e4f6fbd3065242ac63"
+  },
+  "D:\\The App\\scripts\\data\\biostats_depth\\ex_26-6a.md": {
+    "mtime": 1786733121.8022437,
+    "hash": "fcdb7ee5269ccd1e0cdb8941814f3c4b"
+  },
+  "D:\\The App\\scripts\\data\\biostats_depth\\ex_26-6b.md": {
+    "mtime": 1786731815.60194,
+    "hash": "462be4b4559263f83bdf76e150f854a9"
+  },
+  "D:\\The App\\scripts\\data\\biostats_depth\\ex_26-7.md": {
+    "mtime": 1786731715.576328,
+    "hash": "849c1760abb1867fe9b60af091025606"
+  },
+  "D:\\The App\\scripts\\data\\biostats_depth\\ex_26-8.md": {
+    "mtime": 1786731519.5750945,
+    "hash": "49c3c8658b6acf1b4ba98bdbe9d6ee6a"
+  },
+  "D:\\The App\\scripts\\data\\biostats_depth\\ex_offchapter.md": {
+    "mtime": 1786731864.032172,
+    "hash": "66300ead737827b59c01135952a9ccd9"
   },
   "D:\\The App\\android\\app\\src\\main\\res\\drawable-hdpi\\notification_icon.png": {
     "mtime": 1776686130.2448807,
@@ -1215,6 +1335,74 @@
     "mtime": 1779079364.1225407,
     "hash": "81a10e33edf49f91b1c306780223ff51"
   },
+  "D:\\The App\\reading-illustrations\\bs_26_1_data_types.png": {
+    "mtime": 1786735638.8093693,
+    "hash": "fb9c7f4cb7d2404958c2a53b1e497ae5"
+  },
+  "D:\\The App\\reading-illustrations\\bs_26_1_iron_scales.png": {
+    "mtime": 1786735638.998431,
+    "hash": "b1ad37eb6718a99307c6678977aa1655"
+  },
+  "D:\\The App\\reading-illustrations\\bs_26_2_bar_vs_histogram.png": {
+    "mtime": 1786735639.4203165,
+    "hash": "a8eede98f28f27d2b897d60634ddc5ca"
+  },
+  "D:\\The App\\reading-illustrations\\bs_26_2_choose_diagram.png": {
+    "mtime": 1786735639.2198286,
+    "hash": "be6482af51315a85c9e4386e7f6aa64f"
+  },
+  "D:\\The App\\reading-illustrations\\bs_26_3_averages.png": {
+    "mtime": 1786735639.6083999,
+    "hash": "df72f489e98e08ae60524c40da20a6fe"
+  },
+  "D:\\The App\\reading-illustrations\\bs_26_3_sd_vs_se.png": {
+    "mtime": 1786735639.8179674,
+    "hash": "3a9327f4beca2987e10ae7596df936fa"
+  },
+  "D:\\The App\\reading-illustrations\\bs_26_4_normal_curve.png": {
+    "mtime": 1786735640.0426724,
+    "hash": "7a1b1df3eefdf170092c27cabd526cb9"
+  },
+  "D:\\The App\\reading-illustrations\\bs_26_4_skewness.png": {
+    "mtime": 1786735640.2807417,
+    "hash": "d38c9bf9818b9b56a51b0d1f5ca3f1b4"
+  },
+  "D:\\The App\\reading-illustrations\\bs_26_5_ci.png": {
+    "mtime": 1786735640.6505916,
+    "hash": "04d9434c9a372046142f14ae3d7bdfb1"
+  },
+  "D:\\The App\\reading-illustrations\\bs_26_5_errors.png": {
+    "mtime": 1786735640.4449809,
+    "hash": "b7b99062abe50b9ba2311cfb69ff45c3"
+  },
+  "D:\\The App\\reading-illustrations\\bs_26_6_chi_square.png": {
+    "mtime": 1786735641.1477983,
+    "hash": "44dfc71f58d83709b0b7c7ccf999f393"
+  },
+  "D:\\The App\\reading-illustrations\\bs_26_6_which_test.png": {
+    "mtime": 1786735640.9187596,
+    "hash": "e74231765af1bd38abe30ea242b2d6b5"
+  },
+  "D:\\The App\\reading-illustrations\\bs_26_7_correlation.png": {
+    "mtime": 1786735641.524433,
+    "hash": "ca2d99086ce9c7baa25f1c70b892f04a"
+  },
+  "D:\\The App\\reading-illustrations\\bs_26_7_probability_laws.png": {
+    "mtime": 1786735641.3655596,
+    "hash": "4abfe0a94b153814273310dfcd14f6ce"
+  },
+  "D:\\The App\\reading-illustrations\\bs_26_7_regression.png": {
+    "mtime": 1786735641.6647208,
+    "hash": "ab4d53fc3d73721c3352397e8526235d"
+  },
+  "D:\\The App\\reading-illustrations\\bs_26_8_sampling.png": {
+    "mtime": 1786735641.8484514,
+    "hash": "eff008b931ed66305391fa290134ca2c"
+  },
+  "D:\\The App\\reading-illustrations\\bs_26_9_design_steps.png": {
+    "mtime": 1786735641.9986334,
+    "hash": "50d7e74d25fa255afbd2b1958adea595"
+  },
   "D:\\The App\\reading-illustrations\\nhp-logo-staging-contact-sheet.png": {
     "mtime": 1775300411.9803963,
     "hash": "01cfafbcebd43026a52905b0dec6ffc7"
@@ -1238,6 +1426,30 @@
   "D:\\The App\\reading-illustrations\\practical_5-5_fig_22-2.png": {
     "mtime": 1779626381.5268402,
     "hash": "4bea7a9f2b39af0cc50f2a12a7cb9f69"
+  },
+  "D:\\The App\\reading-illustrations\\rm_ethics_consent.png": {
+    "mtime": 1786644048.7676456,
+    "hash": "4306b963daa1c7e24a4f943d88495bb7"
+  },
+  "D:\\The App\\reading-illustrations\\rm_finer_criteria.png": {
+    "mtime": 1786644047.948819,
+    "hash": "78c4e0c71848d88fe8d48779c1055317"
+  },
+  "D:\\The App\\reading-illustrations\\rm_health_research_domains.png": {
+    "mtime": 1786644047.742679,
+    "hash": "acd659f707cfdac72392bad33d0507b6"
+  },
+  "D:\\The App\\reading-illustrations\\rm_imrad_thesis.png": {
+    "mtime": 1786644049.112413,
+    "hash": "bf6d649ff6037142efa73417efb43142"
+  },
+  "D:\\The App\\reading-illustrations\\rm_qualitative_methods.png": {
+    "mtime": 1786644048.429283,
+    "hash": "2f81a03972e54a1160984d4268475d20"
+  },
+  "D:\\The App\\reading-illustrations\\rm_sampling_methods.png": {
+    "mtime": 1786644048.214329,
+    "hash": "48909ce8a5f4f1e644f889da4d5418e4"
   },
   "D:\\The App\\reading-illustrations\\stage_7-10_npncd.png": {
     "mtime": 1775298704.9441788,

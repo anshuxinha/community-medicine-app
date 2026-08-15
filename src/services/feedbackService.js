@@ -9,13 +9,50 @@ import { auth, db } from "../config/firebase";
 
 export const APP_FEEDBACK_COLLECTION = "appFeedback";
 export const FEEDBACK_MESSAGE_MAX_LENGTH = 2000;
+export const FEEDBACK_KIND_FEEDBACK = "feedback";
+export const FEEDBACK_KIND_VIDEO_REQUEST = "video_request";
+export const VIDEO_REQUEST_SOURCE = "videos_screen";
+export const VIDEO_REQUEST_TOPIC_MAX_LENGTH = 160;
+
+export const VIDEO_REQUEST_CATEGORIES = [
+  { id: "lectures", label: "Lectures" },
+  { id: "revision", label: "Revision" },
+  { id: "cases", label: "Case Discussions" },
+  { id: "other", label: "Other" },
+];
+
+export const isVideoRequestItem = (item) =>
+  item?.kind === FEEDBACK_KIND_VIDEO_REQUEST ||
+  item?.source === VIDEO_REQUEST_SOURCE;
+
+export const buildVideoRequestMessage = ({
+  topic,
+  details,
+  categoryLabel,
+} = {}) => {
+  const lines = [`Topic: ${String(topic || "").trim()}`];
+  if (categoryLabel) {
+    lines.push(`Category: ${categoryLabel}`);
+  }
+  const extra = String(details || "").trim();
+  if (extra) {
+    lines.push("", extra);
+  }
+  return lines.join("\n");
+};
 
 /**
- * Submit improvement feedback (review prompt or chapter-complete stars).
+ * Submit improvement feedback or a video request.
  * Writes to Firestore for the admin in-app queue (no mail client).
  *
  * @param {string} message
- * @param {{ source?: string, rating?: number }} [options]
+ * @param {{
+ *   source?: string,
+ *   rating?: number,
+ *   kind?: string,
+ *   topic?: string,
+ *   requestedCategory?: string,
+ * }} [options]
  * @returns {Promise<string>} new document id
  */
 export async function submitAppFeedback(message, options = {}) {
@@ -48,6 +85,13 @@ export async function submitAppFeedback(message, options = {}) {
       ? Math.round(ratingRaw)
       : null;
 
+  const isVideoRequest = options.kind === FEEDBACK_KIND_VIDEO_REQUEST;
+  const kind = isVideoRequest
+    ? FEEDBACK_KIND_VIDEO_REQUEST
+    : FEEDBACK_KIND_FEEDBACK;
+  const topic = String(options.topic || "").trim();
+  const requestedCategory = String(options.requestedCategory || "").trim();
+
   const payload = {
     message: trimmed,
     userId: currentUser.uid,
@@ -56,12 +100,19 @@ export async function submitAppFeedback(message, options = {}) {
     platform: Platform.OS,
     appVersion: String(appVersion),
     source: options.source || "review_prompt_negative",
+    kind,
     status: "new",
     createdAt: serverTimestamp(),
   };
 
   if (rating !== null) {
     payload.rating = rating;
+  }
+  if (isVideoRequest && topic) {
+    payload.topic = topic.slice(0, VIDEO_REQUEST_TOPIC_MAX_LENGTH);
+  }
+  if (isVideoRequest && requestedCategory) {
+    payload.requestedCategory = requestedCategory;
   }
 
   const docRef = await addDoc(collection(db, APP_FEEDBACK_COLLECTION), payload);

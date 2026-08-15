@@ -715,7 +715,7 @@ const ProfileScreen = () => {
                 />
                 <ActionRow
                   icon="inbox"
-                  label="App Feedback"
+                  label="Feedback & Requests"
                   onPress={handleOpenAdminFeedback}
                 />
                 <ActionRow

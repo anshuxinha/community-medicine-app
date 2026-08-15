@@ -326,7 +326,7 @@ const AppNavigator = () => {
             <Stack.Screen
               name="AdminAppFeedback"
               getComponent={getAdminAppFeedbackScreen}
-              options={{ title: "App Feedback" }}
+              options={{ title: "Feedback & Requests" }}
             />
             <Stack.Screen
               name="LearningProgress"

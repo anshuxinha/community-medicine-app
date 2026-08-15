@@ -180,7 +180,7 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // --- App feedback from review "Not Really" path ---
+    // --- App feedback (review prompt, chapter stars) and video requests ---
     match /appFeedback/{docId} {
       allow create: if request.auth != null
         && request.resource.data.userId == request.auth.uid

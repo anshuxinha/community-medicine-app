@@ -72,6 +72,7 @@ import {
   disableScreenCaptureProtection,
 } from "../utils/screenCaptureProtection";
 import GestureVideoPlayer from "../components/GestureVideoPlayer";
+import VideoRequestModal from "../components/VideoRequestModal";
 
 const SEEN_VIDEO_IDS_STORAGE_KEY = "seenVideoIds:v1";
 
@@ -263,7 +264,7 @@ const getThumbnailSource = (thumbnailUrl) => {
   return { uri: thumbnailUrl };
 };
 
-const EmptyState = ({ isFiltered }) => {
+const EmptyState = ({ isFiltered, onRequestVideo }) => {
   const { styles, colors } = useThemedStyles(createStyles);
   return (
     <View style={styles.emptyState}>
@@ -280,6 +281,21 @@ const EmptyState = ({ isFiltered }) => {
           ? "Choose another category or pull to refresh."
           : "New teaching videos will appear here as soon as they are synced."}
       </Text>
+      {!isFiltered && typeof onRequestVideo === "function" ? (
+        <Pressable
+          style={styles.emptyRequestBtn}
+          onPress={onRequestVideo}
+          accessibilityRole="button"
+          accessibilityLabel="Request a new video"
+        >
+          <MaterialIcons
+            name="video-call"
+            size={18}
+            color={theme.colors.onPrimary}
+          />
+          <Text style={styles.emptyRequestBtnText}>Request a video</Text>
+        </Pressable>
+      ) : null}
     </View>
   );
 };
@@ -387,6 +403,7 @@ const VideosScreen = ({ navigation, route }) => {
   const [seenVideoIds, setSeenVideoIds] = useState({});
   const [windowSize, setWindowSize] = useState(() => Dimensions.get("window"));
   const [sensorLandscape, setSensorLandscape] = useState(false);
+  const [requestModalVisible, setRequestModalVisible] = useState(false);
 
   const isLandscape =
     windowSize.width > windowSize.height || sensorLandscape;
@@ -1220,7 +1237,7 @@ const VideosScreen = ({ navigation, route }) => {
         ListHeaderComponent={
           <View style={styles.header}>
             <View style={styles.titleRow}>
-              <View>
+              <View style={styles.titleCopy}>
                 <Text style={styles.title}>Videos</Text>
                 <Text style={styles.subtitle}>
                   Recorded lectures, revisions, and case discussions.
@@ -1259,6 +1276,32 @@ const VideosScreen = ({ navigation, route }) => {
               )}
             />
 
+            <Pressable
+              style={styles.requestCard}
+              onPress={() => setRequestModalVisible(true)}
+              accessibilityRole="button"
+              accessibilityLabel="Request a new video"
+            >
+              <View style={styles.requestIconWrap}>
+                <MaterialIcons
+                  name="video-call"
+                  size={22}
+                  color={theme.colors.secondary}
+                />
+              </View>
+              <View style={styles.requestCardText}>
+                <Text style={styles.requestCardTitle}>Request a video</Text>
+                <Text style={styles.requestCardSub}>
+                  Missing a topic? Tell us what to record next.
+                </Text>
+              </View>
+              <MaterialIcons
+                name="chevron-right"
+                size={22}
+                color={colors.textTertiary}
+              />
+            </Pressable>
+
             <Text style={styles.sectionHeading}>LATEST VIDEOS</Text>
           </View>
         }
@@ -1285,7 +1328,10 @@ const VideosScreen = ({ navigation, route }) => {
               onRetry={retryVideosLoad}
             />
           ) : (
-            <EmptyState isFiltered={selectedCategory !== "all"} />
+            <EmptyState
+              isFiltered={selectedCategory !== "all"}
+              onRequestVideo={() => setRequestModalVisible(true)}
+            />
           )
         }
       />
@@ -1662,6 +1708,11 @@ const VideosScreen = ({ navigation, route }) => {
           />
         </SafeAreaView>
       </Modal>
+
+      <VideoRequestModal
+        visible={requestModalVisible}
+        onClose={() => setRequestModalVisible(false)}
+      />
     </SafeAreaView>
   );
 };
@@ -1682,6 +1733,42 @@ const createStyles = (colors) => StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
+  },
+  titleCopy: {
+    flex: 1,
+  },
+  requestCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderRadius: 16,
+    backgroundColor: colors.primarySoft,
+    borderWidth: 1,
+    borderColor: colors.primaryMuted,
+  },
+  requestIconWrap: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: colors.surfacePrimary,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  requestCardText: {
+    flex: 1,
+  },
+  requestCardTitle: {
+    fontSize: 15,
+    fontWeight: "800",
+    color: colors.textTitle,
+  },
+  requestCardSub: {
+    marginTop: 2,
+    fontSize: 12,
+    lineHeight: 16,
+    color: colors.textSecondary,
   },
   title: {
     fontSize: 30,
@@ -1847,6 +1934,21 @@ const createStyles = (colors) => StyleSheet.create({
     color: colors.textSecondary,
     textAlign: "center",
     lineHeight: 20,
+  },
+  emptyRequestBtn: {
+    marginTop: 18,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: theme.colors.secondary,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 12,
+  },
+  emptyRequestBtnText: {
+    color: theme.colors.onPrimary,
+    fontWeight: "700",
+    fontSize: 14,
   },
   errorFixText: {
     marginTop: 10,

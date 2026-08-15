@@ -177,7 +177,7 @@ exports.onVideoDoubtCreated = functionsV1
   });
 
 /**
- * Notify admins when app feedback is submitted (review prompt / chapter stars).
+ * Notify admins when app feedback or a video request is submitted.
  */
 exports.onAppFeedbackCreated = functionsV1
   .region("us-central1")
@@ -197,10 +197,20 @@ exports.onAppFeedbackCreated = functionsV1
         ? Math.round(data.rating)
         : null;
     const source = data.source || "app_feedback";
+    const isVideoRequest =
+      data.kind === "video_request" || source === "videos_screen";
+    const kind = isVideoRequest ? "video_request" : "feedback";
 
-    const ratingLabel = rating != null ? `${rating}/5 stars` : "feedback";
-    const title = "New app feedback";
-    const body = `${username} (${ratingLabel}): ${preview}`;
+    const ratingLabel = isVideoRequest
+      ? data.requestedCategory || "video request"
+      : rating != null
+        ? `${rating}/5 stars`
+        : "feedback";
+    const title = isVideoRequest ? "New video request" : "New app feedback";
+    const topic = String(data.topic || "").trim();
+    const body = isVideoRequest
+      ? `${username}: ${topic || preview}`
+      : `${username} (${ratingLabel}): ${preview}`;
 
     const tokens = await getAdminPushTokens(authorUid);
     if (tokens.length === 0) {
@@ -220,6 +230,7 @@ exports.onAppFeedbackCreated = functionsV1
         type: "admin_app_feedback",
         feedbackId,
         source,
+        kind,
         rating,
       },
     }));
