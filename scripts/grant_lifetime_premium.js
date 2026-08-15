@@ -72,9 +72,11 @@ async function main() {
     }
   }
 
-  // ── Set custom claims ─────────────────────────────────────────
-  await auth.setCustomUserClaims(uid, { isPremium: true });
-  console.log(`✅  Custom claims set → { isPremium: true }`);
+  // ── Set custom claims (merge so isAdmin is not wiped) ─────────
+  const existingUser = await auth.getUser(uid);
+  const nextClaims = { ...(existingUser.customClaims || {}), isPremium: true };
+  await auth.setCustomUserClaims(uid, nextClaims);
+  console.log(`✅  Custom claims set → ${JSON.stringify(nextClaims)}`);
 
   // ── Update Firestore document ─────────────────────────────────
   try {

@@ -3,14 +3,15 @@
  * Finds all Firebase Auth users with the given email and sets isAdmin: true
  * on both their custom claims and Firestore user document.
  *
- * Run: node scripts/set_admin.js
+ * Run: node scripts/set_admin.js [email]
+ * Example: node scripts/set_admin.js kaushikeec@gmail.com
  */
 
 const admin = require('firebase-admin');
 const path = require('path');
 
 const SERVICE_ACCOUNT_PATH = path.join(__dirname, '..', 'serviceAccountKey.json');
-const ADMIN_EMAIL = 'anshuxinha@gmail.com';
+const ADMIN_EMAIL = process.argv[2] || 'anshuxinha@gmail.com';
 const PROJECT_ID = 'community-med-app';
 
 async function main() {
@@ -49,9 +50,14 @@ async function main() {
     console.log(`  Providers: ${primaryUser.providerData.map(p => p.providerId).join(', ')}`);
     console.log(`  Display:   ${primaryUser.displayName || '(none)'}`);
 
-    // Set custom claims
-    await auth.setCustomUserClaims(primaryUser.uid, { isAdmin: true, isPremium: true });
-    console.log(`\n✅  Custom claims set → { isAdmin: true, isPremium: true }`);
+    // Set custom claims (merge so other claims are not wiped)
+    const nextClaims = {
+        ...(primaryUser.customClaims || {}),
+        isAdmin: true,
+        isPremium: true,
+    };
+    await auth.setCustomUserClaims(primaryUser.uid, nextClaims);
+    console.log(`\n✅  Custom claims set → ${JSON.stringify(nextClaims)}`);
 
     // Set Firestore doc
     try {
