@@ -5,6 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
   Dimensions,
   Alert,
   BackHandler,
@@ -25,7 +26,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { theme, useResponsive } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
 import { AppContext } from "../context/AppContext";
-import { PYQ_IMAGES } from "../data/pyq_images_map";
+import { pyqImageSource, pyqImageUrl } from "../data/pyqImages";
 import {
   getRelatedGemsForQuestion,
   readingParamsForGem,
@@ -35,6 +36,41 @@ import {
 const STORAGE_ATTEMPTS_KEY = "pyq_attempts_v1";
 const STORAGE_BOOKMARKS_KEY = "pyq_bookmarks_v1";
 const WINDOW_WIDTH = Dimensions.get("window").width;
+
+function PyqQuestionImage({ fileName, wrapperStyle, imageStyle, colors }) {
+  const source = pyqImageSource(fileName);
+  const [status, setStatus] = useState("loading");
+
+  useEffect(() => {
+    setStatus(pyqImageSource(fileName) ? "loading" : "empty");
+  }, [fileName]);
+
+  if (!source) return null;
+
+  return (
+    <View style={wrapperStyle}>
+      {status === "loading" && (
+        <ActivityIndicator color={colors.secondary} />
+      )}
+      {status === "error" ? (
+        <Text style={{ color: colors.textTertiary, fontSize: 13 }}>
+          Could not load figure
+        </Text>
+      ) : (
+        <Image
+          source={source}
+          style={[
+            imageStyle,
+            status === "loading" && { position: "absolute", opacity: 0 },
+          ]}
+          resizeMode="contain"
+          onLoad={() => setStatus("loaded")}
+          onError={() => setStatus("error")}
+        />
+      )}
+    </View>
+  );
+}
 
 const RelatedGemsBlock = ({ question, navigation, isPremium, styles, colors }) => {
   const gems = getRelatedGemsForQuestion(question);
@@ -98,6 +134,13 @@ const PYQPracticeScreen = ({ route, navigation }) => {
   const timerRef = useRef(null);
   const startTimeRef = useRef(Date.now());
   const actualDurationRef = useRef(0);
+
+  useEffect(() => {
+    [currentIdx, currentIdx + 1].forEach((i) => {
+      const url = pyqImageUrl(questions[i]?.image);
+      if (url) Image.prefetch(url).catch(() => {});
+    });
+  }, [currentIdx, questions]);
 
   // Only intercept hardware back while this screen is focused.
   // When a Related Gem opens Reading on top, back should pop Reading
@@ -378,13 +421,12 @@ const PYQPracticeScreen = ({ route, navigation }) => {
                 <ScrollView contentContainerStyle={styles.dialogScrollContent}>
                   <Text style={styles.dialogQuestion}>{questions[reviewIdx].question}</Text>
 
-                  {questions[reviewIdx].image && PYQ_IMAGES[questions[reviewIdx].image] && (
-                    <Image
-                      source={PYQ_IMAGES[questions[reviewIdx].image]}
-                      style={styles.dialogImage}
-                      resizeMode="contain"
-                    />
-                  )}
+                  <PyqQuestionImage
+                    fileName={questions[reviewIdx].image}
+                    wrapperStyle={styles.imageWrapper}
+                    imageStyle={styles.questionImage}
+                    colors={colors}
+                  />
 
                   <View style={styles.optionsContainer}>
                     {questions[reviewIdx].options.map((opt, i) => {
@@ -507,15 +549,12 @@ const PYQPracticeScreen = ({ route, navigation }) => {
             </Text>
 
             {/* Render question image if present */}
-            {currentQ.image && PYQ_IMAGES[currentQ.image] && (
-              <View style={styles.imageWrapper}>
-                <Image
-                  source={PYQ_IMAGES[currentQ.image]}
-                  style={styles.questionImage}
-                  resizeMode="contain"
-                />
-              </View>
-            )}
+            <PyqQuestionImage
+              fileName={currentQ.image}
+              wrapperStyle={styles.imageWrapper}
+              imageStyle={styles.questionImage}
+              colors={colors}
+            />
 
             <View style={styles.optionsList}>
               {currentQ.options.map((optionText, i) => {

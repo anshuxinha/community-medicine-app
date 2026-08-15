@@ -384,12 +384,12 @@
     "hash": "c5100afd214bc670e2f3753acaaa4e18"
   },
   "D:\\The App\\scripts\\grant_lifetime_premium.js": {
-    "mtime": 1775412414.646668,
-    "hash": "039ef18442ec3977c1ae32fc965da703"
+    "mtime": 1786815027.2886705,
+    "hash": "0ee7eefb320d3c9b975b85f2e23aa25f"
   },
   "D:\\The App\\scripts\\grant_yearly_premium.js": {
-    "mtime": 1782548982.6255007,
-    "hash": "bb3369280587f52bb8f02ceeddce9d1c"
+    "mtime": 1786815027.2886705,
+    "hash": "8b43ebad2ca2d0c7120af10e80de8a6e"
   },
   "D:\\The App\\scripts\\migrate-thumbnails.js": {
     "mtime": 1782655609.54987,
@@ -448,8 +448,8 @@
     "hash": "bf1e0a59b3713803a975661c13c05a61"
   },
   "D:\\The App\\scripts\\set_admin.js": {
-    "mtime": 1777560719.6075256,
-    "hash": "ac70e79e9a4b9bc3aedddbaf334b0080"
+    "mtime": 1786815047.058584,
+    "hash": "1dd9e1fed3a7e1bc7d3f1556900dd3fe"
   },
   "D:\\The App\\scripts\\stage-nhp-logo-crops.js": {
     "mtime": 1775298689.7760763,
@@ -494,6 +494,10 @@
   "D:\\The App\\scripts\\upload-biostat-images.py": {
     "mtime": 1772355533.3817184,
     "hash": "7f1309f7b80e7f81379541523bafabca"
+  },
+  "D:\\The App\\scripts\\upload-pyq-images.js": {
+    "mtime": 1786815484.5866427,
+    "hash": "a2e0b45768d096d92e1154baceeb90ae"
   },
   "D:\\The App\\scripts\\validate-illustrations.js": {
     "mtime": 1778646311.1204073,
@@ -595,9 +599,13 @@
     "mtime": 1786730641.1171691,
     "hash": "48afd3b073e22291b52cea352872d9cd"
   },
-  "D:\\The App\\src\\data\\pyq_images_map.js": {
-    "mtime": 1785266322.336642,
-    "hash": "d9067b25bb9242dad8d52e9eb6096abb"
+  "D:\\The App\\src\\data\\pyqImages.js": {
+    "mtime": 1786815484.5881505,
+    "hash": "e73a0c56d25307e15eeb833f7a9665b4"
+  },
+  "D:\\The App\\src\\data\\__tests__\\pyqImages.test.js": {
+    "mtime": 1786815484.5881505,
+    "hash": "1796d49ccfe1f7b21ebee87d303ff5b9"
   },
   "D:\\The App\\src\\hooks\\useSessionEnforcer.js": {
     "mtime": 1776915623.531863,
@@ -696,8 +704,8 @@
     "hash": "76e6a739445f2a916938625c3009ff52"
   },
   "D:\\The App\\src\\screens\\PYQPracticeScreen.js": {
-    "mtime": 1785303036.805771,
-    "hash": "d66ea14d2112b0803574bb1b9e3b371b"
+    "mtime": 1786815527.9284897,
+    "hash": "0161b69f1b492b2c0f10edef7612d3ae"
   },
   "D:\\The App\\src\\screens\\QuizScreen.js": {
     "mtime": 1784220348.7577372,
