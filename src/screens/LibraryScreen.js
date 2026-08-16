@@ -11,7 +11,6 @@ import {
   Text,
   List,
   Divider,
-  Searchbar,
   SegmentedButtons,
   Badge,
   Menu,
@@ -83,7 +82,7 @@ const FreeLabel = () => {
   return <Badge style={styles.freeBadge}>FREE</Badge>;
 };
 
-const buildReadingParams = (item, section, status, searchTerms = "") => ({
+const buildReadingParams = (item, section, status) => ({
   id: item.id,
   title: item.title,
   content: item.content || "# No Content\n\nThis topic has no content yet.",
@@ -93,114 +92,6 @@ const buildReadingParams = (item, section, status, searchTerms = "") => ({
   contentSignature: getContentSignature(item),
   updatedSegments: getUpdatedSegmentsForItem(item),
   showUpdateHighlights: status === "updated",
-  searchTerms,
-});
-
-// ── Search excerpt: finds keyword context in body content ──────────────────
-const EXCERPT_CONTEXT = 55; // chars of context before/after match
-// Use theme secondary; fallback for static excerpt styles module-level
-const SEARCH_PURPLE = "#A855F7";
-
-const getExcerptAroundMatch = (text, query) => {
-  if (!text || !query) return null;
-  const lowerText = text.toLowerCase();
-  const lowerQuery = query.toLowerCase();
-  const idx = lowerText.indexOf(lowerQuery);
-  if (idx === -1) return null;
-
-  const start = Math.max(0, idx - EXCERPT_CONTEXT);
-  const end = Math.min(text.length, idx + query.length + EXCERPT_CONTEXT);
-  const prefix = (start > 0 ? "\u2026" : "") + text.slice(start, idx);
-  const match = text.slice(idx, idx + query.length);
-  const suffix =
-    text.slice(idx + query.length, end) + (end < text.length ? "\u2026" : "");
-  return { prefix, match, suffix };
-};
-
-const itemMatchesQuery = (item, normalizedQuery) =>
-  Boolean(
-    item &&
-      normalizedQuery &&
-      ((item.title && item.title.toLowerCase().includes(normalizedQuery)) ||
-        (item.content && item.content.toLowerCase().includes(normalizedQuery))),
-  );
-
-const findFirstMatchingItemOrSub = (item, query) => {
-  if (!item || !query) return null;
-  const normalizedQuery = query.toLowerCase();
-  if (itemMatchesQuery(item, normalizedQuery)) {
-    return item;
-  }
-  if (Array.isArray(item.subsections) && item.subsections.length > 0) {
-    for (const sub of item.subsections) {
-      const matched = findFirstMatchingItemOrSub(sub, query);
-      if (matched) return matched;
-    }
-  }
-  return null;
-};
-
-/** Prefer a readable leaf for in-chapter jump; null if only a parent title matched. */
-const findFirstMatchingLeaf = (item, query) => {
-  if (!item || !query) return null;
-  const normalizedQuery = query.toLowerCase();
-  if (Array.isArray(item.subsections) && item.subsections.length > 0) {
-    for (const sub of item.subsections) {
-      const matched = findFirstMatchingLeaf(sub, query);
-      if (matched) return matched;
-    }
-    return null;
-  }
-  return itemMatchesQuery(item, normalizedQuery) ? item : null;
-};
-
-const SearchExcerpt = ({ item, searchQuery }) => {
-  const { colors } = useThemedStyles(createStyles);
-  const excerptStyles = getExcerptStyles(colors);
-  if (!searchQuery) return null;
-  const matchItem = findFirstMatchingItemOrSub(item, searchQuery);
-  if (!matchItem) return null;
-
-  const bodyText = matchItem.content || "";
-  const bodyMatch = bodyText.toLowerCase().includes(searchQuery.toLowerCase());
-  if (!bodyMatch) {
-    if (matchItem !== item) {
-      return (
-        <Text style={excerptStyles.container} numberOfLines={2}>
-          <Text style={excerptStyles.plain}>Matches subtopic: </Text>
-          <Text style={excerptStyles.match}>{matchItem.title}</Text>
-        </Text>
-      );
-    }
-    return null;
-  }
-
-  const excerpt = getExcerptAroundMatch(bodyText, searchQuery);
-  if (!excerpt) return null;
-
-  return (
-    <Text style={excerptStyles.container} numberOfLines={2}>
-      {matchItem !== item && (
-        <Text style={{ ...excerptStyles.plain, fontStyle: "italic" }}>
-          In {matchItem.title}:{" "}
-        </Text>
-      )}
-      <Text style={excerptStyles.plain}>{excerpt.prefix}</Text>
-      <Text style={excerptStyles.match}>{excerpt.match}</Text>
-      <Text style={excerptStyles.plain}>{excerpt.suffix}</Text>
-    </Text>
-  );
-};
-
-const getExcerptStyles = (colors) => ({
-  container: {
-    fontSize: 12,
-    lineHeight: 17,
-    color: colors.textTertiary,
-    marginTop: 2,
-  },
-  plain: { color: colors.textTertiary },
-  match: { color: colors.secondary, fontWeight: "700" },
 });
 
 const LibraryScreen = (props) => {
@@ -217,7 +108,6 @@ const LibraryScreen = (props) => {
     user,
     setResidentMode,
   } = useContext(AppContext);
-  const [searchQuery, setSearchQuery] = useState("");
   const [activeSection, setActiveSection] = useState("theory");
   const residentMode = isResidentModeEnabled(user);
   const [residentModeSaving, setResidentModeSaving] = useState(false);
@@ -281,22 +171,15 @@ const LibraryScreen = (props) => {
         (topic) => getPrimaryPaperForChapterId(topic.id) === paperId,
       );
     }
-    if (searchQuery.trim()) {
-      const q = searchQuery.trim();
-      topics = topics.filter(
-        (topic) => findFirstMatchingItemOrSub(topic, q) !== null,
-      );
-    }
     return topics;
-  }, [currentTopics, activeSection, paperFilter, searchQuery, residentMode]);
+  }, [currentTopics, activeSection, paperFilter, residentMode]);
 
   /** FlatList data: chapters or paper group headers when Theory + All + resident mode */
   const listData = useMemo(() => {
     if (
       !residentMode ||
       activeSection !== "theory" ||
-      paperFilter !== "all" ||
-      searchQuery.trim()
+      paperFilter !== "all"
     ) {
       return filteredTopics.map((item) => ({ type: "chapter", item }));
     }
@@ -316,7 +199,7 @@ const LibraryScreen = (props) => {
       chapters.forEach((item) => rows.push({ type: "chapter", item }));
     });
     return rows;
-  }, [residentMode, activeSection, paperFilter, searchQuery, filteredTopics]);
+  }, [residentMode, activeSection, paperFilter, filteredTopics]);
 
   const getMenuKey = (item) => `${activeSection}:${item.id}`;
 
@@ -325,34 +208,6 @@ const LibraryScreen = (props) => {
   const openItem = useCallback(
     (item, itemStatus) => {
       const isFree = item.id === "1" || item.title === "Man and Medicine";
-      const q = searchQuery.trim();
-
-      // Search: open the first matching leaf so Reading can jump to the term.
-      if (q) {
-        const leaf = findFirstMatchingLeaf(item, q);
-        if (leaf) {
-          const leafStatus = getItemStatus(
-            leaf,
-            activeSection,
-            readItemVersions,
-          );
-          const readingParams = buildReadingParams(
-            leaf,
-            activeSection,
-            leafStatus,
-            q,
-          );
-          if (isFree) {
-            navigation.navigate("Reading", readingParams);
-          } else {
-            navigation.navigate("PremiumGuard", {
-              destination: "Reading",
-              readingParams,
-            });
-          }
-          return;
-        }
-      }
 
       if (item.subsections) {
         const subTopicsParams = {
@@ -376,7 +231,6 @@ const LibraryScreen = (props) => {
         item,
         activeSection,
         itemStatus,
-        q,
       );
       if (isFree) {
         navigation.navigate("Reading", readingParams);
@@ -387,7 +241,7 @@ const LibraryScreen = (props) => {
         });
       }
     },
-    [activeSection, navigation, readItemVersions, searchQuery],
+    [activeSection, navigation],
   );
 
   const handleMarkUnread = (item) => {
@@ -570,19 +424,7 @@ const LibraryScreen = (props) => {
           isTablet && { paddingHorizontal: horizontalPadding },
         ]}
       >
-        <View style={styles.searchBarContainer}>
-          <Searchbar
-            placeholder="Search topics..."
-            onChangeText={setSearchQuery}
-            value={searchQuery}
-            style={styles.searchBar}
-            inputStyle={styles.searchBarInput}
-            iconColor={colors.textPlaceholder}
-            placeholderTextColor={colors.textPlaceholder}
-          />
-        </View>
-
-        {searchQuery.length === 0 && <Text style={styles.header}>Library</Text>}
+        <Text style={styles.header}>Library</Text>
 
         <View style={styles.segmentedButtonsContainer}>
           <SegmentedButtons
@@ -719,14 +561,6 @@ const LibraryScreen = (props) => {
                 style={styles.listItem}
                 onPress={() => openItem(item, itemStatus)}
                 description={() => {
-                  if (searchQuery.trim().length > 0) {
-                    return (
-                      <SearchExcerpt
-                        item={item}
-                        searchQuery={searchQuery.trim()}
-                      />
-                    );
-                  }
                   if (item.id === "1" && !isPremium) {
                     return (
                       <Text style={styles.freeDescText}>
@@ -825,29 +659,12 @@ const createStyles = (colors) => StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
   },
-  searchBarContainer: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 12,
-  },
-  searchBar: {
-    backgroundColor: colors.surfaceSecondary,
-    borderRadius: 12,
-    elevation: 0,
-    height: 48,
-    marginBottom: 0,
-  },
-  searchBarInput: {
-    fontSize: 16,
-    color: colors.textTitle,
-    minHeight: 48,
-    alignSelf: "center",
-  },
   header: {
     fontSize: 32,
     fontWeight: "bold",
     color: colors.textTitle,
     paddingHorizontal: 16,
+    paddingTop: 16,
     marginTop: 0,
     marginBottom: 12,
   },
