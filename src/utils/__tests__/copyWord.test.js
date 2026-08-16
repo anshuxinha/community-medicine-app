@@ -1,8 +1,4 @@
-import {
-  copiedWordToastMessage,
-  extractCopyWord,
-  splitCopyablePieces,
-} from "../copyWord";
+import { extractCopyWord, splitCopyablePieces } from "../copyWord";
 
 describe("extractCopyWord", () => {
   test("trims whitespace and surrounding punctuation", () => {
@@ -23,12 +19,6 @@ describe("extractCopyWord", () => {
     expect(extractCopyWord("")).toBe("");
     expect(extractCopyWord("   ")).toBe("");
     expect(extractCopyWord(null)).toBe("");
-  });
-});
-
-describe("copiedWordToastMessage", () => {
-  test("matches the reading-screen copy toast", () => {
-    expect(copiedWordToastMessage("epidemiology")).toBe('Copied "epidemiology"');
   });
 });
 

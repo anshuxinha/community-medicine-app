@@ -16,10 +16,6 @@ export function extractCopyWord(token) {
   return stripped || trimmed;
 }
 
-export function copiedWordToastMessage(word) {
-  return `Copied "${word}"`;
-}
-
 /**
  * Split text into display pieces. Trailing whitespace stays on the
  * preceding word so each copyable token is one Text node.

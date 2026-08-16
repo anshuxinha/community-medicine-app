@@ -25,7 +25,6 @@ import { normalizeUpdatedSnippet } from "../utils/contentRegistry";
 import { ALL_ORIENTATIONS } from "../constants/orientations";
 import ThemeModePill from "./ThemeModePill";
 import {
-  copiedWordToastMessage,
   extractCopyWord,
   hasSeenWordCopyHint,
   markWordCopyHintSeen,
@@ -857,9 +856,7 @@ const ReadingView = ({
   const [showHighlightsLocal, setShowHighlightsLocal] = useState(showUpdateHighlights);
   const [isHighlightMode, setIsHighlightMode] = useState(false);
   const [noteModalVisible, setNoteModalVisible] = useState(false);
-  const [copyToast, setCopyToast] = useState(null);
   const [wordCopyHintVisible, setWordCopyHintVisible] = useState(false);
-  const copyToastTimerRef = useRef(null);
   const hasReachedEndRef = useRef(false);
   const viewportHeightRef = useRef(0);
   const contentHeightRef = useRef(0);
@@ -961,37 +958,14 @@ const ReadingView = ({
     }
   }, []);
 
-  const showCopyToast = useCallback((word) => {
-    if (copyToastTimerRef.current) {
-      clearTimeout(copyToastTimerRef.current);
+  const handleCopyWord = useCallback((rawToken) => {
+    const word = extractCopyWord(rawToken);
+    if (!word) return;
+    try {
+      Clipboard.setString(word);
+    } catch (error) {
+      console.warn("ReadingView: copy word failed", error?.message);
     }
-    setCopyToast(copiedWordToastMessage(word));
-    copyToastTimerRef.current = setTimeout(() => {
-      setCopyToast(null);
-      copyToastTimerRef.current = null;
-    }, 1800);
-  }, []);
-
-  const handleCopyWord = useCallback(
-    (rawToken) => {
-      const word = extractCopyWord(rawToken);
-      if (!word) return;
-      try {
-        Clipboard.setString(word);
-        showCopyToast(word);
-      } catch (error) {
-        console.warn("ReadingView: copy word failed", error?.message);
-      }
-    },
-    [showCopyToast],
-  );
-
-  useEffect(() => {
-    return () => {
-      if (copyToastTimerRef.current) {
-        clearTimeout(copyToastTimerRef.current);
-      }
-    };
   }, []);
 
   useEffect(() => {
@@ -2209,8 +2183,7 @@ const ReadingView = ({
               Copy a word
             </Text>
             <Text style={styles.wordCopyHintBody} selectable={false}>
-              Long press any word on this page to copy it. You will see a short
-              confirmation when it is copied.
+              Long press any word on this page to copy it.
             </Text>
             <View style={styles.noteModalActions}>
               <TouchableOpacity
@@ -2226,23 +2199,6 @@ const ReadingView = ({
           </Pressable>
         </Pressable>
       </Modal>
-
-      {copyToast ? (
-        <View
-          pointerEvents="none"
-          style={[
-            styles.copyToastWrap,
-            { bottom: 72 + (insets.bottom || 8) },
-          ]}
-        >
-          <View style={styles.copyToast}>
-            <MaterialIcons name="content-copy" size={16} color={colors.surfacePrimary} />
-            <Text style={styles.copyToastText} selectable={false}>
-              {copyToast}
-            </Text>
-          </View>
-        </View>
-      ) : null}
     </View>
   );
 };
@@ -2974,29 +2930,6 @@ const createStyles = (colors) => StyleSheet.create({
     fontSize: 14,
     fontWeight: "700",
     color: colors.onPrimary || colors.surfacePrimary,
-  },
-  copyToastWrap: {
-    position: "absolute",
-    left: 20,
-    right: 20,
-    bottom: 88,
-    alignItems: "center",
-    zIndex: 50,
-  },
-  copyToast: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    maxWidth: "100%",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 24,
-    backgroundColor: colors.textTitle,
-  },
-  copyToastText: {
-    color: colors.surfacePrimary,
-    fontSize: 14,
-    fontWeight: "600",
   },
 
   // ── Fullscreen Image Viewer ──
