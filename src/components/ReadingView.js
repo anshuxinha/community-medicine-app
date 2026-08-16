@@ -1193,6 +1193,7 @@ const ReadingView = ({
           style={extraStyle}
           selectable={false}
           suppressHighlighting
+          contextMenuHidden
           onPress={
             isHighlightMode || isAnnotationMode ? undefined : () => {}
           }
@@ -1217,7 +1218,7 @@ const ReadingView = ({
       const words = renderCopyableSegment(text, undefined, "t");
       if (baseStyle) {
         return (
-          <Text style={baseStyle} selectable={false}>
+          <Text style={baseStyle} selectable={false} contextMenuHidden>
             {words}
           </Text>
         );
@@ -1240,7 +1241,7 @@ const ReadingView = ({
           if (sTermIdx > lastIdx) {
             const subText = part.slice(lastIdx, sTermIdx);
             elements.push(
-              <Text key={`${idx}-${subIndex++}`} style={boldStyle}>
+              <Text key={`${idx}-${subIndex++}`} style={boldStyle} contextMenuHidden>
                 {renderCopyableSegment(subText, undefined, `${idx}-p${subIndex}`)}
               </Text>
             );
@@ -1253,6 +1254,7 @@ const ReadingView = ({
                 styles.searchTermMatch,
                 isBold && { fontWeight: "bold" }
               ]}
+              contextMenuHidden
             >
               {renderCopyableSegment(matchText, undefined, `${idx}-m${subIndex}`)}
             </Text>
@@ -1264,14 +1266,14 @@ const ReadingView = ({
         if (lastIdx < part.length) {
           const subText = part.slice(lastIdx);
           elements.push(
-            <Text key={`${idx}-${subIndex++}`} style={boldStyle}>
+            <Text key={`${idx}-${subIndex++}`} style={boldStyle} contextMenuHidden>
               {renderCopyableSegment(subText, undefined, `${idx}-t${subIndex}`)}
             </Text>
           );
         }
       } else {
         elements.push(
-          <Text key={idx} style={boldStyle}>
+          <Text key={idx} style={boldStyle} contextMenuHidden>
             {renderCopyableSegment(part, undefined, `b${idx}`)}
           </Text>
         );
@@ -1280,7 +1282,7 @@ const ReadingView = ({
 
     if (baseStyle) {
       return (
-        <Text style={baseStyle} selectable={false}>
+        <Text style={baseStyle} selectable={false} contextMenuHidden>
           {elements}
         </Text>
       );
@@ -1402,7 +1404,7 @@ const ReadingView = ({
             {hasSearchMatch && !isHighlightMode ? (
               renderFormattedText(block.text, styles.blockquoteText, true)
             ) : (
-              <Text key={blockHighlightSig} style={styles.blockquoteText} selectable={false}>
+              <Text key={blockHighlightSig} style={styles.blockquoteText} selectable={false} contextMenuHidden>
                 {sentences.map((sentence, sIdx) => {
                   const hlKey = `${index}:${sIdx}`;
                   const isHl = userHighlights[hlKey];
@@ -1411,6 +1413,7 @@ const ReadingView = ({
                       key={sIdx}
                       style={isHl ? styles.userHighlightSentence : null}
                       selectable={false}
+                      contextMenuHidden
                       onPress={isHighlightMode ? () => onToggleHighlight(hlKey) : undefined}
                       suppressHighlighting={true}
                     >
@@ -1440,7 +1443,7 @@ const ReadingView = ({
             {hasSearchMatch && !isHighlightMode ? (
               renderFormattedText(block.text, baseStyle, true)
             ) : (
-              <Text key={blockHighlightSig} style={baseStyle} selectable={false}>
+              <Text key={blockHighlightSig} style={baseStyle} selectable={false} contextMenuHidden>
                 {sentences.map((sentence, sIdx) => {
                   const hlKey = `${index}:${sIdx}`;
                   const isHl = userHighlights[hlKey];
@@ -1449,6 +1452,7 @@ const ReadingView = ({
                       key={sIdx}
                       style={isHl ? styles.userHighlightSentence : null}
                       selectable={false}
+                      contextMenuHidden
                       onPress={isHighlightMode ? () => onToggleHighlight(hlKey) : undefined}
                       suppressHighlighting={true}
                     >
@@ -1479,7 +1483,7 @@ const ReadingView = ({
                   ]}
                 >
                   <Text style={styles.bulletDot} selectable={false}>{"\u2022"}</Text>
-                  <Text style={styles.bulletText} selectable={false}>
+                  <Text style={styles.bulletText} selectable={false} contextMenuHidden>
                     {renderFormattedText(item, null, hasSearchMatch && !isHighlightMode)}
                   </Text>
                 </View>
@@ -1514,7 +1518,7 @@ const ReadingView = ({
                   ]}
                 >
                   <Text style={styles.nestedBulletDot} selectable={false}>{"\u2013"}</Text>
-                  <Text style={styles.nestedBulletText} selectable={false}>
+                  <Text style={styles.nestedBulletText} selectable={false} contextMenuHidden>
                     {renderFormattedText(item, null, hasSearchMatch && !isHighlightMode)}
                   </Text>
                 </View>
