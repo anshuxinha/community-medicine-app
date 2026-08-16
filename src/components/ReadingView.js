@@ -1155,6 +1155,18 @@ const ReadingView = ({
   }, [firstSearchBlockIndex]);
 
   const renderCopyableSegment = (text, extraStyle, keyPrefix) => {
+    // Highlight and Note own the tap. Word-level responders steal those presses.
+    if (isHighlightMode || isAnnotationMode) {
+      if (extraStyle) {
+        return (
+          <Text style={extraStyle} selectable={false} contextMenuHidden>
+            {text}
+          </Text>
+        );
+      }
+      return text;
+    }
+
     const pieces = splitCopyablePieces(text);
     if (pieces.length === 0) return null;
     return pieces.map((piece, i) => {
@@ -1168,9 +1180,7 @@ const ReadingView = ({
           selectable={false}
           suppressHighlighting
           contextMenuHidden
-          onPress={
-            isHighlightMode || isAnnotationMode ? undefined : () => {}
-          }
+          onPress={() => {}}
           onLongPress={() => handleCopyWord(piece.text)}
           delayLongPress={400}
         >
