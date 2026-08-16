@@ -1,4 +1,11 @@
-import React, { createContext, useState, useEffect, useRef } from "react";
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import { AppState, Platform } from "react-native";
 import {
   enableScreenCaptureProtection,
@@ -487,7 +494,7 @@ export const AppProvider = ({ children }) => {
       ),
     );
 
-  const applyCachedLibraryOverrides = async () => {
+  const applyCachedLibraryOverrides = useCallback(async () => {
     try {
       const raw = await AsyncStorage.getItem(LIBRARY_OVERRIDES_CACHE_KEY);
       if (!raw) return false;
@@ -500,9 +507,9 @@ export const AppProvider = ({ children }) => {
       console.warn("Failed to apply cached library overrides:", err?.message);
       return false;
     }
-  };
+  }, []);
 
-  const refreshLibraryContent = async () => {
+  const refreshLibraryContent = useCallback(async () => {
     try {
       const snapshot = await Promise.race([
         getDocs(collection(db, "libraryContentOverrides")),
@@ -540,9 +547,9 @@ export const AppProvider = ({ children }) => {
     } catch (err) {
       console.warn("Library override refresh failed:", err?.message);
     }
-  };
+  }, []);
 
-  const persistLearningLocally = async (uid, snapshot) => {
+  const persistLearningLocally = useCallback(async (uid, snapshot) => {
     if (!uid || !snapshot) return;
     try {
       const pairs = [
@@ -581,7 +588,7 @@ export const AppProvider = ({ children }) => {
     } catch (err) {
       console.warn("Failed to persist learning state locally:", err?.message);
     }
-  };
+  }, []);
 
   const loadLocalLearningSnapshot = async (uid) => {
     try {
@@ -1044,14 +1051,15 @@ export const AppProvider = ({ children }) => {
     }, []);
 
   // Refresh learning progress from Firestore on app foreground
-  const refreshFromCloud = async () => {
-    if (!user?.uid || isLoggingOutRef.current || !cloudHydratedRef.current) return;
+  const refreshFromCloud = useCallback(async () => {
+    const uid = userRef.current?.uid;
+    if (!uid || isLoggingOutRef.current || !cloudHydratedRef.current) return;
     const now = Date.now();
     if (now - lastRefreshRef.current < 30000) return;
     lastRefreshRef.current = now;
 
     try {
-      const userDocRef = doc(db, "users", user.uid);
+      const userDocRef = doc(db, "users", uid);
       const userDoc = await Promise.race([
         getDoc(userDocRef),
         timeoutPromise(5000),
@@ -1061,7 +1069,7 @@ export const AppProvider = ({ children }) => {
         const data = userDoc.data();
         await refreshLibraryContent();
 
-        const cachedAccountRaw = await loadLocalLearningSnapshot(user.uid);
+        const cachedAccountRaw = await loadLocalLearningSnapshot(uid);
 
         const mergedLearningState = collectLearningStateCandidates(
           data,
@@ -1071,16 +1079,16 @@ export const AppProvider = ({ children }) => {
         );
         const cloudState = hydrateStoredState(mergedLearningState);
 
-        await persistLearningLocally(user.uid, cloudState);
+        await persistLearningLocally(uid, cloudState);
 
-        syncAllAnnotations(user.uid);
-        syncAllHighlights(user.uid);
-        await syncReceivedUpvotes(user.uid);
+        syncAllAnnotations(uid);
+        syncAllHighlights(uid);
+        await syncReceivedUpvotes(uid);
       }
     } catch (err) {
       console.warn("Cloud refresh failed:", err?.message);
     }
-  };
+  }, [persistLearningLocally, refreshLibraryContent]);
 
   // Flush local learning state when backgrounding; refresh from cloud on resume
   useEffect(() => {
@@ -1110,7 +1118,7 @@ export const AppProvider = ({ children }) => {
       handleAppStateChange,
     );
     return () => subscription.remove();
-  }, [user]);
+  }, [refreshFromCloud, persistLearningLocally]);
 
   useEffect(() => {
     if (user === null) {
@@ -1228,14 +1236,9 @@ export const AppProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    const saveState = async () => {
-      // Don't save if logging out or not authenticated
-      if (isLoggingOutRef.current || !user || !user.uid) {
-        return;
-      }
-
-      // Don't save until cloud is hydrated
-      if (!cloudHydratedRef.current) {
+    const saveLearning = async () => {
+      const uid = userRef.current?.uid;
+      if (isLoggingOutRef.current || !uid || !cloudHydratedRef.current) {
         return;
       }
 
@@ -1250,18 +1253,13 @@ export const AppProvider = ({ children }) => {
           studyScore,
         };
 
-        // Local first (batch) so kill-after-read keeps progress for cold start
-        await persistLearningLocally(user.uid, accountStateSnapshot);
-        await AsyncStorage.setItem("highlights", JSON.stringify(highlights));
-        await AsyncStorage.setItem("user", JSON.stringify(user));
-        await AsyncStorage.setItem("isPremium", JSON.stringify(isPremium));
+        await persistLearningLocally(uid, accountStateSnapshot);
 
-        // Firestore second — network may lag; local cache is source for first paint
         try {
           const deviceId =
             currentDeviceIdRef.current || (await getDeviceId());
 
-          const updateData = {
+          await updateDoc(doc(db, "users", uid), {
             readItems,
             readItemVersions,
             bookmarks,
@@ -1271,9 +1269,7 @@ export const AppProvider = ({ children }) => {
             studyScore,
             [`deviceStates.${deviceId}`]: accountStateSnapshot,
             syncedAt: serverTimestamp(),
-          };
-
-          await updateDoc(doc(db, "users", user.uid), updateData);
+          });
         } catch (e) {
           console.warn("Failed to sync to Firebase:", e?.message);
         }
@@ -1282,19 +1278,31 @@ export const AppProvider = ({ children }) => {
       }
     };
 
-    saveState();
+    saveLearning();
   }, [
     readItems,
     readItemVersions,
     bookmarks,
-    highlights,
     currentStreak,
     lastReadDate,
     studyScore,
     dailyReadHistory,
-    user,
-    isPremium,
+    persistLearningLocally,
   ]);
+
+  useEffect(() => {
+    if (isLoggingOutRef.current || !userRef.current?.uid) return;
+    if (!cloudHydratedRef.current) return;
+    AsyncStorage.setItem("highlights", JSON.stringify(highlights)).catch(
+      (err) => console.warn("Failed to persist highlights:", err?.message),
+    );
+  }, [highlights]);
+
+  useEffect(() => {
+    if (isLoggingOutRef.current || !user) return;
+    AsyncStorage.setItem("user", JSON.stringify(user)).catch(() => {});
+    AsyncStorage.setItem("isPremium", JSON.stringify(isPremium)).catch(() => {});
+  }, [user, isPremium]);
 
   useEffect(() => {
     const uid = user?.uid;
@@ -1382,7 +1390,7 @@ export const AppProvider = ({ children }) => {
   const readingProgress =
     totalItems === 0 ? 0 : Math.min(effectiveReadCount / totalItems, 1);
 
-  const recordContentOpened = (contentKey) => {
+  const recordContentOpened = useCallback((contentKey) => {
     if (!contentKey || typeof contentKey !== "string") return;
     setLastOpenedContentKey(contentKey);
     const uid = userRef.current?.uid;
@@ -1392,9 +1400,9 @@ export const AppProvider = ({ children }) => {
         contentKey,
       ).catch(() => {});
     }
-  };
+  }, []);
 
-  const markAsRead = ({ itemTitle, contentKey, contentSignature }) => {
+  const markAsRead = useCallback(({ itemTitle, contentKey, contentSignature }) => {
     if (!itemTitle || !contentKey || !contentSignature) {
       return { didComplete: false };
     }
@@ -1488,7 +1496,7 @@ export const AppProvider = ({ children }) => {
       streakIncremented,
       readItemVersions: nextVersions,
     };
-  };
+  }, [totalItems, persistLearningLocally]);
 
   // Trigger streak milestone notifications when streak changes
   useEffect(() => {
@@ -1507,7 +1515,7 @@ export const AppProvider = ({ children }) => {
   // In-app review CTA is the standalone Review Request on app open.
   // Legacy Alert-based maybePromptReview is no longer auto-fired here.
 
-  const markAsUnread = (contentRefs = []) => {
+  const markAsUnread = useCallback((contentRefs = []) => {
     const refsToClear = contentRefs.filter((ref) => ref?.contentKey);
     if (refsToClear.length === 0) {
       return;
@@ -1538,7 +1546,7 @@ export const AppProvider = ({ children }) => {
     if (uid) {
       void persistLearningLocally(uid, snapshot);
     }
-  };
+  }, [persistLearningLocally]);
 
   const getBookmarkIdentity = (itemOrTitle) => {
     if (!itemOrTitle) return null;
@@ -1551,15 +1559,15 @@ export const AppProvider = ({ children }) => {
     );
   };
 
-  const isBookmarked = (itemOrTitle) => {
+  const isBookmarked = useCallback((itemOrTitle) => {
     const targetIdentity = getBookmarkIdentity(itemOrTitle);
     if (!targetIdentity) return false;
     return bookmarks.some(
       (bookmark) => getBookmarkIdentity(bookmark) === targetIdentity,
     );
-  };
+  }, [bookmarks]);
 
-  const toggleBookmark = (item) => {
+  const toggleBookmark = useCallback((item) => {
     const targetIdentity = getBookmarkIdentity(item);
     if (!targetIdentity) return;
 
@@ -1593,16 +1601,16 @@ export const AppProvider = ({ children }) => {
     if (uid) {
       void persistLearningLocally(uid, snapshot);
     }
-  };
+  }, [persistLearningLocally]);
 
-  const saveHighlight = (id, htmlContent) => {
+  const saveHighlight = useCallback((id, htmlContent) => {
     setHighlights((prev) => ({
       ...prev,
       [id]: htmlContent,
     }));
-  };
+  }, []);
 
-  const persistPremiumAccess = async (metadata = {}) => {
+  const persistPremiumAccess = useCallback(async (metadata = {}) => {
     const currentUser = userRef.current;
     if (!currentUser?.uid) return;
 
@@ -1619,7 +1627,7 @@ export const AppProvider = ({ children }) => {
     } catch (err) {
       console.warn("Failed to sync premium to Firestore:", err.message);
     }
-  };
+  }, []);
 
   // RevenueCat: configure and sync customer info on mount
   useEffect(() => {
@@ -1793,13 +1801,13 @@ export const AppProvider = ({ children }) => {
       .catch((err) => {
         console.warn("RevenueCat logIn failed:", err.message);
       });
-  }, [user]);
+  }, [user?.uid]);
 
   const completeDailyGoal = (score) => {
     setStudyScore((prev) => prev + score);
   };
 
-  const clearStorage = async () => {
+  const clearStorage = useCallback(async () => {
     await AsyncStorage.multiRemove([
       "readItems",
       "readItemVersions",
@@ -1821,9 +1829,9 @@ export const AppProvider = ({ children }) => {
     setUser(null);
     setAccountPremium(false);
     setRevenueCatPremium(false);
-  };
+  }, []);
 
-  const login = async (userData) => {
+  const login = useCallback(async (userData) => {
     if (Constants.appOwnership !== "expo" && Purchases && userData.uid) {
       Purchases.logIn(userData.uid)
         .then(({ customerInfo }) => {
@@ -1943,9 +1951,9 @@ export const AppProvider = ({ children }) => {
         }
       }
     }
-  };
+  }, [persistLearningLocally]);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     isLoggingOutRef.current = true;
 
     // Clear currentDeviceId in Firestore so re-login won't trigger conflict
@@ -1998,14 +2006,14 @@ export const AppProvider = ({ children }) => {
     setLastReadDate(null);
     setStudyScore(0);
     setDailyReadHistory({});
-  };
+  }, []);
 
-  const upgradeToPremium = async (metadata = {}) => {
+  const upgradeToPremium = useCallback(async (metadata = {}) => {
     setAccountPremium(true);
     await persistPremiumAccess(metadata);
-  };
+  }, [persistPremiumAccess]);
 
-  const updateUsername = async (newUsername) => {
+  const updateUsername = useCallback(async (newUsername) => {
     if (!user || !user.uid) return;
     const trimmed = newUsername.trim();
     if (!trimmed) return;
@@ -2044,9 +2052,9 @@ export const AppProvider = ({ children }) => {
     } catch (err) {
       console.warn("Failed to update cached user in AsyncStorage:", err);
     }
-  };
+  }, [user]);
 
-  const updateLearningProfile = async (profile = {}) => {
+  const updateLearningProfile = useCallback(async (profile = {}) => {
     if (!user?.uid) {
       throw new Error("Not signed in");
     }
@@ -2098,9 +2106,9 @@ export const AppProvider = ({ children }) => {
       }
       throw err;
     }
-  };
+  }, [user]);
 
-  const setResidentMode = async (enabled) => {
+  const setResidentMode = useCallback(async (enabled) => {
     if (!user?.uid) {
       throw new Error("Not signed in");
     }
@@ -2117,46 +2125,82 @@ export const AppProvider = ({ children }) => {
       console.warn("Failed to save residentMode:", err?.message);
       throw err;
     }
-  };
+  }, [user]);
+
+  const contextValue = useMemo(
+    () => ({
+      readItems,
+      readItemVersions,
+      bookmarks,
+      totalItems,
+      readingProgress,
+      highlights,
+      currentStreak,
+      lastReadDate,
+      studyScore,
+      setStudyScore,
+      dailyReadHistory,
+      markAsRead,
+      markAsUnread,
+      recordContentOpened,
+      lastOpenedContentKey,
+      isBookmarked,
+      toggleBookmark,
+      saveHighlight,
+      clearStorage,
+      refreshFromCloud,
+      refreshLibraryContent,
+      contentRegistryVersion,
+      user,
+      isPremium,
+      premiumType,
+      subscriptionExpiry,
+      login,
+      logout,
+      upgradeToPremium,
+      updateUsername,
+      updateLearningProfile,
+      setResidentMode,
+      isScreenCapturePrevented,
+    }),
+    [
+      readItems,
+      readItemVersions,
+      bookmarks,
+      totalItems,
+      readingProgress,
+      highlights,
+      currentStreak,
+      lastReadDate,
+      studyScore,
+      dailyReadHistory,
+      markAsRead,
+      markAsUnread,
+      recordContentOpened,
+      lastOpenedContentKey,
+      isBookmarked,
+      toggleBookmark,
+      saveHighlight,
+      clearStorage,
+      refreshFromCloud,
+      refreshLibraryContent,
+      contentRegistryVersion,
+      user,
+      isPremium,
+      premiumType,
+      subscriptionExpiry,
+      login,
+      logout,
+      upgradeToPremium,
+      updateUsername,
+      updateLearningProfile,
+      setResidentMode,
+      isScreenCapturePrevented,
+    ],
+  );
 
   return (
-    <AppContext.Provider
-      value={{
-        readItems,
-        readItemVersions,
-        bookmarks,
-        totalItems,
-        readingProgress,
-        highlights,
-        currentStreak,
-        lastReadDate,
-        studyScore,
-        setStudyScore,
-        dailyReadHistory,
-        markAsRead,
-        markAsUnread,
-        recordContentOpened,
-        lastOpenedContentKey,
-        isBookmarked,
-        toggleBookmark,
-        saveHighlight,
-        clearStorage,
-        refreshFromCloud,
-        refreshLibraryContent,
-        contentRegistryVersion,
-        user,
-        isPremium,
-        premiumType,
-        subscriptionExpiry,
-        login,
-        logout,
-        upgradeToPremium,
-        updateUsername,
-        updateLearningProfile,
-        setResidentMode,
-        isScreenCapturePrevented,
-      }}
-    >
+    <AppContext.Provider value={contextValue}>
       {children}
     </AppContext.Provider>
   );

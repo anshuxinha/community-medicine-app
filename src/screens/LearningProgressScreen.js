@@ -21,10 +21,7 @@ import {
   getRecommendedChaptersForYear,
 } from "../utils/learningProgress";
 import { progressToPercent } from "../utils/progressPresentation";
-import {
-  getContentSignature,
-  getUpdatedSegmentsForItem,
-} from "../utils/contentRegistry";
+import { buildLibraryReadingParams } from "../utils/contentRegistry";
 import { DEFAULT_DAILY_GOAL } from "../data/nmcCurriculum";
 import { isResidentModeEnabled } from "../utils/residentMode";
 
@@ -37,19 +34,7 @@ const colorForToken = (colors, token) => {
 
 const buildReadingParamsFromEntry = (entry) => {
   if (!entry?.item) return null;
-  const status = "none";
-  return {
-    id: entry.item.id,
-    title: entry.item.title,
-    content: entry.item.content || "# No Content\n\nThis topic has no content yet.",
-    quizzes: entry.item.quizzes,
-    section: entry.section,
-    contentKey: entry.key,
-    contentSignature: entry.signature || getContentSignature(entry.item),
-    updatedSegments: getUpdatedSegmentsForItem(entry.item),
-    showUpdateHighlights: false,
-    searchTerms: "",
-  };
+  return buildLibraryReadingParams(entry.item, entry.section);
 };
 
 const isFreeTheoryRoot = (rootChapterId) =>

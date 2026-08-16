@@ -102,6 +102,23 @@ describe("silent library content updates (progress preservation)", () => {
     expect(isEntryReadForProgress(updated, versions)).toBe(false);
   });
 
+  it("uses the cached registry signature instead of re-hashing live content", () => {
+    const leaf = LEAF_CONTENT_ENTRIES.find(
+      (e) => e.section === "theory" && e.item?.content,
+    );
+    expect(leaf).toBeTruthy();
+
+    const versions = { [leaf.key]: leaf.signature };
+    const mutatedItem = {
+      ...leaf.item,
+      content: `${leaf.item.content}\n\n<!-- should not change cached status -->`,
+    };
+
+    expect(isItemReadForProgress(versions, "theory", mutatedItem)).toBe(true);
+    expect(getItemStatus(mutatedItem, "theory", versions)).toBe("read");
+    expect(getContentSignature(mutatedItem)).not.toBe(leaf.signature);
+  });
+
   it("treats legacy overrides without markAsNew and empty segments as silent", () => {
     const leaf = LEAF_CONTENT_ENTRIES.find(
       (e) => e.section === "theory" && e.item?.content,

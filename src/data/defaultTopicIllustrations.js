@@ -6,18 +6,10 @@ import illustrationSeed from "./topicIllustrations.seed.json";
 export const DEFAULT_TOPIC_ILLUSTRATION_MAP = illustrationSeed.reduce(
   (accumulator, entry) => {
     const images = Array.isArray(entry.images)
-      ? entry.images.map((image) => {
-          // For Firebase hosting, we don't use local sources
-          // Images will be loaded from Firebase Storage URLs
-          // Keep source as null - Firebase URLs will be added during merge
-          console.log(
-            `Default illustration mapping (Firebase): ${entry.contentKey} -> ${image.fileName} - expecting Firebase URL`,
-          );
-          return {
-            ...image,
-            source: null, // No local source - images will come from Firebase URLs
-          };
-        })
+      ? entry.images.map((image) => ({
+          ...image,
+          source: null,
+        }))
       : [];
 
     accumulator.set(entry.contentKey, images);

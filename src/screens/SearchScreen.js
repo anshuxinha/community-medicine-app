@@ -27,9 +27,8 @@ import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { AppContext } from "../context/AppContext";
 import {
-  getContentSignature,
+  buildLibraryReadingParams,
   getItemStatus,
-  getUpdatedSegmentsForItem,
 } from "../utils/contentRegistry";
 import {
   buildGemsIndex,
@@ -239,18 +238,14 @@ const SearchScreen = ({ navigation }) => {
           item.section,
           readItemVersions,
         );
-        const readingParams = {
-          id: item.id,
-          title: item.title,
-          content: item.content || "# No Content\n\nThis topic has no content yet.",
-          quizzes: item.quizzes,
-          section: item.section,
-          contentKey: item.contentKey,
-          contentSignature: getContentSignature(item.rawItem),
-          updatedSegments: getUpdatedSegmentsForItem(item.rawItem),
-          showUpdateHighlights: status === "updated",
-          searchTerms: debouncedQuery,
-        };
+        const readingParams = buildLibraryReadingParams(
+          item.rawItem,
+          item.section,
+          {
+            status,
+            searchTerms: debouncedQuery,
+          },
+        );
         if (item.isFree) {
           navigation.navigate("Reading", readingParams);
         } else {

@@ -544,8 +544,8 @@
     "hash": "ee80de9ca72397fd02e0fb31ed09698c"
   },
   "D:\\The App\\src\\components\\ReadingView.js": {
-    "mtime": 1786878700.2660685,
-    "hash": "c3a671c9d96f65921113d04c2416d303"
+    "mtime": 1786882135.0513904,
+    "hash": "d1a8cb509fd0f098a0b24ae263a83bdc"
   },
   "D:\\The App\\src\\components\\ReviewFeedbackModal.js": {
     "mtime": 1785328661.2858431,
@@ -580,12 +580,12 @@
     "hash": "28aff4aa2aa407d8be48e8aed5bb252a"
   },
   "D:\\The App\\src\\context\\AppContext.js": {
-    "mtime": 1786816795.6030817,
-    "hash": "dba68e6bc0babe4a469f37d5e62ecf5b"
+    "mtime": 1786882348.647669,
+    "hash": "be12b3a1653256d0ea14c95bbedb25f7"
   },
   "D:\\The App\\src\\data\\defaultTopicIllustrations.js": {
-    "mtime": 1775143847.0992994,
-    "hash": "6d7efe5eaf665c93daf1b4265c4c2234"
+    "mtime": 1786881885.1823778,
+    "hash": "a490e41b1ac815ddc9971f88c51c3945"
   },
   "D:\\The App\\src\\data\\museumData.js": {
     "mtime": 1784344792.89133,
@@ -612,8 +612,8 @@
     "hash": "1796d49ccfe1f7b21ebee87d303ff5b9"
   },
   "D:\\The App\\src\\hooks\\useSessionEnforcer.js": {
-    "mtime": 1776915623.531863,
-    "hash": "f486f262d18f04ca01c8458ba191645d"
+    "mtime": 1786882348.383382,
+    "hash": "414c412599255e06ed6e40966609bdf5"
   },
   "D:\\The App\\src\\hooks\\useUnlockOrientationOnFocus.js": {
     "mtime": 1785261854.9955852,
@@ -624,8 +624,8 @@
     "hash": "cc9a10b9fc4d6e5c67642d1b34ae488c"
   },
   "D:\\The App\\src\\navigation\\AppNavigator.js": {
-    "mtime": 1786804426.1599362,
-    "hash": "9f4f65d0e6940fe82e2ca1d7217b7fc0"
+    "mtime": 1786882132.329567,
+    "hash": "bbb9bfe9300d00536317353e3023051a"
   },
   "D:\\The App\\src\\screens\\AdminAppFeedbackScreen.js": {
     "mtime": 1786804524.82716,
@@ -644,8 +644,8 @@
     "hash": "77261ef4f3a431023f33b15a62e7388e"
   },
   "D:\\The App\\src\\screens\\BookmarksScreen.js": {
-    "mtime": 1784224587.3500724,
-    "hash": "54d95e35abd81c66cfcfb4d05ddcd448"
+    "mtime": 1786882049.2355409,
+    "hash": "a14bc2deadd242ebeaf41f2f8d693c62"
   },
   "D:\\The App\\src\\screens\\DashboardScreen.js": {
     "mtime": 1785775351.1839488,
@@ -664,12 +664,12 @@
     "hash": "aa3688842ec7c1abad4f7b83e2894bf8"
   },
   "D:\\The App\\src\\screens\\LearningProgressScreen.js": {
-    "mtime": 1785733611.5855398,
-    "hash": "7802f83ff634ab49a274508a5599e0fd"
+    "mtime": 1786882049.2476742,
+    "hash": "1478ceec6c8c734f66e923eb2f437c88"
   },
   "D:\\The App\\src\\screens\\LibraryScreen.js": {
-    "mtime": 1786644172.1677425,
-    "hash": "820dc6b7e7bae57ab74e7c0836bdd964"
+    "mtime": 1786881959.8532062,
+    "hash": "f11bab65f90da8e5954f09a87ee72317"
   },
   "D:\\The App\\src\\screens\\LoginScreen.js": {
     "mtime": 1785163280.5808306,
@@ -716,20 +716,20 @@
     "hash": "f968241eb8b01706ae26202300310ee9"
   },
   "D:\\The App\\src\\screens\\ReadingScreen.js": {
-    "mtime": 1786816795.7348764,
-    "hash": "4de642ac70ed41bb9775ffbf46a22c55"
+    "mtime": 1786882587.938691,
+    "hash": "734f0bee2f780762c282d49fc46bad0e"
   },
   "D:\\The App\\src\\screens\\SearchScreen.js": {
-    "mtime": 1785313571.7960963,
-    "hash": "d45303e211973f06aa1864e04ce36dd8"
+    "mtime": 1786882049.273741,
+    "hash": "c4684982405b60695193d0ea6b88a58c"
   },
   "D:\\The App\\src\\screens\\SESCalculatorScreen.js": {
     "mtime": 1784225615.121064,
     "hash": "fb217cb7586d7fb2f616c1fe675dd0e9"
   },
   "D:\\The App\\src\\screens\\SubTopicsScreen.js": {
-    "mtime": 1784226108.0246305,
-    "hash": "ab2f084fae8903b86b44dfb3f2af2bb0"
+    "mtime": 1786882049.1852891,
+    "hash": "b24ac6db7d72556720fb54653690cc48"
   },
   "D:\\The App\\src\\screens\\SupportScreen.js": {
     "mtime": 1786340384.0302837,
@@ -776,8 +776,8 @@
     "hash": "9322181633114c0a828bacd7c06d524b"
   },
   "D:\\The App\\src\\services\\topicIllustrations.js": {
-    "mtime": 1778664278.3496735,
-    "hash": "ea8466bc88791dd4c6ebedcee902c58a"
+    "mtime": 1786881885.3898406,
+    "hash": "e923139fd1233f91118093974fe16aa2"
   },
   "D:\\The App\\src\\services\\updatesService.js": {
     "mtime": 1785775127.4745152,
@@ -816,8 +816,8 @@
     "hash": "aeeb25e31f8c2b1e8ab34083cf63308a"
   },
   "D:\\The App\\src\\utils\\contentRegistry.js": {
-    "mtime": 1785993204.0143225,
-    "hash": "7c1d925de447ccb1c63354fd3397b4de"
+    "mtime": 1786881933.5635006,
+    "hash": "6b2363eca1047a024d7a5b9c764b6060"
   },
   "D:\\The App\\src\\utils\\copyWord.js": {
     "mtime": 1786856743.7656906,
@@ -876,8 +876,8 @@
     "hash": "985dc88ff91debb96b26431b81f41c0e"
   },
   "D:\\The App\\src\\utils\\__tests__\\contentRegistry.silentUpdate.test.js": {
-    "mtime": 1785993256.761871,
-    "hash": "5028237339496633bacd64b3352b3a9a"
+    "mtime": 1786881959.7196937,
+    "hash": "0efc688f9c60827d8d15d95809c2c50e"
   },
   "D:\\The App\\src\\utils\\__tests__\\copyWord.test.js": {
     "mtime": 1786856743.8022223,

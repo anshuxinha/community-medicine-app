@@ -24,11 +24,9 @@ import { useRoute } from "@react-navigation/native";
 import { AppContext } from "../context/AppContext";
 import {
   CONTENT_SECTIONS,
-  getContentKey,
-  getContentSignature,
+  buildLibraryReadingParams,
   getItemStatus,
   getLeafContentRefsForItem,
-  getUpdatedSegmentsForItem,
 } from "../utils/contentRegistry";
 import { theme, useResponsive } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
@@ -82,17 +80,7 @@ const FreeLabel = () => {
   return <Badge style={styles.freeBadge}>FREE</Badge>;
 };
 
-const buildReadingParams = (item, section, status) => ({
-  id: item.id,
-  title: item.title,
-  content: item.content || "# No Content\n\nThis topic has no content yet.",
-  quizzes: item.quizzes,
-  section,
-  contentKey: getContentKey(section, item.id),
-  contentSignature: getContentSignature(item),
-  updatedSegments: getUpdatedSegmentsForItem(item),
-  showUpdateHighlights: status === "updated",
-});
+
 
 const LibraryScreen = (props) => {
   const { styles, colors } = useThemedStyles(createStyles);
@@ -212,8 +200,8 @@ const LibraryScreen = (props) => {
       if (item.subsections) {
         const subTopicsParams = {
           title: item.title,
-          items: item.subsections,
           section: activeSection,
+          parentId: item.id,
         };
 
         if (isFree) {
@@ -227,11 +215,9 @@ const LibraryScreen = (props) => {
         return;
       }
 
-      const readingParams = buildReadingParams(
-        item,
-        activeSection,
-        itemStatus,
-      );
+      const readingParams = buildLibraryReadingParams(item, activeSection, {
+        status: itemStatus,
+      });
       if (isFree) {
         navigation.navigate("Reading", readingParams);
       } else {

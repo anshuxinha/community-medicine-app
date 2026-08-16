@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useMemo } from "react";
 import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { Text, List, Divider, Badge, Menu } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -14,11 +14,10 @@ import {
   disableScreenCaptureProtection,
 } from "../utils/screenCaptureProtection";
 import {
-  getContentKey,
-  getContentSignature,
+  buildLibraryReadingParams,
+  getContentItemById,
   getItemStatus,
   getLeafContentRefsForItem,
-  getUpdatedSegmentsForItem,
 } from "../utils/contentRegistry";
 
 const TOPIC_ID_ICON_MAP = {
@@ -99,23 +98,24 @@ const StatusMark = ({ status }) => {
   );
 };
 
-const buildReadingParams = (item, section, status) => ({
-  id: item.id,
-  title: item.title,
-  content: item.content || "# No Content\n\nThis topic has no content yet.",
-  quizzes: item.quizzes,
-  section,
-  contentKey: getContentKey(section, item.id),
-  contentSignature: getContentSignature(item),
-  updatedSegments: getUpdatedSegmentsForItem(item),
-  showUpdateHighlights: status === "updated",
-});
-
 const SubTopicsScreen = ({ route, navigation }) => {
   const { styles, colors } = useThemedStyles(createStyles);
 
-  const { items, section = "theory" } = route.params;
-  const { readItemVersions, markAsUnread } = useContext(AppContext);
+  const {
+    items: paramItems,
+    section = "theory",
+    parentId,
+  } = route.params;
+  const { readItemVersions, markAsUnread, contentRegistryVersion } =
+    useContext(AppContext);
+
+  const items = useMemo(() => {
+    if (parentId != null && parentId !== undefined) {
+      const parent = getContentItemById(section, parentId);
+      if (Array.isArray(parent?.subsections)) return parent.subsections;
+    }
+    return Array.isArray(paramItems) ? paramItems : [];
+  }, [parentId, section, paramItems, contentRegistryVersion]);
   const [openMenuKey, setOpenMenuKey] = useState(null);
   const insets = useSafeAreaInsets();
 
@@ -136,8 +136,8 @@ const SubTopicsScreen = ({ route, navigation }) => {
         destination: "SubTopics",
         subTopicsParams: {
           title: item.title,
-          items: item.subsections,
           section,
+          parentId: item.id,
         },
       });
       return;
@@ -145,7 +145,9 @@ const SubTopicsScreen = ({ route, navigation }) => {
 
     navigation.navigate("PremiumGuard", {
       destination: "Reading",
-      readingParams: buildReadingParams(item, section, itemStatus),
+      readingParams: buildLibraryReadingParams(item, section, {
+        status: itemStatus,
+      }),
     });
   };
 

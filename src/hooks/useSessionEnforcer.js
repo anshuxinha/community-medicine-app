@@ -50,5 +50,5 @@ export const useSessionEnforcer = () => {
     return () => {
       unsubscribe();
     };
-  }, [user]);
+  }, [user?.uid, logout]);
 };

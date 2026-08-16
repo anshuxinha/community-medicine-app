@@ -31,14 +31,6 @@ const normalizeIllustration = (image = {}, basePath = "reading-illustrations") =
   // But for Firebase hosting, we expect URL to always be present
   const source = url ? null : image.source;
 
-  console.log("normalizeIllustration:", {
-    id: image.id,
-    fileName: image.fileName,
-    hasUrl: !!url,
-    hasSource: !!source,
-    constructedUrl: !image.url && image.fileName ? "yes" : "no",
-  });
-
   return {
     id: image.id || null,
     alt: image.alt || "Topic illustration",
@@ -67,27 +59,11 @@ const mergeIllustrations = (
   remote = [],
   basePath = "reading-illustrations",
 ) => {
-  console.log(
-    "mergeIllustrations: defaults count",
-    defaults.length,
-    "remote count",
-    remote.length,
-    "basePath",
-    basePath,
-  );
   const merged = new Map();
 
   defaults.forEach((image) => {
     const normalized = normalizeIllustration(image, basePath);
     const key = normalized.id || `${normalized.anchorText}:${normalized.alt}`;
-    console.log(
-      "default image key",
-      key,
-      "hasUrl",
-      !!normalized.url,
-      "hasSource",
-      !!normalized.source,
-    );
     merged.set(key, normalized);
   });
 
@@ -108,14 +84,7 @@ const mergeIllustrations = (
   });
 
   // Filter: keep images that have either a URL (Firebase) or source (local fallback)
-  const filtered = [...merged.values()].filter(
-    (image) => image.url || image.source,
-  );
-  console.log("mergeIllustrations: after filtering", filtered.length, "images");
-  filtered.forEach((img) =>
-    console.log(" -", img.id, "hasUrl", !!img.url, "hasSource", !!img.source),
-  );
-  return filtered;
+  return [...merged.values()].filter((image) => image.url || image.source);
 };
 
 const buildIllustrationDocId = (section, topicId) =>
@@ -127,10 +96,6 @@ export const getTopicIllustrations = async ({
   contentKey,
 }) => {
   if (!section || topicId === undefined || topicId === null) {
-    console.log("getTopicIllustrations: missing section or topicId", {
-      section,
-      topicId,
-    });
     return [];
   }
 
@@ -139,26 +104,11 @@ export const getTopicIllustrations = async ({
     ? "gems"
     : "reading-illustrations";
 
-  console.log(
-    "getTopicIllustrations: resolvedContentKey",
-    resolvedContentKey,
-    "basePath",
-    basePath,
-  );
-
   const defaultIllustrations =
     DEFAULT_TOPIC_ILLUSTRATION_MAP.get(resolvedContentKey) || [];
-  console.log(
-    "getTopicIllustrations: defaultIllustrations count",
-    defaultIllustrations.length,
-  );
   const docId = buildIllustrationDocId(section, topicId);
 
   if (remoteIllustrationCache.has(docId)) {
-    console.log(
-      "getTopicIllustrations: using cached remote illustrations for",
-      docId,
-    );
     return mergeIllustrations(
       defaultIllustrations,
       remoteIllustrationCache.get(docId),
@@ -203,12 +153,6 @@ export const getTopicIllustrations = async ({
       }
     }
 
-    console.log(
-      "getTopicIllustrations: finished fetching",
-      remoteImages.length,
-      "images for",
-      resolvedContentKey,
-    );
     remoteIllustrationCache.set(docId, remoteImages);
     return mergeIllustrations(defaultIllustrations, remoteImages, basePath);
   } catch (error) {

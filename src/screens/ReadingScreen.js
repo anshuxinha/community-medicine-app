@@ -8,6 +8,7 @@ import { useThemedStyles } from '../styles/useThemedStyles';
 import { useUnlockOrientationOnFocus } from "../hooks/useUnlockOrientationOnFocus";
 import { buildSpeechChunks, buildSpeechText } from "../utils/tts";
 import {
+  buildLibraryReadingParams,
   getContentKey,
   getContentSignature,
   getCurrentContentEntry,
@@ -33,19 +34,7 @@ const isFreeLibraryItem = (item) =>
 
 const buildReadingParamsFromEntry = (entry) => {
   const item = entry?.item || {};
-  const section = entry.section;
-  const status = "none";
-  return {
-    id: item.id,
-    title: item.title,
-    content: item.content || "# No Content\n\nThis topic has no content yet.",
-    quizzes: item.quizzes,
-    section,
-    contentKey: entry.key || getContentKey(section, item.id),
-    contentSignature: entry.signature || getContentSignature(item),
-    updatedSegments: getUpdatedSegmentsForItem(item),
-    showUpdateHighlights: status === "updated",
-  };
+  return buildLibraryReadingParams(item, entry.section);
 };
 
 const triggerCompleteHaptic = () => {
@@ -108,7 +97,10 @@ const ReadingScreen = ({ route, navigation }) => {
   const effectiveSection = currentEntry?.section || section || null;
   const effectiveId = currentItem?.id || id;
   const effectiveTitle = currentItem?.title || title;
-  const effectiveContent = currentItem?.content || content;
+  const effectiveContent =
+    currentItem?.content ||
+    content ||
+    "# No Content\n\nThis topic has no content yet.";
   const effectiveQuizzes = currentItem?.quizzes || quizzes;
   const effectiveContentKey =
     contentKey ||
@@ -273,15 +265,6 @@ const ReadingScreen = ({ route, navigation }) => {
         contentKey: effectiveContentKey,
       });
 
-      console.log(
-        "ReadingScreen: illustrations fetched for",
-        {
-          section: effectiveSection,
-          topicId: effectiveId,
-          contentKey: effectiveContentKey,
-        },
-        illustrations,
-      );
       if (isMounted) {
         setTopicIllustrations(illustrations);
       }
@@ -301,15 +284,22 @@ const ReadingScreen = ({ route, navigation }) => {
     };
   }, []);
 
-  const bookmarkPayload = {
-    ...route.params,
-    id: effectiveId,
-    title: effectiveTitle,
-    content: effectiveContent,
-    quizzes: effectiveQuizzes,
-    section: effectiveSection,
-    contentKey: effectiveContentKey,
-  };
+  const bookmarkPayload = isGem
+    ? {
+        id: effectiveId,
+        title: effectiveTitle,
+        content: effectiveContent,
+        quizzes: effectiveQuizzes,
+        section: effectiveSection,
+        contentKey: effectiveContentKey,
+        isGem: true,
+      }
+    : {
+        id: effectiveId,
+        title: effectiveTitle,
+        section: effectiveSection,
+        contentKey: effectiveContentKey,
+      };
 
   const bookmarked = isBookmarked(bookmarkPayload);
 

@@ -11,10 +11,9 @@ import {
   disableScreenCaptureProtection,
 } from "../utils/screenCaptureProtection";
 import {
+  buildLibraryReadingParams,
   getContentKey,
-  getContentSignature,
   getCurrentContentEntry,
-  getUpdatedSegmentsForItem,
   getItemStatus,
 } from "../utils/contentRegistry";
 
@@ -38,22 +37,29 @@ const BookmarksScreen = ({ navigation }) => {
       ? getItemStatus(currentItem, effectiveSection, readItemVersions)
       : "none";
 
-    const readingParams = {
-      ...bookmark,
-      id: currentItem.id,
-      title: currentItem.title,
-      content: currentItem.content,
-      quizzes: currentItem.quizzes,
-      section: effectiveSection,
-      contentKey:
-        bookmark.contentKey ||
-        (effectiveSection
-          ? getContentKey(effectiveSection, currentItem.id)
-          : null),
-      contentSignature: getContentSignature(currentItem),
-      updatedSegments: getUpdatedSegmentsForItem(currentItem),
-      showUpdateHighlights: itemStatus === "updated",
-    };
+    const readingParams = bookmark.isGem
+      ? {
+          id: currentItem.id,
+          title: currentItem.title,
+          content: currentItem.content,
+          section: effectiveSection,
+          contentKey:
+            bookmark.contentKey ||
+            (effectiveSection
+              ? getContentKey(effectiveSection, currentItem.id)
+              : null),
+          isGem: true,
+        }
+      : {
+          ...buildLibraryReadingParams(currentItem, effectiveSection, {
+            status: itemStatus,
+          }),
+          contentKey:
+            bookmark.contentKey ||
+            (effectiveSection
+              ? getContentKey(effectiveSection, currentItem.id)
+              : null),
+        };
 
     // Determine if the content is free
     const isFree = !bookmark.isGem && (currentItem.id === "1" || currentItem.title === "Man and Medicine");

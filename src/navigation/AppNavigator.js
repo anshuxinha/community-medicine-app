@@ -16,11 +16,11 @@ import { useAppTheme } from "../styles/ThemeContext";
 // Eager: first-paint surfaces only
 import DashboardScreen from "../screens/DashboardScreen";
 import LibraryScreen from "../screens/LibraryScreen";
-import VideosScreen from "../screens/VideosScreen";
 import LoginScreen from "../screens/LoginScreen";
 import PaywallScreen from "../screens/PaywallScreen";
 
 // Deferred screens: loaded on first navigation via getComponent
+const getVideosScreen = () => require("../screens/VideosScreen").default;
 const getUpdatesScreen = () => require("../screens/UpdatesScreen").default;
 const getPYQCreateScreen = () => require("../screens/PYQCreateScreen").default;
 const getReadingScreen = () => require("../screens/ReadingScreen").default;
@@ -90,7 +90,7 @@ const TabNavigator = () => {
     >
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen name="Library" component={LibraryScreen} />
-      <Tab.Screen name="Videos" component={VideosScreen} />
+      <Tab.Screen name="Videos" getComponent={getVideosScreen} />
       <Tab.Screen
         name="Updates"
         getComponent={getUpdatesScreen}

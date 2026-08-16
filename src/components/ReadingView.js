@@ -17,6 +17,7 @@ import {
   KeyboardAvoidingView,
   LayoutAnimation,
   UIManager,
+  InteractionManager,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -588,14 +589,7 @@ const buildIllustrationBlock = (illustration) => ({
 });
 
 const mergeBlocksWithIllustrations = (blocks, illustrations = []) => {
-  console.log(
-    "mergeBlocksWithIllustrations: illustrations count",
-    illustrations.length,
-  );
   if (!Array.isArray(illustrations) || illustrations.length === 0) {
-    console.log(
-      "mergeBlocksWithIllustrations: no illustrations, returning blocks",
-    );
     return blocks;
   }
 
@@ -608,24 +602,14 @@ const mergeBlocksWithIllustrations = (blocks, illustrations = []) => {
     const normalizedPlacement = illustration.placement || "after";
     const normalizedAnchor = normalizeAnchorText(illustration.anchorText || "");
     const illustrationBlock = buildIllustrationBlock(illustration);
-    console.log("mergeBlocksWithIllustrations: processing illustration", {
-      normalizedPlacement,
-      normalizedAnchor,
-      illustrationId: illustration.id,
-      fileName: illustration.fileName,
-    });
 
     if (normalizedPlacement === "top") {
       topBlocks.push(illustrationBlock);
-      console.log("mergeBlocksWithIllustrations: added to topBlocks");
       return;
     }
 
     if (normalizedPlacement === "bottom" || !normalizedAnchor) {
       bottomBlocks.push(illustrationBlock);
-      console.log(
-        "mergeBlocksWithIllustrations: added to bottomBlocks (no anchor or bottom placement)",
-      );
       return;
     }
 
@@ -633,11 +617,6 @@ const mergeBlocksWithIllustrations = (blocks, illustrations = []) => {
     const bucket = targetMap.get(normalizedAnchor) || [];
     bucket.push(illustrationBlock);
     targetMap.set(normalizedAnchor, bucket);
-    console.log("mergeBlocksWithIllustrations: added to map", {
-      targetMap: normalizedPlacement === "before" ? "before" : "after",
-      key: normalizedAnchor,
-      bucketSize: bucket.length,
-    });
   });
 
   const mergedBlocks = [...topBlocks];
@@ -663,71 +642,32 @@ const mergeBlocksWithIllustrations = (blocks, illustrations = []) => {
   };
 
   blocks.forEach((block) => {
-    const blockAnchor = getBlockAnchorText(block);
-    console.log("mergeBlocksWithIllustrations: checking block", {
-      blockType: block.type,
-      blockAnchor,
-      blockText:
-        block.type === "h1" || block.type === "h2" || block.type === "body"
-          ? block.text?.substring(0, 50)
-          : "",
-    });
-
-    // Check for before placement matches
-    let matchedBefore = false;
     for (const [anchor, illustrationBlocks] of beforeMap.entries()) {
       if (doesAnchorMatchBlock(anchor, block)) {
         mergedBlocks.push(...illustrationBlocks);
         beforeMap.delete(anchor);
-        console.log(
-          "mergeBlocksWithIllustrations: inserted beforeMap blocks for anchor",
-          anchor,
-        );
-        matchedBefore = true;
         break;
       }
     }
 
     mergedBlocks.push(block);
 
-    // Check for after placement matches
-    let matchedAfter = false;
     for (const [anchor, illustrationBlocks] of afterMap.entries()) {
       if (doesAnchorMatchBlock(anchor, block)) {
         mergedBlocks.push(...illustrationBlocks);
         afterMap.delete(anchor);
-        console.log(
-          "mergeBlocksWithIllustrations: inserted afterMap blocks for anchor",
-          anchor,
-        );
-        matchedAfter = true;
         break;
       }
     }
   });
 
-  // Add any remaining unmatched illustrations to bottom
   beforeMap.forEach((value) => {
     unmatchedBottomBlocks.push(...value);
-    console.log(
-      "mergeBlocksWithIllustrations: flushing unmatched beforeMap blocks",
-      value.length,
-    );
   });
   afterMap.forEach((value) => {
     unmatchedBottomBlocks.push(...value);
-    console.log(
-      "mergeBlocksWithIllustrations: flushing unmatched afterMap blocks",
-      value.length,
-    );
   });
 
-  console.log(
-    "mergeBlocksWithIllustrations: mergedBlocks count",
-    mergedBlocks.length,
-    "unmatchedBottomBlocks count",
-    unmatchedBottomBlocks.length,
-  );
   return [...mergedBlocks, ...unmatchedBottomBlocks];
 };
 
@@ -801,6 +741,9 @@ const getRotatedAspectRatio = (aspectRatio, rotation = 0) => {
   return normalizedTurns === 1 ? 1 / aspectRatio : aspectRatio;
 };
 
+const INITIAL_BLOCK_COUNT = 40;
+const BLOCK_CHUNK = 40;
+
 const ReadingView = ({
   content,
   title,
@@ -827,7 +770,6 @@ const ReadingView = ({
   contentKey,
 }) => {
   const { styles, colors } = useThemedStyles(createStyles);
-  console.log("ReadingView: illustrations prop", illustrations);
   const insets = useSafeAreaInsets();
   const blocks = useMemo(() => {
     return parseMarkdown(content || "", { isGem });
@@ -857,12 +799,15 @@ const ReadingView = ({
   const [isHighlightMode, setIsHighlightMode] = useState(false);
   const [noteModalVisible, setNoteModalVisible] = useState(false);
   const [wordCopyHintVisible, setWordCopyHintVisible] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(INITIAL_BLOCK_COUNT);
   const hasReachedEndRef = useRef(false);
   const viewportHeightRef = useRef(0);
   const contentHeightRef = useRef(0);
   const blockYMapRef = useRef({});
   const scrollViewRef = useRef(null);
   const didScrollToSearchRef = useRef(false);
+  const lastProgressEmitRef = useRef(0);
+  const lastProgressPctRef = useRef(-1);
 
   const highlightSet = useMemo(
     () =>
@@ -881,7 +826,27 @@ const ReadingView = ({
     contentHeightRef.current = 0;
     blockYMapRef.current = {};
     didScrollToSearchRef.current = false;
+    lastProgressEmitRef.current = 0;
+    lastProgressPctRef.current = -1;
+    setVisibleCount(searchTerms ? Number.MAX_SAFE_INTEGER : INITIAL_BLOCK_COUNT);
   }, [content, title, searchTerms]);
+
+  useEffect(() => {
+    if (searchTerms) return undefined;
+    if (visibleCount >= mergedBlocks.length) return undefined;
+    const handle = InteractionManager.runAfterInteractions(() => {
+      setVisibleCount((current) =>
+        Math.min(current + BLOCK_CHUNK, mergedBlocks.length),
+      );
+    });
+    return () => handle.cancel();
+  }, [visibleCount, mergedBlocks.length, searchTerms]);
+
+  const visibleBlocks = useMemo(
+    () => mergedBlocks.slice(0, visibleCount),
+    [mergedBlocks, visibleCount],
+  );
+  const allBlocksVisible = visibleCount >= mergedBlocks.length;
 
   const rotateImage = (rotationKey, delta) => {
     if (!rotationKey) {
@@ -1042,7 +1007,7 @@ const ReadingView = ({
   }, [annotations]);
 
   const maybeMarkAsReachedEnd = (progress, viewportHeight, contentHeight) => {
-    if (hasReachedEndRef.current) {
+    if (hasReachedEndRef.current || !allBlocksVisible) {
       return;
     }
 
@@ -1070,7 +1035,16 @@ const ReadingView = ({
 
     viewportHeightRef.current = viewportHeight;
     contentHeightRef.current = contentHeight;
-    setScrollProgress(progress);
+    const pct = Math.round(progress * 100);
+    const now = Date.now();
+    if (
+      pct !== lastProgressPctRef.current &&
+      (now - lastProgressEmitRef.current >= 80 || pct === 0 || pct === 100)
+    ) {
+      lastProgressEmitRef.current = now;
+      lastProgressPctRef.current = pct;
+      setScrollProgress(progress);
+    }
     maybeMarkAsReachedEnd(progress, viewportHeight, contentHeight);
   };
 
@@ -1804,6 +1778,8 @@ const ReadingView = ({
     </TouchableOpacity>
   );
 
+  const needsBlockLayout = Boolean(normalizedSearchTerm) || isAnnotationMode;
+
   const renderBlockWithAnnotations = (block, index) => {
     const blockAnnotations = annotationsByBlock[index] || [];
     const tappable = isAnnotationMode && block.type !== "spacing";
@@ -1811,13 +1787,16 @@ const ReadingView = ({
     return (
       <View
         key={`block-wrapper-${index}`}
-        onLayout={(e) => {
-          // Y relative to ScrollView content (wrapper is a direct content child).
-          blockYMapRef.current[index] = e.nativeEvent.layout.y;
-          if (index === firstSearchBlockIndex) {
-            tryScrollToSearchMatch();
-          }
-        }}
+        onLayout={
+          needsBlockLayout
+            ? (e) => {
+                blockYMapRef.current[index] = e.nativeEvent.layout.y;
+                if (index === firstSearchBlockIndex) {
+                  tryScrollToSearchMatch();
+                }
+              }
+            : undefined
+        }
       >
         <Pressable
           disabled={!tappable}
@@ -1930,7 +1909,7 @@ const ReadingView = ({
             </Text>
           </View>
         ) : null}
-        {mergedBlocks.map(renderBlockWithAnnotations)}
+        {visibleBlocks.map(renderBlockWithAnnotations)}
       </ScrollView>
 
       {/* ── Bottom Toolbar ── */}

@@ -235,9 +235,43 @@ hydrateContentRegistry();
 export const getReadVersionForItem = (readItemVersions, section, item) =>
   readItemVersions?.[getContentKey(section, item.id)] || null;
 
+const getCachedSignatureForItem = (section, item) => {
+  if (!item) return null;
+  const key = getContentKey(section, item.id);
+  const entry = CONTENT_ENTRY_BY_KEY.get(key);
+  if (entry?.signature) return entry.signature;
+  return getContentSignature(item);
+};
+
 export const isItemReadCurrent = (readItemVersions, section, item) =>
   getReadVersionForItem(readItemVersions, section, item) ===
-  getContentSignature(item);
+  getCachedSignatureForItem(section, item);
+
+export const getContentItemById = (section, id) => {
+  const items = CONTENT_SECTIONS[section];
+  if (!Array.isArray(items)) return null;
+  return findItemById(items, id);
+};
+
+export const buildLibraryReadingParams = (
+  item,
+  section,
+  { status = "none", searchTerms } = {},
+) => {
+  const contentKey = getContentKey(section, item.id);
+  const entry = CONTENT_ENTRY_BY_KEY.get(contentKey);
+  const params = {
+    id: item.id,
+    title: item.title,
+    section,
+    contentKey,
+    contentSignature: entry?.signature || getContentSignature(item),
+    updatedSegments: getUpdatedSegmentsForItem(item),
+    showUpdateHighlights: status === "updated",
+  };
+  if (searchTerms) params.searchTerms = searchTerms;
+  return params;
+};
 
 /**
  * Whether a leaf counts as completed for progress / checkmarks.
@@ -256,6 +290,8 @@ export const isEntryReadForProgress = (entry, readItemVersions = {}) => {
 export const isItemReadForProgress = (readItemVersions, section, item) => {
   if (!item) return false;
   const key = getContentKey(section, item.id);
+  const entry = CONTENT_ENTRY_BY_KEY.get(key);
+  if (entry) return isEntryReadForProgress(entry, readItemVersions);
   const stored = readItemVersions?.[key];
   if (typeof stored !== "string" || !stored) return false;
   if (stored === getContentSignature(item)) return true;
