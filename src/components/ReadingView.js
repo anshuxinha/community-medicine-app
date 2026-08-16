@@ -13,6 +13,7 @@ import {
   Platform,
   ToastAndroid,
   Alert,
+  Clipboard,
   KeyboardAvoidingView,
   LayoutAnimation,
   UIManager,
@@ -23,6 +24,13 @@ import { useThemedStyles } from '../styles/useThemedStyles';
 import { normalizeUpdatedSnippet } from "../utils/contentRegistry";
 import { ALL_ORIENTATIONS } from "../constants/orientations";
 import ThemeModePill from "./ThemeModePill";
+import {
+  copiedWordToastMessage,
+  extractCopyWord,
+  hasSeenWordCopyHint,
+  markWordCopyHintSeen,
+  splitCopyablePieces,
+} from "../utils/copyWord";
 import {
   exerciseHeaderTitle,
   hasExerciseMarkup,
@@ -849,6 +857,9 @@ const ReadingView = ({
   const [showHighlightsLocal, setShowHighlightsLocal] = useState(showUpdateHighlights);
   const [isHighlightMode, setIsHighlightMode] = useState(false);
   const [noteModalVisible, setNoteModalVisible] = useState(false);
+  const [copyToast, setCopyToast] = useState(null);
+  const [wordCopyHintVisible, setWordCopyHintVisible] = useState(false);
+  const copyToastTimerRef = useRef(null);
   const hasReachedEndRef = useRef(false);
   const viewportHeightRef = useRef(0);
   const contentHeightRef = useRef(0);
@@ -948,6 +959,58 @@ const ReadingView = ({
     } else {
       Alert.alert("", message);
     }
+  }, []);
+
+  const showCopyToast = useCallback((word) => {
+    if (copyToastTimerRef.current) {
+      clearTimeout(copyToastTimerRef.current);
+    }
+    setCopyToast(copiedWordToastMessage(word));
+    copyToastTimerRef.current = setTimeout(() => {
+      setCopyToast(null);
+      copyToastTimerRef.current = null;
+    }, 1800);
+  }, []);
+
+  const handleCopyWord = useCallback(
+    (rawToken) => {
+      const word = extractCopyWord(rawToken);
+      if (!word) return;
+      try {
+        Clipboard.setString(word);
+        showCopyToast(word);
+      } catch (error) {
+        console.warn("ReadingView: copy word failed", error?.message);
+      }
+    },
+    [showCopyToast],
+  );
+
+  useEffect(() => {
+    return () => {
+      if (copyToastTimerRef.current) {
+        clearTimeout(copyToastTimerRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      const seen = await hasSeenWordCopyHint();
+      if (!cancelled && !seen) {
+        setWordCopyHintVisible(true);
+      }
+    }, 500);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, []);
+
+  const dismissWordCopyHint = useCallback(() => {
+    setWordCopyHintVisible(false);
+    markWordCopyHintSeen();
   }, []);
 
   const toggleHighlightMode = useCallback(() => {
@@ -1117,6 +1180,31 @@ const ReadingView = ({
     }, 60);
   }, [firstSearchBlockIndex]);
 
+  const renderCopyableSegment = (text, extraStyle, keyPrefix) => {
+    const pieces = splitCopyablePieces(text);
+    if (pieces.length === 0) return null;
+    return pieces.map((piece, i) => {
+      if (!piece.copyable) {
+        return piece.text;
+      }
+      return (
+        <Text
+          key={`${keyPrefix}-${i}`}
+          style={extraStyle}
+          selectable={false}
+          suppressHighlighting
+          onPress={
+            isHighlightMode || isAnnotationMode ? undefined : () => {}
+          }
+          onLongPress={() => handleCopyWord(piece.text)}
+          delayLongPress={400}
+        >
+          {piece.text}
+        </Text>
+      );
+    });
+  };
+
   const renderFormattedText = (text, baseStyle = null, highlightSearch = true) => {
     if (!text) return null;
     const parts = String(text).split(/\*\*/);
@@ -1124,21 +1212,23 @@ const ReadingView = ({
 
     const activeSearchTerm = highlightSearch ? normalizedSearchTerm : "";
 
-    // Optimization: if no bolding and no search term, return plain text or simple wrapper
+    // Optimization: if no bolding and no search term, wrap words for copy
     if (parts.length === 1 && !activeSearchTerm) {
+      const words = renderCopyableSegment(text, undefined, "t");
       if (baseStyle) {
         return (
           <Text style={baseStyle} selectable={false}>
-            {text}
+            {words}
           </Text>
         );
       }
-      return text;
+      return words;
     }
 
     parts.forEach((part, idx) => {
       if (!part) return;
       const isBold = idx % 2 === 1;
+      const boldStyle = isBold ? { fontWeight: "bold" } : undefined;
 
       if (activeSearchTerm) {
         const lowerPart = part.toLowerCase();
@@ -1150,8 +1240,8 @@ const ReadingView = ({
           if (sTermIdx > lastIdx) {
             const subText = part.slice(lastIdx, sTermIdx);
             elements.push(
-              <Text key={`${idx}-${subIndex++}`} style={isBold ? { fontWeight: "bold" } : undefined}>
-                {subText}
+              <Text key={`${idx}-${subIndex++}`} style={boldStyle}>
+                {renderCopyableSegment(subText, undefined, `${idx}-p${subIndex}`)}
               </Text>
             );
           }
@@ -1164,7 +1254,7 @@ const ReadingView = ({
                 isBold && { fontWeight: "bold" }
               ]}
             >
-              {matchText}
+              {renderCopyableSegment(matchText, undefined, `${idx}-m${subIndex}`)}
             </Text>
           );
           lastIdx = sTermIdx + activeSearchTerm.length;
@@ -1174,25 +1264,17 @@ const ReadingView = ({
         if (lastIdx < part.length) {
           const subText = part.slice(lastIdx);
           elements.push(
-            <Text key={`${idx}-${subIndex++}`} style={isBold ? { fontWeight: "bold" } : undefined}>
-              {subText}
+            <Text key={`${idx}-${subIndex++}`} style={boldStyle}>
+              {renderCopyableSegment(subText, undefined, `${idx}-t${subIndex}`)}
             </Text>
           );
         }
       } else {
-        if (isBold) {
-          elements.push(
-            <Text key={idx} style={{ fontWeight: "bold" }}>
-              {part}
-            </Text>
-          );
-        } else {
-          elements.push(
-            <Text key={idx}>
-              {part}
-            </Text>
-          );
-        }
+        elements.push(
+          <Text key={idx} style={boldStyle}>
+            {renderCopyableSegment(part, undefined, `b${idx}`)}
+          </Text>
+        );
       }
     });
 
@@ -1563,16 +1645,12 @@ const ReadingView = ({
             </View>
             {block.caption || block.purpose ? (
               <View style={styles.illustrationTextBlock}>
-                {block.caption ? (
-                  <Text style={styles.illustrationCaption} selectable={false}>
-                    {block.caption}
-                  </Text>
-                ) : null}
-                {block.purpose ? (
-                  <Text style={styles.illustrationPurpose} selectable={false}>
-                    {block.purpose}
-                  </Text>
-                ) : null}
+                {block.caption
+                  ? renderFormattedText(block.caption, styles.illustrationCaption)
+                  : null}
+                {block.purpose
+                  ? renderFormattedText(block.purpose, styles.illustrationPurpose)
+                  : null}
               </View>
             ) : null}
           </View>
@@ -1692,9 +1770,9 @@ const ReadingView = ({
             </TouchableOpacity>
             {expanded ? (
               <View style={styles.exerciseBody}>
-                {showFullStem ? (
-                  <Text style={styles.exerciseStem}>{block.question}</Text>
-                ) : null}
+                {showFullStem
+                  ? renderFormattedText(block.question, styles.exerciseStem)
+                  : null}
                 <Text style={styles.exerciseSolutionLabel}>Solution</Text>
                 {(block.answerBlocks || []).map((ansBlock, ansIdx) =>
                   renderBlock(ansBlock, `${index}-ans-${ansIdx}`),
@@ -1846,9 +1924,7 @@ const ReadingView = ({
           <Text style={styles.chapterLabel} selectable={false}>
             {section ? section.toUpperCase() : ""}
           </Text>
-          <Text style={styles.chapterTitle} selectable={false}>
-            {title || ""}
-          </Text>
+          {renderFormattedText(title || "", styles.chapterTitle, false)}
           <View style={styles.chapterDivider} />
         </View>
 
@@ -2112,6 +2188,57 @@ const ReadingView = ({
           </Text>
         </View>
       </Modal>
+
+      <Modal
+        visible={wordCopyHintVisible}
+        transparent
+        animationType="fade"
+        supportedOrientations={ALL_ORIENTATIONS}
+        onRequestClose={dismissWordCopyHint}
+      >
+        <Pressable style={styles.noteModalBackdrop} onPress={dismissWordCopyHint}>
+          <Pressable style={styles.noteModalContent} onPress={() => {}}>
+            <View style={styles.wordCopyHintIconWrap}>
+              <MaterialIcons name="content-copy" size={26} color={colors.secondary} />
+            </View>
+            <Text style={styles.noteModalTitle} selectable={false}>
+              Copy a word
+            </Text>
+            <Text style={styles.wordCopyHintBody} selectable={false}>
+              Long press any word on this page to copy it. You will see a short
+              confirmation when it is copied.
+            </Text>
+            <View style={styles.noteModalActions}>
+              <TouchableOpacity
+                style={styles.wordCopyHintButton}
+                onPress={dismissWordCopyHint}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.wordCopyHintButtonText} selectable={false}>
+                  Got it
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+      {copyToast ? (
+        <View
+          pointerEvents="none"
+          style={[
+            styles.copyToastWrap,
+            { bottom: 72 + (insets.bottom || 8) },
+          ]}
+        >
+          <View style={styles.copyToast}>
+            <MaterialIcons name="content-copy" size={16} color={colors.surfacePrimary} />
+            <Text style={styles.copyToastText} selectable={false}>
+              {copyToast}
+            </Text>
+          </View>
+        </View>
+      ) : null}
     </View>
   );
 };
@@ -2818,6 +2945,54 @@ const createStyles = (colors) => StyleSheet.create({
     justifyContent: "flex-end",
     gap: 10,
     marginTop: 16,
+  },
+  wordCopyHintIconWrap: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.primarySoft || colors.surfaceTertiary,
+    marginBottom: 12,
+  },
+  wordCopyHintBody: {
+    fontSize: 15,
+    lineHeight: 22,
+    color: colors.textPrimary,
+  },
+  wordCopyHintButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: colors.secondary,
+  },
+  wordCopyHintButtonText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: colors.onPrimary || colors.surfacePrimary,
+  },
+  copyToastWrap: {
+    position: "absolute",
+    left: 20,
+    right: 20,
+    bottom: 88,
+    alignItems: "center",
+    zIndex: 50,
+  },
+  copyToast: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    maxWidth: "100%",
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 24,
+    backgroundColor: colors.textTitle,
+  },
+  copyToastText: {
+    color: colors.surfacePrimary,
+    fontSize: 14,
+    fontWeight: "600",
   },
 
   // ── Fullscreen Image Viewer ──

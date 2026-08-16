@@ -544,8 +544,8 @@
     "hash": "ee80de9ca72397fd02e0fb31ed09698c"
   },
   "D:\\The App\\src\\components\\ReadingView.js": {
-    "mtime": 1786730976.3599532,
-    "hash": "15e1b03c4da4934361f9bf5465b3d27f"
+    "mtime": 1786854255.995178,
+    "hash": "657fdb778cae70cc00d5baa74ea774af"
   },
   "D:\\The App\\src\\components\\ReviewFeedbackModal.js": {
     "mtime": 1785328661.2858431,
@@ -819,6 +819,10 @@
     "mtime": 1785993204.0143225,
     "hash": "7c1d925de447ccb1c63354fd3397b4de"
   },
+  "D:\\The App\\src\\utils\\copyWord.js": {
+    "mtime": 1786853832.66369,
+    "hash": "90f238e2694b09fa97f381fd3383f7c9"
+  },
   "D:\\The App\\src\\utils\\deviceUtils.js": {
     "mtime": 1776915497.5873566,
     "hash": "3173bec75bf9e2ad87bedbd9cf0360eb"
@@ -874,6 +878,10 @@
   "D:\\The App\\src\\utils\\__tests__\\contentRegistry.silentUpdate.test.js": {
     "mtime": 1785993256.761871,
     "hash": "5028237339496633bacd64b3352b3a9a"
+  },
+  "D:\\The App\\src\\utils\\__tests__\\copyWord.test.js": {
+    "mtime": 1786853832.6647947,
+    "hash": "360f3d3d0684a2eb8f456cf0862a15ca"
   },
   "D:\\The App\\src\\utils\\__tests__\\learningProgress.test.js": {
     "mtime": 1786730641.1171691,
