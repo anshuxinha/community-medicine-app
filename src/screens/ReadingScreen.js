@@ -1,12 +1,10 @@
 import React, { useContext, useMemo, useRef, useEffect, useState, useCallback } from "react";
 import { View, StyleSheet, Platform, Vibration } from "react-native";
-import * as Speech from "expo-speech";
 import ReadingView from "../components/ReadingView";
 import ChapterCompleteSheet from "../components/ChapterCompleteSheet";
 import { AppContext } from "../context/AppContext";
 import { useThemedStyles } from '../styles/useThemedStyles';
 import { useUnlockOrientationOnFocus } from "../hooks/useUnlockOrientationOnFocus";
-import { buildSpeechChunks, buildSpeechText } from "../utils/tts";
 import {
   buildLibraryReadingParams,
   getContentKey,
@@ -80,9 +78,6 @@ const ReadingScreen = ({ route, navigation }) => {
     readingProgress,
     currentStreak,
   } = useContext(AppContext);
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const speechSessionRef = useRef(0);
-  const speechQueueRef = useRef([]);
   const openedUpdateRef = useRef(false);
   const [annotations, setAnnotations] = useState([]);
   const [userHighlights, setUserHighlights] = useState({});
@@ -197,51 +192,6 @@ const ReadingScreen = ({ route, navigation }) => {
       });
     },
     [user?.uid, effectiveContentKey],
-  );
-
-  // ── TTS ──
-  const stopSpeech = () => {
-    speechSessionRef.current += 1;
-    speechQueueRef.current = [];
-    Speech.stop();
-    setIsSpeaking(false);
-  };
-
-  const speakNextChunk = (sessionId) => {
-    const [nextChunk, ...remainingChunks] = speechQueueRef.current;
-
-    if (!nextChunk) {
-      if (speechSessionRef.current === sessionId) {
-        setIsSpeaking(false);
-      }
-      return;
-    }
-
-    speechQueueRef.current = remainingChunks;
-    Speech.speak(nextChunk, {
-      onDone: () => {
-        if (speechSessionRef.current === sessionId) {
-          speakNextChunk(sessionId);
-        }
-      },
-      onError: () => {
-        if (speechSessionRef.current === sessionId) {
-          stopSpeech();
-        }
-      },
-      onStopped: () => {
-        if (speechSessionRef.current === sessionId) {
-          setIsSpeaking(false);
-        }
-      },
-    });
-  };
-
-  useEffect(
-    () => () => {
-      stopSpeech();
-    },
-    [],
   );
 
   useEffect(() => {
@@ -402,29 +352,6 @@ const ReadingScreen = ({ route, navigation }) => {
     });
   }, [celebration, navigation]);
 
-  const handleSpeak = () => {
-    if (isSpeaking) {
-      stopSpeech();
-      return;
-    }
-
-    const speechText = buildSpeechText({
-      title: effectiveTitle,
-      content: effectiveContent,
-    });
-    const speechChunks = buildSpeechChunks(speechText);
-    if (speechChunks.length === 0) {
-      return;
-    }
-
-    Speech.stop();
-    const sessionId = speechSessionRef.current + 1;
-    speechSessionRef.current = sessionId;
-    speechQueueRef.current = speechChunks;
-    setIsSpeaking(true);
-    speakNextChunk(sessionId);
-  };
-
   const headerTitle = isGem ? (effectiveTitle || title) : (effectiveId ? `Chapter ${effectiveId}` : effectiveSection || "");
 
   return (
@@ -437,8 +364,6 @@ const ReadingScreen = ({ route, navigation }) => {
         isGem={isGem}
         isBookmarked={bookmarked}
         onToggleBookmark={() => toggleBookmark(bookmarkPayload)}
-        isSpeaking={isSpeaking}
-        onToggleSpeak={handleSpeak}
         highlightedSegments={effectiveUpdatedSegments}
         showUpdateHighlights={sessionHighlightUpdates}
         illustrations={topicIllustrations}

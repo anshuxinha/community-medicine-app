@@ -15,6 +15,7 @@ import {
   Alert,
   Clipboard,
   KeyboardAvoidingView,
+  Keyboard,
   LayoutAnimation,
   UIManager,
   InteractionManager,
@@ -37,6 +38,10 @@ import {
   isExerciseMarkupLine,
   splitExerciseSegments,
 } from "../utils/libraryExerciseMarkup";
+import {
+  collectChapterSearchMatches,
+  normalizeSearchQuery,
+} from "../utils/chapterSearch";
 
 if (
   Platform.OS === "android" &&
@@ -751,8 +756,6 @@ const ReadingView = ({
   topicId,
   isBookmarked,
   onToggleBookmark,
-  isSpeaking,
-  onToggleSpeak,
   highlightedSegments = [],
   showUpdateHighlights = false,
   isGem = false,
@@ -808,6 +811,12 @@ const ReadingView = ({
   const didScrollToSearchRef = useRef(false);
   const lastProgressEmitRef = useRef(0);
   const lastProgressPctRef = useRef(-1);
+  const findInputRef = useRef(null);
+  const [findOpen, setFindOpen] = useState(() =>
+    Boolean(String(searchTerms || "").trim()),
+  );
+  const [findQuery, setFindQuery] = useState(() => String(searchTerms || ""));
+  const [activeMatchIndex, setActiveMatchIndex] = useState(0);
 
   const highlightSet = useMemo(
     () =>
@@ -828,11 +837,21 @@ const ReadingView = ({
     didScrollToSearchRef.current = false;
     lastProgressEmitRef.current = 0;
     lastProgressPctRef.current = -1;
-    setVisibleCount(searchTerms ? Number.MAX_SAFE_INTEGER : INITIAL_BLOCK_COUNT);
+    const incoming = String(searchTerms || "");
+    setFindQuery(incoming);
+    setFindOpen(Boolean(incoming.trim()));
+    setActiveMatchIndex(0);
+    setVisibleCount(incoming.trim() ? Number.MAX_SAFE_INTEGER : INITIAL_BLOCK_COUNT);
   }, [content, title, searchTerms]);
 
   useEffect(() => {
-    if (searchTerms) return undefined;
+    if (findQuery.trim()) {
+      setVisibleCount(Number.MAX_SAFE_INTEGER);
+    }
+  }, [findQuery]);
+
+  useEffect(() => {
+    if (findQuery.trim()) return undefined;
     if (visibleCount >= mergedBlocks.length) return undefined;
     const handle = InteractionManager.runAfterInteractions(() => {
       setVisibleCount((current) =>
@@ -840,7 +859,7 @@ const ReadingView = ({
       );
     });
     return () => handle.cancel();
-  }, [visibleCount, mergedBlocks.length, searchTerms]);
+  }, [visibleCount, mergedBlocks.length, findQuery]);
 
   const visibleBlocks = useMemo(
     () => mergedBlocks.slice(0, visibleCount),
@@ -1068,65 +1087,91 @@ const ReadingView = ({
   };
 
   // -- Search term helpers ------------------------------------------------
-  const normalizedSearchTerm = searchTerms ? searchTerms.trim().toLowerCase() : "";
+  const normalizedSearchTerm = normalizeSearchQuery(findQuery);
 
   const blockContainsSearch = (text) => {
     if (!normalizedSearchTerm || !text) return false;
     return text.toLowerCase().includes(normalizedSearchTerm);
   };
 
-  const blockMatchesSearch = useCallback(
-    (block) => {
-      if (!normalizedSearchTerm || !block) return false;
-      if (block.text && blockContainsSearch(block.text)) return true;
-      if (
-        Array.isArray(block.items) &&
-        block.items.some((item) => blockContainsSearch(item))
-      ) {
-        return true;
-      }
-      if (block.type === "table") {
-        const headers = block.headers || [];
-        const rows = block.rows || [];
-        if (headers.some((h) => blockContainsSearch(String(h || "")))) {
-          return true;
-        }
-        for (const row of rows) {
-          if (
-            Array.isArray(row) &&
-            row.some((cell) => blockContainsSearch(String(cell || "")))
-          ) {
-            return true;
-          }
-        }
-      }
-      if (block.caption && blockContainsSearch(block.caption)) return true;
-      if (block.purpose && blockContainsSearch(block.purpose)) return true;
-      return false;
-    },
-    [normalizedSearchTerm],
+  const searchMatches = useMemo(
+    () => collectChapterSearchMatches(mergedBlocks, findQuery),
+    [mergedBlocks, findQuery],
   );
+  const activeMatchBlockIndex =
+    searchMatches[activeMatchIndex]?.blockIndex ?? -1;
 
-  const firstSearchBlockIndex = useMemo(() => {
-    if (!normalizedSearchTerm) return -1;
-    for (let i = 0; i < mergedBlocks.length; i += 1) {
-      if (blockMatchesSearch(mergedBlocks[i])) return i;
-    }
-    return -1;
-  }, [mergedBlocks, normalizedSearchTerm, blockMatchesSearch]);
+  const scrollToMatch = useCallback(
+    (matchIndex, { delayed = false } = {}) => {
+      const match = searchMatches[matchIndex];
+      if (!match) return false;
+      const y = blockYMapRef.current[match.blockIndex];
+      if (typeof y !== "number" || !scrollViewRef.current) return false;
+      const targetY = Math.max(0, y - 24);
+      const run = () => {
+        scrollViewRef.current?.scrollTo({ y: targetY, animated: true });
+      };
+      if (delayed) {
+        setTimeout(run, 60);
+      } else {
+        run();
+      }
+      return true;
+    },
+    [searchMatches],
+  );
 
   const tryScrollToSearchMatch = useCallback(() => {
     if (didScrollToSearchRef.current) return;
-    if (firstSearchBlockIndex < 0) return;
-    const y = blockYMapRef.current[firstSearchBlockIndex];
-    if (typeof y !== "number" || !scrollViewRef.current) return;
+    if (searchMatches.length === 0) return;
+    if (!scrollToMatch(activeMatchIndex, { delayed: true })) return;
     didScrollToSearchRef.current = true;
-    const targetY = Math.max(0, y - 24);
-    // Layout can still settle one frame after onLayout; small delay keeps the match in view.
-    setTimeout(() => {
-      scrollViewRef.current?.scrollTo({ y: targetY, animated: true });
+  }, [searchMatches, activeMatchIndex, scrollToMatch]);
+
+  const handleFindQueryChange = useCallback((text) => {
+    setFindQuery(text);
+    setActiveMatchIndex(0);
+    didScrollToSearchRef.current = false;
+  }, []);
+
+  const closeFind = useCallback(() => {
+    Keyboard.dismiss();
+    setFindOpen(false);
+    setFindQuery("");
+    setActiveMatchIndex(0);
+    didScrollToSearchRef.current = false;
+  }, []);
+
+  const toggleFind = useCallback(() => {
+    if (findOpen) {
+      closeFind();
+      return;
+    }
+    setFindOpen(true);
+    setTimeout(() => findInputRef.current?.focus(), 50);
+  }, [findOpen, closeFind]);
+
+  const goToMatch = useCallback(
+    (direction) => {
+      if (searchMatches.length === 0) return;
+      Keyboard.dismiss();
+      const next =
+        (activeMatchIndex + direction + searchMatches.length) %
+        searchMatches.length;
+      setActiveMatchIndex(next);
+      scrollToMatch(next);
+    },
+    [searchMatches, activeMatchIndex, scrollToMatch],
+  );
+
+  useEffect(() => {
+    if (!normalizedSearchTerm || searchMatches.length === 0) return undefined;
+    didScrollToSearchRef.current = false;
+    const timer = setTimeout(() => {
+      tryScrollToSearchMatch();
     }, 60);
-  }, [firstSearchBlockIndex]);
+    return () => clearTimeout(timer);
+  }, [normalizedSearchTerm, searchMatches.length, tryScrollToSearchMatch]);
 
   const renderCopyableSegment = (text, extraStyle, keyPrefix) => {
     // Highlight and Note own the tap. Word-level responders steal those presses.
@@ -1163,6 +1208,8 @@ const ReadingView = ({
       );
     });
   };
+
+  const searchPaint = { index: 0 };
 
   const renderFormattedText = (text, baseStyle = null, highlightSearch = true) => {
     if (!text) return null;
@@ -1205,11 +1252,14 @@ const ReadingView = ({
             );
           }
           const matchText = part.slice(sTermIdx, sTermIdx + activeSearchTerm.length);
+          const matchIndex = searchPaint.index;
+          searchPaint.index += 1;
           elements.push(
             <Text
               key={`${idx}-${subIndex++}`}
               style={[
                 styles.searchTermMatch,
+                matchIndex === activeMatchIndex && styles.searchTermMatchCurrent,
                 isBold && { fontWeight: "bold" }
               ]}
               contextMenuHidden
@@ -1791,7 +1841,7 @@ const ReadingView = ({
           needsBlockLayout
             ? (e) => {
                 blockYMapRef.current[index] = e.nativeEvent.layout.y;
-                if (index === firstSearchBlockIndex) {
+                if (index === activeMatchBlockIndex) {
                   tryScrollToSearchMatch();
                 }
               }
@@ -1850,17 +1900,93 @@ const ReadingView = ({
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.headerActionBtn}
-            onPress={onToggleSpeak}
+            onPress={toggleFind}
             activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityLabel={findOpen ? "Close search" : "Search chapter"}
           >
             <MaterialIcons
-              name={isSpeaking ? "stop" : "volume-up"}
+              name="search"
               size={22}
-              color={colors.secondary}
+              color={findOpen ? colors.primary : colors.secondary}
             />
           </TouchableOpacity>
         </View>
       </View>
+
+      {findOpen ? (
+        <View style={styles.findBar}>
+          <TextInput
+            ref={findInputRef}
+            value={findQuery}
+            onChangeText={handleFindQueryChange}
+            placeholder="Find in chapter"
+            placeholderTextColor={colors.inputPlaceholder}
+            style={styles.findInput}
+            returnKeyType="search"
+            autoCorrect={false}
+            autoCapitalize="none"
+            accessibilityLabel="Find in chapter"
+          />
+          <Text
+            style={styles.findCount}
+            selectable={false}
+            accessibilityLabel={
+              searchMatches.length
+                ? `Match ${activeMatchIndex + 1} of ${searchMatches.length}`
+                : "No matches"
+            }
+          >
+            {normalizedSearchTerm
+              ? searchMatches.length
+                ? `${activeMatchIndex + 1} of ${searchMatches.length}`
+                : "No matches"
+              : "0"}
+          </Text>
+          <TouchableOpacity
+            style={styles.findNavBtn}
+            onPress={() => goToMatch(-1)}
+            disabled={searchMatches.length === 0}
+            accessibilityRole="button"
+            accessibilityLabel="Previous match"
+          >
+            <MaterialIcons
+              name="keyboard-arrow-up"
+              size={22}
+              color={
+                searchMatches.length
+                  ? colors.textPrimary
+                  : colors.textPlaceholder
+              }
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.findNavBtn}
+            onPress={() => goToMatch(1)}
+            disabled={searchMatches.length === 0}
+            accessibilityRole="button"
+            accessibilityLabel="Next match"
+          >
+            <MaterialIcons
+              name="keyboard-arrow-down"
+              size={22}
+              color={
+                searchMatches.length
+                  ? colors.textPrimary
+                  : colors.textPlaceholder
+              }
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.findNavBtn}
+            onPress={closeFind}
+            accessibilityRole="button"
+            accessibilityLabel="Close search"
+          >
+            <MaterialIcons name="close" size={20} color={colors.textSecondary} />
+          </TouchableOpacity>
+        </View>
+      ) : null}
 
       {/* ── Progress Bar ── */}
       <View style={styles.progressBarBackground}>
@@ -2245,6 +2371,41 @@ const createStyles = (colors) => StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 20,
+  },
+  findBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    backgroundColor: colors.surfaceSecondary,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.border,
+    gap: 4,
+  },
+  findInput: {
+    flex: 1,
+    height: 36,
+    paddingHorizontal: 10,
+    paddingVertical: 0,
+    borderRadius: 8,
+    backgroundColor: colors.inputBackground,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.inputBorder,
+    color: colors.inputText,
+    fontSize: 14,
+  },
+  findCount: {
+    minWidth: 78,
+    textAlign: "center",
+    fontSize: 12,
+    fontWeight: "600",
+    color: colors.textSecondary,
+  },
+  findNavBtn: {
+    width: 32,
+    height: 32,
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   // ── Progress ──
@@ -3004,6 +3165,11 @@ const createStyles = (colors) => StyleSheet.create({
     color: colors.secondary,
     fontWeight: "700",
     backgroundColor: colors.highlightBg,
+  },
+  searchTermMatchCurrent: {
+    color: colors.textTitle,
+    backgroundColor: colors.highlightBorder,
+    fontWeight: "700",
   },
 
   // ── Solved exercise accordion (Support-screen pattern) ──
