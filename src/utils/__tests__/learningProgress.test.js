@@ -47,6 +47,12 @@ describe("nmcCurriculum coverage", () => {
     expect(list).toContain("28");
     expect(getPrimaryPaperForChapterId("28")).toBe(3);
   });
+
+  it("places Public Health Legislation on paper III", () => {
+    const list = getChaptersForPaper(3);
+    expect(list).toContain("29");
+    expect(getPrimaryPaperForChapterId("29")).toBe(3);
+  });
 });
 
 describe("learningProgress", () => {

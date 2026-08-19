@@ -1193,5 +1193,123 @@
         "aspectRatio": 1
       }
     ]
+  },
+  {
+    "contentKey": "theory:29-0",
+    "section": "theory",
+    "topicId": "29-0",
+    "topicTitle": "Framework and How to Answer a Legislation Paper",
+    "images": [
+      {
+        "id": "phleg-29-0-classification",
+        "fileName": "phleg_29_0_classification.png",
+        "alt": "Eight-bucket long-answer map of Indian public health legislation",
+        "caption": "",
+        "purpose": "Gives the resident a single page to open a legislation long answer: eight named buckets with the statutes under each.",
+        "anchorText": "EIGHT-BUCKET CLASSIFICATION FOR A LONG ANSWER",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:29-1",
+    "section": "theory",
+    "topicId": "29-1",
+    "topicTitle": "Reproductive, Maternal, and Sex-Selection Law",
+    "images": [
+      {
+        "id": "phleg-29-1-mtp-flow",
+        "fileName": "phleg_29_1_mtp_flow.png",
+        "alt": "MTP Amendment Act 2021 gestational limits and required opinions",
+        "caption": "",
+        "purpose": "Stops the obsolete 12-week versus 20-week opinion rule. Shows one RMP to 20 weeks, two RMPs to 24 weeks, and Medical Board beyond 24 weeks.",
+        "anchorText": "GESTATION AND OPINION (CURRENT RULE)",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "phleg-29-1-pcpndt-flow",
+        "fileName": "phleg_29_1_pcpndt_flow.png",
+        "alt": "PCPNDT Act pathway from clinic registration through Form F to the Appropriate Authority",
+        "caption": "",
+        "purpose": "Five-step visual for the sex-selection statute: register, consent, Form F, no disclosure of sex, Appropriate Authority.",
+        "anchorText": "PRE-CONCEPTION AND PRE-NATAL DIAGNOSTIC TECHNIQUES (PROHIBITION OF SEX SELECTION) ACT, 1994",
+        "placement": "before",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:29-4",
+    "section": "theory",
+    "topicId": "29-4",
+    "topicTitle": "Mental Health, Disability, HIV, and Transgender Persons",
+    "images": [
+      {
+        "id": "phleg-29-4-mhca-rights",
+        "fileName": "phleg_29_4_mhca_rights.png",
+        "alt": "Ten high-yield rights and protections under the Mental Healthcare Act 2017",
+        "caption": "",
+        "purpose": "Turns a rights-based statute into a countable list for short notes: access, advance directive, nominated representative, insurance parity, and section 115.",
+        "anchorText": "MENTAL HEALTHCARE ACT, 2017",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:29-5",
+    "section": "theory",
+    "topicId": "29-5",
+    "topicTitle": "Food, Drugs, Tobacco, and Narcotics",
+    "images": [
+      {
+        "id": "phleg-29-5-cotpa-pillars",
+        "fileName": "phleg_29_5_cotpa_pillars.png",
+        "alt": "Four pillars of the Cigarettes and Other Tobacco Products Act 2003",
+        "caption": "",
+        "purpose": "Cancer-prevention legislation visual: smoke-free places, advertisement ban, sale restrictions, and specified warnings including 85 percent pictorial warnings.",
+        "anchorText": "CIGARETTES AND OTHER TOBACCO PRODUCTS ACT, 2003",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:29-7",
+    "section": "theory",
+    "topicId": "29-7",
+    "topicTitle": "Occupational Health and Labour Law",
+    "images": [
+      {
+        "id": "phleg-29-7-esi-benefits",
+        "fileName": "phleg_29_7_esi_benefits.png",
+        "alt": "Six Employees State Insurance benefits: medical, sickness, maternity, disablement, dependants, funeral",
+        "caption": "",
+        "purpose": "Classic six-benefit board for the Employees State Insurance Act short note.",
+        "anchorText": "EMPLOYEES’ STATE INSURANCE ACT, 1948",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:29-8",
+    "section": "theory",
+    "topicId": "29-8",
+    "topicTitle": "Environment and Waste Law",
+    "images": [
+      {
+        "id": "phleg-29-8-bmw-colours",
+        "fileName": "phleg_29_8_bmw_colours.png",
+        "alt": "Bio-Medical Waste Management Rules 2016 four colour categories",
+        "caption": "",
+        "purpose": "Legal-note colour chart for yellow, red, white, and blue categories under the 2016 Rules.",
+        "anchorText": "BIO-MEDICAL WASTE MANAGEMENT RULES, 2016",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
   }
 ]

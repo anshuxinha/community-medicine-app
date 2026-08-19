@@ -70,6 +70,8 @@ APP_TO_PARK = {
     25: 25,
     26: 21,  # Biostatistics overlaps Park 21
     27: 23,  # PH management overlaps Park 23
+    # 29 Public Health Legislation is compiled from Park 12, 18, 8, 11, 15, 16, 20, 24, 25.
+    # No single Park PDF; omit from APP_TO_PARK so the gap scan skips it.
 }
 
 # Domain keyword sets for asymmetric half-chapter detection (Park ch -> domains)
