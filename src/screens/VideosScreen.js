@@ -1292,7 +1292,7 @@ const VideosScreen = ({ navigation, route }) => {
               <View style={styles.requestCardText}>
                 <Text style={styles.requestCardTitle}>Request a video</Text>
                 <Text style={styles.requestCardSub}>
-                  Missing a topic? Tell us what to record next.
+                  New videos are added regularly. Any suggestions?
                 </Text>
               </View>
               <MaterialIcons
