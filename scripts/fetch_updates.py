@@ -535,6 +535,10 @@ def fetch_health_updates(*, publish: bool = True, notify: bool = True):
         
         if not feed_items:
             raise SkipPIB("No new links found on PIB page for MoHFW this month.")
+
+        print(f"PIB candidate titles ({len(feed_items)}):")
+        for item in feed_items:
+            print(f"  [{item['id']}] {item['title']}")
             
         filter_prompt = f"""
         You are an expert in Community Medicine, Public Health, and Epidemiology in India.
@@ -565,6 +569,10 @@ def fetch_health_updates(*, publish: bool = True, notify: bool = True):
         
         print("Filtering relevant Community Medicine articles with Ollama...")
         selected_ids_response = call_ollama(filter_prompt)
+        print(
+            "Ollama filter response: "
+            + json.dumps(selected_ids_response, ensure_ascii=False, indent=2)
+        )
         
         if selected_ids_response is None:
             raise SkipPIB("Failed to filter articles with Ollama.")
