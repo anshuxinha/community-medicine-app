@@ -77,6 +77,7 @@ export const CHAPTER_NMC_MAP = {
   "27": { primaryPaper: 2, secondaryPapers: [], yearPhase: [2, 3] },
   "28": { primaryPaper: 3, secondaryPapers: [1], yearPhase: [1, 2] },
   "29": { primaryPaper: 3, secondaryPapers: [4], yearPhase: [2, 3] },
+  "30": { primaryPaper: 4, secondaryPapers: [2], yearPhase: [2, 3] },
 };
 
 export const PRACTICAL_SKILL_MAP = {

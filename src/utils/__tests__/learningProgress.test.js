@@ -53,6 +53,12 @@ describe("nmcCurriculum coverage", () => {
     expect(list).toContain("29");
     expect(getPrimaryPaperForChapterId("29")).toBe(3);
   });
+
+  it("places Health Economics on paper IV", () => {
+    const list = getChaptersForPaper(4);
+    expect(list).toContain("30");
+    expect(getPrimaryPaperForChapterId("30")).toBe(4);
+  });
 });
 
 describe("learningProgress", () => {

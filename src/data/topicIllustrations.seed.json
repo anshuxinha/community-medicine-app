@@ -1311,5 +1311,179 @@
         "aspectRatio": 1
       }
     ]
+  },
+  {
+    "contentKey": "theory:30-1",
+    "section": "theory",
+    "topicId": "30-1",
+    "topicTitle": "Introduction, Scarcity, Opportunity Cost, and Health Technology Assessment",
+    "images": [
+      {
+        "id": "he-30-1-comparative",
+        "fileName": "he_30_1_comparative.png",
+        "alt": "Comparative analysis of programme A versus comparator B showing costs and consequences of each alternative",
+        "caption": "",
+        "purpose": "Shows that a full economic evaluation always compares alternatives on both costs and consequences.",
+        "anchorText": "COMPARATIVE ANALYSIS (THE BASIC FIGURE)",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:30-2",
+    "section": "theory",
+    "topicId": "30-2",
+    "topicTitle": "Types of Economic Evaluation",
+    "images": [
+      {
+        "id": "he-30-2-types",
+        "fileName": "he_30_2_types.png",
+        "alt": "Six types of economic evaluation from cost analysis through CMA, CEA, CUA, CBA, and CCA",
+        "caption": "",
+        "purpose": "Exam table of methods: what is measured as the consequence in each type.",
+        "anchorText": "THE MEASUREMENT TABLE",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:30-3",
+    "section": "theory",
+    "topicId": "30-3",
+    "topicTitle": "Costs, Perspectives, Discounting, and Marginal Cost",
+    "images": [
+      {
+        "id": "he-30-3-cost-taxonomy",
+        "fileName": "he_30_3_cost_taxonomy.png",
+        "alt": "Cost taxonomy splitting provider capital and recurrent costs from purchaser out-of-pocket and time costs",
+        "caption": "",
+        "purpose": "Separates facility costs from household costs so residents do not double-count OOPE.",
+        "anchorText": "PROVIDER COST AND PURCHASER COST",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "he-30-3-discounting",
+        "fileName": "he_30_3_discounting.png",
+        "alt": "Discounting formula converting future costs and effects to present value",
+        "caption": "",
+        "purpose": "Makes the present-value formula and the effect of rate and delay memorable.",
+        "anchorText": "DISCOUNTING",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:30-4",
+    "section": "theory",
+    "topicId": "30-4",
+    "topicTitle": "Measuring and Valuing Effects: QALY, DALY, and Willingness to Pay",
+    "images": [
+      {
+        "id": "he-30-4-qaly-area",
+        "fileName": "he_30_4_qaly_area.png",
+        "alt": "QALY area diagram showing quality gain during life that would have been lived and extra years of life",
+        "caption": "",
+        "purpose": "Visual of QALYs gained as the area between with-intervention and without-intervention health paths.",
+        "anchorText": "QALY: CONSTRUCTION",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:30-5",
+    "section": "theory",
+    "topicId": "30-5",
+    "topicTitle": "ICER, Cost-Effectiveness Plane, and Decision Rules",
+    "images": [
+      {
+        "id": "he-30-5-icer",
+        "fileName": "he_30_5_icer.png",
+        "alt": "Incremental cost-effectiveness ratio formula with net monetary benefit and net health benefit",
+        "caption": "",
+        "purpose": "Puts the ICER formula and linear decision rules on one board.",
+        "anchorText": "INCREMENTAL, NOT AVERAGE",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "he-30-5-ce-plane",
+        "fileName": "he_30_5_ce_plane.png",
+        "alt": "Cost-effectiveness plane with four quadrants and a threshold line",
+        "caption": "",
+        "purpose": "Classic four-quadrant map for accept, reject, or compare with a threshold.",
+        "anchorText": "COST-EFFECTIVENESS PLANE",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:30-6",
+    "section": "theory",
+    "topicId": "30-6",
+    "topicTitle": "Models, Uncertainty, and Critical Appraisal",
+    "images": [
+      {
+        "id": "he-30-6-decision-tree",
+        "fileName": "he_30_6_decision_tree.png",
+        "alt": "Decision tree with a chemotherapy versus no-chemotherapy choice and chance nodes for fever",
+        "caption": "",
+        "purpose": "Shows decision nodes, chance nodes, and terminal payoffs for expected-value calculation.",
+        "anchorText": "DECISION TREES",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:30-7",
+    "section": "theory",
+    "topicId": "30-7",
+    "topicTitle": "Health Financing in India, NHA, OOPE, and Insurance",
+    "images": [
+      {
+        "id": "he-30-7-financing",
+        "fileName": "he_30_7_financing.png",
+        "alt": "Four sources of health finance in India with NHA 2022-23 out-of-pocket and government shares",
+        "caption": "",
+        "purpose": "Sources tree plus official NHA shares for the financing long answer.",
+        "anchorText": "SOURCES OF FINANCE",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:30-8",
+    "section": "theory",
+    "topicId": "30-8",
+    "topicTitle": "Resource Allocation, Universal Health Coverage, and Using Evaluation",
+    "images": [
+      {
+        "id": "he-30-8-uhc-cube",
+        "fileName": "he_30_8_uhc_cube.png",
+        "alt": "Universal health coverage cube with population, services, and cost-share axes",
+        "caption": "",
+        "purpose": "Three-axis UHC cube used in every MD short note on universal coverage.",
+        "anchorText": "THE UHC CUBE",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "he-30-8-building-blocks",
+        "fileName": "he_30_8_building_blocks.png",
+        "alt": "WHO health system building blocks plus community participation",
+        "caption": "",
+        "purpose": "Six blocks plus community as the allocation map for a district answer.",
+        "anchorText": "BUILDING BLOCKS",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
   }
 ]
