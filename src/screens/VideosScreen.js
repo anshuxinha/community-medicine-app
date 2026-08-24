@@ -72,7 +72,6 @@ import {
   disableScreenCaptureProtection,
 } from "../utils/screenCaptureProtection";
 import GestureVideoPlayer from "../components/GestureVideoPlayer";
-import VideoRequestModal from "../components/VideoRequestModal";
 
 const SEEN_VIDEO_IDS_STORAGE_KEY = "seenVideoIds:v1";
 
@@ -264,7 +263,7 @@ const getThumbnailSource = (thumbnailUrl) => {
   return { uri: thumbnailUrl };
 };
 
-const EmptyState = ({ isFiltered, onRequestVideo }) => {
+const EmptyState = ({ isFiltered }) => {
   const { styles, colors } = useThemedStyles(createStyles);
   return (
     <View style={styles.emptyState}>
@@ -281,21 +280,6 @@ const EmptyState = ({ isFiltered, onRequestVideo }) => {
           ? "Choose another category or pull to refresh."
           : "New teaching videos will appear here as soon as they are synced."}
       </Text>
-      {!isFiltered && typeof onRequestVideo === "function" ? (
-        <Pressable
-          style={styles.emptyRequestBtn}
-          onPress={onRequestVideo}
-          accessibilityRole="button"
-          accessibilityLabel="Request a new video"
-        >
-          <MaterialIcons
-            name="video-call"
-            size={18}
-            color={theme.colors.onPrimary}
-          />
-          <Text style={styles.emptyRequestBtnText}>Request a video</Text>
-        </Pressable>
-      ) : null}
     </View>
   );
 };
@@ -403,7 +387,6 @@ const VideosScreen = ({ navigation, route }) => {
   const [seenVideoIds, setSeenVideoIds] = useState({});
   const [windowSize, setWindowSize] = useState(() => Dimensions.get("window"));
   const [sensorLandscape, setSensorLandscape] = useState(false);
-  const [requestModalVisible, setRequestModalVisible] = useState(false);
 
   const isLandscape =
     windowSize.width > windowSize.height || sensorLandscape;
@@ -1276,31 +1259,28 @@ const VideosScreen = ({ navigation, route }) => {
               )}
             />
 
-            <Pressable
+            <View
               style={styles.requestCard}
-              onPress={() => setRequestModalVisible(true)}
-              accessibilityRole="button"
-              accessibilityLabel="Request a new video"
+              accessibilityRole="text"
+              accessibilityLabel="Video requests are closed. New lectures still go up regularly."
             >
               <View style={styles.requestIconWrap}>
                 <MaterialIcons
-                  name="video-call"
+                  name="videocam"
                   size={22}
                   color={theme.colors.secondary}
                 />
               </View>
               <View style={styles.requestCardText}>
-                <Text style={styles.requestCardTitle}>Request a video</Text>
+                <Text style={styles.requestCardTitle}>
+                  Video requests are closed
+                </Text>
                 <Text style={styles.requestCardSub}>
-                  New videos added regularly. Any suggestions?
+                  New lectures still go up regularly. Watch this tab for the
+                  next drop.
                 </Text>
               </View>
-              <MaterialIcons
-                name="chevron-right"
-                size={22}
-                color={colors.textTertiary}
-              />
-            </Pressable>
+            </View>
 
             <Text style={styles.sectionHeading}>LATEST VIDEOS</Text>
           </View>
@@ -1328,10 +1308,7 @@ const VideosScreen = ({ navigation, route }) => {
               onRetry={retryVideosLoad}
             />
           ) : (
-            <EmptyState
-              isFiltered={selectedCategory !== "all"}
-              onRequestVideo={() => setRequestModalVisible(true)}
-            />
+            <EmptyState isFiltered={selectedCategory !== "all"} />
           )
         }
       />
@@ -1709,10 +1686,6 @@ const VideosScreen = ({ navigation, route }) => {
         </SafeAreaView>
       </Modal>
 
-      <VideoRequestModal
-        visible={requestModalVisible}
-        onClose={() => setRequestModalVisible(false)}
-      />
     </SafeAreaView>
   );
 };
@@ -1934,21 +1907,6 @@ const createStyles = (colors) => StyleSheet.create({
     color: colors.textSecondary,
     textAlign: "center",
     lineHeight: 20,
-  },
-  emptyRequestBtn: {
-    marginTop: 18,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    backgroundColor: theme.colors.secondary,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 12,
-  },
-  emptyRequestBtnText: {
-    color: theme.colors.onPrimary,
-    fontWeight: "700",
-    fontSize: 14,
   },
   errorFixText: {
     marginTop: 10,
