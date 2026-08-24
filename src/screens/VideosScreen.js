@@ -1262,7 +1262,7 @@ const VideosScreen = ({ navigation, route }) => {
             <View
               style={styles.requestCard}
               accessibilityRole="text"
-              accessibilityLabel="Video requests are closed. New lectures still go up regularly."
+              accessibilityLabel="Requested videos are on the way. We are working on your suggestions. New requests are paused."
             >
               <View style={styles.requestIconWrap}>
                 <MaterialIcons
@@ -1273,11 +1273,10 @@ const VideosScreen = ({ navigation, route }) => {
               </View>
               <View style={styles.requestCardText}>
                 <Text style={styles.requestCardTitle}>
-                  Video requests are closed
+                  Requested videos are on the way
                 </Text>
                 <Text style={styles.requestCardSub}>
-                  New lectures still go up regularly. Watch this tab for the
-                  next drop.
+                  We are working on your suggestions. New requests are paused.
                 </Text>
               </View>
             </View>
