@@ -198,7 +198,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💉",
     image: `${BASE}/fig_13_13.png`,
     description:
-      "Type: Killed vaccine\nAdverse effects: Local reaction. Fever.\nContraindications: History of allergic reaction. Children less than weeks age, severe illness.\nRoute and site: Intramuscular, anterolateral aspect of thigh\nDosage and schedule: 0.5 ml, 6, 10, 14 weeks (pentavalent vaccine)",
+      "Type: Killed vaccine\nAdverse effects: Local reaction. Fever.\nContraindications: History of allergic reaction. Children less than 6 weeks of age, severe illness.\nRoute and site: Intramuscular, anterolateral aspect of thigh\nDosage and schedule: 0.5 ml, 6, 10, 14 weeks (pentavalent vaccine)",
     keyFact:
       "For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.",
   },
@@ -218,7 +218,7 @@ export const MUSEUM_ITEMS = [
     category: "Vaccines",
     title: "Vaccine for MMR",
     emoji: "💉",
-    image: `${BASE}/fig_13_15.png`,
+    image: `${BASE}/fig_13_16.png`,
     description:
       "Type: Live attenuated\nComposition, strain of vaccine: Measles (EZ strain), mumps (Jeryl-lynn) and rubella (RA 27/3)\nAdverse effects: TSS, arthralgia, thrombocytopenia, convulsion, encephalopathy.\nContraindications: Pregnancy\nDiluent: Distilled water\nRoute and site: Subcutaneous, right upper arm\nDosage and schedule: 0.5 ml , 16-24 months (booster)",
     keyFact:
@@ -229,9 +229,9 @@ export const MUSEUM_ITEMS = [
     category: "Vaccines",
     title: "Vaccine for Japanese encephalitis",
     emoji: "💉",
-    image: `${BASE}/fig_13_16.png`,
+    image: `${BASE}/je_rs_jev.png`,
     description:
-      "Type: Live attenuated vaccine\nComposition, strain of vaccine: SA 14 -14- 2 strain\nDiluent: Distilled water\nAdverse effects: Fever, local reaction\nContraindications: Local reaction, myalgia, fever, irritability, etc.\nRoute and site: Subcutaneous, upper arm\nDosage and schedule: 0.5 ml , 9 months, 16-24 months [booster](endemic areas)",
+      "Type: Live attenuated vaccine\nComposition, strain of vaccine: SA 14-14-2 strain\nDiluent: Sterile phosphate buffered saline (PBS) supplied by the manufacturer only\nAdverse effects: Transient fever, rash, irritability, local induration and tenderness\nContraindications: Fever or acute infectious disease; pregnancy; immunosuppression; hypersensitivity to kanamycin or gentamicin; other live vaccine within 1 month. Mild URI is not a contraindication.\nRoute and site: Subcutaneous, left upper arm\nDosage and schedule: 0.5 ml, 9 months, 16-24 months [booster] (endemic areas)\nOpen vial policy: Not applicable. Use within 6 hours of reconstitution.",
     keyFact:
       "For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.",
   },
@@ -308,7 +308,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💉",
     image: `${BASE}/fig_13_23.png`,
     description:
-      "Nature of vaccine: Killed vaccine, oral vaccine\nComposition, strain of vaccine: Vi polysaccharide, Ty21a strain (typhoral)\nRoute and site: Intramuscular and oral, anterolateral aspect of thigh\nDosage and schedule: Given at 2 years (0 doses), repeat booster 3 years for killed vaccine, day 1, 3, 5 oral capsules (for children >5 years)\nAdverse effects: Local site reactions ( IM ), diarrhea (oral)\nContraindications: Congenital or acquired immunodeficiency, acute febrile illness and acute intestinal infection",
+      "Nature of vaccine: Killed vaccine, oral vaccine\nComposition, strain of vaccine: Vi polysaccharide, Ty21a strain (typhoral)\nRoute and site: Intramuscular and oral, anterolateral aspect of thigh\nDosage and schedule: Given at 2 years (1 dose), repeat booster 3 years for killed vaccine, day 1, 3, 5 oral capsules (for children >5 years)\nAdverse effects: Local site reactions ( IM ), diarrhea (oral)\nContraindications: Congenital or acquired immunodeficiency, acute febrile illness and acute intestinal infection",
     keyFact:
       "For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.",
   },
@@ -374,7 +374,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💉",
     image: `${BASE}/fig_13_29.png`,
     description:
-      "Composition: It contains recombinant human adenovirus serotype number 26 (rAd26)) of the Sputnik V coronavirus vaccine and is a single dose vaccine.\nRoute: Intramuscular\nDosage and schedule: 0.5 ml, two doses (21 days apart)\nStorage temperature: 2-8°C\nAdverse effects: Redness, swelling at the injection site\nContraindications: Pregnancy",
+      "Composition: It contains recombinant human adenovirus serotype number 26 (rAd26)) of the Sputnik V coronavirus vaccine and is a single dose vaccine.\nRoute: Intramuscular\nDosage and schedule: 0.5 ml, single dose\nStorage temperature: 2-8°C\nAdverse effects: Redness, swelling at the injection site\nContraindications: Pregnancy",
     keyFact:
       "For each vaccine spotter, be ready with type, dose, route, schedule, and common contraindications.",
   },
@@ -526,7 +526,7 @@ export const MUSEUM_ITEMS = [
     emoji: "💊",
     image: `${BASE}/fig_16_1.png`,
     description:
-      "Composition\nFerrous Sulphate: 60 mg elemental iron (POSHAN abhiyan), 500 mg folic acid\nDosage\nANC: 1 tablet daily for 180 days (4th month onwards)\nPNC: 1 tablet daily for 180 days\nFor adolescents: 1 tablet weekly (blue colored tablets)\nFor children: 6 m-5 yrs (biweekly, 1 ml IFA syrup: 20 mg iron and 100 mg FA)\n5-9 yrs (weekly, 1 tablet, 45 mg iron and 400 mg FA) (pink-colored tablets)",
+      "Composition\nFerrous Sulphate: 60 mg elemental iron (POSHAN abhiyan), 500 mcg folic acid\nDosage\nANC: 1 tablet daily for 180 days (4th month onwards)\nPNC: 1 tablet daily for 180 days\nFor adolescents: 1 tablet weekly (blue colored tablets)\nFor children: 6 m-5 yrs (biweekly, 1 ml IFA syrup: 20 mg iron and 100 mg FA)\n5-9 yrs (weekly, 1 tablet, 45 mg iron and 400 mg FA) (pink-colored tablets)",
     keyFact:
       "State key indication, public health use, and relevant national-program context for each medicine.",
   },
