@@ -189,10 +189,13 @@ const UpdatesScreen = ({ navigation }) => {
                     <Text variant="titleMedium" style={styles.updateTitle}>
                       {update.title}
                     </Text>
-                    <Text variant="bodyMedium" style={styles.updateSummary}>
-                      {update.summary && update.summary.length > 100
-                        ? `${update.summary.substring(0, 100)}...`
-                        : update.summary}
+                    <Text
+                      variant="bodyMedium"
+                      style={styles.updateSummary}
+                      numberOfLines={3}
+                      ellipsizeMode="tail"
+                    >
+                      {update.summary}
                     </Text>
                   </Card.Content>
                   <Card.Actions>

@@ -277,6 +277,84 @@ def publish_updates_feed(
     return True
 
 
+# Lock-screen / collapsed notification limits. Full summaries stay in the app.
+PUSH_TITLE_MAX = 90
+PUSH_BODY_MAX = 320
+PUSH_DIGEST_LINE_MAX = 90
+
+
+def _collapse_ws(text: str) -> str:
+    return " ".join((text or "").split())
+
+
+def _clip_at_word(text: str, max_len: int) -> str:
+    """Trim to max_len on a word boundary so copy is not cut mid-word."""
+    text = _collapse_ws(text)
+    if not text:
+        return ""
+    if len(text) <= max_len:
+        return text
+    budget = max(16, max_len - 3)
+    window = text[:budget].rstrip()
+    idx = window.rfind(" ")
+    clipped = window[:idx] if idx >= 16 else window
+    return clipped.rstrip(" ,;:-") + "..."
+
+
+def _first_sentence(text: str) -> str:
+    """First complete sentence. Ignores abbreviations like Dr. and decimals."""
+    text = _collapse_ws(text)
+    if not text:
+        return ""
+    # Period counts as sentence end after two lowercase letters, a digit, or )/"'
+    # so "Dr." and "S.O." are skipped, while "7X7X7. Next" still splits.
+    match = re.search(
+        r"(.+?(?:[a-z]{2}|[0-9)\"'])[.!?])(?=\s+[A-Z\"'(]|\s*$)",
+        text,
+    )
+    if match:
+        candidate = match.group(1).strip()
+        if len(candidate) >= 40:
+            return candidate
+    return text
+
+
+def build_update_push_copy(items: List[Dict[str, Any]]) -> Tuple[str, str]:
+    """Title + body for Expo push. Summaries are 100+ words; lock screens are not."""
+    if not items:
+        return "New public health update", "Open the Updates tab for the full brief."
+
+    if len(items) == 1:
+        item = items[0]
+        title = _clip_at_word(
+            item.get("title") or "New public health update",
+            PUSH_TITLE_MAX,
+        )
+        summary = item.get("summary") or ""
+        sentence = _first_sentence(summary)
+        if sentence and len(sentence) <= PUSH_BODY_MAX:
+            body = sentence
+        elif sentence:
+            body = _clip_at_word(sentence, PUSH_BODY_MAX)
+        else:
+            body = "Open the Updates tab for the full brief."
+        return title, body
+
+    title = f"{len(items)} new public health updates"
+    lines: List[str] = []
+    shown = items[:3]
+    for item in shown:
+        headline = _clip_at_word(
+            item.get("title") or "New update",
+            PUSH_DIGEST_LINE_MAX,
+        )
+        lines.append(f"• {headline}")
+    leftover = len(items) - len(shown)
+    if leftover > 0:
+        lines.append(f"and {leftover} more in Updates.")
+    return title, "\n".join(lines)
+
+
 def _notify_new_updates(new_items: List[Dict[str, Any]]) -> None:
     """One Expo broadcast for this run (single item or digest)."""
     try:
@@ -301,18 +379,11 @@ def _notify_new_updates(new_items: List[Dict[str, Any]]) -> None:
 
     # Newest first
     items = sorted(new_items, key=lambda x: x.get("date", ""), reverse=True)
-    if len(items) == 1:
-        item = items[0]
-        title = (item.get("title") or "New public health update")[:80]
-        body = (item.get("summary") or "Open the Updates tab for details.")[:160]
-    else:
-        first = items[0].get("title") or "New update"
-        title = f"{len(items)} new public health updates"
-        body = f"{first} and {len(items) - 1} more."
-        if len(body) > 160:
-            body = body[:157] + "..."
+    title, body = build_update_push_copy(items)
 
     print(f"Sending push for {len(items)} new update(s) to {len(tokens)} tokens...")
+    print(f"Push title: {title}")
+    print(f"Push body: {body}")
     send_push_notifications(tokens, title, body, "Updates")
 
 
@@ -617,8 +688,8 @@ def fetch_health_updates(*, publish: bool = True, notify: bool = True):
         
         Return ONLY a valid JSON array of objects, each containing:
         - "id": the same id as provided (integer)
-        - "title": a short English headline
-        - "summary": an English summary of the update, constrained to UNDER 150 words (try to be succint and include all the important information for a MD Community Medicine resident, especially changes, facts, figures, app names, etc.).
+        - "title": a short English headline that states the actual change
+        - "summary": an English summary of the update, constrained to UNDER 150 words (try to be succint and include all the important information for a MD Community Medicine resident, especially changes, facts, figures, app names, etc.). Start with one self-contained sentence that states the change, because that sentence is used as the lock-screen notification.
         - "date": the exact date of the release in YYYY-MM-DD format based on the text (default to today if unseen)
         
         Ensure the array length matches the number of articles provided.
