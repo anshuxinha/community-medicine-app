@@ -27,6 +27,7 @@ import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
 import { AppContext } from "../context/AppContext";
 import { useThemedStyles } from "../styles/useThemedStyles";
+import { ALL_ORIENTATIONS } from "../constants/orientations";
 import { useAppTheme } from "../styles/ThemeContext";
 import Constants from "expo-constants";
 import {
@@ -763,6 +764,7 @@ const ProfileScreen = () => {
         transparent
         animationType="fade"
         onRequestClose={() => setIsEditingName(false)}
+        supportedOrientations={ALL_ORIENTATIONS}
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>

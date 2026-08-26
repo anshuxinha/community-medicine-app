@@ -4,11 +4,11 @@ import {
   StyleSheet,
   TouchableOpacity,
   Animated,
-  Dimensions,
   Modal,
   ScrollView,
   Linking,
   Alert,
+  useWindowDimensions,
 } from "react-native";
 import { Text, Avatar, Divider, ActivityIndicator } from "react-native-paper";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
@@ -20,10 +20,7 @@ import { AppContext } from "../context/AppContext";
 import { theme } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
 import Constants from "expo-constants";
-
-const { width } = Dimensions.get("window");
-const isTabletBase = width >= 600;
-const DRAWER_WIDTH = isTabletBase ? Math.min(width * 0.4, 320) : width * 0.75;
+import { ALL_ORIENTATIONS } from "../constants/orientations";
 
 const BASE_MENU_ITEMS = [
   {
@@ -63,8 +60,10 @@ const BASE_MENU_ITEMS = [
 
 const DrawerMenu = ({ visible, onClose, user }) => {
   const { styles, colors } = useThemedStyles(createStyles);
+  const { width } = useWindowDimensions();
+  const drawerWidth = Math.min(width * 0.75, 320);
 
-  const slideAnim = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
+  const slideAnim = useRef(new Animated.Value(-320)).current;
   const backdropAnim = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation();
   const { currentStreak, studyScore, readingProgress, logout } =
@@ -115,7 +114,7 @@ const DrawerMenu = ({ visible, onClose, user }) => {
     } else {
       Animated.parallel([
         Animated.timing(slideAnim, {
-          toValue: -DRAWER_WIDTH,
+          toValue: -drawerWidth,
           duration: 220,
           useNativeDriver: true,
         }),
@@ -126,7 +125,7 @@ const DrawerMenu = ({ visible, onClose, user }) => {
         }),
       ]).start();
     }
-  }, [visible]);
+  }, [visible, drawerWidth, slideAnim, backdropAnim]);
 
   const handleItem = async (item) => {
     onClose();
@@ -179,13 +178,14 @@ const DrawerMenu = ({ visible, onClose, user }) => {
     }, 300);
   };
 
-  if (!visible && slideAnim._value === -DRAWER_WIDTH) return null;
+  if (!visible && slideAnim._value === -drawerWidth) return null;
 
   return (
     <Modal
       transparent
       visible={visible}
       onRequestClose={onClose}
+      supportedOrientations={ALL_ORIENTATIONS}
       statusBarTranslucent
     >
       {/* Backdrop */}
@@ -195,7 +195,10 @@ const DrawerMenu = ({ visible, onClose, user }) => {
 
       {/* Drawer panel */}
       <Animated.View
-        style={[styles.drawer, { transform: [{ translateX: slideAnim }] }]}
+        style={[
+          styles.drawer,
+          { width: drawerWidth, transform: [{ translateX: slideAnim }] },
+        ]}
       >
         {/* Header */}
         <View style={styles.drawerHeader}>
@@ -278,7 +281,6 @@ const createStyles = (colors) => StyleSheet.create({
     top: 0,
     left: 0,
     bottom: 0,
-    width: DRAWER_WIDTH,
     backgroundColor: colors.surfacePrimary,
     elevation: 16,
     shadowColor: colors.textTitle,

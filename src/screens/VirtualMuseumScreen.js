@@ -17,6 +17,7 @@ import { MUSEUM_ITEMS, CATEGORIES, FREE_CATEGORY } from "../data/museumData";
 import { AppContext } from "../context/AppContext";
 import { theme } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
+import { ALL_ORIENTATIONS } from "../constants/orientations";
 import {
   enableScreenCaptureProtection,
   disableScreenCaptureProtection,
@@ -134,6 +135,7 @@ const MuseumCard = ({ item, initiallyExpanded = false }) => {
         transparent
         animationType="fade"
         onRequestClose={() => setViewerVisible(false)}
+        supportedOrientations={ALL_ORIENTATIONS}
       >
         <View style={styles.viewerBackdrop}>
           <SafeAreaView style={styles.viewerSafeArea}>

@@ -4,6 +4,7 @@ import { Text, Divider } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
+import { ALL_ORIENTATIONS } from '../constants/orientations';
 
 const DropdownPicker = ({ selectedValue, onValueChange, items, labelExtractor, valueExtractor, style }) => {
   const { styles, colors } = useThemedStyles(createStyles);
@@ -35,7 +36,7 @@ const DropdownPicker = ({ selectedValue, onValueChange, items, labelExtractor, v
                 <MaterialIcons name="arrow-drop-down" size={24} color={theme.colors.textSecondary} />
             </TouchableOpacity>
 
-            <Modal visible={visible} transparent={true} animationType="fade" onRequestClose={() => setVisible(false)}>
+            <Modal visible={visible} transparent={true} animationType="fade" onRequestClose={() => setVisible(false)} supportedOrientations={ALL_ORIENTATIONS}>
                 <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPressOut={() => setVisible(false)}>
                     <View style={styles.modalContent}>
                         <View style={styles.modalHeader}>

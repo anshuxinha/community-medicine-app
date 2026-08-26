@@ -33,6 +33,7 @@ import { db } from "../config/firebase";
 import { AppContext } from "../context/AppContext";
 import { theme } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
+import { ALL_ORIENTATIONS } from "../constants/orientations";
 
 const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
 
@@ -606,6 +607,7 @@ const AdminLibraryReviewScreen = () => {
         visible={Boolean(selectedSuggestion)}
         animationType="slide"
         onRequestClose={saving ? undefined : closeEditor}
+        supportedOrientations={ALL_ORIENTATIONS}
         statusBarTranslucent
       >
         <SafeAreaView style={styles.modalSafeArea}>

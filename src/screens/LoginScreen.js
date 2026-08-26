@@ -10,6 +10,7 @@ import {
   Linking,
   Modal,
   ActivityIndicator,
+  useWindowDimensions,
 } from "react-native";
 import { Text, TextInput, Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -35,6 +36,7 @@ import {
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import Constants from "expo-constants";
 import { useThemedStyles } from '../styles/useThemedStyles';
+import { ALL_ORIENTATIONS } from "../constants/orientations";
 import * as AppleAuthentication from "expo-apple-authentication";
 import * as Crypto from "expo-crypto";
 
@@ -78,6 +80,8 @@ const PASSWORD_RESET_SENT_MESSAGE =
 
 const LoginScreen = () => {
   const { styles, colors } = useThemedStyles(createStyles);
+  const { width, height } = useWindowDimensions();
+  const isLandscape = width > height;
 
   const { login } = useContext(AppContext);
   const [isRegistering, setIsRegistering] = useState(false);
@@ -538,14 +542,16 @@ const LoginScreen = () => {
   return (
     <View style={styles.root}>
       {/* Brand navy hero — matches logo/splash so the mark sits cleanly */}
-      <View style={styles.topHalf}>
+      <View style={[styles.topHalf, isLandscape && styles.topHalfLandscape]}>
         <Image
           source={require("../../assets/stroma_logo_login.png")}
-          style={styles.logo}
+          style={[styles.logo, isLandscape && styles.logoLandscape]}
           resizeMode="contain"
           accessibilityLabel="STROMA"
         />
-        <Text style={styles.brandTagline}>Community Medicine · Simplified</Text>
+        {isLandscape ? null : (
+          <Text style={styles.brandTagline}>Community Medicine · Simplified</Text>
+        )}
       </View>
 
       {/* Form sheet */}
@@ -751,6 +757,7 @@ const LoginScreen = () => {
         visible={isConflictModalVisible}
         animationType="fade"
         onRequestClose={handleCancelConflict}
+        supportedOrientations={ALL_ORIENTATIONS}
         statusBarTranslucent
       >
         <View style={styles.modalOverlay}>
@@ -832,10 +839,20 @@ const createStyles = (colors) => StyleSheet.create({
     paddingBottom: 4,
     backgroundColor: colors.brandHero,
   },
+  topHalfLandscape: {
+    height: 72,
+    paddingTop: 4,
+    paddingBottom: 0,
+  },
   logo: {
     width: 168,
     height: 132,
     marginBottom: 4,
+  },
+  logoLandscape: {
+    width: 90,
+    height: 56,
+    marginBottom: 0,
   },
   brandTagline: {
     fontSize: 12,

@@ -49,10 +49,8 @@ function ThemedApp() {
 
 export default function App() {
   useEffect(() => {
-    ScreenOrientation.lockAsync(
-      ScreenOrientation.OrientationLock.PORTRAIT_UP,
-    ).catch((err) =>
-      console.warn("Failed to lock portrait orientation:", err?.message),
+    ScreenOrientation.unlockAsync().catch((err) =>
+      console.warn("Failed to unlock screen orientation:", err?.message),
     );
 
     scheduleAllNotifications().catch((err) =>

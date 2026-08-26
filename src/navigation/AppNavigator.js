@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { View, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator, useWindowDimensions } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   NavigationContainer,
@@ -57,6 +57,9 @@ const navigationRef = createNavigationContainerRef();
 
 const TabNavigator = () => {
   const insets = useSafeAreaInsets();
+  const { width, height } = useWindowDimensions();
+  const isLandscape = width > height;
+  const tabBarBaseHeight = isLandscape ? 48 : 60;
   const { isPremium } = React.useContext(AppContext);
   const { colors } = useAppTheme();
 
@@ -83,8 +86,8 @@ const TabNavigator = () => {
           shadowOpacity: 0.1,
           shadowRadius: 10,
           shadowOffset: { width: 0, height: -5 },
-          height: 60 + insets.bottom,
-          paddingBottom: insets.bottom || 8,
+          height: tabBarBaseHeight + insets.bottom,
+          paddingBottom: insets.bottom || (isLandscape ? 4 : 8),
         },
       })}
     >

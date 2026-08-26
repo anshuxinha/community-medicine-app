@@ -4,7 +4,6 @@ import ReadingView from "../components/ReadingView";
 import ChapterCompleteSheet from "../components/ChapterCompleteSheet";
 import { AppContext } from "../context/AppContext";
 import { useThemedStyles } from '../styles/useThemedStyles';
-import { useUnlockOrientationOnFocus } from "../hooks/useUnlockOrientationOnFocus";
 import {
   buildLibraryReadingParams,
   getContentKey,
@@ -63,9 +62,6 @@ const ReadingScreen = ({ route, navigation }) => {
     searchTerms = "",
     isGem = false,
   } = route.params;
-
-  // Free rotation while reading; re-lock portrait when leaving this screen.
-  useUnlockOrientationOnFocus();
 
   const {
     markAsRead,

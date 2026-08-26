@@ -7,6 +7,7 @@ import { WebView } from 'react-native-webview';
 import DropdownPicker from '../components/DropdownPicker';
 import { theme } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
+import { ALL_ORIENTATIONS } from '../constants/orientations';
 import { NFHS, NFHS_META } from '../data/nfhsTrendsData';
 
 const ROUND_ORDER = ["NFHS-1", "NFHS-2", "NFHS-3", "NFHS-4", "NFHS-5", "NFHS-6"];
@@ -497,6 +498,7 @@ const NFHSTrendsScreen = () => {
                 visible={stateModalVisible}
                 animationType="slide"
                 onRequestClose={() => setStateModalVisible(false)}
+                supportedOrientations={ALL_ORIENTATIONS}
             >
                 <SafeAreaView style={styles.modalSafeArea}>
                     <View style={styles.modalHeader}>

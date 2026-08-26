@@ -72,6 +72,7 @@ import {
   disableScreenCaptureProtection,
 } from "../utils/screenCaptureProtection";
 import GestureVideoPlayer from "../components/GestureVideoPlayer";
+import { ALL_ORIENTATIONS } from "../constants/orientations";
 
 const SEEN_VIDEO_IDS_STORAGE_KEY = "seenVideoIds:v1";
 
@@ -469,40 +470,6 @@ const VideosScreen = ({ navigation, route }) => {
       StatusBar.setHidden(false, "fade");
     };
   }, [selectedVideo, effectivePlayerFullscreen]);
-
-  // Allow free rotation only while a video is open; re-lock portrait afterward.
-  // Requires a native build with app.json orientation "default" (not OTA-only).
-  useEffect(() => {
-    let cancelled = false;
-
-    const applyOrientation = async () => {
-      try {
-        if (selectedVideo) {
-          await ScreenOrientation.unlockAsync();
-        } else {
-          await ScreenOrientation.lockAsync(
-            ScreenOrientation.OrientationLock.PORTRAIT_UP,
-          );
-        }
-      } catch (error) {
-        if (!cancelled) {
-          console.warn(
-            "Failed to update screen orientation:",
-            error?.message,
-          );
-        }
-      }
-    };
-
-    applyOrientation();
-
-    return () => {
-      cancelled = true;
-      ScreenOrientation.lockAsync(
-        ScreenOrientation.OrientationLock.PORTRAIT_UP,
-      ).catch(() => {});
-    };
-  }, [selectedVideo]);
 
   useEffect(() => {
     let mounted = true;
@@ -1318,13 +1285,7 @@ const VideosScreen = ({ navigation, route }) => {
         // fullScreen lets iOS hand status-bar control to us (pageSheet keeps OS chrome).
         presentationStyle="fullScreen"
         // iOS Modal defaults to portrait-only; allow landscape while video is open.
-        supportedOrientations={[
-          "portrait",
-          "portrait-upside-down",
-          "landscape",
-          "landscape-left",
-          "landscape-right",
-        ]}
+        supportedOrientations={ALL_ORIENTATIONS}
         statusBarTranslucent={effectivePlayerFullscreen}
         navigationBarTranslucent={effectivePlayerFullscreen}
         onRequestClose={() => {
@@ -1646,6 +1607,7 @@ const VideosScreen = ({ navigation, route }) => {
         visible={fullscreenPdf}
         animationType="slide"
         onRequestClose={handleCloseFullscreenPdf}
+        supportedOrientations={ALL_ORIENTATIONS}
       >
         <SafeAreaView style={styles.pdfFullscreenSafeArea}>
           <View style={styles.pdfFullscreenHeader}>

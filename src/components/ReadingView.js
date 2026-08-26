@@ -6,8 +6,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  Dimensions,
   Modal,
+  useWindowDimensions,
   Pressable,
   TextInput,
   Platform,
@@ -690,7 +690,6 @@ const splitSentences = (text) => {
 
 const REACH_END_THRESHOLD = 0.98;
 const SHORT_CONTENT_TOLERANCE = 24;
-const SCREEN = Dimensions.get("window");
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 3;
 const ZOOM_STEP = 0.5;
@@ -774,6 +773,7 @@ const ReadingView = ({
 }) => {
   const { styles, colors } = useThemedStyles(createStyles);
   const insets = useSafeAreaInsets();
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const blocks = useMemo(() => {
     return parseMarkdown(content || "", { isGem });
   }, [content, isGem]);
@@ -792,8 +792,8 @@ const ReadingView = ({
   const [viewerZoomScale, setViewerZoomScale] = useState(MIN_ZOOM);
   const [fullscreenRotation, setFullscreenRotation] = useState(0);
   const [fullscreenViewport, setFullscreenViewport] = useState({
-    width: SCREEN.width - 32,
-    height: SCREEN.height * 0.78,
+    width: windowWidth - 32,
+    height: windowHeight * 0.78,
   });
   const [isAnnotationMode, setIsAnnotationMode] = useState(false);
   const [editingAnnotation, setEditingAnnotation] = useState(null);
@@ -1686,7 +1686,7 @@ const ReadingView = ({
         const minColumnWidth = 120;
         // Match scrollContent paddingHorizontal: 20 on each side
         const contentPad = 40;
-        const availableWidth = SCREEN.width - contentPad;
+        const availableWidth = windowWidth - contentPad;
         const colCount = Math.max(headers.length, 1);
         const naturalWidth = colCount * minColumnWidth;
         // Stretch to full content width when columns would leave empty space;
