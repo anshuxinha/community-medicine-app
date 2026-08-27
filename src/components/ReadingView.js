@@ -40,6 +40,9 @@ import {
 } from "../utils/libraryExerciseMarkup";
 import {
   collectChapterSearchMatches,
+  collectOccurrences,
+  lineYForCharOffset,
+  matchYFromHostLayout,
   normalizeSearchQuery,
 } from "../utils/chapterSearch";
 
@@ -807,6 +810,9 @@ const ReadingView = ({
   const viewportHeightRef = useRef(0);
   const contentHeightRef = useRef(0);
   const blockYMapRef = useRef({});
+  const matchYMapRef = useRef({});
+  const scrollOffsetYRef = useRef(0);
+  const pendingExactScrollRef = useRef(null);
   const scrollViewRef = useRef(null);
   const didScrollToSearchRef = useRef(false);
   const lastProgressEmitRef = useRef(0);
@@ -834,6 +840,9 @@ const ReadingView = ({
     viewportHeightRef.current = 0;
     contentHeightRef.current = 0;
     blockYMapRef.current = {};
+    matchYMapRef.current = {};
+    scrollOffsetYRef.current = 0;
+    pendingExactScrollRef.current = null;
     didScrollToSearchRef.current = false;
     lastProgressEmitRef.current = 0;
     lastProgressPctRef.current = -1;
@@ -1044,6 +1053,7 @@ const ReadingView = ({
 
   const handleScroll = (event) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    scrollOffsetYRef.current = contentOffset.y;
     const viewportHeight = layoutMeasurement.height;
     const contentHeight = contentSize.height;
     const totalContentHeight = contentHeight - viewportHeight;
@@ -1104,9 +1114,11 @@ const ReadingView = ({
   const scrollToMatch = useCallback(
     (matchIndex, { delayed = false } = {}) => {
       const match = searchMatches[matchIndex];
-      if (!match) return false;
-      const y = blockYMapRef.current[match.blockIndex];
-      if (typeof y !== "number" || !scrollViewRef.current) return false;
+      if (!match || !scrollViewRef.current) return false;
+      const matchY = matchYMapRef.current[matchIndex];
+      const blockY = blockYMapRef.current[match.blockIndex];
+      const y = typeof matchY === "number" ? matchY : blockY;
+      if (typeof y !== "number") return false;
       const targetY = Math.max(0, y - 24);
       const run = () => {
         scrollViewRef.current?.scrollTo({ y: targetY, animated: true });
@@ -1116,7 +1128,7 @@ const ReadingView = ({
       } else {
         run();
       }
-      return true;
+      return typeof matchY === "number";
     },
     [searchMatches],
   );
@@ -1124,6 +1136,7 @@ const ReadingView = ({
   const tryScrollToSearchMatch = useCallback(() => {
     if (didScrollToSearchRef.current) return;
     if (searchMatches.length === 0) return;
+    if (typeof matchYMapRef.current[activeMatchIndex] !== "number") return;
     if (!scrollToMatch(activeMatchIndex, { delayed: true })) return;
     didScrollToSearchRef.current = true;
   }, [searchMatches, activeMatchIndex, scrollToMatch]);
@@ -1131,6 +1144,8 @@ const ReadingView = ({
   const handleFindQueryChange = useCallback((text) => {
     setFindQuery(text);
     setActiveMatchIndex(0);
+    matchYMapRef.current = {};
+    pendingExactScrollRef.current = null;
     didScrollToSearchRef.current = false;
   }, []);
 
@@ -1139,6 +1154,8 @@ const ReadingView = ({
     setFindOpen(false);
     setFindQuery("");
     setActiveMatchIndex(0);
+    matchYMapRef.current = {};
+    pendingExactScrollRef.current = null;
     didScrollToSearchRef.current = false;
   }, []);
 
@@ -1159,7 +1176,9 @@ const ReadingView = ({
         (activeMatchIndex + direction + searchMatches.length) %
         searchMatches.length;
       setActiveMatchIndex(next);
+      const exact = typeof matchYMapRef.current[next] === "number";
       scrollToMatch(next);
+      pendingExactScrollRef.current = exact ? null : next;
     },
     [searchMatches, activeMatchIndex, scrollToMatch],
   );
@@ -1170,8 +1189,17 @@ const ReadingView = ({
     const timer = setTimeout(() => {
       tryScrollToSearchMatch();
     }, 60);
-    return () => clearTimeout(timer);
-  }, [normalizedSearchTerm, searchMatches.length, tryScrollToSearchMatch]);
+    const fallback = setTimeout(() => {
+      if (didScrollToSearchRef.current) return;
+      if (pendingExactScrollRef.current != null) return;
+      scrollToMatch(0);
+    }, 280);
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(fallback);
+    };
+    // Re-run when the search set changes, not on next/prev.
+  }, [normalizedSearchTerm, searchMatches.length]);
 
   const renderCopyableSegment = (text, extraStyle, keyPrefix) => {
     // Highlight and Note own the tap. Word-level responders steal those presses.
@@ -1217,6 +1245,50 @@ const ReadingView = ({
     const elements = [];
 
     const activeSearchTerm = highlightSearch ? normalizedSearchTerm : "";
+    const firstMatchIndex = searchPaint.index;
+    const hostRef = { current: null };
+    const trackMatchY =
+      Boolean(activeSearchTerm) &&
+      String(text).toLowerCase().includes(activeSearchTerm);
+
+    const commitMatchYs = (lines) => {
+      const host = hostRef.current;
+      if (!host || typeof host.measureInWindow !== "function") return;
+      const starts = collectOccurrences(text, activeSearchTerm);
+      if (starts.length === 0) return;
+      host.measureInWindow((x, hostY) => {
+        const apply = (scrollViewPageY) => {
+          starts.forEach((charStart, i) => {
+            matchYMapRef.current[firstMatchIndex + i] = matchYFromHostLayout({
+              scrollOffsetY: scrollOffsetYRef.current,
+              hostPageY: hostY,
+              scrollViewPageY,
+              lineY: lineYForCharOffset(lines, charStart),
+            });
+          });
+          if (
+            activeMatchIndex < firstMatchIndex ||
+            activeMatchIndex >= firstMatchIndex + starts.length
+          ) {
+            return;
+          }
+          if (!didScrollToSearchRef.current) {
+            tryScrollToSearchMatch();
+            return;
+          }
+          if (pendingExactScrollRef.current === activeMatchIndex) {
+            pendingExactScrollRef.current = null;
+            scrollToMatch(activeMatchIndex);
+          }
+        };
+        const sv = scrollViewRef.current;
+        if (sv && typeof sv.measureInWindow === "function") {
+          sv.measureInWindow((sx, sy) => apply(sy));
+        } else {
+          apply(0);
+        }
+      });
+    };
 
     // Optimization: if no bolding and no search term, wrap words for copy
     if (parts.length === 1 && !activeSearchTerm) {
@@ -1288,9 +1360,21 @@ const ReadingView = ({
       }
     });
 
-    if (baseStyle) {
+    if (baseStyle || trackMatchY) {
       return (
-        <Text style={baseStyle} selectable={false} contextMenuHidden>
+        <Text
+          ref={(el) => {
+            hostRef.current = el;
+          }}
+          style={baseStyle}
+          selectable={false}
+          contextMenuHidden
+          onTextLayout={
+            trackMatchY
+              ? (event) => commitMatchYs(event.nativeEvent.lines)
+              : undefined
+          }
+        >
           {elements}
         </Text>
       );
@@ -1491,9 +1575,11 @@ const ReadingView = ({
                   ]}
                 >
                   <Text style={styles.bulletDot} selectable={false}>{"\u2022"}</Text>
-                  <Text style={styles.bulletText} selectable={false} contextMenuHidden>
-                    {renderFormattedText(item, null, hasSearchMatch && !isHighlightMode)}
-                  </Text>
+                  {renderFormattedText(
+                    item,
+                    styles.bulletText,
+                    hasSearchMatch && !isHighlightMode,
+                  )}
                 </View>
               );
               return (
@@ -1526,9 +1612,11 @@ const ReadingView = ({
                   ]}
                 >
                   <Text style={styles.nestedBulletDot} selectable={false}>{"\u2013"}</Text>
-                  <Text style={styles.nestedBulletText} selectable={false} contextMenuHidden>
-                    {renderFormattedText(item, null, hasSearchMatch && !isHighlightMode)}
-                  </Text>
+                  {renderFormattedText(
+                    item,
+                    styles.nestedBulletText,
+                    hasSearchMatch && !isHighlightMode,
+                  )}
                 </View>
               );
               return (

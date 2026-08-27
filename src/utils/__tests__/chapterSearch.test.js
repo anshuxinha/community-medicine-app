@@ -1,6 +1,8 @@
 import {
   collectChapterSearchMatches,
   collectOccurrences,
+  lineYForCharOffset,
+  matchYFromHostLayout,
   normalizeSearchQuery,
 } from "../chapterSearch";
 
@@ -26,7 +28,7 @@ describe("collectOccurrences", () => {
   });
 
   test("splits on markdown bold the same way highlights paint", () => {
-    expect(collectOccurrences("**Iron** stores and iron", "iron")).toHaveLength(2);
+    expect(collectOccurrences("**Iron** stores and iron", "iron")).toEqual([0, 16]);
   });
 
   test("empty query or text yields no hits", () => {
@@ -105,5 +107,42 @@ describe("collectChapterSearchMatches", () => {
       "iron",
     );
     expect(matches).toEqual([]);
+  });
+});
+
+describe("lineYForCharOffset", () => {
+  const lines = [
+    { text: "Iron stores in the liver ", y: 0, height: 20 },
+    { text: "and iron in plasma.", y: 22, height: 20 },
+  ];
+
+  test("maps a hit on the first line", () => {
+    expect(lineYForCharOffset(lines, 0)).toBe(0);
+  });
+
+  test("maps a hit on a later wrapped line", () => {
+    expect(lineYForCharOffset(lines, 29)).toBe(22);
+  });
+
+  test("falls back to the last line past the end", () => {
+    expect(lineYForCharOffset(lines, 999)).toBe(22);
+  });
+
+  test("empty lines yield 0", () => {
+    expect(lineYForCharOffset([], 0)).toBe(0);
+    expect(lineYForCharOffset(null, 0)).toBe(0);
+  });
+});
+
+describe("matchYFromHostLayout", () => {
+  test("adds line y onto host content y", () => {
+    expect(
+      matchYFromHostLayout({
+        scrollOffsetY: 400,
+        hostPageY: 180,
+        scrollViewPageY: 100,
+        lineY: 22,
+      }),
+    ).toBe(502);
   });
 });

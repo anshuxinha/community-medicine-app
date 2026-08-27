@@ -315,6 +315,10 @@
     "mtime": 1787383305.8928387,
     "hash": "e94fb3288ff548a526d37d09cd758731"
   },
+  "D:\\The App\\scripts\\apply_nfhs6_library_indicators.py": {
+    "mtime": 1787809741.084486,
+    "hash": "40a58f649fb72059af74346ebdc45be9"
+  },
   "D:\\The App\\scripts\\apply_staged_library_updates.py": {
     "mtime": 1777265229.3049736,
     "hash": "54936b9b06f3ffedf69217c6f0accca5"
@@ -560,8 +564,8 @@
     "hash": "ee80de9ca72397fd02e0fb31ed09698c"
   },
   "D:\\The App\\src\\components\\ReadingView.js": {
-    "mtime": 1787747176.1099148,
-    "hash": "96a15efe8d7ce5c3a7422c1b8d6b15e6"
+    "mtime": 1787812483.774464,
+    "hash": "783842cac5065c7781197f403f12391a"
   },
   "D:\\The App\\src\\components\\ReviewFeedbackModal.js": {
     "mtime": 1785328661.2858431,
@@ -828,8 +832,8 @@
     "hash": "aeeb25e31f8c2b1e8ab34083cf63308a"
   },
   "D:\\The App\\src\\utils\\chapterSearch.js": {
-    "mtime": 1787030502.933952,
-    "hash": "3e17f94d6d6d217219b58535c2759bbb"
+    "mtime": 1787812099.5555847,
+    "hash": "ebc4c3a67f8eae29e527d79d3260b61c"
   },
   "D:\\The App\\src\\utils\\contentRegistry.js": {
     "mtime": 1786881933.5635006,
@@ -884,8 +888,8 @@
     "hash": "df7f8269babb6479cbe06602e784d124"
   },
   "D:\\The App\\src\\utils\\__tests__\\chapterSearch.test.js": {
-    "mtime": 1787030502.933952,
-    "hash": "d1654b44ea4edd27cd4ba6c97d2a13c2"
+    "mtime": 1787812129.4978118,
+    "hash": "889bcfd492e6bd6aa68a2198e745a2ba"
   },
   "D:\\The App\\src\\utils\\__tests__\\contentRegistry.nextLeaf.test.js": {
     "mtime": 1784650282.931558,
