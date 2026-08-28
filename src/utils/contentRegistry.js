@@ -421,7 +421,8 @@ export const migrateLegacyReadItems = (
   legacyTitles.forEach((title) => {
     const matches = CONTENT_ENTRIES_BY_TITLE.get(title) || [];
     matches.forEach((entry) => {
-      if (entry.recentlyUpdated || nextVersions[entry.key]) {
+      if (entry.recentlyUpdated) return;
+      if (Object.prototype.hasOwnProperty.call(nextVersions, entry.key)) {
         return;
       }
       nextVersions[entry.key] = entry.signature;

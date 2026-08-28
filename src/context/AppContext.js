@@ -41,7 +41,6 @@ import { triggerStreakMilestone } from "../services/notificationService";
 import {
   VALID_MASTER_TITLES,
   VALID_CONTENT_KEYS,
-  CONTENT_ENTRY_BY_KEY,
   TOTAL_LEAF_CONTENT_ITEMS,
   getEffectiveReadCount,
   getContentKey,
@@ -49,6 +48,11 @@ import {
   hydrateContentRegistry,
   migrateLegacyReadItems,
 } from "../utils/contentRegistry";
+import {
+  READ_UNREAD_TOMBSTONE,
+  mergeReadItemVersions,
+  sanitizeReadItemVersions,
+} from "../utils/learningStateMerge";
 import { syncAllAnnotations } from "../services/annotationService";
 import { syncAllHighlights } from "../services/highlightService";
 import { generateReferralCode } from "../utils/referralUtils";
@@ -161,17 +165,6 @@ const resolveReferralCode = async (uid, username, existingCode) => {
   return referralCode;
 };
 
-const sanitizeReadItemVersions = (value) => {
-  if (!value || typeof value !== "object") return {};
-
-  return Object.entries(value).reduce((accumulator, [key, version]) => {
-    if (VALID_CONTENT_KEYS.has(key) && typeof version === "string") {
-      accumulator[key] = version;
-    }
-    return accumulator;
-  }, {});
-};
-
 const resolveBookmarkContentKey = (item) => {
   if (!item || typeof item !== "object") return null;
   if (
@@ -262,36 +255,6 @@ const mergeBookmarksLists = (...lists) => {
     if (!map.has(key)) map.set(key, item);
   });
   return normalizeBookmarks([...map.values()]);
-};
-
-// Prefer a version that matches current content signature so merge cannot
-// demote an item from "read" by keeping a stale signature from an old device.
-const mergeReadItemVersions = (states) => {
-  const keys = new Set();
-  states.forEach((state) => {
-    Object.keys(state.readItemVersions || {}).forEach((key) => keys.add(key));
-  });
-
-  const merged = {};
-  keys.forEach((key) => {
-    // states are ordered highest-priority first
-    const versions = states
-      .map((state) => state.readItemVersions?.[key])
-      .filter((version) => typeof version === "string");
-    if (versions.length === 0) return;
-
-    const currentSignature = CONTENT_ENTRY_BY_KEY.get(key)?.signature;
-    if (currentSignature) {
-      const matching = versions.find((version) => version === currentSignature);
-      if (matching) {
-        merged[key] = matching;
-        return;
-      }
-    }
-
-    merged[key] = versions[0];
-  });
-  return merged;
 };
 
 const mergeLearningStates = (...rawStates) => {
@@ -444,6 +407,7 @@ export const AppProvider = ({ children }) => {
   const cloudHydratedRef = useRef(false);
   const currentDeviceIdRef = useRef(null);
   const lastRefreshRef = useRef(0);
+  const learningSaveGenRef = useRef(0);
   const prevStreakRef = useRef(0);
   const userRef = useRef(user);
   const learningStateRef = useRef({
@@ -1242,32 +1206,36 @@ export const AppProvider = ({ children }) => {
         return;
       }
 
+      const gen = ++learningSaveGenRef.current;
+
       try {
         const accountStateSnapshot = {
-          readItems,
-          readItemVersions,
-          bookmarks,
-          currentStreak,
-          lastReadDate: lastReadDate || null,
-          dailyReadHistory,
-          studyScore,
+          ...learningStateRef.current,
+          lastReadDate: learningStateRef.current.lastReadDate || null,
         };
 
         await persistLearningLocally(uid, accountStateSnapshot);
+        if (gen !== learningSaveGenRef.current) return;
 
         try {
           const deviceId =
             currentDeviceIdRef.current || (await getDeviceId());
+          if (gen !== learningSaveGenRef.current) return;
+
+          const latest = {
+            ...learningStateRef.current,
+            lastReadDate: learningStateRef.current.lastReadDate || null,
+          };
 
           await updateDoc(doc(db, "users", uid), {
-            readItems,
-            readItemVersions,
-            bookmarks,
-            currentStreak,
-            lastReadDate: lastReadDate || null,
-            dailyReadHistory,
-            studyScore,
-            [`deviceStates.${deviceId}`]: accountStateSnapshot,
+            readItems: latest.readItems,
+            readItemVersions: latest.readItemVersions,
+            bookmarks: latest.bookmarks,
+            currentStreak: latest.currentStreak,
+            lastReadDate: latest.lastReadDate,
+            dailyReadHistory: latest.dailyReadHistory,
+            studyScore: latest.studyScore,
+            [`deviceStates.${deviceId}`]: latest,
             syncedAt: serverTimestamp(),
           });
         } catch (e) {
@@ -1525,8 +1493,9 @@ export const AppProvider = ({ children }) => {
     const nextVersions = { ...(prev.readItemVersions || {}) };
     let changed = false;
     refsToClear.forEach(({ contentKey }) => {
-      if (nextVersions[contentKey]) {
-        delete nextVersions[contentKey];
+      const stored = nextVersions[contentKey];
+      if (typeof stored === "string" && stored) {
+        nextVersions[contentKey] = READ_UNREAD_TOMBSTONE;
         changed = true;
       }
     });

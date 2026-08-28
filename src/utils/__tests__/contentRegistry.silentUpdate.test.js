@@ -9,7 +9,9 @@ import {
   isItemPendingUpdate,
   isItemReadForProgress,
   LEAF_CONTENT_ENTRIES,
+  migrateLegacyReadItems,
 } from "../contentRegistry";
+import { READ_UNREAD_TOMBSTONE } from "../learningStateMerge";
 
 describe("silent library content updates (progress preservation)", () => {
   beforeEach(() => {
@@ -133,5 +135,15 @@ describe("silent library content updates (progress preservation)", () => {
     ]);
     const updated = LEAF_CONTENT_ENTRIES.find((e) => e.key === leaf.key);
     expect(updated.recentlyUpdated).toBe(false);
+  });
+
+  it("does not resurrect a tombstone from leftover read titles", () => {
+    const entry = LEAF_CONTENT_ENTRIES.find((e) => e.section === "theory");
+    expect(entry).toBeTruthy();
+    const migrated = migrateLegacyReadItems([entry.title], {
+      [entry.key]: READ_UNREAD_TOMBSTONE,
+    });
+    expect(migrated[entry.key]).toBe(READ_UNREAD_TOMBSTONE);
+    expect(isEntryReadForProgress(entry, migrated)).toBe(false);
   });
 });
