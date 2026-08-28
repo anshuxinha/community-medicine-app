@@ -62,6 +62,10 @@ import {
   setLocalOnboardingCompleted,
   resolveOnboardingCompleted,
 } from "../utils/onboardingStorage";
+import {
+  CLOUD_LEARNING_SAVE_DEBOUNCE_MS,
+  createDebouncedTask,
+} from "../utils/debouncedTask";
 
 let Purchases;
 let GoogleSignin;
@@ -408,6 +412,14 @@ export const AppProvider = ({ children }) => {
   const currentDeviceIdRef = useRef(null);
   const lastRefreshRef = useRef(0);
   const learningSaveGenRef = useRef(0);
+  const writeLearningToCloudRef = useRef(async () => {});
+  const cloudLearningSaveTaskRef = useRef(null);
+  if (!cloudLearningSaveTaskRef.current) {
+    cloudLearningSaveTaskRef.current = createDebouncedTask(
+      () => writeLearningToCloudRef.current(),
+      CLOUD_LEARNING_SAVE_DEBOUNCE_MS,
+    );
+  }
   const prevStreakRef = useRef(0);
   const userRef = useRef(user);
   const learningStateRef = useRef({
@@ -553,6 +565,53 @@ export const AppProvider = ({ children }) => {
       console.warn("Failed to persist learning state locally:", err?.message);
     }
   }, []);
+
+  const writeLearningToCloud = useCallback(async () => {
+    const uid = userRef.current?.uid;
+    if (isLoggingOutRef.current || !uid || !cloudHydratedRef.current) {
+      return;
+    }
+
+    const gen = ++learningSaveGenRef.current;
+
+    try {
+      const deviceId = currentDeviceIdRef.current || (await getDeviceId());
+      if (gen !== learningSaveGenRef.current) return;
+
+      const latest = {
+        ...learningStateRef.current,
+        lastReadDate: learningStateRef.current.lastReadDate || null,
+      };
+
+      await updateDoc(doc(db, "users", uid), {
+        readItems: latest.readItems,
+        readItemVersions: latest.readItemVersions,
+        bookmarks: latest.bookmarks,
+        currentStreak: latest.currentStreak,
+        lastReadDate: latest.lastReadDate,
+        dailyReadHistory: latest.dailyReadHistory,
+        studyScore: latest.studyScore,
+        [`deviceStates.${deviceId}`]: latest,
+        syncedAt: serverTimestamp(),
+      });
+    } catch (e) {
+      console.warn("Failed to sync to Firebase:", e?.message);
+    }
+  }, []);
+
+  writeLearningToCloudRef.current = writeLearningToCloud;
+
+  const flushCloudLearningSave = useCallback(async () => {
+    const uid = userRef.current?.uid;
+    if (uid && cloudHydratedRef.current && !isLoggingOutRef.current) {
+      const snapshot = {
+        ...learningStateRef.current,
+        lastReadDate: learningStateRef.current.lastReadDate || null,
+      };
+      await persistLearningLocally(uid, snapshot);
+    }
+    await cloudLearningSaveTaskRef.current?.flush();
+  }, [persistLearningLocally]);
 
   const loadLocalLearningSnapshot = async (uid) => {
     try {
@@ -1065,7 +1124,7 @@ export const AppProvider = ({ children }) => {
       ) {
         const uid = userRef.current?.uid;
         if (uid && cloudHydratedRef.current && !isLoggingOutRef.current) {
-          void persistLearningLocally(uid, learningStateRef.current);
+          void flushCloudLearningSave();
         }
       }
       if (
@@ -1082,7 +1141,7 @@ export const AppProvider = ({ children }) => {
       handleAppStateChange,
     );
     return () => subscription.remove();
-  }, [refreshFromCloud, persistLearningLocally]);
+  }, [refreshFromCloud, persistLearningLocally, flushCloudLearningSave]);
 
   useEffect(() => {
     if (user === null) {
@@ -1200,53 +1259,18 @@ export const AppProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    const saveLearning = async () => {
-      const uid = userRef.current?.uid;
-      if (isLoggingOutRef.current || !uid || !cloudHydratedRef.current) {
-        return;
-      }
+    const uid = userRef.current?.uid;
+    if (isLoggingOutRef.current || !uid || !cloudHydratedRef.current) {
+      return;
+    }
 
-      const gen = ++learningSaveGenRef.current;
-
-      try {
-        const accountStateSnapshot = {
-          ...learningStateRef.current,
-          lastReadDate: learningStateRef.current.lastReadDate || null,
-        };
-
-        await persistLearningLocally(uid, accountStateSnapshot);
-        if (gen !== learningSaveGenRef.current) return;
-
-        try {
-          const deviceId =
-            currentDeviceIdRef.current || (await getDeviceId());
-          if (gen !== learningSaveGenRef.current) return;
-
-          const latest = {
-            ...learningStateRef.current,
-            lastReadDate: learningStateRef.current.lastReadDate || null,
-          };
-
-          await updateDoc(doc(db, "users", uid), {
-            readItems: latest.readItems,
-            readItemVersions: latest.readItemVersions,
-            bookmarks: latest.bookmarks,
-            currentStreak: latest.currentStreak,
-            lastReadDate: latest.lastReadDate,
-            dailyReadHistory: latest.dailyReadHistory,
-            studyScore: latest.studyScore,
-            [`deviceStates.${deviceId}`]: latest,
-            syncedAt: serverTimestamp(),
-          });
-        } catch (e) {
-          console.warn("Failed to sync to Firebase:", e?.message);
-        }
-      } catch (error) {
-        console.error("Failed to save state to AsyncStorage:", error);
-      }
+    const accountStateSnapshot = {
+      ...learningStateRef.current,
+      lastReadDate: learningStateRef.current.lastReadDate || null,
     };
 
-    saveLearning();
+    void persistLearningLocally(uid, accountStateSnapshot);
+    cloudLearningSaveTaskRef.current?.schedule();
   }, [
     readItems,
     readItemVersions,
@@ -1923,7 +1947,12 @@ export const AppProvider = ({ children }) => {
   }, [persistLearningLocally]);
 
   const logout = useCallback(async () => {
+    try {
+      await flushCloudLearningSave();
+    } catch (_) {}
+    cloudLearningSaveTaskRef.current?.cancel();
     isLoggingOutRef.current = true;
+    cloudHydratedRef.current = false;
 
     // Clear currentDeviceId in Firestore so re-login won't trigger conflict
     const uid = user?.uid || auth.currentUser?.uid;
@@ -1975,7 +2004,7 @@ export const AppProvider = ({ children }) => {
     setLastReadDate(null);
     setStudyScore(0);
     setDailyReadHistory({});
-  }, []);
+  }, [flushCloudLearningSave]);
 
   const upgradeToPremium = useCallback(async (metadata = {}) => {
     setAccountPremium(true);

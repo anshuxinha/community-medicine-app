@@ -1,4 +1,11 @@
-import React, { useContext, useState, useEffect, useMemo, useCallback } from "react";
+import React, {
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+  memo,
+} from "react";
 import {
   View,
   StyleSheet,
@@ -40,6 +47,12 @@ import {
   getPaperMeta,
 } from "../data/nmcCurriculum";
 import { isResidentModeEnabled } from "../utils/residentMode";
+import {
+  isFreeLibraryItem,
+  navigateToLibraryContent,
+} from "../utils/libraryNavigation";
+
+const topicIconCache = new Map();
 
 const SECTION_ID_ICON_MAP = {
   "theory:28": "microscope",
@@ -79,6 +92,110 @@ const FreeLabel = () => {
 
   return <Badge style={styles.freeBadge}>FREE</Badge>;
 };
+
+const libraryKeyExtractor = (row, index) =>
+  row.type === "header"
+    ? `header-${row.paperId}`
+    : `chapter-${row.item.id}-${index}`;
+
+const LibrarySeparator = memo(function LibrarySeparator() {
+  const { styles } = useThemedStyles(createStyles);
+  return <Divider style={styles.divider} />;
+});
+
+const PaperHeaderRow = memo(function PaperHeaderRow({ title, domains }) {
+  const { styles } = useThemedStyles(createStyles);
+  return (
+    <View style={styles.paperHeaderBlock}>
+      <Text style={styles.paperHeaderTitle}>{title}</Text>
+      <Text style={styles.paperHeaderDomains} numberOfLines={2}>
+        {domains}
+      </Text>
+    </View>
+  );
+});
+
+const ChapterRow = memo(function ChapterRow({
+  item,
+  itemStatus,
+  iconName,
+  menuOpen,
+  menuKey,
+  paperMeta,
+  isPremium,
+  onOpen,
+  onOpenMenu,
+  onCloseMenu,
+  onMarkUnread,
+}) {
+  const { styles, colors } = useThemedStyles(createStyles);
+  return (
+    <List.Item
+      title={item.title}
+      titleNumberOfLines={3}
+      titleStyle={styles.listItemTitle}
+      style={styles.listItem}
+      onPress={() => onOpen(item, itemStatus)}
+      description={() => {
+        if (item.id === "1" && !isPremium) {
+          return (
+            <Text style={styles.freeDescText}>Free for all users</Text>
+          );
+        }
+        return null;
+      }}
+      left={(leftProps) => (
+        <List.Icon
+          {...leftProps}
+          icon={() => (
+            <MaterialCommunityIcons
+              name={iconName}
+              size={24}
+              color={colors.textTertiary}
+            />
+          )}
+        />
+      )}
+      right={() => (
+        <Menu
+          visible={menuOpen}
+          onDismiss={onCloseMenu}
+          anchor={
+            <TouchableOpacity
+              style={styles.rightSlot}
+              activeOpacity={0.7}
+              onPress={() => onOpenMenu(menuKey)}
+            >
+              {item.id === "1" && !isPremium && <FreeLabel />}
+              {paperMeta ? (
+                <View style={styles.paperPill}>
+                  <Text style={styles.paperPillText}>P{paperMeta.roman}</Text>
+                </View>
+              ) : null}
+              <StatusMark status={itemStatus} />
+            </TouchableOpacity>
+          }
+        >
+          <Menu.Item
+            title={
+              itemStatus === "updated" ? "Open updated topic" : "Open topic"
+            }
+            onPress={() => {
+              onCloseMenu();
+              onOpen(item, itemStatus);
+            }}
+          />
+          {itemStatus === "read" ? (
+            <Menu.Item
+              title="Mark as unread"
+              onPress={() => onMarkUnread(item)}
+            />
+          ) : null}
+        </Menu>
+      )}
+    />
+  );
+});
 
 
 
@@ -191,51 +308,51 @@ const LibraryScreen = (props) => {
 
   const getMenuKey = (item) => `${activeSection}:${item.id}`;
 
-  const closeMenu = () => setOpenMenuKey(null);
+  const closeMenu = useCallback(() => setOpenMenuKey(null), []);
 
   const openItem = useCallback(
     (item, itemStatus) => {
-      const isFree = item.id === "1" || item.title === "Man and Medicine";
+      const isFree = isFreeLibraryItem(item);
 
       if (item.subsections) {
-        const subTopicsParams = {
-          title: item.title,
-          section: activeSection,
-          parentId: item.id,
-        };
-
-        if (isFree) {
-          navigation.navigate("SubTopics", subTopicsParams);
-        } else {
-          navigation.navigate("PremiumGuard", {
-            destination: "SubTopics",
-            subTopicsParams,
-          });
-        }
+        navigateToLibraryContent(navigation, {
+          isPremium,
+          isFree,
+          destination: "SubTopics",
+          params: {
+            title: item.title,
+            section: activeSection,
+            parentId: item.id,
+          },
+        });
         return;
       }
 
-      const readingParams = buildLibraryReadingParams(item, activeSection, {
-        status: itemStatus,
+      navigateToLibraryContent(navigation, {
+        isPremium,
+        isFree,
+        destination: "Reading",
+        params: buildLibraryReadingParams(item, activeSection, {
+          status: itemStatus,
+        }),
       });
-      if (isFree) {
-        navigation.navigate("Reading", readingParams);
-      } else {
-        navigation.navigate("PremiumGuard", {
-          destination: "Reading",
-          readingParams,
-        });
-      }
     },
-    [activeSection, navigation],
+    [activeSection, isPremium, navigation],
   );
 
-  const handleMarkUnread = (item) => {
-    markAsUnread(getLeafContentRefsForItem(item, activeSection));
-    closeMenu();
-  };
+  const handleMarkUnread = useCallback(
+    (item) => {
+      markAsUnread(getLeafContentRefsForItem(item, activeSection));
+      closeMenu();
+    },
+    [activeSection, closeMenu, markAsUnread],
+  );
 
   const getIconForTopic = (section, id, title) => {
+    const cacheKey = `${section}:${id}:${title || ""}`;
+    const cached = topicIconCache.get(cacheKey);
+    if (cached) return cached;
+    const icon = (() => {
     const idMapped = SECTION_ID_ICON_MAP[`${section}:${id}`];
     if (idMapped) return idMapped;
 
@@ -393,7 +510,58 @@ const LibraryScreen = (props) => {
     )
       return "scale-balance";
     return "book-open-outline";
+    })();
+    topicIconCache.set(cacheKey, icon);
+    return icon;
   };
+
+  const renderLibraryRow = useCallback(
+    ({ item: row }) => {
+      if (row.type === "header") {
+        return (
+          <PaperHeaderRow title={row.title} domains={row.domains} />
+        );
+      }
+
+      const item = row.item;
+      const itemStatus = getItemStatus(
+        item,
+        activeSection,
+        readItemVersions,
+      );
+      const menuKey = getMenuKey(item);
+      const primaryPaper =
+        residentMode && activeSection === "theory"
+          ? getPrimaryPaperForChapterId(item.id)
+          : null;
+      const paperMeta = primaryPaper ? getPaperMeta(primaryPaper) : null;
+      return (
+        <ChapterRow
+          item={item}
+          itemStatus={itemStatus}
+          iconName={getIconForTopic(activeSection, item.id, item.title)}
+          menuOpen={openMenuKey === menuKey}
+          menuKey={menuKey}
+          paperMeta={paperMeta}
+          isPremium={isPremium}
+          onOpen={openItem}
+          onOpenMenu={setOpenMenuKey}
+          onCloseMenu={closeMenu}
+          onMarkUnread={handleMarkUnread}
+        />
+      );
+    },
+    [
+      activeSection,
+      closeMenu,
+      handleMarkUnread,
+      isPremium,
+      openItem,
+      openMenuKey,
+      readItemVersions,
+      residentMode,
+    ],
+  );
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -504,115 +672,15 @@ const LibraryScreen = (props) => {
 
         <FlatList
           data={listData}
-          keyExtractor={(row, index) =>
-            row.type === "header"
-              ? `header-${row.paperId}`
-              : `chapter-${row.item.id}-${index}`
-          }
+          keyExtractor={libraryKeyExtractor}
           style={styles.list}
-          renderItem={({ item: row }) => {
-            if (row.type === "header") {
-              return (
-                <View style={styles.paperHeaderBlock}>
-                  <Text style={styles.paperHeaderTitle}>{row.title}</Text>
-                  <Text style={styles.paperHeaderDomains} numberOfLines={2}>
-                    {row.domains}
-                  </Text>
-                </View>
-              );
-            }
-
-            const item = row.item;
-            const itemStatus = getItemStatus(
-              item,
-              activeSection,
-              readItemVersions,
-            );
-            const iconName = getIconForTopic(
-              activeSection,
-              item.id,
-              item.title,
-            );
-            const menuKey = getMenuKey(item);
-            const primaryPaper =
-              residentMode && activeSection === "theory"
-                ? getPrimaryPaperForChapterId(item.id)
-                : null;
-            const paperMeta = primaryPaper ? getPaperMeta(primaryPaper) : null;
-            return (
-              <List.Item
-                title={item.title}
-                titleNumberOfLines={3}
-                titleStyle={styles.listItemTitle}
-                style={styles.listItem}
-                onPress={() => openItem(item, itemStatus)}
-                description={() => {
-                  if (item.id === "1" && !isPremium) {
-                    return (
-                      <Text style={styles.freeDescText}>
-                        Free for all users
-                      </Text>
-                    );
-                  }
-                  return null;
-                }}
-                left={(leftProps) => (
-                  <List.Icon
-                    {...leftProps}
-                    icon={() => (
-                      <MaterialCommunityIcons
-                        name={iconName}
-                        size={24}
-                        color={colors.textTertiary}
-                      />
-                    )}
-                  />
-                )}
-                right={() => (
-                  <Menu
-                    visible={openMenuKey === menuKey}
-                    onDismiss={closeMenu}
-                    anchor={
-                      <TouchableOpacity
-                        style={styles.rightSlot}
-                        activeOpacity={0.7}
-                        onPress={() => setOpenMenuKey(menuKey)}
-                      >
-                        {item.id === "1" && !isPremium && <FreeLabel />}
-                        {paperMeta ? (
-                          <View style={styles.paperPill}>
-                            <Text style={styles.paperPillText}>
-                              P{paperMeta.roman}
-                            </Text>
-                          </View>
-                        ) : null}
-                        <StatusMark status={itemStatus} />
-                      </TouchableOpacity>
-                    }
-                  >
-                    <Menu.Item
-                      title={
-                        itemStatus === "updated"
-                          ? "Open updated topic"
-                          : "Open topic"
-                      }
-                      onPress={() => {
-                        closeMenu();
-                        openItem(item, itemStatus);
-                      }}
-                    />
-                    {itemStatus === "read" ? (
-                      <Menu.Item
-                        title="Mark as unread"
-                        onPress={() => handleMarkUnread(item)}
-                      />
-                    ) : null}
-                  </Menu>
-                )}
-              />
-            );
-          }}
-          ItemSeparatorComponent={() => <Divider style={styles.divider} />}
+          renderItem={renderLibraryRow}
+          extraData={`${openMenuKey || ""}:${activeSection}`}
+          initialNumToRender={12}
+          maxToRenderPerBatch={8}
+          windowSize={8}
+          removeClippedSubviews
+          ItemSeparatorComponent={LibrarySeparator}
           contentContainerStyle={[
             styles.listContent,
             isTablet && { maxWidth: contentMaxWidth, alignSelf: "center" },

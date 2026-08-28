@@ -1,4 +1,11 @@
-import React, { useContext, useState, useEffect, useMemo } from "react";
+import React, {
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+  memo,
+} from "react";
 import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { Text, List, Divider, Badge, Menu } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -19,6 +26,10 @@ import {
   getItemStatus,
   getLeafContentRefsForItem,
 } from "../utils/contentRegistry";
+import {
+  isFreeLibraryItem,
+  navigateToLibraryContent,
+} from "../utils/libraryNavigation";
 
 const TOPIC_ID_ICON_MAP = {
   "27-1": "chart-line-variant",
@@ -70,6 +81,73 @@ const getIconForSubtopic = (item) => {
   return "file-document-outline";
 };
 
+const SubtopicRow = memo(function SubtopicRow({
+  item,
+  itemStatus,
+  iconName,
+  menuOpen,
+  menuKey,
+  onOpen,
+  onOpenMenu,
+  onCloseMenu,
+  onMarkUnread,
+}) {
+  const { styles } = useThemedStyles(createStyles);
+  return (
+    <List.Item
+      title={item.title}
+      titleNumberOfLines={3}
+      titleStyle={styles.itemTitle}
+      description={item.description}
+      descriptionStyle={styles.itemDescription}
+      left={(leftProps) => (
+        <List.Icon
+          {...leftProps}
+          icon={() => (
+            <MaterialCommunityIcons
+              name={iconName}
+              size={24}
+              color={theme.colors.secondary}
+            />
+          )}
+        />
+      )}
+      right={() => (
+        <Menu
+          visible={menuOpen}
+          onDismiss={onCloseMenu}
+          anchor={
+            <TouchableOpacity
+              style={styles.rightSlot}
+              activeOpacity={0.7}
+              onPress={() => onOpenMenu(menuKey)}
+            >
+              <StatusMark status={itemStatus} />
+            </TouchableOpacity>
+          }
+        >
+          <Menu.Item
+            title={
+              itemStatus === "updated" ? "Open updated topic" : "Open topic"
+            }
+            onPress={() => {
+              onCloseMenu();
+              onOpen(item, itemStatus);
+            }}
+          />
+          {itemStatus === "read" ? (
+            <Menu.Item
+              title="Mark as unread"
+              onPress={() => onMarkUnread(item)}
+            />
+          ) : null}
+        </Menu>
+      )}
+      onPress={() => onOpen(item, itemStatus)}
+    />
+  );
+});
+
 const StatusMark = ({ status }) => {
   const { styles, colors } = useThemedStyles(createStyles);
 
@@ -106,7 +184,7 @@ const SubTopicsScreen = ({ route, navigation }) => {
     section = "theory",
     parentId,
   } = route.params;
-  const { readItemVersions, markAsUnread, contentRegistryVersion } =
+  const { readItemVersions, markAsUnread, contentRegistryVersion, isPremium } =
     useContext(AppContext);
 
   const items = useMemo(() => {
@@ -128,33 +206,73 @@ const SubTopicsScreen = ({ route, navigation }) => {
 
   const getMenuKey = (item) => `${section}:${item.id}`;
 
-  const closeMenu = () => setOpenMenuKey(null);
+  const closeMenu = useCallback(() => setOpenMenuKey(null), []);
 
-  const openItem = (item, itemStatus) => {
-    if (item.subsections) {
-      navigation.push("PremiumGuard", {
-        destination: "SubTopics",
-        subTopicsParams: {
-          title: item.title,
-          section,
-          parentId: item.id,
-        },
+  const openItem = useCallback(
+    (item, itemStatus) => {
+      const isFree = isFreeLibraryItem(item);
+      if (item.subsections) {
+        navigateToLibraryContent(navigation, {
+          isPremium,
+          isFree,
+          destination: "SubTopics",
+          params: {
+            title: item.title,
+            section,
+            parentId: item.id,
+          },
+          mode: "push",
+        });
+        return;
+      }
+
+      navigateToLibraryContent(navigation, {
+        isPremium,
+        isFree,
+        destination: "Reading",
+        params: buildLibraryReadingParams(item, section, {
+          status: itemStatus,
+        }),
       });
-      return;
-    }
+    },
+    [isPremium, navigation, section],
+  );
 
-    navigation.navigate("PremiumGuard", {
-      destination: "Reading",
-      readingParams: buildLibraryReadingParams(item, section, {
-        status: itemStatus,
-      }),
-    });
-  };
+  const handleMarkUnread = useCallback(
+    (item) => {
+      markAsUnread(getLeafContentRefsForItem(item, section));
+      closeMenu();
+    },
+    [closeMenu, markAsUnread, section],
+  );
 
-  const handleMarkUnread = (item) => {
-    markAsUnread(getLeafContentRefsForItem(item, section));
-    closeMenu();
-  };
+  const renderSubtopic = useCallback(
+    ({ item }) => {
+      const itemStatus = getItemStatus(item, section, readItemVersions);
+      const menuKey = getMenuKey(item);
+      return (
+        <SubtopicRow
+          item={item}
+          itemStatus={itemStatus}
+          iconName={getIconForSubtopic(item)}
+          menuOpen={openMenuKey === menuKey}
+          menuKey={menuKey}
+          onOpen={openItem}
+          onOpenMenu={setOpenMenuKey}
+          onCloseMenu={closeMenu}
+          onMarkUnread={handleMarkUnread}
+        />
+      );
+    },
+    [
+      closeMenu,
+      handleMarkUnread,
+      openItem,
+      openMenuKey,
+      readItemVersions,
+      section,
+    ],
+  );
 
   return (
     <SafeAreaView style={styles.container} edges={["bottom"]}>
@@ -165,65 +283,12 @@ const SubTopicsScreen = ({ route, navigation }) => {
           styles.listContent,
           { paddingBottom: insets.bottom + 28 },
         ]}
-        renderItem={({ item }) => {
-          const itemStatus = getItemStatus(item, section, readItemVersions);
-          const menuKey = getMenuKey(item);
-          return (
-            <List.Item
-              title={item.title}
-              titleNumberOfLines={3}
-              titleStyle={styles.itemTitle}
-              description={item.description}
-              descriptionStyle={styles.itemDescription}
-              left={(leftProps) => (
-                <List.Icon
-                  {...leftProps}
-                  icon={() => (
-                    <MaterialCommunityIcons
-                      name={getIconForSubtopic(item)}
-                      size={24}
-                      color={theme.colors.secondary}
-                    />
-                  )}
-                />
-              )}
-              right={() => (
-                <Menu
-                  visible={openMenuKey === menuKey}
-                  onDismiss={closeMenu}
-                  anchor={
-                    <TouchableOpacity
-                      style={styles.rightSlot}
-                      activeOpacity={0.7}
-                      onPress={() => setOpenMenuKey(menuKey)}
-                    >
-                      <StatusMark status={itemStatus} />
-                    </TouchableOpacity>
-                  }
-                >
-                  <Menu.Item
-                    title={
-                      itemStatus === "updated"
-                        ? "Open updated topic"
-                        : "Open topic"
-                    }
-                    onPress={() => {
-                      closeMenu();
-                      openItem(item, itemStatus);
-                    }}
-                  />
-                  {itemStatus === "read" ? (
-                    <Menu.Item
-                      title="Mark as unread"
-                      onPress={() => handleMarkUnread(item)}
-                    />
-                  ) : null}
-                </Menu>
-              )}
-              onPress={() => openItem(item, itemStatus)}
-            />
-          );
-        }}
+        renderItem={renderSubtopic}
+        extraData={openMenuKey}
+        initialNumToRender={12}
+        maxToRenderPerBatch={8}
+        windowSize={8}
+        removeClippedSubviews
         ItemSeparatorComponent={Divider}
       />
     </SafeAreaView>

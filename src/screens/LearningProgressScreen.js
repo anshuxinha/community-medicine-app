@@ -22,6 +22,7 @@ import {
 } from "../utils/learningProgress";
 import { progressToPercent } from "../utils/progressPresentation";
 import { buildLibraryReadingParams } from "../utils/contentRegistry";
+import { navigateToLibraryContent } from "../utils/libraryNavigation";
 import { DEFAULT_DAILY_GOAL } from "../data/nmcCurriculum";
 import { isResidentModeEnabled } from "../utils/residentMode";
 
@@ -127,15 +128,14 @@ const LearningProgressScreen = ({ navigation }) => {
       const readingParams = buildReadingParamsFromEntry(entry);
       if (!readingParams) return;
 
-      const free = entry.section === "theory" && isFreeTheoryRoot(entry.rootChapterId);
-      if (free || isPremium) {
-        navigation.navigate("Reading", readingParams);
-      } else {
-        navigation.navigate("PremiumGuard", {
-          destination: "Reading",
-          readingParams,
-        });
-      }
+      const free =
+        entry.section === "theory" && isFreeTheoryRoot(entry.rootChapterId);
+      navigateToLibraryContent(navigation, {
+        isPremium,
+        isFree: free,
+        destination: "Reading",
+        params: readingParams,
+      });
     },
     [isPremium, navigation],
   );

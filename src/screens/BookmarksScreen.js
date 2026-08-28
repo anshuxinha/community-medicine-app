@@ -16,11 +16,15 @@ import {
   getCurrentContentEntry,
   getItemStatus,
 } from "../utils/contentRegistry";
+import {
+  isFreeLibraryItem,
+  navigateToLibraryContent,
+} from "../utils/libraryNavigation";
 
 const BookmarksScreen = ({ navigation }) => {
   const { styles, colors } = useThemedStyles(createStyles);
 
-  const { bookmarks, readItemVersions } = useContext(AppContext);
+  const { bookmarks, readItemVersions, isPremium } = useContext(AppContext);
 
   useEffect(() => {
     enableScreenCaptureProtection();
@@ -61,17 +65,12 @@ const BookmarksScreen = ({ navigation }) => {
               : null),
         };
 
-    // Determine if the content is free
-    const isFree = !bookmark.isGem && (currentItem.id === "1" || currentItem.title === "Man and Medicine");
-
-    if (isFree) {
-      navigation.navigate("Reading", readingParams);
-    } else {
-      navigation.navigate("PremiumGuard", {
-        destination: "Reading",
-        readingParams,
-      });
-    }
+    navigateToLibraryContent(navigation, {
+      isPremium,
+      isFree: !bookmark.isGem && isFreeLibraryItem(currentItem),
+      destination: "Reading",
+      params: readingParams,
+    });
   };
 
   return (

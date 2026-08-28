@@ -19,6 +19,10 @@ import {
   disableScreenCaptureProtection,
 } from "../utils/screenCaptureProtection";
 import {
+  isFreeLibraryItem,
+  navigateToLibraryContent,
+} from "../utils/libraryNavigation";
+import {
   subscribeAnnotations,
   saveAnnotations,
 } from "../services/annotationService";
@@ -26,9 +30,6 @@ import {
   subscribeHighlights,
   saveHighlights,
 } from "../services/highlightService";
-const isFreeLibraryItem = (item) =>
-  String(item?.id) === "1" || item?.title === "Man and Medicine";
-
 const buildReadingParamsFromEntry = (entry) => {
   const item = entry?.item || {};
   return buildLibraryReadingParams(item, entry.section);
@@ -73,6 +74,7 @@ const ReadingScreen = ({ route, navigation }) => {
     user,
     readingProgress,
     currentStreak,
+    isPremium,
   } = useContext(AppContext);
   const [annotations, setAnnotations] = useState([]);
   const [userHighlights, setUserHighlights] = useState({});
@@ -315,23 +317,21 @@ const ReadingScreen = ({ route, navigation }) => {
       return;
     }
 
-    const readingParams = buildReadingParamsFromEntry(nextEntry);
-    if (isFreeLibraryItem(nextEntry.item)) {
-      navigation.replace("Reading", readingParams);
-      return;
-    }
-
-    navigation.replace("PremiumGuard", {
+    navigateToLibraryContent(navigation, {
+      isPremium,
+      isFree: isFreeLibraryItem(nextEntry.item),
       destination: "Reading",
-      readingParams,
+      params: buildReadingParamsFromEntry(nextEntry),
+      mode: "replace",
     });
-  }, [celebration, navigation]);
+  }, [celebration, isPremium, navigation]);
 
   const headerTitle = isGem ? (effectiveTitle || title) : (effectiveId ? `Chapter ${effectiveId}` : effectiveSection || "");
 
   return (
     <View style={styles.container}>
       <ReadingView
+        key={effectiveContentKey || String(effectiveId)}
         content={effectiveContent}
         title={effectiveTitle}
         headerTitle={headerTitle}
@@ -353,6 +353,7 @@ const ReadingScreen = ({ route, navigation }) => {
         onToggleHighlight={handleToggleHighlight}
         searchTerms={searchTerms}
         contentKey={effectiveContentKey}
+        contentSignature={effectiveContentSignature}
       />
       <ChapterCompleteSheet
         visible={Boolean(celebration)}

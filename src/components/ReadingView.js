@@ -24,6 +24,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useThemedStyles } from '../styles/useThemedStyles';
 import { normalizeUpdatedSnippet } from "../utils/contentRegistry";
+import {
+  makeMarkdownParseCacheKey,
+  markdownParseCache,
+} from "../utils/markdownParseCache";
 import { ALL_ORIENTATIONS } from "../constants/orientations";
 import ThemeModePill from "./ThemeModePill";
 import {
@@ -763,16 +767,29 @@ const ReadingView = ({
   onToggleHighlight,
   searchTerms = "",
   contentKey,
+  contentSignature,
 }) => {
   const { styles, colors } = useThemedStyles(createStyles);
   const insets = useSafeAreaInsets();
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
-  const blocks = useMemo(() => {
-    return parseMarkdown(content || "", { isGem });
-  }, [content, isGem]);
+  const parseCacheKey = useMemo(
+    () =>
+      makeMarkdownParseCacheKey({
+        contentKey,
+        contentSignature,
+        isGem,
+      }),
+    [contentKey, contentSignature, isGem],
+  );
+  const [blocks, setBlocks] = useState(() => {
+    if (!parseCacheKey) return null;
+    return markdownParseCache.get(parseCacheKey) || null;
+  });
+  const parseReady = Array.isArray(blocks);
   const mergedBlocks = useMemo(
-    () => mergeBlocksWithIllustrations(blocks, illustrations),
-    [blocks, illustrations],
+    () =>
+      mergeBlocksWithIllustrations(parseReady ? blocks : [], illustrations),
+    [blocks, illustrations, parseReady],
   );
   const [expandedExerciseId, setExpandedExerciseId] = useState(null);
   const toggleExercise = useCallback((id) => {
@@ -840,6 +857,35 @@ const ReadingView = ({
   }, []);
 
   useEffect(() => {
+    const cached = parseCacheKey
+      ? markdownParseCache.get(parseCacheKey)
+      : undefined;
+    if (cached) {
+      setBlocks(cached);
+      return undefined;
+    }
+
+    setBlocks(null);
+    const parseNow = () => {
+      const parsed = parseMarkdown(content || "", { isGem });
+      if (parseCacheKey) {
+        markdownParseCache.set(parseCacheKey, parsed);
+      }
+      if (isMountedRef.current) {
+        setBlocks(parsed);
+      }
+    };
+
+    if (String(searchTerms || "").trim()) {
+      parseNow();
+      return undefined;
+    }
+
+    const handle = InteractionManager.runAfterInteractions(parseNow);
+    return () => handle.cancel();
+  }, [content, isGem, parseCacheKey, searchTerms]);
+
+  useEffect(() => {
     hasReachedEndRef.current = false;
     if (fitTimerRef.current) {
       clearTimeout(fitTimerRef.current);
@@ -883,7 +929,8 @@ const ReadingView = ({
     () => mergedBlocks.slice(0, visibleCount),
     [mergedBlocks, visibleCount],
   );
-  const allBlocksVisible = visibleCount >= mergedBlocks.length;
+  const allBlocksVisible =
+    parseReady && visibleCount >= mergedBlocks.length;
   const scrollBottomPadding = SCROLL_BOTTOM_PADDING + insets.bottom;
   onReachEndRef.current = onReachEnd;
   allBlocksVisibleRef.current = allBlocksVisible;
@@ -2200,7 +2247,13 @@ const ReadingView = ({
             </Text>
           </View>
         ) : null}
-        {visibleBlocks.map(renderBlockWithAnnotations)}
+        {!parseReady ? (
+          <Text style={styles.parsePending} selectable={false}>
+            Loading topic…
+          </Text>
+        ) : (
+          visibleBlocks.map(renderBlockWithAnnotations)
+        )}
       </ScrollView>
 
       {/* ── Bottom Toolbar ── */}
@@ -2616,6 +2669,12 @@ const createStyles = (colors) => StyleSheet.create({
   scrollContent: {
     paddingHorizontal: 20,
     paddingTop: 4,
+  },
+  parsePending: {
+    paddingTop: 20,
+    paddingBottom: 32,
+    fontSize: 14,
+    color: colors.textTertiary,
   },
 
   // ── Banners ──

@@ -1,5 +1,11 @@
 import React, { useEffect, useRef } from "react";
-import { View, ActivityIndicator, useWindowDimensions } from "react-native";
+import {
+  View,
+  ActivityIndicator,
+  useWindowDimensions,
+  InteractionManager,
+  Platform,
+} from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   NavigationContainer,
@@ -55,6 +61,12 @@ const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 const navigationRef = createNavigationContainerRef();
 
+const libraryStackScreenOptions = {
+  freezeOnBlur: true,
+  animation: "slide_from_right",
+  ...(Platform.OS === "android" ? { animationDuration: 220 } : {}),
+};
+
 const TabNavigator = () => {
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
@@ -62,6 +74,14 @@ const TabNavigator = () => {
   const tabBarBaseHeight = isLandscape ? 48 : 60;
   const { isPremium } = React.useContext(AppContext);
   const { colors } = useAppTheme();
+
+  useEffect(() => {
+    const handle = InteractionManager.runAfterInteractions(() => {
+      getReadingScreen();
+      getSubTopicsScreen();
+    });
+    return () => handle.cancel();
+  }, []);
 
   return (
     <Tab.Navigator
@@ -214,17 +234,20 @@ const AppNavigator = () => {
             <Stack.Screen
               name="MainTabs"
               component={TabNavigator}
-              options={{ headerShown: false }}
+              options={{ headerShown: false, freezeOnBlur: true }}
             />
             <Stack.Screen
               name="Reading"
               getComponent={getReadingScreen}
-              options={{ headerShown: false }}
+              options={{ headerShown: false, ...libraryStackScreenOptions }}
             />
             <Stack.Screen
               name="SubTopics"
               getComponent={getSubTopicsScreen}
-              options={({ route }) => ({ title: route.params.title })}
+              options={({ route }) => ({
+                title: route.params.title,
+                ...libraryStackScreenOptions,
+              })}
             />
             <Stack.Screen
               name="Quiz"

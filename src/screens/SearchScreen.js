@@ -30,6 +30,7 @@ import {
   buildLibraryReadingParams,
   getItemStatus,
 } from "../utils/contentRegistry";
+import { navigateToLibraryContent } from "../utils/libraryNavigation";
 import {
   buildGemsIndex,
   buildLibraryIndex,
@@ -246,14 +247,12 @@ const SearchScreen = ({ navigation }) => {
             searchTerms: debouncedQuery,
           },
         );
-        if (item.isFree) {
-          navigation.navigate("Reading", readingParams);
-        } else {
-          navigation.navigate("PremiumGuard", {
-            destination: "Reading",
-            readingParams,
-          });
-        }
+        navigateToLibraryContent(navigation, {
+          isPremium,
+          isFree: item.isFree,
+          destination: "Reading",
+          params: readingParams,
+        });
         return;
       }
 
