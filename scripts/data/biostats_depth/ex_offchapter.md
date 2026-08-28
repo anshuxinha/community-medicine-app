@@ -43,7 +43,7 @@ Annual increment = 6,381.5 persons per year.
 
 **(e)** Neonatal mortality: deaths in the first 28 days × 1,000 / live births. Perinatal mortality: (stillbirths + early neonatal deaths, usually first 7 days) × 1,000 / (live births + stillbirths). Perinatal includes stillbirths; neonatal does not.
 
-(See also the Mortality indicators leaf for worked rate examples.)
+(See also the Mortality indicators section for worked rate examples.)
 [/ANS]
 
 ##LEAF##3-1

@@ -31,7 +31,7 @@ def leaf(id_, title, content):
         "id": id_,
         "title": title,
         "content": text,
-        "recentlyUpdated": True,
+        "recentlyUpdated": False,
     }
 
 
@@ -52,7 +52,7 @@ def main() -> None:
         "id": "29",
         "title": "Public Health Legislation",
         "description": "Compiled Indian public health and social legislation for MD Community Medicine: Constitution, classification, and exam-depth notes on the statutes residents must write.",
-        "recentlyUpdated": True,
+        "recentlyUpdated": False,
         "subsections": subsections,
     }
     data.append(chapter)
