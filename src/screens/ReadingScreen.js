@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useRef, useEffect, useState, useCallback } from "react";
+import React, { useContext, useMemo, useEffect, useState, useCallback } from "react";
 import { View, StyleSheet, Platform, Vibration } from "react-native";
 import ReadingView from "../components/ReadingView";
 import ChapterCompleteSheet from "../components/ChapterCompleteSheet";
@@ -74,7 +74,6 @@ const ReadingScreen = ({ route, navigation }) => {
     readingProgress,
     currentStreak,
   } = useContext(AppContext);
-  const openedUpdateRef = useRef(false);
   const [annotations, setAnnotations] = useState([]);
   const [userHighlights, setUserHighlights] = useState({});
   const [celebration, setCelebration] = useState(null);
@@ -249,29 +248,10 @@ const ReadingScreen = ({ route, navigation }) => {
 
   const bookmarked = isBookmarked(bookmarkPayload);
 
-  useEffect(() => {
-    if (
-      !openedUpdateRef.current &&
-      sessionHighlightUpdates &&
-      effectiveTitle &&
-      effectiveContentKey &&
-      effectiveContentSignature
-    ) {
-      openedUpdateRef.current = true;
-      markAsRead({
-        itemTitle: effectiveTitle,
-        contentKey: effectiveContentKey,
-        contentSignature: effectiveContentSignature,
-      });
-    }
-  }, [
-    effectiveContentKey,
-    effectiveContentSignature,
-    effectiveTitle,
-    sessionHighlightUpdates,
-  ]);
-
   const handleReachEnd = () => {
+    if (typeof navigation.isFocused === "function" && !navigation.isFocused()) {
+      return;
+    }
     if (!effectiveTitle || !effectiveContentKey || !effectiveContentSignature) {
       return;
     }
@@ -293,8 +273,7 @@ const ReadingScreen = ({ route, navigation }) => {
     });
 
     // Always show the progress report when the user finishes reading in this
-    // session, including updated library-review leaves (often markAsRead already
-    // ran on open) and revisit re-completions (didComplete false).
+    // session, including revisit re-completions (didComplete false).
     const versionsForNext =
       result?.readItemVersions || readItemVersions || {};
     const nextEntry = getNextUnreadLeafEntry(

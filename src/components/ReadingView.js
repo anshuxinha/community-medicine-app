@@ -46,6 +46,7 @@ import {
   normalizeSearchQuery,
 } from "../utils/chapterSearch";
 import { splitSentences } from "../utils/splitSentences";
+import { classifyReadingEnd, SHORT_CONTENT_TOLERANCE } from "../utils/readingEnd";
 
 if (
   Platform.OS === "android" &&
@@ -680,8 +681,8 @@ const mergeBlocksWithIllustrations = (blocks, illustrations = []) => {
   return [...mergedBlocks, ...unmatchedBottomBlocks];
 };
 
-const REACH_END_THRESHOLD = 0.98;
-const SHORT_CONTENT_TOLERANCE = 24;
+const FIT_CONFIRM_MS = 450;
+const SCROLL_BOTTOM_PADDING = 80;
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 3;
 const ZOOM_STEP = 0.5;
@@ -796,6 +797,10 @@ const ReadingView = ({
   const [wordCopyHintVisible, setWordCopyHintVisible] = useState(false);
   const [visibleCount, setVisibleCount] = useState(INITIAL_BLOCK_COUNT);
   const hasReachedEndRef = useRef(false);
+  const isMountedRef = useRef(true);
+  const fitTimerRef = useRef(null);
+  const onReachEndRef = useRef(onReachEnd);
+  const allBlocksVisibleRef = useRef(false);
   const viewportHeightRef = useRef(0);
   const contentHeightRef = useRef(0);
   const blockYMapRef = useRef({});
@@ -824,7 +829,22 @@ const ReadingView = ({
   );
 
   useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      if (fitTimerRef.current) {
+        clearTimeout(fitTimerRef.current);
+        fitTimerRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     hasReachedEndRef.current = false;
+    if (fitTimerRef.current) {
+      clearTimeout(fitTimerRef.current);
+      fitTimerRef.current = null;
+    }
     setScrollProgress(0);
     viewportHeightRef.current = 0;
     contentHeightRef.current = 0;
@@ -864,6 +884,9 @@ const ReadingView = ({
     [mergedBlocks, visibleCount],
   );
   const allBlocksVisible = visibleCount >= mergedBlocks.length;
+  const scrollBottomPadding = SCROLL_BOTTOM_PADDING + insets.bottom;
+  onReachEndRef.current = onReachEnd;
+  allBlocksVisibleRef.current = allBlocksVisible;
 
   const rotateImage = (rotationKey, delta) => {
     if (!rotationKey) {
@@ -1023,21 +1046,77 @@ const ReadingView = ({
     return map;
   }, [annotations]);
 
-  const maybeMarkAsReachedEnd = (progress, viewportHeight, contentHeight) => {
-    if (hasReachedEndRef.current || !allBlocksVisible) {
+  const fireReachedEnd = () => {
+    if (hasReachedEndRef.current || !isMountedRef.current) {
+      return;
+    }
+    hasReachedEndRef.current = true;
+    onReachEndRef.current?.();
+  };
+
+  const clearFitTimer = () => {
+    if (fitTimerRef.current) {
+      clearTimeout(fitTimerRef.current);
+      fitTimerRef.current = null;
+    }
+  };
+
+  const maybeMarkAsReachedEnd = (contentOffsetY, viewportHeight, contentHeight) => {
+    if (hasReachedEndRef.current || !isMountedRef.current) {
       return;
     }
 
-    const contentFitsScreen =
-      contentHeight > 0 &&
-      viewportHeight > 0 &&
-      contentHeight <= viewportHeight + SHORT_CONTENT_TOLERANCE;
-    const scrolledToBottom = progress >= REACH_END_THRESHOLD;
+    const kind = classifyReadingEnd({
+      contentOffsetY,
+      viewportHeight,
+      contentHeight,
+      allBlocksVisible: allBlocksVisibleRef.current,
+      bottomPadding: scrollBottomPadding,
+    });
 
-    if (contentFitsScreen || scrolledToBottom) {
-      hasReachedEndRef.current = true;
-      onReachEnd?.();
+    if (kind === "reached") {
+      clearFitTimer();
+      fireReachedEnd();
+      return;
     }
+
+    if (kind !== "pending-fit") {
+      clearFitTimer();
+      return;
+    }
+
+    clearFitTimer();
+    const heightAtStart = contentHeight;
+    fitTimerRef.current = setTimeout(() => {
+      fitTimerRef.current = null;
+      if (hasReachedEndRef.current || !isMountedRef.current) {
+        return;
+      }
+      if (contentHeightRef.current > heightAtStart + SHORT_CONTENT_TOLERANCE) {
+        return;
+      }
+      const kindLater = classifyReadingEnd({
+        contentOffsetY: scrollOffsetYRef.current,
+        viewportHeight: viewportHeightRef.current,
+        contentHeight: contentHeightRef.current,
+        allBlocksVisible: allBlocksVisibleRef.current,
+        bottomPadding: scrollBottomPadding,
+      });
+      if (kindLater === "reached") {
+        fireReachedEnd();
+        return;
+      }
+      if (kindLater !== "pending-fit") {
+        return;
+      }
+      const readableOverflow =
+        contentHeightRef.current -
+        scrollBottomPadding -
+        viewportHeightRef.current;
+      if (readableOverflow <= SHORT_CONTENT_TOLERANCE) {
+        fireReachedEnd();
+      }
+    }, FIT_CONFIRM_MS);
   };
 
   const handleScroll = (event) => {
@@ -1049,7 +1128,9 @@ const ReadingView = ({
     const progress =
       totalContentHeight > 0
         ? Math.min(Math.max(contentOffset.y / totalContentHeight, 0), 1)
-        : 1;
+        : allBlocksVisibleRef.current
+          ? 1
+          : 0;
 
     viewportHeightRef.current = viewportHeight;
     contentHeightRef.current = contentHeight;
@@ -1063,13 +1144,13 @@ const ReadingView = ({
       lastProgressPctRef.current = pct;
       setScrollProgress(progress);
     }
-    maybeMarkAsReachedEnd(progress, viewportHeight, contentHeight);
+    maybeMarkAsReachedEnd(contentOffset.y, viewportHeight, contentHeight);
   };
 
   const handleLayout = (event) => {
     viewportHeightRef.current = event.nativeEvent.layout.height;
     maybeMarkAsReachedEnd(
-      scrollProgress,
+      scrollOffsetYRef.current,
       viewportHeightRef.current,
       contentHeightRef.current,
     );
@@ -1078,7 +1159,7 @@ const ReadingView = ({
   const handleContentSizeChange = (_, height) => {
     contentHeightRef.current = height;
     maybeMarkAsReachedEnd(
-      scrollProgress,
+      scrollOffsetYRef.current,
       viewportHeightRef.current,
       contentHeightRef.current,
     );
@@ -2088,7 +2169,7 @@ const ReadingView = ({
         style={styles.scroll}
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingBottom: 80 + insets.bottom },
+          { paddingBottom: scrollBottomPadding },
         ]}
         showsVerticalScrollIndicator={false}
         onLayout={handleLayout}
