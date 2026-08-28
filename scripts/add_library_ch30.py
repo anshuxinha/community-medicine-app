@@ -27,7 +27,7 @@ def leaf(id_, title, content):
         "id": id_,
         "title": title,
         "content": text,
-        "recentlyUpdated": True,
+        "recentlyUpdated": False,
     }
 
 
@@ -48,7 +48,7 @@ def main() -> None:
         "id": "30",
         "title": "Health Economics",
         "description": "Economic evaluation of health programmes, costing, QALY and DALY, ICER and thresholds, and health financing in India for MD Community Medicine.",
-        "recentlyUpdated": True,
+        "recentlyUpdated": False,
         "subsections": subsections,
     }
     data.append(chapter)

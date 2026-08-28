@@ -45,6 +45,7 @@ import {
   matchYFromHostLayout,
   normalizeSearchQuery,
 } from "../utils/chapterSearch";
+import { splitSentences } from "../utils/splitSentences";
 
 if (
   Platform.OS === "android" &&
@@ -679,18 +680,6 @@ const mergeBlocksWithIllustrations = (blocks, illustrations = []) => {
   return [...mergedBlocks, ...unmatchedBottomBlocks];
 };
 
-/** Split text into sentences for granular highlighting. */
-const splitSentences = (text) => {
-  if (!text) return [text || ""];
-  // Match runs of text ending with sentence punctuation
-  const matches = text.match(/[^.!?]*[.!?]+/g);
-  if (!matches) return [text];
-  const joined = matches.join("");
-  const remaining = text.slice(joined.length).trim();
-  if (remaining) matches.push(remaining);
-  return matches.map((s) => s.trim()).filter(Boolean);
-};
-
 const REACH_END_THRESHOLD = 0.98;
 const SHORT_CONTENT_TOLERANCE = 24;
 const MIN_ZOOM = 1;
@@ -1227,7 +1216,6 @@ const ReadingView = ({
           selectable={false}
           suppressHighlighting
           contextMenuHidden
-          onPress={() => {}}
           onLongPress={() => handleCopyWord(piece.text)}
           delayLongPress={400}
         >
@@ -1486,6 +1474,9 @@ const ReadingView = ({
         const sentences = splitSentences(block.text);
         const blockHighlightSig = sentences.map((_, sIdx) => userHighlights[`${index}:${sIdx}`] ? "1" : "0").join("");
         const hasSearchMatch = blockContainsSearch(block.text);
+        // Nested sentence Text on Android clips the last wrapped line. Use it
+        // only when highlight mode needs per-sentence press targets.
+        const useSentenceNodes = isHighlightMode && !hasSearchMatch;
 
         return (
           <View
@@ -1495,7 +1486,7 @@ const ReadingView = ({
           >
             {hasSearchMatch && !isHighlightMode ? (
               renderFormattedText(block.text, styles.blockquoteText, true)
-            ) : (
+            ) : useSentenceNodes ? (
               <Text key={blockHighlightSig} style={styles.blockquoteText} selectable={false} contextMenuHidden>
                 {sentences.map((sentence, sIdx) => {
                   const hlKey = `${index}:${sIdx}`;
@@ -1506,7 +1497,7 @@ const ReadingView = ({
                       style={isHl ? styles.userHighlightSentence : null}
                       selectable={false}
                       contextMenuHidden
-                      onPress={isHighlightMode ? () => onToggleHighlight(hlKey) : undefined}
+                      onPress={() => onToggleHighlight(hlKey)}
                       suppressHighlighting={true}
                     >
                       {sIdx > 0 ? " " : ""}{renderFormattedText(sentence, null, false)}
@@ -1514,6 +1505,8 @@ const ReadingView = ({
                   );
                 })}
               </Text>
+            ) : (
+              renderFormattedText(block.text, styles.blockquoteText, false)
             )}
           </View>
         );
@@ -1525,6 +1518,7 @@ const ReadingView = ({
         const hasSearchMatch = blockContainsSearch(block.text);
         const isAllCapsTitle = block.text.length > 3 && block.text === block.text.toUpperCase() && /[A-Z]/.test(block.text);
         const baseStyle = isAllCapsTitle ? styles.allCapsTitle : styles.body;
+        const useSentenceNodes = isHighlightMode && !hasSearchMatch;
 
         return (
           <View
@@ -1534,7 +1528,7 @@ const ReadingView = ({
           >
             {hasSearchMatch && !isHighlightMode ? (
               renderFormattedText(block.text, baseStyle, true)
-            ) : (
+            ) : useSentenceNodes ? (
               <Text key={blockHighlightSig} style={baseStyle} selectable={false} contextMenuHidden>
                 {sentences.map((sentence, sIdx) => {
                   const hlKey = `${index}:${sIdx}`;
@@ -1545,7 +1539,7 @@ const ReadingView = ({
                       style={isHl ? styles.userHighlightSentence : null}
                       selectable={false}
                       contextMenuHidden
-                      onPress={isHighlightMode ? () => onToggleHighlight(hlKey) : undefined}
+                      onPress={() => onToggleHighlight(hlKey)}
                       suppressHighlighting={true}
                     >
                       {sIdx > 0 ? " " : ""}{renderFormattedText(sentence, null, false)}
@@ -1553,6 +1547,8 @@ const ReadingView = ({
                   );
                 })}
               </Text>
+            ) : (
+              renderFormattedText(block.text, baseStyle, false)
             )}
           </View>
         );
@@ -2603,6 +2599,7 @@ const createStyles = (colors) => StyleSheet.create({
     fontSize: 15.5,
     lineHeight: 24,
     marginVertical: 4,
+    ...(Platform.OS === "android" ? { paddingBottom: 4 } : null),
   },
   allCapsTitle: {
     color: colors.secondary,
@@ -2610,6 +2607,7 @@ const createStyles = (colors) => StyleSheet.create({
     fontWeight: "bold",
     lineHeight: 24,
     marginVertical: 4,
+    ...(Platform.OS === "android" ? { paddingBottom: 4 } : null),
   },
   tableTitleBlock: {
     marginTop: 14,
@@ -2749,6 +2747,7 @@ const createStyles = (colors) => StyleSheet.create({
     color: colors.textTitle,
     fontSize: 15.5,
     lineHeight: 24,
+    ...(Platform.OS === "android" ? { paddingBottom: 4 } : null),
   },
   nestedBulletGroup: {
     marginVertical: 2,
@@ -2770,6 +2769,7 @@ const createStyles = (colors) => StyleSheet.create({
     color: colors.textTitle,
     fontSize: 14.5,
     lineHeight: 22,
+    ...(Platform.OS === "android" ? { paddingBottom: 4 } : null),
   },
 
   // ── Highlights (gold left-border style) ──
@@ -2834,6 +2834,7 @@ const createStyles = (colors) => StyleSheet.create({
     fontStyle: "italic",
     lineHeight: 24,
     fontWeight: "600",
+    ...(Platform.OS === "android" ? { paddingBottom: 4 } : null),
   },
 
   // ── Spacing ──

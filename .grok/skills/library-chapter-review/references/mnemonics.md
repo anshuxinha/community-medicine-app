@@ -107,3 +107,5 @@ If the answering section does not exist yet, **create the section** from Park/of
 - No em-dashes (U+2014) or ` -- ` clause dashes
 - No reader-offload language
 - No invented facts to force a rhyme or letter
+- No prompt residue or author-to-self notes: never write "not a forced word", "sentence for recall", "no dummy items", "do not invent a fifth letter", or similar
+- If no clean word forms, omit the mnemonic. Do not apologise in the page for skipping one.

@@ -98,7 +98,9 @@ Park chapter PDFs are the **primary** reference but are not exhaustive for every
 
 | Check | Expectation |
 |-------|-------------|
-| Clarity | Precise medical English; no AI fluff |
+| Clarity | Precise medical English; no AI fluff. Guidebook voice: teach the topic, do not describe the app. One idea per sentence when the concept is hard. |
+| Meta language | Forbidden in live text: "this leaf", "next leaf", "not a forced word", "sentence for recall", prompt residue, author-to-self notes. Cross-references name the topic, not the file. |
+| Figure captions | State what the figure shows, as in a textbook. Do not write what the figure is for as a study aid ("helps students memorize"). |
 | Acronyms | **First use in each leaf:** `Full Name (ACRONYM)`; short form only after that. Never open a topic with a bare unexplained acronym (e.g. bare `GAS` without Group A β-haemolytic Streptococcus). Expand programme, disease, legal, and technical initialisms. SI units and pure formula symbols may stay short. |
 | Consistency | Same term for same concept throughout (e.g. HWC vs Ayushman Arogya Mandir: state current official name if tagging updates) |
 | Tables | Prefer markdown tables for multi-column comparisons when ReadingView supports them |
@@ -132,3 +134,4 @@ Park chapter PDFs are the **primary** reference but are not exhaustive for every
 - Put "Park", "Park-aligned", "as per Park", or other textbook name-drops into live Library content.
 - Use em-dashes (U+2014) or ` -- ` clause dashes in live Library content.
 - Introduce bare acronyms without a prior full-form expansion in that leaf.
+- Put meta language into live Library content ("this leaf", "not a forced word", prompt residue, study-aid captions).

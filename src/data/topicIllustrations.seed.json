@@ -9,8 +9,8 @@
         "id": "medicine-evolution-timeline",
         "fileName": "id1.png",
         "alt": "Chronological visual roadmap of medical history showing evolution from primitive beliefs to modern SDG-driven health revolution",
-        "caption": "",
-        "purpose": "To provide a clear, chronological visual roadmap of medical history. Memorizing historical milestones is much easier when students can visually sequence the eras—from primitive beliefs and ancient systems to the modern SDG-driven health revolution.",
+        "caption": "Timeline of medicine from early beliefs to the Sustainable Development Goals era.",
+        "purpose": "",
         "anchorText": "MEDICINE IN ANTIQUITY",
         "placement": "before",
         "aspectRatio": 1
@@ -27,8 +27,8 @@
         "id": "iceberg-phenomenon",
         "fileName": "iceberg_phenomenon_of_disease.png",
         "alt": "The Iceberg Phenomenon of Disease showing apparent clinical cases above the waterline and hidden subclinical disease below",
-        "caption": "",
-        "purpose": "Visual metaphor clarifying the difference between apparent clinical cases and the hidden mass of subclinical disease.",
+        "caption": "Iceberg of disease: clinical cases above the waterline and subclinical disease below.",
+        "purpose": "",
         "anchorText": "Iceberg Phenomenon of Disease",
         "placement": "after",
         "aspectRatio": 1
@@ -37,8 +37,8 @@
         "id": "levels-of-prevention",
         "fileName": "levels_of_prevention_steps.png",
         "alt": "Levels of Prevention and Modes of Intervention mapped against the stages of disease progression",
-        "caption": "",
-        "purpose": "Visually maps the chronological stages of a disease against the appropriate public health interventions.",
+        "caption": "Levels of prevention and modes of intervention mapped against stages of disease.",
+        "purpose": "",
         "anchorText": "Levels of Prevention & Modes of Intervention",
         "placement": "after",
         "aspectRatio": 1
@@ -55,8 +55,8 @@
         "id": "evidence-based-pyramid",
         "fileName": "evidence_based_medicine_pyramid.png",
         "alt": "Hierarchy of Epidemiological Evidence showing study designs from weakest to strongest",
-        "caption": "",
-        "purpose": "Helps students visualize the gold standard of clinical relevance and memorize the exact order of study designs.",
+        "caption": "Hierarchy of epidemiological evidence, from weakest designs at the base to strongest at the top.",
+        "purpose": "",
         "anchorText": "EVIDENCE BASED PYRAMID",
         "placement": "after",
         "aspectRatio": 1
@@ -73,8 +73,8 @@
         "id": "vvm-stages",
         "fileName": "vvm_stages.png",
         "alt": "Vaccine Vial Monitor stages showing color changes from usable to discard point",
-        "caption": "",
-        "purpose": "Practical guide on how healthcare workers read heat-sensitive vaccine labels.",
+        "caption": "Vaccine vial monitor stages from usable inner square to the discard point.",
+        "purpose": "",
         "anchorText": "Vaccine Vial Monitor (VVM)",
         "placement": "after",
         "aspectRatio": 1
@@ -91,8 +91,8 @@
         "id": "shifting-cutoffs",
         "fileName": "shifting_cutoffs_sensitivity_specificity.png",
         "alt": "Shifting Cut-offs showing the trade-off between Sensitivity and Specificity",
-        "caption": "",
-        "purpose": "Visually explains the mathematical trade-off between Sensitivity and Specificity.",
+        "caption": "Overlapping distributions of well and diseased people, showing how a shifting cut-off trades sensitivity for specificity.",
+        "purpose": "",
         "anchorText": "Interpretation of Distribution Curve (Shifting Cut-offs)",
         "placement": "after",
         "aspectRatio": 1
@@ -109,8 +109,8 @@
         "id": "rule-of-halves-hypertension",
         "fileName": "rule_of_halves_hypertension.png",
         "alt": "The Rule of Halves for Hypertension showing the steep drop-off in diagnosis treatment and control",
-        "caption": "",
-        "purpose": "Visually depicts the steep drop-off in the diagnosis, treatment, and control of hypertension in the general population.",
+        "caption": "The Rule of Halves for Hypertension showing the steep drop-off in diagnosis treatment and control.",
+        "purpose": "",
         "anchorText": "3. HYPERTENSION (HTN)",
         "placement": "after",
         "aspectRatio": 1
@@ -127,8 +127,8 @@
         "id": "laqshya-logo",
         "fileName": "stage_7-2_laqshya.png",
         "alt": "LaQshya labour room quality improvement programme logo",
-        "caption": "",
-        "purpose": "Visual cue for the LaQshya quality certification initiative under maternal health services.",
+        "caption": "LaQshya labour room quality improvement programme logo.",
+        "purpose": "",
         "anchorText": "LAQSHYA - LABOR ROOM QUALITY IMPROVEMENT GUIDELINE",
         "placement": "after",
         "aspectRatio": 1.07
@@ -137,8 +137,8 @@
         "id": "pmmvy-logo",
         "fileName": "stage_7-2_pmmvy.png",
         "alt": "Pradhan Mantri Matru Vandana Yojana logo",
-        "caption": "",
-        "purpose": "Helps learners quickly associate the PMMVY cash benefit scheme with its official logo.",
+        "caption": "Pradhan Mantri Matru Vandana Yojana logo.",
+        "purpose": "",
         "anchorText": "PRADHAN MANTRI MATRU VANDANA YOJANA (PMMVY)",
         "placement": "after",
         "aspectRatio": 0.99
@@ -147,8 +147,8 @@
         "id": "pmsma-logo",
         "fileName": "stage_7-2_pmsma.png",
         "alt": "Pradhan Mantri Surakshit Matritva Abhiyan logo",
-        "caption": "",
-        "purpose": "Adds a recognizable visual marker for PMSMA near the antenatal care initiative section.",
+        "caption": "Pradhan Mantri Surakshit Matritva Abhiyan logo.",
+        "purpose": "",
         "anchorText": "PRADHAN MANTRI SURAKSHIT MATRITVA ABHIYAN (PMSMA)",
         "placement": "after",
         "aspectRatio": 1
@@ -157,8 +157,8 @@
         "id": "suman-logo",
         "fileName": "stage_7-2_suman.png",
         "alt": "Surakshit Matritva Aashwasan SUMAN scheme logo",
-        "caption": "",
-        "purpose": "Reinforces recall of the SUMAN maternal and newborn care entitlement scheme.",
+        "caption": "Surakshit Matritva Aashwasan SUMAN scheme logo.",
+        "purpose": "",
         "anchorText": "SURAKSHIT MATRITVA AASHWASAN (SUMAN) SCHEME",
         "placement": "after",
         "aspectRatio": 0.78
@@ -167,8 +167,8 @@
         "id": "maa-logo",
         "fileName": "stage_7-2_maa.png",
         "alt": "Mothers' Absolute Affection programme logo",
-        "caption": "",
-        "purpose": "Places the MAA breastfeeding promotion icon directly beside its programme description.",
+        "caption": "Mothers' Absolute Affection programme logo.",
+        "purpose": "",
         "anchorText": "MAA (MOTHERS ABSOLUTE AFFECTION) PROGRAMME",
         "placement": "after",
         "aspectRatio": 0.78
@@ -177,8 +177,8 @@
         "id": "inap-logo",
         "fileName": "stage_7-2_inap.png",
         "alt": "Indian Newborn Action Plan logo",
-        "caption": "",
-        "purpose": "Provides a quick visual hook for the newborn survival action plan section.",
+        "caption": "Indian Newborn Action Plan logo.",
+        "purpose": "",
         "anchorText": "INDIAN NEWBORN ACTION PLAN (INAP)",
         "placement": "after",
         "aspectRatio": 1.5
@@ -187,8 +187,8 @@
         "id": "rksk-logo",
         "fileName": "stage_7-2_rksk.png",
         "alt": "Rashtriya Kishor Swasthya Karyakram logo",
-        "caption": "",
-        "purpose": "Visually anchors the adolescent health programme under the RMNCAH+N umbrella.",
+        "caption": "Rashtriya Kishor Swasthya Karyakram logo.",
+        "purpose": "",
         "anchorText": "RASHTRIYA KISHOR SWASTHYA KARYAKRAM (RKSK)",
         "placement": "after",
         "aspectRatio": 1.22
@@ -205,8 +205,8 @@
         "id": "nvbdcp-logo",
         "fileName": "stage_7-3_nvbdcp.png",
         "alt": "National Vector Borne Disease Control Programme logo",
-        "caption": "",
-        "purpose": "Shows the official NVBDCP identity near the programme introduction for easier recall.",
+        "caption": "National Vector Borne Disease Control Programme logo.",
+        "purpose": "",
         "anchorText": "National Vector Borne Disease Control Programme (NVBDCP)",
         "placement": "after",
         "aspectRatio": 1.19
@@ -223,8 +223,8 @@
         "id": "nlep-logo",
         "fileName": "stage_7-4_nlep.png",
         "alt": "National Leprosy Eradication Programme graphic",
-        "caption": "",
-        "purpose": "Adds the NLEP programme visual near the opening section on leprosy control in India.",
+        "caption": "National Leprosy Eradication Programme graphic.",
+        "purpose": "",
         "anchorText": "National Leprosy Eradication Programme (NLEP)",
         "placement": "after",
         "aspectRatio": 0.78
@@ -241,8 +241,8 @@
         "id": "rntcp-dots-logo",
         "fileName": "stage_7-5_rntcp_dots.png",
         "alt": "RNTCP DOTS logo",
-        "caption": "",
-        "purpose": "Highlights the older RNTCP era and DOTS strategy at the point where the programme evolution is introduced.",
+        "caption": "RNTCP DOTS logo.",
+        "purpose": "",
         "anchorText": "Revised National Tuberculosis Control Programme (RNTCP)",
         "placement": "before",
         "aspectRatio": 1.39
@@ -251,8 +251,8 @@
         "id": "ntep-logo",
         "fileName": "stage_7-5_ntep.png",
         "alt": "National Tuberculosis Elimination Programme logo",
-        "caption": "",
-        "purpose": "Places the current NTEP emblem beside the modern renamed TB control programme section.",
+        "caption": "National Tuberculosis Elimination Programme logo.",
+        "purpose": "",
         "anchorText": "National Tuberculosis Elimination Programme (NTEP)",
         "placement": "after",
         "aspectRatio": 1.02
@@ -269,8 +269,8 @@
         "id": "naco-logo",
         "fileName": "stage_7-6_naco.png",
         "alt": "National AIDS Control Organization logo",
-        "caption": "",
-        "purpose": "Adds the NACO identifier near the programme introduction for immediate visual recognition.",
+        "caption": "National AIDS Control Organization logo.",
+        "purpose": "",
         "anchorText": "National AIDS Control Organization (NACO)",
         "placement": "after",
         "aspectRatio": 1.75
@@ -287,8 +287,8 @@
         "id": "npcbvi-logo",
         "fileName": "stage_7-7_npcbvi.png",
         "alt": "National Programme for Control of Blindness and Visual Impairment logo",
-        "caption": "",
-        "purpose": "Provides an official visual marker for the NPCB&VI section.",
+        "caption": "National Programme for Control of Blindness and Visual Impairment logo.",
+        "purpose": "",
         "anchorText": "National Programme for Control of Blindness and Visual Impairment (NPCB&VI)",
         "placement": "after",
         "aspectRatio": 1.32
@@ -305,8 +305,8 @@
         "id": "demographic-cycle",
         "fileName": "demographic_cycle_5_stages.png",
         "alt": "The Demographic Cycle showing 5 stages of birth rate and death rate changes over economic development",
-        "caption": "",
-        "purpose": "Line graph showing the crucial relationship and resulting gap between birth rates and death rates over the 5 stages.",
+        "caption": "The Demographic Cycle showing 5 stages of birth rate and death rate changes over economic development.",
+        "purpose": "",
         "anchorText": "DEMOGRAPHIC CYCLE (5 STAGES)",
         "placement": "after",
         "aspectRatio": 1
@@ -315,8 +315,8 @@
         "id": "population-pyramids",
         "fileName": "population_pyramids_three_patterns.png",
         "alt": "Population Pyramids comparison showing expansive stationary and constrictive age-sex structures",
-        "caption": "",
-        "purpose": "Visually compares the age-sex structures of different populations so students can interpret population growth trends.",
+        "caption": "Population Pyramids comparison showing expansive stationary and constrictive age-sex structures.",
+        "purpose": "",
         "anchorText": "POPULATION PYRAMID",
         "placement": "after",
         "aspectRatio": 1
@@ -333,8 +333,8 @@
         "id": "under5-clinic-logo",
         "fileName": "under5_clinic_logo.png",
         "alt": "The Under-5 Clinic Logo showing the structural components and which triangle represents which service",
-        "caption": "",
-        "purpose": "Visually embeds the exact structural components of the Under-5 clinic logo.",
+        "caption": "The Under-5 Clinic Logo showing the structural components and which triangle represents which service.",
+        "purpose": "",
         "anchorText": "LOGO OF THE UNDER-5 CLINIC",
         "placement": "after",
         "aspectRatio": 1
@@ -351,8 +351,8 @@
         "id": "apgar-score-visual",
         "fileName": "apgar_score_assessment.png",
         "alt": "APGAR Score Visual Mnemonic Table showing 0 1 and 2 point criteria for each parameter",
-        "caption": "",
-        "purpose": "Quick-reference visual mnemonic for the APGAR scoring system.",
+        "caption": "APGAR Score Visual Mnemonic Table showing 0 1 and 2 point criteria for each parameter.",
+        "purpose": "",
         "anchorText": "PARAMETERS OF APGAR SCORE",
         "placement": "after",
         "aspectRatio": 1
@@ -369,8 +369,8 @@
         "id": "npncd-logo",
         "fileName": "stage_7-10_npncd.png",
         "alt": "National Programme for Prevention and Control of Non-Communicable Diseases logo",
-        "caption": "",
-        "purpose": "Places the NP-NCD visual identity next to the updated programme rename and overview.",
+        "caption": "National Programme for Prevention and Control of Non-Communicable Diseases logo.",
+        "purpose": "",
         "anchorText": "GOALS AND OBJECTIVES OF NP-NCD",
         "placement": "before",
         "aspectRatio": 1.29
@@ -387,8 +387,8 @@
         "id": "nmhp-logo",
         "fileName": "stage_7-11_nmhp.png",
         "alt": "National Mental Health Programme logo",
-        "caption": "",
-        "purpose": "Introduces the NMHP section with its programme branding for better recognition.",
+        "caption": "National Mental Health Programme logo.",
+        "purpose": "",
         "anchorText": "National Mental Health Programme (NMHP)",
         "placement": "after",
         "aspectRatio": 2.75
@@ -405,8 +405,8 @@
         "id": "idsp-logo",
         "fileName": "stage_7-12_idsp.png",
         "alt": "Integrated Disease Surveillance Programme logo",
-        "caption": "",
-        "purpose": "Adds the IDSP logo beside the surveillance system introduction and IHIP transition notes.",
+        "caption": "Integrated Disease Surveillance Programme logo.",
+        "purpose": "",
         "anchorText": "Integrated Disease Surveillance Project (IDSP)",
         "placement": "after",
         "aspectRatio": 1
@@ -423,8 +423,8 @@
         "id": "pmjay-logo",
         "fileName": "stage_7-13_pmjay.png",
         "alt": "Ayushman Bharat Pradhan Mantri Jan Arogya Yojana logo",
-        "caption": "",
-        "purpose": "Places the PM-JAY branding right where the Ayushman Bharat programme components are introduced.",
+        "caption": "Ayushman Bharat Pradhan Mantri Jan Arogya Yojana logo.",
+        "purpose": "",
         "anchorText": "Ayushman Bharat - Pradhan Mantri Jan Arogya Yojana (AB-PMJAY)",
         "placement": "after",
         "aspectRatio": 0.95
@@ -441,8 +441,8 @@
         "id": "healthcare-infrastructure-pyramid",
         "fileName": "rural_health_infrastructure_india.png",
         "alt": "Healthcare Infrastructure Pyramid showing 3-tier rural healthcare system and population norms",
-        "caption": "",
-        "purpose": "Visually maps the 3-tier rural healthcare system and its specific population coverage norms.",
+        "caption": "Three-tier rural health infrastructure and population coverage norms.",
+        "purpose": "",
         "anchorText": "RURAL HEALTH INFRASTRUCTURE NORMS",
         "placement": "after",
         "aspectRatio": 1
@@ -459,8 +459,8 @@
         "id": "kwashiorkor-vs-marasmus",
         "fileName": "kwashiorkor_vs_marasmus.png",
         "alt": "Severe Acute Malnutrition comparison showing Kwashiorkor versus Marasmus clinical features",
-        "caption": "",
-        "purpose": "Classic high-yield visual comparison to distinguish the clinical signs of protein deficiency versus energy deficiency.",
+        "caption": "Severe Acute Malnutrition comparison showing Kwashiorkor versus Marasmus clinical features.",
+        "purpose": "",
         "anchorText": "CLINICAL FEATURES: KWASHIORKOR VS MARASMUS",
         "placement": "after",
         "aspectRatio": 1
@@ -477,8 +477,8 @@
         "id": "maslow-hierarchy",
         "fileName": "maslow_hierarchy_needs.png",
         "alt": "Maslow's Hierarchy of Needs pyramid showing deficiency and growth needs",
-        "caption": "",
-        "purpose": "Visual structured mnemonic for the psychological drivers of human behavior categorized by deficiency vs growth needs.",
+        "caption": "Maslow's Hierarchy of Needs pyramid showing deficiency and growth needs.",
+        "purpose": "",
         "anchorText": "MOTIVATION AND MASLOW'S HIERARCHY OF NEEDS",
         "placement": "after",
         "aspectRatio": 1
@@ -495,8 +495,8 @@
         "id": "sdg3-health-targets",
         "fileName": "sdg3_health_targets.png",
         "alt": "Key SDG 3 Health Targets showing the most critical 2030 targets",
-        "caption": "",
-        "purpose": "Synthesizes dense text and statistics into a quick-reference hub of the most critical 2030 targets.",
+        "caption": "Key SDG 3 Health Targets showing the most critical 2030 targets.",
+        "purpose": "",
         "anchorText": "TARGETS AND INDICATORS FOR SDG 3",
         "placement": "after",
         "aspectRatio": 1
@@ -513,8 +513,8 @@
         "id": "slow-sand-filter",
         "fileName": "slow_sand_filter.png",
         "alt": "Anatomy of a Slow Sand Filter showing layers and the Schmutzdecke vital layer",
-        "caption": "",
-        "purpose": "Visualizes the layers of a sand filter highlighting the location of the Schmutzdecke.",
+        "caption": "Anatomy of a Slow Sand Filter showing layers and the Schmutzdecke vital layer.",
+        "purpose": "",
         "anchorText": "SLOW SAND FILTER / BIOLOGICAL FILTER",
         "placement": "after",
         "aspectRatio": 1
@@ -531,8 +531,8 @@
         "id": "mosquito-resting-postures",
         "fileName": "mosquito_resting_postures_larvae.png",
         "alt": "Mosquito Resting Postures and Larval Positions for identifying different mosquito vectors",
-        "caption": "",
-        "purpose": "Essential entomology visual for identifying mosquito vectors based on their physical posture.",
+        "caption": "Mosquito Resting Postures and Larval Positions for identifying different mosquito vectors.",
+        "purpose": "",
         "anchorText": "MOSQUITO VECTORS: COMPARATIVE CHARACTERISTICS",
         "placement": "after",
         "aspectRatio": 1
@@ -549,8 +549,8 @@
         "id": "biomedical-waste-color-coding",
         "fileName": "biomedical_waste_color_coding.png",
         "alt": "Biomedical Waste Color Coding showing the 4-bin segregation system",
-        "caption": "",
-        "purpose": "Instant visual reference for the 4-bin segregation system for biomedical waste.",
+        "caption": "Biomedical Waste Color Coding showing the 4-bin segregation system.",
+        "purpose": "",
         "anchorText": "BIOMEDICAL WASTE CATEGORIES AND SEGREGATION (2016 GUIDELINES)",
         "placement": "after",
         "aspectRatio": 1
@@ -567,8 +567,8 @@
         "id": "disaster-triage-color-tags",
         "fileName": "disaster_triage_color_tags.png",
         "alt": "Disaster Triage Color Tags showing the four triage categories used in mass casualty incidents",
-        "caption": "",
-        "purpose": "Visually anchors the four triage categories used in mass casualty incidents.",
+        "caption": "Disaster Triage Color Tags showing the four triage categories used in mass casualty incidents.",
+        "purpose": "",
         "anchorText": "COLOR CODING SYSTEM FOR TRIAGE",
         "placement": "after",
         "aspectRatio": 1
@@ -585,167 +585,8 @@
         "id": "silicosis-vs-asbestosis",
         "fileName": "silicosis_vs_asbestosis.png",
         "alt": "Pneumoconiosis comparison showing Silicosis versus Asbestosis with affected lung zones and X-ray appearances",
-        "caption": "",
-        "purpose": "Visually contrasts the two most frequently tested occupational lung diseases.",
-        "anchorText": "PNEUMOCONIOSIS OVERVIEW",
-        "placement": "after",
-        "aspectRatio": 1
-      }
-    ]
-  },
-  {
-    "topicTitle": "Health Care of the Community",
-    "images": [
-      {
-        "id": "healthcare-infrastructure-pyramid",
-        "fileName": "rural_health_infrastructure_india.png",
-        "alt": "Healthcare Infrastructure Pyramid showing 3-tier rural healthcare system and population norms",
-        "caption": "",
-        "purpose": "Visually maps the 3-tier rural healthcare system and its specific population coverage norms.",
-        "anchorText": "RURAL HEALTH INFRASTRUCTURE NORMS",
-        "placement": "after",
-        "aspectRatio": 1
-      }
-    ]
-  },
-  {
-    "contentKey": "theory:11-12",
-    "section": "theory",
-    "topicId": "11-12",
-    "topicTitle": "Malnutrition, Nutritional Rehabilitation Centres, Hidden Hunger and GHI",
-    "images": [
-      {
-        "id": "kwashiorkor-vs-marasmus",
-        "fileName": "kwashiorkor_vs_marasmus.png",
-        "alt": "Severe Acute Malnutrition comparison showing Kwashiorkor versus Marasmus clinical features",
-        "caption": "",
-        "purpose": "Classic high-yield visual comparison to distinguish the clinical signs of protein deficiency versus energy deficiency.",
-        "anchorText": "CLINICAL FEATURES: KWASHIORKOR VS MARASMUS",
-        "placement": "after",
-        "aspectRatio": 1
-      }
-    ]
-  },
-  {
-    "contentKey": "theory:12-2",
-    "section": "theory",
-    "topicId": "12-2",
-    "topicTitle": "Psychology, Behavior, and Learning",
-    "images": [
-      {
-        "id": "maslow-hierarchy",
-        "fileName": "maslow_hierarchy_needs.png",
-        "alt": "Maslow's Hierarchy of Needs pyramid showing deficiency and growth needs",
-        "caption": "",
-        "purpose": "Visual structured mnemonic for the psychological drivers of human behavior categorized by deficiency vs growth needs.",
-        "anchorText": "MOTIVATION AND MASLOW'S HIERARCHY OF NEEDS",
-        "placement": "after",
-        "aspectRatio": 1
-      }
-    ]
-  },
-  {
-    "contentKey": "theory:14",
-    "section": "theory",
-    "topicId": "14",
-    "topicTitle": "Sustainable Development Goals",
-    "images": [
-      {
-        "id": "sdg3-health-targets",
-        "fileName": "sdg3_health_targets.png",
-        "alt": "Key SDG 3 Health Targets showing the most critical 2030 targets",
-        "caption": "",
-        "purpose": "Synthesizes dense text and statistics into a quick-reference hub of the most critical 2030 targets.",
-        "anchorText": "TARGETS AND INDICATORS FOR SDG 3",
-        "placement": "after",
-        "aspectRatio": 1
-      }
-    ]
-  },
-  {
-    "contentKey": "theory:15-2",
-    "section": "theory",
-    "topicId": "15-2",
-    "topicTitle": "Environment and Health: Water Purification & Quality",
-    "images": [
-      {
-        "id": "slow-sand-filter",
-        "fileName": "slow_sand_filter.png",
-        "alt": "Anatomy of a Slow Sand Filter showing layers and the Schmutzdecke vital layer",
-        "caption": "",
-        "purpose": "Visualizes the layers of a sand filter highlighting the location of the Schmutzdecke.",
-        "anchorText": "SLOW SAND FILTER / BIOLOGICAL FILTER",
-        "placement": "after",
-        "aspectRatio": 1
-      }
-    ]
-  },
-  {
-    "contentKey": "theory:15-6",
-    "section": "theory",
-    "topicId": "15-6",
-    "topicTitle": "Entomology: Mosquitoes & Control",
-    "images": [
-      {
-        "id": "mosquito-resting-postures",
-        "fileName": "mosquito_resting_postures_larvae.png",
-        "alt": "Mosquito Resting Postures and Larval Positions for identifying different mosquito vectors",
-        "caption": "",
-        "purpose": "Essential entomology visual for identifying mosquito vectors based on their physical posture.",
-        "anchorText": "MOSQUITO VECTORS: COMPARATIVE CHARACTERISTICS",
-        "placement": "after",
-        "aspectRatio": 1
-      }
-    ]
-  },
-  {
-    "contentKey": "theory:16",
-    "section": "theory",
-    "topicId": "16",
-    "topicTitle": "Hospital Waste Management",
-    "images": [
-      {
-        "id": "biomedical-waste-color-coding",
-        "fileName": "biomedical_waste_color_coding.png",
-        "alt": "Biomedical Waste Color Coding showing the 4-bin segregation system",
-        "caption": "",
-        "purpose": "Instant visual reference for the 4-bin segregation system for biomedical waste.",
-        "anchorText": "BIOMEDICAL WASTE CATEGORIES AND SEGREGATION (2016 GUIDELINES)",
-        "placement": "after",
-        "aspectRatio": 1
-      }
-    ]
-  },
-  {
-    "contentKey": "theory:17",
-    "section": "theory",
-    "topicId": "17",
-    "topicTitle": "Disaster Management",
-    "images": [
-      {
-        "id": "disaster-triage-color-tags",
-        "fileName": "disaster_triage_color_tags.png",
-        "alt": "Disaster Triage Color Tags showing the four triage categories used in mass casualty incidents",
-        "caption": "",
-        "purpose": "Visually anchors the four triage categories used in mass casualty incidents.",
-        "anchorText": "COLOR CODING SYSTEM FOR TRIAGE",
-        "placement": "after",
-        "aspectRatio": 1
-      }
-    ]
-  },
-  {
-    "contentKey": "theory:18-2",
-    "section": "theory",
-    "topicId": "18-2",
-    "topicTitle": "Chemical, Biological, Mechanical, Psychosocial Hazards, and Pneumoconioses",
-    "images": [
-      {
-        "id": "silicosis-vs-asbestosis",
-        "fileName": "silicosis_vs_asbestosis.png",
-        "alt": "Pneumoconiosis comparison showing Silicosis versus Asbestosis with affected lung zones and X-ray appearances",
-        "caption": "",
-        "purpose": "Visually contrasts the two most frequently tested occupational lung diseases.",
+        "caption": "Pneumoconiosis comparison showing Silicosis versus Asbestosis with affected lung zones and X-ray appearances.",
+        "purpose": "",
         "anchorText": "PNEUMOCONIOSIS OVERVIEW",
         "placement": "after",
         "aspectRatio": 1
@@ -762,8 +603,8 @@
         "id": "abc-ved-inventory-control",
         "fileName": "abc_ved_inventory_control.png",
         "alt": "ABC and VED Matrix for Inventory Control combining cost-based and criticality-based techniques",
-        "caption": "",
-        "purpose": "Visually combines ABC and VED inventory control techniques into a single 3x3 matrix.",
+        "caption": "ABC-VED matrix combining annual consumption value with clinical criticality.",
+        "purpose": "",
         "anchorText": "LOGISTICS AND INVENTORY CONTROL",
         "placement": "after",
         "aspectRatio": 1
@@ -781,7 +622,7 @@
         "fileName": "practical_2-1_fig_12-1.png",
         "alt": "Mosquito larvae and pupae in stagnant water",
         "caption": "Mosquito larvae and pupae in stagnant water",
-        "purpose": "Enables physical identification of vector larvae and pupae in stagnant water during household surveys.",
+        "purpose": "",
         "anchorText": "Classification: Report as \"mosquito breeding site\" if larvae/pupae are visible. Report as \"potential breeding site\" if water is stagnant but no larvae are detected.",
         "placement": "after",
         "aspectRatio": 1.87
@@ -799,7 +640,7 @@
         "fileName": "practical_2-3_fig_13-1.png",
         "alt": "Food category intake per CU as percent of RDA/EAR",
         "caption": "Food category intake per CU as percent of RDA/EAR",
-        "purpose": "Provides a visual example of a bar chart comparing household food group intake against standard recommendations, highlighting macroscopic imbalances.",
+        "purpose": "",
         "anchorText": "These are also plotted on a bar graph for better visual comparison with the EAR.",
         "placement": "after",
         "aspectRatio": 1.71
@@ -809,7 +650,7 @@
         "fileName": "practical_2-3_fig_13-2.png",
         "alt": "Nutrient intake per capita as percent of RDA/EAR",
         "caption": "Nutrient intake per capita as percent of RDA/EAR",
-        "purpose": "Displays a visual nutrient adequacy profile, allowing immediate identification of micro- or macronutrient malnutrition (e.g., excessive fat vs. deficient vitamin A).",
+        "purpose": "",
         "anchorText": "These are also plotted on a bar graph for better visual comparison with the EAR.",
         "placement": "after",
         "aspectRatio": 1.98
@@ -827,7 +668,7 @@
         "fileName": "practical_5-5_fig_22-1.png",
         "alt": "Some average sized household measures",
         "caption": "Some average sized household measures",
-        "purpose": "Provides critical visual references of standard Indian household utensils to prevent volume estimation errors in dietary counseling.",
+        "purpose": "",
         "anchorText": "- Standard Household Measures: Standardized utensils utilized to bridge the gap between clinical gram-based nutrient requirements and practical, home-based portion sizes.",
         "placement": "after",
         "aspectRatio": 2.38
@@ -837,7 +678,7 @@
         "fileName": "practical_5-5_fig_22-2.png",
         "alt": "A sample diet demonstration for a 26-year-old bank clerk",
         "caption": "A sample diet demonstration for a 26-year-old bank clerk",
-        "purpose": "Displays real-world portion sizes and visual food plates to aid students in translating raw nutrient calculations into actionable dietary recommendations.",
+        "purpose": "",
         "anchorText": "- Designed 24-Hour Meal Menu:",
         "placement": "after",
         "aspectRatio": 1.35
@@ -854,8 +695,8 @@
         "id": "rm-health-research-domains",
         "fileName": "rm_health_research_domains.png",
         "alt": "Four domains of health research: biomedical, clinical, epidemiological, and health systems",
-        "caption": "",
-        "purpose": "Compresses the object-by-level grid used to classify a health research question.",
+        "caption": "Four domains of health research: biomedical, clinical, epidemiological, and health systems.",
+        "purpose": "",
         "anchorText": "DOMAINS OF HEALTH RESEARCH",
         "placement": "after",
         "aspectRatio": 1
@@ -872,8 +713,8 @@
         "id": "rm-finer-criteria",
         "fileName": "rm_finer_criteria.png",
         "alt": "FINER criteria for selecting a research problem: Feasible, Interesting, Novel, Ethical, Relevant",
-        "caption": "",
-        "purpose": "Turns the high-yield FINER list into a single recall board.",
+        "caption": "FINER criteria for selecting a research problem: Feasible, Interesting, Novel, Ethical, Relevant.",
+        "purpose": "",
         "anchorText": "FINER CRITERIA",
         "placement": "after",
         "aspectRatio": 1
@@ -890,8 +731,8 @@
         "id": "rm-sampling-methods",
         "fileName": "rm_sampling_methods.png",
         "alt": "Probability versus non-probability sampling methods used in health research",
-        "caption": "",
-        "purpose": "Separates sampling families that residents commonly mix in viva and protocol writing.",
+        "caption": "Probability versus non-probability sampling methods used in health research.",
+        "purpose": "",
         "anchorText": "TYPES OF SAMPLING",
         "placement": "after",
         "aspectRatio": 1
@@ -908,8 +749,8 @@
         "id": "rm-qualitative-methods",
         "fileName": "rm_qualitative_methods.png",
         "alt": "Qualitative methods map: focus group, interviews, observation, participatory tools, document review",
-        "caption": "",
-        "purpose": "Shows which qualitative tool answers which kind of research question.",
+        "caption": "Qualitative methods map: focus group, interviews, observation, participatory tools, document review.",
+        "purpose": "",
         "anchorText": "QUALITATIVE METHODS",
         "placement": "after",
         "aspectRatio": 1
@@ -926,8 +767,8 @@
         "id": "rm-ethics-consent",
         "fileName": "rm_ethics_consent.png",
         "alt": "Informed consent process: information, comprehension, voluntariness, documentation, plus ethics committee review",
-        "caption": "",
-        "purpose": "Compresses the ICMR 2017 consent process and ethics-committee gate into one board.",
+        "caption": "Informed consent process: information, comprehension, voluntariness, documentation, plus ethics committee review.",
+        "purpose": "",
         "anchorText": "INFORMED CONSENT",
         "placement": "after",
         "aspectRatio": 1
@@ -944,8 +785,8 @@
         "id": "rm-imrad-thesis",
         "fileName": "rm_imrad_thesis.png",
         "alt": "IMRAD structure of a research report: Introduction, Methods, Results, Discussion",
-        "caption": "",
-        "purpose": "Gives the exam-standard skeleton for thesis and paper writing.",
+        "caption": "IMRAD structure of a research report: Introduction, Methods, Results, Discussion.",
+        "purpose": "",
         "anchorText": "IMRAD FORMAT",
         "placement": "after",
         "aspectRatio": 1
@@ -962,8 +803,8 @@
         "id": "bs-26-1-data-types",
         "fileName": "bs_26_1_data_types.png",
         "alt": "Types of data: qualitative versus quantitative, then discrete versus continuous",
-        "caption": "",
-        "purpose": "Stops the common mix-up of qualitative with discrete and quantitative with continuous.",
+        "caption": "Types of data: qualitative versus quantitative, then discrete versus continuous.",
+        "purpose": "",
         "anchorText": "DATA AND VARIABLES",
         "placement": "after",
         "aspectRatio": 1
@@ -972,8 +813,8 @@
         "id": "bs-26-1-iron-scales",
         "fileName": "bs_26_1_iron_scales.png",
         "alt": "I.R.O.N. scales of measurement: interval, ratio, ordinal, nominal",
-        "caption": "",
-        "purpose": "Four-tile recall board for which average and which test family fit each scale.",
+        "caption": "I.R.O.N. scales of measurement: interval, ratio, ordinal, nominal.",
+        "purpose": "",
         "anchorText": "SCALES OF MEASUREMENT (I.R.O.N. SCALE)",
         "placement": "after",
         "aspectRatio": 1
@@ -990,8 +831,8 @@
         "id": "bs-26-2-bar-vs-histogram",
         "fileName": "bs_26_2_bar_vs_histogram.png",
         "alt": "Bar chart versus histogram: gaps and height versus no gaps and area",
-        "caption": "",
-        "purpose": "Classic viva contrast so students do not swap bar and histogram.",
+        "caption": "Bar chart versus histogram: gaps and height versus no gaps and area.",
+        "purpose": "",
         "anchorText": "CHARTS AND DIAGRAMS FOR QUANTITATIVE DATA",
         "placement": "after",
         "aspectRatio": 1
@@ -1000,8 +841,8 @@
         "id": "bs-26-2-choose-diagram",
         "fileName": "bs_26_2_choose_diagram.png",
         "alt": "Which diagram to draw for each kind of statistical question",
-        "caption": "",
-        "purpose": "One-screen map from data type to the correct diagram.",
+        "caption": "Which diagram to draw for each kind of statistical question.",
+        "purpose": "",
         "anchorText": "HOW TO CHOOSE A DIAGRAM",
         "placement": "after",
         "aspectRatio": 1
@@ -1018,8 +859,8 @@
         "id": "bs-26-3-averages",
         "fileName": "bs_26_3_averages.png",
         "alt": "Mean, median, and mode on one series with an outlier",
-        "caption": "",
-        "purpose": "Shows why the mean is pulled by extremes while the median stays central.",
+        "caption": "Mean, median, and mode on one series with an outlier.",
+        "purpose": "",
         "anchorText": "MEASURES OF CENTRAL TENDENCY (AVERAGES)",
         "placement": "after",
         "aspectRatio": 1
@@ -1028,8 +869,8 @@
         "id": "bs-26-3-sd-vs-se",
         "fileName": "bs_26_3_sd_vs_se.png",
         "alt": "Standard deviation versus standard error of the mean",
-        "caption": "",
-        "purpose": "Separates scatter inside one sample from sampling variation of the mean.",
+        "caption": "Standard deviation versus standard error of the mean.",
+        "purpose": "",
         "anchorText": "MEASURES OF DISPERSION (VARIABILITY)",
         "placement": "after",
         "aspectRatio": 1
@@ -1046,8 +887,8 @@
         "id": "bs-26-4-normal-curve",
         "fileName": "bs_26_4_normal_curve.png",
         "alt": "Normal curve with the 68, 95, and 99.7 percent areas",
-        "caption": "",
-        "purpose": "Maps the 68-95-99.7 rule onto a drawn Gaussian curve.",
+        "caption": "Normal curve with the 68, 95, and 99.7 percent areas.",
+        "purpose": "",
         "anchorText": "NORMAL DISTRIBUTION (GAUSSIAN DISTRIBUTION)",
         "placement": "after",
         "aspectRatio": 1
@@ -1056,8 +897,8 @@
         "id": "bs-26-4-skewness",
         "fileName": "bs_26_4_skewness.png",
         "alt": "Positive and negative skew with mean, median, and mode order",
-        "caption": "",
-        "purpose": "Shows that the tail names the skew and that the mean is pulled toward the tail.",
+        "caption": "Positive and negative skew with mean, median, and mode order.",
+        "purpose": "",
         "anchorText": "SKEWNESS (ASYMMETRY)",
         "placement": "after",
         "aspectRatio": 1
@@ -1074,8 +915,8 @@
         "id": "bs-26-5-errors",
         "fileName": "bs_26_5_errors.png",
         "alt": "Type I and Type II error table with power",
-        "caption": "",
-        "purpose": "One 2 by 2 board for alpha, beta, and power.",
+        "caption": "Type I and Type II error table with power.",
+        "purpose": "",
         "anchorText": "STATISTICAL ERRORS",
         "placement": "after",
         "aspectRatio": 1
@@ -1084,8 +925,8 @@
         "id": "bs-26-5-ci",
         "fileName": "bs_26_5_ci.png",
         "alt": "Confidence interval as mean plus or minus Z times standard error",
-        "caption": "",
-        "purpose": "Shows 68, 95, and 99 percent intervals on one line.",
+        "caption": "Confidence interval as mean plus or minus Z times standard error.",
+        "purpose": "",
         "anchorText": "CONFIDENCE INTERVALS (CI)",
         "placement": "after",
         "aspectRatio": 1
@@ -1102,8 +943,8 @@
         "id": "bs-26-6-which-test",
         "fileName": "bs_26_6_which_test.png",
         "alt": "Which statistical test to use for means, ranks, or categories",
-        "caption": "",
-        "purpose": "Exam decision board for t, ANOVA, Z, rank tests, and chi-square.",
+        "caption": "Which statistical test to use for means, ranks, or categories.",
+        "purpose": "",
         "anchorText": "WHICH TEST WHEN",
         "placement": "after",
         "aspectRatio": 1
@@ -1112,8 +953,8 @@
         "id": "bs-26-6-chi-square",
         "fileName": "bs_26_6_chi_square.png",
         "alt": "Chi-square 2 by 2 vaccine table with the 3.84 rule",
-        "caption": "",
-        "purpose": "Formula, expected-count idea, and a worked 2 by 2 conclusion.",
+        "caption": "Chi-square 2 by 2 vaccine table with the 3.84 rule.",
+        "purpose": "",
         "anchorText": "CHI-SQUARE TEST",
         "placement": "after",
         "aspectRatio": 1
@@ -1130,8 +971,8 @@
         "id": "bs-26-7-probability-laws",
         "fileName": "bs_26_7_probability_laws.png",
         "alt": "Multiplication and addition laws of probability",
-        "caption": "",
-        "purpose": "AND multiplies when independent. OR adds when exclusive.",
+        "caption": "Multiplication and addition laws of probability.",
+        "purpose": "",
         "anchorText": "LAWS OF PROBABILITY",
         "placement": "after",
         "aspectRatio": 1
@@ -1140,8 +981,8 @@
         "id": "bs-26-7-correlation",
         "fileName": "bs_26_7_correlation.png",
         "alt": "Positive, negative, and no linear correlation on three scatter plots",
-        "caption": "",
-        "purpose": "Scatter first: direction and tightness, not causation.",
+        "caption": "Positive, negative, and no linear correlation on three scatter plots.",
+        "purpose": "",
         "anchorText": "CORRELATION",
         "placement": "after",
         "aspectRatio": 1
@@ -1150,8 +991,8 @@
         "id": "bs-26-7-regression",
         "fileName": "bs_26_7_regression.png",
         "alt": "Regression line Y equals a plus bX with slope and intercept labelled",
-        "caption": "",
-        "purpose": "Shows prediction of one variable from another.",
+        "caption": "Regression line Y equals a plus bX with slope and intercept labelled.",
+        "purpose": "",
         "anchorText": "REGRESSION",
         "placement": "after",
         "aspectRatio": 1
@@ -1168,8 +1009,8 @@
         "id": "bs-26-8-sampling",
         "fileName": "bs_26_8_sampling.png",
         "alt": "Probability versus non-probability sampling methods",
-        "caption": "",
-        "purpose": "MSC SMS probability methods versus convenience, quota, snowball, and purposive.",
+        "caption": "Probability versus non-probability sampling methods.",
+        "purpose": "",
         "anchorText": "TYPES OF SAMPLING",
         "placement": "after",
         "aspectRatio": 1
@@ -1186,8 +1027,8 @@
         "id": "bs-26-9-design-steps",
         "fileName": "bs_26_9_design_steps.png",
         "alt": "Eight steps in designing a medical study",
-        "caption": "",
-        "purpose": "Process board from problem definition through conclusion.",
+        "caption": "Eight steps in designing a medical study.",
+        "purpose": "",
         "anchorText": "STEPS IN METHODOLOGY AND DESIGNING",
         "placement": "after",
         "aspectRatio": 1
@@ -1204,8 +1045,8 @@
         "id": "phleg-29-0-classification",
         "fileName": "phleg_29_0_classification.png",
         "alt": "Eight-bucket long-answer map of Indian public health legislation",
-        "caption": "",
-        "purpose": "Gives the resident a single page to open a legislation long answer: eight named buckets with the statutes under each.",
+        "caption": "Eight-bucket long-answer map of Indian public health legislation.",
+        "purpose": "",
         "anchorText": "EIGHT-BUCKET CLASSIFICATION FOR A LONG ANSWER",
         "placement": "after",
         "aspectRatio": 1
@@ -1222,8 +1063,8 @@
         "id": "phleg-29-1-mtp-flow",
         "fileName": "phleg_29_1_mtp_flow.png",
         "alt": "MTP Amendment Act 2021 gestational limits and required opinions",
-        "caption": "",
-        "purpose": "Stops the obsolete 12-week versus 20-week opinion rule. Shows one RMP to 20 weeks, two RMPs to 24 weeks, and Medical Board beyond 24 weeks.",
+        "caption": "MTP Amendment Act 2021 gestational limits and required opinions.",
+        "purpose": "",
         "anchorText": "GESTATION AND OPINION (CURRENT RULE)",
         "placement": "after",
         "aspectRatio": 1
@@ -1232,8 +1073,8 @@
         "id": "phleg-29-1-pcpndt-flow",
         "fileName": "phleg_29_1_pcpndt_flow.png",
         "alt": "PCPNDT Act pathway from clinic registration through Form F to the Appropriate Authority",
-        "caption": "",
-        "purpose": "Five-step visual for the sex-selection statute: register, consent, Form F, no disclosure of sex, Appropriate Authority.",
+        "caption": "PCPNDT Act pathway from clinic registration through Form F to the Appropriate Authority.",
+        "purpose": "",
         "anchorText": "PRE-CONCEPTION AND PRE-NATAL DIAGNOSTIC TECHNIQUES (PROHIBITION OF SEX SELECTION) ACT, 1994",
         "placement": "before",
         "aspectRatio": 1
@@ -1250,8 +1091,8 @@
         "id": "phleg-29-4-mhca-rights",
         "fileName": "phleg_29_4_mhca_rights.png",
         "alt": "Ten high-yield rights and protections under the Mental Healthcare Act 2017",
-        "caption": "",
-        "purpose": "Turns a rights-based statute into a countable list for short notes: access, advance directive, nominated representative, insurance parity, and section 115.",
+        "caption": "Ten high-yield rights and protections under the Mental Healthcare Act 2017.",
+        "purpose": "",
         "anchorText": "MENTAL HEALTHCARE ACT, 2017",
         "placement": "after",
         "aspectRatio": 1
@@ -1268,8 +1109,8 @@
         "id": "phleg-29-5-cotpa-pillars",
         "fileName": "phleg_29_5_cotpa_pillars.png",
         "alt": "Four pillars of the Cigarettes and Other Tobacco Products Act 2003",
-        "caption": "",
-        "purpose": "Cancer-prevention legislation visual: smoke-free places, advertisement ban, sale restrictions, and specified warnings including 85 percent pictorial warnings.",
+        "caption": "Four pillars of the Cigarettes and Other Tobacco Products Act 2003.",
+        "purpose": "",
         "anchorText": "CIGARETTES AND OTHER TOBACCO PRODUCTS ACT, 2003",
         "placement": "after",
         "aspectRatio": 1
@@ -1286,8 +1127,8 @@
         "id": "phleg-29-7-esi-benefits",
         "fileName": "phleg_29_7_esi_benefits.png",
         "alt": "Six Employees State Insurance benefits: medical, sickness, maternity, disablement, dependants, funeral",
-        "caption": "",
-        "purpose": "Classic six-benefit board for the Employees State Insurance Act short note.",
+        "caption": "Six Employees State Insurance benefits: medical, sickness, maternity, disablement, dependants, funeral.",
+        "purpose": "",
         "anchorText": "EMPLOYEES’ STATE INSURANCE ACT, 1948",
         "placement": "after",
         "aspectRatio": 1
@@ -1304,8 +1145,8 @@
         "id": "phleg-29-8-bmw-colours",
         "fileName": "phleg_29_8_bmw_colours.png",
         "alt": "Bio-Medical Waste Management Rules 2016 four colour categories",
-        "caption": "",
-        "purpose": "Legal-note colour chart for yellow, red, white, and blue categories under the 2016 Rules.",
+        "caption": "Bio-Medical Waste Management Rules 2016 four colour categories.",
+        "purpose": "",
         "anchorText": "BIO-MEDICAL WASTE MANAGEMENT RULES, 2016",
         "placement": "after",
         "aspectRatio": 1
@@ -1322,8 +1163,8 @@
         "id": "he-30-1-comparative",
         "fileName": "he_30_1_comparative.png",
         "alt": "Comparative analysis of programme A versus comparator B showing costs and consequences of each alternative",
-        "caption": "",
-        "purpose": "Shows that a full economic evaluation always compares alternatives on both costs and consequences.",
+        "caption": "Programme A compared with comparator B on costs and consequences.",
+        "purpose": "",
         "anchorText": "COMPARATIVE ANALYSIS (THE BASIC FIGURE)",
         "placement": "after",
         "aspectRatio": 1
@@ -1340,8 +1181,8 @@
         "id": "he-30-2-types",
         "fileName": "he_30_2_types.png",
         "alt": "Six types of economic evaluation from cost analysis through CMA, CEA, CUA, CBA, and CCA",
-        "caption": "",
-        "purpose": "Exam table of methods: what is measured as the consequence in each type.",
+        "caption": "Six types of economic evaluation, distinguished by how consequences are measured and valued.",
+        "purpose": "",
         "anchorText": "THE MEASUREMENT TABLE",
         "placement": "after",
         "aspectRatio": 1
@@ -1358,8 +1199,8 @@
         "id": "he-30-3-cost-taxonomy",
         "fileName": "he_30_3_cost_taxonomy.png",
         "alt": "Cost taxonomy splitting provider capital and recurrent costs from purchaser out-of-pocket and time costs",
-        "caption": "",
-        "purpose": "Separates facility costs from household costs so residents do not double-count OOPE.",
+        "caption": "Provider costs and purchaser costs in a health programme.",
+        "purpose": "",
         "anchorText": "PROVIDER COST AND PURCHASER COST",
         "placement": "after",
         "aspectRatio": 1
@@ -1368,9 +1209,29 @@
         "id": "he-30-3-discounting",
         "fileName": "he_30_3_discounting.png",
         "alt": "Discounting formula converting future costs and effects to present value",
-        "caption": "",
-        "purpose": "Makes the present-value formula and the effect of rate and delay memorable.",
+        "caption": "Present-value formula converting a future cost or effect to today's value.",
+        "purpose": "",
         "anchorText": "DISCOUNTING",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "he-30-3-eoq",
+        "fileName": "he_30_3_eoq.png",
+        "alt": "Ordering cost, holding cost, and total cost against order quantity, with economic order quantity at the minimum of total cost",
+        "caption": "Ordering cost, holding cost, and total cost against order quantity, with economic order quantity at the lowest point of total cost.",
+        "purpose": "",
+        "anchorText": "ECONOMIC ORDER QUANTITY (EOQ)",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "he-30-3-eoq-inventory",
+        "fileName": "he_30_3_eoq_inventory.png",
+        "alt": "Inventory cycle showing stock falling with use, a reorder point, lead time, and receipt of the new order",
+        "caption": "Inventory falling with use, a reorder point, lead time, and arrival of the new order.",
+        "purpose": "",
+        "anchorText": "ECONOMIC ORDER QUANTITY (EOQ)",
         "placement": "after",
         "aspectRatio": 1
       }
@@ -1386,8 +1247,8 @@
         "id": "he-30-4-qaly-area",
         "fileName": "he_30_4_qaly_area.png",
         "alt": "QALY area diagram showing quality gain during life that would have been lived and extra years of life",
-        "caption": "",
-        "purpose": "Visual of QALYs gained as the area between with-intervention and without-intervention health paths.",
+        "caption": "Quality-adjusted life-years gained as the area between with-intervention and without-intervention health paths.",
+        "purpose": "",
         "anchorText": "QALY: CONSTRUCTION",
         "placement": "after",
         "aspectRatio": 1
@@ -1404,8 +1265,8 @@
         "id": "he-30-5-icer",
         "fileName": "he_30_5_icer.png",
         "alt": "Incremental cost-effectiveness ratio formula with net monetary benefit and net health benefit",
-        "caption": "",
-        "purpose": "Puts the ICER formula and linear decision rules on one board.",
+        "caption": "Incremental cost-effectiveness ratio, with net monetary benefit and net health benefit.",
+        "purpose": "",
         "anchorText": "INCREMENTAL, NOT AVERAGE",
         "placement": "after",
         "aspectRatio": 1
@@ -1414,8 +1275,8 @@
         "id": "he-30-5-ce-plane",
         "fileName": "he_30_5_ce_plane.png",
         "alt": "Cost-effectiveness plane with four quadrants and a threshold line",
-        "caption": "",
-        "purpose": "Classic four-quadrant map for accept, reject, or compare with a threshold.",
+        "caption": "Cost-effectiveness plane: extra effect on the x-axis, extra cost on the y-axis, and a threshold line through the origin.",
+        "purpose": "",
         "anchorText": "COST-EFFECTIVENESS PLANE",
         "placement": "after",
         "aspectRatio": 1
@@ -1432,8 +1293,8 @@
         "id": "he-30-6-decision-tree",
         "fileName": "he_30_6_decision_tree.png",
         "alt": "Decision tree with a chemotherapy versus no-chemotherapy choice and chance nodes for fever",
-        "caption": "",
-        "purpose": "Shows decision nodes, chance nodes, and terminal payoffs for expected-value calculation.",
+        "caption": "Decision tree with a choice node, chance nodes, and terminal payoffs.",
+        "purpose": "",
         "anchorText": "DECISION TREES",
         "placement": "after",
         "aspectRatio": 1
@@ -1450,8 +1311,8 @@
         "id": "he-30-7-financing",
         "fileName": "he_30_7_financing.png",
         "alt": "Four sources of health finance in India with NHA 2022-23 out-of-pocket and government shares",
-        "caption": "",
-        "purpose": "Sources tree plus official NHA shares for the financing long answer.",
+        "caption": "Four sources of health finance in India, with National Health Accounts shares.",
+        "purpose": "",
         "anchorText": "SOURCES OF FINANCE",
         "placement": "after",
         "aspectRatio": 1
@@ -1468,8 +1329,8 @@
         "id": "he-30-8-uhc-cube",
         "fileName": "he_30_8_uhc_cube.png",
         "alt": "Universal health coverage cube with population, services, and cost-share axes",
-        "caption": "",
-        "purpose": "Three-axis UHC cube used in every MD short note on universal coverage.",
+        "caption": "Universal health coverage cube: population covered, services covered, and share of cost covered.",
+        "purpose": "",
         "anchorText": "THE UHC CUBE",
         "placement": "after",
         "aspectRatio": 1
@@ -1478,9 +1339,55 @@
         "id": "he-30-8-building-blocks",
         "fileName": "he_30_8_building_blocks.png",
         "alt": "WHO health system building blocks plus community participation",
-        "caption": "",
-        "purpose": "Six blocks plus community as the allocation map for a district answer.",
+        "caption": "World Health Organization health system building blocks, with community participation.",
+        "purpose": "",
         "anchorText": "BUILDING BLOCKS",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:22",
+    "section": "theory",
+    "topicId": "22",
+    "topicTitle": "Communication for Health Education",
+    "images": [
+      {
+        "id": "he-22-communication-process",
+        "fileName": "he_22_communication_process.png",
+        "alt": "Communication process from sender through message, channel, and receiver, with feedback returning to the sender",
+        "caption": "Communication process: sender, message, channel, receiver, and feedback returning to the sender.",
+        "purpose": "",
+        "anchorText": "COMMUNICATION PROCESS (components)",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:23",
+    "section": "theory",
+    "topicId": "23",
+    "topicTitle": "Health Planning and Management",
+    "images": [
+      {
+        "id": "hp-23-planning-cycle",
+        "fileName": "hp_23_planning_cycle.png",
+        "alt": "Eight-step health planning cycle from situation analysis to evaluation and replan",
+        "caption": "Health planning cycle: eight steps from situation analysis around to evaluation and replan.",
+        "purpose": "",
+        "anchorText": "THE HEALTH PLANNING CYCLE",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "hp-23-gantt",
+        "fileName": "hp_23_gantt.png",
+        "alt": "Gantt chart of a six-month urban primary health centre project with overlapping bars and a milestone",
+        "caption": "Gantt chart of a six-month facility project, with overlapping activity bars and an inauguration milestone.",
+        "purpose": "",
+        "anchorText": "GANTT CHART",
         "placement": "after",
         "aspectRatio": 1
       }
