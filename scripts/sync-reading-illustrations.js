@@ -78,11 +78,16 @@ const uploadIfNeeded = async (bucket, image) => {
     }
 
     const localPath = path.join(LOCAL_IMAGE_DIR, image.fileName);
+    const remotePath = `reading-illustrations/${image.fileName}`;
     if (!fs.existsSync(localPath)) {
-        throw new Error(`Local illustration missing: ${localPath}`);
+        console.warn(`Local illustration missing, keeping Storage URL: ${image.fileName}`);
+        return {
+            ...image,
+            storagePath: remotePath,
+            url: `https://storage.googleapis.com/${STORAGE_BUCKET}/${remotePath}`,
+        };
     }
 
-    const remotePath = `reading-illustrations/${image.fileName}`;
     await bucket.upload(localPath, {
         destination: remotePath,
         metadata: {
