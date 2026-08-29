@@ -40,10 +40,10 @@ Any **new** or **substantially expanded** block must be enough for a final-year 
 
 Must include, in order:
 
-1. **Definition** (1–2 lines). Prefer plain standard wording. Cite **WHO / MoHFW / statute** only when that authority is part of the exam answer; never label definitions "Park" in live text.
+1. **Definition** (1–2 lines). Copy **verbatim from the source**. Cite **WHO / MoHFW / statute** only when that authority is part of the exam answer; never label definitions "Park" in live text. If the source sentence is hard to follow, keep it and add a following teaching paragraph.
 2. **Core body**: 6–12 high-yield bullets (or a short table + bullets). Cover classification, mechanism/features, advantages/limitations, or steps as the topic demands.
-3. **India / programme hook** where relevant (national programme, NFHS/SRS figure, legal act, institutional example).
-4. **Mnemonic (hybrid list-only)** only when the body has a finite high-yield list of **4–10 items**. Place after the list; format and gates in `mnemonics.md`. Prefer no mnemonic over a forced one.
+3. **Indian context:** where relevant (national programme, NFHS/SRS figure, legal act, institutional example). Use this heading, never "India hook."
+4. **Mnemonic (hybrid list-only)** only when the body has a finite high-yield list of **4–10 items** **and** the mnemonic actually helps recall. Place after the list; format and gates in `mnemonics.md`. Prefer no mnemonic over a forced, decorative, or slogan-like one. Never add a trailing `MNEMONICS` dump.
 5. **Closing exam line** only if it adds marks (e.g. one high-yield contrast or “remember” point).
 6. **Exam tip** (`> **EXAM TIP:** …` preferred): brief framing (structure order, what not to miss). See `tag-format.md`. **No mark-count prefixes** (`SN (5)`, `LAQ (10)`, etc.).
 
@@ -56,8 +56,8 @@ Must include, in order:
 1. **Introduction / definition(s)** with authority.
 2. **Framework or classification** (prefer a markdown table or numbered levels).
 3. **Elaboration** of each major limb with examples a resident can expand under time pressure.
-4. **National / programme context** (India-specific schemes, indicators, recent renames) when the topic allows.
-5. **Mnemonic (hybrid list-only)** for major classification/steps lists of **4–10 items** when exam-recall heavy (after the list; see `mnemonics.md`). Not required for pure essay narrative limbs or short 2–3 item sets.
+4. **Indian context:** (India-specific schemes, indicators, recent renames) when the topic allows. Use this heading, never "India hook."
+5. **Mnemonic (hybrid list-only)** for major classification/steps lists of **4–10 items** when exam-recall heavy **and** the mnemonic actually helps (after the list; see `mnemonics.md`). Not required for pure essay narrative limbs, short 2–3 item sets, or tables that are already easy to recopy. Never add a trailing `MNEMONICS` dump.
 6. **Conclusion**: 2–4 lines tying concept to public-health practice or exam “so what”.
 7. **Exam tip** (`> **EXAM TIP:** …` preferred): how to frame the long answer (recommended heading sequence). **No invented mark splits** (`LAQ (10)`, `10 marks`, etc.).
 
@@ -83,13 +83,20 @@ Park chapter PDFs are the **primary** reference but are not exhaustive for every
 - In the report, note for each gap-fill block: `Park coverage: full | partial | absent` and `Sources used: …`.
 - **Never** ship phrases that make the paying reader re-verify programme facts.
 
+### C4. Source wording and following explanation
+
+1. Definitions and categorisations (named types, classification tables, numbered frameworks) stay **verbatim from the source**.
+2. If a source sentence or bullet is hard to follow, keep it, then add a **following** paragraph (or a following bullet if the source was a bullet) in ordinary teaching English. Do not compress that explanation to save space.
+3. Do not put the writing instruction into the page. Never write "standard guidebook language", "information not too compressed", "this is an explanation for easier understanding", "leaf", or "India hook".
+4. National material uses the heading **`Indian context:`**.
+
 ## D. Structure & pedagogy
 
 | Check | Expectation |
 |-------|-------------|
 | Section hierarchy | Clear ALL-CAPS or equivalent section heads; scannable bullets |
 | Definitions first | Exam answers open with definition/authority |
-| Mnemonics | **Hybrid list-only** (`mnemonics.md`): only for finite high-yield lists (**4–10 items**). No I RECALL. Prefer classic CM, then acronym/acrostic, then initialism/chunking. After list, before Exam Tip. Remove forced/weak/list-less mnemonics |
+| Mnemonics | **Hybrid list-only** (`mnemonics.md`): only for finite high-yield lists (**4–10 items**) when the cue actually helps recall. No I RECALL. Prefer classic CM, then acronym/acrostic, then initialism/chunking. After list, before Exam Tip. Remove forced/weak/list-less/slogan mnemonics and trailing `MNEMONICS` dumps |
 | Formulas | Correct formula + units + multiplier + when to use |
 | Exam Tip | Every new SN/LAQ block ends with Exam Tip (brief framing only: not a second essay) |
 | Redundancy | Duplicate blocks across subsections noted; don’t rewrite whole chapter unless asked |
@@ -98,10 +105,11 @@ Park chapter PDFs are the **primary** reference but are not exhaustive for every
 
 | Check | Expectation |
 |-------|-------------|
-| Clarity | Precise medical English; no AI fluff. Guidebook voice: teach the topic, do not describe the app. One idea per sentence when the concept is hard. |
-| Meta language | Forbidden in live text: "this leaf", "next leaf", "not a forced word", "sentence for recall", prompt residue, author-to-self notes. Cross-references name the topic, not the file. |
+| Clarity | Precise medical English; no AI fluff. Teach the topic; do not describe the app. One idea per sentence when the concept is hard. |
+| Source wording | Definitions and categorisations stay **verbatim from the source**. If source language is hard to follow, keep it and add a following paragraph (or following bullet, if the source was a bullet) in ordinary teaching English. Do not compress that explanation. |
+| Meta language | Forbidden in live text: "leaf" / "this leaf" / "next leaf" as a section label; "India hook"; "India paper"; "guidebook language"; "standard guidebook language"; "information not too compressed"; "not a forced word"; "sentence for recall"; prompt residue; author-to-self notes. Cross-references name the topic, not the file. National material uses the heading `Indian context:`. |
 | Figure captions | State what the figure shows, as in a textbook. Do not write what the figure is for as a study aid ("helps students memorize"). |
-| Acronyms | **First use in each leaf:** `Full Name (ACRONYM)`; short form only after that. Never open a topic with a bare unexplained acronym (e.g. bare `GAS` without Group A β-haemolytic Streptococcus). Expand programme, disease, legal, and technical initialisms. SI units and pure formula symbols may stay short. |
+| Acronyms | **First use in each subsection:** `Full Name (ACRONYM)`; short form only after that. Never open a topic with a bare unexplained acronym (e.g. bare `GAS` without Group A β-haemolytic Streptococcus). Expand programme, disease, legal, and technical initialisms. SI units and pure formula symbols may stay short. |
 | Consistency | Same term for same concept throughout (e.g. HWC vs Ayushman Arogya Mandir: state current official name if tagging updates) |
 | Tables | Prefer markdown tables for multi-column comparisons when ReadingView supports them |
 | Length | SN-depth ~½–1 page equivalent; LAQ scaffolds deeper without essay padding |
@@ -127,11 +135,16 @@ Park chapter PDFs are the **primary** reference but are not exhaustive for every
 - Apply content, Firebase overrides, commit, or push without explicit user **approval of the report** (approval then triggers the full ship path in SKILL.md Step 7).
 - Ship new SN/LAQ text without an Exam Tip box.
 - Force a mnemonic onto every paragraph, definition, or short 2-item set.
+- Add a mnemonic that does not actually help recall (sentence paraphrase of a table already on the page, decorative slogan, trailing `MNEMONICS` dump).
 - Invent facts to make a mnemonic phrase work.
+- Call a subsection a "leaf" in live Library text.
+- Use "India hook." Use **Indian context:** instead.
+- Put writing-process labels into live text ("standard guidebook language", "information not too compressed", and similar).
+- Paraphrase a source definition or categorisation to "simplify" it. Keep it verbatim and explain after it if needed.
 - Dump SN/LAQ tags before chapter overview instead of above answering sections.
 - Pad answers with generic AI filler that would not earn MD theory marks.
 - Put "verify latest…", "confirm for your exam year", or similar **reader-offload** wording into live Library content (including Exam Tips).
 - Put "Park", "Park-aligned", "as per Park", or other textbook name-drops into live Library content.
 - Use em-dashes (U+2014) or ` -- ` clause dashes in live Library content.
-- Introduce bare acronyms without a prior full-form expansion in that leaf.
-- Put meta language into live Library content ("this leaf", "not a forced word", prompt residue, study-aid captions).
+- Introduce bare acronyms without a prior full-form expansion in that subsection.
+- Put meta language into live Library content ("leaf" as a section label, "India hook", "not a forced word", "standard guidebook language", prompt residue, study-aid captions).

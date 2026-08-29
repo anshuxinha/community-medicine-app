@@ -103,7 +103,7 @@ Apply `references/quality-rubric.md`.
 
 Content must support:
 
-- **Short notes (SN):** definition → 6–12 high-yield bullets → India/programme hook → **Exam Tip box**
+- **Short notes (SN):** definition → 6–12 high-yield bullets → Indian context → **Exam Tip box**
 - **Long answers (LAQ/LQ):** definition → framework/classification → elaboration → national context → conclusion → **Exam Tip box**
 
 Depth = MD theory exam, not UG one-liners and not textbook chapter rewrites.
@@ -138,11 +138,18 @@ Residents pay for **finished, trustworthy Library text**. All of the following a
 **Allowed in Exam Tips only:** how to **structure the answer** (order of headings, tables to draw), not "go verify this fact".
 **If a figure cannot be verified:** omit it or use qualitative wording the agent can defend. Never tell the reader to verify.
 
-### Live prose voice: no textbook name-dropping, no em-dashes, expand acronyms on first use
+### Live prose voice: no textbook name-dropping, no em-dashes, no meta language, expand acronyms on first use
 
 Park (and other textbooks) are **agent-side references** for accuracy audits and the **review report**. They are not branding for the app reader.
 
 **Forbidden in live Library text** (bodies, headings, tags, Exam Tips, `mockData`, Firebase overrides):
+
+0. **Meta language (hard ban)**
+   - Do **not** write author-to-self notes, prompt residue, or writing-process labels in the page.
+   - Do **not** call a chapter subsection a "leaf" (or "this leaf", "next leaf", "effects leaf"). Cross-references name the **topic**, not the file or the content tree.
+   - Do **not** label a block "India hook", "India paper", "guidebook language", "standard guidebook language", "information not too compressed", "for completeness", "not a forced word", or similar.
+   - The heading for national material is **`Indian context:`** (not "India hook.").
+   - These skill instructions stay in the skill. They must never appear in reader-facing content.
 
 1. **Textbook name spam**
    - Do **not** write: "Park", "Park-aligned", "Park framing", "Park notes", "Park says", "as per Park", "Park (edition)", "According to Park", "Park-aligned steps", "Meaning (Park)", "DEFINITION (Park)", "Open with Park's definition", "to link Park", or similar.
@@ -168,7 +175,7 @@ Park (and other textbooks) are **agent-side references** for accuracy audits and
    - **Audit existing text** during review: flag bare first-use acronyms as clarity findings and fix on apply.
    - **Pre-flight on apply:** spot-check high-yield acronyms in changed leaves; first occurrence must be `Expanded (ACRONYM)` form.
 
-**Pre-flight (mandatory before apply/ship):** search each changed leaf for `Park`, `park-aligned`, U+2014 em-dash, and ` -- `. Fail ship if any hit remains in live text (case-insensitive for Park, except incidental words that are not the textbook, which should not appear). Also confirm first-use expansions for major acronyms introduced in that leaf.
+**Pre-flight (mandatory before apply/ship):** search each changed subsection for `Park`, `park-aligned`, U+2014 em-dash, ` -- `, `India hook`, and live-text uses of `leaf` as a section label (`this leaf`, `next leaf`, `effects leaf`). Fail ship if any hit remains in live text (case-insensitive for Park, except incidental words that are not the textbook, which should not appear). Also confirm first-use expansions for major acronyms introduced in that subsection.
 
 ## Step 3: PYQ coverage map
 
@@ -194,10 +201,19 @@ Whenever the review **proposes** or **applies** new/expanded text for a PYQ gap:
 
 | Type | Minimum usable answer |
 |------|------------------------|
-| **SN** | Definition (with authority) + 6–12 high-yield points + India/programme hook when relevant. Length ≈ ½–1 exam page. |
+| **SN** | Definition (with authority) + 6–12 high-yield points + Indian context when relevant. Length ≈ ½–1 exam page. |
 | **LAQ/LQ** | Definition → classification/framework (table preferred) → elaborate each limb with examples → national context → short conclusion. Length ≈ 1½–3 exam pages of scannable scaffold (not fluff). |
 
 Full rules: `references/quality-rubric.md` §C1–C2.
+
+### Source wording and following explanation (mandatory)
+
+When drafting or editing live Library text:
+
+1. **Definitions and categorisations** (named types, tables of classes, numbered frameworks) must be **verbatim from the source** (Park, WHO, MoHFW, statute, or the teaching source used for that topic). Do not paraphrase a definition to "simplify" it.
+2. If a source sentence or bullet is hard to follow, **keep the source wording**, then add a **following** paragraph (or a following bullet if the source was a bullet) that restates the same idea in ordinary teaching English. Do not compress that explanation to save space.
+3. Never put the writing instruction into the page. Do not write "standard guidebook language", "information not too compressed", "this is an explanation for easier understanding", "leaf", or "India hook".
+4. National material uses the heading **`Indian context:`**.
 
 ### Park gaps: fill, don’t invent
 
@@ -233,8 +249,8 @@ Apply `references/mnemonics.md`. Rules in short:
 1. **Only** for finite high-yield lists residents must memorize (typically **4–10 ordered items**; classic fixed lists of 5–7 are ideal). Not for narrative, definitions, or every section.
 2. **House method = hybrid:** prefer classic CM mnemonics when already standard and accurate; else acronym/acrostic when letters map cleanly; else initialism; chunk long lists rather than one bloated cue. **Do not use the I RECALL framework.**
 3. **Place** after the list/table it encodes and **before** Exam Tip.
-4. **Remove** weak, forced, or list-less mnemonics on apply.
-5. **Never** invent facts to force a phrase. Prefer no mnemonic over a bad one.
+4. **Remove** weak, forced, or list-less mnemonics on apply. Do **not** add a mnemonic that does not actually help recall (sentence paraphrases of a table already on the page, decorative slogans, or a trailing `MNEMONICS` dump that only restates earlier text).
+5. **Never** invent facts to force a phrase. Prefer no mnemonic over a bad one. Never add a bottom-of-page `MNEMONICS` index.
 
 Default live format (when a mnemonic is warranted):
 
@@ -256,9 +272,13 @@ Default live format (when a mnemonic is warranted):
 - [ ] Mnemonic (if any) sits after the list and **before** Exam Tip
 - [ ] Ends with Exam Tip (`> **EXAM TIP:** …` preferred)
 - [ ] Precise medical English; no AI filler
-- [ ] **Acronyms expanded on first use** in each leaf (`Full Name (ACRONYM)`), then short form OK
+- [ ] **Acronyms expanded on first use** in each subsection (`Full Name (ACRONYM)`), then short form OK
 - [ ] **No textbook name-dropping** ("Park", "Park-aligned", etc.) in live draft text
 - [ ] **No em-dashes** (U+2014) or ` -- ` clause dashes
+- [ ] **No meta language** in live draft text ("leaf" as a section label, "India hook", "guidebook language", "information not too compressed", prompt residue)
+- [ ] **Indian context:** used as the heading for national material (never "India hook.")
+- [ ] Definitions and categorisations copied **verbatim from the source**; a following teaching paragraph or bullet is added where the source wording is hard to follow
+- [ ] Mnemonics only when they actually help a finite 4–10 item list; no trailing `MNEMONICS` dump
 
 In **report-only** mode, write these full drafts under “Proposed content additions” so apply is copy-paste ready.
 
@@ -296,7 +316,7 @@ If `ReadingView.js` lacks SN/LAQ/EXAMTIP block styles **or** still folds exam ta
 
 Check and note:
 
-- Section order (overview → definitions → core → programmes/India → key points → formulas/mnemonics)
+- Section order (overview → definitions → core → Indian context → key points → formulas). Mnemonics sit after the list they encode, not in a trailing dump
 - Broken formulas, wrong units, empty “FORMULAS” stubs that should exist
 - Contradictions between leaves of the same chapter
 - Weak LAQ scaffolding (lists without definitions/frameworks)
@@ -366,7 +386,7 @@ Also give the user a short in-chat summary with the bundle path and top findings
 2. Insert SN/LAQ tags **only above answering sections** (never pre-overview dumps) and full new blocks that pass Step 3a (depth + verified gap-fill + optional list-only mnemonics + Exam Tip).
 3. Apply approved mnemonic add/replace/remove actions (list-only; after list, before Exam Tip). Remove weak or list-less mnemonics.
 4. Surgical edits only: no drive-by refactors.
-5. **Pre-flight:** grep applied text for forbidden reader-offload phrases (`verify latest`, `exam year`, `confirm yourself`, `NEEDS_`, "commonly taught; confirm", etc.), **textbook name-dropping** (`Park`, `park-aligned`), and **em-dashes** (U+2014, ` -- `). Remove all hits before ship. Confirm **acronyms expand on first use** in each changed leaf.
+5. **Pre-flight:** grep applied text for forbidden reader-offload phrases (`verify latest`, `exam year`, `confirm yourself`, `NEEDS_`, "commonly taught; confirm", etc.), **textbook name-dropping** (`Park`, `park-aligned`), **em-dashes** (U+2014, ` -- `), **`India hook`**, and live-text **`leaf`** as a section label. Remove all hits before ship. Confirm **acronyms expand on first use** in each changed subsection. Confirm definitions/categorisations are verbatim and that hard source wording has a following teaching explanation.
 6. Live text must be **authoritative finished prose**. Verification is the agent's job before publish, not the subscriber's.
 
 ### 7b: Git commit + push (**always** on approval)
@@ -437,7 +457,9 @@ After ship, report:
 - [ ] Park gaps filled only with non-hallucinated, cross-verified material (sources noted **in the report**)
 - [ ] Every new/expanded exam block ends with Exam Tip
 - [ ] SN/LAQ tags only above answering sections (no pre-overview tag dump)
-- [ ] Mnemonics only for finite high-yield lists when warranted; weak/list-less ones removed or proposed for removal
+- [ ] Mnemonics only for finite high-yield lists when they actually help recall; weak/list-less/slogan/trailing-dump ones removed or proposed for removal
+- [ ] No meta language in proposed live content ("leaf" as a section label, "India hook", writing-process labels)
+- [ ] Definitions and categorisations verbatim from source; hard source wording followed by a teaching explanation
 - [ ] No I RECALL framework required; method per `mnemonics.md`
 - [ ] No reader-offload / "verify yourself" language in proposed live content
 - [ ] No "Park" / textbook name-dropping in proposed live content

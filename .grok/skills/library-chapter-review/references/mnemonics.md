@@ -14,7 +14,7 @@ Apply methods in this order for each candidate list:
 4. **Chunking** if the list is long: prefer two short cues over one 12-letter soup.
 5. **Link / mini-story** only when sequence matters and shorter methods fail; keep it tight and clinical.
 
-Prefer **no mnemonic** over a forced, inaccurate, or slogan-like cue.
+Prefer **no mnemonic** over a forced, inaccurate, or slogan-like cue. If a cue does not actually help a resident recall a real exam list, do not add it.
 
 ## When to add a mnemonic (hard gates)
 
@@ -34,6 +34,9 @@ Lists with **fewer than 4** items: usually skip (plain bullets are enough). List
 - Forced letter-glue on trial names or weak 2–3 item sets
 - Unverified numbers, doses, or programme years
 - Vague lifestyle slogans that are not a real exam list
+- Sentence paraphrases of a table or list already on the page (for example a four-quadrant slogan that only restates the cost-effectiveness plane)
+- Cues that do not actually help recall: decorative, cute, or “something at the bottom of the page”
+- A trailing `MNEMONICS` index at the end of a subsection
 
 ## Method reference
 
@@ -52,7 +55,7 @@ Avoid Hindi/hinglish unless it is already a standard local teaching mnemonic and
 
 1. Put the mnemonic **immediately after the list or table it encodes**.
 2. Put it **before** the Exam Tip when both exist.
-3. **Never** dump a `MNEMONICS` index at the chapter start, and never invent mnemonics with no adjacent list.
+3. **Never** dump a `MNEMONICS` index at the chapter start or at the chapter end, and never invent mnemonics with no adjacent list.
 4. Prefer one mnemonic per list; do not stack three mnemonics on one short note.
 
 ### Format (live text)
@@ -89,6 +92,7 @@ If the answering section does not exist yet, **create the section** from Park/of
 | Factually wrong | Fix or remove (**critical/major**) |
 | Forced, weak, or not attached to a list | **Remove** |
 | Decorative / slogan | **Remove** |
+| Does not actually help recall (restates a table, trailing dump) | **Remove** |
 
 ## Report section (when any mnemonic work applies)
 
@@ -109,3 +113,4 @@ If the answering section does not exist yet, **create the section** from Park/of
 - No invented facts to force a rhyme or letter
 - No prompt residue or author-to-self notes: never write "not a forced word", "sentence for recall", "no dummy items", "do not invent a fifth letter", or similar
 - If no clean word forms, omit the mnemonic. Do not apologise in the page for skipping one.
+- Never write "not a forced word", "sentence for recall", "leaf", or other process notes next to a mnemonic.

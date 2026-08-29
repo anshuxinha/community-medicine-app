@@ -33,7 +33,7 @@ Place at the **end** of every **new or substantially expanded** SN/LAQ content b
 ### Preferred (portable: works even without a JS OTA)
 
 ```text
-> **EXAM TIP:** Open with WHO definition → 6–8 bullets on classification + features → one India/programme line. Skip history essays.
+> **EXAM TIP:** Open with WHO definition → 6–8 bullets on classification + features → one Indian context line. Skip history essays.
 ```
 
 ```text
@@ -45,7 +45,7 @@ Older app builds still render this as a blockquote box; newer builds map it to t
 ### Alternate (newer builds only: avoid for live content until renderer is confirmed)
 
 ```text
-[EXAMTIP]Open with WHO definition → 6–8 bullets on classification + features → one India/programme line.[/EXAMTIP]
+[EXAMTIP]Open with WHO definition → 6–8 bullets on classification + features → one Indian context line.[/EXAMTIP]
 ```
 
 **Fixed colours (do not invent alternatives):**
@@ -81,7 +81,7 @@ Do **not** invent a `[MNEMONIC]…[/MNEMONIC]` colour tag unless ReadingView is 
 ## Placement rules
 
 1. Put SN/LAQ tags on their **own line**, immediately **above** the section that answers that PYQ.
-2. **Never** open a leaf with a long dump of SN/LAQ tags before `OVERVIEW` / definitions.
+2. **Never** open a subsection with a long dump of SN/LAQ tags before `OVERVIEW` / definitions. In live reader text, never call the subsection a "leaf".
 3. **Blank line after every individual SN/LAQ tag line**: including between two consecutive tags. Required so the text-table heuristic never treats `[SN]A[/SN]` + `[SN]B[/SN]` or `[SN]…` + title as a 2-column table.
 4. Topic title inside SN/LAQ tags should match the PYQ wording closely (or a clear shortened form).
 5. One tag per discrete exam topic. Prefer multiple SN tags over one vague LAQ tag.
