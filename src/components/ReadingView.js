@@ -1606,8 +1606,10 @@ const ReadingView = ({
         const blockHighlightSig = sentences.map((_, sIdx) => userHighlights[`${index}:${sIdx}`] ? "1" : "0").join("");
         const hasSearchMatch = blockContainsSearch(block.text);
         // Nested sentence Text on Android clips the last wrapped line. Use it
-        // only when highlight mode needs per-sentence press targets.
-        const useSentenceNodes = isHighlightMode && !hasSearchMatch;
+        // for per-sentence press targets, and whenever a saved highlight must
+        // stay visible after the Highlight tool is dismissed.
+        const useSentenceNodes =
+          (isHighlightMode || blockHighlightSig.includes("1")) && !hasSearchMatch;
 
         return (
           <View
@@ -1628,7 +1630,7 @@ const ReadingView = ({
                       style={isHl ? styles.userHighlightSentence : null}
                       selectable={false}
                       contextMenuHidden
-                      onPress={() => onToggleHighlight(hlKey)}
+                      onPress={isHighlightMode ? () => onToggleHighlight(hlKey) : undefined}
                       suppressHighlighting={true}
                     >
                       {sIdx > 0 ? " " : ""}{renderFormattedText(sentence, null, false)}
@@ -1649,7 +1651,8 @@ const ReadingView = ({
         const hasSearchMatch = blockContainsSearch(block.text);
         const isAllCapsTitle = block.text.length > 3 && block.text === block.text.toUpperCase() && /[A-Z]/.test(block.text);
         const baseStyle = isAllCapsTitle ? styles.allCapsTitle : styles.body;
-        const useSentenceNodes = isHighlightMode && !hasSearchMatch;
+        const useSentenceNodes =
+          (isHighlightMode || blockHighlightSig.includes("1")) && !hasSearchMatch;
 
         return (
           <View
@@ -1670,7 +1673,7 @@ const ReadingView = ({
                       style={isHl ? styles.userHighlightSentence : null}
                       selectable={false}
                       contextMenuHidden
-                      onPress={() => onToggleHighlight(hlKey)}
+                      onPress={isHighlightMode ? () => onToggleHighlight(hlKey) : undefined}
                       suppressHighlighting={true}
                     >
                       {sIdx > 0 ? " " : ""}{renderFormattedText(sentence, null, false)}
@@ -2839,33 +2842,34 @@ const createStyles = (colors) => StyleSheet.create({
     lineHeight: 20,
     flexShrink: 1,
   },
-  // Fixed EXAMTIP box (library-chapter-review skill) — do not change colours casually
+  // Fixed EXAMTIP box (library-chapter-review skill). Light palette is the
+  // documented indigo chip; dark palette is the same family, slightly muted.
   examTipBlock: {
     marginTop: 10,
     marginBottom: 10,
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderLeftWidth: 4,
-    borderLeftColor: "#4338CA",
-    backgroundColor: "#E0E7FF",
+    borderLeftColor: colors.examTipBorder,
+    backgroundColor: colors.examTipBg,
     borderRadius: 4,
     flexDirection: "column",
     alignItems: "flex-start",
     gap: 6,
   },
   examTipBadge: {
-    color: "#3730A3",
+    color: colors.examTipText,
     fontSize: 11,
     fontWeight: "800",
     letterSpacing: 0.6,
-    backgroundColor: "#C7D2FE",
+    backgroundColor: colors.examTipBadgeBg,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 4,
     overflow: "hidden",
   },
   examTipText: {
-    color: "#3730A3",
+    color: colors.examTipText,
     fontSize: 13.5,
     fontWeight: "600",
     lineHeight: 20,
