@@ -102,7 +102,7 @@ const uploadIfNeeded = async (bucket, image) => {
     return {
         ...image,
         storagePath: remotePath,
-        url: `https://storage.googleapis.com/${STORAGE_BUCKET}/${remotePath}`,
+        url: `https://storage.googleapis.com/${STORAGE_BUCKET}/${remotePath}?v=${Date.now()}`,
     };
 };
 

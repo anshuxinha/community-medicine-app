@@ -1251,7 +1251,7 @@
         "purpose": "",
         "anchorText": "QALY: CONSTRUCTION",
         "placement": "after",
-        "aspectRatio": 1
+        "aspectRatio": 1.27
       }
     ]
   },
@@ -1297,7 +1297,7 @@
         "purpose": "",
         "anchorText": "DECISION TREES",
         "placement": "after",
-        "aspectRatio": 1
+        "aspectRatio": 1.33
       }
     ]
   },

@@ -308,12 +308,12 @@
     "hash": "5af06cf930dfee1627beb56252653965"
   },
   "D:\\The App\\scripts\\add_library_ch29.py": {
-    "mtime": 1787112513.046029,
-    "hash": "07b429dcfab063b1f7d6167793afb533"
+    "mtime": 1787904795.1097443,
+    "hash": "79827783e8bfa2fe922315dc2967dd06"
   },
   "D:\\The App\\scripts\\add_library_ch30.py": {
-    "mtime": 1787383305.8928387,
-    "hash": "e94fb3288ff548a526d37d09cd758731"
+    "mtime": 1787901960.172692,
+    "hash": "265c89e17b0a11130480c546b0e84429"
   },
   "D:\\The App\\scripts\\apply_nfhs6_library_indicators.py": {
     "mtime": 1787809741.084486,
@@ -387,9 +387,17 @@
     "mtime": 1786735635.4082162,
     "hash": "3c3da799a178752daa2c6c635cd0d043"
   },
+  "D:\\The App\\scripts\\generate-guidebook-figures.js": {
+    "mtime": 1787902217.4640093,
+    "hash": "9e27342caa0221fcaab8c478094fe26d"
+  },
+  "D:\\The App\\scripts\\generate-he-qaly-figure.py": {
+    "mtime": 1787992720.254935,
+    "hash": "033da19640ff2556c48ca77ecb870c33"
+  },
   "D:\\The App\\scripts\\generate-health-economics-illustrations.js": {
-    "mtime": 1787383305.9061987,
-    "hash": "a080ed0237ecddfeed00b12efb789ae8"
+    "mtime": 1787992788.0541253,
+    "hash": "48669d0d4a56106a50242d5c174c47eb"
   },
   "D:\\The App\\scripts\\generate-ph-legislation-illustrations.js": {
     "mtime": 1787112711.9099288,
@@ -459,6 +467,10 @@
     "mtime": 1776771290.9485075,
     "hash": "f024e7b721a3c582829bc7b05c03a814"
   },
+  "D:\\The App\\scripts\\rewrite_illustration_captions.py": {
+    "mtime": 1787902330.7579584,
+    "hash": "bcaeb8a3339b31fb8d050bb2396857ac"
+  },
   "D:\\The App\\scripts\\scan_park_library_gaps.py": {
     "mtime": 1787112157.305858,
     "hash": "f9f8ac0756ea50d0baf294448c2799c6"
@@ -480,8 +492,8 @@
     "hash": "54e2fda3efab3b6cf0e1e4998d71e192"
   },
   "D:\\The App\\scripts\\sync-reading-illustrations.js": {
-    "mtime": 1775306756.8060327,
-    "hash": "fad85bbe9647a11753c0e33d597086ee"
+    "mtime": 1787992506.7390301,
+    "hash": "873746c60c065a16a12c6f71da772abd"
   },
   "D:\\The App\\scripts\\test-notifications.js": {
     "mtime": 1783958333.7269132,
@@ -564,8 +576,8 @@
     "hash": "ee80de9ca72397fd02e0fb31ed09698c"
   },
   "D:\\The App\\src\\components\\ReadingView.js": {
-    "mtime": 1787812483.774464,
-    "hash": "783842cac5065c7781197f403f12391a"
+    "mtime": 1787992484.5177855,
+    "hash": "8dca7a8411ce655df6e61c27bc02e1e9"
   },
   "D:\\The App\\src\\components\\ReviewFeedbackModal.js": {
     "mtime": 1785328661.2858431,
@@ -600,8 +612,8 @@
     "hash": "28aff4aa2aa407d8be48e8aed5bb252a"
   },
   "D:\\The App\\src\\context\\AppContext.js": {
-    "mtime": 1786882348.647669,
-    "hash": "be12b3a1653256d0ea14c95bbedb25f7"
+    "mtime": 1787947606.6249375,
+    "hash": "df3dcc08d8f6de635bc1497a53584b9a"
   },
   "D:\\The App\\src\\data\\defaultTopicIllustrations.js": {
     "mtime": 1786881885.1823778,
@@ -640,8 +652,8 @@
     "hash": "cc9a10b9fc4d6e5c67642d1b34ae488c"
   },
   "D:\\The App\\src\\navigation\\AppNavigator.js": {
-    "mtime": 1787747175.6797593,
-    "hash": "2c779952578fe5747ed5162560dcf613"
+    "mtime": 1787947074.8395865,
+    "hash": "6761d261a45ba93eba6cab722b851fc4"
   },
   "D:\\The App\\src\\screens\\AdminAppFeedbackScreen.js": {
     "mtime": 1786804524.82716,
@@ -660,8 +672,8 @@
     "hash": "77261ef4f3a431023f33b15a62e7388e"
   },
   "D:\\The App\\src\\screens\\BookmarksScreen.js": {
-    "mtime": 1786882049.2355409,
-    "hash": "a14bc2deadd242ebeaf41f2f8d693c62"
+    "mtime": 1787947074.8395865,
+    "hash": "f1e7ade8058d26abf467d904414ca50b"
   },
   "D:\\The App\\src\\screens\\DashboardScreen.js": {
     "mtime": 1787721989.5379567,
@@ -680,12 +692,12 @@
     "hash": "aa3688842ec7c1abad4f7b83e2894bf8"
   },
   "D:\\The App\\src\\screens\\LearningProgressScreen.js": {
-    "mtime": 1786882049.2476742,
-    "hash": "1478ceec6c8c734f66e923eb2f437c88"
+    "mtime": 1787947074.8250465,
+    "hash": "73c4d221f284cb9d881ab7052147d0e7"
   },
   "D:\\The App\\src\\screens\\LibraryScreen.js": {
-    "mtime": 1786882687.3128364,
-    "hash": "be6587cfb01991a4a0472217a8c53075"
+    "mtime": 1787947483.0389373,
+    "hash": "726879698a04a46b4b0e332e1d92e276"
   },
   "D:\\The App\\src\\screens\\LoginScreen.js": {
     "mtime": 1787747176.030194,
@@ -732,20 +744,20 @@
     "hash": "f968241eb8b01706ae26202300310ee9"
   },
   "D:\\The App\\src\\screens\\ReadingScreen.js": {
-    "mtime": 1787747039.3196435,
-    "hash": "6ca18232d8406741b85613a3f87bd2c4"
+    "mtime": 1787947219.2723083,
+    "hash": "37885e64dbc12a4d5c2c49bf42bce88a"
   },
   "D:\\The App\\src\\screens\\SearchScreen.js": {
-    "mtime": 1786882049.273741,
-    "hash": "c4684982405b60695193d0ea6b88a58c"
+    "mtime": 1787947074.7724802,
+    "hash": "1976ef6a96f4080482beabbe8366f561"
   },
   "D:\\The App\\src\\screens\\SESCalculatorScreen.js": {
     "mtime": 1784225615.121064,
     "hash": "fb217cb7586d7fb2f616c1fe675dd0e9"
   },
   "D:\\The App\\src\\screens\\SubTopicsScreen.js": {
-    "mtime": 1786882049.1852891,
-    "hash": "b24ac6db7d72556720fb54653690cc48"
+    "mtime": 1787947606.6249375,
+    "hash": "f74bac5b6cacc2294cc290f9d1286777"
   },
   "D:\\The App\\src\\screens\\SupportScreen.js": {
     "mtime": 1786340384.0302837,
@@ -836,12 +848,16 @@
     "hash": "ebc4c3a67f8eae29e527d79d3260b61c"
   },
   "D:\\The App\\src\\utils\\contentRegistry.js": {
-    "mtime": 1786881933.5635006,
-    "hash": "6b2363eca1047a024d7a5b9c764b6060"
+    "mtime": 1787943381.0516217,
+    "hash": "f3b5ca66cb4db2f3ce3ea36b82761f45"
   },
   "D:\\The App\\src\\utils\\copyWord.js": {
     "mtime": 1786856743.7656906,
     "hash": "f07e139e8b65bb387fd36b0b788a1ef9"
+  },
+  "D:\\The App\\src\\utils\\debouncedTask.js": {
+    "mtime": 1787946994.8570578,
+    "hash": "cea64ee482be37481eb68605145399d2"
   },
   "D:\\The App\\src\\utils\\deviceUtils.js": {
     "mtime": 1776915497.5873566,
@@ -855,9 +871,25 @@
     "mtime": 1785993203.9006617,
     "hash": "ba56499826ddddda28d3b85d22f7b9d0"
   },
+  "D:\\The App\\src\\utils\\learningStateMerge.js": {
+    "mtime": 1787943366.3156245,
+    "hash": "db790ed382aef9a2d1adc8f3247ae162"
+  },
   "D:\\The App\\src\\utils\\libraryExerciseMarkup.js": {
     "mtime": 1786730907.9515162,
     "hash": "366716f4a92c5cd7983af7441ae2fe38"
+  },
+  "D:\\The App\\src\\utils\\libraryNavigation.js": {
+    "mtime": 1787946994.8530617,
+    "hash": "b269e84e1c56191b81e4eb5e04dc6932"
+  },
+  "D:\\The App\\src\\utils\\lruCache.js": {
+    "mtime": 1787946994.854065,
+    "hash": "8108e99bed8a1aeed455acb426d75369"
+  },
+  "D:\\The App\\src\\utils\\markdownParseCache.js": {
+    "mtime": 1787946994.8570578,
+    "hash": "63c899f3a5cbe82506d129274c7a008e"
   },
   "D:\\The App\\src\\utils\\onboardingStorage.js": {
     "mtime": 1785734535.5422063,
@@ -866,6 +898,10 @@
   "D:\\The App\\src\\utils\\progressPresentation.js": {
     "mtime": 1784650210.305622,
     "hash": "211921205c1af08b837fb3d8b3d58f3b"
+  },
+  "D:\\The App\\src\\utils\\readingEnd.js": {
+    "mtime": 1787941336.8921723,
+    "hash": "09fd0ca91f550d80a2573e3ed5fff8f9"
   },
   "D:\\The App\\src\\utils\\referralUtils.js": {
     "mtime": 1786463941.3213525,
@@ -887,6 +923,10 @@
     "mtime": 1780371717.8520322,
     "hash": "df7f8269babb6479cbe06602e784d124"
   },
+  "D:\\The App\\src\\utils\\splitSentences.js": {
+    "mtime": 1787901780.1874683,
+    "hash": "3dfb7ae237bff7a669dc1daa90462f95"
+  },
   "D:\\The App\\src\\utils\\__tests__\\chapterSearch.test.js": {
     "mtime": 1787812129.4978118,
     "hash": "889bcfd492e6bd6aa68a2198e745a2ba"
@@ -896,20 +936,36 @@
     "hash": "985dc88ff91debb96b26431b81f41c0e"
   },
   "D:\\The App\\src\\utils\\__tests__\\contentRegistry.silentUpdate.test.js": {
-    "mtime": 1786881959.7196937,
-    "hash": "0efc688f9c60827d8d15d95809c2c50e"
+    "mtime": 1787943453.657562,
+    "hash": "220d372a85c1806be3d72b4aa1967cd3"
   },
   "D:\\The App\\src\\utils\\__tests__\\copyWord.test.js": {
     "mtime": 1786856743.8022223,
     "hash": "bab8759b5a192d3036003560de5cb013"
   },
+  "D:\\The App\\src\\utils\\__tests__\\debouncedTask.test.js": {
+    "mtime": 1787946994.8590744,
+    "hash": "70fd2b823b2d044b1328ed3a027323b1"
+  },
   "D:\\The App\\src\\utils\\__tests__\\learningProgress.test.js": {
     "mtime": 1787383305.9431407,
     "hash": "2f96f676932074f87d77634c70e3046b"
   },
+  "D:\\The App\\src\\utils\\__tests__\\learningStateMerge.test.js": {
+    "mtime": 1787943381.0516217,
+    "hash": "8860ecc7ddb688fdae13f3669453b290"
+  },
   "D:\\The App\\src\\utils\\__tests__\\libraryExerciseMarkup.test.js": {
     "mtime": 1786730907.9515162,
     "hash": "c2671446518927ad90edefaceb54b2df"
+  },
+  "D:\\The App\\src\\utils\\__tests__\\libraryNavigation.test.js": {
+    "mtime": 1787946994.854065,
+    "hash": "8f6e20128a0431202108aabd45548065"
+  },
+  "D:\\The App\\src\\utils\\__tests__\\markdownParseCache.test.js": {
+    "mtime": 1787946994.862061,
+    "hash": "fd922c3bdb78f8d3131cd80a6e62fe38"
   },
   "D:\\The App\\src\\utils\\__tests__\\onboardingStorage.test.js": {
     "mtime": 1785734555.4803152,
@@ -918,6 +974,10 @@
   "D:\\The App\\src\\utils\\__tests__\\progressPresentation.test.js": {
     "mtime": 1784650282.931558,
     "hash": "035440e518221f9db9a58e3cb9736f87"
+  },
+  "D:\\The App\\src\\utils\\__tests__\\readingEnd.test.js": {
+    "mtime": 1787941336.8921723,
+    "hash": "c32136ccdb41ab5fa440257a3efdcd84"
   },
   "D:\\The App\\src\\utils\\__tests__\\referralUtils.test.js": {
     "mtime": 1786463941.3180087,
@@ -930,6 +990,10 @@
   "D:\\The App\\src\\utils\\__tests__\\reviewPrompt.test.js": {
     "mtime": 1786817197.5660062,
     "hash": "3d68ddc140b733708b8165468f377190"
+  },
+  "D:\\The App\\src\\utils\\__tests__\\splitSentences.test.js": {
+    "mtime": 1787901780.1874683,
+    "hash": "3d842b0f76517755c8069a3a4beabccc"
   },
   "D:\\The App\\AGENTS.md": {
     "mtime": 1785916675.9318168,
@@ -1012,16 +1076,16 @@
     "hash": "4ef7b59e89a144b9ab51c9eaa6052501"
   },
   "D:\\The App\\scripts\\data\\biostats_depth\\26-7.md": {
-    "mtime": 1786733121.8012433,
-    "hash": "a1690fc7f2ded8cf2506ed5f9719f330"
+    "mtime": 1787904846.4128997,
+    "hash": "762540a8fb190b9157b600c0b716d533"
   },
   "D:\\The App\\scripts\\data\\biostats_depth\\26-8.md": {
     "mtime": 1786733150.2011569,
     "hash": "a060e85bc6d4dcd700f0928196a3cdd9"
   },
   "D:\\The App\\scripts\\data\\biostats_depth\\26-9.md": {
-    "mtime": 1786731461.2678044,
-    "hash": "dc5408bc961005e8edbd2955760b8474"
+    "mtime": 1787904846.4138994,
+    "hash": "34e41ee974df8fddb3aaac5cc908ef8a"
   },
   "D:\\The App\\scripts\\data\\biostats_depth\\ex_26-1.md": {
     "mtime": 1786733121.8022437,
@@ -1060,88 +1124,88 @@
     "hash": "49c3c8658b6acf1b4ba98bdbe9d6ee6a"
   },
   "D:\\The App\\scripts\\data\\biostats_depth\\ex_offchapter.md": {
-    "mtime": 1786731864.032172,
-    "hash": "66300ead737827b59c01135952a9ccd9"
+    "mtime": 1787904846.4128997,
+    "hash": "808baa6e93c1879bd5e52d5e3ee94228"
   },
   "D:\\The App\\scripts\\data\\health_economics\\30-1.md": {
-    "mtime": 1787385596.9330416,
-    "hash": "c14d926367d6b7182c87625a51493a99"
+    "mtime": 1787988293.466528,
+    "hash": "ae48df6f045d65112cc6a9db80e51592"
   },
   "D:\\The App\\scripts\\data\\health_economics\\30-2.md": {
-    "mtime": 1787383305.8968372,
-    "hash": "f7089f306c62dcf7fbb1f82577fc69d8"
+    "mtime": 1787901874.3360116,
+    "hash": "5b1fb057e254648ff61e7a4c364b094c"
   },
   "D:\\The App\\scripts\\data\\health_economics\\30-3.md": {
-    "mtime": 1787383305.8978379,
-    "hash": "75452982019237d68eab916f40a18dc2"
+    "mtime": 1787901874.3136692,
+    "hash": "9011e829bb6be9845f3ea7820ae9534f"
   },
   "D:\\The App\\scripts\\data\\health_economics\\30-4.md": {
-    "mtime": 1787383305.8998384,
-    "hash": "306bbe9b99f6f4e9ced59a39474dcd0d"
+    "mtime": 1787988293.466528,
+    "hash": "1388bb0a91cd7fd6fc33df7ac3dbb28a"
   },
   "D:\\The App\\scripts\\data\\health_economics\\30-5.md": {
-    "mtime": 1787383305.9008381,
-    "hash": "4f1e2a8540e8e418cc2a2c08cd65346a"
+    "mtime": 1787988737.0260217,
+    "hash": "5461541ba26f9c5c605b74e12f468fb4"
   },
   "D:\\The App\\scripts\\data\\health_economics\\30-6.md": {
-    "mtime": 1787383305.901838,
-    "hash": "b173cd9641c2a312ccd28e9767c4fb0b"
+    "mtime": 1787902088.2960885,
+    "hash": "582d5b962e977b964d536421fe269438"
   },
   "D:\\The App\\scripts\\data\\health_economics\\30-7.md": {
-    "mtime": 1787383305.9034846,
-    "hash": "afa5442ff7725ff62b79492745b20e90"
+    "mtime": 1787988293.4675317,
+    "hash": "734bcda77dcc65158493923ec3c909b5"
   },
   "D:\\The App\\scripts\\data\\health_economics\\30-8.md": {
-    "mtime": 1787385596.8798492,
-    "hash": "ff8acc6796230d768fb5d54ef48a0741"
+    "mtime": 1787901931.184999,
+    "hash": "9b6a8d37797040622a3bc1835eb1f0e8"
   },
   "D:\\The App\\scripts\\data\\ph_legislation\\29-0.md": {
-    "mtime": 1787112332.5908813,
-    "hash": "c21a138ec181a6f2d2fa02a5ca277f54"
+    "mtime": 1787904795.1107569,
+    "hash": "872cfe22604bd85fe2cee54c50d54206"
   },
   "D:\\The App\\scripts\\data\\ph_legislation\\29-1.md": {
-    "mtime": 1787113145.9805036,
-    "hash": "845cf1213dd94bdff91b4f0c292b0121"
+    "mtime": 1787904795.0741994,
+    "hash": "fa0492bdfd2cf0459cb1662d5c414178"
   },
   "D:\\The App\\scripts\\data\\ph_legislation\\29-10.md": {
-    "mtime": 1787113979.7442806,
-    "hash": "6220dc42c7433cefc2fc60794464cb5f"
+    "mtime": 1787904846.475521,
+    "hash": "7857128b94af2d6cde322e119ef57055"
   },
   "D:\\The App\\scripts\\data\\ph_legislation\\29-11.md": {
-    "mtime": 1787113979.7442806,
-    "hash": "823ea9e6bb6d146e3838a43ee3027da9"
+    "mtime": 1787904846.4149039,
+    "hash": "7022dba749996129a39e673680f259c7"
   },
   "D:\\The App\\scripts\\data\\ph_legislation\\29-2.md": {
-    "mtime": 1787113146.0099094,
-    "hash": "0e2a9e57e5bbfe5d98ed79cec0fc7133"
+    "mtime": 1787904795.0752008,
+    "hash": "0b73e4d8d17944f995c092151d2256e1"
   },
   "D:\\The App\\scripts\\data\\ph_legislation\\29-3.md": {
-    "mtime": 1787113146.0310793,
-    "hash": "8f5984aa7b674d6dcac8c8501255084b"
+    "mtime": 1787904795.1792881,
+    "hash": "5ac16dffc04c57accc4a2bfb2084c033"
   },
   "D:\\The App\\scripts\\data\\ph_legislation\\29-4.md": {
-    "mtime": 1787113145.9805036,
-    "hash": "cb88e2f8c9580875efc0de45c2f6aaf8"
+    "mtime": 1787904846.4128997,
+    "hash": "6da751ce9f20ace8075acd8c9b596d37"
   },
   "D:\\The App\\scripts\\data\\ph_legislation\\29-5.md": {
-    "mtime": 1787113459.7807713,
-    "hash": "6ddc85d956a08b4b859d940ecd542cf4"
+    "mtime": 1787904846.4745212,
+    "hash": "20759900c9319c7d516d19db46109d73"
   },
   "D:\\The App\\scripts\\data\\ph_legislation\\29-6.md": {
-    "mtime": 1787113459.7807713,
-    "hash": "2997f4494421589184a3007272ea2e12"
+    "mtime": 1787904846.4128997,
+    "hash": "951e7dc2c3d25cbc7077cd98d47eb59e"
   },
   "D:\\The App\\scripts\\data\\ph_legislation\\29-7.md": {
-    "mtime": 1787113459.7807713,
-    "hash": "59847fbd355949e7684b9c32b34a728f"
+    "mtime": 1787904846.4745212,
+    "hash": "7ac4a9be2dd642df1d48bf106cc33f63"
   },
   "D:\\The App\\scripts\\data\\ph_legislation\\29-8.md": {
-    "mtime": 1787113260.868181,
-    "hash": "d90af253d8ba1cc99b92a09b8e919a67"
+    "mtime": 1787904846.4128997,
+    "hash": "7d393a3134fe0e1085c339972a1654fe"
   },
   "D:\\The App\\scripts\\data\\ph_legislation\\29-9.md": {
-    "mtime": 1787113979.7442806,
-    "hash": "3b2a8ccf7b38608a737de62633f157ee"
+    "mtime": 1787904846.4159026,
+    "hash": "81393b32ef21733f2276452375dd0584"
   },
   "D:\\The App\\android\\app\\src\\main\\res\\drawable-hdpi\\notification_icon.png": {
     "mtime": 1776686130.2448807,
@@ -1527,49 +1591,69 @@
     "mtime": 1786735641.9986334,
     "hash": "50d7e74d25fa255afbd2b1958adea595"
   },
+  "D:\\The App\\reading-illustrations\\he_22_communication_process.png": {
+    "mtime": 1787902221.336707,
+    "hash": "f7b91ad0c040b73157eefde3de2f9a64"
+  },
   "D:\\The App\\reading-illustrations\\he_30_1_comparative.png": {
-    "mtime": 1787383305.857503,
-    "hash": "0a18e97c6f6b7294c4d536dcba1a34b5"
+    "mtime": 1787992826.8120599,
+    "hash": "c434bd3ebe80ca892b721d70d342b558"
   },
   "D:\\The App\\reading-illustrations\\he_30_2_types.png": {
-    "mtime": 1787383305.8607965,
-    "hash": "daad5cfd170bb2cb56f1572eb9e5beb8"
+    "mtime": 1787992826.9629035,
+    "hash": "0cc4250901db1bd563b1be092c90916e"
   },
   "D:\\The App\\reading-illustrations\\he_30_3_cost_taxonomy.png": {
-    "mtime": 1787383305.864302,
-    "hash": "7d9b1279ee7eb8af89bde7b796f4ca02"
+    "mtime": 1787992827.1261988,
+    "hash": "6a1eb21e6469e3caad394805277fc48b"
   },
   "D:\\The App\\reading-illustrations\\he_30_3_discounting.png": {
-    "mtime": 1787383305.8671951,
-    "hash": "87a96cd569d2d172e2e9000e539fa90d"
+    "mtime": 1787992827.3212502,
+    "hash": "c30f82149b9f6d2bdeb1c71a3f5217ee"
+  },
+  "D:\\The App\\reading-illustrations\\he_30_3_eoq.png": {
+    "mtime": 1787902220.119202,
+    "hash": "c6bed4785c75824befdba4d4831644c9"
+  },
+  "D:\\The App\\reading-illustrations\\he_30_3_eoq_inventory.png": {
+    "mtime": 1787902220.3921816,
+    "hash": "0462f759a0fc18a368dbdedd98ff6e69"
   },
   "D:\\The App\\reading-illustrations\\he_30_4_qaly_area.png": {
-    "mtime": 1787383305.8701952,
-    "hash": "e8e290892a8046344344e072ff24cddd"
+    "mtime": 1787992829.565786,
+    "hash": "6d104b9d93449393fb66824447595898"
   },
   "D:\\The App\\reading-illustrations\\he_30_5_ce_plane.png": {
-    "mtime": 1787383305.8721986,
-    "hash": "351e8476b0d8a82cfe761789a6bc6974"
+    "mtime": 1787992827.5108469,
+    "hash": "c7bc3fa22060923b1818849e31935a29"
   },
   "D:\\The App\\reading-illustrations\\he_30_5_icer.png": {
-    "mtime": 1787383305.8757346,
-    "hash": "e5cd2589200084cfe072e379062cae12"
+    "mtime": 1787992827.720042,
+    "hash": "bd373af1d4f0fa21ba9fa448f80a750e"
   },
   "D:\\The App\\reading-illustrations\\he_30_6_decision_tree.png": {
-    "mtime": 1787383305.8792527,
-    "hash": "58cca69d409a0c21163b21eb01bf5d0b"
+    "mtime": 1787992827.8880632,
+    "hash": "e61fbaa3e751bdaff268f294a2c5a18f"
   },
   "D:\\The App\\reading-illustrations\\he_30_7_financing.png": {
-    "mtime": 1787383305.8839276,
-    "hash": "f1de2e36fe90bf0fb8d5613022c5fde0"
+    "mtime": 1787992828.0596619,
+    "hash": "7c6cdf7e39a0711f5846857e9ce262ce"
   },
   "D:\\The App\\reading-illustrations\\he_30_8_building_blocks.png": {
-    "mtime": 1787383305.8883135,
-    "hash": "d4476948570a15a717adbf6bdb3ffae7"
+    "mtime": 1787992828.3435225,
+    "hash": "c313d5a02492b33718f9b8a91ef84baa"
   },
   "D:\\The App\\reading-illustrations\\he_30_8_uhc_cube.png": {
-    "mtime": 1787383305.891838,
-    "hash": "3936ef3f18d78e5f89ad66f52d7788de"
+    "mtime": 1787992828.2058334,
+    "hash": "0b4a190d630be6a7a41474b5a847df20"
+  },
+  "D:\\The App\\reading-illustrations\\hp_23_gantt.png": {
+    "mtime": 1787902220.9650202,
+    "hash": "edd9a0b88ffd8aa331dbc3aadec18d85"
+  },
+  "D:\\The App\\reading-illustrations\\hp_23_planning_cycle.png": {
+    "mtime": 1787902220.7000175,
+    "hash": "0b2a69c0485648460b3e48a3499a8261"
   },
   "D:\\The App\\reading-illustrations\\nhp-logo-staging-contact-sheet.png": {
     "mtime": 1775300411.9803963,

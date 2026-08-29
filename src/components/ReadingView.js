@@ -636,21 +636,24 @@ const mergeBlocksWithIllustrations = (blocks, illustrations = []) => {
   const mergedBlocks = [...topBlocks];
   const unmatchedBottomBlocks = [...bottomBlocks];
 
-  // Helper function to check if anchor matches block text (exact or substring)
+  // Match section headings, not long overview paragraphs that happen to name the topic.
+  // Short anchors such as "DECISION TREES" appear in the overview of 30-6; those
+  // paragraphs must not steal the figure from the heading they belong next to.
+  const HEADING_LIKE_MAX = 90;
   const doesAnchorMatchBlock = (anchor, block) => {
     if (!anchor || !block) return false;
 
     const blockText = getBlockAnchorText(block);
     if (!blockText) return false;
 
-    // Exact match after normalization
     if (blockText === anchor) return true;
 
-    // Substring match: check if anchor is contained within block text
-    if (blockText.includes(anchor)) return true;
+    const headingLike = blockText.length <= HEADING_LIKE_MAX;
+    const longAnchor = anchor.length >= 40;
+    if (!headingLike && !longAnchor) return false;
 
-    // Also check if block text is contained within anchor (for shorter headings)
-    if (anchor.includes(blockText)) return true;
+    if (blockText.includes(anchor)) return true;
+    if (headingLike && anchor.includes(blockText) && blockText.length >= 8) return true;
 
     return false;
   };
