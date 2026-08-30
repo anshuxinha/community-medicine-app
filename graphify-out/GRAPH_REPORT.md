@@ -1,16 +1,16 @@
-# Graph Report - The App  (2026-08-29)
+# Graph Report - The App  (2026-08-30)
 
 ## Corpus Check
-- 298 files · ~1,810,500 words
+- 298 files · ~1,810,569 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1827 nodes · 3029 edges · 210 communities (189 shown, 21 thin omitted)
+- 1827 nodes · 3029 edges · 209 communities (188 shown, 21 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 16 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `706eb272`
+- Built from commit: `751fe55e`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -141,7 +141,6 @@
 - [[_COMMUNITY_Community 123|Community 123]]
 - [[_COMMUNITY_Community 124|Community 124]]
 - [[_COMMUNITY_Community 125|Community 125]]
-- [[_COMMUNITY_Community 126|Community 126]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `useThemedStyles()` - 98 edges
@@ -167,7 +166,7 @@
 - `_notify_new_updates()` --calls--> `send_push_notifications()`  [INFERRED]
   scripts/fetch_updates.py → scripts/push_notifications.py
 
-## Communities (210 total, 21 thin omitted)
+## Communities (209 total, 21 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.05
@@ -194,16 +193,16 @@ Cohesion: 0.08
 Nodes (49): apply_corrections(), _batched(), build_candidate_map(), build_review_markdown(), build_source_context(), build_unified_diff(), call_ollama(), _document_url() (+41 more)
 
 ### Community 6 - "Community 6"
-Cohesion: 0.09
-Nodes (31): CHAPTER_NMC_MAP, getChapterNmcMeta(), getChaptersForPaper(), getPaperMeta(), getPrimaryPaperForChapterId(), LEARNER_ROLES, NMC_PAPERS, PRACTICAL_SKILL_MAP (+23 more)
+Cohesion: 0.07
+Nodes (29): ReferralAnnouncementDialog(), styles, AppContext, CATEGORIES, MUSEUM_ITEMS, useUpdatesFeed(), DashboardScreen(), GemsScreen() (+21 more)
 
 ### Community 7 - "Community 7"
 Cohesion: 0.09
-Nodes (19): BASE_MENU_ITEMS, DrawerMenu(), styles, { width }, ReviewFeedbackModal(), ReviewRequestModal(), VideoRequestModal(), auth (+11 more)
+Nodes (31): CHAPTER_NMC_MAP, getChapterNmcMeta(), getChaptersForPaper(), getPaperMeta(), getPrimaryPaperForChapterId(), LEARNER_ROLES, NMC_PAPERS, PRACTICAL_SKILL_MAP (+23 more)
 
 ### Community 8 - "Community 8"
-Cohesion: 0.08
-Nodes (23): DropdownPicker(), styles, CATEGORIES, MUSEUM_ITEMS, DietarySurveyScreen(), REFERENCE_VALUES, styles, FieldToolboxScreen() (+15 more)
+Cohesion: 0.07
+Nodes (21): DropdownPicker(), styles, styles, AnthropometryScreen(), BMI_CATEGORIES_ASIAN, styles, DietarySurveyScreen(), REFERENCE_VALUES (+13 more)
 
 ### Community 9 - "Community 9"
 Cohesion: 0.1
@@ -215,47 +214,47 @@ Nodes (34): 1. Think Before Coding, 2. Simplicity First, 3. Surgical Changes, 4.
 
 ### Community 11 - "Community 11"
 Cohesion: 0.09
-Nodes (26): app, buildBunnyEmbedUrl(), EmptyState(), FreeLabel(), pdfViewerHtml(), playerHtml(), styles, VideosLoadErrorState() (+18 more)
+Nodes (25): buildBunnyEmbedUrl(), EmptyState(), FreeLabel(), pdfViewerHtml(), playerHtml(), styles, VideosLoadErrorState(), VideosScreen() (+17 more)
 
 ### Community 12 - "Community 12"
 Cohesion: 0.15
 Nodes (25): averages(), barVsHistogram(), C, chiSquare(), chooseDiagram(), ciBoard(), correlation(), { createCanvas } (+17 more)
 
 ### Community 13 - "Community 13"
+Cohesion: 0.09
+Nodes (17): BASE_MENU_ITEMS, DrawerMenu(), styles, { width }, flex1, { height: WINDOW_HEIGHT }, styles, UpdateBottomSheet() (+9 more)
+
+### Community 14 - "Community 14"
 Cohesion: 0.15
 Nodes (24): ensureReviewPromptMigrated(), getHasRatedFiveStarReview(), isReviewRequestDue(), markAsRated(), markAsShown(), markReviewPromptShown(), markVideoPrompted(), maybePromptReview() (+16 more)
 
-### Community 14 - "Community 14"
+### Community 15 - "Community 15"
 Cohesion: 0.14
 Nodes (27): apply_overrides(), build_topic_list(), cache_key_for_pdf(), detect_asymmetric(), domain_coverage(), extract_heading_candidates(), extract_pdf_text(), fetch_active_overrides() (+19 more)
 
-### Community 15 - "Community 15"
-Cohesion: 0.1
-Nodes (16): ReferralAnnouncementDialog(), styles, AppContext, useUpdatesFeed(), DashboardScreen(), GemsScreen(), styles, OnboardingScreen() (+8 more)
-
 ### Community 16 - "Community 16"
-Cohesion: 0.1
-Nodes (14): styles, flex1, { height: WINDOW_HEIGHT }, styles, UpdateBottomSheet(), AnthropometryScreen(), BMI_CATEGORIES_ASIAN, styles (+6 more)
-
-### Community 17 - "Community 17"
 Cohesion: 0.12
 Nodes (19): HighlightedExcerpt(), SearchScreen(), StatusMark(), styles, TYPE_ICON, buildGemsIndex(), buildLibraryIndex(), buildMuseumIndex() (+11 more)
 
-### Community 18 - "Community 18"
+### Community 17 - "Community 17"
 Cohesion: 0.11
 Nodes (21): FeatureItem(), hasPremiumEntitlement(), PaywallScreen(), PLAN_METADATA, resolvePremiumAfterPurchase(), sleep(), styles, applyDiscount() (+13 more)
 
-### Community 19 - "Community 19"
+### Community 18 - "Community 18"
 Cohesion: 0.2
 Nodes (22): buildingBlocks(), C, cePlane(), comparative(), costTaxonomy(), { createCanvas }, decisionTree(), discounting() (+14 more)
 
-### Community 20 - "Community 20"
+### Community 19 - "Community 19"
 Cohesion: 0.12
 Nodes (15): BookmarksScreen(), styles, StatusMark(), styles, SubtopicRow, SubTopicsScreen(), TOPIC_ID_ICON_MAP, { navigation } (+7 more)
 
-### Community 21 - "Community 21"
+### Community 20 - "Community 20"
 Cohesion: 0.12
 Nodes (19): useUnlockOrientationOnFocus(), ChapterRow, excerptStyles, findFirstMatchingItemOrSub(), findFirstMatchingLeaf(), FreeLabel(), getExcerptAroundMatch(), getExcerptStyles() (+11 more)
+
+### Community 21 - "Community 21"
+Cohesion: 0.14
+Nodes (12): ReviewFeedbackModal(), ReviewRequestModal(), VideoRequestModal(), ALL_ORIENTATIONS, AdminAppFeedbackScreen(), formatWhen(), getSortValue(), STATUS_TONES (+4 more)
 
 ### Community 22 - "Community 22"
 Cohesion: 0.16
@@ -319,15 +318,15 @@ Nodes (12): communication(), { createCanvas }, drawTitle(), eoqCost(), eoqInvent
 
 ### Community 37 - "Community 37"
 Cohesion: 0.21
-Nodes (8): ChapterCompleteSheet(), REVIEW_CTA_VARIANTS, styles, UpdateDownloadIndicator(), LearningProgressScreen(), getLastSeenReadingProgress(), progressToPercent(), setLastSeenReadingProgress()
+Nodes (12): admin, ensureFirebaseApp(), fs, GEM_IMAGE_ENTRIES, GEMS_DATA_PATH, getImageMetadata(), loadGemsData(), { loadImage } (+4 more)
 
 ### Community 38 - "Community 38"
 Cohesion: 0.21
-Nodes (12): admin, ensureFirebaseApp(), fs, GEM_IMAGE_ENTRIES, GEMS_DATA_PATH, getImageMetadata(), loadGemsData(), { loadImage } (+4 more)
+Nodes (11): admin, ensureFirebaseApp(), fs, loadSeed(), LOCAL_IMAGE_DIR, main(), parseArgs(), path (+3 more)
 
 ### Community 39 - "Community 39"
-Cohesion: 0.21
-Nodes (11): admin, ensureFirebaseApp(), fs, loadSeed(), LOCAL_IMAGE_DIR, main(), parseArgs(), path (+3 more)
+Cohesion: 0.23
+Nodes (7): ChapterCompleteSheet(), REVIEW_CTA_VARIANTS, styles, UpdateDownloadIndicator(), getLastSeenReadingProgress(), progressToPercent(), setLastSeenReadingProgress()
 
 ### Community 40 - "Community 40"
 Cohesion: 0.19
@@ -442,88 +441,88 @@ Cohesion: 0.25
 Nodes (6): admin, fs, LOCAL_DIR, path, ROOT, SERVICE_ACCOUNT_PATH
 
 ### Community 68 - "Community 68"
-Cohesion: 0.32
-Nodes (5): AdminAppFeedbackScreen(), formatWhen(), getSortValue(), STATUS_TONES, isVideoRequestItem()
-
-### Community 69 - "Community 69"
 Cohesion: 0.36
 Nodes (6): buildSpeechChunks(), buildSpeechText(), cleanSpeechText(), collectSpeechFragments(), OBJECT_KEYS_TO_SKIP, PREFERRED_OBJECT_KEYS
 
-### Community 70 - "Community 70"
+### Community 69 - "Community 69"
 Cohesion: 0.29
 Nodes (5): admin, filesToAttach, fs, path, SERVICE_ACCOUNT_PATH
 
-### Community 71 - "Community 71"
+### Community 70 - "Community 70"
 Cohesion: 0.52
 Nodes (6): apply_proposal(), find_item_by_id(), load_json(), main(), save_json(), select_approved_proposals()
 
-### Community 72 - "Community 72"
+### Community 71 - "Community 71"
 Cohesion: 0.33
 Nodes (6): admin, fs, main(), parseArgs(), path, SERVICE_ACCOUNT_PATH
 
-### Community 73 - "Community 73"
+### Community 72 - "Community 72"
 Cohesion: 0.33
 Nodes (5): cleanContent(), fs, main(), MOCK, path
 
-### Community 74 - "Community 74"
+### Community 73 - "Community 73"
 Cohesion: 0.33
 Nodes (4): appIcon, styles, UpdateDetailDialog(), UPDATES_IMAGES
 
-### Community 75 - "Community 75"
+### Community 74 - "Community 74"
 Cohesion: 0.29
 Nodes (5): 1. Think Before Coding, 2. Simplicity First, 3. Surgical Changes, 4. Goal-Driven Execution, code:block1 (1. [Step] → verify: [check])
 
-### Community 76 - "Community 76"
+### Community 75 - "Community 75"
 Cohesion: 0.29
 Nodes (6): Framework used, Full-content findings, Good next candidates, Initial batch added now, Purposeful Placement Audit, Why Firebase was chosen
 
-### Community 77 - "Community 77"
+### Community 76 - "Community 76"
 Cohesion: 0.33
 Nodes (3): { createCanvas }, fs, path
 
-### Community 78 - "Community 78"
+### Community 77 - "Community 77"
 Cohesion: 0.33
 Nodes (5): content, fs, registerEnd, registerEndAlt, registerStart
 
-### Community 80 - "Community 80"
+### Community 79 - "Community 79"
 Cohesion: 0.33
 Nodes (5): content, data, fs, jsonPart, jsonStart
 
-### Community 81 - "Community 81"
+### Community 80 - "Community 80"
 Cohesion: 0.67
 Nodes (5): apply_repls(), find_node(), insert_after_overview(), main(), strip_park_phrases()
 
-### Community 82 - "Community 82"
+### Community 81 - "Community 81"
 Cohesion: 0.33
 Nodes (4): admin, fs, path, SERVICE_ACCOUNT_PATH
 
-### Community 83 - "Community 83"
+### Community 82 - "Community 82"
 Cohesion: 0.4
 Nodes (5): fs, path, processFile(), ROOTS, walk()
 
-### Community 84 - "Community 84"
+### Community 83 - "Community 83"
 Cohesion: 0.33
 Nodes (4): admin, db, path, serviceAccount
+
+### Community 84 - "Community 84"
+Cohesion: 0.33
+Nodes (4): admin, fs, path, SERVICE_ACCOUNT_PATH
 
 ### Community 85 - "Community 85"
 Cohesion: 0.33
 Nodes (4): admin, fs, path, SERVICE_ACCOUNT_PATH
 
 ### Community 86 - "Community 86"
-Cohesion: 0.33
-Nodes (4): admin, fs, path, SERVICE_ACCOUNT_PATH
-
-### Community 87 - "Community 87"
 Cohesion: 0.73
 Nodes (5): find_node(), join_body(), main(), parse_offchapter(), read_text()
 
-### Community 88 - "Community 88"
+### Community 87 - "Community 87"
 Cohesion: 0.33
 Nodes (5): code:json ({), Coupon Firestore Setup, Document Structure, Example Document (`PROMO20`):, Script for Bulk Upload
 
-### Community 89 - "Community 89"
+### Community 88 - "Community 88"
 Cohesion: 0.33
 Nodes (5): { getByText }, mockAction, mockDismiss, React, { View }
+
+### Community 89 - "Community 89"
+Cohesion: 0.4
+Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
 ### Community 90 - "Community 90"
 Cohesion: 0.4
@@ -531,11 +530,11 @@ Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
 ### Community 91 - "Community 91"
 Cohesion: 0.4
-Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
+Nodes (4): data, fs, match, pos
 
 ### Community 92 - "Community 92"
 Cohesion: 0.4
-Nodes (4): data, fs, match, pos
+Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
 ### Community 93 - "Community 93"
 Cohesion: 0.4
@@ -543,19 +542,19 @@ Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
 ### Community 94 - "Community 94"
 Cohesion: 0.4
-Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
+Nodes (3): fs, path, s
 
 ### Community 95 - "Community 95"
 Cohesion: 0.4
-Nodes (3): fs, path, s
-
-### Community 96 - "Community 96"
-Cohesion: 0.4
 Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
-### Community 97 - "Community 97"
+### Community 96 - "Community 96"
 Cohesion: 0.6
 Nodes (4): badge(), main(), q_from_segments(), Drummond Fig 5.2: QALYs gained, areas A and B separated at Death 1. White backgr
+
+### Community 97 - "Community 97"
+Cohesion: 0.4
+Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
 ### Community 98 - "Community 98"
 Cohesion: 0.4
@@ -563,11 +562,11 @@ Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
 ### Community 99 - "Community 99"
 Cohesion: 0.4
-Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
+Nodes (4): data, fs, mockDataPath, path
 
 ### Community 100 - "Community 100"
 Cohesion: 0.4
-Nodes (4): data, fs, mockDataPath, path
+Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
 ### Community 101 - "Community 101"
 Cohesion: 0.4
@@ -577,19 +576,15 @@ Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 Cohesion: 0.4
 Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
 
-### Community 103 - "Community 103"
-Cohesion: 0.4
-Nodes (3): admin, path, SERVICE_ACCOUNT_PATH
-
-### Community 105 - "Community 105"
+### Community 104 - "Community 104"
 Cohesion: 0.4
 Nodes (4): { getByText }, insetContext, React, { View }
 
-### Community 110 - "Community 110"
+### Community 109 - "Community 109"
 Cohesion: 0.67
 Nodes (3): extract_text_from_pdf(), main(), Extracts text from a PDF file.     This is a placeholder function. In a real ap
 
-### Community 112 - "Community 112"
+### Community 111 - "Community 111"
 Cohesion: 0.67
 Nodes (3): find_node(), main(), next
 
@@ -601,11 +596,11 @@ Nodes (3): find_node(), main(), next
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `list` connect `Community 2` to `Community 5`, `Community 6`, `Community 14`?**
+- **Why does `list` connect `Community 2` to `Community 15`, `Community 5`, `Community 7`?**
   _High betweenness centrality (0.037) - this node is a cross-community bridge._
-- **Why does `useThemedStyles()` connect `Community 8` to `Community 1`, `Community 4`, `Community 6`, `Community 7`, `Community 9`, `Community 11`, `Community 15`, `Community 16`, `Community 17`, `Community 18`, `Community 20`, `Community 21`, `Community 24`, `Community 25`, `Community 31`, `Community 37`, `Community 40`, `Community 56`, `Community 60`, `Community 68`, `Community 74`?**
+- **Why does `useThemedStyles()` connect `Community 6` to `Community 1`, `Community 4`, `Community 7`, `Community 8`, `Community 9`, `Community 11`, `Community 13`, `Community 16`, `Community 17`, `Community 19`, `Community 20`, `Community 21`, `Community 24`, `Community 25`, `Community 31`, `Community 39`, `Community 40`, `Community 56`, `Community 60`, `Community 73`?**
   _High betweenness centrality (0.024) - this node is a cross-community bridge._
-- **Why does `theme` connect `Community 16` to `Community 0`, `Community 1`, `Community 4`, `Community 7`, `Community 8`, `Community 9`, `Community 11`, `Community 15`, `Community 17`, `Community 18`, `Community 20`, `Community 21`, `Community 24`, `Community 25`, `Community 31`, `Community 37`, `Community 40`, `Community 56`, `Community 60`, `Community 68`, `Community 74`?**
+- **Why does `theme` connect `Community 8` to `Community 0`, `Community 1`, `Community 4`, `Community 6`, `Community 9`, `Community 11`, `Community 13`, `Community 16`, `Community 17`, `Community 19`, `Community 20`, `Community 21`, `Community 24`, `Community 25`, `Community 31`, `Community 39`, `Community 40`, `Community 56`, `Community 60`, `Community 73`?**
   _High betweenness centrality (0.014) - this node is a cross-community bridge._
 - **What connects `admin`, `path`, `SERVICE_ACCOUNT_PATH` to the rest of the system?**
   _558 weakly-connected nodes found - possible documentation gaps or missing edges._

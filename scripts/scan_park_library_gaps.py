@@ -10,7 +10,7 @@ Usage (prefer Windows Python 3.13):
   py -3 scripts/scan_park_library_gaps.py --min-gap-score 40
   py -3 scripts/scan_park_library_gaps.py --refresh-park-cache
 
-Deps: pypdf or pdfplumber (py -3 -m pip install pypdf)
+Deps: pymupdf (fitz) or pdfplumber (py -3 -m pip install pymupdf)
 """
 
 from __future__ import annotations
@@ -299,6 +299,26 @@ def extract_pdf_text(pdf_path: str, max_chars: int = 400_000) -> dict[str, Any]:
     if not path.exists():
         return {"text": "", "pages": 0, "error": "file missing"}
     try:
+        import fitz  # PyMuPDF
+        doc = fitz.open(str(path))
+        pages = len(doc)
+        parts: list[str] = []
+        for page in doc:
+            parts.append(page.get_text() or "")
+            if sum(len(p) for p in parts) >= max_chars:
+                break
+        doc.close()
+        text = "\n".join(parts)
+        return {
+            "text": text[:max_chars],
+            "pages": pages,
+            "truncated": len(text) > max_chars,
+            "engine": "pymupdf",
+        }
+    except ImportError:
+        pass
+
+    try:
         import pdfplumber
 
         parts: list[str] = []
@@ -317,25 +337,7 @@ def extract_pdf_text(pdf_path: str, max_chars: int = 400_000) -> dict[str, Any]:
             "engine": "pdfplumber",
         }
     except ImportError:
-        pass
-    try:
-        from pypdf import PdfReader
-    except ImportError:
-        return {"text": "", "pages": 0, "error": "install pdfplumber or pypdf"}
-
-    reader = PdfReader(str(path))
-    parts = []
-    for page in reader.pages:
-        parts.append(page.extract_text() or "")
-        if sum(len(p) for p in parts) >= max_chars:
-            break
-    text = "\n".join(parts)
-    return {
-        "text": text[:max_chars],
-        "pages": len(reader.pages),
-        "truncated": len(text) > max_chars,
-        "engine": "pypdf",
-    }
+        return {"text": "", "pages": 0, "error": "install pymupdf (fitz) or pdfplumber"}
 
 
 def extract_heading_candidates(text: str, max_topics: int = 40) -> list[str]:

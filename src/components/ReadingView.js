@@ -306,6 +306,7 @@ const parseMarkdown = (content, { isGem = false, skipExercises = false } = {}) =
   let nestedGroup = [];
   let tableLines = [];
   let lastTableCells = [];
+  let refLines = null;
 
   const flushBullets = () => {
     if (bulletGroup.length > 0) {
@@ -330,13 +331,21 @@ const parseMarkdown = (content, { isGem = false, skipExercises = false } = {}) =
     const parseRow = (row) =>
       row
         .split("|")
-        .map((c) => c.trim())
-        .filter((_, i, arr) => i > 0 && i < arr.length - 1);  // Remove first/last (from leading/trailing |)
-    let headers = parseRow(tableLines[0]);
-    let rows = tableLines.slice(2).map(parseRow);
+        .slice(1, -1)
+        .map((cell) => cell.trim());
+    const headers = parseRow(tableLines[0]);
+    const rows = tableLines.slice(2).map(parseRow);
+    
+    // Safety check: if table has fewer than 2 headers, treat as regular body text
+    // rather than rendering an invalid/broken 1-column table layout.
+    if (headers.length < 2) {
+      tableLines.forEach((l) => rawBlocks.push({ type: "body", text: l }));
+      tableLines = [];
+      return;
+    }
 
     // Filter out separator artifact rows (rows where every cell is just dashes)
-    rows = rows.filter(row => {
+    const filteredRows = rows.filter(row => {
       const nonEmptyCells = row.filter(c => c.trim());
       if (nonEmptyCells.length === 0) return false;
       if (nonEmptyCells.every(c => /^-+$/.test(c))) return false;
@@ -344,7 +353,7 @@ const parseMarkdown = (content, { isGem = false, skipExercises = false } = {}) =
     });
 
     // Check if it's a question-wrapper table
-    const questionText = extractQuestionTable(headers, rows);
+    const questionText = extractQuestionTable(headers, filteredRows);
     if (questionText !== null) {
       rawBlocks.push({ type: "question", text: questionText });
       tableLines = [];
@@ -357,16 +366,19 @@ const parseMarkdown = (content, { isGem = false, skipExercises = false } = {}) =
     for (let col = 0; col < headers.length; col++) {
       let allEmpty = true;
       if (headers[col] && headers[col].trim()) allEmpty = false;
-      for (const row of rows) {
+      for (const row of filteredRows) {
         if (row[col] && row[col].trim()) allEmpty = false;
       }
       if (!allEmpty) nonEmptyCols.push(col);
     }
     
+    let finalHeaders = headers;
+    let finalRows = filteredRows;
+    
     if (nonEmptyCols.length > 0) {
       const newHeaders = nonEmptyCols.map((col) => headers[col]);
       const newRows = [];
-      for (const row of rows) {
+      for (const row of filteredRows) {
         const newRow = nonEmptyCols.map((col) => row[col] || "");
         newRows.push(newRow);
       }
@@ -398,25 +410,38 @@ const parseMarkdown = (content, { isGem = false, skipExercises = false } = {}) =
       
       if (nonEmptyCols.length < headers.length) {
         // Only rebuild if we actually stripped columns
-        headers = newHeaders;
-        rows = mergedRows;
+        rawBlocks.push({ type: "table", headers: newHeaders, rows: mergedRows });
       } else {
-        // Columns unchanged but we still want merged rows
-        rows = mergedRows;
+        // Use merged rows with original headers
+        rawBlocks.push({ type: "table", headers, rows: mergedRows });
       }
+    } else {
+      rawBlocks.push({ type: "table", headers, rows: filteredRows });
     }
 
-    rawBlocks.push({ type: "table", headers, rows });
     // Store flattened cell values for duplicate detection
     lastTableCells = [];
     headers.forEach((h) => { if (h.trim()) lastTableCells.push(h.trim()); });
-    rows.forEach((row) => row.forEach((c) => { if (c && c.trim()) lastTableCells.push(c.trim()); }));
+    finalRows.forEach((row) => row.forEach((c) => { if (c && c.trim()) lastTableCells.push(c.trim()); }));
     tableLines = [];
   };
 
   const isTableRow = (line) => line.trim().startsWith("|") && line.trim().endsWith("|");
 
   for (const line of lines) {
+    // Multi-line [REF]...[/REF] accumulator
+    if (refLines !== null) {
+      if (/\[\/REF\]/i.test(line)) {
+        const remaining = line.replace(/\[\/REF\].*$/i, "").trim();
+        if (remaining) refLines.push(remaining);
+        rawBlocks.push({ type: "reference", text: refLines.join("\n").trim() });
+        refLines = null;
+      } else {
+        refLines.push(line);
+      }
+      continue;
+    }
+
     if (isTableRow(line)) {
       flushBullets();
       flushNested();
@@ -444,6 +469,13 @@ const parseMarkdown = (content, { isGem = false, skipExercises = false } = {}) =
     const trimmedLine = line.trim();
     const tableTitleMatch = trimmedLine.match(/^\*\*Table\s+\d+(?:\.\d+)?\s*(.*?)\*\*$/i);
     const refMatch = trimmedLine.match(/^\[REF\]([\s\S]*?)\[\/REF\]$/i);
+    if (!refMatch && /^\[REF\]/i.test(trimmedLine)) {
+      flushBullets();
+      flushNested();
+      const contentAfter = line.replace(/^\s*\[REF\]/i, "").trim();
+      refLines = contentAfter ? [contentAfter] : [];
+      continue;
+    }
     // Fixed exam tags — colours documented in .grok/skills/library-chapter-review/references/tag-format.md
     // Allow optional surrounding whitespace inside markers; tip body may include arrows/quotes.
     const snTagMatch = trimmedLine.match(/^\[SN\]([\s\S]*?)\[\/SN\]$/i);
