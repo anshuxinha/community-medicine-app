@@ -1,11 +1,13 @@
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const admin = require("firebase-admin");
-const {
-  generateRegistrationOptions,
-  verifyRegistrationResponse,
-  generateAuthenticationOptions,
-  verifyAuthenticationResponse,
-} = require("@simplewebauthn/server");
+
+let webauthn;
+const getWebAuthn = () => {
+  if (!webauthn) {
+    webauthn = require("@simplewebauthn/server");
+  }
+  return webauthn;
+};
 
 const RP_ID = "community-med-app.firebaseapp.com";
 const RP_NAME = "STROMA";
@@ -76,6 +78,7 @@ exports.createRestoreCredentialOptions = onCall(async (request) => {
     id: docSnap.id,
   }));
 
+  const { generateRegistrationOptions } = getWebAuthn();
   const options = await generateRegistrationOptions({
     rpName: RP_NAME,
     rpID: RP_ID,
@@ -124,6 +127,7 @@ exports.registerRestoreCredential = onCall(async (request) => {
     throw new HttpsError("failed-precondition", "Restore challenge expired.");
   }
 
+  const { verifyRegistrationResponse } = getWebAuthn();
   const verification = await verifyRegistrationResponse({
     response: registration,
     expectedChallenge: clientData.challenge,
@@ -175,6 +179,7 @@ exports.registerRestoreCredential = onCall(async (request) => {
 });
 
 exports.getRestoreCredentialOptions = onCall(async () => {
+  const { generateAuthenticationOptions } = getWebAuthn();
   const options = await generateAuthenticationOptions({
     rpID: RP_ID,
     userVerification: "preferred",
@@ -216,6 +221,7 @@ exports.completeRestoreSignIn = onCall(async (request) => {
   const stored = credSnap.data() || {};
   const publicKey = Buffer.from(stored.publicKey, "base64");
 
+  const { verifyAuthenticationResponse } = getWebAuthn();
   const verification = await verifyAuthenticationResponse({
     response: assertion,
     expectedChallenge: clientData.challenge,
