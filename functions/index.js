@@ -4,6 +4,7 @@ const { setGlobalOptions } = require("firebase-functions/v2");
 const functionsV1 = require("firebase-functions/v1");
 const admin = require("firebase-admin");
 const { signUrl } = require("./bunnyToken");
+const restoreCredentials = require("./restoreCredentials");
 
 setGlobalOptions({ region: "us-central1" });
 
@@ -354,3 +355,10 @@ exports.getVideoPlaybackUrl = onCall(async (request) => {
     bunnyVideoId,
   };
 });
+
+exports.createRestoreCredentialOptions =
+  restoreCredentials.createRestoreCredentialOptions;
+exports.registerRestoreCredential = restoreCredentials.registerRestoreCredential;
+exports.getRestoreCredentialOptions =
+  restoreCredentials.getRestoreCredentialOptions;
+exports.completeRestoreSignIn = restoreCredentials.completeRestoreSignIn;

@@ -30,6 +30,12 @@ import {
 } from "firebase/firestore";
 import { getDeviceId } from "../utils/deviceUtils";
 import {
+  tryRestoreSignIn,
+  ensureRestoreKey,
+  clearRestoreKey,
+  consumeAppDataRestoredFlag,
+} from "../services/restoreCredentials";
+import {
   onAuthStateChanged,
   getIdTokenResult,
   signOut,
@@ -818,12 +824,21 @@ export const AppProvider = ({ children }) => {
 
             // Safety net: ONLY on cold restart with a stale Firebase auth
             // session. Fresh logins are handled by the LoginScreen modal.
+            // Android backup / Restore Credentials is a device transfer, not
+            // a second live session, so claim this phone instead of signing out.
             if (isInitialLoad && data.currentDeviceId && data.currentDeviceId !== deviceId) {
-              try { await signOut(auth); } catch(e) {}
-              setUser(null);
-              setAccountPremium(false);
-              cloudHydratedRef.current = true;
-              return;
+              const restored = await consumeAppDataRestoredFlag();
+              if (restored) {
+                try {
+                  await updateDoc(userDocRef, { currentDeviceId: deviceId });
+                } catch (_) {}
+              } else {
+                try { await signOut(auth); } catch(e) {}
+                setUser(null);
+                setAccountPremium(false);
+                cloudHydratedRef.current = true;
+                return;
+              }
             }
 
             // Fresh login with device conflict: don't set user here.
@@ -931,6 +946,7 @@ export const AppProvider = ({ children }) => {
             setUser(userData);
             setAccountPremium(Boolean(finalPremiumStatus));
             cloudHydratedRef.current = true;
+            void ensureRestoreKey(userData);
 
             void AsyncStorage.setItem("user", JSON.stringify(userData));
             void persistLearningLocally(firebaseUser.uid, cloudState);
@@ -1047,8 +1063,15 @@ export const AppProvider = ({ children }) => {
             setAccountPremium(Boolean(claimsPremium));
             cloudHydratedRef.current = true;
             void AsyncStorage.setItem("user", JSON.stringify(userData));
+            void ensureRestoreKey(userData);
           }
         } else {
+          if (initialLoadRef.current && !isLoggingOutRef.current) {
+            const restored = await tryRestoreSignIn();
+            if (restored) {
+              return;
+            }
+          }
           cloudHydratedRef.current = false;
           initialLoadRef.current = false;
           currentDeviceIdRef.current = null;
@@ -1871,6 +1894,7 @@ export const AppProvider = ({ children }) => {
     if (userData.isPremium !== undefined) {
       setAccountPremium(Boolean(userData.isPremium));
     }
+    void ensureRestoreKey(userData);
 
     // Hydrate learning (if needed) and always attach referralCode when missing.
     // LoginScreen builds a minimal user object; onAuthStateChanged may race and
@@ -1964,6 +1988,9 @@ export const AppProvider = ({ children }) => {
       }
     }
 
+    try {
+      await clearRestoreKey();
+    } catch (_) {}
     try {
       await signOut(auth);
     } catch (_) { }

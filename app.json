@@ -58,7 +58,10 @@
           "android": {
             "compileSdkVersion": 36,
             "targetSdkVersion": 36,
-            "buildToolsVersion": "36.0.0"
+            "buildToolsVersion": "36.0.0",
+            "enableMinifyInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true,
+            "extraProguardRules": "-keep class com.communitymed.app.** { *; }\n-keep class androidx.credentials.** { *; }\n-dontwarn androidx.credentials.**"
           },
           "ios": {
             "deploymentTarget": "15.1",
@@ -84,7 +87,8 @@
           "initialOrientation": "PORTRAIT_UP"
         }
       ],
-      "expo-video"
+      "expo-video",
+      "./plugins/withPlayQuality"
     ],
     "extra": {
       "eas": {
