@@ -1,8 +1,11 @@
 package com.communitymed.app
 
 import android.app.backup.BackupAgent
+import android.app.backup.BackupDataInput
+import android.app.backup.BackupDataOutput
 import android.content.Context
 import android.os.CancellationSignal
+import android.os.ParcelFileDescriptor
 import android.util.Log
 import androidx.credentials.CredentialManager
 import androidx.credentials.CredentialManagerCallback
@@ -26,6 +29,22 @@ import java.util.concurrent.TimeUnit
  * signed in on first launch (and so JS can treat this as a device transfer).
  */
 class StromaBackupAgent : BackupAgent() {
+    override fun onBackup(
+        oldState: ParcelFileDescriptor?,
+        data: BackupDataOutput?,
+        newState: ParcelFileDescriptor?,
+    ) {
+        // Auto Backup owns app data. Key-value backup is unused.
+    }
+
+    override fun onRestore(
+        data: BackupDataInput?,
+        appVersionCode: Int,
+        newState: ParcelFileDescriptor?,
+    ) {
+        // Auto Backup restore uses onRestoreFinished.
+    }
+
     override fun onRestoreFinished() {
         val prefs = getSharedPreferences(
             RestoreCredentialsModule.PREFS,
