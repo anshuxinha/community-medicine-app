@@ -78,6 +78,8 @@ export const CHAPTER_NMC_MAP = {
   "28": { primaryPaper: 3, secondaryPapers: [1], yearPhase: [1, 2] },
   "29": { primaryPaper: 3, secondaryPapers: [4], yearPhase: [2, 3] },
   "30": { primaryPaper: 4, secondaryPapers: [2], yearPhase: [2, 3] },
+  "31": { primaryPaper: 1, secondaryPapers: [2], yearPhase: [1, 2] },
+  "32": { primaryPaper: 4, secondaryPapers: [1], yearPhase: [2, 3] },
 };
 
 export const PRACTICAL_SKILL_MAP = {
@@ -97,6 +99,21 @@ export const PRACTICAL_SKILL_MAP = {
     skillTags: ["epi_biostats_exercises"],
     paperAffinity: 1,
     label: "Epi & biostats exercises",
+  },
+  "6": {
+    skillTags: ["spots"],
+    paperAffinity: null,
+    label: "Spots",
+  },
+  "7": {
+    skillTags: ["viva"],
+    paperAffinity: null,
+    label: "Viva pack",
+  },
+  "8": {
+    skillTags: ["contrasts"],
+    paperAffinity: null,
+    label: "High-yield contrasts",
   },
 };
 
