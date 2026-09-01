@@ -1392,5 +1392,131 @@
         "aspectRatio": 1
       }
     ]
+  },
+  {
+    "contentKey": "theory:32-1",
+    "section": "theory",
+    "topicId": "32-1",
+    "topicTitle": "Ayushman Bharat Digital Mission and E-Health",
+    "images": [
+      {
+        "id": "abdm-blocks",
+        "fileName": "gn_32_1_abdm_blocks.png",
+        "alt": "Five ABDM building blocks: ABHA, professional registry, facility registry, personal health record, and unified health interface.",
+        "caption": "ABDM building blocks.",
+        "purpose": "",
+        "anchorText": "BUILDING BLOCKS",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:32-6",
+    "section": "theory",
+    "topicId": "32-6",
+    "topicTitle": "National Action Plan on Antimicrobial Resistance 2.0",
+    "images": [
+      {
+        "id": "nap-amr-objectives",
+        "fileName": "gn_32_6_nap_amr.png",
+        "alt": "Six NAP-AMR 2.0 strategic objectives from awareness to intersectoral governance.",
+        "caption": "NAP-AMR 2.0 six strategic objectives.",
+        "purpose": "",
+        "anchorText": "SIX STRATEGIC OBJECTIVES",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:32-11",
+    "section": "theory",
+    "topicId": "32-11",
+    "topicTitle": "Traveler's Health and Yellow Fever IHR Certificate",
+    "images": [
+      {
+        "id": "yf-ihr-flow",
+        "fileName": "gn_32_11_yf_ihr.png",
+        "alt": "Yellow fever IHR flow: authorised vaccine, 10-day wait, lifelong validity, and 6-day quarantine if the certificate is missing.",
+        "caption": "IHR yellow fever certificate flow for travel to India.",
+        "purpose": "",
+        "anchorText": "YELLOW FEVER (IHR)",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:5-11",
+    "section": "theory",
+    "topicId": "5-11",
+    "topicTitle": "Trachoma, Yaws, Scabies, and Pediculosis",
+    "images": [
+      {
+        "id": "safe-trachoma",
+        "fileName": "gn_5_11_safe.png",
+        "alt": "WHO SAFE strategy for trachoma: surgery, antibiotics, facial cleanliness, environmental improvement.",
+        "caption": "SAFE strategy for trachoma.",
+        "purpose": "",
+        "anchorText": "SAFE strategy",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:15-8",
+    "section": "theory",
+    "topicId": "15-8",
+    "topicTitle": "Climate Change, Greenhouse Effect, and Heat-Health Action",
+    "images": [
+      {
+        "id": "climate-pathways",
+        "fileName": "gn_15_8_climate.png",
+        "alt": "Five health pathways from climate change: heat, extreme weather, water and food, air, and vectors.",
+        "caption": "Climate change health pathways.",
+        "purpose": "",
+        "anchorText": "HEALTH IMPACT MAP",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:7-24",
+    "section": "theory",
+    "topicId": "7-24",
+    "topicTitle": "Kayakalp, Swachh Swasth Sarvatra, and VISHWAS",
+    "images": [
+      {
+        "id": "kayakalp-criteria",
+        "fileName": "gn_7_24_kayakalp.png",
+        "alt": "Eight Kayakalp assessment criteria from hospital upkeep to eco-friendly facility.",
+        "caption": "Kayakalp eight assessment criteria.",
+        "purpose": "",
+        "anchorText": "KAYAKALP",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "practical:6",
+    "section": "practical",
+    "topicId": "6",
+    "topicTitle": "Spots: Pedigree, MCCD, Cold Chain, Growth Chart, Partograph, Entomology",
+    "images": [
+      {
+        "id": "pedigree-reading",
+        "fileName": "gn_prac_6_pedigree.png",
+        "alt": "How to read a pedigree: male, female, affected, dominant, recessive, and X-linked patterns.",
+        "caption": "Pedigree symbols and inheritance patterns.",
+        "purpose": "",
+        "anchorText": "PEDIGREE CHART",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
   }
 ]
