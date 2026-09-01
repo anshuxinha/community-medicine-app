@@ -25,17 +25,17 @@ GN_IDS = {
 
 PRAC_IDS = {"2-4", "2-5", "2-6", "2-7", "2-8", "2-9", "4-3", "4-4", "5-6", "5-7", "7", "8"}
 
-EXAM_TIP = re.compile(r"\n?> \*\*EXAM TIP:\*\*[^\n]*(?:\n(?!> \*\*)[^\n]*)*", re.M)
-INSTRUCT = [
-    (re.compile(r"(?i)\bdo not invent\b[^.]*\."), ""),
-    (re.compile(r"(?i)\bdon't invent\b[^.]*\."), ""),
-    (re.compile(r"(?i)\bdo not write\b[^.]*\."), ""),
-    (re.compile(r"(?i)\bdon't write\b[^.]*\."), ""),
-    (re.compile(r"(?i)\bdo not mix\b[^.]*\."), ""),
-    (re.compile(r"(?i)\bthe resident should\b[^.]*\."), ""),
-    (re.compile(r"(?i)\bwrite both names in an MD answer:[^.]*\."), ""),
-    (re.compile(r"(?i)\bKeep one official source in mind[^.]*\."), ""),
-]
+def strip_exam_tip_lines(text: str) -> str:
+    """Remove only exam-tip lines. Do not delete following textbook paragraphs."""
+    out = []
+    for line in text.splitlines(True):
+        if line.lstrip().startswith("> **EXAM TIP:**"):
+            continue
+        out.append(line)
+    t = "".join(out)
+    while "\n\n\n" in t:
+        t = t.replace("\n\n\n", "\n\n")
+    return t
 
 
 def read_md(name: str) -> str:
@@ -43,11 +43,7 @@ def read_md(name: str) -> str:
 
 
 def clean_voice(text: str) -> str:
-    text = EXAM_TIP.sub("", text)
-    for pat, repl in INSTRUCT:
-        text = pat.sub(repl, text)
-    text = re.sub(r"\n{3,}", "\n\n", text)
-    return text.strip() + "\n"
+    return strip_exam_tip_lines(text).strip() + "\n"
 
 
 def walk_clean(nodes, ids):
