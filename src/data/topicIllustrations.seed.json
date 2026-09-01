@@ -1500,23 +1500,5 @@
         "aspectRatio": 1
       }
     ]
-  },
-  {
-    "contentKey": "practical:6",
-    "section": "practical",
-    "topicId": "6",
-    "topicTitle": "Spots: Pedigree, MCCD, Cold Chain, Growth Chart, Partograph, Entomology",
-    "images": [
-      {
-        "id": "pedigree-reading",
-        "fileName": "gn_prac_6_pedigree.png",
-        "alt": "How to read a pedigree: male, female, affected, dominant, recessive, and X-linked patterns.",
-        "caption": "Pedigree symbols and inheritance patterns.",
-        "purpose": "",
-        "anchorText": "PEDIGREE CHART",
-        "placement": "after",
-        "aspectRatio": 1
-      }
-    ]
   }
 ]

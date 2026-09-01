@@ -100,11 +100,6 @@ export const PRACTICAL_SKILL_MAP = {
     paperAffinity: 1,
     label: "Epi & biostats exercises",
   },
-  "6": {
-    skillTags: ["spots"],
-    paperAffinity: null,
-    label: "Spots",
-  },
   "7": {
     skillTags: ["viva"],
     paperAffinity: null,
