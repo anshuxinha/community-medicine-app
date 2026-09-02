@@ -66,8 +66,10 @@ const normalizeAnchorText = (text = "") =>
 
 
 // Matches: "Grade A ★★★★★ | Asked 20x | NTRUHS SPM Paper I" style headings
-const isNumberedParentLine = (text = "") =>
-  /^\s*(?:\d+[\.\)]|\([0-9a-zA-Z]+\)|[A-Z][\.\)]|(?:Step|Phase|Stage|Level|Tier)\s+\d+[:\.\)])\s+(?!\s*$)/.test(text);
+const isRootNumberedLine = (text = "") =>
+  !/^\s{2,}/.test(text) && /^\s*(?:\d+[\.\)]|\([0-9a-zA-Z]+\)|[A-Z][\.\)]|(?:Step|Phase|Stage|Level|Tier)\s+\d+[:\.\)])\s+(?!\s*$)/.test(text);
+
+const isNumberedParentLine = isRootNumberedLine;
 
 const isSubListItem = (text = "") =>
   /^\s*(?:[a-z][\.\)]|\([a-z0-9]+\)|\d+\.\d+)\s+/.test(text);
@@ -315,6 +317,7 @@ export const parseMarkdown = (content, { isGem = false, skipExercises = false } 
   let lastTableCells = [];
   let refLines = null;
   let inNumberedParent = false;
+  let inNumberedSublistUnderBullet = false;
   let blankLineCount = 0;
 
   const flushBullets = () => {
@@ -500,12 +503,14 @@ export const parseMarkdown = (content, { isGem = false, skipExercises = false } 
       flushBullets();
       flushNested();
       inNumberedParent = false;
+      inNumberedSublistUnderBullet = false;
       blankLineCount = 0;
       rawBlocks.push({ type: "h1", text: line.replace(/^# /, "") });
     } else if (line.startsWith("## ")) {
       flushBullets();
       flushNested();
       inNumberedParent = false;
+      inNumberedSublistUnderBullet = false;
       blankLineCount = 0;
       const rawH2 = line.replace(/^## /, "");
       const h2Text = stripBold(rawH2);
@@ -521,6 +526,7 @@ export const parseMarkdown = (content, { isGem = false, skipExercises = false } 
     } else if (/^[*\u2022-] /.test(line)) {
       flushNested();
       blankLineCount = 0;
+      inNumberedSublistUnderBullet = false;
       const bText = line.replace(/^[*\u2022-] /, "").trim();
       if (bText) {
         if (bulletGroup.length === 0) {
@@ -532,6 +538,7 @@ export const parseMarkdown = (content, { isGem = false, skipExercises = false } 
       flushBullets();
       flushNested();
       inNumberedParent = false;
+      inNumberedSublistUnderBullet = false;
       blankLineCount = 0;
       const match = line.match(/^!\[(.*?)\]\((.*?)\)$/);
       rawBlocks.push({ type: "image", url: match[2], alt: match[1] });
@@ -543,6 +550,7 @@ export const parseMarkdown = (content, { isGem = false, skipExercises = false } 
       flushBullets();
       flushNested();
       inNumberedParent = false;
+      inNumberedSublistUnderBullet = false;
       blankLineCount = 0;
       const tableTitle = tableTitleMatch[1]?.trim();
       rawBlocks.push({ type: "tableTitle", text: tableTitle ? `Table: ${tableTitle}` : "Table" });
@@ -550,24 +558,28 @@ export const parseMarkdown = (content, { isGem = false, skipExercises = false } 
       flushBullets();
       flushNested();
       inNumberedParent = false;
+      inNumberedSublistUnderBullet = false;
       blankLineCount = 0;
       rawBlocks.push({ type: "reference", text: refMatch[1].trim() });
     } else if (snTagMatch) {
       flushBullets();
       flushNested();
       inNumberedParent = false;
+      inNumberedSublistUnderBullet = false;
       blankLineCount = 0;
       rawBlocks.push({ type: "exam_sn", text: snTagMatch[1].trim() });
     } else if (laqTagMatch) {
       flushBullets();
       flushNested();
       inNumberedParent = false;
+      inNumberedSublistUnderBullet = false;
       blankLineCount = 0;
       rawBlocks.push({ type: "exam_laq", text: laqTagMatch[1].trim() });
     } else if (examTipMatch) {
       flushBullets();
       flushNested();
       inNumberedParent = false;
+      inNumberedSublistUnderBullet = false;
       blankLineCount = 0;
       rawBlocks.push({ type: "exam_tip", text: examTipMatch[1].trim() });
     } else if (line.trim() === "") {
@@ -576,12 +588,14 @@ export const parseMarkdown = (content, { isGem = false, skipExercises = false } 
       blankLineCount++;
       if (blankLineCount >= 2) {
         inNumberedParent = false;
+        inNumberedSublistUnderBullet = false;
       }
       rawBlocks.push({ type: "spacing" });
     } else if (line.startsWith("> ")) {
       flushBullets();
       flushNested();
       inNumberedParent = false;
+      inNumberedSublistUnderBullet = false;
       blankLineCount = 0;
       const quoteText = line.replace(/^>\s*/, "");
       // Prefer dedicated exam-tip box when blockquote is an exam tip
@@ -602,6 +616,7 @@ export const parseMarkdown = (content, { isGem = false, skipExercises = false } 
         flushBullets();
         flushNested();
         inNumberedParent = false;
+        inNumberedSublistUnderBullet = false;
         rawBlocks.push({ type: "exam_tip", text: looseTip[1].trim() });
       // Continuation of a bullet: non-empty, starts with lowercase, currently accumulating bullets
       } else if (bulletGroup.length > 0 && strippedBody && /^[a-z]/.test(strippedBody)) {
@@ -609,22 +624,35 @@ export const parseMarkdown = (content, { isGem = false, skipExercises = false } 
       } else if (nestedGroup.length > 0 && strippedBody && /^[a-z]/.test(strippedBody)) {
         nestedGroup[nestedGroup.length - 1] += " " + bodyText.trim();
       } else {
+        const hadBullets = bulletGroup.length > 0;
         flushBullets();
         flushNested();
         if (!isNtruHsMetaLine(stripBold(bodyText))) {
           const isAllCapsTitle = bodyText.length > 3 && bodyText === bodyText.toUpperCase() && /[A-Z]/.test(bodyText);
+          const isIndentedBySpaces = /^\s{2,}/.test(line);
+          const isNumbered = /^\s*(?:\d+[\.\)]|\([0-9a-zA-Z]+\))\s+/.test(bodyText);
+          const isSublistStart = /^\s*1[\.\)]\s+/.test(bodyText);
+
           if (isAllCapsTitle) {
             inNumberedParent = false;
+            inNumberedSublistUnderBullet = false;
             rawBlocks.push({ type: "body", text: bodyText });
-          } else if (isNumberedParentLine(bodyText)) {
+          } else if (isIndentedBySpaces) {
+            rawBlocks.push({ type: "body", text: bodyText.trim(), indented: true });
+          } else if (hadBullets && isSublistStart) {
+            inNumberedSublistUnderBullet = true;
+            rawBlocks.push({ type: "body", text: bodyText.trim(), indented: true });
+          } else if (inNumberedSublistUnderBullet && isNumbered) {
+            rawBlocks.push({ type: "body", text: bodyText.trim(), indented: true });
+          } else if (isRootNumberedLine(bodyText)) {
             inNumberedParent = true;
+            inNumberedSublistUnderBullet = false;
             rawBlocks.push({ type: "body", text: bodyText });
-          } else if (inNumberedParent && (isSubListItem(bodyText) || /^\s{2,}/.test(line))) {
-            rawBlocks.push({ type: "body", text: bodyText, indented: true });
-          } else if (/^\s{2,}/.test(line)) {
-            rawBlocks.push({ type: "body", text: bodyText, indented: true });
+          } else if (inNumberedParent && isSubListItem(bodyText)) {
+            rawBlocks.push({ type: "body", text: bodyText.trim(), indented: true });
           } else {
             inNumberedParent = false;
+            inNumberedSublistUnderBullet = false;
             rawBlocks.push({ type: "body", text: bodyText });
           }
         }
@@ -3006,10 +3034,10 @@ const createStyles = (colors) => StyleSheet.create({
     marginLeft: 20,
   },
   indentedBulletGroup: {
-    marginLeft: 18,
+    marginLeft: 22,
   },
   indentedBody: {
-    marginLeft: 18,
+    marginLeft: 22,
   },
   nestedBulletRow: {
     flexDirection: "row",

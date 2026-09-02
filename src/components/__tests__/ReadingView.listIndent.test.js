@@ -117,4 +117,37 @@ b. Specific Protection`;
     expect(nestedBlock).toBeDefined();
     expect(nestedBlock.items).toHaveLength(2);
   });
+
+  test("indents numbered list items under a parent bullet point (Winslow definition case)", () => {
+    const md = `- **Public health definition for:**
+  1. Sanitation of the environment,
+  2. Control of community infections,
+  3. Education of the individual in principles of personal hygiene,
+  4. Organisation of medical and nursing services, and
+  5. Development of the social machinery`;
+
+    const blocks = parseMarkdown(md);
+    expect(blocks[0].type).toBe("bullets");
+    for (let i = 1; i <= 5; i++) {
+      expect(blocks[i].type).toBe("body");
+      expect(blocks[i].indented).toBe(true);
+      expect(blocks[i].text).toMatch(new RegExp(`^${i}\\.`));
+    }
+  });
+
+  test("indents numbered list starting with 1. immediately following a bullet without spaces", () => {
+    const md = `- **Four Cardinal Principles of Primary Health Care:**
+1. Equitable Distribution
+2. Community Participation
+3. Intersectoral Coordination
+4. Appropriate Technology`;
+
+    const blocks = parseMarkdown(md);
+    expect(blocks[0].type).toBe("bullets");
+    for (let i = 1; i <= 4; i++) {
+      expect(blocks[i].type).toBe("body");
+      expect(blocks[i].indented).toBe(true);
+      expect(blocks[i].text).toMatch(new RegExp(`^${i}\\.`));
+    }
+  });
 });
