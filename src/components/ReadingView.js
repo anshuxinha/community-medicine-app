@@ -66,6 +66,12 @@ const normalizeAnchorText = (text = "") =>
 
 
 // Matches: "Grade A ★★★★★ | Asked 20x | NTRUHS SPM Paper I" style headings
+const isNumberedParentLine = (text = "") =>
+  /^\s*(?:\d+[\.\)]|\([0-9a-zA-Z]+\)|[A-Z][\.\)]|(?:Step|Phase|Stage|Level|Tier)\s+\d+[:\.\)])\s+(?!\s*$)/.test(text);
+
+const isSubListItem = (text = "") =>
+  /^\s*(?:[a-z][\.\)]|\([a-z0-9]+\)|\d+\.\d+)\s+/.test(text);
+
 const isNtruHsHeading = (text) =>
   /Grade [A-C].*Asked.*x/i.test(text) || /NTRUHS/i.test(text);
 
@@ -267,7 +273,7 @@ const preprocessTextTables = (content) => {
   return newLines.join("\n");
 };
 
-const parseMarkdown = (content, { isGem = false, skipExercises = false } = {}) => {
+export const parseMarkdown = (content, { isGem = false, skipExercises = false } = {}) => {
   if (!skipExercises && hasExerciseMarkup(content)) {
     const parts = splitExerciseSegments(content);
     if (parts.some((part) => part.type === "exercise")) {
@@ -303,15 +309,23 @@ const parseMarkdown = (content, { isGem = false, skipExercises = false } = {}) =
   const lines = processedContent.split("\n");
   const rawBlocks = [];
   let bulletGroup = [];
+  let bulletGroupIndented = false;
   let nestedGroup = [];
   let tableLines = [];
   let lastTableCells = [];
   let refLines = null;
+  let inNumberedParent = false;
+  let blankLineCount = 0;
 
   const flushBullets = () => {
     if (bulletGroup.length > 0) {
-      rawBlocks.push({ type: "bullets", items: [...bulletGroup] });
+      rawBlocks.push({
+        type: "bullets",
+        items: [...bulletGroup],
+        indented: bulletGroupIndented,
+      });
       bulletGroup = [];
+      bulletGroupIndented = false;
     }
   };
 
@@ -485,27 +499,40 @@ const parseMarkdown = (content, { isGem = false, skipExercises = false } = {}) =
     if (line.startsWith("# ")) {
       flushBullets();
       flushNested();
+      inNumberedParent = false;
+      blankLineCount = 0;
       rawBlocks.push({ type: "h1", text: line.replace(/^# /, "") });
     } else if (line.startsWith("## ")) {
       flushBullets();
       flushNested();
+      inNumberedParent = false;
+      blankLineCount = 0;
       const rawH2 = line.replace(/^## /, "");
       const h2Text = stripBold(rawH2);
       // Skip NTRUHS/grade headings entirely
       if (!isNtruHsHeading(h2Text)) {
         rawBlocks.push({ type: "h2", text: rawH2 });
       }
-    } else if (/^  - /.test(line)) {
+    } else if (/^\s{2,}[*\u2022-]\s+/.test(line)) {
       flushBullets();
-      const bText = line.replace(/^  - /, "").trim();
+      blankLineCount = 0;
+      const bText = line.replace(/^\s{2,}[*\u2022-]\s+/, "").trim();
       if (bText) nestedGroup.push(bText);
     } else if (/^[*\u2022-] /.test(line)) {
       flushNested();
+      blankLineCount = 0;
       const bText = line.replace(/^[*\u2022-] /, "").trim();
-      if (bText) bulletGroup.push(bText);
+      if (bText) {
+        if (bulletGroup.length === 0) {
+          bulletGroupIndented = inNumberedParent;
+        }
+        bulletGroup.push(bText);
+      }
     } else if (line.match(/^!\[(.*?)\]\((.*?)\)$/)) {
       flushBullets();
       flushNested();
+      inNumberedParent = false;
+      blankLineCount = 0;
       const match = line.match(/^!\[(.*?)\]\((.*?)\)$/);
       rawBlocks.push({ type: "image", url: match[2], alt: match[1] });
     } else if (line.trim().match(/^\*\[Image Placeholders?:\s*(.+?)\]\*$/)) {
@@ -515,31 +542,47 @@ const parseMarkdown = (content, { isGem = false, skipExercises = false } = {}) =
     } else if (tableTitleMatch) {
       flushBullets();
       flushNested();
+      inNumberedParent = false;
+      blankLineCount = 0;
       const tableTitle = tableTitleMatch[1]?.trim();
       rawBlocks.push({ type: "tableTitle", text: tableTitle ? `Table: ${tableTitle}` : "Table" });
     } else if (refMatch) {
       flushBullets();
       flushNested();
+      inNumberedParent = false;
+      blankLineCount = 0;
       rawBlocks.push({ type: "reference", text: refMatch[1].trim() });
     } else if (snTagMatch) {
       flushBullets();
       flushNested();
+      inNumberedParent = false;
+      blankLineCount = 0;
       rawBlocks.push({ type: "exam_sn", text: snTagMatch[1].trim() });
     } else if (laqTagMatch) {
       flushBullets();
       flushNested();
+      inNumberedParent = false;
+      blankLineCount = 0;
       rawBlocks.push({ type: "exam_laq", text: laqTagMatch[1].trim() });
     } else if (examTipMatch) {
       flushBullets();
       flushNested();
+      inNumberedParent = false;
+      blankLineCount = 0;
       rawBlocks.push({ type: "exam_tip", text: examTipMatch[1].trim() });
     } else if (line.trim() === "") {
       flushBullets();
       flushNested();
+      blankLineCount++;
+      if (blankLineCount >= 2) {
+        inNumberedParent = false;
+      }
       rawBlocks.push({ type: "spacing" });
     } else if (line.startsWith("> ")) {
       flushBullets();
       flushNested();
+      inNumberedParent = false;
+      blankLineCount = 0;
       const quoteText = line.replace(/^>\s*/, "");
       // Prefer dedicated exam-tip box when blockquote is an exam tip
       const tipFromQuote = quoteText.match(/^\*\*EXAM\s*TIP:\*\*\s*(.*)$/i)
@@ -552,11 +595,13 @@ const parseMarkdown = (content, { isGem = false, skipExercises = false } = {}) =
     } else {
       const bodyText = line;
       const strippedBody = stripBold(bodyText).trim();
+      blankLineCount = 0;
       // Fallback: full-line EXAMTIP that failed earlier match (e.g. odd whitespace)
       const looseTip = strippedBody.match(/^\[EXAMTIP\]\s*([\s\S]*?)\s*\[\/EXAMTIP\]$/i);
       if (looseTip) {
         flushBullets();
         flushNested();
+        inNumberedParent = false;
         rawBlocks.push({ type: "exam_tip", text: looseTip[1].trim() });
       // Continuation of a bullet: non-empty, starts with lowercase, currently accumulating bullets
       } else if (bulletGroup.length > 0 && strippedBody && /^[a-z]/.test(strippedBody)) {
@@ -567,7 +612,21 @@ const parseMarkdown = (content, { isGem = false, skipExercises = false } = {}) =
         flushBullets();
         flushNested();
         if (!isNtruHsMetaLine(stripBold(bodyText))) {
-          rawBlocks.push({ type: "body", text: bodyText });
+          const isAllCapsTitle = bodyText.length > 3 && bodyText === bodyText.toUpperCase() && /[A-Z]/.test(bodyText);
+          if (isAllCapsTitle) {
+            inNumberedParent = false;
+            rawBlocks.push({ type: "body", text: bodyText });
+          } else if (isNumberedParentLine(bodyText)) {
+            inNumberedParent = true;
+            rawBlocks.push({ type: "body", text: bodyText });
+          } else if (inNumberedParent && (isSubListItem(bodyText) || /^\s{2,}/.test(line))) {
+            rawBlocks.push({ type: "body", text: bodyText, indented: true });
+          } else if (/^\s{2,}/.test(line)) {
+            rawBlocks.push({ type: "body", text: bodyText, indented: true });
+          } else {
+            inNumberedParent = false;
+            rawBlocks.push({ type: "body", text: bodyText });
+          }
         }
       }
     }
@@ -607,7 +666,10 @@ const parseMarkdown = (content, { isGem = false, skipExercises = false } = {}) =
       prev &&
       prev.type === "body" &&
       block.text.trim() &&
-      /^[a-z(]/.test(block.text.trim())
+      /^[a-z(]/.test(block.text.trim()) &&
+      !isSubListItem(block.text.trim()) &&
+      !isNumberedParentLine(block.text.trim()) &&
+      Boolean(prev.indented) === Boolean(block.indented)
     ) {
       prev.text = prev.text.trimEnd() + " " + block.text.trim();
     } else {
@@ -1689,8 +1751,11 @@ const ReadingView = ({
         return (
           <View
             key={index}
-            style={[highlighted ? styles.highlightBlock : null, { marginVertical: 4 }]}
-            
+            style={[
+              highlighted ? styles.highlightBlock : null,
+              { marginVertical: 4 },
+              block.indented ? styles.indentedBody : null,
+            ]}
           >
             {hasSearchMatch && !isHighlightMode ? (
               renderFormattedText(block.text, baseStyle, true)
@@ -1719,9 +1784,16 @@ const ReadingView = ({
           </View>
         );
       }
-      case "bullets":
+      case "bullets": {
+        const isIndented = Boolean(block.indented);
         return (
-          <View key={index} style={styles.bulletGroup} >
+          <View
+            key={index}
+            style={[
+              styles.bulletGroup,
+              isIndented ? styles.indentedBulletGroup : null,
+            ]}
+          >
             {block.items.map((item, itemIndex) => {
               const highlighted = shouldHighlightText(item);
               const hlKey = `${index}:b${itemIndex}`;
@@ -1756,6 +1828,7 @@ const ReadingView = ({
             })}
           </View>
         );
+      }
       case "nested_bullets":
         return (
           <View key={index} style={styles.nestedBulletGroup} >
@@ -2931,6 +3004,12 @@ const createStyles = (colors) => StyleSheet.create({
   nestedBulletGroup: {
     marginVertical: 2,
     marginLeft: 20,
+  },
+  indentedBulletGroup: {
+    marginLeft: 18,
+  },
+  indentedBody: {
+    marginLeft: 18,
   },
   nestedBulletRow: {
     flexDirection: "row",
