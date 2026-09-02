@@ -66,11 +66,19 @@ def main():
         now_iso = datetime.now(timezone.utc).isoformat()
         payload = {
             "libraryId": leaf_id,
+            "libraryTitle": title,
             "title": title,
+            "proposalId": f"override-{leaf_id}-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}",
+            "proposedContent": content,
             "content": content,
             "status": "active",
             "summaryReason": "Lead Directorate overhaul: formal textbook register, exam tips, and mobile UX",
             "recentlyUpdated": False,
+            "markAsNew": False,
+            "updatedSegments": [],
+            "sourceUpdates": [{"title": "publish_final_9_overhauls.py", "type": "manual_override"}],
+            "approvedAt": now_iso,
+            "approvedBy": "grok-cli",
             "updatedAt": now_iso,
             "publishedAt": now_iso,
         }

@@ -320,6 +320,8 @@ export const parseMarkdown = (content, { isGem = false, skipExercises = false } 
   let inNumberedSublistUnderBullet = false;
   let blankLineCount = 0;
 
+  let quoteLines = [];
+
   const flushBullets = () => {
     if (bulletGroup.length > 0) {
       rawBlocks.push({
@@ -336,6 +338,24 @@ export const parseMarkdown = (content, { isGem = false, skipExercises = false } 
     if (nestedGroup.length > 0) {
       rawBlocks.push({ type: "nested_bullets", items: [...nestedGroup] });
       nestedGroup = [];
+    }
+  };
+
+  const flushQuote = () => {
+    if (quoteLines.length === 0) return;
+    const allText = quoteLines.join("\n").trim();
+    quoteLines = [];
+    if (!allText) return;
+
+    const tipMatch =
+      allText.match(/^(?:\*\*EXAM\s*TIP:\*\*|EXAM\s*TIP:)\s*([\s\S]*)$/i) ||
+      allText.match(/^\[EXAMTIP\]([\s\S]*?)\[\/EXAMTIP\]$/i);
+
+    if (tipMatch) {
+      const tipContent = tipMatch[1].trim();
+      rawBlocks.push({ type: "exam_tip", text: tipContent || allText });
+    } else {
+      rawBlocks.push({ type: "blockquote", text: allText });
     }
   };
 
@@ -457,6 +477,20 @@ export const parseMarkdown = (content, { isGem = false, skipExercises = false } 
         refLines.push(line);
       }
       continue;
+    }
+
+    if (/^\s*>/.test(line)) {
+      flushBullets();
+      flushNested();
+      if (tableLines.length > 0) flushTable();
+      inNumberedParent = false;
+      inNumberedSublistUnderBullet = false;
+      blankLineCount = 0;
+      const contentAfter = line.replace(/^\s*>\s?/, "");
+      quoteLines.push(contentAfter);
+      continue;
+    } else if (quoteLines.length > 0) {
+      flushQuote();
     }
 
     if (isTableRow(line)) {
@@ -591,21 +625,6 @@ export const parseMarkdown = (content, { isGem = false, skipExercises = false } 
         inNumberedSublistUnderBullet = false;
       }
       rawBlocks.push({ type: "spacing" });
-    } else if (line.startsWith("> ")) {
-      flushBullets();
-      flushNested();
-      inNumberedParent = false;
-      inNumberedSublistUnderBullet = false;
-      blankLineCount = 0;
-      const quoteText = line.replace(/^>\s*/, "");
-      // Prefer dedicated exam-tip box when blockquote is an exam tip
-      const tipFromQuote = quoteText.match(/^\*\*EXAM\s*TIP:\*\*\s*(.*)$/i)
-        || quoteText.match(/^EXAM\s*TIP:\s*(.*)$/i);
-      if (tipFromQuote) {
-        rawBlocks.push({ type: "exam_tip", text: (tipFromQuote[1] || "").trim() || quoteText });
-      } else {
-        rawBlocks.push({ type: "blockquote", text: quoteText });
-      }
     } else {
       const bodyText = line;
       const strippedBody = stripBold(bodyText).trim();
@@ -661,6 +680,7 @@ export const parseMarkdown = (content, { isGem = false, skipExercises = false } 
   }
 
   if (tableLines.length > 0) flushTable();
+  if (quoteLines.length > 0) flushQuote();
   flushBullets();
   flushNested();
 
@@ -1480,9 +1500,10 @@ const ReadingView = ({
 
   const searchPaint = { index: 0 };
 
-  const renderFormattedText = (text, baseStyle = null, highlightSearch = true) => {
-    if (!text) return null;
-    const parts = String(text).split(/\*\*/);
+  const renderFormattedText = (rawText, baseStyle = null, highlightSearch = true) => {
+    if (!rawText) return null;
+    const text = String(rawText).replace(/<br\s*\/?>/gi, "\n");
+    const parts = text.split(/\*\*/);
     const elements = [];
 
     const activeSearchTerm = highlightSearch ? normalizedSearchTerm : "";
