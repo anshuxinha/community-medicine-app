@@ -120,16 +120,24 @@
     "hash": "c1f194df6986b55c1ff8b75bd0afe65e"
   },
   "D:\\The App\\android\\app\\build.gradle": {
-    "mtime": 1776686130.361584,
-    "hash": "9189307c2d4e5bdfb298d551e40ad5c4"
+    "mtime": 1788180800.262056,
+    "hash": "762ddc89649eed25f7863c117809af08"
   },
   "D:\\The App\\android\\app\\src\\main\\java\\com\\communitymed\\app\\MainActivity.kt": {
     "mtime": 1771997218.373908,
     "hash": "8ff0a163ce7031b2b67e80ab808e96d9"
   },
   "D:\\The App\\android\\app\\src\\main\\java\\com\\communitymed\\app\\MainApplication.kt": {
-    "mtime": 1776437175.429324,
-    "hash": "c5f64fedf32512eb71508cc2c4e02042"
+    "mtime": 1788180800.183894,
+    "hash": "23d778d3bcbdbd1ab01414ee4cf8e5a6"
+  },
+  "D:\\The App\\android\\app\\src\\main\\java\\com\\communitymed\\app\\RestoreCredentialsModule.kt": {
+    "mtime": 1788180993.254196,
+    "hash": "72c034f6685d85e748a68b00120e1276"
+  },
+  "D:\\The App\\android\\app\\src\\main\\java\\com\\communitymed\\app\\RestoreCredentialsPackage.java": {
+    "mtime": 1788180671.0995927,
+    "hash": "e24d65a380a3a7966aed3a55ece71fc7"
   },
   "D:\\The App\\android\\app\\src\\main\\java\\com\\communitymed\\app\\ScreenCaptureProtectionModule.java": {
     "mtime": 1776678968.6954668,
@@ -139,13 +147,37 @@
     "mtime": 1776437152.4591136,
     "hash": "d86677b7acb85461ac8aa6026ba52141"
   },
+  "D:\\The App\\android\\app\\src\\main\\java\\com\\communitymed\\app\\StromaBackupAgent.kt": {
+    "mtime": 1788190817.5361347,
+    "hash": "1bf2b66660a4fdc19f812a6306df4719"
+  },
   "D:\\The App\\functions\\bunnyToken.js": {
     "mtime": 1784607395.433206,
     "hash": "597e6f363323f1f82a50df6e3fcd71de"
   },
   "D:\\The App\\functions\\index.js": {
-    "mtime": 1786804524.82716,
-    "hash": "ce21daa8605353fcde4b76c4e98e4a5c"
+    "mtime": 1788180800.2905993,
+    "hash": "d2c9d414c584620f4a76aab1929eeb81"
+  },
+  "D:\\The App\\functions\\restoreCredentials.js": {
+    "mtime": 1788182208.6314883,
+    "hash": "352a30c87ac5f39e251cf3ffd24c34c0"
+  },
+  "D:\\The App\\plugins\\withPlayQuality.js": {
+    "mtime": 1788180671.0995927,
+    "hash": "9370a4d6642da85098dfe4afbbff3c9f"
+  },
+  "D:\\The App\\plugins\\restore-credentials\\RestoreCredentialsModule.kt": {
+    "mtime": 1788180993.254196,
+    "hash": "72c034f6685d85e748a68b00120e1276"
+  },
+  "D:\\The App\\plugins\\restore-credentials\\RestoreCredentialsPackage.java": {
+    "mtime": 1788180671.0995927,
+    "hash": "e24d65a380a3a7966aed3a55ece71fc7"
+  },
+  "D:\\The App\\plugins\\restore-credentials\\StromaBackupAgent.kt": {
+    "mtime": 1788190817.5361347,
+    "hash": "1bf2b66660a4fdc19f812a6306df4719"
   },
   "D:\\The App\\scratch\\analyze_trends.py": {
     "mtime": 1783704747.112139,
@@ -315,6 +347,10 @@
     "mtime": 1787901960.172692,
     "hash": "265c89e17b0a11130480c546b0e84429"
   },
+  "D:\\The App\\scripts\\apply_gn_missing_and_voice.py": {
+    "mtime": 1788280881.0727181,
+    "hash": "de488925274d9c14c43068d58434dc2e"
+  },
   "D:\\The App\\scripts\\apply_nfhs6_library_indicators.py": {
     "mtime": 1787809741.084486,
     "hash": "40a58f649fb72059af74346ebdc45be9"
@@ -334,6 +370,10 @@
   "D:\\The App\\scripts\\auth_telegram.py": {
     "mtime": 1776158882.4297302,
     "hash": "d2356a6192520e31f73a149eeed2931b"
+  },
+  "D:\\The App\\scripts\\build_leaves_content.py": {
+    "mtime": 1788063424.3435285,
+    "hash": "923b3d7d5fab1081bfb5a27dedd7288f"
   },
   "D:\\The App\\scripts\\bunny-videos.js": {
     "mtime": 1786019299.489607,
@@ -383,6 +423,10 @@
     "mtime": 1784304894.978399,
     "hash": "c80482ea912116ba81db60cf39230fa6"
   },
+  "D:\\The App\\scripts\\fix_library_ch6_structure.py": {
+    "mtime": 1788279247.3030474,
+    "hash": "08bebf2d24f9021058cfe1d04d71170d"
+  },
   "D:\\The App\\scripts\\generate-biostats-illustrations.js": {
     "mtime": 1786735635.4082162,
     "hash": "3c3da799a178752daa2c6c635cd0d043"
@@ -411,6 +455,10 @@
     "mtime": 1786644045.046149,
     "hash": "c5100afd214bc670e2f3753acaaa4e18"
   },
+  "D:\\The App\\scripts\\generate_gap_figures.py": {
+    "mtime": 1788260303.2175567,
+    "hash": "fd05f69409d5ee263e64170139736be4"
+  },
   "D:\\The App\\scripts\\grant_lifetime_premium.js": {
     "mtime": 1786815027.2886705,
     "hash": "0ee7eefb320d3c9b975b85f2e23aa25f"
@@ -418,6 +466,18 @@
   "D:\\The App\\scripts\\grant_yearly_premium.js": {
     "mtime": 1786815027.2886705,
     "hash": "8b43ebad2ca2d0c7120af10e80de8a6e"
+  },
+  "D:\\The App\\scripts\\inject_golden_notes_batch3.py": {
+    "mtime": 1788258710.1645582,
+    "hash": "19e067a53c4147b639b070f270265129"
+  },
+  "D:\\The App\\scripts\\inject_golden_notes_batch4.py": {
+    "mtime": 1788260236.6897027,
+    "hash": "ba80de246826b655915bd157dcee5a37"
+  },
+  "D:\\The App\\scripts\\inject_golden_notes_leaves.py": {
+    "mtime": 1788258075.0750978,
+    "hash": "176759e193b6b001fe66ab5f656d4b55"
   },
   "D:\\The App\\scripts\\migrate-thumbnails.js": {
     "mtime": 1782655609.54987,
@@ -472,8 +532,8 @@
     "hash": "bcaeb8a3339b31fb8d050bb2396857ac"
   },
   "D:\\The App\\scripts\\scan_park_library_gaps.py": {
-    "mtime": 1787112157.305858,
-    "hash": "f9f8ac0756ea50d0baf294448c2799c6"
+    "mtime": 1788061626.324321,
+    "hash": "f84d29cdece495af834795eecfac44d0"
   },
   "D:\\The App\\scripts\\seed-updates-feed.js": {
     "mtime": 1785775511.889063,
@@ -482,6 +542,10 @@
   "D:\\The App\\scripts\\set_admin.js": {
     "mtime": 1786815047.058584,
     "hash": "1dd9e1fed3a7e1bc7d3f1556900dd3fe"
+  },
+  "D:\\The App\\scripts\\split_library_ch6_and_p0.py": {
+    "mtime": 1788253891.3524928,
+    "hash": "eaecfc13e4e31a62c9e7b9288d1b67ba"
   },
   "D:\\The App\\scripts\\stage-nhp-logo-crops.js": {
     "mtime": 1775298689.7760763,
@@ -576,8 +640,8 @@
     "hash": "ee80de9ca72397fd02e0fb31ed09698c"
   },
   "D:\\The App\\src\\components\\ReadingView.js": {
-    "mtime": 1788019311.6052263,
-    "hash": "b325268116facfc8f427f4a5fe57bb5e"
+    "mtime": 1788063077.148537,
+    "hash": "9f31f8b042a54d11a143fdc3140627cb"
   },
   "D:\\The App\\src\\components\\ReviewFeedbackModal.js": {
     "mtime": 1785328661.2858431,
@@ -612,8 +676,8 @@
     "hash": "28aff4aa2aa407d8be48e8aed5bb252a"
   },
   "D:\\The App\\src\\context\\AppContext.js": {
-    "mtime": 1787947606.6249375,
-    "hash": "df3dcc08d8f6de635bc1497a53584b9a"
+    "mtime": 1788180937.14527,
+    "hash": "09f38c2e5d1d523970fb2db449a88854"
   },
   "D:\\The App\\src\\data\\defaultTopicIllustrations.js": {
     "mtime": 1786881885.1823778,
@@ -632,8 +696,8 @@
     "hash": "364c13199d54f90055491311383d0e28"
   },
   "D:\\The App\\src\\data\\nmcCurriculum.js": {
-    "mtime": 1787383305.939603,
-    "hash": "78b9cecd2e893e8c83790b66ec71ca03"
+    "mtime": 1788280892.4545019,
+    "hash": "70f6a4eb0aadaaf80dedb1cd6c2ccd1b"
   },
   "D:\\The App\\src\\data\\pyqImages.js": {
     "mtime": 1786815484.5881505,
@@ -803,6 +867,10 @@
     "mtime": 1784724327.560844,
     "hash": "9322181633114c0a828bacd7c06d524b"
   },
+  "D:\\The App\\src\\services\\restoreCredentials.js": {
+    "mtime": 1788180734.5537179,
+    "hash": "abfb82c7add2c81d8bcd5bf498bd8664"
+  },
   "D:\\The App\\src\\services\\topicIllustrations.js": {
     "mtime": 1786881885.3898406,
     "hash": "e923139fd1233f91118093974fe16aa2"
@@ -826,6 +894,10 @@
   "D:\\The App\\src\\services\\__tests__\\feedbackService.test.js": {
     "mtime": 1786805881.6052039,
     "hash": "c8cea99b3b3d30c164ba27743c50cf96"
+  },
+  "D:\\The App\\src\\services\\__tests__\\restoreCredentials.test.js": {
+    "mtime": 1788181184.121643,
+    "hash": "52d8ad944d6855119592b1293fd4bc7e"
   },
   "D:\\The App\\src\\services\\__tests__\\topicIllustrations.test.js": {
     "mtime": 1778646220.8562944,
@@ -1126,6 +1198,190 @@
   "D:\\The App\\scripts\\data\\biostats_depth\\ex_offchapter.md": {
     "mtime": 1787904846.4128997,
     "hash": "808baa6e93c1879bd5e52d5e3ee94228"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\12-7.md": {
+    "mtime": 1788280833.5248096,
+    "hash": "7966785e527d1bc597995d5ea85716a1"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\15-8.md": {
+    "mtime": 1788258075.0635822,
+    "hash": "3c2204380e457db3cf5c2998f0978824"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\20-3.md": {
+    "mtime": 1788258075.064583,
+    "hash": "12b6e50c06573c0a8942240f4a754e0a"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\26-10.md": {
+    "mtime": 1788258075.064583,
+    "hash": "2d4bbbfbfeef2077a82caaa2328b83e8"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\27-13.md": {
+    "mtime": 1788280833.5248096,
+    "hash": "89bdf80be0d081200aa4d21649995bc9"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\27-14.md": {
+    "mtime": 1788280833.5248096,
+    "hash": "ae400bd642738e475a0f5217c5ab218e"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\29-13.md": {
+    "mtime": 1788258075.064583,
+    "hash": "10d8de19c2dcdedd7d63d2e2afd31a57"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\31-2.md": {
+    "mtime": 1788258075.0655837,
+    "hash": "a63c618936ccdb3a0a9e1ab0320447b6"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\31-3.md": {
+    "mtime": 1788258075.0655837,
+    "hash": "34d27dc06261891fd24c1a961f47cf7e"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\31-4.md": {
+    "mtime": 1788258075.066585,
+    "hash": "9d32be45fe362017da1251282249697f"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\31-5.md": {
+    "mtime": 1788258075.066585,
+    "hash": "fda77ca741e55525f6b8e550572bfdd7"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\31-6.md": {
+    "mtime": 1788258075.0675838,
+    "hash": "bfd41ea901c4e1267cab745d5d4360a9"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\32-1.md": {
+    "mtime": 1788258075.0675838,
+    "hash": "72812eccc401bd76785ac00cb1c58925"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\32-10.md": {
+    "mtime": 1788258613.2246823,
+    "hash": "46c2919d6ac46f426670930b2cbc6cc7"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\32-11.md": {
+    "mtime": 1788258540.2881725,
+    "hash": "980add78a56e94fbdc2df0a21c8fd193"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\32-2.md": {
+    "mtime": 1788258075.0685854,
+    "hash": "b31ac436ee91449dbdbc75dbf7ac20a6"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\32-3.md": {
+    "mtime": 1788258075.0685854,
+    "hash": "88c23f2f62b1bb4e625182ff1701b78c"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\32-4.md": {
+    "mtime": 1788258075.069585,
+    "hash": "7e75e040f54c818b798954d1c3896fad"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\32-5.md": {
+    "mtime": 1788258075.070586,
+    "hash": "9ab8fc99b113660acb7f31a32839b292"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\32-6.md": {
+    "mtime": 1788258540.2871747,
+    "hash": "8194f5e3a91cd2b8cc706d7b7ac86b7b"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\32-7.md": {
+    "mtime": 1788258540.2881725,
+    "hash": "ea5eb95a9ef2d0c27ebba012f3ce82a6"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\32-8.md": {
+    "mtime": 1788260078.3672204,
+    "hash": "6cc80fe08a5bce3ab6f61647c067dde4"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\32-9.md": {
+    "mtime": 1788258540.2881725,
+    "hash": "0a0feee04c4f25adfae626ccc002c1f4"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\5-10.md": {
+    "mtime": 1788258075.0715854,
+    "hash": "87944039db808282c6cabffa0aeb533e"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\5-11.md": {
+    "mtime": 1788258613.2246823,
+    "hash": "ac1d9767fc23a4cf1303e32fc4400c0b"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\5-9.md": {
+    "mtime": 1788258075.0725842,
+    "hash": "dc98e1f331b1bc8bec22e3b83daf1f67"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\7-20.md": {
+    "mtime": 1788258075.0730908,
+    "hash": "33600e9b5ef10474bfc8f8b9698138a6"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\7-21.md": {
+    "mtime": 1788258075.0730908,
+    "hash": "30c0f116222eb87aab3036d8468fa86d"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\7-22.md": {
+    "mtime": 1788258075.0741005,
+    "hash": "bb4e3fac48ec853a149666a89f34ab3c"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\7-23.md": {
+    "mtime": 1788258075.0750978,
+    "hash": "17cb765c5f929130094afba03e4de62e"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\7-24.md": {
+    "mtime": 1788258613.2246823,
+    "hash": "e2e50a379679b7f74d7a5aa9fa4941f6"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\7-25.md": {
+    "mtime": 1788258613.2256815,
+    "hash": "4f5c7e1bd6b2f2430b86586e809c4b5c"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\7-26.md": {
+    "mtime": 1788258613.2256815,
+    "hash": "40106db00d86cdc78fe28b9cbea11adb"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\practical-2-4.md": {
+    "mtime": 1788260078.3712332,
+    "hash": "63219291441323f925f5ede5079d9d9a"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\practical-2-5.md": {
+    "mtime": 1788260078.36822,
+    "hash": "c4f7c38f2cb0dec28c6a55288284c177"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\practical-2-6.md": {
+    "mtime": 1788260078.3692224,
+    "hash": "dd5d8d46fbb64b02855c5937ec92f925"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\practical-2-7.md": {
+    "mtime": 1788260078.3717558,
+    "hash": "0c6a43fb8a0e2c20d66dc9961e46d213"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\practical-2-8.md": {
+    "mtime": 1788260078.3727765,
+    "hash": "de97b40c7171886df231769d13faaf90"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\practical-2-9.md": {
+    "mtime": 1788260078.3727765,
+    "hash": "a70f05acc3db91c604a418f757b06075"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\practical-4-3.md": {
+    "mtime": 1788260136.0677936,
+    "hash": "d316b1ecfb72a658cab43421b00543e7"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\practical-4-4.md": {
+    "mtime": 1788260136.0677936,
+    "hash": "0d2cbb41482a8578b97c344bc7d7423a"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\practical-5-6.md": {
+    "mtime": 1788260136.0689895,
+    "hash": "94d9e8f9cae6eac13ce016ba3faca5ba"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\practical-5-7.md": {
+    "mtime": 1788260136.0699868,
+    "hash": "92d194888b8593d4ebebd95da0d9365e"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\practical-6.md": {
+    "mtime": 1788258678.6649697,
+    "hash": "3d344cf3807cbcc98e6578c1e64d9f1d"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\practical-7.md": {
+    "mtime": 1788258690.334265,
+    "hash": "0ed2b642f5bd9a3778ed6a1ca55755ea"
+  },
+  "D:\\The App\\scripts\\data\\golden_notes_leaves\\practical-8.md": {
+    "mtime": 1788258678.6649697,
+    "hash": "4da38d885640db512151ac1fabda152a"
   },
   "D:\\The App\\scripts\\data\\health_economics\\30-1.md": {
     "mtime": 1787988293.466528,
@@ -1590,6 +1846,34 @@
   "D:\\The App\\reading-illustrations\\bs_26_9_design_steps.png": {
     "mtime": 1786735641.9986334,
     "hash": "50d7e74d25fa255afbd2b1958adea595"
+  },
+  "D:\\The App\\reading-illustrations\\gn_15_8_climate.png": {
+    "mtime": 1788260250.1854274,
+    "hash": "19a42ac2d51f39ba56b799e86b14b2ee"
+  },
+  "D:\\The App\\reading-illustrations\\gn_32_11_yf_ihr.png": {
+    "mtime": 1788260317.0166006,
+    "hash": "47bfe16a1376e156fec8769be926bef9"
+  },
+  "D:\\The App\\reading-illustrations\\gn_32_1_abdm_blocks.png": {
+    "mtime": 1788260249.7467086,
+    "hash": "d043f204e77592ac18d54f366f84dbcc"
+  },
+  "D:\\The App\\reading-illustrations\\gn_32_6_nap_amr.png": {
+    "mtime": 1788260249.849103,
+    "hash": "7b0124625eb0a5e5a3f0d9daac9f07df"
+  },
+  "D:\\The App\\reading-illustrations\\gn_5_11_safe.png": {
+    "mtime": 1788260250.065798,
+    "hash": "3bc397d74e51f6fca78e2c5914588989"
+  },
+  "D:\\The App\\reading-illustrations\\gn_7_24_kayakalp.png": {
+    "mtime": 1788260250.3113968,
+    "hash": "a6e98373f88d8176a1e4527950a4fe7c"
+  },
+  "D:\\The App\\reading-illustrations\\gn_prac_6_pedigree.png": {
+    "mtime": 1788260250.4419997,
+    "hash": "5c2b681c12498c329abb492f81edf70a"
   },
   "D:\\The App\\reading-illustrations\\he_22_communication_process.png": {
     "mtime": 1787902221.336707,

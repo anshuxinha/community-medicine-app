@@ -140,21 +140,34 @@ Residents pay for **finished, trustworthy Library text**. All of the following a
 **Allowed in Exam Tips only:** how to **structure the answer** (order of headings, tables to draw).
 **If a figure cannot be verified:** omit it or use qualitative wording the agent can defend. Never tell the reader to verify.
 
-### Live prose voice: no textbook name-dropping, no em-dashes, no meta language, expand acronyms on first use
+### Live prose voice: textbook register, zero tuition tone, exam coaching in Exam Tips only, no textbook name-dropping, no em-dashes, expand acronyms on first use
 
-Park (and other textbooks) are **agent-side references** for accuracy audits and the **review report**. They are not branding for the app reader.
+Park (and other textbooks) are **agent-side references** for accuracy audits and the **review report**. They are not branding for the app reader. The app's body text must read like a gold-standard medical textbook: formal, objective, third-person medical prose with academic gravity.
 
-**Forbidden in live Library text** (bodies, headings, tags, Exam Tips, `mockData`, Firebase overrides):
+**Forbidden in live Library text** (bodies, headings, tags, `mockData`, Firebase overrides):
 
-0. **Meta language (hard ban)**
+0. **Instructional, conversational, and tuition tone (hard ban in body prose)**
+   - Do **not** write coaching, tutoring, or conversational instructions in body prose, headings, or bullet points.
+   - Banned phrases in body text:
+     - "residents should do this" / "residents must remember"
+     - "write this, not that" / "do not write a full essay" / "do not write unrelated essays"
+     - "India teaching emphasises" / "as per India teaching" / "India paper" / "India hook"
+     - "examiners accept this" / "examiners expect" / "examiners look for"
+     - "quote this in exam" / "in the exam" / "in exam answers" / "for 5 marks"
+     - "useful for viva" / "classic viva question" / "in viva examination"
+     - "sit beside X in the exam but were not full notes in the Library"
+   - **Action:** Relocate ALL tactical exam advice, recommended heading sequences, essential tables to sketch, and mark-scoring framing strictly into the `> **EXAM TIP:**` callout box. Body prose must state facts, mechanisms, classifications, and frameworks objectively.
+   - If an epidemiological reality or clinical guidance differs between global and Indian literature, state it objectively: "In the Indian epidemiological context, ..." or under the standard heading `Indian context:` (never "India teaching" or "India hook").
+
+1. **Meta language (hard ban)**
    - Do **not** write author-to-self notes, prompt residue, or writing-process labels in the page.
    - Do **not** write `(PYQ FOCUS)`, `(PYQ Focus)`, `PYQ Focus`, `(PYQ)`, or similar meta badges in headings, definition keys, or body text. Question relevance is marked strictly via dedicated `[SN]...[/SN]` and `[LAQ]...[/LAQ]` badge lines.
    - Do **not** call a chapter subsection a "leaf" (or "this leaf", "next leaf", "effects leaf"). Cross-references name the **topic**, not the file or the content tree.
-   - Do **not** label a block "India hook", "India paper", "guidebook language", "standard guidebook language", "information not too compressed", "for completeness", "not a forced word", or similar.
+   - Do **not** label a block "guidebook language", "standard guidebook language", "information not too compressed", "for completeness", "not a forced word", or similar.
    - The heading for national material is **`Indian context:`** (not "India hook.").
    - These skill instructions stay in the skill. They must never appear in reader-facing content.
 
-1. **Textbook name spam & [REF] tags**
+2. **Textbook name spam & [REF] tags**
    - Do **not** write: "Park", "Park-aligned", "Park framing", "Park notes", "Park says", "as per Park", "Park (edition)", "According to Park", "Park-aligned steps", "Meaning (Park)", "DEFINITION (Park)", "Open with Park's definition", "to link Park", or similar in live prose or headings.
    - Do **not** stamp every heading or definition with a textbook name.
    - **Prefer zero** textbook author names in leaf body prose. Standard definitions stand alone as exam-ready fact.
@@ -162,36 +175,59 @@ Park (and other textbooks) are **agent-side references** for accuracy audits and
    - Keep all "Park coverage: full|partial|absent" and "Sources used: Park Ch.N…" notes **only in the review report**, never in drafts that ship.
    - **[REF] tags at the end of each leaf:** Every leaf should conclude with a standard `[REF]Reference: ...[/REF]` tag referencing the authoritative source textbooks (e.g. Park, Sathe, Sunder Lal) and official guidelines used for that leaf.
 
-2. **Em-dashes (hard ban in live content and in skill-generated drafts)**
+3. **Three-tier knowledge hierarchy (Park vs. Golden Notes vs. Official Guidelines)**
+   When reviewing, cleaning, or synthesizing content across sources, adhere to this strict hierarchy:
+   - **Tier 1: Temporal & Quantitative Ground Truth (Official Guidelines, MoHFW, NCDC, ICMR, SRS 2024, NFHS):**
+     - Absolute supremacy for all numerical indicators, cut-offs, vaccine schedules, operational guidelines, and statutory Acts.
+     - Never overwrite newer official figures with Park's older textbook figures (e.g., retain IMR 24 from SRS 2024; retain NP-NCD).
+     - Sections titled `CURRENT INDIA FIGURES` or citing official indicators are quarantined from Park edits.
+   - **Tier 2: Structural & High-Yield Backbone (Golden Notes & University MD PYQ Scaffolds):**
+     - Golden Notes (`D:\Study Related\Books\Golden Notes Split`) provides high-yield examination structures, criteria lists, and recent exam topics (e.g., Chandipura, Nipah, Kayakalp, PM-ABHIM, Tanahashi model, DPDP Act 2023).
+     - **Anti-flattening mandate:** NEVER convert comparison tables, criteria lists, or bulleted classifications into unbroken narrative prose.
+     - **Park-silent is not an error:** If a topic from Golden Notes or recent guidelines is absent in Park, clean its tone to textbook register, but NEVER delete or truncate it.
+   - **Tier 3: Authoritative Register & Conceptual Framing (Park's Textbook):**
+     - Use Park (`D:\Study Related\Books\Park Split`) for academic vocabulary, disease natural history, causal mechanisms, and chapter Overviews.
+
+4. **Context-sensitive Overview enrichment (Rethink strategy per chapter from Park)**
+   - Overviews must not be flat, mechanical syllabus catalogs ("This chapter covers X, Y, and Z").
+   - Nor should they follow a rigid, robotic copy-paste formula for every chapter.
+   - **Strategy:** Read the corresponding chapter in `D:\Study Related\Books\Park Split` and rethink the best strategy to introduce that specific chapter:
+     - For historical/philosophical chapters (e.g. Ch 1 Man and Medicine, Ch 2 Concept of Health), open with the paradigm shift from supernatural/biomedical to holistic and social justice.
+     - For disease clusters (e.g. Ch 5 Communicable Diseases, Ch 6 NCDs), open with the global and Indian epidemiological transition, South Asian vascular/metabolic phenotypes, and public health stakes.
+     - For health systems and programmes (e.g. Ch 7, Ch 10, Ch 23), open with the evolution from colonial sanitation to Alma-Ata Primary Health Care, universal health coverage, and decentralized rural delivery.
+   - Aim for an intellectually engaging gateway (roughly 100–140 words) that sparks interest, provides macro context, and anchors the resident before detailed study.
+
+5. **Mobile-first reading ergonomics (Avoid the "Textbook Trap")**
+   Park's two-column print paragraphs become overwhelming 30-line walls of text on a 390px phone screen.
+   - **Paragraph ceiling:** Maximum 4 printed lines on mobile (~50–65 words) per narrative block.
+   - **Bold semantic anchors:** Lead each bullet point with a bold keyword or conceptual handle (e.g., `- **Prepathogenesis phase:** ...`).
+   - **Aggressive tabular formatting:** Use markdown tables for comparing levels, entities, study designs, or phases.
+   - **Algorithmic flowcharts:** Use clean Unicode arrow chains for sequences (e.g., `Disease ──► Impairment ──► Disability ──► Handicap`).
+   - **Tag spacing safety:** Always leave a blank line after every `[SN]` and `[LAQ]` tag line to prevent `ReadingView.js` from corrupting tags into tables.
+
+6. **Em-dashes (hard ban in live content and in skill-generated drafts)**
    - Never use Unicode U+2014 (em dash). Write the code point, not the character, in docs when naming the ban.
    - Never use HTML entities `&mdash;`, `&#8212;`, `&#x2014;`.
    - Never use markdown/plain substitutes meant as em-dashes (e.g. `---` as a dash in prose, or ` -- ` between clauses).
    - **Use instead:** a period and new sentence; a comma, colon, or semicolon; parentheses for asides; a regular hyphen only for true compound words (e.g. `well-known`, `cost-effectiveness`).
-   - This matches the global no-em-dashes house rule and applies to all proposed and shipped Library prose.
 
-3. **Acronyms: expand on first use (mandatory in every leaf)**
+7. **Acronyms: expand on first use (mandatory in every leaf)**
    - The **first time** an acronym or initialism appears in a leaf, write the **full expanded form** with the acronym in parentheses, then use the short form freely after.
    - **Format:** `Full Name (ACRONYM)` on first use. Examples: `Group A β-haemolytic Streptococcus (GAS)`, `National Programme for Prevention and Control of Non-Communicable Diseases (NP-NCD)`, `Body Mass Index (BMI)`, `World Health Organization (WHO)`.
-   - Apply to medical, programme, legal, and technical acronyms a resident might not instantly expand (e.g. GAS, RHD, NPCDCS, NP-NCD, DASH, STEPS, COTPA, NPPCD, RPwD, VIA, HPV, TIA, RTA, HDL, LDL).
-   - **Per-leaf rule:** expand on first use **within each leaf** (readers open leaves separately). One-leaf chapters expand once at first appearance in that leaf.
-   - **Do not** open a section with a bare acronym the body never expands (e.g. “GAS pharyngitis” with no prior expansion).
-   - **Exceptions:** SI units (`mmHg`, `mg/dL`, `kg`, `cm`) and pure formula symbols already defined in context. Still expand programme and disease acronyms.
-   - **Audit existing text** during review: flag bare first-use acronyms as clarity findings and fix on apply.
-   - **Pre-flight on apply:** spot-check high-yield acronyms in changed leaves; first occurrence must be `Expanded (ACRONYM)` form.
+   - **Per-leaf rule:** expand on first use **within each leaf** (readers open leaves separately).
+   - **Exceptions:** SI units (`mmHg`, `mg/dL`, `kg`, `cm`) and pure formula symbols already defined in context.
 
-4. **Stop-slop prose filter (mandatory on all draft additions, edits, and framing)**
+8. **Stop-slop prose filter (mandatory on all draft additions, edits, and framing)**
    - Apply the rules from the **stop-slop** skill (`.agents/skills/stop-slop/SKILL.md`) to all new or modified prose.
-   - **Exception (verbatim from source):** Definitions, classifications, statutory legal wording, official WHO/MoHFW phrasing, diagnostic criteria lists, and numerical cut-offs must remain **verbatim from the source** (Park, WHO, MoHFW, Acts). Do NOT alter, soften, or paraphrase these.
+   - **Exception (verbatim from source):** Definitions, classifications, statutory legal wording, official WHO/MoHFW phrasing, diagnostic criteria lists, and numerical cut-offs must remain **verbatim from the source**.
    - **Filtered parts (all explanatory, follow-up, and framing prose):**
-     - **Cut filler & throat-clearing:** Remove "It is worth noting that", "Crucially", "In essence", "At its core", "Importantly", "Furthermore, it should be noted that".
-     - **Cut all adverbs:** Eliminate "significantly", "extremely", "notably", "essentially", "critically".
-     - **Break formulaic structures:** Avoid binary contrasts ("not X, but Y"), negative listings, dramatic fragmentation, and false agency ("the programme seeks to", "the strategy unfolds").
-     - **Use active voice:** Name the clinician, epidemiologist, health worker, or patient doing the action.
-     - **Be dense and specific:** Replace vague declaratives ("plays a crucial role", "has significant implications") with concrete clinical/public health facts.
-     - **Vary rhythm:** Mix short and medium sentences; avoid metronomic 3-item lists and cliché one-liner paragraph endings.
-     - **Trust the resident:** State facts directly without patronising justification, softening, or hand-holding.
+     - Cut filler & throat-clearing: Remove "It is worth noting that", "Crucially", "In essence", "At its core", "Importantly", "Furthermore".
+     - Cut all adverbs: Eliminate "significantly", "extremely", "notably", "essentially", "critically".
+     - Break formulaic structures: Avoid binary contrasts ("not X, but Y"), negative listings, dramatic fragmentation.
+     - Use active voice: Name the clinician, epidemiologist, health worker, or patient doing the action.
+     - Be dense and specific; vary sentence rhythm; trust the resident.
 
-**Pre-flight (mandatory before apply/ship):** search each changed subsection for `Park`, `park-aligned`, U+2014 em-dash, ` -- `, `India hook`, AI filler patterns (`crucially`, `in essence`, `worth noting`, `pivotal role`), and live-text uses of `leaf` as a section label (`this leaf`, `next leaf`, `effects leaf`). Fail ship if any hit remains in live text (case-insensitive for Park, except incidental words that are not the textbook, which should not appear). Confirm first-use expansions for major acronyms introduced in that subsection, and verify that non-verbatim prose conforms to stop-slop rules.
+**Pre-flight (mandatory before apply/ship):** search each changed subsection for conversational tuition phrases (`residents should`, `write this`, `India teaching`, `examiner`, `viva`, `do not write`), `Park`, `park-aligned`, U+2014 em-dash, ` -- `, `India hook`, and AI filler patterns (`crucially`, `in essence`, `worth noting`, `pivotal role`). Ensure all exam tactical guidance is inside `> **EXAM TIP:**`. Ensure blank lines follow all tags. Confirm first-use acronym expansions.
 
 ## Step 3: PYQ coverage map
 
