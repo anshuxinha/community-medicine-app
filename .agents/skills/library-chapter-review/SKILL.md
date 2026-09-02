@@ -1,27 +1,24 @@
 ---
 name: library-chapter-review
 description: >
-  Review accuracy and exam-quality of a Library chapter (latest Firebase
-  libraryContentOverrides + mockData) against Park textbook PDFs in
+  Review accuracy, textbook prose register, and exam-quality of a Library chapter
+  (latest Firebase libraryContentOverrides + mockData) against Park textbook PDFs in
   D:\Study Related\Books\Park Split and MD Community Medicine PYQs in
-  categorized_questions_report.md. Filters all content additions and
-  modifications through the stop-slop skill (except verbatim source definitions/
-  classifications). Tags SN/LAQ sections with fixed colour markers, requires
-  MD-exam-depth new content with Exam Tip boxes, inserts list-only hybrid
-  mnemonics sparingly (finite 4–10 item exam lists only), places SN/LAQ tags
-  only above answering sections (never a tag dump before overview), fills Park
-  gaps only with verified knowledge, flags outdated facts only when verified
-  from official sources, and suggests PYQ content gaps. Use when the user runs
-  /library-chapter-review, /chapter-review, "review library chapter",
-  "check chapter accuracy", "audit Park chapter", or asks to quality-check
-  a specific Library chapter for MD exam prep.
+  categorized_questions_report.md. Enforces formal medical textbook prose (Park register)
+  in body text, complete elimination of conversational tuition language, strict segregation
+  of exam strategy into > **EXAM TIP:** callout boxes, dynamic tailored Overviews (philosophical
+  hook, paradigm evolution, Indian public health significance), 4-line mobile paragraph ceiling,
+  100% bold semantic bullet anchors, zero em-dashes, sub-list indentation under parent points,
+  and fixed colour SN/LAQ tags. Use when the user runs /library-chapter-review, /chapter-review,
+  "review library chapter", "check chapter accuracy", "audit Park chapter", or asks to
+  quality-check a specific Library chapter for MD exam prep.
 metadata:
-  short-description: "QA Library chapters vs Park + PYQs (SN/LAQ + Exam Tip + stop-slop filtered content)"
+  short-description: "QA Library chapters vs Park + PYQs (Textbook register + Exam Tips + stop-slop + mobile UX)"
 ---
 
 # /library-chapter-review: Library chapter accuracy & exam quality
 
-Review one Library chapter for an **MD Community Medicine resident** exam prep standard: factual accuracy, academic structure, PYQ coverage, fixed SN/LAQ colour tags (only above real sections), **exam-ready new content** (depth + Exam Tip), **stop-slop prose filtering** (active voice, zero AI fluff, with verbatim source definitions preserved), and **optional hybrid list-only mnemonics** where a finite high-yield list (typically **4–10 items**) must be memorized.
+Review one Library chapter for an **MD Community Medicine resident** exam prep standard: factual accuracy, authoritative textbook prose (Park register), PYQ coverage, fixed SN/LAQ colour tags (only above real sections), **exam-ready new content** (depth + Exam Tip), **stop-slop prose filtering** (active voice, zero AI fluff, with verbatim source definitions preserved), **mobile reading ergonomics** (4-line paragraph ceiling, 100% bold semantic anchors, sub-list indentation), and **optional hybrid list-only mnemonics** where a finite high-yield list (typically **4–10 items**) must be memorized.
 
 ## Usage
 
@@ -150,12 +147,14 @@ Park (and other textbooks) are **agent-side references** for accuracy audits and
    - Do **not** write coaching, tutoring, or conversational instructions in body prose, headings, or bullet points.
    - Banned phrases in body text:
      - "residents should do this" / "residents must remember"
-     - "write this, not that" / "do not write a full essay" / "do not write unrelated essays"
+     - "write this, not that" / "do not write a full essay" / "do not write unrelated essays" / "do not write that"
      - "India teaching emphasises" / "as per India teaching" / "India paper" / "India hook"
      - "examiners accept this" / "examiners expect" / "examiners look for"
-     - "quote this in exam" / "in the exam" / "in exam answers" / "for 5 marks"
-     - "useful for viva" / "classic viva question" / "in viva examination"
+     - "quote this in exam" / "in the exam" / "in exam answers" / "for 5 marks" / "for 10 marks"
+     - "useful for viva" / "classic viva question" / "in viva examination" / "useful one-liner in a sanitation-and-health viva"
+     - "Grade A ★★★★★" / "NTRUHS" / "exam sequence" / "exam contrast" / "city plan content to write in exam"
      - "sit beside X in the exam but were not full notes in the Library"
+     - "saying that he could not score good marks in the examination"
    - **Action:** Relocate ALL tactical exam advice, recommended heading sequences, essential tables to sketch, and mark-scoring framing strictly into the `> **EXAM TIP:**` callout box. Body prose must state facts, mechanisms, classifications, and frameworks objectively.
    - If an epidemiological reality or clinical guidance differs between global and Indian literature, state it objectively: "In the Indian epidemiological context, ..." or under the standard heading `Indian context:` (never "India teaching" or "India hook").
 
@@ -195,15 +194,19 @@ Park (and other textbooks) are **agent-side references** for accuracy audits and
      - For historical/philosophical chapters (e.g. Ch 1 Man and Medicine, Ch 2 Concept of Health), open with the paradigm shift from supernatural/biomedical to holistic and social justice.
      - For disease clusters (e.g. Ch 5 Communicable Diseases, Ch 6 NCDs), open with the global and Indian epidemiological transition, South Asian vascular/metabolic phenotypes, and public health stakes.
      - For health systems and programmes (e.g. Ch 7, Ch 10, Ch 23), open with the evolution from colonial sanitation to Alma-Ata Primary Health Care, universal health coverage, and decentralized rural delivery.
-   - Aim for an intellectually engaging gateway (roughly 100–140 words) that sparks interest, provides macro context, and anchors the resident before detailed study.
+   - Aim for an intellectually engaging gateway (roughly 100–140 words) combining:
+     1. A philosophical hook or epigram
+     2. The historical or conceptual paradigm transition
+     3. Contemporary Indian and global public health significance
 
 5. **Mobile-first reading ergonomics (Avoid the "Textbook Trap")**
    Park's two-column print paragraphs become overwhelming 30-line walls of text on a 390px phone screen.
    - **Paragraph ceiling:** Maximum 4 printed lines on mobile (~50–65 words) per narrative block.
    - **Bold semantic anchors:** Lead each bullet point with a bold keyword or conceptual handle (e.g., `- **Prepathogenesis phase:** ...`).
+   - **Sub-list indentation hierarchy:** When subordinate lists appear under a parent numbered point (e.g. `1. Phase ...`) or under a parent bullet point (e.g. `- **Cardinal Principles:**`), format sub-items with 2+ leading spaces (`  1. `, `  - `) or follow directly in sequence so `ReadingView.js` renders them indented with `styles.indentedBody` / `styles.indentedBulletGroup` (`marginLeft: 22`).
    - **Aggressive tabular formatting:** Use markdown tables for comparing levels, entities, study designs, or phases.
    - **Algorithmic flowcharts:** Use clean Unicode arrow chains for sequences (e.g., `Disease ──► Impairment ──► Disability ──► Handicap`).
-   - **Tag spacing safety:** Always leave a blank line after every `[SN]` and `[LAQ]` tag line to prevent `ReadingView.js` from corrupting tags into tables.
+   - **Tag spacing safety:** Always leave a blank line after every `[SN]` and `[LAQ]` tag line to prevent `ReadingView.js` from corrupting tags into tables. Never dump tags before `OVERVIEW`.
 
 6. **Em-dashes (hard ban in live content and in skill-generated drafts)**
    - Never use Unicode U+2014 (em dash). Write the code point, not the character, in docs when naming the ban.
@@ -227,7 +230,12 @@ Park (and other textbooks) are **agent-side references** for accuracy audits and
      - Use active voice: Name the clinician, epidemiologist, health worker, or patient doing the action.
      - Be dense and specific; vary sentence rhythm; trust the resident.
 
-**Pre-flight (mandatory before apply/ship):** search each changed subsection for conversational tuition phrases (`residents should`, `write this`, `India teaching`, `examiner`, `viva`, `do not write`), `Park`, `park-aligned`, U+2014 em-dash, ` -- `, `India hook`, and AI filler patterns (`crucially`, `in essence`, `worth noting`, `pivotal role`). Ensure all exam tactical guidance is inside `> **EXAM TIP:**`. Ensure blank lines follow all tags. Confirm first-use acronym expansions.
+**Pre-flight (mandatory before apply/ship):**
+Run the automated preflight audit tool to guarantee compliance:
+```bash
+python .agents/skills/library-lead-directorate/scripts/verify_directorate_gate.py "<candidate_json_file>"
+```
+Verify zero critical violations: no conversational tuition phrases (`residents should`, `write this`, `India teaching`, `examiner`, `viva`, `do not write`), no textbook author name-drops (`Park`, `According to Park`), no U+2014 em-dashes, no ` -- `, no `India hook`, and no AI filler patterns (`crucially`, `in essence`, `worth noting`). Ensure all exam tactical guidance is inside `> **EXAM TIP:**`. Ensure blank lines follow all tags. Confirm first-use acronym expansions and sub-list indentation. For multi-chapter overhauls, invoke `/library-lead-directorate` to convene Dr. Aris, Dr. Maya, and Alex for final qualitative approval before deployment.
 
 ## Step 3: PYQ coverage map
 
@@ -529,7 +537,11 @@ After ship, report:
 - [ ] Every new/expanded exam block ends with Exam Tip
 - [ ] SN/LAQ tags only above answering sections (no pre-overview tag dump)
 - [ ] Mnemonics only for finite high-yield lists when they actually help recall; weak/list-less/slogan/trailing-dump ones removed or proposed for removal
-- [ ] No meta language in proposed live content ("leaf" as a section label, "India hook", writing-process labels)
+- [ ] No meta language or conversational tuition tone in proposed live content ("residents should", "write this", "India hook", "examiner", "viva", "leaf")
+- [ ] All tactical exam framing strictly segregated into `> **EXAM TIP:**` callouts
+- [ ] Dynamic, tailored Overview with philosophical hook, paradigm evolution, and Indian public health significance
+- [ ] Sub-lists formatted for visual indentation under parent numbered points / bullets
+- [ ] Automated preflight passed via `verify_directorate_gate.py`
 - [ ] Definitions and categorisations verbatim from source; hard source wording followed by a teaching explanation
 - [ ] Non-verbatim prose filtered through stop-slop rules (active voice, zero AI fluff/adverbs, direct facts)
 - [ ] No I RECALL framework required; method per `mnemonics.md`
@@ -549,3 +561,4 @@ After ship, report:
 - [ ] **Firebase overrides published** (`status: active`) for **every** changed leaf
 - [ ] **EAS update not run** unless required: and if required, **user asked first**
 - [ ] Close-out summary given to user
+- [ ] For multi-chapter overhauls, invoke `/library-lead-directorate` for formal approval from Dr. Aris, Dr. Maya, and Alex before shipping
