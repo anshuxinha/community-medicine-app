@@ -230,12 +230,24 @@ Park (and other textbooks) are **agent-side references** for accuracy audits and
      - Use active voice: Name the clinician, epidemiologist, health worker, or patient doing the action.
      - Be dense and specific; vary sentence rhythm; trust the resident.
 
+9. **Medical visuals, diagrams & infographics (Marcus directive)**
+   Ensure that high-yield topics are visually anchored with essential diagrams, flowcharts, schemas, or clinical decision trees:
+   - **Visual Coverage Standards:** Identify concepts that require graphical representation (e.g., population pyramids, surveillance flowcharts like the SRS dual-record model, care cascades, health system architecture like ABDM, logistics frameworks like drone corridors, clinical decision trees like Yellow Fever quarantine, containment matrices like BSL 1-4, PRISMA flowcharts, and ROC curves).
+   - **Approved Acquisition Channels:**
+     1. *Internet Repositories:* Source authentic, high-resolution, public-domain or CC-BY medical diagrams from Wikimedia Commons, WHO, CDC, or official MoHFW/NHA portals using stable, direct HTTPS URLs.
+     2. *Generative AI via Orca Browser CLI (`orca-cli`):* Where public domain diagrams are unavailable or custom tailored infographics are needed, launch the Orca browser workspace (`orca tab create --url "https://chatgpt.com"`), prompt ChatGPT / DALL-E for authoritative medical textbook diagrams adhering to Indian public health guidelines, retrieve the high-res asset, and embed it.
+   - **Markdown Format & Parser Safety:**
+     - Always format images as: `![Descriptive Caption](image_url)`
+     - Isolate every image block with preceding and trailing blank lines (`\n\n`).
+     - Place images contextually below the relevant concept header; never inside `> **EXAM TIP:**` callouts.
+     - Ensure alt text is descriptive ($\ge 5$ words) for accessibility and screen readers.
+
 **Pre-flight (mandatory before apply/ship):**
 Run the automated preflight audit tool to guarantee compliance:
 ```bash
 python .agents/skills/library-lead-directorate/scripts/verify_directorate_gate.py "<candidate_json_file>"
 ```
-Verify zero critical violations: no conversational tuition phrases (`residents should`, `write this`, `India teaching`, `examiner`, `viva`, `do not write`), no textbook author name-drops (`Park`, `According to Park`), no U+2014 em-dashes, no ` -- `, no `India hook`, and no AI filler patterns (`crucially`, `in essence`, `worth noting`). Ensure all exam tactical guidance is inside `> **EXAM TIP:**`. Ensure blank lines follow all tags. Confirm first-use acronym expansions and sub-list indentation. For multi-chapter overhauls, invoke `/library-lead-directorate` to convene Dr. Aris, Dr. Maya, and Alex for final qualitative approval before deployment.
+Verify zero critical violations: no conversational tuition phrases (`residents should`, `write this`, `India teaching`, `examiner`, `viva`, `do not write`), no textbook author name-drops (`Park`, `According to Park`), no U+2014 em-dashes, no ` -- `, no `India hook`, and no AI filler patterns (`crucially`, `in essence`, `worth noting`). Ensure all exam tactical guidance is inside `> **EXAM TIP:**`. Ensure blank lines follow all tags and image blocks. Confirm first-use acronym expansions, sub-list indentation, and visual asset inclusion for high-yield topics. For multi-chapter overhauls, invoke `/library-lead-directorate` to convene Dr. Aris, Dr. Maya, Alex, and Marcus for final qualitative approval before deployment.
 
 ## Step 3: PYQ coverage map
 

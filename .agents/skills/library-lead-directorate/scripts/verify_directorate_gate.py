@@ -152,6 +152,67 @@ def check_leaf_content(leaf_id, title, content):
         elif in_overview and (line.startswith("#") or (line.isupper() and len(line) > 5)):
             in_overview = False
 
+        # Check 5: Marcus Visual Architecture Audit
+        img_match = re.search(r"!\[(.*?)\]\((.*?)\)", line)
+        if img_match:
+            alt_text = img_match.group(1).strip()
+            img_url = img_url_val = img_match.group(2).strip()
+            
+            # Sub-check: Image inside blockquote / Exam Tip
+            if line.strip().startswith(">"):
+                issues.append({
+                    "auditor": "Marcus",
+                    "severity": "CRITICAL",
+                    "leaf": leaf_id,
+                    "line": line_num,
+                    "message": "Image must not be placed inside a blockquote or Exam Tip.",
+                    "snippet": line[:100]
+                })
+
+            # Sub-check: Preceding blank line
+            if idx > 0 and lines[idx - 1].strip() != "":
+                issues.append({
+                    "auditor": "Marcus",
+                    "severity": "WARNING",
+                    "leaf": leaf_id,
+                    "line": line_num,
+                    "message": "Image block must be preceded by a blank line.",
+                    "snippet": line[:100]
+                })
+
+            # Sub-check: Trailing blank line
+            if idx + 1 < len(lines) and lines[idx + 1].strip() != "":
+                issues.append({
+                    "auditor": "Marcus",
+                    "severity": "WARNING",
+                    "leaf": leaf_id,
+                    "line": line_num,
+                    "message": "Image block must be followed by a blank line.",
+                    "snippet": line[:100]
+                })
+
+            # Sub-check: Alt text quality
+            if len(alt_text) < 5:
+                issues.append({
+                    "auditor": "Marcus",
+                    "severity": "WARNING",
+                    "leaf": leaf_id,
+                    "line": line_num,
+                    "message": "Image alt text is missing or too brief (< 5 characters).",
+                    "snippet": line[:100]
+                })
+
+            # Sub-check: Insecure HTTP
+            if img_url_val.startswith("http://"):
+                issues.append({
+                    "auditor": "Marcus",
+                    "severity": "WARNING",
+                    "leaf": leaf_id,
+                    "line": line_num,
+                    "message": "Insecure HTTP image URL; use HTTPS for mobile app security.",
+                    "snippet": line[:100]
+                })
+
     return issues
 
 def audit_file(file_path):
