@@ -14,11 +14,22 @@ const app = admin.initializeApp({
 const bucket = app.storage().bucket();
 
 const revisedFiles = [
+    // Chapter 31
+    'ch31_1_demographic_transition_pyramid.png',
     'ch31_2_srs_dual_record_flowchart.png',
+    'ch31_3_nfhs_indicators_dashboard.png',
+    'ch31_4_disease_care_cascades.png',
     'ch31_5_nhp_continuum_aam_architecture.png',
+    'ch31_6_health_information_systems_continuum.png',
+    // Chapter 32
+    'ch32_1_abdm_architecture.png',
+    'ch32_2_ai_cad_screening_workflow.png',
     'ch32_3_idrone_logistics_model.png',
+    'ch32_4_adult_immunization_framework.png',
+    'ch32_5_biosafety_levels_bioterrorism.png',
     'ch32_6_nap_amr_aware_one_health.png',
     'ch32_7_gis_thematic_layers_buffering.png',
+    'ch32_8_prisma_roc_geometry.png',
     'ch32_9_millers_pyramid_fap_timeline.png',
     'ch32_10_healthcare_ghg_scopes_green_hospital.png',
     'ch32_11_yellow_fever_ihr_decision_tree.png',
@@ -49,7 +60,7 @@ async function main() {
         const publicUrl = `https://storage.googleapis.com/${STORAGE_BUCKET}/${remotePath}`;
         console.log(`[+] Uploaded & Verified Public: ${publicUrl}`);
     }
-    console.log('[*] All 8 revised assets uploaded successfully!');
+    console.log('[*] All 17 revised assets uploaded successfully!');
 }
 
 main().catch(err => {
