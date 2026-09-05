@@ -62,6 +62,7 @@ table_test.txt
 
 # Scratch files
 scratch/
+scripts/_ifct_index.csv
 
 # Graphify caches
 graphify-out/cache/

@@ -1,1972 +1,2191 @@
 [
-    {
-        "id": "wheat_atta",
-        "name": "Wheat Flour (Atta / Whole Wheat)",
-        "category": "Cereals & Millets",
-        "calories": 341,
-        "protein": 12.1,
-        "fat": 1.7,
-        "carbs": 69.4,
-        "calcium": 48,
-        "iron": 4.9,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "roti_med",
-                "label": "Medium Phulka / Roti (1 pc = ~25g atta)",
-                "grams": 25
-            },
-            {
-                "id": "roti_lg",
-                "label": "Large Roti / Paratha (1 pc = ~40g atta)",
-                "grams": 40
-            },
-            {
-                "id": "puri",
-                "label": "Puri (1 pc = ~20g atta)",
-                "grams": 20
-            },
-            {
-                "id": "katori_flour",
-                "label": "Flour (1 Katori = ~100g)",
-                "grams": 100
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "rice_raw",
-        "name": "Rice (Raw / Milled White)",
-        "category": "Cereals & Millets",
-        "calories": 345,
-        "protein": 6.8,
-        "fat": 0.5,
-        "carbs": 78.2,
-        "calcium": 10,
-        "iron": 0.7,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "katori_cooked",
-                "label": "Cooked Rice (1 Katori / 150g = ~50g raw)",
-                "grams": 50
-            },
-            {
-                "id": "half_katori",
-                "label": "Cooked Rice (1/2 Katori = ~25g raw)",
-                "grams": 25
-            },
-            {
-                "id": "plate_cooked",
-                "label": "Cooked Rice (1 Full Plate = ~100g raw)",
-                "grams": 100
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "rice_parboiled",
-        "name": "Rice (Parboiled / Sella)",
-        "category": "Cereals & Millets",
-        "calories": 349,
-        "protein": 8.5,
-        "fat": 0.6,
-        "carbs": 77.4,
-        "calcium": 12,
-        "iron": 2.8,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "katori_cooked",
-                "label": "Cooked Rice (1 Katori = ~50g raw)",
-                "grams": 50
-            },
-            {
-                "id": "plate_cooked",
-                "label": "Cooked Rice (1 Full Plate = ~100g raw)",
-                "grams": 100
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "poha",
-        "name": "Poha (Flattened Rice - Iron Rich)",
-        "category": "Cereals & Millets",
-        "calories": 346,
-        "protein": 6.6,
-        "fat": 1.0,
-        "carbs": 77.3,
-        "calcium": 20,
-        "iron": 20.0,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "katori_dry",
-                "label": "Raw Poha (1 Katori = ~40g)",
-                "grams": 40
-            },
-            {
-                "id": "plate_cooked",
-                "label": "Cooked Poha (1 Plate / Snack = ~50g raw)",
-                "grams": 50
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "ragi",
-        "name": "Ragi / Finger Millet (High Calcium)",
-        "category": "Cereals & Millets",
-        "calories": 328,
-        "protein": 7.3,
-        "fat": 1.3,
-        "carbs": 72.0,
-        "calcium": 344,
-        "iron": 3.9,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "roti_ragi",
-                "label": "Ragi Roti / Mudde (1 pc = ~35g ragi)",
-                "grams": 35
-            },
-            {
-                "id": "katori_flour",
-                "label": "Ragi Flour (1 Katori = ~100g)",
-                "grams": 100
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "bajra",
-        "name": "Bajra / Pearl Millet (High Iron)",
-        "category": "Cereals & Millets",
-        "calories": 361,
-        "protein": 11.6,
-        "fat": 5.0,
-        "carbs": 67.5,
-        "calcium": 42,
-        "iron": 8.0,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "roti_bajra",
-                "label": "Bajra Roti (1 pc = ~40g bajra)",
-                "grams": 40
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "jowar",
-        "name": "Jowar / Sorghum Flour",
-        "category": "Cereals & Millets",
-        "calories": 349,
-        "protein": 10.4,
-        "fat": 1.9,
-        "carbs": 72.6,
-        "calcium": 25,
-        "iron": 4.1,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "roti_jowar",
-                "label": "Jowar Bhakri / Roti (1 pc = ~40g)",
-                "grams": 40
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "suji",
-        "name": "Suji / Semolina (Rava)",
-        "category": "Cereals & Millets",
-        "calories": 348,
-        "protein": 10.4,
-        "fat": 0.8,
-        "carbs": 74.8,
-        "calcium": 16,
-        "iron": 1.6,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "katori_cooked",
-                "label": "Cooked Upma / Halwa (1 Katori = ~40g suji)",
-                "grams": 40
-            },
-            {
-                "id": "tbsp",
-                "label": "Tablespoon (1 tbsp = ~15g)",
-                "grams": 15
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "maida",
-        "name": "Maida / Refined Wheat Flour",
-        "category": "Cereals & Millets",
-        "calories": 352,
-        "protein": 11.0,
-        "fat": 0.9,
-        "carbs": 73.9,
-        "calcium": 23,
-        "iron": 2.7,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "naan",
-                "label": "Naan / Bhatura (1 pc = ~60g maida)",
-                "grams": 60
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "oats",
-        "name": "Oats (Rolled / Instant)",
-        "category": "Cereals & Millets",
-        "calories": 374,
-        "protein": 13.6,
-        "fat": 7.6,
-        "carbs": 62.8,
-        "calcium": 50,
-        "iron": 3.8,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "bowl",
-                "label": "Cooked Porridge (1 Bowl = ~35g oats)",
-                "grams": 35
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "dal_toor",
-        "name": "Dal (Toor / Arhar / Red Gram)",
-        "category": "Pulses & Legumes",
-        "calories": 335,
-        "protein": 22.3,
-        "fat": 1.7,
-        "carbs": 57.6,
-        "calcium": 73,
-        "iron": 2.7,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "katori_med",
-                "label": "Cooked Dal (1 Med Katori = ~25g raw)",
-                "grams": 25
-            },
-            {
-                "id": "katori_thin",
-                "label": "Cooked Dal (1 Thin Katori = ~15g raw)",
-                "grams": 15
-            },
-            {
-                "id": "katori_thick",
-                "label": "Cooked Dal (1 Thick Katori = ~35g raw)",
-                "grams": 35
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "dal_moong",
-        "name": "Moong Dal (Split Yellow / Dhuli)",
-        "category": "Pulses & Legumes",
-        "calories": 348,
-        "protein": 24.5,
-        "fat": 1.2,
-        "carbs": 59.9,
-        "calcium": 75,
-        "iron": 3.9,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "katori_med",
-                "label": "Cooked Dal (1 Med Katori = ~25g raw)",
-                "grams": 25
-            },
-            {
-                "id": "katori_thin",
-                "label": "Cooked Dal (1 Thin Katori = ~15g raw)",
-                "grams": 15
-            },
-            {
-                "id": "katori_thick",
-                "label": "Cooked Dal (1 Thick Katori = ~35g raw)",
-                "grams": 35
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "moong_whole",
-        "name": "Moong Whole / Green Gram",
-        "category": "Pulses & Legumes",
-        "calories": 334,
-        "protein": 24.0,
-        "fat": 1.3,
-        "carbs": 56.7,
-        "calcium": 124,
-        "iron": 4.4,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "katori_cooked",
-                "label": "Cooked Whole Moong (1 Katori = ~30g raw)",
-                "grams": 30
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "moong_sprouted",
-        "name": "Sprouted Moong / Gram (Vit C rich)",
-        "category": "Pulses & Legumes",
-        "calories": 120,
-        "protein": 8.5,
-        "fat": 0.5,
-        "carbs": 19.0,
-        "calcium": 45,
-        "iron": 2.5,
-        "vitC": 16.0,
-        "portions": [
-            {
-                "id": "katori_sprouts",
-                "label": "Raw Sprouts (1 Katori = ~50g)",
-                "grams": 50
-            },
-            {
-                "id": "bowl",
-                "label": "Large Bowl (100g)",
-                "grams": 100
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "dal_chana",
-        "name": "Chana Dal (Bengal Gram Split)",
-        "category": "Pulses & Legumes",
-        "calories": 372,
-        "protein": 20.8,
-        "fat": 5.6,
-        "carbs": 59.8,
-        "calcium": 56,
-        "iron": 5.3,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "katori_med",
-                "label": "Cooked Dal (1 Med Katori = ~25g raw)",
-                "grams": 25
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "kala_chana",
-        "name": "Kala Chana (Bengal Gram Whole)",
-        "category": "Pulses & Legumes",
-        "calories": 360,
-        "protein": 17.1,
-        "fat": 5.3,
-        "carbs": 60.9,
-        "calcium": 166,
-        "iron": 10.2,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "katori_cooked",
-                "label": "Cooked Chana (1 Katori = ~35g raw)",
-                "grams": 35
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "sattu",
-        "name": "Sattu / Roasted Bengal Gram Flour",
-        "category": "Pulses & Legumes",
-        "calories": 369,
-        "protein": 22.5,
-        "fat": 5.2,
-        "carbs": 58.1,
-        "calcium": 58,
-        "iron": 9.5,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "glass_drink",
-                "label": "Sattu Drink (2 tbsp = ~30g)",
-                "grams": 30
-            },
-            {
-                "id": "tbsp",
-                "label": "Tablespoon (1 tbsp = ~15g)",
-                "grams": 15
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "dal_masoor",
-        "name": "Masoor Dal (Red Lentil)",
-        "category": "Pulses & Legumes",
-        "calories": 343,
-        "protein": 25.1,
-        "fat": 0.7,
-        "carbs": 59.0,
-        "calcium": 69,
-        "iron": 7.6,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "katori_med",
-                "label": "Cooked Dal (1 Med Katori = ~25g raw)",
-                "grams": 25
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "dal_urad",
-        "name": "Urad Dal (Black Gram Split)",
-        "category": "Pulses & Legumes",
-        "calories": 347,
-        "protein": 24.0,
-        "fat": 1.4,
-        "carbs": 59.6,
-        "calcium": 154,
-        "iron": 3.8,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "katori_med",
-                "label": "Cooked Dal (1 Med Katori = ~25g raw)",
-                "grams": 25
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "rajma",
-        "name": "Rajma (Red Kidney Beans)",
-        "category": "Pulses & Legumes",
-        "calories": 346,
-        "protein": 22.9,
-        "fat": 1.3,
-        "carbs": 60.6,
-        "calcium": 130,
-        "iron": 5.1,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "katori_cooked",
-                "label": "Cooked Rajma (1 Katori = ~35g raw)",
-                "grams": 35
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "chole",
-        "name": "Kabuli Chana / Chickpeas (White)",
-        "category": "Pulses & Legumes",
-        "calories": 360,
-        "protein": 20.5,
-        "fat": 5.6,
-        "carbs": 61.0,
-        "calcium": 105,
-        "iron": 6.2,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "katori_cooked",
-                "label": "Cooked Chole (1 Katori = ~35g raw)",
-                "grams": 35
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "soya_chunks",
-        "name": "Soya Chunks / Meal (52% Protein)",
-        "category": "Pulses & Legumes",
-        "calories": 345,
-        "protein": 52.0,
-        "fat": 0.5,
-        "carbs": 33.0,
-        "calcium": 350,
-        "iron": 20.0,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "portion",
-                "label": "1 Cooked Portion (~25g dry soya)",
-                "grams": 25
-            },
-            {
-                "id": "katori_cooked",
-                "label": "Cooked Curry (1 Katori = ~35g dry)",
-                "grams": 35
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "besan",
-        "name": "Besan / Chickpea Gram Flour",
-        "category": "Pulses & Legumes",
-        "calories": 387,
-        "protein": 22.0,
-        "fat": 6.7,
-        "carbs": 58.0,
-        "calcium": 58,
-        "iron": 5.5,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "chilla",
-                "label": "Besan Chilla (1 pc = ~30g besan)",
-                "grams": 30
-            },
-            {
-                "id": "tbsp",
-                "label": "Tablespoon (1 tbsp = ~15g)",
-                "grams": 15
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "spinach",
-        "name": "Spinach / Palak (Cooked)",
-        "category": "Green Leafy Vegetables",
-        "calories": 26,
-        "protein": 2.0,
-        "fat": 0.7,
-        "carbs": 2.9,
-        "calcium": 73,
-        "iron": 1.14,
-        "vitC": 28.0,
-        "portions": [
-            {
-                "id": "katori_cooked",
-                "label": "Cooked Sabzi (1 Katori = ~100g raw)",
-                "grams": 100
-            },
-            {
-                "id": "half_katori",
-                "label": "Cooked Sabzi (1/2 Katori = ~50g raw)",
-                "grams": 50
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "methi_leaves",
-        "name": "Fenugreek Leaves / Methi",
-        "category": "Green Leafy Vegetables",
-        "calories": 49,
-        "protein": 4.4,
-        "fat": 0.9,
-        "carbs": 6.0,
-        "calcium": 395,
-        "iron": 1.9,
-        "vitC": 52.0,
-        "portions": [
-            {
-                "id": "katori_cooked",
-                "label": "Cooked Sabzi (1 Katori = ~100g raw)",
-                "grams": 100
-            },
-            {
-                "id": "roti_methi",
-                "label": "In Methi Thepla/Roti (~25g)",
-                "grams": 25
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "drumstick_leaves",
-        "name": "Drumstick Leaves / Moringa (High Ca, Vit C)",
-        "category": "Green Leafy Vegetables",
-        "calories": 92,
-        "protein": 6.7,
-        "fat": 1.7,
-        "carbs": 12.5,
-        "calcium": 440,
-        "iron": 0.85,
-        "vitC": 220.0,
-        "portions": [
-            {
-                "id": "katori_cooked",
-                "label": "Cooked Portion (1 Katori = ~75g raw)",
-                "grams": 75
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "mustard_leaves",
-        "name": "Mustard Greens / Sarson Ka Saag",
-        "category": "Green Leafy Vegetables",
-        "calories": 34,
-        "protein": 2.7,
-        "fat": 0.6,
-        "carbs": 4.5,
-        "calcium": 155,
-        "iron": 1.6,
-        "vitC": 33.0,
-        "portions": [
-            {
-                "id": "katori_cooked",
-                "label": "Cooked Saag (1 Katori = ~120g raw)",
-                "grams": 120
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "amaranth_leaves",
-        "name": "Amaranth Leaves / Chaulai (High Ca, Fe)",
-        "category": "Green Leafy Vegetables",
-        "calories": 45,
-        "protein": 4.0,
-        "fat": 0.5,
-        "carbs": 6.1,
-        "calcium": 397,
-        "iron": 3.5,
-        "vitC": 99.0,
-        "portions": [
-            {
-                "id": "katori_cooked",
-                "label": "Cooked Sabzi (1 Katori = ~100g raw)",
-                "grams": 100
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "potato",
-        "name": "Potato / Aloo",
-        "category": "Roots & Tubers",
-        "calories": 97,
-        "protein": 1.6,
-        "fat": 0.1,
-        "carbs": 22.6,
-        "calcium": 10,
-        "iron": 0.5,
-        "vitC": 17.0,
-        "portions": [
-            {
-                "id": "med_potato",
-                "label": "1 Medium Potato (~80g)",
-                "grams": 80
-            },
-            {
-                "id": "katori_sabzi",
-                "label": "In Sabzi (1 Katori = ~60g potato)",
-                "grams": 60
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "onion",
-        "name": "Onion (Pyaz)",
-        "category": "Roots & Tubers",
-        "calories": 50,
-        "protein": 1.2,
-        "fat": 0.1,
-        "carbs": 11.1,
-        "calcium": 40,
-        "iron": 0.6,
-        "vitC": 11.0,
-        "portions": [
-            {
-                "id": "med_onion",
-                "label": "1 Medium Onion (~60g)",
-                "grams": 60
-            },
-            {
-                "id": "salad",
-                "label": "Salad / Cooking (~30g)",
-                "grams": 30
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "carrot",
-        "name": "Carrot / Gajar (Beta-Carotene)",
-        "category": "Roots & Tubers",
-        "calories": 48,
-        "protein": 0.9,
-        "fat": 0.2,
-        "carbs": 10.6,
-        "calcium": 80,
-        "iron": 1.0,
-        "vitC": 3.0,
-        "portions": [
-            {
-                "id": "med_carrot",
-                "label": "1 Medium Carrot (~70g)",
-                "grams": 70
-            },
-            {
-                "id": "katori_sabzi",
-                "label": "In Sabzi / Salad (1 Katori = ~80g)",
-                "grams": 80
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "sweet_potato",
-        "name": "Sweet Potato / Shakarkand",
-        "category": "Roots & Tubers",
-        "calories": 120,
-        "protein": 1.2,
-        "fat": 0.3,
-        "carbs": 28.2,
-        "calcium": 46,
-        "iron": 0.8,
-        "vitC": 24.0,
-        "portions": [
-            {
-                "id": "med_piece",
-                "label": "1 Medium Boiled Piece (~100g)",
-                "grams": 100
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "tomato",
-        "name": "Tomato (Tamatar)",
-        "category": "Other Vegetables",
-        "calories": 20,
-        "protein": 0.9,
-        "fat": 0.2,
-        "carbs": 3.6,
-        "calcium": 20,
-        "iron": 0.6,
-        "vitC": 27.0,
-        "portions": [
-            {
-                "id": "med_tomato",
-                "label": "1 Medium Tomato (~80g)",
-                "grams": 80
-            },
-            {
-                "id": "in_curry",
-                "label": "In Gravy / Salad (~40g)",
-                "grams": 40
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "cauliflower",
-        "name": "Cauliflower / Gobhi",
-        "category": "Other Vegetables",
-        "calories": 30,
-        "protein": 2.6,
-        "fat": 0.4,
-        "carbs": 4.0,
-        "calcium": 33,
-        "iron": 1.2,
-        "vitC": 56.0,
-        "portions": [
-            {
-                "id": "katori_cooked",
-                "label": "Cooked Sabzi (1 Katori = ~100g raw)",
-                "grams": 100
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "cabbage",
-        "name": "Cabbage / Patta Gobhi",
-        "category": "Other Vegetables",
-        "calories": 27,
-        "protein": 1.8,
-        "fat": 0.1,
-        "carbs": 4.6,
-        "calcium": 39,
-        "iron": 0.8,
-        "vitC": 124.0,
-        "portions": [
-            {
-                "id": "katori_cooked",
-                "label": "Cooked Sabzi (1 Katori = ~100g raw)",
-                "grams": 100
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "bhindi",
-        "name": "Ladyfinger / Bhindi / Okra",
-        "category": "Other Vegetables",
-        "calories": 35,
-        "protein": 1.9,
-        "fat": 0.2,
-        "carbs": 6.4,
-        "calcium": 66,
-        "iron": 0.4,
-        "vitC": 13.0,
-        "portions": [
-            {
-                "id": "katori_cooked",
-                "label": "Cooked Sabzi (1 Katori = ~100g raw)",
-                "grams": 100
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "lauki",
-        "name": "Bottle Gourd / Lauki / Ghiya",
-        "category": "Other Vegetables",
-        "calories": 12,
-        "protein": 0.2,
-        "fat": 0.1,
-        "carbs": 2.5,
-        "calcium": 20,
-        "iron": 0.5,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "katori_cooked",
-                "label": "Cooked Sabzi (1 Katori = ~120g raw)",
-                "grams": 120
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "green_peas",
-        "name": "Green Peas / Matar",
-        "category": "Other Vegetables",
-        "calories": 93,
-        "protein": 7.2,
-        "fat": 0.1,
-        "carbs": 15.9,
-        "calcium": 20,
-        "iron": 1.5,
-        "vitC": 9.0,
-        "portions": [
-            {
-                "id": "katori_cooked",
-                "label": "In Sabzi (1/2 Katori = ~50g raw)",
-                "grams": 50
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "brinjal",
-        "name": "Brinjal / Eggplant / Baingan",
-        "category": "Other Vegetables",
-        "calories": 24,
-        "protein": 1.4,
-        "fat": 0.3,
-        "carbs": 4.0,
-        "calcium": 18,
-        "iron": 0.4,
-        "vitC": 12.0,
-        "portions": [
-            {
-                "id": "katori_bharta",
-                "label": "Baingan Bharta (1 Katori = ~120g raw)",
-                "grams": 120
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "cucumber",
-        "name": "Cucumber / Kheera (Salad)",
-        "category": "Other Vegetables",
-        "calories": 13,
-        "protein": 0.4,
-        "fat": 0.1,
-        "carbs": 2.5,
-        "calcium": 10,
-        "iron": 0.6,
-        "vitC": 7.0,
-        "portions": [
-            {
-                "id": "med_cucumber",
-                "label": "1 Medium Cucumber (~100g)",
-                "grams": 100
-            },
-            {
-                "id": "half",
-                "label": "1/2 Cucumber (~50g)",
-                "grams": 50
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "banana",
-        "name": "Banana / Kela (Energy Dense)",
-        "category": "Fruits",
-        "calories": 116,
-        "protein": 1.2,
-        "fat": 0.3,
-        "carbs": 27.2,
-        "calcium": 17,
-        "iron": 0.4,
-        "vitC": 7.0,
-        "portions": [
-            {
-                "id": "med_banana",
-                "label": "1 Medium Banana (~100g pulp)",
-                "grams": 100
-            },
-            {
-                "id": "small_banana",
-                "label": "1 Small Banana (~60g pulp)",
-                "grams": 60
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "guava",
-        "name": "Guava / Amrood (High Vit C)",
-        "category": "Fruits",
-        "calories": 51,
-        "protein": 0.9,
-        "fat": 0.3,
-        "carbs": 11.2,
-        "calcium": 10,
-        "iron": 0.3,
-        "vitC": 212.0,
-        "portions": [
-            {
-                "id": "med_guava",
-                "label": "1 Medium Guava (~100g)",
-                "grams": 100
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "amla",
-        "name": "Amla / Indian Gooseberry (600mg Vit C)",
-        "category": "Fruits",
-        "calories": 58,
-        "protein": 0.5,
-        "fat": 0.1,
-        "carbs": 13.7,
-        "calcium": 50,
-        "iron": 1.2,
-        "vitC": 600.0,
-        "portions": [
-            {
-                "id": "amla_pc",
-                "label": "1 Amla (~30g)",
-                "grams": 30
-            },
-            {
-                "id": "amla_juice",
-                "label": "Amla Juice (1 tbsp = ~15g)",
-                "grams": 15
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "orange",
-        "name": "Orange / Mosambi / Citrus",
-        "category": "Fruits",
-        "calories": 48,
-        "protein": 0.7,
-        "fat": 0.2,
-        "carbs": 10.9,
-        "calcium": 26,
-        "iron": 0.3,
-        "vitC": 30.0,
-        "portions": [
-            {
-                "id": "med_orange",
-                "label": "1 Medium Orange (~100g pulp)",
-                "grams": 100
-            },
-            {
-                "id": "glass_juice",
-                "label": "1 Glass Fresh Juice (~150g)",
-                "grams": 150
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "papaya",
-        "name": "Papaya (Ripe, Vit A & C)",
-        "category": "Fruits",
-        "calories": 32,
-        "protein": 0.6,
-        "fat": 0.1,
-        "carbs": 7.2,
-        "calcium": 17,
-        "iron": 0.5,
-        "vitC": 57.0,
-        "portions": [
-            {
-                "id": "katori_pieces",
-                "label": "1 Katori Diced Papaya (~120g)",
-                "grams": 120
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "mango",
-        "name": "Mango (Ripe)",
-        "category": "Fruits",
-        "calories": 74,
-        "protein": 0.6,
-        "fat": 0.4,
-        "carbs": 16.9,
-        "calcium": 14,
-        "iron": 1.3,
-        "vitC": 16.0,
-        "portions": [
-            {
-                "id": "med_mango",
-                "label": "1 Medium Mango Pulp (~120g)",
-                "grams": 120
-            },
-            {
-                "id": "katori_pulp",
-                "label": "1 Katori Diced (~100g)",
-                "grams": 100
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "apple",
-        "name": "Apple (Seb)",
-        "category": "Fruits",
-        "calories": 59,
-        "protein": 0.2,
-        "fat": 0.5,
-        "carbs": 13.4,
-        "calcium": 10,
-        "iron": 0.7,
-        "vitC": 1.0,
-        "portions": [
-            {
-                "id": "med_apple",
-                "label": "1 Medium Apple (~120g)",
-                "grams": 120
-            },
-            {
-                "id": "half",
-                "label": "1/2 Apple (~60g)",
-                "grams": 60
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "milk_cow",
-        "name": "Milk (Cow's Milk)",
-        "category": "Milk & Dairy",
-        "calories": 67,
-        "protein": 3.2,
-        "fat": 4.1,
-        "carbs": 4.4,
-        "calcium": 120,
-        "iron": 0.1,
-        "vitC": 2.0,
-        "portions": [
-            {
-                "id": "glass",
-                "label": "1 Glass (200 ml)",
-                "grams": 200
-            },
-            {
-                "id": "cup",
-                "label": "1 Tea Cup (100 ml)",
-                "grams": 100
-            },
-            {
-                "id": "half_glass",
-                "label": "1/2 Glass (100 ml)",
-                "grams": 100
-            },
-            {
-                "id": "tbsp",
-                "label": "In Tea (2 tbsp = ~30 ml)",
-                "grams": 30
-            },
-            {
-                "id": "g",
-                "label": "ml / grams",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "milk_buffalo",
-        "name": "Milk (Buffalo's Milk - High Fat/Ca)",
-        "category": "Milk & Dairy",
-        "calories": 117,
-        "protein": 4.3,
-        "fat": 6.5,
-        "carbs": 5.0,
-        "calcium": 210,
-        "iron": 0.2,
-        "vitC": 1.0,
-        "portions": [
-            {
-                "id": "glass",
-                "label": "1 Glass (200 ml)",
-                "grams": 200
-            },
-            {
-                "id": "cup",
-                "label": "1 Tea Cup (100 ml)",
-                "grams": 100
-            },
-            {
-                "id": "tbsp",
-                "label": "In Tea (2 tbsp = ~30 ml)",
-                "grams": 30
-            },
-            {
-                "id": "g",
-                "label": "ml / grams",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "milk_toned",
-        "name": "Milk (Toned Milk 3% Fat)",
-        "category": "Milk & Dairy",
-        "calories": 58,
-        "protein": 3.0,
-        "fat": 3.0,
-        "carbs": 4.7,
-        "calcium": 110,
-        "iron": 0.1,
-        "vitC": 1.0,
-        "portions": [
-            {
-                "id": "glass",
-                "label": "1 Glass (200 ml)",
-                "grams": 200
-            },
-            {
-                "id": "cup",
-                "label": "1 Tea Cup (100 ml)",
-                "grams": 100
-            },
-            {
-                "id": "g",
-                "label": "ml / grams",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "curd_dahi",
-        "name": "Curd / Dahi (Plain / Homemade)",
-        "category": "Milk & Dairy",
-        "calories": 60,
-        "protein": 3.1,
-        "fat": 4.0,
-        "carbs": 3.0,
-        "calcium": 149,
-        "iron": 0.2,
-        "vitC": 1.0,
-        "portions": [
-            {
-                "id": "katori",
-                "label": "1 Katori Curd (~100g)",
-                "grams": 100
-            },
-            {
-                "id": "glass_chach",
-                "label": "1 Glass Buttermilk / Chach (~50g curd diluted)",
-                "grams": 50
-            },
-            {
-                "id": "g",
-                "label": "Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "paneer",
-        "name": "Paneer / Cottage Cheese",
-        "category": "Milk & Dairy",
-        "calories": 265,
-        "protein": 18.3,
-        "fat": 20.8,
-        "carbs": 1.2,
-        "calcium": 208,
-        "iron": 0.4,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "portion",
-                "label": "1 Serving in Sabzi (~40g)",
-                "grams": 40
-            },
-            {
-                "id": "katori_cooked",
-                "label": "Cooked Paneer Sabzi (1 Katori = ~60g paneer)",
-                "grams": 60
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "butter",
-        "name": "Butter (Makhan)",
-        "category": "Milk & Dairy",
-        "calories": 717,
-        "protein": 0.9,
-        "fat": 81.0,
-        "carbs": 0.1,
-        "calcium": 24,
-        "iron": 0.2,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "tsp",
-                "label": "1 Teaspoon (~5g)",
-                "grams": 5
-            },
-            {
-                "id": "tbsp",
-                "label": "1 Tablespoon (~15g)",
-                "grams": 15
-            },
-            {
-                "id": "g",
-                "label": "Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "ghee",
-        "name": "Ghee / Desi Ghee",
-        "category": "Fats & Oils",
-        "calories": 900,
-        "protein": 0,
-        "fat": 100.0,
-        "carbs": 0,
-        "calcium": 0,
-        "iron": 0,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "tsp",
-                "label": "1 Teaspoon on Roti/Dal (~5g)",
-                "grams": 5
-            },
-            {
-                "id": "tbsp",
-                "label": "1 Tablespoon (~15g)",
-                "grams": 15
-            },
-            {
-                "id": "g",
-                "label": "Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "egg_whole",
-        "name": "Egg (Whole Hen's Egg - 6g Protein)",
-        "category": "Egg & Meat",
-        "calories": 173,
-        "protein": 13.3,
-        "fat": 13.3,
-        "carbs": 0,
-        "calcium": 60,
-        "iron": 2.1,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "one_egg",
-                "label": "1 Whole Boiled / Poached Egg (~50g)",
-                "grams": 50
-            },
-            {
-                "id": "two_eggs",
-                "label": "2 Whole Eggs (~100g)",
-                "grams": 100
-            },
-            {
-                "id": "omelette",
-                "label": "1 Egg Omelette (~50g + oil)",
-                "grams": 50
-            },
-            {
-                "id": "g",
-                "label": "Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "egg_white",
-        "name": "Egg White (Fat-Free Protein)",
-        "category": "Egg & Meat",
-        "calories": 44,
-        "protein": 10.9,
-        "fat": 0.2,
-        "carbs": 0.7,
-        "calcium": 7,
-        "iron": 0.1,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "one_white",
-                "label": "1 Egg White (~33g)",
-                "grams": 33
-            },
-            {
-                "id": "two_whites",
-                "label": "2 Egg Whites (~66g)",
-                "grams": 66
-            },
-            {
-                "id": "g",
-                "label": "Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "chicken_lean",
-        "name": "Chicken (Lean / Breast Meat)",
-        "category": "Egg & Meat",
-        "calories": 109,
-        "protein": 25.9,
-        "fat": 0.6,
-        "carbs": 0,
-        "calcium": 15,
-        "iron": 1.3,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "piece_med",
-                "label": "1 Medium Piece (~50g)",
-                "grams": 50
-            },
-            {
-                "id": "katori_curry",
-                "label": "In Curry (1 Katori = ~75g chicken)",
-                "grams": 75
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "fish_freshwater",
-        "name": "Fish (Freshwater / Rohu / Katla)",
-        "category": "Egg & Meat",
-        "calories": 97,
-        "protein": 16.6,
-        "fat": 1.4,
-        "carbs": 4.4,
-        "calcium": 650,
-        "iron": 1.0,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "piece_fish",
-                "label": "1 Medium Fried/Curry Piece (~60g)",
-                "grams": 60
-            },
-            {
-                "id": "two_pieces",
-                "label": "2 Pieces (~120g)",
-                "grams": 120
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "mutton",
-        "name": "Mutton / Goat Meat",
-        "category": "Egg & Meat",
-        "calories": 118,
-        "protein": 21.4,
-        "fat": 3.6,
-        "carbs": 0,
-        "calcium": 12,
-        "iron": 2.5,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "piece_mutton",
-                "label": "1 Piece (~40g)",
-                "grams": 40
-            },
-            {
-                "id": "katori_curry",
-                "label": "In Curry (1 Katori = ~80g meat)",
-                "grams": 80
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "groundnuts",
-        "name": "Groundnuts / Peanuts (High Protein & Kcal)",
-        "category": "Nuts & Oilseeds",
-        "calories": 567,
-        "protein": 25.3,
-        "fat": 40.1,
-        "carbs": 26.1,
-        "calcium": 90,
-        "iron": 2.5,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "handful",
-                "label": "1 Handful / Roasted Snack (~30g)",
-                "grams": 30
-            },
-            {
-                "id": "tbsp",
-                "label": "1 Tablespoon (~15g)",
-                "grams": 15
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "sesame_seeds",
-        "name": "Sesame Seeds / Til (Highest Calcium)",
-        "category": "Nuts & Oilseeds",
-        "calories": 563,
-        "protein": 18.3,
-        "fat": 43.3,
-        "carbs": 25.0,
-        "calcium": 1450,
-        "iron": 9.3,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "tsp",
-                "label": "1 Teaspoon (~5g)",
-                "grams": 5
-            },
-            {
-                "id": "tbsp",
-                "label": "1 Tablespoon / Laddoo (~15g)",
-                "grams": 15
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "almonds",
-        "name": "Almonds / Badam",
-        "category": "Nuts & Oilseeds",
-        "calories": 655,
-        "protein": 20.8,
-        "fat": 58.9,
-        "carbs": 10.5,
-        "calcium": 230,
-        "iron": 5.1,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "five_almonds",
-                "label": "4-5 Almonds (soaked ~6g)",
-                "grams": 6
-            },
-            {
-                "id": "ten_almonds",
-                "label": "10 Almonds (~12g)",
-                "grams": 12
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "cooking_oil",
-        "name": "Cooking Oil (Mustard / Refined / Sunflower)",
-        "category": "Fats & Oils",
-        "calories": 900,
-        "protein": 0,
-        "fat": 100.0,
-        "carbs": 0,
-        "calcium": 0,
-        "iron": 0,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "tsp",
-                "label": "1 Teaspoon (Visible Fat = 5g)",
-                "grams": 5
-            },
-            {
-                "id": "tbsp",
-                "label": "1 Tablespoon (15g)",
-                "grams": 15
-            },
-            {
-                "id": "ladle",
-                "label": "Small Ladle in Cooking (~20g)",
-                "grams": 20
-            },
-            {
-                "id": "g",
-                "label": "Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "sugar",
-        "name": "Sugar (White Refined)",
-        "category": "Sugars & Sweets",
-        "calories": 398,
-        "protein": 0.1,
-        "fat": 0,
-        "carbs": 99.4,
-        "calcium": 12,
-        "iron": 0.1,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "tsp",
-                "label": "1 Level Teaspoon in Tea (~5g)",
-                "grams": 5
-            },
-            {
-                "id": "tsp_heap",
-                "label": "1 Heaped Teaspoon (~7.5g)",
-                "grams": 7.5
-            },
-            {
-                "id": "tbsp",
-                "label": "1 Tablespoon (~15g)",
-                "grams": 15
-            },
-            {
-                "id": "g",
-                "label": "Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "jaggery",
-        "name": "Jaggery / Gur (Traditional Iron Source)",
-        "category": "Sugars & Sweets",
-        "calories": 383,
-        "protein": 0.4,
-        "fat": 0.1,
-        "carbs": 95.0,
-        "calcium": 80,
-        "iron": 2.6,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "small_cube",
-                "label": "1 Small Piece / Cube (~15g)",
-                "grams": 15
-            },
-            {
-                "id": "tsp",
-                "label": "1 Teaspoon Grated (~5g)",
-                "grams": 5
-            },
-            {
-                "id": "g",
-                "label": "Raw Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "snack_idli",
-        "name": "Idli (Steamed Rice-Urad Cake)",
-        "category": "Cooked Snacks",
-        "calories": 134,
-        "protein": 4.0,
-        "fat": 0.4,
-        "carbs": 28.6,
-        "calcium": 24,
-        "iron": 1.0,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "one_idli",
-                "label": "1 Medium Idli (~50g)",
-                "grams": 50
-            },
-            {
-                "id": "two_idlis",
-                "label": "2 Idlis (~100g)",
-                "grams": 100
-            },
-            {
-                "id": "three_idlis",
-                "label": "3 Idlis (~150g)",
-                "grams": 150
-            },
-            {
-                "id": "g",
-                "label": "Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "snack_dosa",
-        "name": "Plain Dosa",
-        "category": "Cooked Snacks",
-        "calories": 224,
-        "protein": 5.2,
-        "fat": 5.0,
-        "carbs": 38.6,
-        "calcium": 22,
-        "iron": 1.4,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "one_dosa",
-                "label": "1 Medium Dosa (~75g)",
-                "grams": 75
-            },
-            {
-                "id": "g",
-                "label": "Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "snack_samosa",
-        "name": "Samosa (Fried Potato Snack)",
-        "category": "Cooked Snacks",
-        "calories": 341,
-        "protein": 4.6,
-        "fat": 22.6,
-        "carbs": 29.3,
-        "calcium": 26,
-        "iron": 1.6,
-        "vitC": 5.0,
-        "portions": [
-            {
-                "id": "one_samosa",
-                "label": "1 Medium Samosa (~75g)",
-                "grams": 75
-            },
-            {
-                "id": "g",
-                "label": "Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "snack_biscuit",
-        "name": "Biscuits (Sweet / Marie / Glucose)",
-        "category": "Cooked Snacks",
-        "calories": 450,
-        "protein": 7.0,
-        "fat": 15.0,
-        "carbs": 72.0,
-        "calcium": 30,
-        "iron": 2.0,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "two_biscuits",
-                "label": "2 Biscuits (~20g)",
-                "grams": 20
-            },
-            {
-                "id": "four_biscuits",
-                "label": "4 Biscuits (~40g)",
-                "grams": 40
-            },
-            {
-                "id": "one_biscuit",
-                "label": "1 Biscuit (~10g)",
-                "grams": 10
-            },
-            {
-                "id": "g",
-                "label": "Grams (g)",
-                "grams": 1
-            }
-        ]
-    },
-    {
-        "id": "snack_bread",
-        "name": "Bread (White / Brown Slices)",
-        "category": "Cooked Snacks",
-        "calories": 260,
-        "protein": 8.0,
-        "fat": 3.2,
-        "carbs": 50.0,
-        "calcium": 60,
-        "iron": 2.4,
-        "vitC": 0,
-        "portions": [
-            {
-                "id": "one_slice",
-                "label": "1 Slice (~25g)",
-                "grams": 25
-            },
-            {
-                "id": "two_slices",
-                "label": "2 Slices (~50g)",
-                "grams": 50
-            },
-            {
-                "id": "g",
-                "label": "Grams (g)",
-                "grams": 1
-            }
-        ]
-    }
+  {
+    "id": "wheat_atta",
+    "name": "Wheat flour, atta (whole wheat)",
+    "category": "Cereals & Millets",
+    "ifctCode": "A019",
+    "source": "IFCT 2017",
+    "calories": 320,
+    "protein": 10.57,
+    "fat": 1.53,
+    "carbs": 64.17,
+    "calcium": 30.94,
+    "iron": 4.1,
+    "vitC": 0.0,
+    "folate": 29.2,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "roti_med",
+        "label": "Medium phulka / roti (~25 g atta)",
+        "grams": 25,
+        "rawEquivalent": true
+      },
+      {
+        "id": "roti_lg",
+        "label": "Large roti / paratha (~40 g atta)",
+        "grams": 40,
+        "rawEquivalent": true
+      },
+      {
+        "id": "puri",
+        "label": "Puri (~20 g atta, flour only)",
+        "grams": 20,
+        "rawEquivalent": true
+      },
+      {
+        "id": "katori_flour",
+        "label": "Flour, 1 katori (~100 g)",
+        "grams": 100,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "rice_raw",
+    "name": "Rice, raw, milled (white)",
+    "category": "Cereals & Millets",
+    "ifctCode": "A015",
+    "source": "IFCT 2017",
+    "calories": 356,
+    "protein": 7.94,
+    "fat": 0.52,
+    "carbs": 78.24,
+    "calcium": 7.49,
+    "iron": 0.65,
+    "vitC": 0.0,
+    "folate": 9.3,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_cooked",
+        "label": "Cooked rice, 1 katori (~50 g raw)",
+        "grams": 50,
+        "rawEquivalent": true
+      },
+      {
+        "id": "half_katori",
+        "label": "Cooked rice, 1/2 katori (~25 g raw)",
+        "grams": 25,
+        "rawEquivalent": true
+      },
+      {
+        "id": "plate_cooked",
+        "label": "Cooked rice, 1 plate (~100 g raw)",
+        "grams": 100,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "rice_parboiled",
+    "name": "Rice, parboiled, milled",
+    "category": "Cereals & Millets",
+    "ifctCode": "A014",
+    "source": "IFCT 2017",
+    "calories": 352,
+    "protein": 7.81,
+    "fat": 0.55,
+    "carbs": 77.16,
+    "calcium": 8.11,
+    "iron": 0.72,
+    "vitC": 0.0,
+    "folate": 9.8,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_cooked",
+        "label": "Cooked rice, 1 katori (~50 g raw)",
+        "grams": 50,
+        "rawEquivalent": true
+      },
+      {
+        "id": "plate_cooked",
+        "label": "Cooked rice, 1 plate (~100 g raw)",
+        "grams": 100,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "poha",
+    "name": "Rice flakes (poha)",
+    "category": "Cereals & Millets",
+    "ifctCode": "A011",
+    "source": "IFCT 2017",
+    "calories": 354,
+    "protein": 7.44,
+    "fat": 1.14,
+    "carbs": 76.75,
+    "calcium": 9.19,
+    "iron": 4.46,
+    "vitC": 0.0,
+    "folate": 8.5,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_dry",
+        "label": "Raw poha, 1 katori (~40 g)",
+        "grams": 40,
+        "rawEquivalent": true
+      },
+      {
+        "id": "plate_cooked",
+        "label": "Cooked poha, 1 plate (~50 g raw)",
+        "grams": 50,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "murmura",
+    "name": "Rice, puffed (murmura)",
+    "category": "Cereals & Millets",
+    "ifctCode": "A012",
+    "source": "IFCT 2017",
+    "calories": 362,
+    "protein": 7.47,
+    "fat": 1.62,
+    "carbs": 77.68,
+    "calcium": 15.09,
+    "iron": 4.55,
+    "vitC": 0.0,
+    "folate": 0.0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~20 g)",
+        "grams": 20,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "ragi",
+    "name": "Ragi / finger millet",
+    "category": "Cereals & Millets",
+    "ifctCode": "A010",
+    "source": "IFCT 2017",
+    "calories": 321,
+    "protein": 7.16,
+    "fat": 1.92,
+    "carbs": 66.82,
+    "calcium": 364.0,
+    "iron": 4.62,
+    "vitC": 0.0,
+    "folate": 34.7,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "roti_ragi",
+        "label": "Ragi roti / mudde (~35 g flour)",
+        "grams": 35,
+        "rawEquivalent": true
+      },
+      {
+        "id": "katori_flour",
+        "label": "Flour, 1 katori (~100 g)",
+        "grams": 100,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "bajra",
+    "name": "Bajra / pearl millet",
+    "category": "Cereals & Millets",
+    "ifctCode": "A003",
+    "source": "IFCT 2017",
+    "calories": 348,
+    "protein": 10.96,
+    "fat": 5.43,
+    "carbs": 61.78,
+    "calcium": 27.35,
+    "iron": 6.42,
+    "vitC": 0.0,
+    "folate": 36.1,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "roti_bajra",
+        "label": "Bajra roti (~40 g flour)",
+        "grams": 40,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "jowar",
+    "name": "Jowar / sorghum",
+    "category": "Cereals & Millets",
+    "ifctCode": "A005",
+    "source": "IFCT 2017",
+    "calories": 334,
+    "protein": 9.97,
+    "fat": 1.73,
+    "carbs": 67.68,
+    "calcium": 27.6,
+    "iron": 3.95,
+    "vitC": 0.0,
+    "folate": 39.4,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "roti_jowar",
+        "label": "Jowar bhakri / roti (~40 g flour)",
+        "grams": 40,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "suji",
+    "name": "Wheat, semolina (suji / rava)",
+    "category": "Cereals & Millets",
+    "ifctCode": "A022",
+    "source": "IFCT 2017",
+    "calories": 334,
+    "protein": 11.38,
+    "fat": 0.74,
+    "carbs": 68.43,
+    "calcium": 29.38,
+    "iron": 2.98,
+    "vitC": 0.0,
+    "folate": 25.7,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_cooked",
+        "label": "Upma / halwa, 1 katori (~40 g suji)",
+        "grams": 40,
+        "rawEquivalent": true
+      },
+      {
+        "id": "tbsp",
+        "label": "1 tablespoon (~15 g)",
+        "grams": 15,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "maida",
+    "name": "Wheat flour, refined (maida)",
+    "category": "Cereals & Millets",
+    "ifctCode": "A018",
+    "source": "IFCT 2017",
+    "calories": 352,
+    "protein": 10.36,
+    "fat": 0.76,
+    "carbs": 74.27,
+    "calcium": 20.4,
+    "iron": 1.77,
+    "vitC": 0.0,
+    "folate": 16.2,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "naan",
+        "label": "Naan / bhatura flour (~60 g maida)",
+        "grams": 60,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "dal_toor",
+    "name": "Red gram dal (toor / arhar)",
+    "category": "Pulses & Legumes",
+    "ifctCode": "B021",
+    "source": "IFCT 2017",
+    "calories": 331,
+    "protein": 21.7,
+    "fat": 1.56,
+    "carbs": 55.23,
+    "calcium": 71.73,
+    "iron": 3.9,
+    "vitC": 0.0,
+    "folate": 108.0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_med",
+        "label": "Cooked dal, 1 medium katori (~25 g raw)",
+        "grams": 25,
+        "rawEquivalent": true
+      },
+      {
+        "id": "katori_thin",
+        "label": "Cooked dal, thin, 1 katori (~15 g raw)",
+        "grams": 15,
+        "rawEquivalent": true
+      },
+      {
+        "id": "katori_thick",
+        "label": "Cooked dal, thick, 1 katori (~35 g raw)",
+        "grams": 35,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "dal_moong",
+    "name": "Green gram dal (moong, split)",
+    "category": "Pulses & Legumes",
+    "ifctCode": "B010",
+    "source": "IFCT 2017",
+    "calories": 326,
+    "protein": 23.88,
+    "fat": 1.35,
+    "carbs": 52.59,
+    "calcium": 43.13,
+    "iron": 3.93,
+    "vitC": 0.0,
+    "folate": 92.1,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_med",
+        "label": "Cooked dal, 1 medium katori (~25 g raw)",
+        "grams": 25,
+        "rawEquivalent": true
+      },
+      {
+        "id": "katori_thin",
+        "label": "Cooked dal, thin, 1 katori (~15 g raw)",
+        "grams": 15,
+        "rawEquivalent": true
+      },
+      {
+        "id": "katori_thick",
+        "label": "Cooked dal, thick, 1 katori (~35 g raw)",
+        "grams": 35,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "moong_whole",
+    "name": "Green gram, whole (moong)",
+    "category": "Pulses & Legumes",
+    "ifctCode": "B011",
+    "source": "IFCT 2017",
+    "calories": 294,
+    "protein": 22.53,
+    "fat": 1.14,
+    "carbs": 46.13,
+    "calcium": 92.43,
+    "iron": 4.89,
+    "vitC": 0.0,
+    "folate": 145.0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_cooked",
+        "label": "Cooked whole moong, 1 katori (~30 g raw)",
+        "grams": 30,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "dal_chana",
+    "name": "Bengal gram dal (chana dal)",
+    "category": "Pulses & Legumes",
+    "ifctCode": "B001",
+    "source": "IFCT 2017",
+    "calories": 329,
+    "protein": 21.55,
+    "fat": 5.31,
+    "carbs": 46.72,
+    "calcium": 46.32,
+    "iron": 6.08,
+    "vitC": 0.0,
+    "folate": 182.0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_med",
+        "label": "Cooked dal, 1 medium katori (~25 g raw)",
+        "grams": 25,
+        "rawEquivalent": true
+      },
+      {
+        "id": "katori_thin",
+        "label": "Cooked dal, thin, 1 katori (~15 g raw)",
+        "grams": 15,
+        "rawEquivalent": true
+      },
+      {
+        "id": "katori_thick",
+        "label": "Cooked dal, thick, 1 katori (~35 g raw)",
+        "grams": 35,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "kala_chana",
+    "name": "Bengal gram, whole (kala chana / sattu base)",
+    "category": "Pulses & Legumes",
+    "ifctCode": "B002",
+    "source": "IFCT 2017",
+    "calories": 287,
+    "protein": 18.77,
+    "fat": 5.11,
+    "carbs": 39.56,
+    "calcium": 150.0,
+    "iron": 6.78,
+    "vitC": 0.0,
+    "folate": 233.0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_cooked",
+        "label": "Cooked chana, 1 katori (~35 g raw)",
+        "grams": 35,
+        "rawEquivalent": true
+      },
+      {
+        "id": "sattu_30",
+        "label": "Sattu / roasted flour, 2 tbsp (~30 g)",
+        "grams": 30,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "dal_masoor",
+    "name": "Lentil dal (masoor)",
+    "category": "Pulses & Legumes",
+    "ifctCode": "B013",
+    "source": "IFCT 2017",
+    "calories": 322,
+    "protein": 24.35,
+    "fat": 0.75,
+    "carbs": 52.53,
+    "calcium": 44.32,
+    "iron": 7.06,
+    "vitC": 0.0,
+    "folate": 50.0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_med",
+        "label": "Cooked dal, 1 medium katori (~25 g raw)",
+        "grams": 25,
+        "rawEquivalent": true
+      },
+      {
+        "id": "katori_thin",
+        "label": "Cooked dal, thin, 1 katori (~15 g raw)",
+        "grams": 15,
+        "rawEquivalent": true
+      },
+      {
+        "id": "katori_thick",
+        "label": "Cooked dal, thick, 1 katori (~35 g raw)",
+        "grams": 35,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "dal_urad",
+    "name": "Black gram dal (urad)",
+    "category": "Pulses & Legumes",
+    "ifctCode": "B003",
+    "source": "IFCT 2017",
+    "calories": 324,
+    "protein": 23.06,
+    "fat": 1.69,
+    "carbs": 51.0,
+    "calcium": 55.67,
+    "iron": 4.67,
+    "vitC": 0.0,
+    "folate": 88.8,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_med",
+        "label": "Cooked dal, 1 medium katori (~25 g raw)",
+        "grams": 25,
+        "rawEquivalent": true
+      },
+      {
+        "id": "katori_thin",
+        "label": "Cooked dal, thin, 1 katori (~15 g raw)",
+        "grams": 15,
+        "rawEquivalent": true
+      },
+      {
+        "id": "katori_thick",
+        "label": "Cooked dal, thick, 1 katori (~35 g raw)",
+        "grams": 35,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "rajma",
+    "name": "Rajmah, red (kidney beans)",
+    "category": "Pulses & Legumes",
+    "ifctCode": "B020",
+    "source": "IFCT 2017",
+    "calories": 299,
+    "protein": 19.91,
+    "fat": 1.77,
+    "carbs": 48.61,
+    "calcium": 126.0,
+    "iron": 6.13,
+    "vitC": 0.0,
+    "folate": 316.0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_cooked",
+        "label": "Cooked rajma, 1 katori (~35 g raw)",
+        "grams": 35,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "soya_bean",
+    "name": "Soya bean, white",
+    "category": "Pulses & Legumes",
+    "ifctCode": "B025",
+    "source": "IFCT 2017",
+    "calories": 377,
+    "protein": 37.8,
+    "fat": 19.42,
+    "carbs": 10.16,
+    "calcium": 195.0,
+    "iron": 8.22,
+    "vitC": 0.0,
+    "folate": 288.0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_cooked",
+        "label": "Cooked soya, 1 katori (~30 g raw)",
+        "grams": 30,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "besan",
+    "name": "Bengal gram dal flour (besan)",
+    "category": "Pulses & Legumes",
+    "ifctCode": "B001",
+    "source": "IFCT 2017",
+    "calories": 329,
+    "protein": 21.55,
+    "fat": 5.31,
+    "carbs": 46.72,
+    "calcium": 46.32,
+    "iron": 6.08,
+    "vitC": 0.0,
+    "folate": 182.0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "tbsp",
+        "label": "1 tablespoon (~10 g)",
+        "grams": 10,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "spinach",
+    "name": "Spinach / palak (raw IFCT values)",
+    "category": "Green Leafy Vegetables",
+    "ifctCode": "C033",
+    "source": "IFCT 2017",
+    "calories": 24,
+    "protein": 2.14,
+    "fat": 0.64,
+    "carbs": 2.05,
+    "calcium": 82.29,
+    "iron": 2.95,
+    "vitC": 30.28,
+    "folate": 142.0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_cooked",
+        "label": "Cooked sabzi, 1 katori (~100 g raw)",
+        "grams": 100,
+        "rawEquivalent": true
+      },
+      {
+        "id": "half_katori",
+        "label": "Cooked sabzi, 1/2 katori (~50 g raw)",
+        "grams": 50,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "methi_leaves",
+    "name": "Fenugreek leaves / methi",
+    "category": "Green Leafy Vegetables",
+    "ifctCode": "C020",
+    "source": "IFCT 2017",
+    "calories": 34,
+    "protein": 3.68,
+    "fat": 0.83,
+    "carbs": 2.17,
+    "calcium": 274.0,
+    "iron": 5.69,
+    "vitC": 58.25,
+    "folate": 75.3,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_cooked",
+        "label": "Cooked sabzi, 1 katori (~100 g raw)",
+        "grams": 100,
+        "rawEquivalent": true
+      },
+      {
+        "id": "half_katori",
+        "label": "Cooked sabzi, 1/2 katori (~50 g raw)",
+        "grams": 50,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "drumstick_leaves",
+    "name": "Drumstick leaves / moringa",
+    "category": "Green Leafy Vegetables",
+    "ifctCode": "C019",
+    "source": "IFCT 2017",
+    "calories": 67,
+    "protein": 6.41,
+    "fat": 1.64,
+    "carbs": 5.62,
+    "calcium": 314.0,
+    "iron": 4.56,
+    "vitC": 108.0,
+    "folate": 42.9,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_cooked",
+        "label": "Cooked sabzi, 1 katori (~100 g raw)",
+        "grams": 100,
+        "rawEquivalent": true
+      },
+      {
+        "id": "half_katori",
+        "label": "Cooked sabzi, 1/2 katori (~50 g raw)",
+        "grams": 50,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "mustard_leaves",
+    "name": "Mustard leaves / sarson",
+    "category": "Green Leafy Vegetables",
+    "ifctCode": "C026",
+    "source": "IFCT 2017",
+    "calories": 30,
+    "protein": 3.52,
+    "fat": 0.51,
+    "carbs": 2.41,
+    "calcium": 191.0,
+    "iron": 2.84,
+    "vitC": 60.32,
+    "folate": 110.0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_cooked",
+        "label": "Cooked sabzi, 1 katori (~100 g raw)",
+        "grams": 100,
+        "rawEquivalent": true
+      },
+      {
+        "id": "half_katori",
+        "label": "Cooked sabzi, 1/2 katori (~50 g raw)",
+        "grams": 50,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "amaranth_leaves",
+    "name": "Amaranth leaves, green / chaulai",
+    "category": "Green Leafy Vegetables",
+    "ifctCode": "C002",
+    "source": "IFCT 2017",
+    "calories": 31,
+    "protein": 3.29,
+    "fat": 0.65,
+    "carbs": 2.28,
+    "calcium": 330.0,
+    "iron": 4.64,
+    "vitC": 83.54,
+    "folate": 70.3,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_cooked",
+        "label": "Cooked sabzi, 1 katori (~100 g raw)",
+        "grams": 100,
+        "rawEquivalent": true
+      },
+      {
+        "id": "half_katori",
+        "label": "Cooked sabzi, 1/2 katori (~50 g raw)",
+        "grams": 50,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "potato",
+    "name": "Potato, brown skin",
+    "category": "Roots & Tubers",
+    "ifctCode": "F006",
+    "source": "IFCT 2017",
+    "calories": 70,
+    "protein": 1.54,
+    "fat": 0.23,
+    "carbs": 14.89,
+    "calcium": 9.52,
+    "iron": 0.57,
+    "vitC": 23.15,
+    "folate": 15.5,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_sabzi",
+        "label": "Sabzi, 1 katori (~60 g)",
+        "grams": 60,
+        "rawEquivalent": true
+      },
+      {
+        "id": "med",
+        "label": "1 medium potato (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "onion",
+    "name": "Onion, big",
+    "category": "Other Vegetables",
+    "ifctCode": "G017",
+    "source": "IFCT 2017",
+    "calories": 48,
+    "protein": 1.5,
+    "fat": 0.24,
+    "carbs": 9.56,
+    "calcium": 21.03,
+    "iron": 0.43,
+    "vitC": 6.69,
+    "folate": 28.9,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "med_onion",
+        "label": "1 medium onion (~60 g)",
+        "grams": 60,
+        "rawEquivalent": true
+      },
+      {
+        "id": "salad",
+        "label": "Salad / cooking (~30 g)",
+        "grams": 30,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "carrot",
+    "name": "Carrot, orange",
+    "category": "Roots & Tubers",
+    "ifctCode": "F002",
+    "source": "IFCT 2017",
+    "calories": 33,
+    "protein": 0.95,
+    "fat": 0.47,
+    "carbs": 5.55,
+    "calcium": 35.09,
+    "iron": 0.6,
+    "vitC": 6.22,
+    "folate": 24.0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "med_carrot",
+        "label": "1 medium carrot (~70 g)",
+        "grams": 70,
+        "rawEquivalent": true
+      },
+      {
+        "id": "katori_sabzi",
+        "label": "Sabzi / salad, 1 katori (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "sweet_potato",
+    "name": "Sweet potato, brown skin",
+    "category": "Roots & Tubers",
+    "ifctCode": "F013",
+    "source": "IFCT 2017",
+    "calories": 109,
+    "protein": 1.33,
+    "fat": 0.26,
+    "carbs": 24.25,
+    "calcium": 27.5,
+    "iron": 0.35,
+    "vitC": 17.94,
+    "folate": 15.6,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "med",
+        "label": "1 medium (~100 g)",
+        "grams": 100,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "tomato",
+    "name": "Tomato, ripe, hybrid",
+    "category": "Other Vegetables",
+    "ifctCode": "D075",
+    "source": "IFCT 2017",
+    "calories": 19,
+    "protein": 0.76,
+    "fat": 0.25,
+    "carbs": 3.2,
+    "calcium": 8.9,
+    "iron": 0.22,
+    "vitC": 25.27,
+    "folate": 15.4,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "med",
+        "label": "1 medium tomato (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "katori",
+        "label": "1 katori (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "cauliflower",
+    "name": "Cauliflower",
+    "category": "Other Vegetables",
+    "ifctCode": "D036",
+    "source": "IFCT 2017",
+    "calories": 23,
+    "protein": 2.15,
+    "fat": 0.44,
+    "carbs": 2.03,
+    "calcium": 25.16,
+    "iron": 0.96,
+    "vitC": 47.14,
+    "folate": 45.9,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "cabbage",
+    "name": "Cabbage, green",
+    "category": "Other Vegetables",
+    "ifctCode": "C015",
+    "source": "IFCT 2017",
+    "calories": 22,
+    "protein": 1.36,
+    "fat": 0.12,
+    "carbs": 3.25,
+    "calcium": 51.76,
+    "iron": 0.35,
+    "vitC": 33.25,
+    "folate": 46.4,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "bhindi",
+    "name": "Ladies finger / bhindi / okra",
+    "category": "Other Vegetables",
+    "ifctCode": "D056",
+    "source": "IFCT 2017",
+    "calories": 27,
+    "protein": 2.08,
+    "fat": 0.22,
+    "carbs": 3.62,
+    "calcium": 86.12,
+    "iron": 0.84,
+    "vitC": 22.51,
+    "folate": 63.7,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "lauki",
+    "name": "Bottle gourd / lauki",
+    "category": "Other Vegetables",
+    "ifctCode": "D007",
+    "source": "IFCT 2017",
+    "calories": 11,
+    "protein": 0.53,
+    "fat": 0.13,
+    "carbs": 1.68,
+    "calcium": 15.42,
+    "iron": 0.26,
+    "vitC": 4.33,
+    "folate": 42.0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "green_peas",
+    "name": "Peas, fresh (matar)",
+    "category": "Other Vegetables",
+    "ifctCode": "D061",
+    "source": "IFCT 2017",
+    "calories": 81,
+    "protein": 7.25,
+    "fat": 0.13,
+    "carbs": 11.88,
+    "calcium": 28.24,
+    "iron": 1.58,
+    "vitC": 38.4,
+    "folate": 54.8,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "brinjal",
+    "name": "Brinjal / baingan (all varieties)",
+    "category": "Other Vegetables",
+    "ifctCode": "D031",
+    "source": "IFCT 2017",
+    "calories": 25,
+    "protein": 1.48,
+    "fat": 0.32,
+    "carbs": 3.52,
+    "calcium": 16.59,
+    "iron": 0.37,
+    "vitC": 2.09,
+    "folate": 33.9,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "cucumber",
+    "name": "Cucumber, green",
+    "category": "Other Vegetables",
+    "ifctCode": "D043",
+    "source": "IFCT 2017",
+    "calories": 20,
+    "protein": 0.71,
+    "fat": 0.16,
+    "carbs": 3.48,
+    "calcium": 16.39,
+    "iron": 0.46,
+    "vitC": 6.11,
+    "folate": 16.8,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "salad",
+        "label": "Salad, 1 katori (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "banana",
+    "name": "Banana, ripe, robusta",
+    "category": "Fruits",
+    "ifctCode": "E012",
+    "source": "IFCT 2017",
+    "calories": 105,
+    "protein": 1.23,
+    "fat": 0.33,
+    "carbs": 23.63,
+    "calcium": 5.07,
+    "iron": 0.28,
+    "vitC": 4.76,
+    "folate": 16.8,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "one",
+        "label": "1 medium banana (~100 g pulp)",
+        "grams": 100,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "guava",
+    "name": "Guava, white flesh",
+    "category": "Fruits",
+    "ifctCode": "E028",
+    "source": "IFCT 2017",
+    "calories": 32,
+    "protein": 1.44,
+    "fat": 0.32,
+    "carbs": 5.13,
+    "calcium": 18.52,
+    "iron": 0.32,
+    "vitC": 214.0,
+    "folate": 29.8,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "one",
+        "label": "1 medium guava (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "amla",
+    "name": "Gooseberry / amla (IFCT 'Goosberry')",
+    "category": "Fruits",
+    "ifctCode": "E021",
+    "source": "IFCT 2017",
+    "calories": 24,
+    "protein": 0.34,
+    "fat": 0.16,
+    "carbs": 4.39,
+    "calcium": 20.14,
+    "iron": 1.25,
+    "vitC": 252.0,
+    "folate": 7.9,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "amla_pc",
+        "label": "1 amla (~20 g)",
+        "grams": 20,
+        "rawEquivalent": true
+      },
+      {
+        "id": "amla_juice",
+        "label": "Juice, 1 tbsp (~15 g)",
+        "grams": 15,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "orange",
+    "name": "Orange, pulp",
+    "category": "Fruits",
+    "ifctCode": "E047",
+    "source": "IFCT 2017",
+    "calories": 37,
+    "protein": 0.7,
+    "fat": 0.13,
+    "carbs": 7.92,
+    "calcium": 19.52,
+    "iron": 0.81,
+    "vitC": 42.72,
+    "folate": 19.5,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "one",
+        "label": "1 medium orange pulp (~100 g)",
+        "grams": 100,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "papaya",
+    "name": "Papaya, ripe",
+    "category": "Fruits",
+    "ifctCode": "E049",
+    "source": "IFCT 2017",
+    "calories": 24,
+    "protein": 0.42,
+    "fat": 0.16,
+    "carbs": 4.61,
+    "calcium": 15.02,
+    "iron": 0.23,
+    "vitC": 43.09,
+    "folate": 60.9,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~100 g)",
+        "grams": 100,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "mango",
+    "name": "Mango, ripe, paheri",
+    "category": "Fruits",
+    "ifctCode": "E041",
+    "source": "IFCT 2017",
+    "calories": 45,
+    "protein": 0.68,
+    "fat": 0.58,
+    "carbs": 8.67,
+    "calcium": 15.11,
+    "iron": 0.51,
+    "vitC": 30.75,
+    "folate": 65.3,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori pulp (~100 g)",
+        "grams": 100,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "apple",
+    "name": "Apple, big",
+    "category": "Fruits",
+    "ifctCode": "E001",
+    "source": "IFCT 2017",
+    "calories": 62,
+    "protein": 0.29,
+    "fat": 0.64,
+    "carbs": 13.11,
+    "calcium": 13.68,
+    "iron": 0.26,
+    "vitC": 3.57,
+    "folate": 3.0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "one",
+        "label": "1 apple (~150 g)",
+        "grams": 150,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "lemon_juice",
+    "name": "Lemon juice",
+    "category": "Fruits",
+    "ifctCode": "E033",
+    "source": "IFCT 2017",
+    "calories": 37,
+    "protein": 0.41,
+    "fat": 0.75,
+    "carbs": 0.0,
+    "calcium": 22.68,
+    "iron": 0.12,
+    "vitC": 48.16,
+    "folate": 12.4,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "tbsp",
+        "label": "1 tablespoon (~15 ml)",
+        "grams": 15,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ]
+  },
+  {
+    "id": "milk_cow",
+    "name": "Milk, whole, cow",
+    "category": "Milk & Dairy",
+    "ifctCode": "L002",
+    "source": "IFCT 2017",
+    "calories": 73,
+    "protein": 3.26,
+    "fat": 4.48,
+    "carbs": 4.94,
+    "calcium": 118.0,
+    "iron": 0.15,
+    "vitC": 2.01,
+    "folate": 7.0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "glass",
+        "label": "1 glass (200 ml)",
+        "grams": 200,
+        "rawEquivalent": false
+      },
+      {
+        "id": "cup",
+        "label": "1 tea cup (100 ml)",
+        "grams": 100,
+        "rawEquivalent": false
+      },
+      {
+        "id": "half_glass",
+        "label": "1/2 glass (100 ml)",
+        "grams": 100,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ]
+  },
+  {
+    "id": "milk_buffalo",
+    "name": "Milk, whole, buffalo",
+    "category": "Milk & Dairy",
+    "ifctCode": "L001",
+    "source": "IFCT 2017",
+    "calories": 107,
+    "protein": 3.68,
+    "fat": 6.58,
+    "carbs": 8.39,
+    "calcium": 121.0,
+    "iron": 0.16,
+    "vitC": 2.37,
+    "folate": 8.6,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "glass",
+        "label": "1 glass (200 ml)",
+        "grams": 200,
+        "rawEquivalent": false
+      },
+      {
+        "id": "cup",
+        "label": "1 tea cup (100 ml)",
+        "grams": 100,
+        "rawEquivalent": false
+      },
+      {
+        "id": "half_glass",
+        "label": "1/2 glass (100 ml)",
+        "grams": 100,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ]
+  },
+  {
+    "id": "curd_dahi",
+    "name": "Curd / dahi (IFCT cow milk; macros nearly unchanged by fermentation)",
+    "category": "Milk & Dairy",
+    "ifctCode": "L002",
+    "source": "IFCT 2017",
+    "calories": 73,
+    "protein": 3.26,
+    "fat": 4.48,
+    "carbs": 4.94,
+    "calcium": 118.0,
+    "iron": 0.15,
+    "vitC": 2.01,
+    "folate": 7.0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~100 g)",
+        "grams": 100,
+        "rawEquivalent": false
+      },
+      {
+        "id": "glass",
+        "label": "1 glass buttermilk-style (~200 g)",
+        "grams": 200,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ]
+  },
+  {
+    "id": "paneer",
+    "name": "Paneer",
+    "category": "Milk & Dairy",
+    "ifctCode": "L003",
+    "source": "IFCT 2017",
+    "calories": 258,
+    "protein": 18.86,
+    "fat": 14.78,
+    "carbs": 12.41,
+    "calcium": 476.0,
+    "iron": 0.9,
+    "vitC": 0.0,
+    "folate": 93.3,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "cube",
+        "label": "2 cubes (~30 g)",
+        "grams": 30,
+        "rawEquivalent": false
+      },
+      {
+        "id": "katori",
+        "label": "1 katori cubes (~50 g)",
+        "grams": 50,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ]
+  },
+  {
+    "id": "cooking_oil",
+    "name": "Mustard oil (visible fat; 9 kcal/g Atwater)",
+    "category": "Fats & Oils",
+    "ifctCode": "T006",
+    "source": "IFCT 2017",
+    "calories": 900,
+    "protein": 0,
+    "fat": 100,
+    "carbs": 0,
+    "calcium": 0,
+    "iron": 0,
+    "vitC": 0,
+    "folate": 0,
+    "visibleFat": true,
+    "portions": [
+      {
+        "id": "tsp",
+        "label": "1 teaspoon (5 g)",
+        "grams": 5,
+        "rawEquivalent": false
+      },
+      {
+        "id": "tbsp",
+        "label": "1 tablespoon (15 g)",
+        "grams": 15,
+        "rawEquivalent": false
+      },
+      {
+        "id": "ladle",
+        "label": "Small ladle in cooking (~20 g)",
+        "grams": 20,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ]
+  },
+  {
+    "id": "ghee",
+    "name": "Ghee (visible fat; 9 kcal/g Atwater)",
+    "category": "Fats & Oils",
+    "ifctCode": "T013",
+    "source": "IFCT 2017",
+    "calories": 900,
+    "protein": 0,
+    "fat": 100,
+    "carbs": 0,
+    "calcium": 0,
+    "iron": 0,
+    "vitC": 0,
+    "folate": 0,
+    "visibleFat": true,
+    "portions": [
+      {
+        "id": "tsp",
+        "label": "1 teaspoon (5 g)",
+        "grams": 5,
+        "rawEquivalent": false
+      },
+      {
+        "id": "tbsp",
+        "label": "1 tablespoon (15 g)",
+        "grams": 15,
+        "rawEquivalent": false
+      },
+      {
+        "id": "ladle",
+        "label": "Small ladle in cooking (~20 g)",
+        "grams": 20,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ]
+  },
+  {
+    "id": "egg_whole",
+    "name": "Egg, poultry, whole, boiled",
+    "category": "Egg & Meat",
+    "ifctCode": "M004",
+    "source": "IFCT 2017",
+    "calories": 148,
+    "protein": 13.43,
+    "fat": 10.54,
+    "carbs": 0.0,
+    "calcium": 55.12,
+    "iron": 1.87,
+    "vitC": 0.0,
+    "folate": 48.2,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "one",
+        "label": "1 boiled egg (~50 g)",
+        "grams": 50,
+        "rawEquivalent": false
+      },
+      {
+        "id": "two",
+        "label": "2 boiled eggs (~100 g)",
+        "grams": 100,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ]
+  },
+  {
+    "id": "egg_white",
+    "name": "Egg, poultry, white, raw",
+    "category": "Egg & Meat",
+    "ifctCode": "M002",
+    "source": "IFCT 2017",
+    "calories": 45,
+    "protein": 10.84,
+    "fat": 0.06,
+    "carbs": 0.0,
+    "calcium": 5.64,
+    "iron": 0.07,
+    "vitC": 0.0,
+    "folate": 5.0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "one",
+        "label": "White of 1 egg (~30 g)",
+        "grams": 30,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ]
+  },
+  {
+    "id": "chicken_lean",
+    "name": "Chicken, breast, skinless",
+    "category": "Egg & Meat",
+    "ifctCode": "N003",
+    "source": "IFCT 2017",
+    "calories": 168,
+    "protein": 21.81,
+    "fat": 9.0,
+    "carbs": 0.0,
+    "calcium": 12.91,
+    "iron": 0.83,
+    "vitC": 0.0,
+    "folate": 10.4,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "piece",
+        "label": "1 piece (~80 g)",
+        "grams": 80,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ]
+  },
+  {
+    "id": "fish_rohu",
+    "name": "Rohu (freshwater fish)",
+    "category": "Egg & Meat",
+    "ifctCode": "S006",
+    "source": "IFCT 2017",
+    "calories": 102,
+    "protein": 19.71,
+    "fat": 2.39,
+    "carbs": 0.0,
+    "calcium": 39.37,
+    "iron": 1.04,
+    "vitC": 0.0,
+    "folate": 0.0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "piece",
+        "label": "1 piece (~80 g)",
+        "grams": 80,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ]
+  },
+  {
+    "id": "mutton",
+    "name": "Goat chops",
+    "category": "Egg & Meat",
+    "ifctCode": "O002",
+    "source": "IFCT 2017",
+    "calories": 136,
+    "protein": 20.39,
+    "fat": 5.98,
+    "carbs": 0.0,
+    "calcium": 7.44,
+    "iron": 1.87,
+    "vitC": 0.0,
+    "folate": 0.0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "piece",
+        "label": "1 piece (~80 g)",
+        "grams": 80,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ]
+  },
+  {
+    "id": "groundnuts",
+    "name": "Ground nut",
+    "category": "Nuts & Oilseeds",
+    "ifctCode": "H012",
+    "source": "IFCT 2017",
+    "calories": 520,
+    "protein": 23.65,
+    "fat": 39.63,
+    "carbs": 17.27,
+    "calcium": 54.0,
+    "iron": 3.44,
+    "vitC": 0.0,
+    "folate": 90.9,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "handful",
+        "label": "1 handful, roasted (~30 g)",
+        "grams": 30,
+        "rawEquivalent": true
+      },
+      {
+        "id": "tbsp",
+        "label": "1 tablespoon (~15 g)",
+        "grams": 15,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "sesame_seeds",
+    "name": "Gingelly seeds, brown (til)",
+    "category": "Nuts & Oilseeds",
+    "ifctCode": "H010",
+    "source": "IFCT 2017",
+    "calories": 516,
+    "protein": 21.61,
+    "fat": 43.22,
+    "carbs": 9.76,
+    "calcium": 1174.0,
+    "iron": 14.95,
+    "vitC": 0.0,
+    "folate": 92.6,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "tsp",
+        "label": "1 teaspoon (~5 g)",
+        "grams": 5,
+        "rawEquivalent": true
+      },
+      {
+        "id": "tbsp",
+        "label": "1 tablespoon (~10 g)",
+        "grams": 10,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "almonds",
+    "name": "Almond",
+    "category": "Nuts & Oilseeds",
+    "ifctCode": "H001",
+    "source": "IFCT 2017",
+    "calories": 609,
+    "protein": 18.41,
+    "fat": 58.49,
+    "carbs": 3.04,
+    "calcium": 228.0,
+    "iron": 4.59,
+    "vitC": 0.74,
+    "folate": 36.5,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "five_almonds",
+        "label": "4-5 almonds (~6 g)",
+        "grams": 6,
+        "rawEquivalent": true
+      },
+      {
+        "id": "ten_almonds",
+        "label": "10 almonds (~12 g)",
+        "grams": 12,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ]
+  },
+  {
+    "id": "sugar",
+    "name": "Sugar, sucrose (Atwater 4 kcal/g; not an IFCT key food)",
+    "category": "Sugars & Sweets",
+    "ifctCode": null,
+    "source": "ICMR Atwater factor for carbohydrate",
+    "calories": 400,
+    "protein": 0,
+    "fat": 0,
+    "carbs": 100,
+    "calcium": 0,
+    "iron": 0,
+    "vitC": 0,
+    "folate": 0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "tsp",
+        "label": "1 level teaspoon in tea (~5 g)",
+        "grams": 5,
+        "rawEquivalent": false
+      },
+      {
+        "id": "tsp_heap",
+        "label": "1 heaped teaspoon (~7.5 g)",
+        "grams": 7.5,
+        "rawEquivalent": false
+      },
+      {
+        "id": "tbsp",
+        "label": "1 tablespoon (~15 g)",
+        "grams": 15,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ]
+  },
+  {
+    "id": "jaggery",
+    "name": "Jaggery, cane",
+    "category": "Sugars & Sweets",
+    "ifctCode": "I001",
+    "source": "IFCT 2017",
+    "calories": 354,
+    "protein": 1.85,
+    "fat": 0.16,
+    "carbs": 84.87,
+    "calcium": 107.0,
+    "iron": 4.63,
+    "vitC": 0.0,
+    "folate": 14.4,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "small_cube",
+        "label": "1 small piece (~15 g)",
+        "grams": 15,
+        "rawEquivalent": false
+      },
+      {
+        "id": "tsp",
+        "label": "1 teaspoon grated (~5 g)",
+        "grams": 5,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ]
+  },
+  {
+    "id": "snack_idli",
+    "name": "Idli (steamed; 32 g parboiled rice + 8 g urad dal per 100 g)",
+    "category": "Cooked Snacks",
+    "ifctCode": "recipe:A014+B003",
+    "source": "Derived from IFCT 2017 (parboiled milled rice + black gram dal)",
+    "countsAsCerealGramsPer100": 32,
+    "countsAsPulseGramsPer100": 8,
+    "calories": 139,
+    "protein": 4.34,
+    "fat": 0.31,
+    "carbs": 28.77,
+    "calcium": 7.05,
+    "iron": 0.6,
+    "vitC": 0.0,
+    "folate": 10.24,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "one_idli",
+        "label": "1 medium idli (~50 g)",
+        "grams": 50,
+        "rawEquivalent": false
+      },
+      {
+        "id": "two_idlis",
+        "label": "2 idlis (~100 g)",
+        "grams": 100,
+        "rawEquivalent": false
+      },
+      {
+        "id": "three_idlis",
+        "label": "3 idlis (~150 g)",
+        "grams": 150,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ]
+  },
+  {
+    "id": "snack_dosa",
+    "name": "Plain dosa (35 g parboiled rice + 10 g urad + 5 g oil per 100 g)",
+    "category": "Cooked Snacks",
+    "ifctCode": "recipe:A014+B003+T006",
+    "source": "Derived from IFCT 2017 (parboiled rice + black gram dal + mustard oil)",
+    "countsAsCerealGramsPer100": 35,
+    "countsAsPulseGramsPer100": 10,
+    "countsAsVisibleFatPer100": 5,
+    "calories": 201,
+    "protein": 5.04,
+    "fat": 5.36,
+    "carbs": 32.11,
+    "calcium": 8.41,
+    "iron": 0.72,
+    "vitC": 0.0,
+    "folate": 12.31,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "one_dosa",
+        "label": "1 medium dosa (~75 g)",
+        "grams": 75,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ]
+  }
 ]

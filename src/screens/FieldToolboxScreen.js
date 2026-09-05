@@ -74,7 +74,7 @@ const FieldToolboxScreen = ({ navigation }) => {
                         <MaterialIcons name="restaurant-menu" size={40} color={theme.colors.secondary} />
                         <View style={styles.textContainer}>
                             <Text style={styles.cardTitle}>Dietary Survey</Text>
-                            <Text style={styles.cardDesc}>Calculate Calories, Protein, and Fat intake vs Reference</Text>
+                            <Text style={styles.cardDesc}>24-hour recall and family CU vs ICMR-NIN 2020, using IFCT 2017 foods</Text>
                         </View>
                     </Card.Content>
                 </Card>
