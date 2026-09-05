@@ -179,6 +179,14 @@
     "mtime": 1788190817.5361347,
     "hash": "1bf2b66660a4fdc19f812a6306df4719"
   },
+  "D:\\The App\\scratch\\analyze_ch21.py": {
+    "mtime": 1788326622.1036854,
+    "hash": "8bdf0f8b58954f3a6dc9679a68d0c273"
+  },
+  "D:\\The App\\scratch\\analyze_rules.py": {
+    "mtime": 1788324978.681886,
+    "hash": "21ca09b8912c7663689cd999e507783b"
+  },
   "D:\\The App\\scratch\\analyze_trends.py": {
     "mtime": 1783704747.112139,
     "hash": "04e4e5b8ed3b52ccb53a2ecd1026c8e7"
@@ -191,13 +199,85 @@
     "mtime": 1783227825.509572,
     "hash": "328e676f2e3381f945616c45d9779117"
   },
+  "D:\\The App\\scratch\\apply_overview_split.py": {
+    "mtime": 1788374215.4945562,
+    "hash": "22d7bd240ad00cf24de287b9f6d32c9a"
+  },
   "D:\\The App\\scratch\\attach_notes.js": {
     "mtime": 1783955643.7976062,
     "hash": "2f47410aec873f8a3cf56c83c2ada642"
   },
+  "D:\\The App\\scratch\\audit_alex_ux.py": {
+    "mtime": 1788374029.1457126,
+    "hash": "73644ee5b33400ad3347725b680fe293"
+  },
+  "D:\\The App\\scratch\\audit_alex_ux_ch31_ch32.py": {
+    "mtime": 1788405881.160445,
+    "hash": "c2a3f06831bc3797301a4e604304e77c"
+  },
+  "D:\\The App\\scratch\\audit_readingview_blocks.py": {
+    "mtime": 1788374160.5929127,
+    "hash": "21843b6dd38cadac1550b7045156b821"
+  },
+  "D:\\The App\\scratch\\build_clean_10_1.py": {
+    "mtime": 1788325039.3203757,
+    "hash": "644343bb991b2a261799ed6d0bd81b3b"
+  },
+  "D:\\The App\\scratch\\build_clean_10_2.py": {
+    "mtime": 1788325089.135635,
+    "hash": "c351133c0e1fa7d8fa74e752afe3827e"
+  },
+  "D:\\The App\\scratch\\build_clean_10_3.py": {
+    "mtime": 1788325132.972679,
+    "hash": "2fd0b3454e3d1557caaef68b47f7fd90"
+  },
+  "D:\\The App\\scratch\\build_clean_10_4.py": {
+    "mtime": 1788325168.33056,
+    "hash": "f0a8dc66de682337a6b6be8ab6e0a4dc"
+  },
+  "D:\\The App\\scratch\\build_clean_10_5.py": {
+    "mtime": 1788325224.4691432,
+    "hash": "db8297c0518e4d48af276d22ce00654e"
+  },
+  "D:\\The App\\scratch\\check_acronyms.py": {
+    "mtime": 1788325290.4330342,
+    "hash": "5468a15d2809a12372c2210cb2d1a852"
+  },
+  "D:\\The App\\scratch\\check_existing_tips.py": {
+    "mtime": 1788323691.6885743,
+    "hash": "357c43ff4eb92066daa77f19990060b3"
+  },
+  "D:\\The App\\scratch\\check_final_json.py": {
+    "mtime": 1788325334.4066825,
+    "hash": "5869918179fb405b216d4d6741f5e533"
+  },
   "D:\\The App\\scratch\\check_pdf.py": {
     "mtime": 1783704672.3351908,
     "hash": "27affdfd439ee131f10a470822620042"
+  },
+  "D:\\The App\\scratch\\check_quotes.py": {
+    "mtime": 1788323833.8380897,
+    "hash": "7982a6af4dd068f3517218e905879c5b"
+  },
+  "D:\\The App\\scratch\\check_tags.py": {
+    "mtime": 1788326662.00727,
+    "hash": "2f13a2bf657cb5b917962782e1676bea"
+  },
+  "D:\\The App\\scratch\\check_ux_deep.py": {
+    "mtime": 1788374104.7475758,
+    "hash": "b0b3b9706b2f03ba7168645c7c482463"
+  },
+  "D:\\The App\\scratch\\check_viva.py": {
+    "mtime": 1788323824.787851,
+    "hash": "a253f293b5c476fdb6f65822295ef46a"
+  },
+  "D:\\The App\\scratch\\clean_sub10_1.py": {
+    "mtime": 1788324999.1840792,
+    "hash": "98287564a2bb2d63c2e9e3489e1ab61f"
+  },
+  "D:\\The App\\scratch\\combine_and_validate.py": {
+    "mtime": 1788323814.663746,
+    "hash": "ab8a16b95db41776e87e30af22c1a1e1"
   },
   "D:\\The App\\scratch\\compare_all_data.py": {
     "mtime": 1783704845.674785,
@@ -223,13 +303,77 @@
     "mtime": 1783227800.956293,
     "hash": "457ffd2e0eb8918aa2a0b80fd52baf73"
   },
+  "D:\\The App\\scratch\\dump_section1.py": {
+    "mtime": 1788326670.8045716,
+    "hash": "2e9906c820a5f730e1a89d5e3ab60ff0"
+  },
+  "D:\\The App\\scratch\\dump_section2.py": {
+    "mtime": 1788326679.3079076,
+    "hash": "1c7d8b3afe3d6f077e12ed72703b6200"
+  },
+  "D:\\The App\\scratch\\dump_section3.py": {
+    "mtime": 1788326688.342899,
+    "hash": "85a07515eb43b9b46181dd909f6fc0f9"
+  },
+  "D:\\The App\\scratch\\dump_section4.py": {
+    "mtime": 1788326697.173807,
+    "hash": "cb39bdb6eb0ef746c7c2d4302bc36b78"
+  },
+  "D:\\The App\\scratch\\dump_section5.py": {
+    "mtime": 1788326706.0230508,
+    "hash": "e711fd3fc3e8444ca1439f67d21816a0"
+  },
+  "D:\\The App\\scratch\\dump_section6.py": {
+    "mtime": 1788326713.9514914,
+    "hash": "6f791841f5e247a09b29311cfd21ee90"
+  },
+  "D:\\The App\\scratch\\dump_subs.py": {
+    "mtime": 1788324794.0984826,
+    "hash": "57c95c64dedb3e6007547b089f3fa439"
+  },
   "D:\\The App\\scratch\\extract_all_text.py": {
     "mtime": 1783704688.2888372,
     "hash": "fade36154f892f7e586ac3413a6fc26d"
   },
+  "D:\\The App\\scratch\\extract_park.py": {
+    "mtime": 1788323544.2797685,
+    "hash": "ccc3bec6722339a08097dc6e0509fd4b"
+  },
+  "D:\\The App\\scratch\\find_acronyms.py": {
+    "mtime": 1788323619.4813786,
+    "hash": "976e8cf36137ae1ff122a00577b7f0ea"
+  },
+  "D:\\The App\\scratch\\find_dashes.py": {
+    "mtime": 1788323594.2105503,
+    "hash": "1d9592e0ee9d7b663e41bc51ddb392b4"
+  },
+  "D:\\The App\\scratch\\find_rv.py": {
+    "mtime": 1788323636.0051713,
+    "hash": "b5e490ca8c54349d7e5f204a8308fb75"
+  },
+  "D:\\The App\\scratch\\find_tag_js.py": {
+    "mtime": 1788326785.861699,
+    "hash": "07693bf1ba986154d0d752c62c12ed54"
+  },
+  "D:\\The App\\scratch\\find_tag_parser.py": {
+    "mtime": 1788326778.374306,
+    "hash": "0c16e6805f384168d47ca1335e083e4c"
+  },
+  "D:\\The App\\scratch\\find_tips.py": {
+    "mtime": 1788323611.7101812,
+    "hash": "3e289be3d0ea005d6b671ece4fbd6c14"
+  },
   "D:\\The App\\scratch\\find_trends_discrepancies.py": {
     "mtime": 1783704869.1593685,
     "hash": "8797f45959da94124272e6eb32a01e8f"
+  },
+  "D:\\The App\\scratch\\find_words.py": {
+    "mtime": 1788323603.0358646,
+    "hash": "c120d276bbb57c283866ddd2d899f08a"
+  },
+  "D:\\The App\\scratch\\fix_tips.py": {
+    "mtime": 1788323843.4471686,
+    "hash": "64d3d5bacef4f2bae6c1d4db4b5a4ae7"
   },
   "D:\\The App\\scratch\\format_data.js": {
     "mtime": 1780033181.0255034,
@@ -238,6 +382,14 @@
   "D:\\The App\\scratch\\inject_style.js": {
     "mtime": 1780033181.0265026,
     "hash": "b1f4620b99c9ece75d6306cb2053d7d0"
+  },
+  "D:\\The App\\scratch\\inspect_ch1.py": {
+    "mtime": 1788323525.3389325,
+    "hash": "13679995bc6c25517e0c4c52680a4332"
+  },
+  "D:\\The App\\scratch\\inspect_ch10.py": {
+    "mtime": 1788324746.3484752,
+    "hash": "5ce6c3aaa580cd29748bd8ae08829401"
   },
   "D:\\The App\\scratch\\inspect_file_exports.py": {
     "mtime": 1783704737.9665325,
@@ -255,9 +407,21 @@
     "mtime": 1783227764.6670299,
     "hash": "973e1d59a3af287c8f7521e023116129"
   },
+  "D:\\The App\\scratch\\inspect_readingview.py": {
+    "mtime": 1788323628.6430316,
+    "hash": "71d413d4d2c068941de0920238a51b55"
+  },
+  "D:\\The App\\scratch\\inspect_readingview2.py": {
+    "mtime": 1788323641.7050483,
+    "hash": "3eb9ff5942f727ccfa64530dbcc69952"
+  },
   "D:\\The App\\scratch\\inspect_specific_pyqs.py": {
     "mtime": 1783227759.8045382,
     "hash": "ea19074031d3593f2d76e9282f9c849d"
+  },
+  "D:\\The App\\scratch\\inspect_tags_context.py": {
+    "mtime": 1788326768.6743388,
+    "hash": "cfb1122710b4047687106d71d30834b6"
   },
   "D:\\The App\\scratch\\list-bunny-libs.js": {
     "mtime": 1780033181.0265026,
@@ -271,6 +435,22 @@
     "mtime": 1780033181.0323775,
     "hash": "0040d014dc636d0a84420475618367c1"
   },
+  "D:\\The App\\scratch\\make_sec1.py": {
+    "mtime": 1788323779.7362335,
+    "hash": "aed74b156f02bc789b613e38f684a094"
+  },
+  "D:\\The App\\scratch\\make_sec2.py": {
+    "mtime": 1788323792.4033499,
+    "hash": "2b531b4b03f9db3c25da2690908cbe84"
+  },
+  "D:\\The App\\scratch\\make_sec3.py": {
+    "mtime": 1788323805.6481984,
+    "hash": "d618cd6a1a6edfa009a6e7c5134af0b2"
+  },
+  "D:\\The App\\scratch\\master_clean_ch10.py": {
+    "mtime": 1788325307.9977312,
+    "hash": "673a0a7f22e3c8ec8719f690467bfb10"
+  },
   "D:\\The App\\scratch\\ollama_free_smoke.py": {
     "mtime": 1786084904.5346112,
     "hash": "e40273b5717c0aa67d825653d9e1e2d3"
@@ -283,6 +463,10 @@
     "mtime": 1780033181.032891,
     "hash": "ac7cc8809ce437a954c8714b441fcc24"
   },
+  "D:\\The App\\scratch\\parse_park_headings.py": {
+    "mtime": 1788326639.4338517,
+    "hash": "f6dee20ac91bf9ea8a0d4da9e63a886a"
+  },
   "D:\\The App\\scratch\\parse_pdf_indicators.py": {
     "mtime": 1783704762.5112593,
     "hash": "7836210459e2d4ee3f7caa14d5f80d62"
@@ -290,6 +474,10 @@
   "D:\\The App\\scratch\\parse_pdf_properly.py": {
     "mtime": 1783704811.199155,
     "hash": "07f98639991e3faccd6fe17c9fbfd63d"
+  },
+  "D:\\The App\\scratch\\prepare_dir.py": {
+    "mtime": 1788323764.142447,
+    "hash": "38980edfbd005293b42d8f89e4bc2c5a"
   },
   "D:\\The App\\scratch\\print_gems_structure.py": {
     "mtime": 1783704897.8537793,
@@ -299,9 +487,17 @@
     "mtime": 1783704785.3933618,
     "hash": "af9d05fe5b0e3d6d386d42999008af20"
   },
+  "D:\\The App\\scratch\\print_park_pages.py": {
+    "mtime": 1788326648.2766182,
+    "hash": "24d7f38d8f70dbf70eec26219ab325e1"
+  },
   "D:\\The App\\scratch\\read_firestore_config.js": {
     "mtime": 1782840076.95,
     "hash": "aa89b5753c9f7c88e0b4ef1f6f2516f0"
+  },
+  "D:\\The App\\scratch\\run_all_audits.py": {
+    "mtime": 1788374008.2842903,
+    "hash": "ebaf189cc1f2b1949295be16f9cc7f3d"
   },
   "D:\\The App\\scratch\\scan_all_data.py": {
     "mtime": 1783227779.0962336,
@@ -315,9 +511,41 @@
     "mtime": 1783227752.712741,
     "hash": "1bdea35485b2d8485067f4c16c143f98"
   },
+  "D:\\The App\\scratch\\search_patterns.py": {
+    "mtime": 1788326630.6663046,
+    "hash": "4d66339c8196cae1e27c2a62e9dd6457"
+  },
+  "D:\\The App\\scratch\\search_repo_tier1.py": {
+    "mtime": 1788326737.9056942,
+    "hash": "9e513dcd6350836e01c8123ec81e8675"
+  },
+  "D:\\The App\\scratch\\search_tier1.py": {
+    "mtime": 1788326728.4607868,
+    "hash": "c5b413139b1120d278a576d78be125f9"
+  },
+  "D:\\The App\\scratch\\show_rv_tags.py": {
+    "mtime": 1788326793.5767455,
+    "hash": "39322e71b7c518a3581a206df018af2d"
+  },
+  "D:\\The App\\scratch\\show_sub10_matches.py": {
+    "mtime": 1788326756.1028244,
+    "hash": "9a33cda79723740745805190cd2e690b"
+  },
+  "D:\\The App\\scratch\\show_tier1_matches.py": {
+    "mtime": 1788326746.983492,
+    "hash": "d8f58874b6ee809301ec1d419c8d95ab"
+  },
+  "D:\\The App\\scratch\\test_draft.py": {
+    "mtime": 1788326897.8696725,
+    "hash": "261a042e96f6252409ee6cd5fcc7a09a"
+  },
   "D:\\The App\\scratch\\test_match.py": {
     "mtime": 1783704772.1103761,
     "hash": "5889d4f2b1f7d7d6534e92c071f72d06"
+  },
+  "D:\\The App\\scratch\\test_split_overviews.py": {
+    "mtime": 1788374204.1166823,
+    "hash": "30c0d32e87f023361d7873bc25afb133"
   },
   "D:\\The App\\scratch\\test_updates.py": {
     "mtime": 1783227834.0932412,
@@ -327,13 +555,53 @@
     "mtime": 1783228203.343647,
     "hash": "38e97ac0d4dd9dce1c8cf06d5768377d"
   },
+  "D:\\The App\\scratch\\validate_all_cleaned.py": {
+    "mtime": 1788325260.0809288,
+    "hash": "893fc4c0f8450103008223d94459a415"
+  },
   "D:\\The App\\scratch\\verify_comparison_manual.py": {
     "mtime": 1783704856.5376534,
     "hash": "01540f7b9772be2e25b6b498d6393c1f"
   },
+  "D:\\The App\\scratch\\verify_final.py": {
+    "mtime": 1788323861.646595,
+    "hash": "47c804919aa47d4ec55b033fbba6bf4d"
+  },
   "D:\\The App\\scratch\\verify_gems_data.py": {
     "mtime": 1783704905.6948457,
     "hash": "61b90c6108687551f626bade0ff54880"
+  },
+  "D:\\The App\\scratch\\view_park_part.py": {
+    "mtime": 1788323551.7495463,
+    "hash": "c01b7e4e5dd9919b951733592f38da6b"
+  },
+  "D:\\The App\\scratch\\view_park_part2.py": {
+    "mtime": 1788323557.856489,
+    "hash": "9bfd96542286996fada25e73ee0c14fd"
+  },
+  "D:\\The App\\scratch\\view_park_part3.py": {
+    "mtime": 1788323572.0341878,
+    "hash": "eeabfc88685aeb0b408e330d29e70d38"
+  },
+  "D:\\The App\\scratch\\view_quote_lines.py": {
+    "mtime": 1788323678.383808,
+    "hash": "268bdcf6b3c1cf7641e1f6ae0deb78f2"
+  },
+  "D:\\The App\\scratch\\view_quote_logic.py": {
+    "mtime": 1788323672.1510017,
+    "hash": "120cc180fb4beb6b209ed77d0530d2f2"
+  },
+  "D:\\The App\\scratch\\view_rv_exam_tip.py": {
+    "mtime": 1788323664.2612052,
+    "hash": "32819bb4f8ac759d3da31f449b72b650"
+  },
+  "D:\\The App\\scratch\\view_rv_tag.py": {
+    "mtime": 1788323650.3825793,
+    "hash": "e25e16f54fe4b90839ba9d893a9a0bcd"
+  },
+  "D:\\The App\\scratch\\view_rv_tag2.py": {
+    "mtime": 1788323656.9918728,
+    "hash": "7d893120873a44a504fab74b7155f2cc"
   },
   "D:\\The App\\scripts\\add_library_ch28.py": {
     "mtime": 1786685564.6549222,
@@ -348,8 +616,8 @@
     "hash": "265c89e17b0a11130480c546b0e84429"
   },
   "D:\\The App\\scripts\\apply_gn_missing_and_voice.py": {
-    "mtime": 1788280881.0727181,
-    "hash": "de488925274d9c14c43068d58434dc2e"
+    "mtime": 1788281408.0268693,
+    "hash": "32f24694516bec948a4b35e39d541e87"
   },
   "D:\\The App\\scripts\\apply_nfhs6_library_indicators.py": {
     "mtime": 1787809741.084486,
@@ -379,9 +647,17 @@
     "mtime": 1786019299.489607,
     "hash": "365f06118eb8bbb6857f07b1732f68f0"
   },
+  "D:\\The App\\scripts\\chatgpt_client.py": {
+    "mtime": 1788415517.5747454,
+    "hash": "a3f8985adaf546f309f9136594f50b0f"
+  },
   "D:\\The App\\scripts\\check-firestore-gem.js": {
     "mtime": 1778661542.9656944,
     "hash": "ee6e923940f2dcc83166554ced75bc0d"
+  },
+  "D:\\The App\\scripts\\check_firestore_overrides.js": {
+    "mtime": 1788428261.9601057,
+    "hash": "6a89f7fc6deb38a169920c43cf3b1198"
   },
   "D:\\The App\\scripts\\check_review_queue.js": {
     "mtime": 1777560719.6051679,
@@ -403,6 +679,10 @@
     "mtime": 1772355533.378721,
     "hash": "340987431de13941db032f91d2540782"
   },
+  "D:\\The App\\scripts\\deploy_v2_visuals.js": {
+    "mtime": 1788428496.9910777,
+    "hash": "c08e97095c4720397331ec5991b3daca"
+  },
   "D:\\The App\\scripts\\download-remaining-nhp-logos.js": {
     "mtime": 1775300401.579737,
     "hash": "fcab1fff7667f905fb7a05124be450ea"
@@ -410,6 +690,14 @@
   "D:\\The App\\scripts\\dump_review_doc.js": {
     "mtime": 1777560719.6063821,
     "hash": "113e41920f0703cdd6ac12124ca636c4"
+  },
+  "D:\\The App\\scripts\\embed_directorate_visuals.py": {
+    "mtime": 1788408880.6726844,
+    "hash": "8124ce2888a1d7971a9733b0b099dcd9"
+  },
+  "D:\\The App\\scripts\\fetch_chatgpt_image.py": {
+    "mtime": 1788412306.5199733,
+    "hash": "e7f673cf7825009d1a06c662180645c2"
   },
   "D:\\The App\\scripts\\fetch_updates.py": {
     "mtime": 1787721989.5359588,
@@ -455,9 +743,17 @@
     "mtime": 1786644045.046149,
     "hash": "c5100afd214bc670e2f3753acaaa4e18"
   },
+  "D:\\The App\\scripts\\generate_directorate_visuals.py": {
+    "mtime": 1788408671.8528552,
+    "hash": "904c66e64582af8745cc4696d9db158c"
+  },
   "D:\\The App\\scripts\\generate_gap_figures.py": {
     "mtime": 1788260303.2175567,
     "hash": "fd05f69409d5ee263e64170139736be4"
+  },
+  "D:\\The App\\scripts\\get_chatgpt_images.py": {
+    "mtime": 1788412811.2492142,
+    "hash": "5f73f1e641cef71578472483f3eb664f"
   },
   "D:\\The App\\scripts\\grant_lifetime_premium.js": {
     "mtime": 1786815027.2886705,
@@ -478,6 +774,10 @@
   "D:\\The App\\scripts\\inject_golden_notes_leaves.py": {
     "mtime": 1788258075.0750978,
     "hash": "176759e193b6b001fe66ab5f656d4b55"
+  },
+  "D:\\The App\\scripts\\inspect_all_chapter_images.py": {
+    "mtime": 1788414979.4369428,
+    "hash": "6bbf5fe6aab67c9facf344e4418a1a97"
   },
   "D:\\The App\\scripts\\migrate-thumbnails.js": {
     "mtime": 1782655609.54987,
@@ -506,6 +806,18 @@
   "D:\\The App\\scripts\\publish-video.js": {
     "mtime": 1786019731.7280447,
     "hash": "2ce0197181b901f1166424dac0236bee"
+  },
+  "D:\\The App\\scripts\\publish_all_overhauled_overrides.py": {
+    "mtime": 1788345062.8987496,
+    "hash": "137642b2777608ec2ed7d1a64f3a957d"
+  },
+  "D:\\The App\\scripts\\publish_ch31_ch32_overrides.py": {
+    "mtime": 1788406934.0937762,
+    "hash": "4af7eba726dcb5f6f1003e1a302a7060"
+  },
+  "D:\\The App\\scripts\\publish_final_9_overhauls.py": {
+    "mtime": 1788377140.3594375,
+    "hash": "996139769bfdfe972a9662dfbfff0fa9"
   },
   "D:\\The App\\scripts\\publish_library_override.py": {
     "mtime": 1785993256.8294716,
@@ -595,6 +907,14 @@
     "mtime": 1786815484.5866427,
     "hash": "a2e0b45768d096d92e1154baceeb90ae"
   },
+  "D:\\The App\\scripts\\upload_directorate_visuals.js": {
+    "mtime": 1788408699.1939473,
+    "hash": "c75d71072f060618c66f4c9756205c9f"
+  },
+  "D:\\The App\\scripts\\upload_revised_visuals.js": {
+    "mtime": 1788416383.7884223,
+    "hash": "59f983a7af95c23038331893eb5fc7db"
+  },
   "D:\\The App\\scripts\\validate-illustrations.js": {
     "mtime": 1778646311.1204073,
     "hash": "f121d6dd8a36a478123857fe8eb498c8"
@@ -640,8 +960,8 @@
     "hash": "ee80de9ca72397fd02e0fb31ed09698c"
   },
   "D:\\The App\\src\\components\\ReadingView.js": {
-    "mtime": 1788063077.148537,
-    "hash": "9f31f8b042a54d11a143fdc3140627cb"
+    "mtime": 1788376667.2256548,
+    "hash": "900028ae03b4c8387cf70e76c4fcd0b2"
   },
   "D:\\The App\\src\\components\\ReviewFeedbackModal.js": {
     "mtime": 1785328661.2858431,
@@ -667,6 +987,14 @@
     "mtime": 1786805849.00881,
     "hash": "b4a7899eb72048322d07b921264af038"
   },
+  "D:\\The App\\src\\components\\__tests__\\ReadingView.examTipsAndBr.test.js": {
+    "mtime": 1788376829.954205,
+    "hash": "b7ea8ea0a2ce446991973b2b518f2c5d"
+  },
+  "D:\\The App\\src\\components\\__tests__\\ReadingView.listIndent.test.js": {
+    "mtime": 1788349048.2941082,
+    "hash": "fde7e43aaa83698a9eae9faaabe73250"
+  },
   "D:\\The App\\src\\config\\firebase.js": {
     "mtime": 1772355531.2110212,
     "hash": "b6d28a52efa63c1ccfa616dabffb7bd9"
@@ -682,6 +1010,10 @@
   "D:\\The App\\src\\data\\defaultTopicIllustrations.js": {
     "mtime": 1786881885.1823778,
     "hash": "a490e41b1ac815ddc9971f88c51c3945"
+  },
+  "D:\\The App\\src\\data\\dietaryReferenceData.js": {
+    "mtime": 1788632225.195262,
+    "hash": "9ff99ff3d3e4b775071f15e3f9da8cdb"
   },
   "D:\\The App\\src\\data\\museumData.js": {
     "mtime": 1787543937.8590336,
@@ -702,6 +1034,10 @@
   "D:\\The App\\src\\data\\pyqImages.js": {
     "mtime": 1786815484.5881505,
     "hash": "e73a0c56d25307e15eeb833f7a9665b4"
+  },
+  "D:\\The App\\src\\data\\__tests__\\dietaryReferenceData.test.js": {
+    "mtime": 1788632165.629264,
+    "hash": "80ba0c03e87e89c14d7156377957407c"
   },
   "D:\\The App\\src\\data\\__tests__\\pyqImages.test.js": {
     "mtime": 1786815484.5881505,
@@ -744,8 +1080,8 @@
     "hash": "78d932dd12dd959406e08481df24d999"
   },
   "D:\\The App\\src\\screens\\DietarySurveyScreen.js": {
-    "mtime": 1784225615.114561,
-    "hash": "8d0b95f26127256139f8e49ff5019a5d"
+    "mtime": 1788632060.3505423,
+    "hash": "d8e5cd23955d9492f1be118322f71ca2"
   },
   "D:\\The App\\src\\screens\\FieldToolboxScreen.js": {
     "mtime": 1784224587.3550723,
@@ -1119,9 +1455,353 @@
     "mtime": 1783227809.9990656,
     "hash": "2033e85f693bb157483d39b3d73e58cf"
   },
+  "D:\\The App\\scratch\\ch1_current_content.txt": {
+    "mtime": 1788323525.6748283,
+    "hash": "dc98295861573030e507e76c6e556760"
+  },
+  "D:\\The App\\scratch\\ch21_current.txt": {
+    "mtime": 1788326556.5428758,
+    "hash": "17c758714f424825aa5049e8ba9f40a8"
+  },
+  "D:\\The App\\scratch\\ch21_raw.txt": {
+    "mtime": 1788339898.218099,
+    "hash": "17c758714f424825aa5049e8ba9f40a8"
+  },
+  "D:\\The App\\scratch\\ch23_current.txt": {
+    "mtime": 1788326496.8444915,
+    "hash": "d186814883779f88f90800a918d3b3f6"
+  },
+  "D:\\The App\\scratch\\ch23_raw.txt": {
+    "mtime": 1788339793.2955391,
+    "hash": "d186814883779f88f90800a918d3b3f6"
+  },
+  "D:\\The App\\scratch\\ch8_audit_results.txt": {
+    "mtime": 1788324799.7901046,
+    "hash": "f818907513f0ee8f9e4f97697f2405c0"
+  },
+  "D:\\The App\\scratch\\ch8_p1_ocr.txt": {
+    "mtime": 1788324578.2474997,
+    "hash": "65a4711beb4da95f47d7e3cd2f03fe7a"
+  },
+  "D:\\The App\\scratch\\ch8_p2_ocr.txt": {
+    "mtime": 1788324594.789223,
+    "hash": "2a00a7d32e0f7b46ca69364dd3722588"
+  },
+  "D:\\The App\\scratch\\cleaned_sub_10-1.txt": {
+    "mtime": 1788325045.853789,
+    "hash": "f70feb7ee9a790defe50fbe7f9de1a82"
+  },
+  "D:\\The App\\scratch\\cleaned_sub_10-2.txt": {
+    "mtime": 1788325095.7266388,
+    "hash": "a376e037acb889b43a49d3cc51dd3d9f"
+  },
+  "D:\\The App\\scratch\\cleaned_sub_10-3.txt": {
+    "mtime": 1788325139.0811274,
+    "hash": "32c35e4fd2b2438cc3b6adea44c031fe"
+  },
+  "D:\\The App\\scratch\\cleaned_sub_10-4.txt": {
+    "mtime": 1788325188.179965,
+    "hash": "dad354ed56c57996a2052d45373581c3"
+  },
+  "D:\\The App\\scratch\\cleaned_sub_10-5.txt": {
+    "mtime": 1788325230.834896,
+    "hash": "9308ff5fec66c5b726ab46d74bd4b866"
+  },
+  "D:\\The App\\scratch\\park_ch10_extracted.txt": {
+    "mtime": 1788324957.0797162,
+    "hash": "61fe8649002b1a4fc386645beae9c376"
+  },
+  "D:\\The App\\scratch\\park_ch13_extracted.txt": {
+    "mtime": 1788325530.5063896,
+    "hash": "b36a38c0e1ec7d4f336468c4dc0078e6"
+  },
+  "D:\\The App\\scratch\\park_ch1_extracted.txt": {
+    "mtime": 1788323545.3759592,
+    "hash": "3a243e7ebc5d12e9e6726e2fbf54a083"
+  },
+  "D:\\The App\\scratch\\park_ch21_extracted.txt": {
+    "mtime": 1788326573.5130568,
+    "hash": "7f244abe527f5209d07a36bbfc157f54"
+  },
+  "D:\\The App\\scratch\\park_ch23_text.txt": {
+    "mtime": 1788339945.2271082,
+    "hash": "c44031532b253c88e2de27d8242a8442"
+  },
   "D:\\The App\\scratch\\pdf_text.txt": {
     "mtime": 1783704693.1305602,
     "hash": "672a0cf539ab4e08e7bed3918e01201e"
+  },
+  "D:\\The App\\scratch\\sec1.txt": {
+    "mtime": 1788323843.9178138,
+    "hash": "e4f5be0873bb288a95e244147a84278b"
+  },
+  "D:\\The App\\scratch\\sec2.txt": {
+    "mtime": 1788323843.9187987,
+    "hash": "f5ee82d3b6267456353702aff0fd053d"
+  },
+  "D:\\The App\\scratch\\sec3.txt": {
+    "mtime": 1788323843.919798,
+    "hash": "cc888de629d5393cae1769c069c4350d"
+  },
+  "D:\\The App\\scratch\\sub_10-1.txt": {
+    "mtime": 1788324801.401134,
+    "hash": "a824c8737f5cdd0c41cb4a0c328adeef"
+  },
+  "D:\\The App\\scratch\\sub_10-2.txt": {
+    "mtime": 1788324801.4034238,
+    "hash": "48ed5e2a6f7f5623f0376717102a902a"
+  },
+  "D:\\The App\\scratch\\sub_10-3.txt": {
+    "mtime": 1788324801.4048336,
+    "hash": "aa0c577a547e25d30fcc7ace30ad808d"
+  },
+  "D:\\The App\\scratch\\sub_10-4.txt": {
+    "mtime": 1788324801.4048336,
+    "hash": "0083c7fd2994c2d04916c4d623af0601"
+  },
+  "D:\\The App\\scratch\\sub_10-5.txt": {
+    "mtime": 1788324801.4059558,
+    "hash": "5aaf583ed27053f317e78b90a4e799c9"
+  },
+  "D:\\The App\\scratch\\ch18\\18-1.txt": {
+    "mtime": 1788373441.6940281,
+    "hash": "e907e624e91691d88e77f5736c99403b"
+  },
+  "D:\\The App\\scratch\\ch18\\18-2.txt": {
+    "mtime": 1788373441.6954699,
+    "hash": "530b4dbceb9c918e50cf22226981cfbd"
+  },
+  "D:\\The App\\scratch\\ch18\\18-3.txt": {
+    "mtime": 1788373441.6964872,
+    "hash": "926c5936a4665cd4c8217bc11165ce88"
+  },
+  "D:\\The App\\scratch\\ch18\\18-4.txt": {
+    "mtime": 1788373441.6973078,
+    "hash": "e7dc8de8e12423a3d155f65f082ad0f7"
+  },
+  "D:\\The App\\scratch\\ch27_raw\\27-1.txt": {
+    "mtime": 1788326587.3040588,
+    "hash": "8c9daa16a1f7eb0fcb71589088882355"
+  },
+  "D:\\The App\\scratch\\ch27_raw\\27-10.txt": {
+    "mtime": 1788326587.3146632,
+    "hash": "048027441fb9add03c9e33fd6c42ecb2"
+  },
+  "D:\\The App\\scratch\\ch27_raw\\27-11.txt": {
+    "mtime": 1788326587.3152368,
+    "hash": "b9f1585b4e2c35e2652100a1f5360a96"
+  },
+  "D:\\The App\\scratch\\ch27_raw\\27-12.txt": {
+    "mtime": 1788326587.3163488,
+    "hash": "ceb62c2439dd4b7b99cb328b825557cc"
+  },
+  "D:\\The App\\scratch\\ch27_raw\\27-13.txt": {
+    "mtime": 1788326587.317462,
+    "hash": "de4ce020da6e42d8b0d0488b69dd0aa2"
+  },
+  "D:\\The App\\scratch\\ch27_raw\\27-14.txt": {
+    "mtime": 1788326587.318035,
+    "hash": "bd1afc66835e82db5949c283cd911670"
+  },
+  "D:\\The App\\scratch\\ch27_raw\\27-2.txt": {
+    "mtime": 1788326587.3051867,
+    "hash": "b6adc5338c143a4f91c63e7a76d331e3"
+  },
+  "D:\\The App\\scratch\\ch27_raw\\27-3.txt": {
+    "mtime": 1788326587.3063009,
+    "hash": "3f10f3cb6b4f76591bd88ae8a137bbf2"
+  },
+  "D:\\The App\\scratch\\ch27_raw\\27-4.txt": {
+    "mtime": 1788326587.3077,
+    "hash": "4da4273358cd98664171468ba33293cd"
+  },
+  "D:\\The App\\scratch\\ch27_raw\\27-5.txt": {
+    "mtime": 1788326587.3089855,
+    "hash": "e9c6d4b94d1d22504963567fccfb8c90"
+  },
+  "D:\\The App\\scratch\\ch27_raw\\27-6.txt": {
+    "mtime": 1788326587.3101084,
+    "hash": "845f0f26a6e6728906066a36f5772d3f"
+  },
+  "D:\\The App\\scratch\\ch27_raw\\27-7.txt": {
+    "mtime": 1788326587.3112433,
+    "hash": "944fcc7aa4e65cb65769c01b2fb668ac"
+  },
+  "D:\\The App\\scratch\\ch27_raw\\27-8.txt": {
+    "mtime": 1788326587.3123329,
+    "hash": "05f5f79adeee762fdce018c87acb39b1"
+  },
+  "D:\\The App\\scratch\\ch27_raw\\27-9.txt": {
+    "mtime": 1788326587.3135414,
+    "hash": "95e6ec5bf50d3667c7ef209e534ed71c"
+  },
+  "D:\\The App\\scratch\\ch27_raw\\overview.txt": {
+    "mtime": 1788326587.3029451,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-0.txt": {
+    "mtime": 1788326818.237012,
+    "hash": "16da6b0d00e53f046be7fb69744905b9"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-1.txt": {
+    "mtime": 1788326818.2390726,
+    "hash": "e6c7c10c8bc3f5bbc495b3b8bfb4687b"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-10.txt": {
+    "mtime": 1788326818.2521336,
+    "hash": "e86803a69475b42f1de7ccb632095d15"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-11.txt": {
+    "mtime": 1788326818.252755,
+    "hash": "021d34081fd816ee7332a6abea9156e9"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-12.txt": {
+    "mtime": 1788326818.2537699,
+    "hash": "291a4664da9cf763bc6b2261b4483345"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-13.txt": {
+    "mtime": 1788326818.2547696,
+    "hash": "51cd438cdedd787efd21dfd5b07f8776"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-14.txt": {
+    "mtime": 1788326818.255775,
+    "hash": "b0b83a53f409ef8a4eefef3c9f7f1299"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-15.txt": {
+    "mtime": 1788326818.256772,
+    "hash": "7b406d92b40f4b97c98cbefade083b77"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-16.txt": {
+    "mtime": 1788326818.2577715,
+    "hash": "273f6365342b82dc0de8256b04e9535c"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-17.txt": {
+    "mtime": 1788326818.258286,
+    "hash": "b06a8f164b7485894860a3d8eb5d97b6"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-18.txt": {
+    "mtime": 1788326818.259305,
+    "hash": "9e44850d1ed62545f3f4cc3cbe75c82e"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-19.txt": {
+    "mtime": 1788326818.2600894,
+    "hash": "af77588f611d588ed746577da3fdbffc"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-2.txt": {
+    "mtime": 1788326818.2416036,
+    "hash": "a7ecc8e0ed0e677a504156e637a11fa4"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-20.txt": {
+    "mtime": 1788326818.2600894,
+    "hash": "d96948d241eaee50094cc5365c1332f8"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-21.txt": {
+    "mtime": 1788326818.2621028,
+    "hash": "fb5ad8a8f1864353eb55d428faf77dc0"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-22.txt": {
+    "mtime": 1788326818.2621028,
+    "hash": "7561d93becfeb7a3725cebfdc83514e1"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-23.txt": {
+    "mtime": 1788326818.2631056,
+    "hash": "3619d45789cac2747c6f5db3e942d6c2"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-24.txt": {
+    "mtime": 1788326818.2641034,
+    "hash": "3fbf027592ad6af77c461f0aa4a9c7d1"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-25.txt": {
+    "mtime": 1788326818.265106,
+    "hash": "34064b5db692e0a522be471b4f7f0647"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-26.txt": {
+    "mtime": 1788326818.2661042,
+    "hash": "de5c1efb71282d29005969313a87e228"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-3.txt": {
+    "mtime": 1788326818.242605,
+    "hash": "f9bebd963ad7d5fe2c035a124686098d"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-4.txt": {
+    "mtime": 1788326818.242605,
+    "hash": "65ee48f9ccbc9cd45f1bebb35b0e08e1"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-5.txt": {
+    "mtime": 1788326818.244605,
+    "hash": "3fdb479a2408dd4a417c3903ce4dc86a"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-6.txt": {
+    "mtime": 1788326818.246606,
+    "hash": "96f9ece3e65de9ce9abff6512407d3d7"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-7.txt": {
+    "mtime": 1788326818.2481167,
+    "hash": "92dd30895f805b201deb97d301c8df11"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-8.txt": {
+    "mtime": 1788326818.2501316,
+    "hash": "e177165dea509c0cae9718d16f9f588b"
+  },
+  "D:\\The App\\scratch\\ch7_inspect\\7-9.txt": {
+    "mtime": 1788326818.251135,
+    "hash": "2dd652ef58a18d5f30951899682cb6d9"
+  },
+  "D:\\The App\\scratch\\ch8_cleaned\\8-1.txt": {
+    "mtime": 1788325040.270855,
+    "hash": "aa4e05a4720e0b7b089ff2f4cb702d32"
+  },
+  "D:\\The App\\scratch\\ch8_cleaned\\8-2.txt": {
+    "mtime": 1788325162.104988,
+    "hash": "c9de293bc670c26e0d45fedea1483cdf"
+  },
+  "D:\\The App\\scratch\\ch8_cleaned\\8-3.txt": {
+    "mtime": 1788325162.3395364,
+    "hash": "9e613c0d69f41ce37d2e9dfdc7f844fa"
+  },
+  "D:\\The App\\scratch\\ch8_cleaned\\8-4.txt": {
+    "mtime": 1788325041.354033,
+    "hash": "cedb23daf55eb046df34deabbf04ac7f"
+  },
+  "D:\\The App\\scratch\\ch8_cleaned\\8-5.txt": {
+    "mtime": 1788325041.7551737,
+    "hash": "4a8589245a0fb1fd80f58d4c8f03c358"
+  },
+  "D:\\The App\\scratch\\ch8_cleaned\\8-6.txt": {
+    "mtime": 1788325162.6566415,
+    "hash": "b5e92fe0039568989f190e84d209d773"
+  },
+  "D:\\The App\\scratch\\ch8_cleaned\\8-7.txt": {
+    "mtime": 1788325162.92075,
+    "hash": "3dbc1904afe731d9510c96c374454ba0"
+  },
+  "D:\\The App\\scratch\\ch8_raw\\8-1.txt": {
+    "mtime": 1788324638.1502652,
+    "hash": "b10711793fdd2c2d99bdc175dd5f6d98"
+  },
+  "D:\\The App\\scratch\\ch8_raw\\8-2.txt": {
+    "mtime": 1788324638.1508274,
+    "hash": "3ce24cb3df8be713b35591e80c073947"
+  },
+  "D:\\The App\\scratch\\ch8_raw\\8-3.txt": {
+    "mtime": 1788324638.1544232,
+    "hash": "dde07c2ec2dd9716daf1df26f7ccf442"
+  },
+  "D:\\The App\\scratch\\ch8_raw\\8-4.txt": {
+    "mtime": 1788324638.1554482,
+    "hash": "6554ec72b6232add7859561934fe7eb6"
+  },
+  "D:\\The App\\scratch\\ch8_raw\\8-5.txt": {
+    "mtime": 1788324638.1564648,
+    "hash": "97d55f3f1520854d8ab8b6f69e5a02b6"
+  },
+  "D:\\The App\\scratch\\ch8_raw\\8-6.txt": {
+    "mtime": 1788324638.1579788,
+    "hash": "3415669162de83c3fdf00a9a4788cdfb"
+  },
+  "D:\\The App\\scratch\\ch8_raw\\8-7.txt": {
+    "mtime": 1788324638.158993,
+    "hash": "09ab34e67abf9e99c83e89d97c7a70da"
   },
   "D:\\The App\\scripts\\data\\biostats_depth\\26-1.md": {
     "mtime": 1786733150.2011569,
@@ -1847,6 +2527,142 @@
     "mtime": 1786735641.9986334,
     "hash": "50d7e74d25fa255afbd2b1958adea595"
   },
+  "D:\\The App\\reading-illustrations\\ch31_1_demographic_transition_pyramid.png": {
+    "mtime": 1788415508.3325067,
+    "hash": "0f8676ef7be4f9fe1f43846238396c1b"
+  },
+  "D:\\The App\\reading-illustrations\\ch31_1_demographic_transition_pyramid_v2.png": {
+    "mtime": 1788415508.3325067,
+    "hash": "0f8676ef7be4f9fe1f43846238396c1b"
+  },
+  "D:\\The App\\reading-illustrations\\ch31_2_srs_dual_record_flowchart.png": {
+    "mtime": 1788412320.6189013,
+    "hash": "f6197724a1834a97b0e74f3753276ac9"
+  },
+  "D:\\The App\\reading-illustrations\\ch31_2_srs_dual_record_flowchart_v2.png": {
+    "mtime": 1788412320.6189013,
+    "hash": "f6197724a1834a97b0e74f3753276ac9"
+  },
+  "D:\\The App\\reading-illustrations\\ch31_3_nfhs_indicators_dashboard.png": {
+    "mtime": 1788415606.4123518,
+    "hash": "75fdb0cea7b1b9cab4f1dee58d684b29"
+  },
+  "D:\\The App\\reading-illustrations\\ch31_3_nfhs_indicators_dashboard_v2.png": {
+    "mtime": 1788415606.4123518,
+    "hash": "75fdb0cea7b1b9cab4f1dee58d684b29"
+  },
+  "D:\\The App\\reading-illustrations\\ch31_4_disease_care_cascades.png": {
+    "mtime": 1788415702.926332,
+    "hash": "398d0f66d5a9adb54f17197d25705ceb"
+  },
+  "D:\\The App\\reading-illustrations\\ch31_4_disease_care_cascades_v2.png": {
+    "mtime": 1788415702.926332,
+    "hash": "398d0f66d5a9adb54f17197d25705ceb"
+  },
+  "D:\\The App\\reading-illustrations\\ch31_5_nhp_continuum_aam_architecture.png": {
+    "mtime": 1788412509.4650724,
+    "hash": "2baad5d7d59008e028740ba2d9daa59d"
+  },
+  "D:\\The App\\reading-illustrations\\ch31_5_nhp_continuum_aam_architecture_v2.png": {
+    "mtime": 1788412509.4650724,
+    "hash": "2baad5d7d59008e028740ba2d9daa59d"
+  },
+  "D:\\The App\\reading-illustrations\\ch31_6_health_information_systems_continuum.png": {
+    "mtime": 1788415818.3621647,
+    "hash": "7419d529b8dda41ec6f684a23a48cb94"
+  },
+  "D:\\The App\\reading-illustrations\\ch31_6_health_information_systems_continuum_v2.png": {
+    "mtime": 1788415818.3621647,
+    "hash": "7419d529b8dda41ec6f684a23a48cb94"
+  },
+  "D:\\The App\\reading-illustrations\\ch32_10_healthcare_ghg_scopes_green_hospital.png": {
+    "mtime": 1788413508.6298723,
+    "hash": "1bf9ab9c3dbe9832c14fc97d58fef2c6"
+  },
+  "D:\\The App\\reading-illustrations\\ch32_10_healthcare_ghg_scopes_green_hospital_v2.png": {
+    "mtime": 1788413508.6298723,
+    "hash": "1bf9ab9c3dbe9832c14fc97d58fef2c6"
+  },
+  "D:\\The App\\reading-illustrations\\ch32_11_yellow_fever_ihr_decision_tree.png": {
+    "mtime": 1788413629.216014,
+    "hash": "2e6d6ee190132f45f7e074a16d03eeb8"
+  },
+  "D:\\The App\\reading-illustrations\\ch32_11_yellow_fever_ihr_decision_tree_v2.png": {
+    "mtime": 1788413629.216014,
+    "hash": "2e6d6ee190132f45f7e074a16d03eeb8"
+  },
+  "D:\\The App\\reading-illustrations\\ch32_1_abdm_architecture.png": {
+    "mtime": 1788415933.3472726,
+    "hash": "81ceb9113ed5b2279459b7c88b8065a5"
+  },
+  "D:\\The App\\reading-illustrations\\ch32_1_abdm_architecture_v2.png": {
+    "mtime": 1788415933.3472726,
+    "hash": "81ceb9113ed5b2279459b7c88b8065a5"
+  },
+  "D:\\The App\\reading-illustrations\\ch32_2_ai_cad_screening_workflow.png": {
+    "mtime": 1788416017.1492302,
+    "hash": "d85c55c216f24778ea64ef1295808c39"
+  },
+  "D:\\The App\\reading-illustrations\\ch32_2_ai_cad_screening_workflow_v2.png": {
+    "mtime": 1788416017.1492302,
+    "hash": "d85c55c216f24778ea64ef1295808c39"
+  },
+  "D:\\The App\\reading-illustrations\\ch32_3_idrone_logistics_model.png": {
+    "mtime": 1788412848.0199873,
+    "hash": "7d20bc8049fdb67efac05e9426529970"
+  },
+  "D:\\The App\\reading-illustrations\\ch32_3_idrone_logistics_model_v2.png": {
+    "mtime": 1788412848.0199873,
+    "hash": "7d20bc8049fdb67efac05e9426529970"
+  },
+  "D:\\The App\\reading-illustrations\\ch32_4_adult_immunization_framework.png": {
+    "mtime": 1788416115.5481882,
+    "hash": "d83eff11a21d9b7c36f1c028461310d5"
+  },
+  "D:\\The App\\reading-illustrations\\ch32_4_adult_immunization_framework_v2.png": {
+    "mtime": 1788416115.5481882,
+    "hash": "d83eff11a21d9b7c36f1c028461310d5"
+  },
+  "D:\\The App\\reading-illustrations\\ch32_5_biosafety_levels_bioterrorism.png": {
+    "mtime": 1788416229.0341134,
+    "hash": "0bf8d85c1f4136e4247423f1bcf0f305"
+  },
+  "D:\\The App\\reading-illustrations\\ch32_5_biosafety_levels_bioterrorism_v2.png": {
+    "mtime": 1788416229.0341134,
+    "hash": "0bf8d85c1f4136e4247423f1bcf0f305"
+  },
+  "D:\\The App\\reading-illustrations\\ch32_6_nap_amr_aware_one_health.png": {
+    "mtime": 1788413047.8963945,
+    "hash": "426b4fa2ae4f6494bac51d2a4b1b6ee3"
+  },
+  "D:\\The App\\reading-illustrations\\ch32_6_nap_amr_aware_one_health_v2.png": {
+    "mtime": 1788413047.8963945,
+    "hash": "426b4fa2ae4f6494bac51d2a4b1b6ee3"
+  },
+  "D:\\The App\\reading-illustrations\\ch32_7_gis_thematic_layers_buffering.png": {
+    "mtime": 1788413283.6379619,
+    "hash": "0127fdeb55551743cdecf804d6d63404"
+  },
+  "D:\\The App\\reading-illustrations\\ch32_7_gis_thematic_layers_buffering_v2.png": {
+    "mtime": 1788413283.6379619,
+    "hash": "0127fdeb55551743cdecf804d6d63404"
+  },
+  "D:\\The App\\reading-illustrations\\ch32_8_prisma_roc_geometry.png": {
+    "mtime": 1788416348.579846,
+    "hash": "fa4ae8ed891e0f9a0b2f65da288297f5"
+  },
+  "D:\\The App\\reading-illustrations\\ch32_8_prisma_roc_geometry_v2.png": {
+    "mtime": 1788416348.579846,
+    "hash": "fa4ae8ed891e0f9a0b2f65da288297f5"
+  },
+  "D:\\The App\\reading-illustrations\\ch32_9_millers_pyramid_fap_timeline.png": {
+    "mtime": 1788413409.112374,
+    "hash": "8287bd5fa6563dce5ad1de37238ffb06"
+  },
+  "D:\\The App\\reading-illustrations\\ch32_9_millers_pyramid_fap_timeline_v2.png": {
+    "mtime": 1788413409.112374,
+    "hash": "8287bd5fa6563dce5ad1de37238ffb06"
+  },
   "D:\\The App\\reading-illustrations\\gn_15_8_climate.png": {
     "mtime": 1788260250.1854274,
     "hash": "19a42ac2d51f39ba56b799e86b14b2ee"
@@ -2082,5 +2898,17 @@
   "D:\\The App\\reading-illustrations\\stage_7-7_npcbvi.png": {
     "mtime": 1775300410.457045,
     "hash": "16f9c9ced01c92235f4827d69dd8298a"
+  },
+  "D:\\The App\\scratch\\ch8_p1.png": {
+    "mtime": 1788324569.6654708,
+    "hash": "0c8b26aa23cd0b4a7ef9214213f07474"
+  },
+  "D:\\The App\\scratch\\ch8_p2.png": {
+    "mtime": 1788324588.7342207,
+    "hash": "2f00ac3a1f09bf6a9566f5d2d284c434"
+  },
+  "D:\\The App\\scratch\\temp_page_1.png": {
+    "mtime": 1788324644.2692287,
+    "hash": "1710b1da30e6cadaec236e4277263cf9"
   }
 }
