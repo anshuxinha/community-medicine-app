@@ -5,7 +5,6 @@ import {
   calculateCerealPulseRatio,
   calculateIndividualIntake,
   calculateFamilySurvey,
-  generateClinicalImpression,
   generateDietaryCounseling,
   generateCaseSheetSummary,
   SAMPLE_FAMILY_MEMBERS,
@@ -140,22 +139,16 @@ describe("engines", () => {
       percentDiff(result.iron, REFERENCE_PROFILES.preg_3rd_sedentary.ironRda),
       5
     );
-    const impression = generateClinicalImpression(
-      result,
-      REFERENCE_PROFILES.preg_3rd_sedentary
-    );
-    expect(impression.length).toBeGreaterThan(20);
-    expect(impression).toMatch(/RDA/);
-    expect(impression).not.toMatch(/below EAR/);
     const tips = generateDietaryCounseling(result, REFERENCE_PROFILES.preg_3rd_sedentary);
     expect(tips.length).toBeGreaterThan(0);
-    expect(tips[0].title).toBe("Specific dietary recommendations");
     expect(tips[0].bullets.length).toBeGreaterThan(0);
     const blob = JSON.stringify(tips);
     expect(blob).not.toMatch(/Gopalan/i);
     expect(blob).not.toMatch(/not the /i);
     expect(blob).toMatch(/RDA/);
     expect(blob).not.toMatch(/below iron EAR/);
+    expect(blob).not.toMatch(/\bIFCT\b/);
+    expect(blob).toMatch(/\d+ (katori|katoris|handful|handfuls|glass|glasses|sattu|boiled egg)/i);
   });
 
   it("judges nutrient status against RDA and energy against EER", () => {
@@ -246,9 +239,8 @@ describe("engines", () => {
     expect(summary).toContain("judged against RDA");
     expect(summary).toMatch(/vs RDA/);
     expect(summary).toContain("Carbohydrate");
-    const amdrBlock = summary
-      .split("ACCEPTABLE MACRONUTRIENT DISTRIBUTION RANGE")[1]
-      .split("IMPRESSION")[0];
+    expect(summary).not.toContain("IMPRESSION");
+    const amdrBlock = summary.split("ACCEPTABLE MACRONUTRIENT DISTRIBUTION RANGE")[1];
     expect(amdrBlock).not.toContain("Cereal : pulse : milk");
   });
 
@@ -273,7 +265,6 @@ describe("engines", () => {
       REFERENCE_PROFILES.man_sedentary
     );
     const withoutVitC = generateDietaryCounseling(result, REFERENCE_PROFILES.man_sedentary);
-    expect(withoutVitC[0].title).toBe("Specific dietary recommendations");
     expect(withoutVitC[0].bullets.join(" ")).not.toMatch(/below vitamin C RDA/i);
     const withVitC = generateDietaryCounseling(result, REFERENCE_PROFILES.man_sedentary, {
       extraMicroKeys: ["vitC"],
@@ -305,5 +296,44 @@ describe("engines", () => {
     expect(REFERENCE_PROFILES.man_sedentary.zincRda).toBe(17);
     expect(REFERENCE_PROFILES.woman_sedentary.vitaminARda).toBe(840);
     expect(REFERENCE_PROFILES.elderly_man.vitaminDRda).toBe(20);
+  });
+
+  it("scales food servings to close the nutrient gap", () => {
+    const profile = REFERENCE_PROFILES.man_sedentary;
+    const atRda = {};
+    MICRONUTRIENT_DEFS.forEach((d) => {
+      atRda[d.gotKey] = profile[d.rdaKey];
+    });
+    const base = {
+      kcal: profile.kcal,
+      protein: profile.proteinRda,
+      proteinEar: profile.proteinEar,
+      cerealGrams: 150,
+      pulseGrams: 50,
+      milkGrams: 125,
+      cpRatio: { ratioNum: 3, triple: "3.0 : 1 : 2.5" },
+      ...atRda,
+    };
+    const servingCount = (text) => {
+      const m = text.match(/Add (\d+) /);
+      return m ? Number(m[1]) : null;
+    };
+    const small = generateDietaryCounseling(
+      { ...base, iron: profile.ironRda - 5 },
+      profile,
+      { selectedMicroKeys: ["iron"] }
+    );
+    const large = generateDietaryCounseling(
+      { ...base, iron: profile.ironRda - 12 },
+      profile,
+      { selectedMicroKeys: ["iron"] }
+    );
+    const smallText = small[0].bullets.join(" ");
+    const largeText = large[0].bullets.join(" ");
+    expect(smallText).toMatch(/below iron RDA/i);
+    expect(largeText).toMatch(/below iron RDA/i);
+    expect(smallText).not.toMatch(/\bIFCT\b/);
+    expect(servingCount(smallText)).toBe(1);
+    expect(servingCount(largeText)).toBeGreaterThan(servingCount(smallText));
   });
 });

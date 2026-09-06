@@ -39,7 +39,6 @@ import {
   SAMPLE_FAMILY_RATIONS,
   calculateIndividualIntake,
   calculateFamilySurvey,
-  generateClinicalImpression,
   generateDietaryCounseling,
   generateCaseSheetSummary,
   findFood,
@@ -418,10 +417,10 @@ const DietarySurveyScreen = () => {
                         { v: `${currentProfile.kcal}`, l: "kcal EER" },
                         {
                           v: `${carbGramsFromEer(currentProfile.kcal).at50}-${carbGramsFromEer(currentProfile.kcal).at60}g`,
-                          l: "Carb AMDR",
+                          l: "Carb 50-60%",
                         },
                         { v: `${currentProfile.proteinEar}/${currentProfile.proteinRda}g`, l: "Protein EAR/RDA" },
-                        { v: `${currentProfile.visibleFat}g`, l: "Visible fat" },
+                        { v: `${currentProfile.visibleFat}g`, l: "Visible fat limit" },
                       ].map((chip) => (
                         <View key={chip.l} style={styles.rdaBadge}>
                           <Text style={styles.rdaBadgeValue}>{chip.v}</Text>
@@ -730,30 +729,14 @@ const DietarySurveyScreen = () => {
                   <Card style={styles.resultCard}>
                     <Card.Content>
                       <View style={styles.cardTitleRow}>
-                        <MaterialIcons name="psychology" size={22} color={colors.secondary} />
-                        <Text style={styles.sectionTitle}>Clinical impression</Text>
-                      </View>
-                      <Text style={styles.impressionText}>
-                        {generateClinicalImpression(individualResult, currentProfile)}
-                      </Text>
-                    </Card.Content>
-                  </Card>
-
-                  <Card style={styles.resultCard}>
-                    <Card.Content>
-                      <View style={styles.cardTitleRow}>
                         <MaterialIcons name="health-and-safety" size={22} color={colors.secondary} />
-                        <Text style={styles.sectionTitle}>Low-cost counseling</Text>
+                        <Text style={styles.sectionTitle}>Dietary Recommendation</Text>
                       </View>
                       {generateDietaryCounseling(individualResult, currentProfile, {
                         selectedMicroKeys,
+                        foods: foodData,
                       }).map((tip, idx) => (
                         <View key={idx} style={styles.counselingItem}>
-                          <View style={styles.counselingHeader}>
-                            <MaterialCommunityIcons name={tip.icon} size={20} color={colors.secondary} />
-                            <Text style={styles.counselingTitle}>{tip.title}</Text>
-                          </View>
-                          <Text style={styles.counselingDesc}>{tip.description}</Text>
                           {tip.bullets.map((b, bIdx) => (
                             <View key={bIdx} style={styles.bulletRow}>
                               <Text style={styles.bulletDot}>•</Text>
@@ -1590,22 +1573,8 @@ const createStyles = (colors) =>
       backgroundColor: colors.surfaceSecondary || "#E2E8F0",
     },
     ratioTitle: { fontSize: 13, fontWeight: "bold", color: colors.textTitle },
-    impressionText: {
-      fontSize: 13,
-      lineHeight: 20,
-      color: colors.textTitle,
-      marginTop: 6,
-    },
-    counselingItem: { marginBottom: 14 },
-    counselingHeader: { flexDirection: "row", alignItems: "center", marginBottom: 2 },
-    counselingTitle: {
-      fontSize: 13,
-      fontWeight: "bold",
-      color: colors.secondary,
-      marginLeft: 6,
-    },
-    counselingDesc: { fontSize: 12, color: colors.textSecondary, marginBottom: 4 },
-    bulletRow: { flexDirection: "row", marginLeft: 4, marginBottom: 2 },
+    counselingItem: { marginBottom: 14, marginTop: 6 },
+    bulletRow: { flexDirection: "row", marginLeft: 4, marginBottom: 6 },
     bulletDot: { fontSize: 14, color: colors.secondary, marginRight: 6 },
     bulletText: { fontSize: 12, color: colors.textTitle, flex: 1, lineHeight: 18 },
     shareBtn: { marginBottom: 8, borderColor: colors.secondary, borderRadius: 8 },

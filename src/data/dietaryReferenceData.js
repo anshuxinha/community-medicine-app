@@ -5,6 +5,8 @@
  * Consumption units are energy ratios vs the sedentary adult man (2110 kcal = 1.0 CU).
  */
 
+import foodTable from "./foodData.json";
+
 const REF_MAN_KCAL = 2110;
 const REF_MAN_PROTEIN_EAR = 42.9;
 const REF_MAN_PROTEIN_RDA = 54.0;
@@ -957,17 +959,12 @@ export const MICRONUTRIENT_DEFS = [
     defaultVisible: true,
     gapThreshold: 3,
     decimals: 1,
-    counseling: {
-      title: "Iron (RDA)",
-      icon: "pill",
-      description: (gap) => `About ${gap.toFixed(1)} mg below iron RDA.`,
-      bullets: [
-        "Cook drumstick leaves, methi, or amaranth in an iron kadai.",
-        "IFCT rice flakes (poha) provide about 4.5 mg iron per 100 g.",
-        "Do not drink tea or coffee within 1 hour of meals.",
-        "Squeeze lemon (IFCT juice, about 48 mg vitamin C per 100 g) over dal.",
-      ],
-    },
+    counselingFoods: [
+      { id: "methi_leaves", portionId: "katori_cooked", singular: "katori of methi leaves", plural: "katoris of methi leaves" },
+      { id: "drumstick_leaves", portionId: "katori_cooked", singular: "katori of drumstick leaves", plural: "katoris of drumstick leaves" },
+      { id: "poha", portionId: "katori_dry", singular: "katori of raw poha", plural: "katoris of raw poha" },
+      { id: "kala_chana", portionId: "sattu_30", singular: "sattu serving (2 tbsp roasted Bengal gram)", plural: "sattu servings (2 tbsp roasted Bengal gram each)" },
+    ],
   },
   {
     key: "calcium",
@@ -981,16 +978,12 @@ export const MICRONUTRIENT_DEFS = [
     defaultVisible: true,
     gapThreshold: 150,
     decimals: 0,
-    counseling: {
-      title: "Calcium",
-      icon: "bottle-tonic-plus",
-      description: (gap) => `About ${Math.round(gap)} mg below calcium RDA:`,
-      bullets: [
-        "Ragi (IFCT: 364 mg calcium per 100 g) in roti or porridge.",
-        "10 g brown gingelly (til) seeds: about 117 mg calcium.",
-        "150-200 ml curd or cow milk (IFCT cow milk: 118 mg calcium per 100 ml).",
-      ],
-    },
+    counselingFoods: [
+      { id: "milk_cow", portionId: "glass", singular: "glass of cow milk", plural: "glasses of cow milk" },
+      { id: "curd_dahi", portionId: "katori", singular: "katori of curd", plural: "katoris of curd" },
+      { id: "ragi", portionId: "roti_ragi", singular: "ragi roti", plural: "ragi rotis" },
+      { id: "sesame_seeds", portionId: "tbsp", singular: "tablespoon of til (gingelly) seeds", plural: "tablespoons of til (gingelly) seeds" },
+    ],
   },
   {
     key: "folate",
@@ -1004,18 +997,11 @@ export const MICRONUTRIENT_DEFS = [
     defaultVisible: true,
     gapThreshold: 80,
     decimals: 0,
-    counseling: {
-      title: "Folate",
-      icon: "leaf",
-      description: (gap, profile) => {
-        const pregNote =
-          profile.category === "Pregnancy" ? " The IFA tablet still supplies 500 µg folic acid." : "";
-        return `About ${Math.round(gap)} µg below folate RDA.${pregNote}`;
-      },
-      bullets: [
-        "Green leafy vegetables and whole pulses (rajma and Bengal gram are folate-dense in IFCT).",
-      ],
-    },
+    counselingFoods: [
+      { id: "rajma", portionId: "katori_cooked", singular: "katori of cooked rajma", plural: "katoris of cooked rajma" },
+      { id: "kala_chana", portionId: "katori_cooked", singular: "katori of cooked Bengal gram", plural: "katoris of cooked Bengal gram" },
+      { id: "spinach", portionId: "katori_cooked", singular: "katori of palak", plural: "katoris of palak" },
+    ],
   },
   {
     key: "vitC",
@@ -1029,16 +1015,11 @@ export const MICRONUTRIENT_DEFS = [
     defaultVisible: false,
     gapThreshold: 10,
     decimals: 1,
-    counseling: {
-      title: "Vitamin C (RDA)",
-      icon: "fruit-citrus",
-      description: (gap) => `About ${gap.toFixed(1)} mg below vitamin C RDA.`,
-      bullets: [
-        "Amla (IFCT: 252 mg vitamin C per 100 g).",
-        "Lemon or guava with meals.",
-        "Squeeze lemon (IFCT juice, about 48 mg vitamin C per 100 g) over dal.",
-      ],
-    },
+    counselingFoods: [
+      { id: "amla", portionId: "amla_pc", singular: "amla", plural: "amlas" },
+      { id: "guava", portionId: "one", singular: "medium guava", plural: "medium guavas" },
+      { id: "lemon_juice", portionId: "tbsp", singular: "tablespoon of lemon juice", plural: "tablespoons of lemon juice" },
+    ],
   },
   {
     key: "zinc",
@@ -1052,15 +1033,11 @@ export const MICRONUTRIENT_DEFS = [
     defaultVisible: false,
     gapThreshold: 2,
     decimals: 1,
-    counseling: {
-      title: "Zinc (RDA)",
-      icon: "circle-outline",
-      description: (gap) => `About ${gap.toFixed(1)} mg below zinc RDA.`,
-      bullets: [
-        "Whole pulses and ground nut (IFCT ground nut: about 3.2 mg zinc per 100 g).",
-        "Whole wheat atta and millets rather than polished rice only.",
-      ],
-    },
+    counselingFoods: [
+      { id: "groundnuts", portionId: "handful", singular: "handful of groundnuts", plural: "handfuls of groundnuts" },
+      { id: "kala_chana", portionId: "katori_cooked", singular: "katori of cooked Bengal gram", plural: "katoris of cooked Bengal gram" },
+      { id: "wheat_atta", portionId: "roti_med", singular: "medium roti (atta)", plural: "medium rotis (atta)" },
+    ],
   },
   {
     key: "magnesium",
@@ -1074,15 +1051,11 @@ export const MICRONUTRIENT_DEFS = [
     defaultVisible: false,
     gapThreshold: 50,
     decimals: 0,
-    counseling: {
-      title: "Magnesium (RDA)",
-      icon: "leaf",
-      description: (gap) => `About ${Math.round(gap)} mg below magnesium RDA.`,
-      bullets: [
-        "Ragi and whole pulses.",
-        "Green leafy vegetables and gingelly (til) seeds.",
-      ],
-    },
+    counselingFoods: [
+      { id: "ragi", portionId: "roti_ragi", singular: "ragi roti", plural: "ragi rotis" },
+      { id: "sesame_seeds", portionId: "tbsp", singular: "tablespoon of til (gingelly) seeds", plural: "tablespoons of til (gingelly) seeds" },
+      { id: "spinach", portionId: "katori_cooked", singular: "katori of palak", plural: "katoris of palak" },
+    ],
   },
   {
     key: "vitaminA",
@@ -1096,15 +1069,12 @@ export const MICRONUTRIENT_DEFS = [
     defaultVisible: false,
     gapThreshold: 150,
     decimals: 0,
-    counseling: {
-      title: "Vitamin A (RDA)",
-      icon: "eye",
-      description: (gap) => `About ${Math.round(gap)} µg below vitamin A RDA.`,
-      bullets: [
-        "Drumstick leaves, amaranth, or ripe mango (IFCT vitamin A as retinol equivalent).",
-        "One egg or a piece of fish if the household eats animal food.",
-      ],
-    },
+    counselingFoods: [
+      { id: "drumstick_leaves", portionId: "katori_cooked", singular: "katori of drumstick leaves", plural: "katoris of drumstick leaves" },
+      { id: "amaranth_leaves", portionId: "katori_cooked", singular: "katori of amaranth leaves", plural: "katoris of amaranth leaves" },
+      { id: "mango", portionId: "katori", singular: "katori of ripe mango", plural: "katoris of ripe mango" },
+      { id: "egg_whole", portionId: "one", singular: "boiled egg", plural: "boiled eggs" },
+    ],
   },
   {
     key: "thiamine",
@@ -1118,15 +1088,11 @@ export const MICRONUTRIENT_DEFS = [
     defaultVisible: false,
     gapThreshold: 0.3,
     decimals: 2,
-    counseling: {
-      title: "Thiamine (RDA)",
-      icon: "barley",
-      description: (gap) => `About ${gap.toFixed(2)} mg below thiamine RDA.`,
-      bullets: [
-        "Whole wheat atta and millets (IFCT atta: about 0.42 mg thiamine per 100 g).",
-        "Whole pulses and ground nut.",
-      ],
-    },
+    counselingFoods: [
+      { id: "wheat_atta", portionId: "roti_med", singular: "medium roti (atta)", plural: "medium rotis (atta)" },
+      { id: "groundnuts", portionId: "handful", singular: "handful of groundnuts", plural: "handfuls of groundnuts" },
+      { id: "kala_chana", portionId: "katori_cooked", singular: "katori of cooked Bengal gram", plural: "katoris of cooked Bengal gram" },
+    ],
   },
   {
     key: "riboflavin",
@@ -1140,15 +1106,12 @@ export const MICRONUTRIENT_DEFS = [
     defaultVisible: false,
     gapThreshold: 0.3,
     decimals: 2,
-    counseling: {
-      title: "Riboflavin (RDA)",
-      icon: "bottle-tonic",
-      description: (gap) => `About ${gap.toFixed(2)} mg below riboflavin RDA.`,
-      bullets: [
-        "Cow milk or curd (IFCT cow milk: about 0.11 mg riboflavin per 100 ml).",
-        "Egg and green leafy vegetables.",
-      ],
-    },
+    counselingFoods: [
+      { id: "milk_cow", portionId: "glass", singular: "glass of cow milk", plural: "glasses of cow milk" },
+      { id: "curd_dahi", portionId: "katori", singular: "katori of curd", plural: "katoris of curd" },
+      { id: "egg_whole", portionId: "one", singular: "boiled egg", plural: "boiled eggs" },
+      { id: "drumstick_leaves", portionId: "katori_cooked", singular: "katori of drumstick leaves", plural: "katoris of drumstick leaves" },
+    ],
   },
   {
     key: "niacin",
@@ -1162,15 +1125,11 @@ export const MICRONUTRIENT_DEFS = [
     defaultVisible: false,
     gapThreshold: 2,
     decimals: 1,
-    counseling: {
-      title: "Niacin (RDA)",
-      icon: "peanut",
-      description: (gap) => `About ${gap.toFixed(1)} mg below niacin RDA.`,
-      bullets: [
-        "Ground nut (IFCT: about 11.4 mg niacin per 100 g).",
-        "Whole cereals and pulses.",
-      ],
-    },
+    counselingFoods: [
+      { id: "groundnuts", portionId: "handful", singular: "handful of groundnuts", plural: "handfuls of groundnuts" },
+      { id: "wheat_atta", portionId: "roti_med", singular: "medium roti (atta)", plural: "medium rotis (atta)" },
+      { id: "kala_chana", portionId: "katori_cooked", singular: "katori of cooked Bengal gram", plural: "katoris of cooked Bengal gram" },
+    ],
   },
   {
     key: "vitB6",
@@ -1184,15 +1143,11 @@ export const MICRONUTRIENT_DEFS = [
     defaultVisible: false,
     gapThreshold: 0.3,
     decimals: 2,
-    counseling: {
-      title: "Vitamin B6 (RDA)",
-      icon: "food-apple",
-      description: (gap) => `About ${gap.toFixed(2)} mg below vitamin B6 RDA.`,
-      bullets: [
-        "Banana, potato, and whole pulses.",
-        "Chicken or fish if the household eats animal food.",
-      ],
-    },
+    counselingFoods: [
+      { id: "banana", portionId: "one", singular: "medium banana", plural: "medium bananas" },
+      { id: "potato", portionId: "med", singular: "medium potato", plural: "medium potatoes" },
+      { id: "kala_chana", portionId: "katori_cooked", singular: "katori of cooked Bengal gram", plural: "katoris of cooked Bengal gram" },
+    ],
   },
   {
     key: "vitaminD",
@@ -1206,15 +1161,10 @@ export const MICRONUTRIENT_DEFS = [
     defaultVisible: false,
     gapThreshold: 3,
     decimals: 1,
-    counseling: {
-      title: "Vitamin D (RDA)",
-      icon: "white-balance-sunny",
-      description: (gap) => `About ${gap.toFixed(1)} µg below vitamin D RDA (15 µg is 600 IU).`,
-      bullets: [
-        "Egg yolk or rohu if the household eats animal food.",
-        "Outdoor daylight; IFCT plant foods are a weak vitamin D source.",
-      ],
-    },
+    counselingFoods: [
+      { id: "egg_whole", portionId: "one", singular: "boiled egg", plural: "boiled eggs" },
+      { id: "fish_rohu", portionId: "piece", singular: "piece of rohu", plural: "pieces of rohu" },
+    ],
   },
 ];
 
@@ -1402,70 +1352,85 @@ export const calculateFamilySurvey = ({ members, rations, period }) => {
   };
 };
 
-export const generateClinicalImpression = (result, profile) => {
-  if (!result || !profile) return "";
-  const parts = [];
-  const kcalDef = result.kcalDiff;
-  const proDef = result.proteinDiff;
+const ENERGY_COUNSELING_FOODS = [
+  { id: "groundnuts", portionId: "handful", singular: "handful of groundnuts", plural: "handfuls of groundnuts" },
+  { id: "kala_chana", portionId: "sattu_30", singular: "sattu serving (2 tbsp roasted Bengal gram)", plural: "sattu servings (2 tbsp roasted Bengal gram each)" },
+  { id: "banana", portionId: "one", singular: "medium banana", plural: "medium bananas" },
+];
 
-  if (kcalDef < -20 && proDef < -20) {
-    parts.push(
-      `Energy (${Math.abs(kcalDef).toFixed(1)}% below EER) and protein (${Math.abs(proDef).toFixed(1)}% below RDA) are both low`
-    );
-  } else if (kcalDef < -10 && proDef < -10) {
-    parts.push(`Moderate energy and protein gap versus ICMR-NIN 2020 EER / RDA`);
-  } else if (kcalDef < -10 && proDef >= -10) {
-    parts.push(`Energy is ${Math.abs(kcalDef).toFixed(1)}% below EER; protein meets RDA`);
-  } else if (kcalDef >= -10 && proDef < -10) {
-    parts.push(`Energy meets EER; protein is ${Math.abs(proDef).toFixed(1)}% below RDA`);
-  } else if (kcalDef > 20) {
-    parts.push(`Energy is ${kcalDef.toFixed(1)}% above EER`);
-  } else {
-    parts.push("Energy and protein are broadly adequate versus ICMR-NIN 2020 EER / RDA");
+const PROTEIN_COUNSELING_FOODS = [
+  { id: "egg_whole", portionId: "one", singular: "boiled egg", plural: "boiled eggs" },
+  { id: "kala_chana", portionId: "sattu_30", singular: "sattu serving (2 tbsp roasted Bengal gram)", plural: "sattu servings (2 tbsp roasted Bengal gram each)" },
+  { id: "dal_toor", portionId: "katori_med", singular: "medium katori of toor dal", plural: "medium katoris of toor dal" },
+  { id: "curd_dahi", portionId: "katori", singular: "katori of curd", plural: "katoris of curd" },
+];
+
+const PULSE_COUNSELING_FOODS = [
+  { id: "dal_toor", portionId: "katori_med", singular: "medium katori of toor dal", plural: "medium katoris of toor dal" },
+  { id: "kala_chana", portionId: "katori_cooked", singular: "katori of cooked Bengal gram", plural: "katoris of cooked Bengal gram" },
+];
+
+const MILK_COUNSELING_FOODS = [
+  { id: "milk_cow", portionId: "glass", singular: "glass of cow milk", plural: "glasses of cow milk" },
+  { id: "curd_dahi", portionId: "katori", singular: "katori of curd", plural: "katoris of curd" },
+];
+
+const MAX_PRACTICAL_SERVINGS = 8;
+
+const perPortionAmount = (food, portion, nutrientKey) => {
+  const grams = Number(portion.grams) || 0;
+  if (nutrientKey === "__grams") return grams;
+  return ((Number(food[nutrientKey]) || 0) * grams) / 100;
+};
+
+const servingsForGap = (gap, per) => {
+  if (!(gap > 0) || !(per > 0)) return null;
+  return Math.max(1, Math.ceil((gap - 1e-9) / per));
+};
+
+const formatAmt = (value, decimals) => {
+  const places = decimals == null ? (value >= 10 ? 0 : value >= 1 ? 1 : 2) : decimals;
+  return String(Number(value.toFixed(places)));
+};
+
+const describeAdd = (resolved, decimals, unit) => {
+  const { spec, portion, count, provided } = resolved;
+  const phrase = count === 1 ? spec.singular : spec.plural;
+  const grams = Math.round(count * (portion.grams || 0));
+  return `${count} ${phrase} (${grams} g, adds ${formatAmt(provided, decimals)} ${unit})`;
+};
+
+const resolveCounselingFoods = (foods, specs, gap, nutrientKey) =>
+  (specs || [])
+    .map((spec) => {
+      const food = findFood(foods, spec.id);
+      const portion = food?.portions?.find((p) => p.id === spec.portionId);
+      if (!food || !portion) return null;
+      const per = perPortionAmount(food, portion, nutrientKey);
+      const count = servingsForGap(gap, per);
+      if (!count) return null;
+      return { spec, food, portion, per, count, provided: per * count };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.count - b.count || b.per - a.per);
+
+const suggestAdds = (foods, specs, gap, nutrientKey, unit, decimals) => {
+  const resolved = resolveCounselingFoods(foods, specs, gap, nutrientKey);
+  if (!resolved.length) return "";
+  const practical = resolved.filter((r) => r.count <= MAX_PRACTICAL_SERVINGS);
+  if (!practical.length) {
+    const densest = resolved[0];
+    const one = { ...densest, count: 1, provided: densest.per };
+    return `${describeAdd(one, decimals, unit)} is a practical start; household portions of these foods do not close this remaining gap.`;
   }
-
-  if (result.lowQualityProtein) {
-    parts.push(
-      "Cereal-heavy pattern: ICMR 2020 uses 1 g protein/kg when cereal protein quality is poor. Status uses official RDA."
-    );
-  }
-
-  const micros = [];
-  MICRONUTRIENT_DEFS.forEach((d) => {
-    const diff = result[d.diffKey];
-    if (diff != null && diff < -25) {
-      micros.push(`${d.label.toLowerCase()} (${Math.abs(diff).toFixed(1)}% below RDA)`);
-    }
-  });
-  if (micros.length) parts.push(`Micronutrient gaps versus RDA: ${micros.join(", ")}`);
-
-  if (result.visibleFatDiff != null && profile.visibleFat > 0) {
-    if (result.visibleFatDiff < -20) {
-      parts.push(`Visible fat (oil/ghee logged) is below the ICMR visible-fat amount of ${profile.visibleFat} g`);
-    } else if (result.visibleFatDiff > 20) {
-      parts.push(`Visible fat logged is above the ICMR visible-fat amount of ${profile.visibleFat} g`);
-    }
-  }
-
-  if (result.amdr) {
-    if (result.amdr.carbPct > 65) {
-      parts.push(`Carbohydrate share is ${result.amdr.carbPct}% of Atwater energy (target about 50-60%)`);
-    } else if (result.amdr.fatPct > 35) {
-      parts.push(`Total fat share is ${result.amdr.fatPct}% of Atwater energy (target about 20-30%)`);
-    }
-  }
-
-  if (result.cpRatio && result.cpRatio.ratioNum > 5) {
-    parts.push(
-      `Cereal : pulse : milk is ${result.cpRatio.triple || result.cpRatio.ratio} (target about 3 : 1 : 2.5)`
-    );
-  }
-
-  return `${parts.join(". ")}.`;
+  const alts = practical.slice(0, 2);
+  if (alts.length === 1) return `Add ${describeAdd(alts[0], decimals, unit)}.`;
+  return `Add ${describeAdd(alts[0], decimals, unit)}, or ${describeAdd(alts[1], decimals, unit)}.`;
 };
 
 export const generateDietaryCounseling = (result, profile, options = {}) => {
   if (!result || !profile) return [];
+  const foods = options.foods || foodTable;
   const selectedMicroKeys =
     options.selectedMicroKeys ||
     MICRONUTRIENT_DEFS.filter(
@@ -1476,20 +1441,32 @@ export const generateDietaryCounseling = (result, profile, options = {}) => {
   const proGap = profile.proteinRda - result.protein;
 
   if (kcalGap > 150) {
+    const add = suggestAdds(foods, ENERGY_COUNSELING_FOODS, kcalGap, "calories", "kcal", 0);
     bullets.push(
-      `Energy intake is ${result.kcal.toFixed(0)} kcal, ${kcalGap} kcal below the EER of ${profile.kcal} kcal. Add 30 g roasted Bengal gram / sattu (IFCT whole Bengal gram: about 86 kcal and 5.6 g protein) and 30 g ground nut (IFCT: about 156 kcal and 7.1 g protein) to raise energy without a large extra cereal load.`
+      `Energy intake is ${result.kcal.toFixed(0)} kcal, ${kcalGap} kcal below the EER of ${profile.kcal} kcal. ${add}`
     );
   }
 
   if (proGap > 5) {
+    const add = suggestAdds(foods, PROTEIN_COUNSELING_FOODS, proGap, "protein", "g protein", 1);
     bullets.push(
-      `Protein intake is ${result.protein.toFixed(1)} g, ${proGap.toFixed(1)} g below the RDA of ${profile.proteinRda} g (EAR ${profile.proteinEar} g). One boiled egg, about 50 g (IFCT: about 74 kcal and 6.7 g protein), plus 30 g roasted Bengal gram (IFCT: about 5.6 g protein) closes part of the gap and improves pulse-quality protein.`
+      `Protein intake is ${result.protein.toFixed(1)} g, ${proGap.toFixed(1)} g below the RDA of ${profile.proteinRda} g (EAR ${profile.proteinEar} g). ${add}`
     );
   }
 
   if (result.cpRatio && result.cpRatio.ratioNum > 5) {
+    const cerealG = result.cerealGrams || 0;
+    const pulseG = result.pulseGrams || 0;
+    const milkG = result.milkGrams || 0;
+    const pulseGap = Math.max(0, cerealG / 3 - pulseG);
+    const pulseAdd =
+      pulseGap > 10 ? suggestAdds(foods, PULSE_COUNSELING_FOODS, pulseGap, "__grams", "g pulse", 0) : "";
+    const pulseAfter = pulseG + pulseGap;
+    const milkGap = Math.max(0, pulseAfter * 2.5 - milkG);
+    const milkAdd =
+      milkGap > 40 ? suggestAdds(foods, MILK_COUNSELING_FOODS, milkGap, "__grams", "g milk", 0) : "";
     bullets.push(
-      `Cereal : pulse : milk is ${result.cpRatio.triple || result.cpRatio.ratio} (target about 3 : 1 : 2.5). ICMR 2020 uses 1 g protein/kg (about ${result.proteinOneGPerKg} g) when pulse is very low. Add one katori of dal or 30 g roasted chana at lunch and dinner, and keep milk or curd in the day.`
+      `Cereal : pulse : milk is ${result.cpRatio.triple || result.cpRatio.ratio} (target about 3 : 1 : 2.5). ${pulseAdd} ${milkAdd}`.replace(/\s+/g, " ").trim()
     );
   }
 
@@ -1497,8 +1474,15 @@ export const generateDietaryCounseling = (result, profile, options = {}) => {
     if (profile[d.rdaKey] == null || result[d.gotKey] == null) return;
     const gap = profile[d.rdaKey] - result[d.gotKey];
     if (gap > d.gapThreshold) {
-      const lead = d.counseling.description(gap, profile).replace(/:\s*$/, ".");
-      bullets.push(`${lead} ${d.counseling.bullets.join(" ")}`);
+      const add = suggestAdds(foods, d.counselingFoods, gap, d.gotKey, d.unit, d.decimals);
+      let lead = `About ${formatAmt(gap, d.decimals)} ${d.unit} below ${d.label.toLowerCase()} RDA.`;
+      if (d.key === "folate" && profile.category === "Pregnancy") {
+        lead += " The IFA tablet still supplies 500 µg folic acid.";
+      }
+      if (d.key === "vitaminD") {
+        lead += " Outdoor daylight remains the main source.";
+      }
+      bullets.push(`${lead} ${add}`.trim());
     }
   });
 
@@ -1508,15 +1492,7 @@ export const generateDietaryCounseling = (result, profile, options = {}) => {
     );
   }
 
-  return [
-    {
-      title: "Specific dietary recommendations",
-      icon: "food-apple",
-      description:
-        "Each point is one shortfall from this recall versus ICMR-NIN 2020 EER or RDA.",
-      bullets,
-    },
-  ];
+  return [{ bullets }];
 };
 
 const dateStamp = () =>
@@ -1597,8 +1573,5 @@ ACCEPTABLE MACRONUTRIENT DISTRIBUTION RANGE (AMDR):
 • Carbohydrate ${result.amdr?.carbPct || 0}% (about 50-60%)
 • Protein ${result.amdr?.proteinPct || 0}% (about 10-15%)
 • Fat ${result.amdr?.fatPct || 0}% (about 20-30%)
------------------------------------------------------------
-IMPRESSION:
-${generateClinicalImpression(result, profile)}
 ===========================================================`;
 };
