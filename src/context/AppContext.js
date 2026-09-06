@@ -720,24 +720,20 @@ export const AppProvider = ({ children }) => {
         upvotesCount += (data.upvotedBy || []).length;
       });
 
-      const allDoubtsSnapshot = await getDocs(collection(db, "videoDoubts"));
-      allDoubtsSnapshot.forEach((doc) => {
-        const data = doc.data();
-        if (data.userId !== uid) {
-          const myReplies = (data.replies || []).filter(r => r.userId === uid);
-          myReplies.forEach(r => {
-            upvotesCount += (r.upvotedBy || []).length;
-          });
-        }
-      });
+      const countKey = "upvotesReceivedCount:ownDoubts";
+      const storedUpvotesCountStr = await AsyncStorage.getItem(countKey);
+      if (storedUpvotesCountStr == null) {
+        // Seed watermark so switching off the old full-collection scan
+        // does not replay historical own-doubt upvotes into study score.
+        await AsyncStorage.setItem(countKey, upvotesCount.toString());
+        return;
+      }
+      const storedUpvotesCount = parseInt(storedUpvotesCountStr, 10) || 0;
 
-      const storedUpvotesCountStr = await AsyncStorage.getItem("upvotesReceivedCount");
-      const storedUpvotesCount = storedUpvotesCountStr ? parseInt(storedUpvotesCountStr, 10) : 0;
-
-      if (upvotesCount !== storedUpvotesCount) {
+      if (upvotesCount > storedUpvotesCount) {
         const diff = upvotesCount - storedUpvotesCount;
         setStudyScore((prev) => prev + diff * 5);
-        await AsyncStorage.setItem("upvotesReceivedCount", upvotesCount.toString());
+        await AsyncStorage.setItem(countKey, upvotesCount.toString());
       }
     } catch (e) {
       console.warn("Failed to sync received upvotes:", e?.message);
@@ -767,25 +763,23 @@ export const AppProvider = ({ children }) => {
               // Without this, base content is used first and % under-counts
               // until Firestore overrides arrive (e.g. 25% → 26%).
               // Admin anshuxinha@gmail.com and others with active overrides hit this.
-              const hadOverrideCache = await applyCachedLibraryOverrides();
-              if (!hadOverrideCache) {
-                // First run / empty cache: wait for network so first paint is correct
-                await refreshLibraryContent();
-              } else {
-                // Background refresh keeps cache current for next cold start
-                void refreshLibraryContent();
-              }
+              await applyCachedLibraryOverrides();
+              // Network overrides never block first paint (5s timeout on
+              // first run used to hold the spinner). Cache paint is enough;
+              // refresh bumps contentRegistryVersion when it lands.
+              void refreshLibraryContent();
 
-              const cachedUserStr = await AsyncStorage.getItem("user");
+              const [cachedUserStr, localSnapshot] = await Promise.all([
+                AsyncStorage.getItem("user"),
+                loadLocalLearningSnapshot(firebaseUser.uid),
+              ]);
               if (cachedUserStr) {
                 const cachedUser = JSON.parse(cachedUserStr);
                 if (cachedUser?.uid === firebaseUser.uid) {
                   cachedUsername = cachedUser.username || null;
                   // Merge accountState + individual keys so a partial prior
                   // save cannot paint one-read-behind progress.
-                  cachedAccountRaw = await loadLocalLearningSnapshot(
-                    firebaseUser.uid,
-                  );
+                  cachedAccountRaw = localSnapshot;
                   if (cachedAccountRaw) {
                     hydrateStoredState(cachedAccountRaw);
                   }
@@ -1067,10 +1061,9 @@ export const AppProvider = ({ children }) => {
           }
         } else {
           if (initialLoadRef.current && !isLoggingOutRef.current) {
-            const restored = await tryRestoreSignIn();
-            if (restored) {
-              return;
-            }
+            // Restore must not hold Login behind Cloud Functions. If it
+            // signs in, onAuthStateChanged fires again and hydrates.
+            void tryRestoreSignIn();
           }
           cloudHydratedRef.current = false;
           initialLoadRef.current = false;

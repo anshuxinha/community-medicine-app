@@ -18,6 +18,7 @@ import { AppContext } from "../context/AppContext";
 import { useSessionEnforcer } from "../hooks/useSessionEnforcer";
 import { setupNotificationTapHandler } from "../services/notificationService";
 import { useAppTheme } from "../styles/ThemeContext";
+import { hideSplash } from "../utils/appSplash";
 
 // Eager: first-paint surfaces only
 import DashboardScreen from "../screens/DashboardScreen";
@@ -159,6 +160,18 @@ const AppNavigator = () => {
 
   useEffect(() => {
     setupNotificationTapHandler(navigationRef);
+  }, []);
+
+  useEffect(() => {
+    if (user === undefined) return;
+    hideSplash();
+  }, [user]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      hideSplash();
+    }, 8000);
+    return () => clearTimeout(timeoutId);
   }, []);
 
   // One-time onboarding after login. Never re-prompt once completed on device

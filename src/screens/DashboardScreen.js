@@ -6,6 +6,7 @@ import {
   Platform,
   TouchableOpacity,
   Animated,
+  InteractionManager,
 } from "react-native";
 import {
   Text,
@@ -235,9 +236,13 @@ const DashboardScreen = ({ navigation }) => {
   const { isTablet, horizontalPadding, scaleFactor, contentMaxWidth } =
     useResponsive();
 
-  // Refresh learning progress from cloud when Dashboard mounts
+  // Refresh after first paint so mount does not contend with Dashboard render.
   useEffect(() => {
-    if (refreshFromCloud) refreshFromCloud();
+    if (!refreshFromCloud) return;
+    const handle = InteractionManager.runAfterInteractions(() => {
+      refreshFromCloud();
+    });
+    return () => handle.cancel();
   }, []);
 
   useEffect(() => {

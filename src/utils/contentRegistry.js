@@ -1,5 +1,6 @@
 import baseMockData from "../data/mockData.json";
 import basePracticalData from "../data/practical.json";
+import BASE_CONTENT_SIGNATURES from "../data/contentSignatures.json";
 import { getPrimaryPaperForChapterId } from "../data/nmcCurriculum";
 
 const cloneDeep = (value) => JSON.parse(JSON.stringify(value));
@@ -80,12 +81,12 @@ const findItemById = (items, targetId) => {
 const applyOverrideToTheory = (theoryItems, override) => {
   const libraryId = override?.libraryId ?? override?.id;
   if (libraryId === undefined || libraryId === null) {
-    return;
+    return false;
   }
 
   const targetItem = findItemById(theoryItems, libraryId);
   if (!targetItem) {
-    return;
+    return false;
   }
 
   if (typeof override.proposedContent === "string" && override.proposedContent.trim()) {
@@ -119,6 +120,7 @@ const applyOverrideToTheory = (theoryItems, override) => {
     approvedBy: override.approvedBy || null,
     markAsNew: targetItem.recentlyUpdated === true,
   };
+  return true;
 };
 
 const getActiveOverrides = (approvedOverrides = []) =>
@@ -136,12 +138,23 @@ const buildSections = (approvedOverrides = []) => {
   const activeOverrides = getActiveOverrides(approvedOverrides);
 
   if (activeOverrides.length === 0) {
-    return { theory: baseMockData, practical: basePracticalData, cloned: false };
+    return {
+      theory: baseMockData,
+      practical: basePracticalData,
+      cloned: false,
+      overriddenIds: new Set(),
+    };
   }
 
   const theory = cloneDeep(baseMockData);
-  activeOverrides.forEach((override) => applyOverrideToTheory(theory, override));
-  return { theory, practical: basePracticalData, cloned: true };
+  const overriddenIds = new Set();
+  activeOverrides.forEach((override) => {
+    const libraryId = override?.libraryId ?? override?.id;
+    if (applyOverrideToTheory(theory, override) && libraryId != null) {
+      overriddenIds.add(String(libraryId));
+    }
+  });
+  return { theory, practical: basePracticalData, cloned: true, overriddenIds };
 };
 
 /**
@@ -168,7 +181,17 @@ export const walkContentItemsWithRoot = (
   });
 };
 
-const rebuildDerivedIndexes = () => {
+const signatureForItem = (section, item, overriddenIds) => {
+  const key = getContentKey(section, item.id);
+  const mustRehash =
+    section === "theory" && overriddenIds && overriddenIds.has(String(item.id));
+  if (!mustRehash && BASE_CONTENT_SIGNATURES[key]) {
+    return BASE_CONTENT_SIGNATURES[key];
+  }
+  return getContentSignature(item);
+};
+
+const rebuildDerivedIndexes = (overriddenIds = new Set()) => {
   LEAF_CONTENT_ENTRIES.splice(0, LEAF_CONTENT_ENTRIES.length);
   VALID_CONTENT_KEYS.clear();
   VALID_MASTER_TITLES.clear();
@@ -190,7 +213,7 @@ const rebuildDerivedIndexes = () => {
         rootChapterId: String(rootChapterId),
         primaryPaper,
         recentlyUpdated: item.recentlyUpdated === true,
-        signature: getContentSignature(item),
+        signature: signatureForItem(activeSection, item, overriddenIds),
         item,
       };
 
@@ -226,7 +249,7 @@ export const hydrateContentRegistry = (approvedOverrides = []) => {
   const nextSections = buildSections(approvedOverrides);
   replaceArrayContents(CONTENT_SECTIONS.theory, nextSections.theory);
   replaceArrayContents(CONTENT_SECTIONS.practical, nextSections.practical);
-  rebuildDerivedIndexes();
+  rebuildDerivedIndexes(nextSections.overriddenIds);
   lastHydrateOverrideCount = activeCount;
 };
 

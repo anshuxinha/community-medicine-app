@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
+import { InteractionManager } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   loadUpdatesMonths,
@@ -7,7 +8,8 @@ import {
 } from "../services/updatesService";
 
 /**
- * Load Updates feed (remote → cache → bundled). Refreshes on focus.
+ * Load Updates feed (remote → cache → bundled). Refreshes on focus
+ * after interactions so Dashboard first paint stays on bundled/cache.
  */
 export default function useUpdatesFeed() {
   const [months, setMonths] = useState(() => monthsFromBundled());
@@ -38,13 +40,12 @@ export default function useUpdatesFeed() {
     }
   }, []);
 
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
-
   useFocusEffect(
     useCallback(() => {
-      refresh();
+      const handle = InteractionManager.runAfterInteractions(() => {
+        refresh();
+      });
+      return () => handle.cancel();
     }, [refresh]),
   );
 

@@ -32,8 +32,8 @@
     "hash": "38b5d2dd80847395a7caef1e901cf267"
   },
   "D:\\The App\\index.js": {
-    "mtime": 1784219648.6215653,
-    "hash": "b7e518b41e4e8caf95b01ee70d7745f2"
+    "mtime": 1788671494.4981945,
+    "hash": "25c4023d3743ba4ba0dbf93d2f986b9f"
   },
   "D:\\The App\\jest.config.js": {
     "mtime": 1784212373.0537157,
@@ -719,6 +719,10 @@
     "mtime": 1786735635.4082162,
     "hash": "3c3da799a178752daa2c6c635cd0d043"
   },
+  "D:\\The App\\scripts\\generate-content-signatures.js": {
+    "mtime": 1788671361.7501984,
+    "hash": "1cd1b6e96edb556eae9051be95650462"
+  },
   "D:\\The App\\scripts\\generate-guidebook-figures.js": {
     "mtime": 1787902217.4640093,
     "hash": "9e27342caa0221fcaab8c478094fe26d"
@@ -1008,8 +1012,8 @@
     "hash": "28aff4aa2aa407d8be48e8aed5bb252a"
   },
   "D:\\The App\\src\\context\\AppContext.js": {
-    "mtime": 1788180937.14527,
-    "hash": "09f38c2e5d1d523970fb2db449a88854"
+    "mtime": 1788671447.574402,
+    "hash": "ccf88f8a5939def6c67d2a547d6303e8"
   },
   "D:\\The App\\src\\data\\defaultTopicIllustrations.js": {
     "mtime": 1786881885.1823778,
@@ -1052,12 +1056,12 @@
     "hash": "414c412599255e06ed6e40966609bdf5"
   },
   "D:\\The App\\src\\hooks\\useUpdatesFeed.js": {
-    "mtime": 1785775127.4745152,
-    "hash": "cc9a10b9fc4d6e5c67642d1b34ae488c"
+    "mtime": 1788671494.5002036,
+    "hash": "d620a156647745fc287bf0ac657655f1"
   },
   "D:\\The App\\src\\navigation\\AppNavigator.js": {
-    "mtime": 1787947074.8395865,
-    "hash": "6761d261a45ba93eba6cab722b851fc4"
+    "mtime": 1788671494.5772347,
+    "hash": "4f982c34f6962740e4ac162a6351b5df"
   },
   "D:\\The App\\src\\screens\\AdminAppFeedbackScreen.js": {
     "mtime": 1786804524.82716,
@@ -1080,8 +1084,8 @@
     "hash": "f1e7ade8058d26abf467d904414ca50b"
   },
   "D:\\The App\\src\\screens\\DashboardScreen.js": {
-    "mtime": 1787721989.5379567,
-    "hash": "78d932dd12dd959406e08481df24d999"
+    "mtime": 1788671494.5879326,
+    "hash": "39b4cbad05f363925fe075de757f34e6"
   },
   "D:\\The App\\src\\screens\\DietarySurveyScreen.js": {
     "mtime": 1788670452.0718217,
@@ -1255,13 +1259,17 @@
     "mtime": 1784220279.988786,
     "hash": "aeeb25e31f8c2b1e8ab34083cf63308a"
   },
+  "D:\\The App\\src\\utils\\appSplash.js": {
+    "mtime": 1788671494.4992008,
+    "hash": "35a738d4cd951de356db384fabaea8cc"
+  },
   "D:\\The App\\src\\utils\\chapterSearch.js": {
     "mtime": 1787812099.5555847,
     "hash": "ebc4c3a67f8eae29e527d79d3260b61c"
   },
   "D:\\The App\\src\\utils\\contentRegistry.js": {
-    "mtime": 1787943381.0516217,
-    "hash": "f3b5ca66cb4db2f3ce3ea36b82761f45"
+    "mtime": 1788671402.3022492,
+    "hash": "5e19942b55e12f9e2c0f30afa55f45bd"
   },
   "D:\\The App\\src\\utils\\copyWord.js": {
     "mtime": 1786856743.7656906,
@@ -1346,6 +1354,10 @@
   "D:\\The App\\src\\utils\\__tests__\\contentRegistry.nextLeaf.test.js": {
     "mtime": 1784650282.931558,
     "hash": "985dc88ff91debb96b26431b81f41c0e"
+  },
+  "D:\\The App\\src\\utils\\__tests__\\contentRegistry.signatures.test.js": {
+    "mtime": 1788671447.37641,
+    "hash": "e8c779f96c365f6d62d8b03121a09feb"
   },
   "D:\\The App\\src\\utils\\__tests__\\contentRegistry.silentUpdate.test.js": {
     "mtime": 1787943453.657562,
