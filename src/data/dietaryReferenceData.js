@@ -545,6 +545,91 @@ export const FOOD_CATEGORIES = [
   "Cooked Snacks",
 ];
 
+/** Common field names that should hit the IFCT food, including Hindi household terms. */
+export const FOOD_SEARCH_ALIASES = {
+  wheat_atta: ["roti", "chapati", "chapatti", "phulka", "paratha", "wheat", "atta", "whole wheat"],
+  rice_raw: ["chawal", "bhat", "white rice", "plain rice"],
+  rice_parboiled: ["sella", "ukda", "converted rice"],
+  poha: ["flattened rice", "beaten rice", "chiwda", "aval"],
+  murmura: ["puffed rice", "muri", "murmure"],
+  ragi: ["finger millet", "nachni", "mandua"],
+  bajra: ["pearl millet"],
+  jowar: ["sorghum", "jola", "bhakri"],
+  suji: ["rava", "semolina", "upma"],
+  maida: ["refined flour", "naan", "bhatura"],
+  dal_toor: ["arhar", "tuvar", "toor", "pigeon pea", "dal"],
+  dal_moong: ["moong", "yellow dal", "dal"],
+  moong_whole: ["green gram", "sabut moong"],
+  dal_chana: ["chana dal", "split chickpea", "dal"],
+  kala_chana: ["sattu", "chickpea", "bengal gram", "chole", "chana"],
+  dal_masoor: ["masoor", "lentil", "red lentil", "dal"],
+  dal_urad: ["urad", "black gram", "idli dal", "dal"],
+  rajma: ["kidney beans", "red beans"],
+  soya_bean: ["soy", "soya", "soya chunks"],
+  besan: ["gram flour", "chickpea flour", "besan"],
+  spinach: ["palak"],
+  methi_leaves: ["fenugreek", "methi"],
+  drumstick_leaves: ["moringa", "sahjan", "munagaku"],
+  mustard_leaves: ["sarson", "saag"],
+  amaranth_leaves: ["chaulai"],
+  potato: ["aloo"],
+  onion: ["pyaz", "pyaaz"],
+  carrot: ["gajar"],
+  sweet_potato: ["shakarkand"],
+  tomato: ["tamatar"],
+  cauliflower: ["gobhi", "phool gobhi", "gobi"],
+  cabbage: ["patta gobhi", "patta gobi"],
+  bhindi: ["okra", "ladyfinger", "lady finger"],
+  lauki: ["bottle gourd", "ghiya", "doodhi"],
+  green_peas: ["matar", "peas"],
+  brinjal: ["baingan", "eggplant", "aubergine"],
+  cucumber: ["kheera", "kakdi"],
+  banana: ["kela"],
+  guava: ["amrood", "amrud"],
+  amla: ["gooseberry", "awla", "nellikai", "usiri"],
+  orange: ["santra", "narangi"],
+  papaya: ["papita"],
+  mango: ["aam"],
+  apple: ["seb"],
+  lemon_juice: ["nimbu", "lime", "lemon"],
+  milk_cow: ["doodh", "cow milk", "milk"],
+  milk_buffalo: ["buffalo milk", "doodh"],
+  curd_dahi: ["dahi", "yogurt", "yoghurt", "buttermilk", "chhach", "chaas"],
+  paneer: ["cottage cheese"],
+  cooking_oil: ["mustard oil", "tel", "oil", "refined oil", "sunflower oil"],
+  ghee: ["desi ghee", "clarified butter"],
+  egg_whole: ["anda", "boiled egg", "egg"],
+  egg_white: ["egg white", "anda"],
+  chicken_lean: ["murgi", "chicken"],
+  fish_rohu: ["machli", "fish", "katla"],
+  mutton: ["bakra", "goat", "gosht", "mutton"],
+  groundnuts: ["peanut", "moongphali", "groundnut", "moongfali"],
+  sesame_seeds: ["til", "gingelly", "sesame"],
+  almonds: ["badam"],
+  sugar: ["cheeni", "chini"],
+  jaggery: ["gur", "gud"],
+  snack_idli: ["idli"],
+  snack_dosa: ["dosa", "dosai"],
+};
+
+export const foodMatchesQuery = (food, query) => {
+  const q = (query || "").trim().toLowerCase();
+  if (!q) return true;
+  const aliases = FOOD_SEARCH_ALIASES[food.id] || food.aliases || [];
+  const hay = [
+    food.name,
+    food.category,
+    food.ifctCode,
+    ...aliases,
+    ...(food.portions || []).map((p) => p.label),
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+  const tokens = q.split(/\s+/).filter(Boolean);
+  return tokens.every((t) => hay.includes(t));
+};
+
 export const SAMPLE_RECALL_ITEMS = [
   { id: "sample_1", mealId: "breakfast", foodId: "wheat_atta", portionId: "roti_med", quantity: "2" },
   { id: "sample_2", mealId: "breakfast", foodId: "milk_cow", portionId: "cup", quantity: "1" },

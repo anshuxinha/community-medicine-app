@@ -18,7 +18,6 @@ import {
   Button,
   Card,
   Divider,
-  Chip,
   IconButton,
   ProgressBar,
 } from "react-native-paper";
@@ -34,6 +33,7 @@ import {
   MEAL_SLOTS,
   CU_COEFFICIENT_OPTIONS,
   FOOD_CATEGORIES,
+  foodMatchesQuery,
   SAMPLE_RECALL_ITEMS,
   SAMPLE_FAMILY_MEMBERS,
   SAMPLE_FAMILY_RATIONS,
@@ -107,13 +107,7 @@ const DietarySurveyScreen = () => {
   const filteredFoods = useMemo(() => {
     return foodData.filter((item) => {
       const matchCat = selectedCategory === "All" || item.category === selectedCategory;
-      const q = searchQuery.trim().toLowerCase();
-      const matchQuery =
-        !q ||
-        item.name.toLowerCase().includes(q) ||
-        item.category.toLowerCase().includes(q) ||
-        (item.ifctCode || "").toLowerCase().includes(q);
-      return matchCat && matchQuery;
+      return matchCat && foodMatchesQuery(item, searchQuery);
     });
   }, [searchQuery, selectedCategory]);
 
@@ -1104,7 +1098,7 @@ const DietarySurveyScreen = () => {
             <View style={styles.searchBarContainer}>
               <MaterialIcons name="search" size={22} color={colors.textSecondary} />
               <TextInput
-                placeholder="Search atta, rice, dal, milk..."
+                placeholder="Search roti, rice, dal, milk..."
                 value={searchQuery}
                 onChangeText={setSearchQuery}
                 style={styles.searchInput}
@@ -1113,26 +1107,35 @@ const DietarySurveyScreen = () => {
                 dense
               />
             </View>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.categoryScroll}
-            >
-              {FOOD_CATEGORIES.map((cat) => {
-                const isSelected = selectedCategory === cat;
-                return (
-                  <Chip
-                    key={cat}
-                    selected={isSelected}
-                    onPress={() => setSelectedCategory(cat)}
-                    style={[styles.catChip, isSelected && { backgroundColor: colors.secondary }]}
-                    textStyle={{ fontSize: 12, color: isSelected ? "#FFFFFF" : colors.textTitle }}
-                  >
-                    {cat}
-                  </Chip>
-                );
-              })}
-            </ScrollView>
+            <View style={styles.categoryRow}>
+              <ScrollView
+                horizontal
+                nestedScrollEnabled
+                keyboardShouldPersistTaps="handled"
+                showsHorizontalScrollIndicator={false}
+                style={styles.categoryScrollView}
+                contentContainerStyle={styles.categoryScroll}
+              >
+                {FOOD_CATEGORIES.map((cat) => {
+                  const isSelected = selectedCategory === cat;
+                  return (
+                    <TouchableOpacity
+                      key={cat}
+                      activeOpacity={0.7}
+                      onPress={() => setSelectedCategory(cat)}
+                      style={[styles.catChip, isSelected && styles.catChipSelected]}
+                    >
+                      <Text
+                        style={[styles.catChipText, isSelected && styles.catChipTextSelected]}
+                        numberOfLines={1}
+                      >
+                        {cat}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+            </View>
             <Divider />
             <FlatList
               data={filteredFoods}
@@ -1581,8 +1584,26 @@ const createStyles = (colors) =>
       borderColor: colors.borderStrong,
     },
     searchInput: { flex: 1, backgroundColor: "transparent", fontSize: 13, height: 40 },
-    categoryScroll: { paddingHorizontal: 16, paddingBottom: 8 },
-    catChip: { marginRight: 6, backgroundColor: colors.backgroundMain },
+    categoryRow: { height: 36, marginBottom: 4 },
+    categoryScrollView: { flexGrow: 0, height: 36 },
+    categoryScroll: { paddingHorizontal: 16, alignItems: "center" },
+    catChip: {
+      height: 28,
+      paddingHorizontal: 10,
+      marginRight: 6,
+      borderRadius: 14,
+      backgroundColor: colors.backgroundMain,
+      borderWidth: 1,
+      borderColor: colors.borderStrong,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    catChipSelected: {
+      backgroundColor: colors.secondary,
+      borderColor: colors.secondary,
+    },
+    catChipText: { fontSize: 12, color: colors.textTitle },
+    catChipTextSelected: { color: "#FFFFFF", fontWeight: "600" },
     foodListItem: {
       flexDirection: "row",
       alignItems: "center",

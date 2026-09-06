@@ -11,6 +11,7 @@ import {
   SAMPLE_FAMILY_MEMBERS,
   SAMPLE_FAMILY_RATIONS,
   SAMPLE_RECALL_ITEMS,
+  foodMatchesQuery,
 } from "../dietaryReferenceData";
 import foodData from "../foodData.json";
 
@@ -73,6 +74,16 @@ describe("IFCT 2017 food table", () => {
     expect(byId.cooking_oil.visibleFat).toBe(true);
     expect(byId.cooking_oil.calories).toBe(900);
     expect(byId.wheat_atta.visibleFat).toBe(false);
+  });
+
+  it("matches household synonyms such as roti, palak, and doodh", () => {
+    expect(foodMatchesQuery(byId.wheat_atta, "roti")).toBe(true);
+    expect(foodMatchesQuery(byId.wheat_atta, "chapati")).toBe(true);
+    expect(foodMatchesQuery(byId.spinach, "palak")).toBe(true);
+    expect(foodMatchesQuery(byId.milk_cow, "doodh")).toBe(true);
+    expect(foodMatchesQuery(byId.rice_raw, "roti")).toBe(false);
+    const rotiHits = foodData.filter((f) => foodMatchesQuery(f, "roti"));
+    expect(rotiHits.some((f) => f.id === "wheat_atta")).toBe(true);
   });
 });
 
