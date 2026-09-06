@@ -1245,6 +1245,18 @@ export const calculateIndividualIntake = (recallItems, foods, profile) => {
     });
   }
 
+  const mealTotals = {};
+  for (const row of calculatedMealRows) {
+    const key = row.mealId || "other";
+    if (!mealTotals[key]) {
+      mealTotals[key] = { kcal: 0, protein: 0, carbs: 0, fat: 0 };
+    }
+    mealTotals[key].kcal += row.kcal || 0;
+    mealTotals[key].protein += row.protein || 0;
+    mealTotals[key].carbs += row.carbs || 0;
+    mealTotals[key].fat += row.fat || 0;
+  }
+
   if (totals.kcal <= 0 && totals.protein <= 0) {
     return null;
   }
@@ -1275,6 +1287,7 @@ export const calculateIndividualIntake = (recallItems, foods, profile) => {
     proteinEar,
     proteinOneGPerKg,
     calculatedMealRows,
+    mealTotals,
   };
 };
 
@@ -1490,12 +1503,35 @@ NUTRIENTS PER CU:
 
   let mealText = "";
   if (mealRows && mealRows.length > 0) {
-    mealText = mealRows
-      .filter((r) => r.food && r.grams > 0)
-      .map(
-        (r) =>
-          `  • [${r.mealLabel}] ${r.food.name} (${r.portionLabel} x ${r.quantity}): ${r.grams.toFixed(0)} g -> ${r.kcal.toFixed(0)} kcal, ${r.protein.toFixed(1)} g P`
-      )
+    const valid = mealRows.filter((r) => r.food && r.grams > 0);
+    const grouped = {};
+    valid.forEach((r) => {
+      const key = r.mealId || "other";
+      if (!grouped[key]) grouped[key] = [];
+      grouped[key].push(r);
+    });
+    const slotOrder = MEAL_SLOTS.map((s) => s.id);
+    const mealIds = [
+      ...slotOrder.filter((id) => grouped[id]),
+      ...Object.keys(grouped).filter((id) => !slotOrder.includes(id)),
+    ];
+    mealText = mealIds
+      .map((id) => {
+        const rows = grouped[id];
+        const slot = MEAL_SLOTS.find((m) => m.id === id);
+        const label = (slot?.title || rows[0]?.mealLabel || id).toUpperCase();
+        const kcal = rows.reduce((s, r) => s + (r.kcal || 0), 0);
+        const protein = rows.reduce((s, r) => s + (r.protein || 0), 0);
+        const carbs = rows.reduce((s, r) => s + (r.carbs || 0), 0);
+        const fat = rows.reduce((s, r) => s + (r.fat || 0), 0);
+        const items = rows
+          .map(
+            (r) =>
+              `    • ${r.food.name} (${r.portionLabel} x ${r.quantity}): ${r.grams.toFixed(0)} g -> ${r.kcal.toFixed(0)} kcal, ${r.protein.toFixed(1)} g P`
+          )
+          .join("\n");
+        return `  ${label} (${kcal.toFixed(0)} kcal, ${protein.toFixed(1)} g protein, ${carbs.toFixed(1)} g carbohydrate, ${fat.toFixed(1)} g fat)\n${items}`;
+      })
       .join("\n");
   }
 

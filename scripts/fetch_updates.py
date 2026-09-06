@@ -16,7 +16,16 @@ except ImportError:  # seed-only path does not need requests
 OLLAMA_API_KEY = os.environ.get("OLLAMA_API_KEY")
 
 OLLAMA_API_URL = "https://ollama.com/api/chat"
-OLLAMA_MODEL = "minimax-m3:cloud"
+# MiniMax M3 left the Ollama Cloud free tier (HTTP 402). Gemma 4 31B remains on free.
+OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "gemma4:31b-cloud")
+OLLAMA_FALLBACK_MODELS = [
+    m.strip()
+    for m in os.environ.get(
+        "OLLAMA_FALLBACK_MODELS",
+        "gpt-oss:20b-cloud,gpt-oss:120b-cloud",
+    ).split(",")
+    if m.strip()
+]
 
 MAX_RETRIES = 2
 RETRY_DELAY_SECONDS = 5
@@ -70,59 +79,78 @@ def _extract_json_payload(text: str) -> Optional[Any]:
             return None
 
 
+def _ollama_models_to_try() -> List[str]:
+    ordered: List[str] = []
+    for name in [OLLAMA_MODEL, *OLLAMA_FALLBACK_MODELS]:
+        if name and name not in ordered:
+            ordered.append(name)
+    return ordered
+
+
 def call_ollama(prompt: str) -> Optional[Any]:
     last_error = None
 
-    for attempt in range(1 + MAX_RETRIES):
-        try:
-            response = requests.post(
-                OLLAMA_API_URL,
-                headers={
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {OLLAMA_API_KEY}",
-                },
-                json={
-                    "model": OLLAMA_MODEL,
-                    "messages": [
-                        {"role": "system", "content": "<|think|>"},
-                        {"role": "user", "content": prompt}
-                    ],
-                    "stream": False,
-                    "think": "max",
-                    "options": {"temperature": 0.1},
-                },
-                timeout=180
-            )
+    for model in _ollama_models_to_try():
+        print(f"Calling Ollama model: {model}")
+        for attempt in range(1 + MAX_RETRIES):
+            try:
+                response = requests.post(
+                    OLLAMA_API_URL,
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {OLLAMA_API_KEY}",
+                    },
+                    json={
+                        "model": model,
+                        "messages": [
+                            {"role": "system", "content": "<|think|>"},
+                            {"role": "user", "content": prompt}
+                        ],
+                        "stream": False,
+                        "think": "max",
+                        "options": {"temperature": 0.1},
+                    },
+                    timeout=180
+                )
 
-            if response.status_code == 200:
-                try:
-                    data = response.json()
-                except (json.JSONDecodeError, ValueError) as exc:
-                    print(f"Ollama API returned non-JSON body (status 200): {exc}")
-                    last_error = "invalid JSON"
-                    continue
-                text_response = _extract_candidate_text(data)
-                if text_response:
-                    payload = _extract_json_payload(text_response)
-                    if payload is not None:
-                        return payload
-                last_error = "empty or unparseable response body"
-            elif response.status_code in (429, 500, 503):
-                last_error = f"HTTP {response.status_code}: {response.text[:200]}"
-                print(f"Ollama API Error (attempt {attempt + 1}): {last_error}")
-            else:
-                print(f"Ollama API Error {response.status_code}: {response.text[:200]}")
-                return None  # non-retryable status
+                if response.status_code == 200:
+                    try:
+                        data = response.json()
+                    except (json.JSONDecodeError, ValueError) as exc:
+                        print(f"Ollama API returned non-JSON body (status 200): {exc}")
+                        last_error = "invalid JSON"
+                        continue
+                    text_response = _extract_candidate_text(data)
+                    if text_response:
+                        payload = _extract_json_payload(text_response)
+                        if payload is not None:
+                            print(f"Ollama model {model} returned a parseable payload.")
+                            return payload
+                    last_error = "empty or unparseable response body"
+                elif response.status_code == 402:
+                    last_error = f"HTTP 402 on {model}: {response.text[:200]}"
+                    print(
+                        f"Ollama model {model} needs a paid plan or extra usage. "
+                        "Trying the next model."
+                    )
+                    break
+                elif response.status_code in (429, 500, 503):
+                    last_error = f"HTTP {response.status_code}: {response.text[:200]}"
+                    print(f"Ollama API Error (attempt {attempt + 1}): {last_error}")
+                else:
+                    last_error = f"HTTP {response.status_code}: {response.text[:200]}"
+                    print(f"Ollama API Error {response.status_code}: {response.text[:200]}")
+                    break
 
-        except requests.RequestException as exc:
-            last_error = str(exc)
-            print(f"Ollama API request exception (attempt {attempt + 1}): {last_error}")
+            except requests.RequestException as exc:
+                last_error = str(exc)
+                print(f"Ollama API request exception (attempt {attempt + 1}): {last_error}")
 
-        if attempt < MAX_RETRIES:
-            print(f"Retrying in {RETRY_DELAY_SECONDS}s...")
-            time.sleep(RETRY_DELAY_SECONDS)
+            if attempt < MAX_RETRIES:
+                print(f"Retrying {model} in {RETRY_DELAY_SECONDS}s...")
+                time.sleep(RETRY_DELAY_SECONDS)
 
-    print(f"Ollama API failed after {1 + MAX_RETRIES} attempts. Last error: {last_error}")
+    print(f"Ollama API failed after trying {_ollama_models_to_try()}. Last error: {last_error}")
     return None
 
 
@@ -418,6 +446,84 @@ def seed_feed_from_local(*, notify: bool = False) -> None:
     print("Seed complete.")
 
 
+_INCLUDE_TITLE_RE = re.compile(
+    r"suman|ayushman|pm-?jay|abdm|nhm|ntep|naco|nacp|immuni|vaccin|outbreak|"
+    r"maternal|child health|an[ae]mia|nutrition|poshan|icds|nfhs|srs|"
+    r"roadmap|guideline|ncd|tubercul|\btb\b|malaria|dengue|leprosy|"
+    r"family planning|rmnch|uhc|ncahp|allied and healthcare|"
+    r"national health|health programme|health program|vital statistic|"
+    r"continuum of care|health and wellness|hwc|iphs|"
+    r"midwife|nursing|community health officer|"
+    r"tele-?manas|mental health|tobacco|cotpa|fssai|food safety|"
+    r"hepatitis|hiv|measles|polio|japanese encephalitis|"
+    r"cancer screening|hypertension|diabetes|npcdcs|nvbdcp|"
+    r"drug rules|blood product|plasma|"
+    r"\bwho\b|census|mmr|imr|stillbirth|under.five",
+    re.I,
+)
+_EXCLUDE_TITLE_RE = re.compile(
+    r"inaugurat\w*.{0,120}(pet-?ct|spect|mri|ct scan)|"
+    r"\breviews?\b.{0,40}preparedness|"
+    r"chair\w* a review|"
+    r"\btrai\b|\b5g\b|telecom|defence minister|defense minister",
+    re.I,
+)
+
+
+def keyword_select(feed_items: List[Dict[str, Any]], limit: int = 6) -> List[Dict[str, Any]]:
+    """Keep public-health titles if the LLM filter is empty or unavailable."""
+    picked: List[Dict[str, Any]] = []
+    for item in feed_items:
+        title = item.get("title") or ""
+        if _EXCLUDE_TITLE_RE.search(title):
+            continue
+        if _INCLUDE_TITLE_RE.search(title):
+            picked.append(item)
+        if len(picked) >= limit:
+            break
+    print(f"Keyword fallback selected {len(picked)} title(s).")
+    for item in picked:
+        print(f"  [{item.get('id')}] {item.get('title')}")
+    return picked
+
+
+def _ids_from_filter_response(payload: Any) -> List[int]:
+    if payload is None:
+        return []
+    if isinstance(payload, dict):
+        payload = payload.get("ids") or payload.get("selected") or payload.get("items") or [payload]
+    ids: List[int] = []
+    if not isinstance(payload, list):
+        return ids
+    for item in payload:
+        raw = None
+        if isinstance(item, dict) and "id" in item:
+            raw = item["id"]
+        elif isinstance(item, int):
+            raw = item
+        elif isinstance(item, str) and item.strip().isdigit():
+            raw = item.strip()
+        if raw is None:
+            continue
+        try:
+            ids.append(int(raw))
+        except (TypeError, ValueError):
+            continue
+    return ids
+
+
+def extractive_summary(article: Dict[str, Any], title_hint: str, today_date: str) -> Dict[str, Any]:
+    text = article.get("text") or ""
+    words = text.split()
+    summary = " ".join(words[:140]).strip() or title_hint
+    return {
+        "id": article["id"],
+        "title": title_hint[:140],
+        "summary": summary[:900],
+        "date": today_date,
+    }
+
+
 def load_local_update_files() -> Tuple[List[Dict[str, Any]], Dict[str, List[Dict[str, Any]]]]:
     existing_updates: List[Dict[str, Any]] = []
     if UPDATES_PATH.exists():
@@ -616,19 +722,22 @@ def fetch_health_updates(*, publish: bool = True, notify: bool = True):
         I have a list of press releases from the Government of India published this month.
         
         YOUR TASK:
-        Review the list of titles and select up to 3 that are HIGHLY RELEVANT to Community Medicine.
+        Review the list of titles and select up to 6 that are relevant to Community Medicine.
         
-        STRICT INCLUSION CRITERIA:
-        - National Health Programs (e.g., NHM, Ayushman Bharat, NTEP, NACP, etc.)
-        - Vaccines, Immunization, and infectious disease outbreaks
-        - Maternal and Child Health (MCH), Family Planning
-        - Public Health infrastructure, epidemiology, or vital statistics
+        INCLUSION CRITERIA:
+        - National health programmes, roadmaps, guidelines, and strategy workshops that set programme direction (e.g. SUMAN, NHM, Ayushman Bharat)
+        - Vaccines, immunization, and infectious disease outbreaks
+        - Maternal and child health, family planning, nutrition
+        - Health workforce, allied health education, and regulatory frameworks (e.g. NCAHP)
+        - Public health infrastructure, epidemiology, surveys, or vital statistics
+        - NCD screening programmes, and drug or vaccine regulation that changes practice
         
-        STRICT EXCLUSION CRITERIA (IGNORE THESE COMPLETELY):
-        - Routine administrative reviews, meetings, or preparedness assessments: Exclude articles where the main focus is a minister, politician, or official chairing a review meeting, visiting a facility, reviewing progress of an ongoing abhiyaan/program, or assessing preparedness (e.g., 'Minister reviews Dengue preparedness', 'Review of TB Mukt Bharat', etc.). We ONLY want updates that announce new guidelines, clinical directives, policy changes, outbreak alerts, or statistical data.
-        - Telecom, TRAI, IT, 5G, or generic technology (unless strictly health-tech eSanjeevani)
-        - Defense, Military, or routine political visits
-        - Any other topic unrelated to public health or community medicine
+        EXCLUSION CRITERIA:
+        - Purely ceremonial inaugurations of a single hospital machine or building, with no programme or policy content
+        - Ministerial review meetings or preparedness visits that announce no new guideline, data, or policy
+        - Telecom, TRAI, IT, 5G, or generic technology (unless eSanjeevani or ABDM)
+        - Defense, military, or routine political visits
+        - Topics unrelated to public health or community medicine
         
         Return ONLY a JSON array of objects containing the "id" of the selected items. 
         Example: [{{"id": 4}}, {{"id": 12}}]
@@ -644,14 +753,17 @@ def fetch_health_updates(*, publish: bool = True, notify: bool = True):
             "Ollama filter response: "
             + json.dumps(selected_ids_response, ensure_ascii=False, indent=2)
         )
-        
-        if selected_ids_response is None:
-            raise SkipPIB("Failed to filter articles with Ollama.")
-            
-        selected_ids = [item['id'] for item in selected_ids_response if 'id' in item]
+
+        ollama_filter_failed = selected_ids_response is None
+        selected_ids = _ids_from_filter_response(selected_ids_response)
         selected_items = [item for item in feed_items if item['id'] in selected_ids]
         if not selected_items:
-            raise SkipPIB("No relevant public-health updates selected by Ollama this run.")
+            print("Ollama selected no titles; applying keyword fallback.")
+            selected_items = keyword_select(feed_items)
+        if not selected_items:
+            if ollama_filter_failed:
+                raise SkipPIB("Failed to filter articles with Ollama.")
+            raise SkipPIB("No relevant public-health updates selected this run.")
         
         today_date = datetime.now().strftime('%Y-%m-%d')
         
@@ -700,9 +812,14 @@ def fetch_health_updates(*, publish: bool = True, notify: bool = True):
         
         print("Generating batch summaries with Ollama...")
         batch_summaries = call_ollama(batch_prompt)
-        
+
         if not isinstance(batch_summaries, list):
-            raise SkipPIB("Batch summarization failed or returned invalid format.")
+            print("Batch summarization failed; using extractive fallback summaries.")
+            title_by_id = {item["id"]: item.get("title") or "Health update" for item in selected_items}
+            batch_summaries = [
+                extractive_summary(article, title_by_id.get(article["id"], "Health update"), today_date)
+                for article in articles
+            ]
         
         # Map summaries by id
         summary_by_id = {s["id"]: s for s in batch_summaries if "id" in s and "title" in s and "summary" in s}
@@ -742,10 +859,14 @@ def fetch_health_updates(*, publish: bool = True, notify: bool = True):
                 
     except SkipPIB as e:
         print(f"PIB update check completed: {e}")
+        if "Failed to filter articles with Ollama" in str(e):
+            raise SystemExit(str(e))
     except requests.exceptions.RequestException as e:
         print(f"Error fetching PIB feed: {e}")
+        raise SystemExit(f"Error fetching PIB feed: {e}")
     except Exception as e:
          print(f"An unexpected error occurred during PIB fetch: {e}")
+         raise SystemExit(f"An unexpected error occurred during PIB fetch: {e}")
 
     # Combine existing updates with new updates, deduplicate by link
     combined = []

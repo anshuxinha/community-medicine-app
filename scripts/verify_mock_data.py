@@ -55,7 +55,15 @@ if not OLLAMA_API_KEY:
     raise ValueError("OLLAMA_API_KEY environment variable is not set")
 
 OLLAMA_API_URL = os.environ.get("OLLAMA_API_URL", "https://ollama.com/api/chat")
-OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "minimax-m3:cloud")
+OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "gemma4:31b-cloud")
+OLLAMA_FALLBACK_MODELS = [
+    m.strip()
+    for m in os.environ.get(
+        "OLLAMA_FALLBACK_MODELS",
+        "gpt-oss:20b-cloud,gpt-oss:120b-cloud",
+    ).split(",")
+    if m.strip()
+]
 REQUEST_TIMEOUT_SECONDS = int(os.environ.get("VERIFY_REQUEST_TIMEOUT_SECONDS", "180"))
 MAX_RETRIES = int(os.environ.get("VERIFY_MAX_RETRIES", "2"))
 RETRY_DELAY_SECONDS = int(os.environ.get("VERIFY_RETRY_DELAY_SECONDS", "5"))
@@ -239,55 +247,73 @@ def _extract_json_payload(text: str) -> Optional[Any]:
             return None
 
 
+def _ollama_models_to_try() -> List[str]:
+    ordered: List[str] = []
+    for name in [OLLAMA_MODEL, *OLLAMA_FALLBACK_MODELS]:
+        if name and name not in ordered:
+            ordered.append(name)
+    return ordered
+
+
 def call_ollama(prompt: str) -> Optional[Any]:
     last_error = None
 
-    for attempt in range(1 + MAX_RETRIES):
-        try:
-            response = requests.post(
-                OLLAMA_API_URL,
-                headers={
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {OLLAMA_API_KEY}",
-                },
-                json={
-                    "model": OLLAMA_MODEL,
-                    "messages": [
-                        {"role": "system", "content": "<|think|>"},
-                        {"role": "user", "content": prompt}
-                    ],
-                    "stream": False,
-                    "think": "max",
-                    "options": {"temperature": 0.1},
-                },
-                timeout=REQUEST_TIMEOUT_SECONDS,
-            )
-
-            if response.status_code == 200:
-                data = response.json()
-                text_response = _extract_candidate_text(data)
-                if text_response:
-                    payload = _extract_json_payload(text_response)
-                    if payload is not None:
-                        return payload
-                last_error = "empty or unparseable response body"
-            elif response.status_code in (429, 500, 503):
-                last_error = f"HTTP {response.status_code}: {response.text[:200]}"
-                print(f"Ollama retryable error (attempt {attempt + 1}): {last_error}")
-            else:
-                print(
-                    f"Ollama API Error {response.status_code}: "
-                    f"{_error_message_from_response(response)[:300]}"
+    for model in _ollama_models_to_try():
+        print(f"Calling Ollama model: {model}")
+        for attempt in range(1 + MAX_RETRIES):
+            try:
+                response = requests.post(
+                    OLLAMA_API_URL,
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {OLLAMA_API_KEY}",
+                    },
+                    json={
+                        "model": model,
+                        "messages": [
+                            {"role": "system", "content": "<|think|>"},
+                            {"role": "user", "content": prompt}
+                        ],
+                        "stream": False,
+                        "think": "max",
+                        "options": {"temperature": 0.1},
+                    },
+                    timeout=REQUEST_TIMEOUT_SECONDS,
                 )
-                return None
-        except (requests.RequestException, ValueError, json.JSONDecodeError) as exc:
-            last_error = str(exc)
-            print(f"Ollama request exception (attempt {attempt + 1}): {last_error}")
 
-        if attempt < MAX_RETRIES:
-            time.sleep(RETRY_DELAY_SECONDS)
+                if response.status_code == 200:
+                    data = response.json()
+                    text_response = _extract_candidate_text(data)
+                    if text_response:
+                        payload = _extract_json_payload(text_response)
+                        if payload is not None:
+                            print(f"Ollama model {model} returned a parseable payload.")
+                            return payload
+                    last_error = "empty or unparseable response body"
+                elif response.status_code == 402:
+                    last_error = f"HTTP 402 on {model}"
+                    print(
+                        f"Ollama model {model} needs a paid plan or extra usage. "
+                        "Trying the next model."
+                    )
+                    break
+                elif response.status_code in (429, 500, 503):
+                    last_error = f"HTTP {response.status_code}: {response.text[:200]}"
+                    print(f"Ollama retryable error (attempt {attempt + 1}): {last_error}")
+                else:
+                    print(
+                        f"Ollama API Error {response.status_code}: "
+                        f"{_error_message_from_response(response)[:300]}"
+                    )
+                    break
+            except (requests.RequestException, ValueError, json.JSONDecodeError) as exc:
+                last_error = str(exc)
+                print(f"Ollama request exception (attempt {attempt + 1}): {last_error}")
 
-    print(f"Ollama API failed after retries. Last error: {last_error}")
+            if attempt < MAX_RETRIES:
+                time.sleep(RETRY_DELAY_SECONDS)
+
+    print(f"Ollama API failed after trying {_ollama_models_to_try()}. Last error: {last_error}")
     return None
 
 

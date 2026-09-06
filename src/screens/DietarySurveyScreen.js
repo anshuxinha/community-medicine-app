@@ -443,6 +443,12 @@ const DietarySurveyScreen = () => {
               <Text style={styles.groupHeading}>Meals (add what was eaten)</Text>
               {MEAL_SLOTS.map((slot) => {
                 const itemsInMeal = recallItems.filter((i) => i.mealId === slot.id);
+                const mealTot = individualResult?.mealTotals?.[slot.id] || {
+                  kcal: 0,
+                  protein: 0,
+                  carbs: 0,
+                  fat: 0,
+                };
                 return (
                   <Card key={slot.id} style={styles.mealCard}>
                     <Card.Content style={{ paddingVertical: 12 }}>
@@ -467,6 +473,21 @@ const DietarySurveyScreen = () => {
                           Add
                         </Button>
                       </View>
+                      {itemsInMeal.length > 0 ? (
+                        <View style={styles.mealMacroRow}>
+                          {[
+                            { v: mealTot.kcal.toFixed(0), l: "Calories (kcal)" },
+                            { v: mealTot.protein.toFixed(1), l: "Protein (g)" },
+                            { v: mealTot.carbs.toFixed(1), l: "Carbohydrate (g)" },
+                            { v: mealTot.fat.toFixed(1), l: "Fat (g)" },
+                          ].map((chip) => (
+                            <View key={chip.l} style={styles.mealMacroChip}>
+                              <Text style={styles.mealMacroValue}>{chip.v}</Text>
+                              <Text style={styles.mealMacroLabel}>{chip.l}</Text>
+                            </View>
+                          ))}
+                        </View>
+                      ) : null}
                       {itemsInMeal.length === 0 ? (
                         <Text style={styles.emptyMealText}>Nothing logged</Text>
                       ) : (
@@ -1514,6 +1535,22 @@ const createStyles = (colors) =>
     },
     mealTitle: { fontSize: 15, fontWeight: "bold", color: colors.textTitle },
     mealTip: { fontSize: 11, color: colors.textSecondary },
+    mealMacroRow: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      marginBottom: 6,
+    },
+    mealMacroChip: {
+      alignItems: "center",
+      paddingVertical: 4,
+      paddingHorizontal: 8,
+      backgroundColor: colors.primaryLight || "#EEF2FF",
+      borderRadius: 6,
+      marginRight: 6,
+      marginTop: 4,
+    },
+    mealMacroValue: { fontSize: 12, fontWeight: "bold", color: colors.secondary },
+    mealMacroLabel: { fontSize: 9, color: colors.textSecondary },
     addBtnSmall: { backgroundColor: colors.primaryLight || "#EEF2FF", borderRadius: 6 },
     emptyMealText: {
       fontSize: 12,

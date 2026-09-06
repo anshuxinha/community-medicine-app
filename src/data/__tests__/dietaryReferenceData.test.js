@@ -246,9 +246,35 @@ describe("engines", () => {
     expect(summary).toContain("judged against RDA");
     expect(summary).toMatch(/vs RDA/);
     expect(summary).toContain("Carbohydrate");
+    expect(summary).toMatch(
+      /LUNCH \(\d+ kcal, [\d.]+ g protein, [\d.]+ g carbohydrate, [\d.]+ g fat\)/
+    );
+    expect(result.mealTotals.lunch.kcal).toBeGreaterThan(0);
+    expect(result.mealTotals.lunch.protein).toBeGreaterThan(0);
+    expect(result.mealTotals.lunch.carbs).toBeGreaterThan(0);
     expect(summary).not.toContain("IMPRESSION");
     const amdrBlock = summary.split("ACCEPTABLE MACRONUTRIENT DISTRIBUTION RANGE")[1];
     expect(amdrBlock).not.toContain("Cereal : pulse : milk");
+  });
+
+  it("totals calories, protein, carbohydrate, and fat for each meal", () => {
+    const result = calculateIndividualIntake(
+      SAMPLE_RECALL_ITEMS,
+      foodData,
+      REFERENCE_PROFILES.man_sedentary
+    );
+    expect(result.mealTotals.breakfast.kcal).toBeGreaterThan(0);
+    expect(result.mealTotals.lunch.kcal).toBeGreaterThan(result.mealTotals.breakfast.kcal);
+    const breakfastRows = result.calculatedMealRows.filter((r) => r.mealId === "breakfast");
+    const kcalSum = breakfastRows.reduce((s, r) => s + r.kcal, 0);
+    const proteinSum = breakfastRows.reduce((s, r) => s + r.protein, 0);
+    const carbSum = breakfastRows.reduce((s, r) => s + r.carbs, 0);
+    const fatSum = breakfastRows.reduce((s, r) => s + r.fat, 0);
+    expect(result.mealTotals.breakfast.kcal).toBeCloseTo(kcalSum, 5);
+    expect(result.mealTotals.breakfast.protein).toBeCloseTo(proteinSum, 5);
+    expect(result.mealTotals.breakfast.carbs).toBeCloseTo(carbSum, 5);
+    expect(result.mealTotals.breakfast.fat).toBeCloseTo(fatSum, 5);
+    expect(result.mealTotals.bedtime).toBeUndefined();
   });
 
   it("computes carbohydrate AMDR grams from EER", () => {
