@@ -14,6 +14,9 @@ import {
   foodMatchesQuery,
   intakeStatus,
   percentDiff,
+  carbGramsFromEer,
+  carbAmdrStatus,
+  MICRONUTRIENT_DEFS,
 } from "../dietaryReferenceData";
 import foodData from "../foodData.json";
 
@@ -238,5 +241,43 @@ describe("engines", () => {
     expect(summary).not.toMatch(/not the /i);
     expect(summary).toContain("judged against RDA");
     expect(summary).toMatch(/vs RDA/);
+    expect(summary).toContain("Carbohydrate");
+    const amdrBlock = summary
+      .split("ACCEPTABLE MACRONUTRIENT DISTRIBUTION RANGE")[1]
+      .split("IMPRESSION")[0];
+    expect(amdrBlock).not.toContain("Cereal : pulse : milk");
+  });
+
+  it("computes carbohydrate AMDR grams from EER", () => {
+    expect(carbGramsFromEer(2110)).toEqual({ at50: 264, at60: 317 });
+    expect(carbAmdrStatus(55).key).toBe("adequate");
+    expect(carbAmdrStatus(40).key).toBe("severe");
+  });
+
+  it("adds vitamin C counseling only when that row is in the table", () => {
+    const result = calculateIndividualIntake(
+      [
+        {
+          id: "1",
+          mealId: "lunch",
+          foodId: "rice_raw",
+          portionId: "katori_cooked",
+          quantity: "1",
+        },
+      ],
+      foodData,
+      REFERENCE_PROFILES.man_sedentary
+    );
+    const withoutVitC = generateDietaryCounseling(result, REFERENCE_PROFILES.man_sedentary);
+    expect(withoutVitC.some((t) => t.title === "Vitamin C (RDA)")).toBe(false);
+    const withVitC = generateDietaryCounseling(result, REFERENCE_PROFILES.man_sedentary, {
+      extraMicroKeys: ["vitC"],
+    });
+    expect(withVitC.some((t) => t.title === "Vitamin C (RDA)")).toBe(true);
+    expect(MICRONUTRIENT_DEFS.filter((d) => d.defaultVisible).map((d) => d.key)).toEqual([
+      "iron",
+      "calcium",
+      "folate",
+    ]);
   });
 });

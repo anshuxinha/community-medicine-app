@@ -46,6 +46,9 @@ import {
   gramsForItem,
   intakeStatus,
   formatPct,
+  MICRONUTRIENT_DEFS,
+  carbGramsFromEer,
+  carbAmdrStatus,
 } from "../data/dietaryReferenceData";
 import { ALL_ORIENTATIONS } from "../constants/orientations";
 import { useThemedStyles } from "../styles/useThemedStyles";
@@ -95,6 +98,7 @@ const DietarySurveyScreen = () => {
   const [familyRations, setFamilyRations] = useState({ ...EMPTY_RATIONS });
   const [cuModalVisible, setCuModalVisible] = useState(false);
   const [cuMemberId, setCuMemberId] = useState(null);
+  const [extraMicroKeys, setExtraMicroKeys] = useState([]);
 
   useEffect(() => {
     enableScreenCaptureProtection();
@@ -282,11 +286,36 @@ const DietarySurveyScreen = () => {
     }
   };
 
-  const renderNutrientRow = (row, idx) => (
-    <View key={row.label} style={[styles.tableDataRow, idx % 2 === 0 && styles.tableDataRowAlt]}>
-      <View style={{ flex: 2.1 }}>
+  const renderEnergyRow = (row) => (
+    <View key={row.label} style={styles.tableDataRow}>
+      <View style={{ flex: 2.2 }}>
         <Text style={styles.tableCellName}>{row.label}</Text>
         <Text style={styles.tableCellUnit}>({row.unit})</Text>
+      </View>
+      <Text style={[styles.tableCellGot, { flex: 1.6 }]}>{row.got}</Text>
+      <Text style={[styles.tableCellRef, { flex: 1.6 }]}>{row.eer}</Text>
+      <View style={{ flex: 2.2, alignItems: "flex-end" }}>
+        <Text style={[styles.diffBadge, { color: row.status.color }]}>{row.status.label}</Text>
+      </View>
+    </View>
+  );
+
+  const renderNutrientRow = (row, idx) => (
+    <View key={row.label} style={[styles.tableDataRow, idx % 2 === 0 && styles.tableDataRowAlt]}>
+      <View style={{ flex: 2.1, flexDirection: "row", alignItems: "center" }}>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.tableCellName}>{row.label}</Text>
+          <Text style={styles.tableCellUnit}>({row.unit})</Text>
+        </View>
+        {row.onRemove ? (
+          <TouchableOpacity
+            onPress={row.onRemove}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            style={styles.microRemoveBtn}
+          >
+            <MaterialIcons name="close" size={14} color="#B91C1C" />
+          </TouchableOpacity>
+        ) : null}
       </View>
       <Text style={[styles.tableCellGot, { flex: 1.4 }]}>{row.got}</Text>
       <Text style={[styles.tableCellRef, { flex: 1.3 }]}>{row.ear}</Text>
@@ -369,7 +398,7 @@ const DietarySurveyScreen = () => {
                     <Text style={styles.sectionTitle}>Subject and ICMR-NIN 2020 values</Text>
                   </View>
                   <Text style={styles.captionText}>
-                    Adequacy is judged against RDA. Energy is EER (no RDA). EAR is shown in the table. Protein RDA is 0.83 g/kg.
+                    Updated 2024. Adequacy is judged against RDA. Energy is EER (no RDA). EAR is shown in the table. Protein RDA is 0.83 g/kg.
                   </Text>
                   <TouchableOpacity
                     style={styles.profilePickerBtn}
@@ -386,10 +415,12 @@ const DietarySurveyScreen = () => {
                     <View style={styles.rdaChipRow}>
                       {[
                         { v: `${currentProfile.kcal}`, l: "kcal EER" },
-                        { v: `${currentProfile.proteinEar}/${currentProfile.proteinRda}g`, l: "EAR/RDA" },
-                        { v: `${currentProfile.ironEar}/${currentProfile.ironRda}`, l: "Fe mg" },
-                        { v: `${currentProfile.calciumEar}/${currentProfile.calciumRda}`, l: "Ca mg" },
-                        { v: `${currentProfile.folateEar}/${currentProfile.folateRda}`, l: "Folate µg" },
+                        {
+                          v: `${carbGramsFromEer(currentProfile.kcal).at50}-${carbGramsFromEer(currentProfile.kcal).at60}g`,
+                          l: "Carb AMDR",
+                        },
+                        { v: `${currentProfile.proteinEar}/${currentProfile.proteinRda}g`, l: "Protein EAR/RDA" },
+                        { v: `${currentProfile.visibleFat}g`, l: "Visible fat" },
                       ].map((chip) => (
                         <View key={chip.l} style={styles.rdaBadge}>
                           <Text style={styles.rdaBadgeValue}>{chip.v}</Text>
@@ -508,109 +539,157 @@ const DietarySurveyScreen = () => {
                         <Text style={styles.sectionTitle}>Intake vs EER / EAR / RDA</Text>
                       </View>
                       <Text style={styles.captionText}>
-                        Status uses RDA (energy uses EER). EAR is shown for information. Visible fat is oil and ghee logged as grams.
+                        Energy uses EER. Macronutrients and micronutrients use RDA. EAR is shown for
+                        information. Visible fat is oil and ghee logged as grams.
                       </Text>
-                      <View style={styles.tableHeaderRow}>
-                        <Text style={[styles.tableColHeader, { flex: 2.1 }]}>Nutrient</Text>
-                        <Text style={[styles.tableColHeader, { flex: 1.4 }]}>Intake</Text>
-                        <Text style={[styles.tableColHeader, { flex: 1.3 }]}>EAR</Text>
-                        <Text style={[styles.tableColHeader, { flex: 1.3 }]}>RDA</Text>
-                        <Text style={[styles.tableColHeader, { flex: 2.1, textAlign: "right" }]}>
-                          Status
-                        </Text>
-                      </View>
-                      {[
-                        {
-                          label: "Energy",
-                          unit: "kcal",
-                          got: individualResult.kcal.toFixed(0),
-                          ear: currentProfile.kcal,
-                          rda: "none",
-                          status: intakeStatus(individualResult.kcal, currentProfile.kcal, null, {
-                            isEnergy: true,
-                          }),
-                        },
-                        {
-                          label: "Protein",
-                          unit: "g",
-                          got: individualResult.protein.toFixed(1),
-                          ear: individualResult.proteinEar,
-                          rda: currentProfile.proteinRda,
-                          status: intakeStatus(
-                            individualResult.protein,
-                            individualResult.proteinEar,
-                            currentProfile.proteinRda
-                          ),
-                        },
-                        {
-                          label: "Visible fat",
-                          unit: "g",
-                          got: individualResult.visibleFatGrams.toFixed(1),
-                          ear: currentProfile.visibleFat,
-                          rda: currentProfile.visibleFat,
-                          status: intakeStatus(
-                            individualResult.visibleFatGrams,
-                            currentProfile.visibleFat,
-                            currentProfile.visibleFat,
-                            { refLabel: "target" }
-                          ),
-                        },
-                        {
-                          label: "Calcium",
-                          unit: "mg",
-                          got: individualResult.calcium.toFixed(0),
-                          ear: currentProfile.calciumEar,
-                          rda: currentProfile.calciumRda,
-                          status: intakeStatus(
-                            individualResult.calcium,
-                            currentProfile.calciumEar,
-                            currentProfile.calciumRda
-                          ),
-                        },
-                        {
-                          label: "Iron",
-                          unit: "mg",
-                          got: individualResult.iron.toFixed(1),
-                          ear: currentProfile.ironEar,
-                          rda: currentProfile.ironRda,
-                          status: intakeStatus(
-                            individualResult.iron,
-                            currentProfile.ironEar,
-                            currentProfile.ironRda
-                          ),
-                        },
-                        {
-                          label: "Vitamin C",
-                          unit: "mg",
-                          got: individualResult.vitC.toFixed(1),
-                          ear: currentProfile.vitCEar,
-                          rda: currentProfile.vitCRda,
-                          status: intakeStatus(
-                            individualResult.vitC,
-                            currentProfile.vitCEar,
-                            currentProfile.vitCRda
-                          ),
-                        },
-                        {
-                          label: "Folate",
-                          unit: "µg",
-                          got: individualResult.folate.toFixed(0),
-                          ear: currentProfile.folateEar,
-                          rda: currentProfile.folateRda,
-                          status: intakeStatus(
-                            individualResult.folate,
-                            currentProfile.folateEar,
-                            currentProfile.folateRda
-                          ),
-                        },
-                      ].map(renderNutrientRow)}
-                      {individualResult.lowQualityProtein ? (
-                        <Text style={styles.captionText}>
-                          Cereal-heavy pattern: ICMR 2020 uses 1 g protein/kg (about{" "}
-                          {individualResult.proteinOneGPerKg} g) when pulse is very low. Status uses
-                          official RDA.
-                        </Text>
-                      ) : null}
+                      {(() => {
+                        const carbAmdrG = carbGramsFromEer(currentProfile.kcal);
+                        const visibleMicros = MICRONUTRIENT_DEFS.filter(
+                          (d) => d.defaultVisible || extraMicroKeys.includes(d.key)
+                        );
+                        const hiddenMicros = MICRONUTRIENT_DEFS.filter(
+                          (d) => !d.defaultVisible && !extraMicroKeys.includes(d.key)
+                        );
+                        return (
+                          <View>
+                            <Text style={styles.tableSectionTitle}>Energy</Text>
+                            <View style={styles.tableHeaderRow}>
+                              <Text style={[styles.tableColHeader, { flex: 2.2 }]}>Nutrient</Text>
+                              <Text style={[styles.tableColHeader, { flex: 1.6 }]}>Intake</Text>
+                              <Text style={[styles.tableColHeader, { flex: 1.6 }]}>EER</Text>
+                              <Text
+                                style={[styles.tableColHeader, { flex: 2.2, textAlign: "right" }]}
+                              >
+                                Status
+                              </Text>
+                            </View>
+                            {renderEnergyRow({
+                              label: "Energy",
+                              unit: "kcal",
+                              got: individualResult.kcal.toFixed(0),
+                              eer: currentProfile.kcal,
+                              status: intakeStatus(
+                                individualResult.kcal,
+                                currentProfile.kcal,
+                                null,
+                                { isEnergy: true }
+                              ),
+                            })}
+
+                            <Text style={[styles.tableSectionTitle, { marginTop: 14 }]}>
+                              Macronutrients
+                            </Text>
+                            <View style={styles.tableHeaderRow}>
+                              <Text style={[styles.tableColHeader, { flex: 2.1 }]}>Nutrient</Text>
+                              <Text style={[styles.tableColHeader, { flex: 1.4 }]}>Intake</Text>
+                              <Text style={[styles.tableColHeader, { flex: 1.3 }]}>EAR</Text>
+                              <Text style={[styles.tableColHeader, { flex: 1.3 }]}>RDA</Text>
+                              <Text
+                                style={[styles.tableColHeader, { flex: 2.1, textAlign: "right" }]}
+                              >
+                                Status
+                              </Text>
+                            </View>
+                            {[
+                              {
+                                label: "Carbohydrate",
+                                unit: "g",
+                                got: individualResult.carbs.toFixed(0),
+                                ear: carbAmdrG.at50,
+                                rda: carbAmdrG.at60,
+                                status: carbAmdrStatus(individualResult.amdr.carbPct),
+                              },
+                              {
+                                label: "Protein",
+                                unit: "g",
+                                got: individualResult.protein.toFixed(1),
+                                ear: individualResult.proteinEar,
+                                rda: currentProfile.proteinRda,
+                                status: intakeStatus(
+                                  individualResult.protein,
+                                  individualResult.proteinEar,
+                                  currentProfile.proteinRda
+                                ),
+                              },
+                              {
+                                label: "Visible fat",
+                                unit: "g",
+                                got: individualResult.visibleFatGrams.toFixed(1),
+                                ear: currentProfile.visibleFat,
+                                rda: currentProfile.visibleFat,
+                                status: intakeStatus(
+                                  individualResult.visibleFatGrams,
+                                  currentProfile.visibleFat,
+                                  currentProfile.visibleFat,
+                                  { refLabel: "target" }
+                                ),
+                              },
+                            ].map(renderNutrientRow)}
+                            <Text style={styles.captionText}>
+                              Carbohydrate columns are AMDR grams from EER (50-60% energy).
+                            </Text>
+                            {individualResult.lowQualityProtein ? (
+                              <Text style={styles.captionText}>
+                                Cereal-heavy pattern: ICMR 2020 uses 1 g protein/kg (about{" "}
+                                {individualResult.proteinOneGPerKg} g) when pulse is very low. Status
+                                uses official RDA.
+                              </Text>
+                            ) : null}
+
+                            <Text style={[styles.tableSectionTitle, { marginTop: 14 }]}>
+                              Micronutrients
+                            </Text>
+                            <View style={styles.tableHeaderRow}>
+                              <Text style={[styles.tableColHeader, { flex: 2.1 }]}>Nutrient</Text>
+                              <Text style={[styles.tableColHeader, { flex: 1.4 }]}>Intake</Text>
+                              <Text style={[styles.tableColHeader, { flex: 1.3 }]}>EAR</Text>
+                              <Text style={[styles.tableColHeader, { flex: 1.3 }]}>RDA</Text>
+                              <Text
+                                style={[styles.tableColHeader, { flex: 2.1, textAlign: "right" }]}
+                              >
+                                Status
+                              </Text>
+                            </View>
+                            {visibleMicros
+                              .map((d) => ({
+                                label: d.label,
+                                unit: d.unit,
+                                got: individualResult[d.gotKey].toFixed(d.decimals),
+                                ear: currentProfile[d.earKey],
+                                rda: currentProfile[d.rdaKey],
+                                status: intakeStatus(
+                                  individualResult[d.gotKey],
+                                  currentProfile[d.earKey],
+                                  currentProfile[d.rdaKey]
+                                ),
+                                onRemove: d.defaultVisible
+                                  ? undefined
+                                  : () =>
+                                      setExtraMicroKeys((keys) =>
+                                        keys.filter((k) => k !== d.key)
+                                      ),
+                              }))
+                              .map(renderNutrientRow)}
+                            {hiddenMicros.length > 0 ? (
+                              <View style={styles.addMicroRow}>
+                                {hiddenMicros.map((d) => (
+                                  <TouchableOpacity
+                                    key={d.key}
+                                    onPress={() =>
+                                      setExtraMicroKeys((keys) =>
+                                        keys.includes(d.key) ? keys : [...keys, d.key]
+                                      )
+                                    }
+                                    style={styles.addMicroChip}
+                                  >
+                                    <Text style={styles.addMicroChipText}>+ {d.label}</Text>
+                                  </TouchableOpacity>
+                                ))}
+                              </View>
+                            ) : null}
+                          </View>
+                        );
+                      })()}
                     </Card.Content>
                   </Card>
 
@@ -623,7 +702,7 @@ const DietarySurveyScreen = () => {
                         </Text>
                       </View>
                       <Text style={styles.captionText}>
-                        Share of energy from carbohydrate, protein, and fat.
+                        Share of energy from carbohydrate, protein, and fat. Target levels in brackets.
                       </Text>
                       {[
                         {
@@ -677,32 +756,6 @@ const DietarySurveyScreen = () => {
                       <Text style={styles.captionText}>
                         Percentages use Atwater (4/4/9). They may sum to 99 or 101 after rounding.
                       </Text>
-                      <Divider style={{ marginVertical: 12 }} />
-                      <View style={styles.ratioRow}>
-                        <View style={{ flex: 1, paddingRight: 8 }}>
-                          <Text style={styles.ratioTitle}>Cereal : pulse : milk (raw g)</Text>
-                          <Text style={styles.ratioSubtitle}>
-                            Cereals {individualResult.cerealGrams.toFixed(0)} g • Pulses{" "}
-                            {individualResult.pulseGrams.toFixed(0)} g • Milk{" "}
-                            {individualResult.milkGrams.toFixed(0)} g
-                          </Text>
-                          <Text style={styles.ratioSubtitle}>{individualResult.cpRatio.text}</Text>
-                        </View>
-                        <View style={{ alignItems: "flex-end" }}>
-                          <Text style={styles.ratioBadge}>
-                            {individualResult.cpRatio.triple || individualResult.cpRatio.ratio}
-                          </Text>
-                          <Text style={styles.ratioSubtitle}>target 3 : 1 : 2.5</Text>
-                          <Text
-                            style={[
-                              styles.ratioStatus,
-                              { color: individualResult.cpRatio.isBalanced ? "#15803D" : "#D97706" },
-                            ]}
-                          >
-                            {individualResult.cpRatio.isBalanced ? "In range" : "Off target"}
-                          </Text>
-                        </View>
-                      </View>
                     </Card.Content>
                   </Card>
 
@@ -724,7 +777,9 @@ const DietarySurveyScreen = () => {
                         <MaterialIcons name="health-and-safety" size={22} color={colors.secondary} />
                         <Text style={styles.sectionTitle}>Low-cost counseling</Text>
                       </View>
-                      {generateDietaryCounseling(individualResult, currentProfile).map((tip, idx) => (
+                      {generateDietaryCounseling(individualResult, currentProfile, {
+                        extraMicroKeys,
+                      }).map((tip, idx) => (
                         <View key={idx} style={styles.counselingItem}>
                           <View style={styles.counselingHeader}>
                             <MaterialCommunityIcons name={tip.icon} size={20} color={colors.secondary} />
@@ -1320,6 +1375,27 @@ const createStyles = (colors) =>
       flex: 1,
     },
     captionText: { fontSize: 12, color: colors.textSecondary, marginBottom: 8 },
+    tableSectionTitle: {
+      fontSize: 13,
+      fontWeight: "bold",
+      color: colors.textTitle,
+      marginBottom: 4,
+    },
+    addMicroRow: { flexDirection: "row", flexWrap: "wrap", marginTop: 8 },
+    addMicroChip: {
+      height: 28,
+      paddingHorizontal: 10,
+      marginRight: 6,
+      marginBottom: 4,
+      borderRadius: 14,
+      backgroundColor: colors.primaryLight || "#EEF2FF",
+      borderWidth: 1,
+      borderColor: colors.borderStrong,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    addMicroChipText: { fontSize: 12, fontWeight: "600", color: colors.secondary },
+    microRemoveBtn: { padding: 4 },
     groupHeading: {
       fontSize: 15,
       fontWeight: "bold",
@@ -1445,11 +1521,7 @@ const createStyles = (colors) =>
       borderRadius: 4,
       backgroundColor: colors.surfaceSecondary || "#E2E8F0",
     },
-    ratioRow: { flexDirection: "row", justifyContent: "space-between" },
     ratioTitle: { fontSize: 13, fontWeight: "bold", color: colors.textTitle },
-    ratioSubtitle: { fontSize: 11, color: colors.textSecondary, marginTop: 2 },
-    ratioBadge: { fontSize: 16, fontWeight: "bold", color: colors.secondary },
-    ratioStatus: { fontSize: 11, fontWeight: "600" },
     impressionText: {
       fontSize: 13,
       lineHeight: 20,

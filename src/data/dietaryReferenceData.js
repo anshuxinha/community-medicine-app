@@ -788,6 +788,123 @@ export const intakeStatus = (got, ear, rda, { isEnergy = false, refLabel } = {})
   return { key: "adequate", label: `${formatPct(pct)} (meets ${name})`, color: "#15803D", pct };
 };
 
+/** Carbohydrate AMDR grams from EER (50-60% of energy at 4 kcal/g). */
+export const carbGramsFromEer = (eerKcal) => ({
+  at50: Math.round((0.5 * (eerKcal || 0)) / 4),
+  at60: Math.round((0.6 * (eerKcal || 0)) / 4),
+});
+
+export const carbAmdrStatus = (carbPct) => {
+  const pct = carbPct || 0;
+  if (pct < 45) {
+    return { key: "severe", label: `${pct}% vs AMDR`, color: "#B91C1C", pct };
+  }
+  if (pct < 50) {
+    return { key: "deficit", label: `${pct}% vs AMDR`, color: "#D97706", pct };
+  }
+  if (pct > 65) {
+    return { key: "surplus", label: `${pct}% vs AMDR`, color: "#DC2626", pct };
+  }
+  if (pct > 60) {
+    return { key: "surplus", label: `${pct}% vs AMDR`, color: "#F59E0B", pct };
+  }
+  return { key: "adequate", label: `${pct}% (meets AMDR)`, color: "#15803D", pct };
+};
+
+export const MICRONUTRIENT_DEFS = [
+  {
+    key: "iron",
+    label: "Iron",
+    unit: "mg",
+    gotKey: "iron",
+    earKey: "ironEar",
+    rdaKey: "ironRda",
+    diffKey: "ironDiff",
+    defaultVisible: true,
+    gapThreshold: 3,
+    decimals: 1,
+    counseling: {
+      title: "Iron (RDA)",
+      icon: "pill",
+      description: (gap) => `About ${gap.toFixed(1)} mg below iron RDA.`,
+      bullets: [
+        "Cook drumstick leaves, methi, or amaranth in an iron kadai.",
+        "IFCT rice flakes (poha) provide about 4.5 mg iron per 100 g.",
+        "Do not drink tea or coffee within 1 hour of meals.",
+        "Squeeze lemon (IFCT juice, about 48 mg vitamin C per 100 g) over dal.",
+      ],
+    },
+  },
+  {
+    key: "calcium",
+    label: "Calcium",
+    unit: "mg",
+    gotKey: "calcium",
+    earKey: "calciumEar",
+    rdaKey: "calciumRda",
+    diffKey: "calciumDiff",
+    defaultVisible: true,
+    gapThreshold: 150,
+    decimals: 0,
+    counseling: {
+      title: "Calcium",
+      icon: "bottle-tonic-plus",
+      description: (gap) => `About ${Math.round(gap)} mg below calcium RDA:`,
+      bullets: [
+        "Ragi (IFCT: 364 mg calcium per 100 g) in roti or porridge.",
+        "10 g brown gingelly (til) seeds: about 117 mg calcium.",
+        "150-200 ml curd or cow milk (IFCT cow milk: 118 mg calcium per 100 ml).",
+      ],
+    },
+  },
+  {
+    key: "folate",
+    label: "Folate",
+    unit: "µg",
+    gotKey: "folate",
+    earKey: "folateEar",
+    rdaKey: "folateRda",
+    diffKey: "folateDiff",
+    defaultVisible: true,
+    gapThreshold: 80,
+    decimals: 0,
+    counseling: {
+      title: "Folate",
+      icon: "leaf",
+      description: (gap, profile) => {
+        const pregNote =
+          profile.category === "Pregnancy" ? " The IFA tablet still supplies 500 µg folic acid." : "";
+        return `About ${Math.round(gap)} µg below folate RDA.${pregNote}`;
+      },
+      bullets: [
+        "Green leafy vegetables and whole pulses (rajma and Bengal gram are folate-dense in IFCT).",
+      ],
+    },
+  },
+  {
+    key: "vitC",
+    label: "Vitamin C",
+    unit: "mg",
+    gotKey: "vitC",
+    earKey: "vitCEar",
+    rdaKey: "vitCRda",
+    diffKey: "vitCDiff",
+    defaultVisible: false,
+    gapThreshold: 10,
+    decimals: 1,
+    counseling: {
+      title: "Vitamin C (RDA)",
+      icon: "fruit-citrus",
+      description: (gap) => `About ${gap.toFixed(1)} mg below vitamin C RDA.`,
+      bullets: [
+        "Amla (IFCT: 252 mg vitamin C per 100 g).",
+        "Lemon or guava with meals.",
+        "Squeeze lemon (IFCT juice, about 48 mg vitamin C per 100 g) over dal.",
+      ],
+    },
+  },
+];
+
 export const findFood = (foods, id) => foods.find((f) => f.id === id);
 
 export const gramsForItem = (item, food) => {
@@ -1033,14 +1150,12 @@ export const generateClinicalImpression = (result, profile) => {
   return `${parts.join(". ")}.`;
 };
 
-export const generateDietaryCounseling = (result, profile) => {
+export const generateDietaryCounseling = (result, profile, options = {}) => {
   if (!result || !profile) return [];
+  const extraMicroKeys = options.extraMicroKeys || [];
   const tips = [];
   const kcalGap = Math.round(profile.kcal - result.kcal);
   const proGap = profile.proteinRda - result.protein;
-  const feGap = profile.ironRda - result.iron;
-  const caGap = profile.calciumRda - result.calcium;
-  const folGap = profile.folateRda - result.folate;
 
   if (kcalGap > 150 || proGap > 5) {
     tips.push({
@@ -1056,45 +1171,19 @@ export const generateDietaryCounseling = (result, profile) => {
     });
   }
 
-  if (feGap > 3) {
-    tips.push({
-      title: "Iron (RDA)",
-      icon: "pill",
-      description: `About ${feGap.toFixed(1)} mg below iron RDA.`,
-      bullets: [
-        "Cook drumstick leaves, methi, or amaranth in an iron kadai.",
-        "IFCT rice flakes (poha) provide about 4.5 mg iron per 100 g.",
-        "Do not drink tea or coffee within 1 hour of meals.",
-        "Squeeze lemon (IFCT juice, about 48 mg vitamin C per 100 g) over dal.",
-      ],
-    });
-  }
-
-  if (caGap > 150) {
-    tips.push({
-      title: "Calcium",
-      icon: "bottle-tonic-plus",
-      description: `About ${Math.round(caGap)} mg below calcium RDA:`,
-      bullets: [
-        "Ragi (IFCT: 364 mg calcium per 100 g) in roti or porridge.",
-        "10 g brown gingelly (til) seeds: about 117 mg calcium.",
-        "150-200 ml curd or cow milk (IFCT cow milk: 118 mg calcium per 100 ml).",
-      ],
-    });
-  }
-
-  if (folGap > 80) {
-    const pregNote =
-      profile.category === "Pregnancy" ? " The IFA tablet still supplies 500 µg folic acid." : "";
-    tips.push({
-      title: "Folate",
-      icon: "leaf",
-      description: `About ${Math.round(folGap)} µg below folate RDA.${pregNote}`,
-      bullets: [
-        "Green leafy vegetables and whole pulses (rajma and Bengal gram are folate-dense in IFCT).",
-      ],
-    });
-  }
+  MICRONUTRIENT_DEFS.filter(
+    (d) => d.defaultVisible || extraMicroKeys.includes(d.key)
+  ).forEach((d) => {
+    const gap = profile[d.rdaKey] - result[d.gotKey];
+    if (gap > d.gapThreshold) {
+      tips.push({
+        title: d.counseling.title,
+        icon: d.counseling.icon,
+        description: d.counseling.description(gap, profile),
+        bullets: d.counseling.bullets,
+      });
+    }
+  });
 
   tips.push({
     title: "Household processing",
@@ -1158,6 +1247,8 @@ NUTRIENTS PER CU:
       .join("\n");
   }
 
+  const carbAmdrG = carbGramsFromEer(profile.kcal);
+
   return `===========================================================
 24-HOUR DIETARY RECALL (ICMR-NIN 2020, IFCT 2017)
 ===========================================================
@@ -1170,6 +1261,7 @@ ${mealText || "  No items recorded"}
 -----------------------------------------------------------
 INTAKE vs EER / EAR / RDA:
 • Energy: ${result.kcal.toFixed(0)} kcal / EER ${profile.kcal} [${formatPct(result.kcalDiff)}]
+• Carbohydrate: ${result.carbs.toFixed(0)} g / AMDR ${carbAmdrG.at50}-${carbAmdrG.at60} g from EER (${result.amdr?.carbPct || 0}% energy)
 • Protein: ${result.protein.toFixed(1)} g / EAR ${result.proteinEar} / RDA ${profile.proteinRda} [${formatPct(result.proteinDiff)} vs RDA]
 • Visible fat: ${result.visibleFatGrams.toFixed(1)} g / ${profile.visibleFat} g
 • Calcium: ${result.calcium.toFixed(0)} mg / EAR ${profile.calciumEar} / RDA ${profile.calciumRda} [${formatPct(result.calciumDiff)} vs RDA]
@@ -1181,7 +1273,6 @@ ACCEPTABLE MACRONUTRIENT DISTRIBUTION RANGE (AMDR):
 • Carbohydrate ${result.amdr?.carbPct || 0}% (about 50-60%)
 • Protein ${result.amdr?.proteinPct || 0}% (about 10-15%)
 • Fat ${result.amdr?.fatPct || 0}% (about 20-30%)
-• Cereal : pulse : milk ${result.cpRatio?.triple || result.cpRatio?.ratio || "N/A"}  (target about 3 : 1 : 2.5)
 -----------------------------------------------------------
 IMPRESSION:
 ${generateClinicalImpression(result, profile)}
