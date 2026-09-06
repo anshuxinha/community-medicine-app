@@ -508,7 +508,7 @@ const DietarySurveyScreen = () => {
                         <Text style={styles.sectionTitle}>Intake vs EER / EAR / RDA</Text>
                       </View>
                       <Text style={styles.captionText}>
-                        Status uses EAR (energy uses EER). Visible fat is oil/ghee logged, not total IFCT fat.
+                        Status uses EAR (energy uses EER). Visible fat is oil and ghee logged as grams.
                       </Text>
                       <View style={styles.tableHeaderRow}>
                         <Text style={[styles.tableColHeader, { flex: 2.1 }]}>Nutrient</Text>
@@ -554,18 +554,6 @@ const DietarySurveyScreen = () => {
                             currentProfile.visibleFat,
                             { refLabel: "target" }
                           ),
-                        },
-                        {
-                          label: "Total fat (IFCT)",
-                          unit: "g",
-                          got: individualResult.fat.toFixed(1),
-                          ear: "% energy",
-                          rda: "20-30%",
-                          status: {
-                            key: "info",
-                            label: `${individualResult.amdr.fatPct}% energy`,
-                            color: colors.textSecondary,
-                          },
                         },
                         {
                           label: "Calcium",
@@ -776,7 +764,7 @@ const DietarySurveyScreen = () => {
                 </View>
               ) : (
                 <Text style={styles.emptyMealText}>
-                  Add foods above. Results appear as you type. Tea: log milk and sugar, not the brew.
+                  Add foods above. Results appear as you type. For tea, log the milk and sugar.
                 </Text>
               )}
             </View>
@@ -789,7 +777,7 @@ const DietarySurveyScreen = () => {
                     <Text style={styles.sectionTitle}>Family roster (ICMR-NIN 2020 CU)</Text>
                   </View>
                   <Text style={styles.captionText}>
-                    1.0 CU = sedentary adult man, 2110 kcal. Pick the labelled row, not a bare number.
+                    1.0 CU = sedentary adult man, 2110 kcal. Pick the labelled row.
                   </Text>
                   <View style={styles.cuSummaryBanner}>
                     <View style={styles.cuSummaryItem}>

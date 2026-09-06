@@ -1056,12 +1056,12 @@ export const generateDietaryCounseling = (result, profile) => {
 
   if (feGap > 3) {
     tips.push({
-      title: "Iron (EAR, not the IFA tablet)",
+      title: "Iron (EAR)",
       icon: "pill",
-      description: `About ${feGap.toFixed(1)} mg below iron EAR. Dietary iron is not the 60 mg IFA tablet.`,
+      description: `About ${feGap.toFixed(1)} mg below iron EAR.`,
       bullets: [
         "Cook drumstick leaves, methi, or amaranth in an iron kadai.",
-        "IFCT rice flakes (poha) provide about 4.5 mg iron per 100 g, not the old 20 mg Gopalan figure.",
+        "IFCT rice flakes (poha) provide about 4.5 mg iron per 100 g.",
         "Do not drink tea or coffee within 1 hour of meals.",
         "Squeeze lemon (IFCT juice, about 48 mg vitamin C per 100 g) over dal.",
       ],
@@ -1143,7 +1143,7 @@ ${groups}
 NUTRIENTS PER CU:
 • Energy: ${fam.perCUKcal.toFixed(0)} kcal  (EER 2110) [${formatPct(fam.kcalDiff)}]
 • Protein: ${fam.perCUProtein.toFixed(1)} g  (EAR 42.9 / RDA 54.0)
-• Per capita energy: ${fam.perCapitaKcal.toFixed(0)} kcal/person (not the viva metric)
+• Per capita energy: ${fam.perCapitaKcal.toFixed(0)} kcal/person
 ===========================================================`;
   }
 
@@ -1172,7 +1172,6 @@ INTAKE vs EER / EAR / RDA:
 • Energy: ${result.kcal.toFixed(0)} kcal / EER ${profile.kcal} [${formatPct(result.kcalDiff)}]
 • Protein: ${result.protein.toFixed(1)} g / EAR ${result.proteinEar} / RDA ${profile.proteinRda} [${formatPct(result.proteinDiff)}]
 • Visible fat: ${result.visibleFatGrams.toFixed(1)} g / ${profile.visibleFat} g
-• Total fat (IFCT): ${result.fat.toFixed(1)} g  (use energy split below, not the visible-fat gram target)
 • Calcium: ${result.calcium.toFixed(0)} mg / EAR ${profile.calciumEar} / RDA ${profile.calciumRda}
 • Iron: ${result.iron.toFixed(1)} mg / EAR ${profile.ironEar} / RDA ${profile.ironRda}
 • Vitamin C: ${result.vitC.toFixed(1)} mg / EAR ${profile.vitCEar} / RDA ${profile.vitCRda}

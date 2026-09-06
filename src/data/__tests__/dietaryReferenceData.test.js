@@ -132,6 +132,9 @@ describe("engines", () => {
     expect(impression.length).toBeGreaterThan(20);
     const tips = generateDietaryCounseling(result, REFERENCE_PROFILES.preg_3rd_sedentary);
     expect(tips.length).toBeGreaterThan(0);
+    const blob = JSON.stringify(tips);
+    expect(blob).not.toMatch(/Gopalan/i);
+    expect(blob).not.toMatch(/not the /i);
   });
 
   it("divides monthly family rations by 30 and errors on zero CU", () => {
@@ -179,6 +182,7 @@ describe("engines", () => {
     expect(summary).toContain("MONTHLY");
     expect(summary).toContain("My Plate 2024");
     expect(summary).not.toContain("DAILY household purchase");
+    expect(summary).not.toMatch(/not the /i);
   });
 
   it("writes an individual case sheet from IFCT names", () => {
@@ -204,5 +208,7 @@ describe("engines", () => {
     expect(summary).toContain("IFCT 2017");
     expect(summary).toContain("Wheat flour, atta");
     expect(summary).toContain("Visible fat");
+    expect(summary).not.toContain("Total fat (IFCT)");
+    expect(summary).not.toMatch(/not the /i);
   });
 });
