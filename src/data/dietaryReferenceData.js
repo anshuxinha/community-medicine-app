@@ -1471,49 +1471,52 @@ export const generateDietaryCounseling = (result, profile, options = {}) => {
     MICRONUTRIENT_DEFS.filter(
       (d) => d.defaultVisible || (options.extraMicroKeys || []).includes(d.key)
     ).map((d) => d.key);
-  const tips = [];
+  const bullets = [];
   const kcalGap = Math.round(profile.kcal - result.kcal);
   const proGap = profile.proteinRda - result.protein;
 
-  if (kcalGap > 150 || proGap > 5) {
-    tips.push({
-      title: "Energy and protein, low cost",
-      icon: "food-apple",
-      description: `About ${Math.max(kcalGap, 0)} kcal and ${Math.max(proGap, 0).toFixed(1)} g protein below EER / RDA:`,
-      bullets: [
-        "30 g roasted Bengal gram / sattu (IFCT whole Bengal gram: about 86 kcal and 5.6 g protein).",
-        "30 g ground nut (IFCT: about 156 kcal and 7.1 g protein).",
-        "1 boiled egg, about 50 g (IFCT: about 74 kcal and 6.7 g protein).",
-        "Keep cereal : pulse : milk near 3 : 1 : 2.5.",
-      ],
-    });
+  if (kcalGap > 150) {
+    bullets.push(
+      `Energy intake is ${result.kcal.toFixed(0)} kcal, ${kcalGap} kcal below the EER of ${profile.kcal} kcal. Add 30 g roasted Bengal gram / sattu (IFCT whole Bengal gram: about 86 kcal and 5.6 g protein) and 30 g ground nut (IFCT: about 156 kcal and 7.1 g protein) to raise energy without a large extra cereal load.`
+    );
+  }
+
+  if (proGap > 5) {
+    bullets.push(
+      `Protein intake is ${result.protein.toFixed(1)} g, ${proGap.toFixed(1)} g below the RDA of ${profile.proteinRda} g (EAR ${profile.proteinEar} g). One boiled egg, about 50 g (IFCT: about 74 kcal and 6.7 g protein), plus 30 g roasted Bengal gram (IFCT: about 5.6 g protein) closes part of the gap and improves pulse-quality protein.`
+    );
+  }
+
+  if (result.cpRatio && result.cpRatio.ratioNum > 5) {
+    bullets.push(
+      `Cereal : pulse : milk is ${result.cpRatio.triple || result.cpRatio.ratio} (target about 3 : 1 : 2.5). ICMR 2020 uses 1 g protein/kg (about ${result.proteinOneGPerKg} g) when pulse is very low. Add one katori of dal or 30 g roasted chana at lunch and dinner, and keep milk or curd in the day.`
+    );
   }
 
   MICRONUTRIENT_DEFS.filter((d) => selectedMicroKeys.includes(d.key)).forEach((d) => {
     if (profile[d.rdaKey] == null || result[d.gotKey] == null) return;
     const gap = profile[d.rdaKey] - result[d.gotKey];
     if (gap > d.gapThreshold) {
-      tips.push({
-        title: d.counseling.title,
-        icon: d.counseling.icon,
-        description: d.counseling.description(gap, profile),
-        bullets: d.counseling.bullets,
-      });
+      const lead = d.counseling.description(gap, profile).replace(/:\s*$/, ".");
+      bullets.push(`${lead} ${d.counseling.bullets.join(" ")}`);
     }
   });
 
-  tips.push({
-    title: "Household processing",
-    icon: "sprout",
-    description: "No-cost steps that improve the same IFCT foods:",
-    bullets: [
-      "Germinate whole moong or chana: vitamin C rises and phytate falls.",
-      "Ferment (idli, dosa, dhokla) for B-vitamin synthesis.",
-      "Keep cereal:pulse:milk near 3:1:2.5.",
-    ],
-  });
+  if (!bullets.length) {
+    bullets.push(
+      `Energy, protein, and the micronutrients on the table sit close to ICMR-NIN 2020 EER and RDA for this recall. Keep cereal : pulse : milk near 3 : 1 : 2.5.`
+    );
+  }
 
-  return tips;
+  return [
+    {
+      title: "Specific dietary recommendations",
+      icon: "food-apple",
+      description:
+        "Each point is one shortfall from this recall versus ICMR-NIN 2020 EER or RDA.",
+      bullets,
+    },
+  ];
 };
 
 const dateStamp = () =>

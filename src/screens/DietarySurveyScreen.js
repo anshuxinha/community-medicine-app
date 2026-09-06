@@ -49,7 +49,6 @@ import {
   MICRONUTRIENT_DEFS,
   DEFAULT_MICRO_KEYS,
   carbGramsFromEer,
-  carbAmdrStatus,
 } from "../data/dietaryReferenceData";
 import { ALL_ORIENTATIONS } from "../constants/orientations";
 import { useThemedStyles } from "../styles/useThemedStyles";
@@ -541,11 +540,10 @@ const DietarySurveyScreen = () => {
                         <Text style={styles.sectionTitle}>Intake vs EER / EAR / RDA</Text>
                       </View>
                       <Text style={styles.captionText}>
-                        Energy uses EER. Macronutrients and micronutrients use RDA. EAR is shown for
-                        information. Visible fat is oil and ghee logged as grams.
+                        Energy uses EER. Protein and micronutrients use RDA. EAR is shown for
+                        information.
                       </Text>
                       {(() => {
-                        const carbAmdrG = carbGramsFromEer(currentProfile.kcal);
                         const visibleMicros = MICRONUTRIENT_DEFS.filter((d) =>
                           selectedMicroKeys.includes(d.key)
                         );
@@ -592,14 +590,6 @@ const DietarySurveyScreen = () => {
                             </View>
                             {[
                               {
-                                label: "Carbohydrate",
-                                unit: "g",
-                                got: individualResult.carbs.toFixed(0),
-                                ear: carbAmdrG.at50,
-                                rda: carbAmdrG.at60,
-                                status: carbAmdrStatus(individualResult.amdr.carbPct),
-                              },
-                              {
                                 label: "Protein",
                                 unit: "g",
                                 got: individualResult.protein.toFixed(1),
@@ -611,22 +601,9 @@ const DietarySurveyScreen = () => {
                                   currentProfile.proteinRda
                                 ),
                               },
-                              {
-                                label: "Visible fat",
-                                unit: "g",
-                                got: individualResult.visibleFatGrams.toFixed(1),
-                                ear: currentProfile.visibleFat,
-                                rda: currentProfile.visibleFat,
-                                status: intakeStatus(
-                                  individualResult.visibleFatGrams,
-                                  currentProfile.visibleFat,
-                                  currentProfile.visibleFat,
-                                  { refLabel: "target" }
-                                ),
-                              },
                             ].map(renderNutrientRow)}
                             <Text style={styles.captionText}>
-                              Carbohydrate columns are AMDR grams from EER (50-60% energy).
+                              There is no EAR/RDA defined by ICMR-NIN for Carbohydrates and Fats.
                             </Text>
                             {individualResult.lowQualityProtein ? (
                               <Text style={styles.captionText}>
@@ -678,9 +655,6 @@ const DietarySurveyScreen = () => {
                                 ? `Choose micronutrients (${hiddenCount} more)`
                                 : "Choose micronutrients"}
                             </Button>
-                            <Text style={styles.captionText}>
-                              IFCT 2017 in this tool does not report vitamin B12 or iodine.
-                            </Text>
                           </View>
                         );
                       })()}
@@ -1296,8 +1270,7 @@ const DietarySurveyScreen = () => {
             </View>
             <Divider />
             <Text style={[styles.captionText, { paddingHorizontal: 16, marginTop: 10 }]}>
-              Iron, calcium, and folate start selected. Tick any other ICMR-NIN 2020 micronutrient
-              that IFCT 2017 reports. Vitamin B12 and iodine are not in this food list.
+              Tick the micronutrients to show in the table.
             </Text>
             <View style={styles.microModalActions}>
               <Button

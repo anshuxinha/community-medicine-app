@@ -149,6 +149,8 @@ describe("engines", () => {
     expect(impression).not.toMatch(/below EAR/);
     const tips = generateDietaryCounseling(result, REFERENCE_PROFILES.preg_3rd_sedentary);
     expect(tips.length).toBeGreaterThan(0);
+    expect(tips[0].title).toBe("Specific dietary recommendations");
+    expect(tips[0].bullets.length).toBeGreaterThan(0);
     const blob = JSON.stringify(tips);
     expect(blob).not.toMatch(/Gopalan/i);
     expect(blob).not.toMatch(/not the /i);
@@ -271,15 +273,16 @@ describe("engines", () => {
       REFERENCE_PROFILES.man_sedentary
     );
     const withoutVitC = generateDietaryCounseling(result, REFERENCE_PROFILES.man_sedentary);
-    expect(withoutVitC.some((t) => t.title === "Vitamin C (RDA)")).toBe(false);
+    expect(withoutVitC[0].title).toBe("Specific dietary recommendations");
+    expect(withoutVitC[0].bullets.join(" ")).not.toMatch(/below vitamin C RDA/i);
     const withVitC = generateDietaryCounseling(result, REFERENCE_PROFILES.man_sedentary, {
       extraMicroKeys: ["vitC"],
     });
-    expect(withVitC.some((t) => t.title === "Vitamin C (RDA)")).toBe(true);
+    expect(withVitC[0].bullets.join(" ")).toMatch(/below vitamin C RDA/i);
     const withZinc = generateDietaryCounseling(result, REFERENCE_PROFILES.man_sedentary, {
       selectedMicroKeys: ["iron", "calcium", "folate", "zinc"],
     });
-    expect(withZinc.some((t) => t.title === "Zinc (RDA)")).toBe(true);
+    expect(withZinc[0].bullets.join(" ")).toMatch(/below zinc RDA/i);
     expect(MICRONUTRIENT_DEFS.filter((d) => d.defaultVisible).map((d) => d.key)).toEqual([
       "iron",
       "calcium",
