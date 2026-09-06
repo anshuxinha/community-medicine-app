@@ -31,6 +31,43 @@ def ug(row, key):
     return round(float(row[key]) * 1_000_000, 1)
 
 
+# field, IFCT column, unit converter name
+MICRO_FIELDS = [
+    ("calcium", "ca", "mg"),
+    ("iron", "fe", "mg"),
+    ("vitC", "vitc", "mg"),
+    ("folate", "folsum", "ug"),
+    ("zinc", "zn", "mg"),
+    ("magnesium", "mg", "mg"),
+    ("vitaminA", "vita", "ug"),
+    ("thiamine", "thia", "mg"),
+    ("riboflavin", "ribf", "mg"),
+    ("niacin", "nia", "mg"),
+    ("vitB6", "vitb6c", "mg"),
+    ("vitaminD", "vitd", "ug"),
+]
+ZERO_MICROS = {field: 0 for field, _col, _unit in MICRO_FIELDS}
+UG_FIELDS = {field for field, _col, unit in MICRO_FIELDS if unit == "ug"}
+
+
+def conv_micro(row, col, unit):
+    raw = row.get(col)
+    if raw is None or raw == "":
+        return 0
+    try:
+        return ug(row, col) if unit == "ug" else mg(row, col)
+    except (TypeError, ValueError):
+        return 0
+
+
+def round_nut(key, value):
+    if key == "calories":
+        return round(value)
+    if key in UG_FIELDS:
+        return round(value, 1)
+    return round(value, 2)
+
+
 def from_ifct(code, by, **extra):
     r = by[code]
     category = extra.pop("category")
@@ -44,20 +81,18 @@ def from_ifct(code, by, **extra):
         "protein": extra.pop("protein", g(r, "protcnt")),
         "fat": extra.pop("fat", g(r, "fatce")),
         "carbs": extra.pop("carbs", g(r, "choavldf")),
-        "calcium": extra.pop("calcium", mg(r, "ca")),
-        "iron": extra.pop("iron", mg(r, "fe")),
-        "vitC": extra.pop("vitC", mg(r, "vitc")),
-        "folate": extra.pop("folate", ug(r, "folsum")),
         "visibleFat": extra.pop("visibleFat", category == "Fats & Oils"),
         "portions": extra.pop("portions"),
     }
+    for field, col, unit in MICRO_FIELDS:
+        item[field] = extra.pop(field, conv_micro(r, col, unit))
     item.update(extra)
     return item
 
 
 def mix(parts, by):
     """Weighted mix of IFCT foods. parts: [(code, grams_per_100g_product), ...]"""
-    tot = {k: 0.0 for k in ["calories", "protein", "fat", "carbs", "calcium", "iron", "vitC", "folate"]}
+    tot = {k: 0.0 for k in ["calories", "protein", "fat", "carbs"] + [f for f, _c, _u in MICRO_FIELDS]}
     for code, grams in parts:
         r = by[code]
         f = grams / 100.0
@@ -65,11 +100,9 @@ def mix(parts, by):
         tot["protein"] += g(r, "protcnt") * f
         tot["fat"] += g(r, "fatce") * f
         tot["carbs"] += g(r, "choavldf") * f
-        tot["calcium"] += mg(r, "ca") * f
-        tot["iron"] += mg(r, "fe") * f
-        tot["vitC"] += mg(r, "vitc") * f
-        tot["folate"] += ug(r, "folsum") * f
-    return {k: round(v, 2) if k != "calories" else round(v) for k, v in tot.items()}
+        for field, col, unit in MICRO_FIELDS:
+            tot[field] += conv_micro(r, col, unit) * f
+    return {k: round_nut(k, v) for k, v in tot.items()}
 
 
 def main():
@@ -425,10 +458,7 @@ def main():
         protein=0,
         fat=100,
         carbs=0,
-        calcium=0,
-        iron=0,
-        vitC=0,
-        folate=0,
+        **ZERO_MICROS,
         visibleFat=True,
         portions=oil_portions,
     )
@@ -442,10 +472,7 @@ def main():
         protein=0,
         fat=100,
         carbs=0,
-        calcium=0,
-        iron=0,
-        vitC=0,
-        folate=0,
+        **ZERO_MICROS,
         visibleFat=True,
         portions=oil_portions,
     )
@@ -498,10 +525,7 @@ def main():
         "protein": 0,
         "fat": 0,
         "carbs": 100,
-        "calcium": 0,
-        "iron": 0,
-        "vitC": 0,
-        "folate": 0,
+        **ZERO_MICROS,
         "visibleFat": False,
         "portions": [
             {"id": "tsp", "label": "1 level teaspoon in tea (~5 g)", "grams": 5, "rawEquivalent": False},

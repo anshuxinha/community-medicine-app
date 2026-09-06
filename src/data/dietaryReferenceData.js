@@ -466,6 +466,139 @@ export const REFERENCE_PROFILES = {
   },
 };
 
+/** Extra ICMR-NIN 2020 EAR/RDA (summary tables). Vitamin D stored as µg (400 IU = 10 µg). */
+const MICRO_REQ = {
+  man_sedentary: {
+    magnesiumEar: 370, magnesiumRda: 440, zincEar: 14.1, zincRda: 17,
+    thiamineEar: 1.2, thiamineRda: 1.4, riboflavinEar: 1.6, riboflavinRda: 2.0,
+    niacinEar: 12, niacinRda: 14, vitB6Ear: 1.6, vitB6Rda: 1.9,
+    vitaminAEar: 460, vitaminARda: 1000, vitaminDEar: 10, vitaminDRda: 15,
+  },
+  man_moderate: {
+    magnesiumEar: 370, magnesiumRda: 440, zincEar: 14.1, zincRda: 17,
+    thiamineEar: 1.5, thiamineRda: 1.8, riboflavinEar: 2.1, riboflavinRda: 2.5,
+    niacinEar: 15, niacinRda: 18, vitB6Ear: 2.1, vitB6Rda: 2.4,
+    vitaminAEar: 460, vitaminARda: 1000, vitaminDEar: 10, vitaminDRda: 15,
+  },
+  man_heavy: {
+    magnesiumEar: 370, magnesiumRda: 440, zincEar: 14.1, zincRda: 17,
+    thiamineEar: 1.9, thiamineRda: 2.3, riboflavinEar: 2.7, riboflavinRda: 3.2,
+    niacinEar: 19, niacinRda: 23, vitB6Ear: 2.6, vitB6Rda: 3.1,
+    vitaminAEar: 460, vitaminARda: 1000, vitaminDEar: 10, vitaminDRda: 15,
+  },
+  woman_sedentary: {
+    magnesiumEar: 310, magnesiumRda: 370, zincEar: 11.0, zincRda: 13.2,
+    thiamineEar: 1.1, thiamineRda: 1.4, riboflavinEar: 1.6, riboflavinRda: 1.9,
+    niacinEar: 9, niacinRda: 11, vitB6Ear: 1.6, vitB6Rda: 1.9,
+    vitaminAEar: 390, vitaminARda: 840, vitaminDEar: 10, vitaminDRda: 15,
+  },
+  woman_moderate: {
+    magnesiumEar: 310, magnesiumRda: 370, zincEar: 11.0, zincRda: 13.2,
+    thiamineEar: 1.4, thiamineRda: 1.7, riboflavinEar: 2.0, riboflavinRda: 2.4,
+    niacinEar: 12, niacinRda: 14, vitB6Ear: 1.6, vitB6Rda: 1.9,
+    vitaminAEar: 390, vitaminARda: 840, vitaminDEar: 10, vitaminDRda: 15,
+  },
+  woman_heavy: {
+    magnesiumEar: 310, magnesiumRda: 370, zincEar: 11.0, zincRda: 13.2,
+    thiamineEar: 1.8, thiamineRda: 2.2, riboflavinEar: 2.6, riboflavinRda: 3.1,
+    niacinEar: 15, niacinRda: 18, vitB6Ear: 2.1, vitB6Rda: 2.4,
+    vitaminAEar: 390, vitaminARda: 840, vitaminDEar: 10, vitaminDRda: 15,
+  },
+  preg_2nd_sedentary: {
+    magnesiumEar: 370, magnesiumRda: 440, zincEar: 12.0, zincRda: 14.5,
+    thiamineEar: 1.6, thiamineRda: 2.0, riboflavinEar: 2.3, riboflavinRda: 2.7,
+    niacinEar: 11, niacinRda: 13, vitB6Ear: 1.9, vitB6Rda: 2.3,
+    vitaminAEar: 406, vitaminARda: 900, vitaminDEar: 10, vitaminDRda: 15,
+  },
+  child_1_3y: {
+    magnesiumEar: 73, magnesiumRda: 90, zincEar: 2.8, zincRda: 3.3,
+    thiamineEar: 0.6, thiamineRda: 0.7, riboflavinEar: 0.8, riboflavinRda: 1.1,
+    niacinEar: 6, niacinRda: 7, vitB6Ear: 0.8, vitB6Rda: 0.9,
+    vitaminAEar: 180, vitaminARda: 390, vitaminDEar: 10, vitaminDRda: 15,
+  },
+  child_4_6y: {
+    magnesiumEar: 104, magnesiumRda: 125, zincEar: 3.7, zincRda: 4.5,
+    thiamineEar: 0.8, thiamineRda: 0.9, riboflavinEar: 1.1, riboflavinRda: 1.3,
+    niacinEar: 8, niacinRda: 9, vitB6Ear: 1.1, vitB6Rda: 1.2,
+    vitaminAEar: 240, vitaminARda: 510, vitaminDEar: 10, vitaminDRda: 15,
+  },
+  child_7_9y: {
+    magnesiumEar: 144, magnesiumRda: 175, zincEar: 4.9, zincRda: 5.9,
+    thiamineEar: 1.0, thiamineRda: 1.1, riboflavinEar: 1.3, riboflavinRda: 1.6,
+    niacinEar: 10, niacinRda: 11, vitB6Ear: 1.3, vitB6Rda: 1.5,
+    vitaminAEar: 290, vitaminARda: 630, vitaminDEar: 10, vitaminDRda: 15,
+  },
+  adol_boys_10_12: {
+    magnesiumEar: 199, magnesiumRda: 240, zincEar: 7.0, zincRda: 8.5,
+    thiamineEar: 1.3, thiamineRda: 1.5, riboflavinEar: 1.7, riboflavinRda: 2.1,
+    niacinEar: 12, niacinRda: 15, vitB6Ear: 1.7, vitB6Rda: 1.9,
+    vitaminAEar: 360, vitaminARda: 770, vitaminDEar: 10, vitaminDRda: 15,
+  },
+  adol_girls_10_12: {
+    magnesiumEar: 207, magnesiumRda: 250, zincEar: 7.1, zincRda: 8.5,
+    thiamineEar: 1.2, thiamineRda: 1.4, riboflavinEar: 1.6, riboflavinRda: 1.9,
+    niacinEar: 12, niacinRda: 14, vitB6Ear: 1.6, vitB6Rda: 1.9,
+    vitaminAEar: 370, vitaminARda: 790, vitaminDEar: 10, vitaminDRda: 15,
+  },
+  adol_boys_13_15: {
+    magnesiumEar: 287, magnesiumRda: 345, zincEar: 11.9, zincRda: 14.3,
+    thiamineEar: 1.6, thiamineRda: 1.9, riboflavinEar: 2.2, riboflavinRda: 2.7,
+    niacinEar: 16, niacinRda: 19, vitB6Ear: 2.2, vitB6Rda: 2.6,
+    vitaminAEar: 430, vitaminARda: 930, vitaminDEar: 10, vitaminDRda: 15,
+  },
+  adol_girls_13_15: {
+    magnesiumEar: 282, magnesiumRda: 340, zincEar: 10.7, zincRda: 12.8,
+    thiamineEar: 1.3, thiamineRda: 1.6, riboflavinEar: 1.9, riboflavinRda: 2.2,
+    niacinEar: 13, niacinRda: 16, vitB6Ear: 1.8, vitB6Rda: 2.2,
+    vitaminAEar: 420, vitaminARda: 890, vitaminDEar: 10, vitaminDRda: 15,
+  },
+  adol_boys_16_18: {
+    magnesiumEar: 367, magnesiumRda: 440, zincEar: 14.7, zincRda: 17.6,
+    thiamineEar: 1.9, thiamineRda: 2.2, riboflavinEar: 2.5, riboflavinRda: 3.1,
+    niacinEar: 19, niacinRda: 22, vitB6Ear: 2.5, vitB6Rda: 3.0,
+    vitaminAEar: 480, vitaminARda: 1000, vitaminDEar: 10, vitaminDRda: 15,
+  },
+  adol_girls_16_18: {
+    magnesiumEar: 317, magnesiumRda: 350, zincEar: 11.8, zincRda: 14.2,
+    thiamineEar: 1.4, thiamineRda: 1.7, riboflavinEar: 1.9, riboflavinRda: 2.3,
+    niacinEar: 14, niacinRda: 17, vitB6Ear: 1.9, vitB6Rda: 2.3,
+    vitaminAEar: 400, vitaminARda: 860, vitaminDEar: 10, vitaminDRda: 15,
+  },
+  infant_0_6m: {
+    magnesiumEar: null, magnesiumRda: 30, zincEar: null, zincRda: null,
+    thiamineEar: null, thiamineRda: 0.2, riboflavinEar: null, riboflavinRda: 0.4,
+    niacinEar: null, niacinRda: 2, vitB6Ear: null, vitB6Rda: 0.1,
+    vitaminAEar: null, vitaminARda: 350, vitaminDEar: 10, vitaminDRda: 10,
+  },
+  infant_6_12m: {
+    magnesiumEar: null, magnesiumRda: 75, zincEar: 2.1, zincRda: 2.5,
+    thiamineEar: null, thiamineRda: 0.4, riboflavinEar: null, riboflavinRda: 0.6,
+    niacinEar: null, niacinRda: 5, vitB6Ear: null, vitB6Rda: 0.6,
+    vitaminAEar: 170, vitaminARda: 350, vitaminDEar: 10, vitaminDRda: 10,
+  },
+  lact_0_6m: {
+    magnesiumEar: 335, magnesiumRda: 400, zincEar: 11.8, zincRda: 14.1,
+    thiamineEar: 1.7, thiamineRda: 2.1, riboflavinEar: 2.5, riboflavinRda: 3.0,
+    niacinEar: 13, niacinRda: 16, vitB6Ear: 1.8, vitB6Rda: 2.2,
+    vitaminAEar: 720, vitaminARda: 950, vitaminDEar: 10, vitaminDRda: 15,
+  },
+  lact_7_12m: {
+    magnesiumEar: 335, magnesiumRda: 400, zincEar: 11.8, zincRda: 14.1,
+    thiamineEar: 1.7, thiamineRda: 2.1, riboflavinEar: 2.4, riboflavinRda: 2.9,
+    niacinEar: 13, niacinRda: 16, vitB6Ear: 1.8, vitB6Rda: 2.1,
+    vitaminAEar: 720, vitaminARda: 950, vitaminDEar: 10, vitaminDRda: 15,
+  },
+};
+MICRO_REQ.preg_2nd_moderate = { ...MICRO_REQ.preg_2nd_sedentary };
+MICRO_REQ.preg_3rd_sedentary = { ...MICRO_REQ.preg_2nd_sedentary };
+MICRO_REQ.preg_3rd_moderate = { ...MICRO_REQ.preg_2nd_sedentary };
+MICRO_REQ.elderly_man = { ...MICRO_REQ.man_sedentary, vitaminDRda: 20 };
+MICRO_REQ.elderly_woman = { ...MICRO_REQ.woman_sedentary, vitaminDRda: 20 };
+
+Object.keys(REFERENCE_PROFILES).forEach((id) => {
+  if (MICRO_REQ[id]) Object.assign(REFERENCE_PROFILES[id], MICRO_REQ[id]);
+});
+
 export const MEAL_SLOTS = [
   { id: "early_morning", title: "Early morning", icon: "weather-sunset", tip: "Tea calories come from the milk and sugar you log" },
   { id: "breakfast", title: "Breakfast", icon: "egg", tip: "Roti, poha, idli, egg, milk" },
@@ -820,6 +953,7 @@ export const MICRONUTRIENT_DEFS = [
     earKey: "ironEar",
     rdaKey: "ironRda",
     diffKey: "ironDiff",
+    group: "Minerals",
     defaultVisible: true,
     gapThreshold: 3,
     decimals: 1,
@@ -843,6 +977,7 @@ export const MICRONUTRIENT_DEFS = [
     earKey: "calciumEar",
     rdaKey: "calciumRda",
     diffKey: "calciumDiff",
+    group: "Minerals",
     defaultVisible: true,
     gapThreshold: 150,
     decimals: 0,
@@ -865,6 +1000,7 @@ export const MICRONUTRIENT_DEFS = [
     earKey: "folateEar",
     rdaKey: "folateRda",
     diffKey: "folateDiff",
+    group: "Vitamins",
     defaultVisible: true,
     gapThreshold: 80,
     decimals: 0,
@@ -889,6 +1025,7 @@ export const MICRONUTRIENT_DEFS = [
     earKey: "vitCEar",
     rdaKey: "vitCRda",
     diffKey: "vitCDiff",
+    group: "Vitamins",
     defaultVisible: false,
     gapThreshold: 10,
     decimals: 1,
@@ -903,7 +1040,185 @@ export const MICRONUTRIENT_DEFS = [
       ],
     },
   },
+  {
+    key: "zinc",
+    label: "Zinc",
+    unit: "mg",
+    gotKey: "zinc",
+    earKey: "zincEar",
+    rdaKey: "zincRda",
+    diffKey: "zincDiff",
+    group: "Minerals",
+    defaultVisible: false,
+    gapThreshold: 2,
+    decimals: 1,
+    counseling: {
+      title: "Zinc (RDA)",
+      icon: "circle-outline",
+      description: (gap) => `About ${gap.toFixed(1)} mg below zinc RDA.`,
+      bullets: [
+        "Whole pulses and ground nut (IFCT ground nut: about 3.2 mg zinc per 100 g).",
+        "Whole wheat atta and millets rather than polished rice only.",
+      ],
+    },
+  },
+  {
+    key: "magnesium",
+    label: "Magnesium",
+    unit: "mg",
+    gotKey: "magnesium",
+    earKey: "magnesiumEar",
+    rdaKey: "magnesiumRda",
+    diffKey: "magnesiumDiff",
+    group: "Minerals",
+    defaultVisible: false,
+    gapThreshold: 50,
+    decimals: 0,
+    counseling: {
+      title: "Magnesium (RDA)",
+      icon: "leaf",
+      description: (gap) => `About ${Math.round(gap)} mg below magnesium RDA.`,
+      bullets: [
+        "Ragi and whole pulses.",
+        "Green leafy vegetables and gingelly (til) seeds.",
+      ],
+    },
+  },
+  {
+    key: "vitaminA",
+    label: "Vitamin A",
+    unit: "µg",
+    gotKey: "vitaminA",
+    earKey: "vitaminAEar",
+    rdaKey: "vitaminARda",
+    diffKey: "vitaminADiff",
+    group: "Vitamins",
+    defaultVisible: false,
+    gapThreshold: 150,
+    decimals: 0,
+    counseling: {
+      title: "Vitamin A (RDA)",
+      icon: "eye",
+      description: (gap) => `About ${Math.round(gap)} µg below vitamin A RDA.`,
+      bullets: [
+        "Drumstick leaves, amaranth, or ripe mango (IFCT vitamin A as retinol equivalent).",
+        "One egg or a piece of fish if the household eats animal food.",
+      ],
+    },
+  },
+  {
+    key: "thiamine",
+    label: "Thiamine (B1)",
+    unit: "mg",
+    gotKey: "thiamine",
+    earKey: "thiamineEar",
+    rdaKey: "thiamineRda",
+    diffKey: "thiamineDiff",
+    group: "Vitamins",
+    defaultVisible: false,
+    gapThreshold: 0.3,
+    decimals: 2,
+    counseling: {
+      title: "Thiamine (RDA)",
+      icon: "barley",
+      description: (gap) => `About ${gap.toFixed(2)} mg below thiamine RDA.`,
+      bullets: [
+        "Whole wheat atta and millets (IFCT atta: about 0.42 mg thiamine per 100 g).",
+        "Whole pulses and ground nut.",
+      ],
+    },
+  },
+  {
+    key: "riboflavin",
+    label: "Riboflavin (B2)",
+    unit: "mg",
+    gotKey: "riboflavin",
+    earKey: "riboflavinEar",
+    rdaKey: "riboflavinRda",
+    diffKey: "riboflavinDiff",
+    group: "Vitamins",
+    defaultVisible: false,
+    gapThreshold: 0.3,
+    decimals: 2,
+    counseling: {
+      title: "Riboflavin (RDA)",
+      icon: "bottle-tonic",
+      description: (gap) => `About ${gap.toFixed(2)} mg below riboflavin RDA.`,
+      bullets: [
+        "Cow milk or curd (IFCT cow milk: about 0.11 mg riboflavin per 100 ml).",
+        "Egg and green leafy vegetables.",
+      ],
+    },
+  },
+  {
+    key: "niacin",
+    label: "Niacin (B3)",
+    unit: "mg",
+    gotKey: "niacin",
+    earKey: "niacinEar",
+    rdaKey: "niacinRda",
+    diffKey: "niacinDiff",
+    group: "Vitamins",
+    defaultVisible: false,
+    gapThreshold: 2,
+    decimals: 1,
+    counseling: {
+      title: "Niacin (RDA)",
+      icon: "peanut",
+      description: (gap) => `About ${gap.toFixed(1)} mg below niacin RDA.`,
+      bullets: [
+        "Ground nut (IFCT: about 11.4 mg niacin per 100 g).",
+        "Whole cereals and pulses.",
+      ],
+    },
+  },
+  {
+    key: "vitB6",
+    label: "Vitamin B6",
+    unit: "mg",
+    gotKey: "vitB6",
+    earKey: "vitB6Ear",
+    rdaKey: "vitB6Rda",
+    diffKey: "vitB6Diff",
+    group: "Vitamins",
+    defaultVisible: false,
+    gapThreshold: 0.3,
+    decimals: 2,
+    counseling: {
+      title: "Vitamin B6 (RDA)",
+      icon: "food-apple",
+      description: (gap) => `About ${gap.toFixed(2)} mg below vitamin B6 RDA.`,
+      bullets: [
+        "Banana, potato, and whole pulses.",
+        "Chicken or fish if the household eats animal food.",
+      ],
+    },
+  },
+  {
+    key: "vitaminD",
+    label: "Vitamin D",
+    unit: "µg",
+    gotKey: "vitaminD",
+    earKey: "vitaminDEar",
+    rdaKey: "vitaminDRda",
+    diffKey: "vitaminDDiff",
+    group: "Vitamins",
+    defaultVisible: false,
+    gapThreshold: 3,
+    decimals: 1,
+    counseling: {
+      title: "Vitamin D (RDA)",
+      icon: "white-balance-sunny",
+      description: (gap) => `About ${gap.toFixed(1)} µg below vitamin D RDA (15 µg is 600 IU).`,
+      bullets: [
+        "Egg yolk or rohu if the household eats animal food.",
+        "Outdoor daylight; IFCT plant foods are a weak vitamin D source.",
+      ],
+    },
+  },
 ];
+
+export const DEFAULT_MICRO_KEYS = MICRONUTRIENT_DEFS.filter((d) => d.defaultVisible).map((d) => d.key);
 
 export const findFood = (foods, id) => foods.find((f) => f.id === id);
 
@@ -925,15 +1240,16 @@ const factorFromFood = (food, grams) => {
   if (!pulseFromRecipe && food.category === "Pulses & Legumes") pulseGrams = grams;
   const visibleFatGrams = food.visibleFat ? grams : visibleFromRecipe;
   const milkGrams = food.category === "Milk & Dairy" ? grams : 0;
+  const micros = {};
+  MICRONUTRIENT_DEFS.forEach((d) => {
+    micros[d.gotKey] = (food[d.gotKey] || 0) * factor;
+  });
   return {
     kcal: (food.calories || 0) * factor,
     protein: (food.protein || 0) * factor,
     fat: (food.fat || 0) * factor,
     carbs: (food.carbs || 0) * factor,
-    calcium: (food.calcium || 0) * factor,
-    iron: (food.iron || 0) * factor,
-    vitC: (food.vitC || 0) * factor,
-    folate: (food.folate || 0) * factor,
+    ...micros,
     cerealGrams,
     pulseGrams,
     milkGrams,
@@ -947,15 +1263,14 @@ export const calculateIndividualIntake = (recallItems, foods, profile) => {
     protein: 0,
     fat: 0,
     carbs: 0,
-    calcium: 0,
-    iron: 0,
-    vitC: 0,
-    folate: 0,
     cerealGrams: 0,
     pulseGrams: 0,
     milkGrams: 0,
     visibleFatGrams: 0,
   };
+  MICRONUTRIENT_DEFS.forEach((d) => {
+    totals[d.gotKey] = 0;
+  });
   const calculatedMealRows = [];
 
   for (const item of recallItems) {
@@ -991,20 +1306,17 @@ export const calculateIndividualIntake = (recallItems, foods, profile) => {
 
   const kcalDiff = percentDiff(totals.kcal, profile.kcal);
   const proteinDiff = percentDiff(totals.protein, profile.proteinRda);
-  const calciumDiff = percentDiff(totals.calcium, profile.calciumRda);
-  const ironDiff = percentDiff(totals.iron, profile.ironRda);
-  const vitCDiff = percentDiff(totals.vitC, profile.vitCRda);
-  const folateDiff = percentDiff(totals.folate, profile.folateRda);
   const visibleFatDiff = percentDiff(totals.visibleFatGrams, profile.visibleFat);
+  const microDiffs = {};
+  MICRONUTRIENT_DEFS.forEach((d) => {
+    microDiffs[d.diffKey] = percentDiff(totals[d.gotKey], profile[d.rdaKey]);
+  });
 
   return {
     ...totals,
     kcalDiff,
     proteinDiff,
-    calciumDiff,
-    ironDiff,
-    vitCDiff,
-    folateDiff,
+    ...microDiffs,
     visibleFatDiff,
     amdr,
     cpRatio,
@@ -1119,10 +1431,12 @@ export const generateClinicalImpression = (result, profile) => {
   }
 
   const micros = [];
-  if (result.ironDiff < -25) micros.push(`iron (${Math.abs(result.ironDiff).toFixed(1)}% below RDA)`);
-  if (result.calciumDiff < -25) micros.push(`calcium (${Math.abs(result.calciumDiff).toFixed(1)}% below RDA)`);
-  if (result.vitCDiff < -30) micros.push(`vitamin C (${Math.abs(result.vitCDiff).toFixed(1)}% below RDA)`);
-  if (result.folateDiff < -25) micros.push(`folate (${Math.abs(result.folateDiff).toFixed(1)}% below RDA)`);
+  MICRONUTRIENT_DEFS.forEach((d) => {
+    const diff = result[d.diffKey];
+    if (diff != null && diff < -25) {
+      micros.push(`${d.label.toLowerCase()} (${Math.abs(diff).toFixed(1)}% below RDA)`);
+    }
+  });
   if (micros.length) parts.push(`Micronutrient gaps versus RDA: ${micros.join(", ")}`);
 
   if (result.visibleFatDiff != null && profile.visibleFat > 0) {
@@ -1152,7 +1466,11 @@ export const generateClinicalImpression = (result, profile) => {
 
 export const generateDietaryCounseling = (result, profile, options = {}) => {
   if (!result || !profile) return [];
-  const extraMicroKeys = options.extraMicroKeys || [];
+  const selectedMicroKeys =
+    options.selectedMicroKeys ||
+    MICRONUTRIENT_DEFS.filter(
+      (d) => d.defaultVisible || (options.extraMicroKeys || []).includes(d.key)
+    ).map((d) => d.key);
   const tips = [];
   const kcalGap = Math.round(profile.kcal - result.kcal);
   const proGap = profile.proteinRda - result.protein;
@@ -1171,9 +1489,8 @@ export const generateDietaryCounseling = (result, profile, options = {}) => {
     });
   }
 
-  MICRONUTRIENT_DEFS.filter(
-    (d) => d.defaultVisible || extraMicroKeys.includes(d.key)
-  ).forEach((d) => {
+  MICRONUTRIENT_DEFS.filter((d) => selectedMicroKeys.includes(d.key)).forEach((d) => {
+    if (profile[d.rdaKey] == null || result[d.gotKey] == null) return;
     const gap = profile[d.rdaKey] - result[d.gotKey];
     if (gap > d.gapThreshold) {
       tips.push({
@@ -1264,10 +1581,14 @@ INTAKE vs EER / EAR / RDA:
 • Carbohydrate: ${result.carbs.toFixed(0)} g / AMDR ${carbAmdrG.at50}-${carbAmdrG.at60} g from EER (${result.amdr?.carbPct || 0}% energy)
 • Protein: ${result.protein.toFixed(1)} g / EAR ${result.proteinEar} / RDA ${profile.proteinRda} [${formatPct(result.proteinDiff)} vs RDA]
 • Visible fat: ${result.visibleFatGrams.toFixed(1)} g / ${profile.visibleFat} g
-• Calcium: ${result.calcium.toFixed(0)} mg / EAR ${profile.calciumEar} / RDA ${profile.calciumRda} [${formatPct(result.calciumDiff)} vs RDA]
-• Iron: ${result.iron.toFixed(1)} mg / EAR ${profile.ironEar} / RDA ${profile.ironRda} [${formatPct(result.ironDiff)} vs RDA]
-• Vitamin C: ${result.vitC.toFixed(1)} mg / EAR ${profile.vitCEar} / RDA ${profile.vitCRda} [${formatPct(result.vitCDiff)} vs RDA]
-• Folate: ${result.folate.toFixed(0)} µg / EAR ${profile.folateEar} / RDA ${profile.folateRda} [${formatPct(result.folateDiff)} vs RDA]
+${MICRONUTRIENT_DEFS.map((d) => {
+    const ear = profile[d.earKey];
+    const rda = profile[d.rdaKey];
+    const got = result[d.gotKey];
+    const earTxt = ear == null ? "—" : ear;
+    const rdaTxt = rda == null ? "—" : rda;
+    return `• ${d.label}: ${got.toFixed(d.decimals)} ${d.unit} / EAR ${earTxt} / RDA ${rdaTxt} [${formatPct(result[d.diffKey])} vs RDA]`;
+  }).join("\n")}
 -----------------------------------------------------------
 ACCEPTABLE MACRONUTRIENT DISTRIBUTION RANGE (AMDR):
 • Carbohydrate ${result.amdr?.carbPct || 0}% (about 50-60%)

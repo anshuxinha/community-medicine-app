@@ -47,6 +47,7 @@ import {
   intakeStatus,
   formatPct,
   MICRONUTRIENT_DEFS,
+  DEFAULT_MICRO_KEYS,
   carbGramsFromEer,
   carbAmdrStatus,
 } from "../data/dietaryReferenceData";
@@ -98,7 +99,8 @@ const DietarySurveyScreen = () => {
   const [familyRations, setFamilyRations] = useState({ ...EMPTY_RATIONS });
   const [cuModalVisible, setCuModalVisible] = useState(false);
   const [cuMemberId, setCuMemberId] = useState(null);
-  const [extraMicroKeys, setExtraMicroKeys] = useState([]);
+  const [selectedMicroKeys, setSelectedMicroKeys] = useState(DEFAULT_MICRO_KEYS);
+  const [microModalVisible, setMicroModalVisible] = useState(false);
 
   useEffect(() => {
     enableScreenCaptureProtection();
@@ -544,12 +546,10 @@ const DietarySurveyScreen = () => {
                       </Text>
                       {(() => {
                         const carbAmdrG = carbGramsFromEer(currentProfile.kcal);
-                        const visibleMicros = MICRONUTRIENT_DEFS.filter(
-                          (d) => d.defaultVisible || extraMicroKeys.includes(d.key)
+                        const visibleMicros = MICRONUTRIENT_DEFS.filter((d) =>
+                          selectedMicroKeys.includes(d.key)
                         );
-                        const hiddenMicros = MICRONUTRIENT_DEFS.filter(
-                          (d) => !d.defaultVisible && !extraMicroKeys.includes(d.key)
-                        );
+                        const hiddenCount = MICRONUTRIENT_DEFS.length - visibleMicros.length;
                         return (
                           <View>
                             <Text style={styles.tableSectionTitle}>Energy</Text>
@@ -654,39 +654,33 @@ const DietarySurveyScreen = () => {
                               .map((d) => ({
                                 label: d.label,
                                 unit: d.unit,
-                                got: individualResult[d.gotKey].toFixed(d.decimals),
-                                ear: currentProfile[d.earKey],
-                                rda: currentProfile[d.rdaKey],
+                                got: (individualResult[d.gotKey] || 0).toFixed(d.decimals),
+                                ear: currentProfile[d.earKey] == null ? "—" : currentProfile[d.earKey],
+                                rda: currentProfile[d.rdaKey] == null ? "—" : currentProfile[d.rdaKey],
                                 status: intakeStatus(
                                   individualResult[d.gotKey],
                                   currentProfile[d.earKey],
                                   currentProfile[d.rdaKey]
                                 ),
-                                onRemove: d.defaultVisible
-                                  ? undefined
-                                  : () =>
-                                      setExtraMicroKeys((keys) =>
-                                        keys.filter((k) => k !== d.key)
-                                      ),
+                                onRemove: () =>
+                                  setSelectedMicroKeys((keys) => keys.filter((k) => k !== d.key)),
                               }))
                               .map(renderNutrientRow)}
-                            {hiddenMicros.length > 0 ? (
-                              <View style={styles.addMicroRow}>
-                                {hiddenMicros.map((d) => (
-                                  <TouchableOpacity
-                                    key={d.key}
-                                    onPress={() =>
-                                      setExtraMicroKeys((keys) =>
-                                        keys.includes(d.key) ? keys : [...keys, d.key]
-                                      )
-                                    }
-                                    style={styles.addMicroChip}
-                                  >
-                                    <Text style={styles.addMicroChipText}>+ {d.label}</Text>
-                                  </TouchableOpacity>
-                                ))}
-                              </View>
-                            ) : null}
+                            <Button
+                              compact
+                              mode="outlined"
+                              icon="plus"
+                              onPress={() => setMicroModalVisible(true)}
+                              style={styles.microPickerBtn}
+                              textColor={colors.secondary}
+                            >
+                              {hiddenCount > 0
+                                ? `Choose micronutrients (${hiddenCount} more)`
+                                : "Choose micronutrients"}
+                            </Button>
+                            <Text style={styles.captionText}>
+                              IFCT 2017 in this tool does not report vitamin B12 or iodine.
+                            </Text>
                           </View>
                         );
                       })()}
@@ -778,7 +772,7 @@ const DietarySurveyScreen = () => {
                         <Text style={styles.sectionTitle}>Low-cost counseling</Text>
                       </View>
                       {generateDietaryCounseling(individualResult, currentProfile, {
-                        extraMicroKeys,
+                        selectedMicroKeys,
                       }).map((tip, idx) => (
                         <View key={idx} style={styles.counselingItem}>
                           <View style={styles.counselingHeader}>
@@ -1288,6 +1282,92 @@ const DietarySurveyScreen = () => {
       </Modal>
 
       <Modal
+        visible={microModalVisible}
+        animationType="slide"
+        transparent
+        supportedOrientations={ALL_ORIENTATIONS}
+        onRequestClose={() => setMicroModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalSheetContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Micronutrients</Text>
+              <IconButton icon="close" size={22} onPress={() => setMicroModalVisible(false)} />
+            </View>
+            <Divider />
+            <Text style={[styles.captionText, { paddingHorizontal: 16, marginTop: 10 }]}>
+              Iron, calcium, and folate start selected. Tick any other ICMR-NIN 2020 micronutrient
+              that IFCT 2017 reports. Vitamin B12 and iodine are not in this food list.
+            </Text>
+            <View style={styles.microModalActions}>
+              <Button
+                compact
+                mode="text"
+                onPress={() => setSelectedMicroKeys(MICRONUTRIENT_DEFS.map((d) => d.key))}
+                textColor={colors.secondary}
+              >
+                Select all
+              </Button>
+              <Button
+                compact
+                mode="text"
+                onPress={() => setSelectedMicroKeys(DEFAULT_MICRO_KEYS)}
+                textColor={colors.secondary}
+              >
+                Default
+              </Button>
+            </View>
+            <ScrollView style={{ maxHeight: 420 }}>
+              {["Minerals", "Vitamins"].map((group) => (
+                <View key={group}>
+                  <Text style={styles.microGroupTitle}>{group}</Text>
+                  {MICRONUTRIENT_DEFS.filter((d) => d.group === group).map((d) => {
+                    const on = selectedMicroKeys.includes(d.key);
+                    return (
+                      <TouchableOpacity
+                        key={d.key}
+                        style={[styles.microCheckRow, on && styles.profileModalItemSelected]}
+                        onPress={() =>
+                          setSelectedMicroKeys((keys) =>
+                            keys.includes(d.key)
+                              ? keys.filter((k) => k !== d.key)
+                              : [...keys, d.key]
+                          )
+                        }
+                      >
+                        <MaterialIcons
+                          name={on ? "check-box" : "check-box-outline-blank"}
+                          size={22}
+                          color={on ? colors.secondary : colors.textSecondary}
+                        />
+                        <View style={{ marginLeft: 10, flex: 1 }}>
+                          <Text style={styles.profileModalLabel}>
+                            {d.label} ({d.unit})
+                          </Text>
+                          {d.defaultVisible ? (
+                            <Text style={styles.profileModalStats}>Shown by default</Text>
+                          ) : null}
+                        </View>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              ))}
+            </ScrollView>
+            <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
+              <Button
+                mode="contained"
+                onPress={() => setMicroModalVisible(false)}
+                buttonColor={colors.secondary}
+              >
+                Done
+              </Button>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
         visible={cuModalVisible}
         animationType="slide"
         transparent
@@ -1381,20 +1461,35 @@ const createStyles = (colors) =>
       color: colors.textTitle,
       marginBottom: 4,
     },
-    addMicroRow: { flexDirection: "row", flexWrap: "wrap", marginTop: 8 },
-    addMicroChip: {
-      height: 28,
-      paddingHorizontal: 10,
-      marginRight: 6,
-      marginBottom: 4,
-      borderRadius: 14,
-      backgroundColor: colors.primaryLight || "#EEF2FF",
-      borderWidth: 1,
-      borderColor: colors.borderStrong,
-      justifyContent: "center",
-      alignItems: "center",
+    microPickerBtn: {
+      marginTop: 10,
+      marginBottom: 6,
+      borderColor: colors.secondary,
+      borderRadius: 8,
+      alignSelf: "flex-start",
     },
-    addMicroChipText: { fontSize: 12, fontWeight: "600", color: colors.secondary },
+    microModalActions: {
+      flexDirection: "row",
+      justifyContent: "flex-end",
+      paddingHorizontal: 8,
+    },
+    microGroupTitle: {
+      fontSize: 11,
+      fontWeight: "bold",
+      color: colors.secondary,
+      textTransform: "uppercase",
+      paddingHorizontal: 16,
+      paddingTop: 12,
+      paddingBottom: 4,
+    },
+    microCheckRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.surfaceSecondary || "#F1F5F9",
+    },
     microRemoveBtn: { padding: 4 },
     groupHeading: {
       fontSize: 15,

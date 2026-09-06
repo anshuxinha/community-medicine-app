@@ -72,6 +72,8 @@ describe("IFCT 2017 food table", () => {
     expect(byId.milk_cow.calories).toBe(73);
     expect(byId.poha.iron).toBe(4.46);
     expect(byId.amla.vitC).toBe(252);
+    expect(byId.wheat_atta.zinc).toBe(2.85);
+    expect(byId.wheat_atta.thiamine).toBe(0.42);
     expect(byId.onion.category).toBe("Other Vegetables");
   });
 
@@ -274,10 +276,31 @@ describe("engines", () => {
       extraMicroKeys: ["vitC"],
     });
     expect(withVitC.some((t) => t.title === "Vitamin C (RDA)")).toBe(true);
+    const withZinc = generateDietaryCounseling(result, REFERENCE_PROFILES.man_sedentary, {
+      selectedMicroKeys: ["iron", "calcium", "folate", "zinc"],
+    });
+    expect(withZinc.some((t) => t.title === "Zinc (RDA)")).toBe(true);
     expect(MICRONUTRIENT_DEFS.filter((d) => d.defaultVisible).map((d) => d.key)).toEqual([
       "iron",
       "calcium",
       "folate",
     ]);
+    expect(MICRONUTRIENT_DEFS.map((d) => d.key)).toEqual([
+      "iron",
+      "calcium",
+      "folate",
+      "vitC",
+      "zinc",
+      "magnesium",
+      "vitaminA",
+      "thiamine",
+      "riboflavin",
+      "niacin",
+      "vitB6",
+      "vitaminD",
+    ]);
+    expect(REFERENCE_PROFILES.man_sedentary.zincRda).toBe(17);
+    expect(REFERENCE_PROFILES.woman_sedentary.vitaminARda).toBe(840);
+    expect(REFERENCE_PROFILES.elderly_man.vitaminDRda).toBe(20);
   });
 });

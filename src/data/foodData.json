@@ -9,10 +9,6 @@
     "protein": 10.57,
     "fat": 1.53,
     "carbs": 64.17,
-    "calcium": 30.94,
-    "iron": 4.1,
-    "vitC": 0.0,
-    "folate": 29.2,
     "visibleFat": false,
     "portions": [
       {
@@ -45,7 +41,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 30.94,
+    "iron": 4.1,
+    "vitC": 0.0,
+    "folate": 29.2,
+    "zinc": 2.85,
+    "magnesium": 125.0,
+    "vitaminA": 2.7,
+    "thiamine": 0.42,
+    "riboflavin": 0.15,
+    "niacin": 2.37,
+    "vitB6": 0.25,
+    "vitaminD": 13.4
   },
   {
     "id": "rice_raw",
@@ -57,10 +65,6 @@
     "protein": 7.94,
     "fat": 0.52,
     "carbs": 78.24,
-    "calcium": 7.49,
-    "iron": 0.65,
-    "vitC": 0.0,
-    "folate": 9.3,
     "visibleFat": false,
     "portions": [
       {
@@ -87,7 +91,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 7.49,
+    "iron": 0.65,
+    "vitC": 0.0,
+    "folate": 9.3,
+    "zinc": 1.21,
+    "magnesium": 19.3,
+    "vitaminA": 0.0,
+    "thiamine": 0.05,
+    "riboflavin": 0.05,
+    "niacin": 1.69,
+    "vitB6": 0.12,
+    "vitaminD": 0.0
   },
   {
     "id": "rice_parboiled",
@@ -99,10 +115,6 @@
     "protein": 7.81,
     "fat": 0.55,
     "carbs": 77.16,
-    "calcium": 8.11,
-    "iron": 0.72,
-    "vitC": 0.0,
-    "folate": 9.8,
     "visibleFat": false,
     "portions": [
       {
@@ -123,7 +135,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 8.11,
+    "iron": 0.72,
+    "vitC": 0.0,
+    "folate": 9.8,
+    "zinc": 1.08,
+    "magnesium": 26.72,
+    "vitaminA": 0.0,
+    "thiamine": 0.17,
+    "riboflavin": 0.06,
+    "niacin": 2.51,
+    "vitB6": 0.22,
+    "vitaminD": 0.0
   },
   {
     "id": "poha",
@@ -135,10 +159,6 @@
     "protein": 7.44,
     "fat": 1.14,
     "carbs": 76.75,
-    "calcium": 9.19,
-    "iron": 4.46,
-    "vitC": 0.0,
-    "folate": 8.5,
     "visibleFat": false,
     "portions": [
       {
@@ -159,7 +179,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 9.19,
+    "iron": 4.46,
+    "vitC": 0.0,
+    "folate": 8.5,
+    "zinc": 1.49,
+    "magnesium": 77.92,
+    "vitaminA": 0.0,
+    "thiamine": 0.12,
+    "riboflavin": 0.04,
+    "niacin": 1.6,
+    "vitB6": 0.02,
+    "vitaminD": 0.0
   },
   {
     "id": "murmura",
@@ -171,10 +203,6 @@
     "protein": 7.47,
     "fat": 1.62,
     "carbs": 77.68,
-    "calcium": 15.09,
-    "iron": 4.55,
-    "vitC": 0.0,
-    "folate": 0.0,
     "visibleFat": false,
     "portions": [
       {
@@ -189,7 +217,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 15.09,
+    "iron": 4.55,
+    "vitC": 0.0,
+    "folate": 0.0,
+    "zinc": 1.45,
+    "magnesium": 64.59,
+    "vitaminA": 0.0,
+    "thiamine": 0.11,
+    "riboflavin": 0.04,
+    "niacin": 1.87,
+    "vitB6": 0.07,
+    "vitaminD": 0.0
   },
   {
     "id": "ragi",
@@ -201,10 +241,6 @@
     "protein": 7.16,
     "fat": 1.92,
     "carbs": 66.82,
-    "calcium": 364.0,
-    "iron": 4.62,
-    "vitC": 0.0,
-    "folate": 34.7,
     "visibleFat": false,
     "portions": [
       {
@@ -225,7 +261,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 364.0,
+    "iron": 4.62,
+    "vitC": 0.0,
+    "folate": 34.7,
+    "zinc": 2.53,
+    "magnesium": 146.0,
+    "vitaminA": 1.5,
+    "thiamine": 0.37,
+    "riboflavin": 0.17,
+    "niacin": 1.34,
+    "vitB6": 0.05,
+    "vitaminD": 41.5
   },
   {
     "id": "bajra",
@@ -237,10 +285,6 @@
     "protein": 10.96,
     "fat": 5.43,
     "carbs": 61.78,
-    "calcium": 27.35,
-    "iron": 6.42,
-    "vitC": 0.0,
-    "folate": 36.1,
     "visibleFat": false,
     "portions": [
       {
@@ -255,7 +299,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 27.35,
+    "iron": 6.42,
+    "vitC": 0.0,
+    "folate": 36.1,
+    "zinc": 2.76,
+    "magnesium": 124.0,
+    "vitaminA": 28.2,
+    "thiamine": 0.25,
+    "riboflavin": 0.2,
+    "niacin": 0.86,
+    "vitB6": 0.27,
+    "vitaminD": 5.7
   },
   {
     "id": "jowar",
@@ -267,10 +323,6 @@
     "protein": 9.97,
     "fat": 1.73,
     "carbs": 67.68,
-    "calcium": 27.6,
-    "iron": 3.95,
-    "vitC": 0.0,
-    "folate": 39.4,
     "visibleFat": false,
     "portions": [
       {
@@ -285,7 +337,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 27.6,
+    "iron": 3.95,
+    "vitC": 0.0,
+    "folate": 39.4,
+    "zinc": 1.96,
+    "magnesium": 133.0,
+    "vitaminA": 8.3,
+    "thiamine": 0.35,
+    "riboflavin": 0.14,
+    "niacin": 2.1,
+    "vitB6": 0.28,
+    "vitaminD": 4.0
   },
   {
     "id": "suji",
@@ -297,10 +361,6 @@
     "protein": 11.38,
     "fat": 0.74,
     "carbs": 68.43,
-    "calcium": 29.38,
-    "iron": 2.98,
-    "vitC": 0.0,
-    "folate": 25.7,
     "visibleFat": false,
     "portions": [
       {
@@ -321,7 +381,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 29.38,
+    "iron": 2.98,
+    "vitC": 0.0,
+    "folate": 25.7,
+    "zinc": 2.13,
+    "magnesium": 37.89,
+    "vitaminA": 1.6,
+    "thiamine": 0.29,
+    "riboflavin": 0.04,
+    "niacin": 1.13,
+    "vitB6": 0.11,
+    "vitaminD": 8.2
   },
   {
     "id": "maida",
@@ -333,10 +405,6 @@
     "protein": 10.36,
     "fat": 0.76,
     "carbs": 74.27,
-    "calcium": 20.4,
-    "iron": 1.77,
-    "vitC": 0.0,
-    "folate": 16.2,
     "visibleFat": false,
     "portions": [
       {
@@ -351,7 +419,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 20.4,
+    "iron": 1.77,
+    "vitC": 0.0,
+    "folate": 16.2,
+    "zinc": 0.88,
+    "magnesium": 30.69,
+    "vitaminA": 2.0,
+    "thiamine": 0.15,
+    "riboflavin": 0.06,
+    "niacin": 0.77,
+    "vitB6": 0.08,
+    "vitaminD": 6.7
   },
   {
     "id": "dal_toor",
@@ -363,10 +443,6 @@
     "protein": 21.7,
     "fat": 1.56,
     "carbs": 55.23,
-    "calcium": 71.73,
-    "iron": 3.9,
-    "vitC": 0.0,
-    "folate": 108.0,
     "visibleFat": false,
     "portions": [
       {
@@ -393,7 +469,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 71.73,
+    "iron": 3.9,
+    "vitC": 0.0,
+    "folate": 108.0,
+    "zinc": 2.63,
+    "magnesium": 119.0,
+    "vitaminA": 127.0,
+    "thiamine": 0.45,
+    "riboflavin": 0.11,
+    "niacin": 2.09,
+    "vitB6": 0.24,
+    "vitaminD": 2.1
   },
   {
     "id": "dal_moong",
@@ -405,10 +493,6 @@
     "protein": 23.88,
     "fat": 1.35,
     "carbs": 52.59,
-    "calcium": 43.13,
-    "iron": 3.93,
-    "vitC": 0.0,
-    "folate": 92.1,
     "visibleFat": false,
     "portions": [
       {
@@ -435,7 +519,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 43.13,
+    "iron": 3.93,
+    "vitC": 0.0,
+    "folate": 92.1,
+    "zinc": 2.49,
+    "magnesium": 155.0,
+    "vitaminA": 122.0,
+    "thiamine": 0.35,
+    "riboflavin": 0.12,
+    "niacin": 1.84,
+    "vitB6": 0.19,
+    "vitaminD": 2.0
   },
   {
     "id": "moong_whole",
@@ -447,10 +543,6 @@
     "protein": 22.53,
     "fat": 1.14,
     "carbs": 46.13,
-    "calcium": 92.43,
-    "iron": 4.89,
-    "vitC": 0.0,
-    "folate": 145.0,
     "visibleFat": false,
     "portions": [
       {
@@ -465,7 +557,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 92.43,
+    "iron": 4.89,
+    "vitC": 0.0,
+    "folate": 145.0,
+    "zinc": 2.67,
+    "magnesium": 198.0,
+    "vitaminA": 137.0,
+    "thiamine": 0.45,
+    "riboflavin": 0.27,
+    "niacin": 2.16,
+    "vitB6": 0.35,
+    "vitaminD": 3.1
   },
   {
     "id": "dal_chana",
@@ -477,10 +581,6 @@
     "protein": 21.55,
     "fat": 5.31,
     "carbs": 46.72,
-    "calcium": 46.32,
-    "iron": 6.08,
-    "vitC": 0.0,
-    "folate": 182.0,
     "visibleFat": false,
     "portions": [
       {
@@ -507,7 +607,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 46.32,
+    "iron": 6.08,
+    "vitC": 0.0,
+    "folate": 182.0,
+    "zinc": 3.65,
+    "magnesium": 118.0,
+    "vitaminA": 165.0,
+    "thiamine": 0.35,
+    "riboflavin": 0.15,
+    "niacin": 1.87,
+    "vitB6": 0.19,
+    "vitaminD": 1.8
   },
   {
     "id": "kala_chana",
@@ -519,10 +631,6 @@
     "protein": 18.77,
     "fat": 5.11,
     "carbs": 39.56,
-    "calcium": 150.0,
-    "iron": 6.78,
-    "vitC": 0.0,
-    "folate": 233.0,
     "visibleFat": false,
     "portions": [
       {
@@ -543,7 +651,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 150.0,
+    "iron": 6.78,
+    "vitC": 0.0,
+    "folate": 233.0,
+    "zinc": 3.37,
+    "magnesium": 160.0,
+    "vitaminA": 172.0,
+    "thiamine": 0.37,
+    "riboflavin": 0.24,
+    "niacin": 2.1,
+    "vitB6": 0.36,
+    "vitaminD": 1.9
   },
   {
     "id": "dal_masoor",
@@ -555,10 +675,6 @@
     "protein": 24.35,
     "fat": 0.75,
     "carbs": 52.53,
-    "calcium": 44.32,
-    "iron": 7.06,
-    "vitC": 0.0,
-    "folate": 50.0,
     "visibleFat": false,
     "portions": [
       {
@@ -585,7 +701,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 44.32,
+    "iron": 7.06,
+    "vitC": 0.0,
+    "folate": 50.0,
+    "zinc": 3.61,
+    "magnesium": 74.69,
+    "vitaminA": 6.3,
+    "thiamine": 0.34,
+    "riboflavin": 0.16,
+    "niacin": 1.81,
+    "vitB6": 0.18,
+    "vitaminD": 1.3
   },
   {
     "id": "dal_urad",
@@ -597,10 +725,6 @@
     "protein": 23.06,
     "fat": 1.69,
     "carbs": 51.0,
-    "calcium": 55.67,
-    "iron": 4.67,
-    "vitC": 0.0,
-    "folate": 88.8,
     "visibleFat": false,
     "portions": [
       {
@@ -627,7 +751,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 55.67,
+    "iron": 4.67,
+    "vitC": 0.0,
+    "folate": 88.8,
+    "zinc": 3.0,
+    "magnesium": 173.0,
+    "vitaminA": 10.1,
+    "thiamine": 0.21,
+    "riboflavin": 0.09,
+    "niacin": 1.76,
+    "vitB6": 0.22,
+    "vitaminD": 8.4
   },
   {
     "id": "rajma",
@@ -639,10 +775,6 @@
     "protein": 19.91,
     "fat": 1.77,
     "carbs": 48.61,
-    "calcium": 126.0,
-    "iron": 6.13,
-    "vitC": 0.0,
-    "folate": 316.0,
     "visibleFat": false,
     "portions": [
       {
@@ -657,7 +789,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 126.0,
+    "iron": 6.13,
+    "vitC": 0.0,
+    "folate": 316.0,
+    "zinc": 2.69,
+    "magnesium": 173.0,
+    "vitaminA": 1.6,
+    "thiamine": 0.3,
+    "riboflavin": 0.19,
+    "niacin": 2.42,
+    "vitB6": 0.21,
+    "vitaminD": 26.7
   },
   {
     "id": "soya_bean",
@@ -669,10 +813,6 @@
     "protein": 37.8,
     "fat": 19.42,
     "carbs": 10.16,
-    "calcium": 195.0,
-    "iron": 8.22,
-    "vitC": 0.0,
-    "folate": 288.0,
     "visibleFat": false,
     "portions": [
       {
@@ -687,7 +827,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 195.0,
+    "iron": 8.22,
+    "vitC": 0.0,
+    "folate": 288.0,
+    "zinc": 3.47,
+    "magnesium": 189.0,
+    "vitaminA": 2.8,
+    "thiamine": 0.61,
+    "riboflavin": 0.23,
+    "niacin": 2.28,
+    "vitB6": 0.45,
+    "vitaminD": 69.8
   },
   {
     "id": "besan",
@@ -699,10 +851,6 @@
     "protein": 21.55,
     "fat": 5.31,
     "carbs": 46.72,
-    "calcium": 46.32,
-    "iron": 6.08,
-    "vitC": 0.0,
-    "folate": 182.0,
     "visibleFat": false,
     "portions": [
       {
@@ -717,7 +865,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 46.32,
+    "iron": 6.08,
+    "vitC": 0.0,
+    "folate": 182.0,
+    "zinc": 3.65,
+    "magnesium": 118.0,
+    "vitaminA": 165.0,
+    "thiamine": 0.35,
+    "riboflavin": 0.15,
+    "niacin": 1.87,
+    "vitB6": 0.19,
+    "vitaminD": 1.8
   },
   {
     "id": "spinach",
@@ -729,10 +889,6 @@
     "protein": 2.14,
     "fat": 0.64,
     "carbs": 2.05,
-    "calcium": 82.29,
-    "iron": 2.95,
-    "vitC": 30.28,
-    "folate": 142.0,
     "visibleFat": false,
     "portions": [
       {
@@ -753,7 +909,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 82.29,
+    "iron": 2.95,
+    "vitC": 30.28,
+    "folate": 142.0,
+    "zinc": 0.46,
+    "magnesium": 86.97,
+    "vitaminA": 2605.0,
+    "thiamine": 0.16,
+    "riboflavin": 0.1,
+    "niacin": 0.33,
+    "vitB6": 0.15,
+    "vitaminD": 0.3
   },
   {
     "id": "methi_leaves",
@@ -765,10 +933,6 @@
     "protein": 3.68,
     "fat": 0.83,
     "carbs": 2.17,
-    "calcium": 274.0,
-    "iron": 5.69,
-    "vitC": 58.25,
-    "folate": 75.3,
     "visibleFat": false,
     "portions": [
       {
@@ -789,7 +953,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 274.0,
+    "iron": 5.69,
+    "vitC": 58.25,
+    "folate": 75.3,
+    "zinc": 0.54,
+    "magnesium": 63.67,
+    "vitaminA": 9245.0,
+    "thiamine": 0.11,
+    "riboflavin": 0.22,
+    "niacin": 0.7,
+    "vitB6": 0.38,
+    "vitaminD": 2.4
   },
   {
     "id": "drumstick_leaves",
@@ -801,10 +977,6 @@
     "protein": 6.41,
     "fat": 1.64,
     "carbs": 5.62,
-    "calcium": 314.0,
-    "iron": 4.56,
-    "vitC": 108.0,
-    "folate": 42.9,
     "visibleFat": false,
     "portions": [
       {
@@ -825,7 +997,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 314.0,
+    "iron": 4.56,
+    "vitC": 108.0,
+    "folate": 42.9,
+    "zinc": 0.72,
+    "magnesium": 97.09,
+    "vitaminA": 17542.0,
+    "thiamine": 0.06,
+    "riboflavin": 0.45,
+    "niacin": 0.82,
+    "vitB6": 0.87,
+    "vitaminD": 14.3
   },
   {
     "id": "mustard_leaves",
@@ -837,10 +1021,6 @@
     "protein": 3.52,
     "fat": 0.51,
     "carbs": 2.41,
-    "calcium": 191.0,
-    "iron": 2.84,
-    "vitC": 60.32,
-    "folate": 110.0,
     "visibleFat": false,
     "portions": [
       {
@@ -861,7 +1041,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 191.0,
+    "iron": 2.84,
+    "vitC": 60.32,
+    "folate": 110.0,
+    "zinc": 0.68,
+    "magnesium": 51.63,
+    "vitaminA": 2619.0,
+    "thiamine": 0.08,
+    "riboflavin": 0.18,
+    "niacin": 0.58,
+    "vitB6": 0.16,
+    "vitaminD": 5.4
   },
   {
     "id": "amaranth_leaves",
@@ -873,10 +1065,6 @@
     "protein": 3.29,
     "fat": 0.65,
     "carbs": 2.28,
-    "calcium": 330.0,
-    "iron": 4.64,
-    "vitC": 83.54,
-    "folate": 70.3,
     "visibleFat": false,
     "portions": [
       {
@@ -897,7 +1085,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 330.0,
+    "iron": 4.64,
+    "vitC": 83.54,
+    "folate": 70.3,
+    "zinc": 0.86,
+    "magnesium": 194.0,
+    "vitaminA": 8553.0,
+    "thiamine": 0.01,
+    "riboflavin": 0.19,
+    "niacin": 0.71,
+    "vitB6": 0.21,
+    "vitaminD": 16.0
   },
   {
     "id": "potato",
@@ -909,10 +1109,6 @@
     "protein": 1.54,
     "fat": 0.23,
     "carbs": 14.89,
-    "calcium": 9.52,
-    "iron": 0.57,
-    "vitC": 23.15,
-    "folate": 15.5,
     "visibleFat": false,
     "portions": [
       {
@@ -933,7 +1129,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 9.52,
+    "iron": 0.57,
+    "vitC": 23.15,
+    "folate": 15.5,
+    "zinc": 0.28,
+    "magnesium": 24.07,
+    "vitaminA": 0.0,
+    "thiamine": 0.06,
+    "riboflavin": 0.01,
+    "niacin": 1.04,
+    "vitB6": 0.1,
+    "vitaminD": 0.2
   },
   {
     "id": "onion",
@@ -945,10 +1153,6 @@
     "protein": 1.5,
     "fat": 0.24,
     "carbs": 9.56,
-    "calcium": 21.03,
-    "iron": 0.43,
-    "vitC": 6.69,
-    "folate": 28.9,
     "visibleFat": false,
     "portions": [
       {
@@ -969,7 +1173,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 21.03,
+    "iron": 0.43,
+    "vitC": 6.69,
+    "folate": 28.9,
+    "zinc": 0.35,
+    "magnesium": 17.96,
+    "vitaminA": 1.1,
+    "thiamine": 0.04,
+    "riboflavin": 0.01,
+    "niacin": 0.34,
+    "vitB6": 0.1,
+    "vitaminD": 0.7
   },
   {
     "id": "carrot",
@@ -981,10 +1197,6 @@
     "protein": 0.95,
     "fat": 0.47,
     "carbs": 5.55,
-    "calcium": 35.09,
-    "iron": 0.6,
-    "vitC": 6.22,
-    "folate": 24.0,
     "visibleFat": false,
     "portions": [
       {
@@ -1005,7 +1217,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 35.09,
+    "iron": 0.6,
+    "vitC": 6.22,
+    "folate": 24.0,
+    "zinc": 0.25,
+    "magnesium": 16.73,
+    "vitaminA": 8077.0,
+    "thiamine": 0.04,
+    "riboflavin": 0.03,
+    "niacin": 0.22,
+    "vitB6": 0.11,
+    "vitaminD": 1.4
   },
   {
     "id": "sweet_potato",
@@ -1017,10 +1241,6 @@
     "protein": 1.33,
     "fat": 0.26,
     "carbs": 24.25,
-    "calcium": 27.5,
-    "iron": 0.35,
-    "vitC": 17.94,
-    "folate": 15.6,
     "visibleFat": false,
     "portions": [
       {
@@ -1035,7 +1255,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 27.5,
+    "iron": 0.35,
+    "vitC": 17.94,
+    "folate": 15.6,
+    "zinc": 0.16,
+    "magnesium": 17.37,
+    "vitaminA": 5376.0,
+    "thiamine": 0.07,
+    "riboflavin": 0.04,
+    "niacin": 0.67,
+    "vitB6": 0.12,
+    "vitaminD": 1.3
   },
   {
     "id": "tomato",
@@ -1047,10 +1279,6 @@
     "protein": 0.76,
     "fat": 0.25,
     "carbs": 3.2,
-    "calcium": 8.9,
-    "iron": 0.22,
-    "vitC": 25.27,
-    "folate": 15.4,
     "visibleFat": false,
     "portions": [
       {
@@ -1071,7 +1299,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 8.9,
+    "iron": 0.22,
+    "vitC": 25.27,
+    "folate": 15.4,
+    "zinc": 0.11,
+    "magnesium": 11.86,
+    "vitaminA": 1520.3,
+    "thiamine": 0.04,
+    "riboflavin": 0.02,
+    "niacin": 0.51,
+    "vitB6": 0.08,
+    "vitaminD": 11.8
   },
   {
     "id": "cauliflower",
@@ -1083,10 +1323,6 @@
     "protein": 2.15,
     "fat": 0.44,
     "carbs": 2.03,
-    "calcium": 25.16,
-    "iron": 0.96,
-    "vitC": 47.14,
-    "folate": 45.9,
     "visibleFat": false,
     "portions": [
       {
@@ -1101,7 +1337,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 25.16,
+    "iron": 0.96,
+    "vitC": 47.14,
+    "folate": 45.9,
+    "zinc": 0.31,
+    "magnesium": 23.08,
+    "vitaminA": 1.6,
+    "thiamine": 0.04,
+    "riboflavin": 0.07,
+    "niacin": 0.31,
+    "vitB6": 0.13,
+    "vitaminD": 1.3
   },
   {
     "id": "cabbage",
@@ -1113,10 +1361,6 @@
     "protein": 1.36,
     "fat": 0.12,
     "carbs": 3.25,
-    "calcium": 51.76,
-    "iron": 0.35,
-    "vitC": 33.25,
-    "folate": 46.4,
     "visibleFat": false,
     "portions": [
       {
@@ -1131,7 +1375,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 51.76,
+    "iron": 0.35,
+    "vitC": 33.25,
+    "folate": 46.4,
+    "zinc": 0.16,
+    "magnesium": 17.99,
+    "vitaminA": 20.5,
+    "thiamine": 0.03,
+    "riboflavin": 0.05,
+    "niacin": 0.24,
+    "vitB6": 0.13,
+    "vitaminD": 0.2
   },
   {
     "id": "bhindi",
@@ -1143,10 +1399,6 @@
     "protein": 2.08,
     "fat": 0.22,
     "carbs": 3.62,
-    "calcium": 86.12,
-    "iron": 0.84,
-    "vitC": 22.51,
-    "folate": 63.7,
     "visibleFat": false,
     "portions": [
       {
@@ -1161,7 +1413,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 86.12,
+    "iron": 0.84,
+    "vitC": 22.51,
+    "folate": 63.7,
+    "zinc": 0.45,
+    "magnesium": 66.1,
+    "vitaminA": 69.1,
+    "thiamine": 0.04,
+    "riboflavin": 0.07,
+    "niacin": 0.61,
+    "vitB6": 0.27,
+    "vitaminD": 7.5
   },
   {
     "id": "lauki",
@@ -1173,10 +1437,6 @@
     "protein": 0.53,
     "fat": 0.13,
     "carbs": 1.68,
-    "calcium": 15.42,
-    "iron": 0.26,
-    "vitC": 4.33,
-    "folate": 42.0,
     "visibleFat": false,
     "portions": [
       {
@@ -1191,7 +1451,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 15.42,
+    "iron": 0.26,
+    "vitC": 4.33,
+    "folate": 42.0,
+    "zinc": 0.15,
+    "magnesium": 10.93,
+    "vitaminA": 44.0,
+    "thiamine": 0.03,
+    "riboflavin": 0.01,
+    "niacin": 0.14,
+    "vitB6": 0.02,
+    "vitaminD": 0.7
   },
   {
     "id": "green_peas",
@@ -1203,10 +1475,6 @@
     "protein": 7.25,
     "fat": 0.13,
     "carbs": 11.88,
-    "calcium": 28.24,
-    "iron": 1.58,
-    "vitC": 38.4,
-    "folate": 54.8,
     "visibleFat": false,
     "portions": [
       {
@@ -1221,7 +1489,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 28.24,
+    "iron": 1.58,
+    "vitC": 38.4,
+    "folate": 54.8,
+    "zinc": 1.09,
+    "magnesium": 40.11,
+    "vitaminA": 121.0,
+    "thiamine": 0.27,
+    "riboflavin": 0.03,
+    "niacin": 1.28,
+    "vitB6": 0.19,
+    "vitaminD": 12.9
   },
   {
     "id": "brinjal",
@@ -1233,10 +1513,6 @@
     "protein": 1.48,
     "fat": 0.32,
     "carbs": 3.52,
-    "calcium": 16.59,
-    "iron": 0.37,
-    "vitC": 2.09,
-    "folate": 33.9,
     "visibleFat": false,
     "portions": [
       {
@@ -1251,7 +1527,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 16.59,
+    "iron": 0.37,
+    "vitC": 2.09,
+    "folate": 33.9,
+    "zinc": 0.21,
+    "magnesium": 21.0,
+    "vitaminA": 146.0,
+    "thiamine": 0.06,
+    "riboflavin": 0.11,
+    "niacin": 0.53,
+    "vitB6": 0.07,
+    "vitaminD": 1.0
   },
   {
     "id": "cucumber",
@@ -1263,10 +1551,6 @@
     "protein": 0.71,
     "fat": 0.16,
     "carbs": 3.48,
-    "calcium": 16.39,
-    "iron": 0.46,
-    "vitC": 6.11,
-    "folate": 16.8,
     "visibleFat": false,
     "portions": [
       {
@@ -1281,7 +1565,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 16.39,
+    "iron": 0.46,
+    "vitC": 6.11,
+    "folate": 16.8,
+    "zinc": 0.17,
+    "magnesium": 20.38,
+    "vitaminA": 5.3,
+    "thiamine": 0.02,
+    "riboflavin": 0.01,
+    "niacin": 0.35,
+    "vitB6": 0.06,
+    "vitaminD": 1.3
   },
   {
     "id": "banana",
@@ -1293,10 +1589,6 @@
     "protein": 1.23,
     "fat": 0.33,
     "carbs": 23.63,
-    "calcium": 5.07,
-    "iron": 0.28,
-    "vitC": 4.76,
-    "folate": 16.8,
     "visibleFat": false,
     "portions": [
       {
@@ -1311,7 +1603,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 5.07,
+    "iron": 0.28,
+    "vitC": 4.76,
+    "folate": 16.8,
+    "zinc": 0.14,
+    "magnesium": 34.98,
+    "vitaminA": 60.4,
+    "thiamine": 0.01,
+    "riboflavin": 0.03,
+    "niacin": 0.47,
+    "vitB6": 0.44,
+    "vitaminD": 0.2
   },
   {
     "id": "guava",
@@ -1323,10 +1627,6 @@
     "protein": 1.44,
     "fat": 0.32,
     "carbs": 5.13,
-    "calcium": 18.52,
-    "iron": 0.32,
-    "vitC": 214.0,
-    "folate": 29.8,
     "visibleFat": false,
     "portions": [
       {
@@ -1341,7 +1641,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 18.52,
+    "iron": 0.32,
+    "vitC": 214.0,
+    "folate": 29.8,
+    "zinc": 0.23,
+    "magnesium": 15.26,
+    "vitaminA": 298.0,
+    "thiamine": 0.05,
+    "riboflavin": 0.04,
+    "niacin": 0.6,
+    "vitB6": 0.11,
+    "vitaminD": 1.7
   },
   {
     "id": "amla",
@@ -1353,10 +1665,6 @@
     "protein": 0.34,
     "fat": 0.16,
     "carbs": 4.39,
-    "calcium": 20.14,
-    "iron": 1.25,
-    "vitC": 252.0,
-    "folate": 7.9,
     "visibleFat": false,
     "portions": [
       {
@@ -1377,7 +1685,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 20.14,
+    "iron": 1.25,
+    "vitC": 252.0,
+    "folate": 7.9,
+    "zinc": 0.05,
+    "magnesium": 6.5,
+    "vitaminA": 1.6,
+    "thiamine": 0.01,
+    "riboflavin": 0.03,
+    "niacin": 0.12,
+    "vitB6": 0.27,
+    "vitaminD": 0.3
   },
   {
     "id": "orange",
@@ -1389,10 +1709,6 @@
     "protein": 0.7,
     "fat": 0.13,
     "carbs": 7.92,
-    "calcium": 19.52,
-    "iron": 0.81,
-    "vitC": 42.72,
-    "folate": 19.5,
     "visibleFat": false,
     "portions": [
       {
@@ -1407,7 +1723,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 19.52,
+    "iron": 0.81,
+    "vitC": 42.72,
+    "folate": 19.5,
+    "zinc": 0.04,
+    "magnesium": 11.05,
+    "vitaminA": 81.7,
+    "thiamine": 0.07,
+    "riboflavin": 0.02,
+    "niacin": 0.28,
+    "vitB6": 0.04,
+    "vitaminD": 0.3
   },
   {
     "id": "papaya",
@@ -1419,10 +1747,6 @@
     "protein": 0.42,
     "fat": 0.16,
     "carbs": 4.61,
-    "calcium": 15.02,
-    "iron": 0.23,
-    "vitC": 43.09,
-    "folate": 60.9,
     "visibleFat": false,
     "portions": [
       {
@@ -1437,7 +1761,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 15.02,
+    "iron": 0.23,
+    "vitC": 43.09,
+    "folate": 60.9,
+    "zinc": 0.08,
+    "magnesium": 10.97,
+    "vitaminA": 1342.0,
+    "thiamine": 0.03,
+    "riboflavin": 0.11,
+    "niacin": 0.33,
+    "vitB6": 0.04,
+    "vitaminD": 11.5
   },
   {
     "id": "mango",
@@ -1449,10 +1785,6 @@
     "protein": 0.68,
     "fat": 0.58,
     "carbs": 8.67,
-    "calcium": 15.11,
-    "iron": 0.51,
-    "vitC": 30.75,
-    "folate": 65.3,
     "visibleFat": false,
     "portions": [
       {
@@ -1467,7 +1799,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 15.11,
+    "iron": 0.51,
+    "vitC": 30.75,
+    "folate": 65.3,
+    "zinc": 0.2,
+    "magnesium": 14.28,
+    "vitaminA": 1063.5,
+    "thiamine": 0.03,
+    "riboflavin": 0.04,
+    "niacin": 0.28,
+    "vitB6": 0.23,
+    "vitaminD": 3.6
   },
   {
     "id": "apple",
@@ -1479,10 +1823,6 @@
     "protein": 0.29,
     "fat": 0.64,
     "carbs": 13.11,
-    "calcium": 13.68,
-    "iron": 0.26,
-    "vitC": 3.57,
-    "folate": 3.0,
     "visibleFat": false,
     "portions": [
       {
@@ -1497,7 +1837,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 13.68,
+    "iron": 0.26,
+    "vitC": 3.57,
+    "folate": 3.0,
+    "zinc": 0.09,
+    "magnesium": 8.09,
+    "vitaminA": 2.4,
+    "thiamine": 0.03,
+    "riboflavin": 0.01,
+    "niacin": 0.25,
+    "vitB6": 0.04,
+    "vitaminD": 1.5
   },
   {
     "id": "lemon_juice",
@@ -1509,10 +1861,6 @@
     "protein": 0.41,
     "fat": 0.75,
     "carbs": 0.0,
-    "calcium": 22.68,
-    "iron": 0.12,
-    "vitC": 48.16,
-    "folate": 12.4,
     "visibleFat": false,
     "portions": [
       {
@@ -1527,7 +1875,19 @@
         "grams": 1,
         "rawEquivalent": false
       }
-    ]
+    ],
+    "calcium": 22.68,
+    "iron": 0.12,
+    "vitC": 48.16,
+    "folate": 12.4,
+    "zinc": 0.08,
+    "magnesium": 8.9,
+    "vitaminA": 2.6,
+    "thiamine": 0.04,
+    "riboflavin": 0.01,
+    "niacin": 0.1,
+    "vitB6": 0.03,
+    "vitaminD": 0.4
   },
   {
     "id": "milk_cow",
@@ -1539,10 +1899,6 @@
     "protein": 3.26,
     "fat": 4.48,
     "carbs": 4.94,
-    "calcium": 118.0,
-    "iron": 0.15,
-    "vitC": 2.01,
-    "folate": 7.0,
     "visibleFat": false,
     "portions": [
       {
@@ -1569,7 +1925,19 @@
         "grams": 1,
         "rawEquivalent": false
       }
-    ]
+    ],
+    "calcium": 118.0,
+    "iron": 0.15,
+    "vitC": 2.01,
+    "folate": 7.0,
+    "zinc": 0.33,
+    "magnesium": 8.28,
+    "vitaminA": 13.7,
+    "thiamine": 0.03,
+    "riboflavin": 0.11,
+    "niacin": 0.08,
+    "vitB6": 0.04,
+    "vitaminD": 1.2
   },
   {
     "id": "milk_buffalo",
@@ -1581,10 +1949,6 @@
     "protein": 3.68,
     "fat": 6.58,
     "carbs": 8.39,
-    "calcium": 121.0,
-    "iron": 0.16,
-    "vitC": 2.37,
-    "folate": 8.6,
     "visibleFat": false,
     "portions": [
       {
@@ -1611,7 +1975,19 @@
         "grams": 1,
         "rawEquivalent": false
       }
-    ]
+    ],
+    "calcium": 121.0,
+    "iron": 0.16,
+    "vitC": 2.37,
+    "folate": 8.6,
+    "zinc": 0.3,
+    "magnesium": 10.05,
+    "vitaminA": 8.4,
+    "thiamine": 0.05,
+    "riboflavin": 0.13,
+    "niacin": 0.07,
+    "vitB6": 0.04,
+    "vitaminD": 1.6
   },
   {
     "id": "curd_dahi",
@@ -1623,10 +1999,6 @@
     "protein": 3.26,
     "fat": 4.48,
     "carbs": 4.94,
-    "calcium": 118.0,
-    "iron": 0.15,
-    "vitC": 2.01,
-    "folate": 7.0,
     "visibleFat": false,
     "portions": [
       {
@@ -1647,7 +2019,19 @@
         "grams": 1,
         "rawEquivalent": false
       }
-    ]
+    ],
+    "calcium": 118.0,
+    "iron": 0.15,
+    "vitC": 2.01,
+    "folate": 7.0,
+    "zinc": 0.33,
+    "magnesium": 8.28,
+    "vitaminA": 13.7,
+    "thiamine": 0.03,
+    "riboflavin": 0.11,
+    "niacin": 0.08,
+    "vitB6": 0.04,
+    "vitaminD": 1.2
   },
   {
     "id": "paneer",
@@ -1659,10 +2043,6 @@
     "protein": 18.86,
     "fat": 14.78,
     "carbs": 12.41,
-    "calcium": 476.0,
-    "iron": 0.9,
-    "vitC": 0.0,
-    "folate": 93.3,
     "visibleFat": false,
     "portions": [
       {
@@ -1683,7 +2063,19 @@
         "grams": 1,
         "rawEquivalent": false
       }
-    ]
+    ],
+    "calcium": 476.0,
+    "iron": 0.9,
+    "vitC": 0.0,
+    "folate": 93.3,
+    "zinc": 2.74,
+    "magnesium": 26.62,
+    "vitaminA": 4.4,
+    "thiamine": 0.02,
+    "riboflavin": 0.1,
+    "niacin": 0.13,
+    "vitB6": 0.04,
+    "vitaminD": 0.1
   },
   {
     "id": "cooking_oil",
@@ -1695,10 +2087,6 @@
     "protein": 0,
     "fat": 100,
     "carbs": 0,
-    "calcium": 0,
-    "iron": 0,
-    "vitC": 0,
-    "folate": 0,
     "visibleFat": true,
     "portions": [
       {
@@ -1725,7 +2113,19 @@
         "grams": 1,
         "rawEquivalent": false
       }
-    ]
+    ],
+    "calcium": 0,
+    "iron": 0,
+    "vitC": 0,
+    "folate": 0,
+    "zinc": 0,
+    "magnesium": 0,
+    "vitaminA": 0,
+    "thiamine": 0,
+    "riboflavin": 0,
+    "niacin": 0,
+    "vitB6": 0,
+    "vitaminD": 0
   },
   {
     "id": "ghee",
@@ -1737,10 +2137,6 @@
     "protein": 0,
     "fat": 100,
     "carbs": 0,
-    "calcium": 0,
-    "iron": 0,
-    "vitC": 0,
-    "folate": 0,
     "visibleFat": true,
     "portions": [
       {
@@ -1767,7 +2163,19 @@
         "grams": 1,
         "rawEquivalent": false
       }
-    ]
+    ],
+    "calcium": 0,
+    "iron": 0,
+    "vitC": 0,
+    "folate": 0,
+    "zinc": 0,
+    "magnesium": 0,
+    "vitaminA": 0,
+    "thiamine": 0,
+    "riboflavin": 0,
+    "niacin": 0,
+    "vitB6": 0,
+    "vitaminD": 0
   },
   {
     "id": "egg_whole",
@@ -1779,10 +2187,6 @@
     "protein": 13.43,
     "fat": 10.54,
     "carbs": 0.0,
-    "calcium": 55.12,
-    "iron": 1.87,
-    "vitC": 0.0,
-    "folate": 48.2,
     "visibleFat": false,
     "portions": [
       {
@@ -1803,7 +2207,19 @@
         "grams": 1,
         "rawEquivalent": false
       }
-    ]
+    ],
+    "calcium": 55.12,
+    "iron": 1.87,
+    "vitC": 0.0,
+    "folate": 48.2,
+    "zinc": 1.31,
+    "magnesium": 13.76,
+    "vitaminA": 194.3,
+    "thiamine": 0.06,
+    "riboflavin": 0.18,
+    "niacin": 0.21,
+    "vitB6": 0.14,
+    "vitaminD": 0.7
   },
   {
     "id": "egg_white",
@@ -1815,10 +2231,6 @@
     "protein": 10.84,
     "fat": 0.06,
     "carbs": 0.0,
-    "calcium": 5.64,
-    "iron": 0.07,
-    "vitC": 0.0,
-    "folate": 5.0,
     "visibleFat": false,
     "portions": [
       {
@@ -1833,7 +2245,19 @@
         "grams": 1,
         "rawEquivalent": false
       }
-    ]
+    ],
+    "calcium": 5.64,
+    "iron": 0.07,
+    "vitC": 0.0,
+    "folate": 5.0,
+    "zinc": 0.03,
+    "magnesium": 11.42,
+    "vitaminA": 0.0,
+    "thiamine": 0.02,
+    "riboflavin": 0.16,
+    "niacin": 0.01,
+    "vitB6": 4.36,
+    "vitaminD": 1.0
   },
   {
     "id": "chicken_lean",
@@ -1845,10 +2269,6 @@
     "protein": 21.81,
     "fat": 9.0,
     "carbs": 0.0,
-    "calcium": 12.91,
-    "iron": 0.83,
-    "vitC": 0.0,
-    "folate": 10.4,
     "visibleFat": false,
     "portions": [
       {
@@ -1863,7 +2283,19 @@
         "grams": 1,
         "rawEquivalent": false
       }
-    ]
+    ],
+    "calcium": 12.91,
+    "iron": 0.83,
+    "vitC": 0.0,
+    "folate": 10.4,
+    "zinc": 0.78,
+    "magnesium": 20.2,
+    "vitaminA": 7.0,
+    "thiamine": 0.1,
+    "riboflavin": 0.06,
+    "niacin": 8.06,
+    "vitB6": 0.53,
+    "vitaminD": 1.4
   },
   {
     "id": "fish_rohu",
@@ -1875,10 +2307,6 @@
     "protein": 19.71,
     "fat": 2.39,
     "carbs": 0.0,
-    "calcium": 39.37,
-    "iron": 1.04,
-    "vitC": 0.0,
-    "folate": 0.0,
     "visibleFat": false,
     "portions": [
       {
@@ -1893,7 +2321,19 @@
         "grams": 1,
         "rawEquivalent": false
       }
-    ]
+    ],
+    "calcium": 39.37,
+    "iron": 1.04,
+    "vitC": 0.0,
+    "folate": 0.0,
+    "zinc": 0.8,
+    "magnesium": 26.53,
+    "vitaminA": 3.9,
+    "thiamine": 0.0,
+    "riboflavin": 0.04,
+    "niacin": 2.33,
+    "vitB6": 240.0,
+    "vitaminD": 1.0
   },
   {
     "id": "mutton",
@@ -1905,10 +2345,6 @@
     "protein": 20.39,
     "fat": 5.98,
     "carbs": 0.0,
-    "calcium": 7.44,
-    "iron": 1.87,
-    "vitC": 0.0,
-    "folate": 0.0,
     "visibleFat": false,
     "portions": [
       {
@@ -1923,7 +2359,19 @@
         "grams": 1,
         "rawEquivalent": false
       }
-    ]
+    ],
+    "calcium": 7.44,
+    "iron": 1.87,
+    "vitC": 0.0,
+    "folate": 0.0,
+    "zinc": 4.55,
+    "magnesium": 21.13,
+    "vitaminA": 2.6,
+    "thiamine": 0.05,
+    "riboflavin": 0.13,
+    "niacin": 5.51,
+    "vitB6": 0.3,
+    "vitaminD": 0.4
   },
   {
     "id": "groundnuts",
@@ -1935,10 +2383,6 @@
     "protein": 23.65,
     "fat": 39.63,
     "carbs": 17.27,
-    "calcium": 54.0,
-    "iron": 3.44,
-    "vitC": 0.0,
-    "folate": 90.9,
     "visibleFat": false,
     "portions": [
       {
@@ -1959,7 +2403,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 54.0,
+    "iron": 3.44,
+    "vitC": 0.0,
+    "folate": 90.9,
+    "zinc": 3.18,
+    "magnesium": 197.0,
+    "vitaminA": 22.8,
+    "thiamine": 0.57,
+    "riboflavin": 0.12,
+    "niacin": 11.35,
+    "vitB6": 0.23,
+    "vitaminD": 7.1
   },
   {
     "id": "sesame_seeds",
@@ -1971,10 +2427,6 @@
     "protein": 21.61,
     "fat": 43.22,
     "carbs": 9.76,
-    "calcium": 1174.0,
-    "iron": 14.95,
-    "vitC": 0.0,
-    "folate": 92.6,
     "visibleFat": false,
     "portions": [
       {
@@ -1995,7 +2447,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 1174.0,
+    "iron": 14.95,
+    "vitC": 0.0,
+    "folate": 92.6,
+    "zinc": 7.84,
+    "magnesium": 328.0,
+    "vitaminA": 5.4,
+    "thiamine": 0.27,
+    "riboflavin": 0.08,
+    "niacin": 3.05,
+    "vitB6": 0.49,
+    "vitaminD": 76.5
   },
   {
     "id": "almonds",
@@ -2007,10 +2471,6 @@
     "protein": 18.41,
     "fat": 58.49,
     "carbs": 3.04,
-    "calcium": 228.0,
-    "iron": 4.59,
-    "vitC": 0.74,
-    "folate": 36.5,
     "visibleFat": false,
     "portions": [
       {
@@ -2031,7 +2491,19 @@
         "grams": 1,
         "rawEquivalent": true
       }
-    ]
+    ],
+    "calcium": 228.0,
+    "iron": 4.59,
+    "vitC": 0.74,
+    "folate": 36.5,
+    "zinc": 3.5,
+    "magnesium": 318.0,
+    "vitaminA": 0.0,
+    "thiamine": 0.15,
+    "riboflavin": 0.26,
+    "niacin": 3.71,
+    "vitB6": 0.09,
+    "vitaminD": 1.6
   },
   {
     "id": "sugar",
@@ -2047,6 +2519,14 @@
     "iron": 0,
     "vitC": 0,
     "folate": 0,
+    "zinc": 0,
+    "magnesium": 0,
+    "vitaminA": 0,
+    "thiamine": 0,
+    "riboflavin": 0,
+    "niacin": 0,
+    "vitB6": 0,
+    "vitaminD": 0,
     "visibleFat": false,
     "portions": [
       {
@@ -2085,10 +2565,6 @@
     "protein": 1.85,
     "fat": 0.16,
     "carbs": 84.87,
-    "calcium": 107.0,
-    "iron": 4.63,
-    "vitC": 0.0,
-    "folate": 14.4,
     "visibleFat": false,
     "portions": [
       {
@@ -2109,7 +2585,19 @@
         "grams": 1,
         "rawEquivalent": false
       }
-    ]
+    ],
+    "calcium": 107.0,
+    "iron": 4.63,
+    "vitC": 0.0,
+    "folate": 14.4,
+    "zinc": 0.45,
+    "magnesium": 115.0,
+    "vitaminA": 0.0,
+    "thiamine": 0.04,
+    "riboflavin": 0.01,
+    "niacin": 0.02,
+    "vitB6": 0.71,
+    "vitaminD": 0.5
   },
   {
     "id": "snack_idli",
@@ -2126,7 +2614,15 @@
     "calcium": 7.05,
     "iron": 0.6,
     "vitC": 0.0,
-    "folate": 10.24,
+    "folate": 10.2,
+    "zinc": 0.59,
+    "magnesium": 22.39,
+    "vitaminA": 0.8,
+    "thiamine": 0.07,
+    "riboflavin": 0.03,
+    "niacin": 0.94,
+    "vitB6": 0.09,
+    "vitaminD": 0.7,
     "visibleFat": false,
     "portions": [
       {
@@ -2171,7 +2667,15 @@
     "calcium": 8.41,
     "iron": 0.72,
     "vitC": 0.0,
-    "folate": 12.31,
+    "folate": 12.3,
+    "zinc": 0.68,
+    "magnesium": 26.65,
+    "vitaminA": 1.0,
+    "thiamine": 0.08,
+    "riboflavin": 0.03,
+    "niacin": 1.05,
+    "vitB6": 0.1,
+    "vitaminD": 0.8,
     "visibleFat": false,
     "portions": [
       {
