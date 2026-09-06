@@ -960,10 +960,11 @@ export const MICRONUTRIENT_DEFS = [
     gapThreshold: 3,
     decimals: 1,
     counselingFoods: [
-      { id: "methi_leaves", portionId: "katori_cooked", singular: "katori of methi leaves", plural: "katoris of methi leaves" },
-      { id: "drumstick_leaves", portionId: "katori_cooked", singular: "katori of drumstick leaves", plural: "katoris of drumstick leaves" },
-      { id: "poha", portionId: "katori_dry", singular: "katori of raw poha", plural: "katoris of raw poha" },
-      { id: "kala_chana", portionId: "sattu_30", singular: "sattu serving (2 tbsp roasted Bengal gram)", plural: "sattu servings (2 tbsp roasted Bengal gram each)" },
+      { id: "methi_leaves", portionId: "katori_cooked", name: "Methi leaves", portionLabel: "1 katori" },
+      { id: "drumstick_leaves", portionId: "katori_cooked", name: "Drumstick leaves", portionLabel: "1 katori" },
+      { id: "poha", portionId: "katori_dry", name: "Poha", portionLabel: "1 katori raw" },
+      { id: "kala_chana", portionId: "sattu_30", name: "Sattu (roasted Bengal gram)", portionLabel: "2 tbsp" },
+      { id: "spinach", portionId: "katori_cooked", name: "Palak", portionLabel: "1 katori" },
     ],
   },
   {
@@ -979,10 +980,10 @@ export const MICRONUTRIENT_DEFS = [
     gapThreshold: 150,
     decimals: 0,
     counselingFoods: [
-      { id: "milk_cow", portionId: "glass", singular: "glass of cow milk", plural: "glasses of cow milk" },
-      { id: "curd_dahi", portionId: "katori", singular: "katori of curd", plural: "katoris of curd" },
-      { id: "ragi", portionId: "roti_ragi", singular: "ragi roti", plural: "ragi rotis" },
-      { id: "sesame_seeds", portionId: "tbsp", singular: "tablespoon of til (gingelly) seeds", plural: "tablespoons of til (gingelly) seeds" },
+      { id: "milk_cow", portionId: "glass", name: "Cow milk", portionLabel: "1 glass" },
+      { id: "curd_dahi", portionId: "katori", name: "Curd", portionLabel: "1 katori" },
+      { id: "ragi", portionId: "roti_ragi", name: "Ragi roti", portionLabel: "1 roti" },
+      { id: "sesame_seeds", portionId: "tbsp", name: "Til (gingelly) seeds", portionLabel: "1 tbsp" },
     ],
   },
   {
@@ -998,9 +999,9 @@ export const MICRONUTRIENT_DEFS = [
     gapThreshold: 80,
     decimals: 0,
     counselingFoods: [
-      { id: "rajma", portionId: "katori_cooked", singular: "katori of cooked rajma", plural: "katoris of cooked rajma" },
-      { id: "kala_chana", portionId: "katori_cooked", singular: "katori of cooked Bengal gram", plural: "katoris of cooked Bengal gram" },
-      { id: "spinach", portionId: "katori_cooked", singular: "katori of palak", plural: "katoris of palak" },
+      { id: "rajma", portionId: "katori_cooked", name: "Rajma", portionLabel: "1 katori" },
+      { id: "kala_chana", portionId: "katori_cooked", name: "Bengal gram", portionLabel: "1 katori" },
+      { id: "spinach", portionId: "katori_cooked", name: "Palak", portionLabel: "1 katori" },
     ],
   },
   {
@@ -1016,9 +1017,9 @@ export const MICRONUTRIENT_DEFS = [
     gapThreshold: 10,
     decimals: 1,
     counselingFoods: [
-      { id: "amla", portionId: "amla_pc", singular: "amla", plural: "amlas" },
-      { id: "guava", portionId: "one", singular: "medium guava", plural: "medium guavas" },
-      { id: "lemon_juice", portionId: "tbsp", singular: "tablespoon of lemon juice", plural: "tablespoons of lemon juice" },
+      { id: "amla", portionId: "amla_pc", name: "Amla", portionLabel: "1 amla" },
+      { id: "guava", portionId: "one", name: "Guava", portionLabel: "1 medium guava" },
+      { id: "lemon_juice", portionId: "tbsp", name: "Lemon juice", portionLabel: "1 tablespoon" },
     ],
   },
   {
@@ -1034,9 +1035,9 @@ export const MICRONUTRIENT_DEFS = [
     gapThreshold: 2,
     decimals: 1,
     counselingFoods: [
-      { id: "groundnuts", portionId: "handful", singular: "handful of groundnuts", plural: "handfuls of groundnuts" },
-      { id: "kala_chana", portionId: "katori_cooked", singular: "katori of cooked Bengal gram", plural: "katoris of cooked Bengal gram" },
-      { id: "wheat_atta", portionId: "roti_med", singular: "medium roti (atta)", plural: "medium rotis (atta)" },
+      { id: "groundnuts", portionId: "handful", name: "Groundnuts", portionLabel: "1 handful" },
+      { id: "kala_chana", portionId: "katori_cooked", name: "Bengal gram", portionLabel: "1 katori" },
+      { id: "wheat_atta", portionId: "roti_med", name: "Roti (atta)", portionLabel: "1 medium roti" },
     ],
   },
   {
@@ -1052,9 +1053,9 @@ export const MICRONUTRIENT_DEFS = [
     gapThreshold: 50,
     decimals: 0,
     counselingFoods: [
-      { id: "ragi", portionId: "roti_ragi", singular: "ragi roti", plural: "ragi rotis" },
-      { id: "sesame_seeds", portionId: "tbsp", singular: "tablespoon of til (gingelly) seeds", plural: "tablespoons of til (gingelly) seeds" },
-      { id: "spinach", portionId: "katori_cooked", singular: "katori of palak", plural: "katoris of palak" },
+      { id: "ragi", portionId: "roti_ragi", name: "Ragi roti", portionLabel: "1 roti" },
+      { id: "sesame_seeds", portionId: "tbsp", name: "Til (gingelly) seeds", portionLabel: "1 tbsp" },
+      { id: "spinach", portionId: "katori_cooked", name: "Palak", portionLabel: "1 katori" },
     ],
   },
   {
@@ -1070,10 +1071,10 @@ export const MICRONUTRIENT_DEFS = [
     gapThreshold: 150,
     decimals: 0,
     counselingFoods: [
-      { id: "drumstick_leaves", portionId: "katori_cooked", singular: "katori of drumstick leaves", plural: "katoris of drumstick leaves" },
-      { id: "amaranth_leaves", portionId: "katori_cooked", singular: "katori of amaranth leaves", plural: "katoris of amaranth leaves" },
-      { id: "mango", portionId: "katori", singular: "katori of ripe mango", plural: "katoris of ripe mango" },
-      { id: "egg_whole", portionId: "one", singular: "boiled egg", plural: "boiled eggs" },
+      { id: "drumstick_leaves", portionId: "katori_cooked", name: "Drumstick leaves", portionLabel: "1 katori" },
+      { id: "amaranth_leaves", portionId: "katori_cooked", name: "Amaranth leaves", portionLabel: "1 katori" },
+      { id: "mango", portionId: "katori", name: "Ripe mango", portionLabel: "1 katori" },
+      { id: "egg_whole", portionId: "one", name: "Boiled egg", portionLabel: "1 egg" },
     ],
   },
   {
@@ -1089,9 +1090,9 @@ export const MICRONUTRIENT_DEFS = [
     gapThreshold: 0.3,
     decimals: 2,
     counselingFoods: [
-      { id: "wheat_atta", portionId: "roti_med", singular: "medium roti (atta)", plural: "medium rotis (atta)" },
-      { id: "groundnuts", portionId: "handful", singular: "handful of groundnuts", plural: "handfuls of groundnuts" },
-      { id: "kala_chana", portionId: "katori_cooked", singular: "katori of cooked Bengal gram", plural: "katoris of cooked Bengal gram" },
+      { id: "wheat_atta", portionId: "roti_med", name: "Roti (atta)", portionLabel: "1 medium roti" },
+      { id: "groundnuts", portionId: "handful", name: "Groundnuts", portionLabel: "1 handful" },
+      { id: "kala_chana", portionId: "katori_cooked", name: "Bengal gram", portionLabel: "1 katori" },
     ],
   },
   {
@@ -1107,10 +1108,10 @@ export const MICRONUTRIENT_DEFS = [
     gapThreshold: 0.3,
     decimals: 2,
     counselingFoods: [
-      { id: "milk_cow", portionId: "glass", singular: "glass of cow milk", plural: "glasses of cow milk" },
-      { id: "curd_dahi", portionId: "katori", singular: "katori of curd", plural: "katoris of curd" },
-      { id: "egg_whole", portionId: "one", singular: "boiled egg", plural: "boiled eggs" },
-      { id: "drumstick_leaves", portionId: "katori_cooked", singular: "katori of drumstick leaves", plural: "katoris of drumstick leaves" },
+      { id: "milk_cow", portionId: "glass", name: "Cow milk", portionLabel: "1 glass" },
+      { id: "curd_dahi", portionId: "katori", name: "Curd", portionLabel: "1 katori" },
+      { id: "egg_whole", portionId: "one", name: "Boiled egg", portionLabel: "1 egg" },
+      { id: "drumstick_leaves", portionId: "katori_cooked", name: "Drumstick leaves", portionLabel: "1 katori" },
     ],
   },
   {
@@ -1126,9 +1127,9 @@ export const MICRONUTRIENT_DEFS = [
     gapThreshold: 2,
     decimals: 1,
     counselingFoods: [
-      { id: "groundnuts", portionId: "handful", singular: "handful of groundnuts", plural: "handfuls of groundnuts" },
-      { id: "wheat_atta", portionId: "roti_med", singular: "medium roti (atta)", plural: "medium rotis (atta)" },
-      { id: "kala_chana", portionId: "katori_cooked", singular: "katori of cooked Bengal gram", plural: "katoris of cooked Bengal gram" },
+      { id: "groundnuts", portionId: "handful", name: "Groundnuts", portionLabel: "1 handful" },
+      { id: "wheat_atta", portionId: "roti_med", name: "Roti (atta)", portionLabel: "1 medium roti" },
+      { id: "kala_chana", portionId: "katori_cooked", name: "Bengal gram", portionLabel: "1 katori" },
     ],
   },
   {
@@ -1144,9 +1145,9 @@ export const MICRONUTRIENT_DEFS = [
     gapThreshold: 0.3,
     decimals: 2,
     counselingFoods: [
-      { id: "banana", portionId: "one", singular: "medium banana", plural: "medium bananas" },
-      { id: "potato", portionId: "med", singular: "medium potato", plural: "medium potatoes" },
-      { id: "kala_chana", portionId: "katori_cooked", singular: "katori of cooked Bengal gram", plural: "katoris of cooked Bengal gram" },
+      { id: "banana", portionId: "one", name: "Banana", portionLabel: "1 medium banana" },
+      { id: "potato", portionId: "med", name: "Potato", portionLabel: "1 medium potato" },
+      { id: "kala_chana", portionId: "katori_cooked", name: "Bengal gram", portionLabel: "1 katori" },
     ],
   },
   {
@@ -1162,8 +1163,8 @@ export const MICRONUTRIENT_DEFS = [
     gapThreshold: 3,
     decimals: 1,
     counselingFoods: [
-      { id: "egg_whole", portionId: "one", singular: "boiled egg", plural: "boiled eggs" },
-      { id: "fish_rohu", portionId: "piece", singular: "piece of rohu", plural: "pieces of rohu" },
+      { id: "egg_whole", portionId: "one", name: "Boiled egg", portionLabel: "1 egg" },
+      { id: "fish_rohu", portionId: "piece", name: "Rohu", portionLabel: "1 piece" },
     ],
   },
 ];
@@ -1352,81 +1353,45 @@ export const calculateFamilySurvey = ({ members, rations, period }) => {
   };
 };
 
-const ENERGY_COUNSELING_FOODS = [
-  { id: "groundnuts", portionId: "handful", singular: "handful of groundnuts", plural: "handfuls of groundnuts" },
-  { id: "kala_chana", portionId: "sattu_30", singular: "sattu serving (2 tbsp roasted Bengal gram)", plural: "sattu servings (2 tbsp roasted Bengal gram each)" },
-  { id: "banana", portionId: "one", singular: "medium banana", plural: "medium bananas" },
-];
-
 const PROTEIN_COUNSELING_FOODS = [
-  { id: "egg_whole", portionId: "one", singular: "boiled egg", plural: "boiled eggs" },
-  { id: "kala_chana", portionId: "sattu_30", singular: "sattu serving (2 tbsp roasted Bengal gram)", plural: "sattu servings (2 tbsp roasted Bengal gram each)" },
-  { id: "dal_toor", portionId: "katori_med", singular: "medium katori of toor dal", plural: "medium katoris of toor dal" },
-  { id: "curd_dahi", portionId: "katori", singular: "katori of curd", plural: "katoris of curd" },
+  { id: "egg_whole", portionId: "one", name: "Boiled egg", portionLabel: "1 egg" },
+  { id: "kala_chana", portionId: "sattu_30", name: "Sattu (roasted Bengal gram)", portionLabel: "2 tbsp" },
+  { id: "dal_toor", portionId: "katori_med", name: "Toor dal", portionLabel: "1 medium katori" },
+  { id: "curd_dahi", portionId: "katori", name: "Curd", portionLabel: "1 katori" },
+  { id: "chicken_lean", portionId: "piece", name: "Chicken", portionLabel: "1 piece" },
 ];
 
 const PULSE_COUNSELING_FOODS = [
-  { id: "dal_toor", portionId: "katori_med", singular: "medium katori of toor dal", plural: "medium katoris of toor dal" },
-  { id: "kala_chana", portionId: "katori_cooked", singular: "katori of cooked Bengal gram", plural: "katoris of cooked Bengal gram" },
+  { id: "dal_toor", portionId: "katori_med", name: "Toor dal", portionLabel: "1 medium katori" },
+  { id: "kala_chana", portionId: "katori_cooked", name: "Bengal gram", portionLabel: "1 katori" },
 ];
 
 const MILK_COUNSELING_FOODS = [
-  { id: "milk_cow", portionId: "glass", singular: "glass of cow milk", plural: "glasses of cow milk" },
-  { id: "curd_dahi", portionId: "katori", singular: "katori of curd", plural: "katoris of curd" },
+  { id: "milk_cow", portionId: "glass", name: "Cow milk", portionLabel: "1 glass" },
+  { id: "curd_dahi", portionId: "katori", name: "Curd", portionLabel: "1 katori" },
 ];
-
-const MAX_PRACTICAL_SERVINGS = 8;
-
-const perPortionAmount = (food, portion, nutrientKey) => {
-  const grams = Number(portion.grams) || 0;
-  if (nutrientKey === "__grams") return grams;
-  return ((Number(food[nutrientKey]) || 0) * grams) / 100;
-};
-
-const servingsForGap = (gap, per) => {
-  if (!(gap > 0) || !(per > 0)) return null;
-  return Math.max(1, Math.ceil((gap - 1e-9) / per));
-};
 
 const formatAmt = (value, decimals) => {
   const places = decimals == null ? (value >= 10 ? 0 : value >= 1 ? 1 : 2) : decimals;
   return String(Number(value.toFixed(places)));
 };
 
-const describeAdd = (resolved, decimals, unit) => {
-  const { spec, portion, count, provided } = resolved;
-  const phrase = count === 1 ? spec.singular : spec.plural;
-  const grams = Math.round(count * (portion.grams || 0));
-  return `${count} ${phrase} (${grams} g, adds ${formatAmt(provided, decimals)} ${unit})`;
-};
+const formatMacro = (value) => (Math.round((Number(value) || 0) * 10) / 10).toFixed(1);
 
-const resolveCounselingFoods = (foods, specs, gap, nutrientKey) =>
+const listFoodItems = (foods, specs) =>
   (specs || [])
     .map((spec) => {
       const food = findFood(foods, spec.id);
       const portion = food?.portions?.find((p) => p.id === spec.portionId);
       if (!food || !portion) return null;
-      const per = perPortionAmount(food, portion, nutrientKey);
-      const count = servingsForGap(gap, per);
-      if (!count) return null;
-      return { spec, food, portion, per, count, provided: per * count };
+      const factor = (Number(portion.grams) || 0) / 100;
+      const kcal = Math.round((food.calories || 0) * factor);
+      const protein = formatMacro((food.protein || 0) * factor);
+      const fat = formatMacro((food.fat || 0) * factor);
+      const carbs = formatMacro((food.carbs || 0) * factor);
+      return `${spec.name} (${spec.portionLabel}: ${kcal} kcal, ${protein} g protein, ${fat} g fat, ${carbs} g carb)`;
     })
-    .filter(Boolean)
-    .sort((a, b) => a.count - b.count || b.per - a.per);
-
-const suggestAdds = (foods, specs, gap, nutrientKey, unit, decimals) => {
-  const resolved = resolveCounselingFoods(foods, specs, gap, nutrientKey);
-  if (!resolved.length) return "";
-  const practical = resolved.filter((r) => r.count <= MAX_PRACTICAL_SERVINGS);
-  if (!practical.length) {
-    const densest = resolved[0];
-    const one = { ...densest, count: 1, provided: densest.per };
-    return `${describeAdd(one, decimals, unit)} is a practical start; household portions of these foods do not close this remaining gap.`;
-  }
-  const alts = practical.slice(0, 2);
-  if (alts.length === 1) return `Add ${describeAdd(alts[0], decimals, unit)}.`;
-  return `Add ${describeAdd(alts[0], decimals, unit)}, or ${describeAdd(alts[1], decimals, unit)}.`;
-};
+    .filter(Boolean);
 
 export const generateDietaryCounseling = (result, profile, options = {}) => {
   if (!result || !profile) return [];
@@ -1437,36 +1402,32 @@ export const generateDietaryCounseling = (result, profile, options = {}) => {
       (d) => d.defaultVisible || (options.extraMicroKeys || []).includes(d.key)
     ).map((d) => d.key);
   const bullets = [];
+  const pushPoint = (text, specs) => {
+    bullets.push({
+      text,
+      foods: specs && specs.length ? listFoodItems(foods, specs) : [],
+    });
+  };
   const kcalGap = Math.round(profile.kcal - result.kcal);
   const proGap = profile.proteinRda - result.protein;
 
   if (kcalGap > 150) {
-    const add = suggestAdds(foods, ENERGY_COUNSELING_FOODS, kcalGap, "calories", "kcal", 0);
-    bullets.push(
-      `Energy intake is ${result.kcal.toFixed(0)} kcal, ${kcalGap} kcal below the EER of ${profile.kcal} kcal. ${add}`
+    pushPoint(
+      `Energy intake is ${result.kcal.toFixed(0)} kcal, ${kcalGap} kcal below the EER of ${profile.kcal} kcal.`
     );
   }
 
   if (proGap > 5) {
-    const add = suggestAdds(foods, PROTEIN_COUNSELING_FOODS, proGap, "protein", "g protein", 1);
-    bullets.push(
-      `Protein intake is ${result.protein.toFixed(1)} g, ${proGap.toFixed(1)} g below the RDA of ${profile.proteinRda} g (EAR ${profile.proteinEar} g). ${add}`
+    pushPoint(
+      `Protein intake is ${result.protein.toFixed(1)} g, ${proGap.toFixed(1)} g below the RDA of ${profile.proteinRda} g (EAR ${profile.proteinEar} g).`,
+      PROTEIN_COUNSELING_FOODS
     );
   }
 
   if (result.cpRatio && result.cpRatio.ratioNum > 5) {
-    const cerealG = result.cerealGrams || 0;
-    const pulseG = result.pulseGrams || 0;
-    const milkG = result.milkGrams || 0;
-    const pulseGap = Math.max(0, cerealG / 3 - pulseG);
-    const pulseAdd =
-      pulseGap > 10 ? suggestAdds(foods, PULSE_COUNSELING_FOODS, pulseGap, "__grams", "g pulse", 0) : "";
-    const pulseAfter = pulseG + pulseGap;
-    const milkGap = Math.max(0, pulseAfter * 2.5 - milkG);
-    const milkAdd =
-      milkGap > 40 ? suggestAdds(foods, MILK_COUNSELING_FOODS, milkGap, "__grams", "g milk", 0) : "";
-    bullets.push(
-      `Cereal : pulse : milk is ${result.cpRatio.triple || result.cpRatio.ratio} (target about 3 : 1 : 2.5). ${pulseAdd} ${milkAdd}`.replace(/\s+/g, " ").trim()
+    pushPoint(
+      `Cereal : pulse : milk is ${result.cpRatio.triple || result.cpRatio.ratio} (target about 3 : 1 : 2.5).`,
+      [...PULSE_COUNSELING_FOODS, ...MILK_COUNSELING_FOODS]
     );
   }
 
@@ -1474,20 +1435,15 @@ export const generateDietaryCounseling = (result, profile, options = {}) => {
     if (profile[d.rdaKey] == null || result[d.gotKey] == null) return;
     const gap = profile[d.rdaKey] - result[d.gotKey];
     if (gap > d.gapThreshold) {
-      const add = suggestAdds(foods, d.counselingFoods, gap, d.gotKey, d.unit, d.decimals);
-      let lead = `About ${formatAmt(gap, d.decimals)} ${d.unit} below ${d.label.toLowerCase()} RDA.`;
-      if (d.key === "folate" && profile.category === "Pregnancy") {
-        lead += " The IFA tablet still supplies 500 µg folic acid.";
-      }
-      if (d.key === "vitaminD") {
-        lead += " Outdoor daylight remains the main source.";
-      }
-      bullets.push(`${lead} ${add}`.trim());
+      pushPoint(
+        `About ${formatAmt(gap, d.decimals)} ${d.unit} below ${d.label.toLowerCase()} RDA.`,
+        d.counselingFoods
+      );
     }
   });
 
   if (!bullets.length) {
-    bullets.push(
+    pushPoint(
       `Energy, protein, and the micronutrients on the table sit close to ICMR-NIN 2020 EER and RDA for this recall. Keep cereal : pulse : milk near 3 : 1 : 2.5.`
     );
   }

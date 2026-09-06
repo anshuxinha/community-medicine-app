@@ -738,9 +738,24 @@ const DietarySurveyScreen = () => {
                       }).map((tip, idx) => (
                         <View key={idx} style={styles.counselingItem}>
                           {tip.bullets.map((b, bIdx) => (
-                            <View key={bIdx} style={styles.bulletRow}>
-                              <Text style={styles.bulletDot}>•</Text>
-                              <Text style={styles.bulletText}>{b}</Text>
+                            <View key={bIdx} style={styles.counselingPoint}>
+                              <View style={styles.bulletRow}>
+                                <Text style={styles.bulletDot}>•</Text>
+                                <Text style={styles.bulletText}>{b.text}</Text>
+                              </View>
+                              {b.foods && b.foods.length > 0 ? (
+                                <View style={styles.foodListWrap}>
+                                  <Text style={styles.foodListIntro}>
+                                    Food items that can be added to the diet:
+                                  </Text>
+                                  {b.foods.map((foodLine, fIdx) => (
+                                    <View key={fIdx} style={styles.foodBulletRow}>
+                                      <Text style={styles.foodBulletDot}>•</Text>
+                                      <Text style={styles.foodBulletText}>{foodLine}</Text>
+                                    </View>
+                                  ))}
+                                </View>
+                              ) : null}
                             </View>
                           ))}
                         </View>
@@ -1574,9 +1589,20 @@ const createStyles = (colors) =>
     },
     ratioTitle: { fontSize: 13, fontWeight: "bold", color: colors.textTitle },
     counselingItem: { marginBottom: 14, marginTop: 6 },
-    bulletRow: { flexDirection: "row", marginLeft: 4, marginBottom: 6 },
+    counselingPoint: { marginBottom: 10 },
+    bulletRow: { flexDirection: "row", marginLeft: 4, marginBottom: 4 },
     bulletDot: { fontSize: 14, color: colors.secondary, marginRight: 6 },
     bulletText: { fontSize: 12, color: colors.textTitle, flex: 1, lineHeight: 18 },
+    foodListWrap: { marginLeft: 18, marginTop: 4, marginBottom: 2 },
+    foodListIntro: {
+      fontSize: 12,
+      color: colors.textSecondary,
+      marginBottom: 4,
+      lineHeight: 18,
+    },
+    foodBulletRow: { flexDirection: "row", marginLeft: 4, marginBottom: 3 },
+    foodBulletDot: { fontSize: 12, color: colors.secondary, marginRight: 6 },
+    foodBulletText: { fontSize: 12, color: colors.textTitle, flex: 1, lineHeight: 18 },
     shareBtn: { marginBottom: 8, borderColor: colors.secondary, borderRadius: 8 },
     cuSummaryBanner: {
       flexDirection: "row",

@@ -148,7 +148,14 @@ describe("engines", () => {
     expect(blob).toMatch(/RDA/);
     expect(blob).not.toMatch(/below iron EAR/);
     expect(blob).not.toMatch(/\bIFCT\b/);
-    expect(blob).toMatch(/\d+ (katori|katoris|handful|handfuls|glass|glasses|sattu|boiled egg)/i);
+    expect(blob).not.toMatch(/IFA tablet/i);
+    expect(tips[0].bullets[0].text).toMatch(/Energy intake/);
+    expect(tips[0].bullets[0].foods).toEqual([]);
+    const proteinPoint = tips[0].bullets.find((b) => b.text.startsWith("Protein intake"));
+    expect(proteinPoint.foods.some((f) => f.startsWith("Chicken ("))).toBe(true);
+    const ironPoint = tips[0].bullets.find((b) => /below iron RDA/i.test(b.text));
+    expect(ironPoint.foods.some((f) => f.startsWith("Palak ("))).toBe(true);
+    expect(blob).toMatch(/kcal, .* g protein, .* g fat, .* g carb/);
   });
 
   it("judges nutrient status against RDA and energy against EER", () => {
@@ -264,16 +271,17 @@ describe("engines", () => {
       foodData,
       REFERENCE_PROFILES.man_sedentary
     );
+    const pointText = (tips) => (tips[0]?.bullets || []).map((b) => b.text).join(" ");
     const withoutVitC = generateDietaryCounseling(result, REFERENCE_PROFILES.man_sedentary);
-    expect(withoutVitC[0].bullets.join(" ")).not.toMatch(/below vitamin C RDA/i);
+    expect(pointText(withoutVitC)).not.toMatch(/below vitamin C RDA/i);
     const withVitC = generateDietaryCounseling(result, REFERENCE_PROFILES.man_sedentary, {
       extraMicroKeys: ["vitC"],
     });
-    expect(withVitC[0].bullets.join(" ")).toMatch(/below vitamin C RDA/i);
+    expect(pointText(withVitC)).toMatch(/below vitamin C RDA/i);
     const withZinc = generateDietaryCounseling(result, REFERENCE_PROFILES.man_sedentary, {
       selectedMicroKeys: ["iron", "calcium", "folate", "zinc"],
     });
-    expect(withZinc[0].bullets.join(" ")).toMatch(/below zinc RDA/i);
+    expect(pointText(withZinc)).toMatch(/below zinc RDA/i);
     expect(MICRONUTRIENT_DEFS.filter((d) => d.defaultVisible).map((d) => d.key)).toEqual([
       "iron",
       "calcium",
@@ -298,42 +306,28 @@ describe("engines", () => {
     expect(REFERENCE_PROFILES.elderly_man.vitaminDRda).toBe(20);
   });
 
-  it("scales food servings to close the nutrient gap", () => {
-    const profile = REFERENCE_PROFILES.man_sedentary;
-    const atRda = {};
-    MICRONUTRIENT_DEFS.forEach((d) => {
-      atRda[d.gotKey] = profile[d.rdaKey];
-    });
-    const base = {
-      kcal: profile.kcal,
-      protein: profile.proteinRda,
-      proteinEar: profile.proteinEar,
-      cerealGrams: 150,
-      pulseGrams: 50,
-      milkGrams: 125,
-      cpRatio: { ratioNum: 3, triple: "3.0 : 1 : 2.5" },
-      ...atRda,
-    };
-    const servingCount = (text) => {
-      const m = text.match(/Add (\d+) /);
-      return m ? Number(m[1]) : null;
-    };
-    const small = generateDietaryCounseling(
-      { ...base, iron: profile.ironRda - 5 },
-      profile,
-      { selectedMicroKeys: ["iron"] }
+  it("lists food items with portion macros and skips foods on the energy line", () => {
+    const profile = REFERENCE_PROFILES.preg_3rd_sedentary;
+    const result = calculateIndividualIntake(SAMPLE_RECALL_ITEMS, foodData, profile);
+    const tips = generateDietaryCounseling(result, profile);
+    const energy = tips[0].bullets[0];
+    expect(energy.text).toMatch(/Energy intake is 992 kcal/);
+    expect(energy.foods).toEqual([]);
+    const protein = tips[0].bullets.find((b) => b.text.startsWith("Protein intake"));
+    expect(protein.foods).toEqual(
+      expect.arrayContaining([
+        expect.stringMatching(/^Boiled egg \(1 egg: 74 kcal, 6\.7 g protein, 5\.3 g fat, 0\.0 g carb\)$/),
+        expect.stringMatching(/^Chicken \(1 piece: 134 kcal, 17\.4 g protein, 7\.2 g fat, 0\.0 g carb\)$/),
+      ])
     );
-    const large = generateDietaryCounseling(
-      { ...base, iron: profile.ironRda - 12 },
-      profile,
-      { selectedMicroKeys: ["iron"] }
+    const iron = tips[0].bullets.find((b) => /below iron RDA/i.test(b.text));
+    expect(iron.foods).toEqual(
+      expect.arrayContaining([
+        expect.stringMatching(/^Palak \(1 katori: 24 kcal, 2\.1 g protein, 0\.6 g fat, 2\.1 g carb\)$/),
+      ])
     );
-    const smallText = small[0].bullets.join(" ");
-    const largeText = large[0].bullets.join(" ");
-    expect(smallText).toMatch(/below iron RDA/i);
-    expect(largeText).toMatch(/below iron RDA/i);
-    expect(smallText).not.toMatch(/\bIFCT\b/);
-    expect(servingCount(smallText)).toBe(1);
-    expect(servingCount(largeText)).toBeGreaterThan(servingCount(smallText));
+    const folate = tips[0].bullets.find((b) => /below folate RDA/i.test(b.text));
+    expect(folate.text).not.toMatch(/IFA/);
+    expect(JSON.stringify(tips)).not.toMatch(/\bIFCT\b/);
   });
 });
