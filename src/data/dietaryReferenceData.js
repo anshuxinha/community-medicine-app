@@ -1,5 +1,6 @@
 /**
  * ICMR-NIN 2020 EAR / RDA and calculation engines for the Dietary Survey tool.
+ * Adequacy is judged against RDA. EAR is shown in tables for information.
  * Energy values are Estimated Energy Requirements (there is no energy RDA).
  * Consumption units are energy ratios vs the sedentary adult man (2110 kcal = 1.0 CU).
  */
@@ -762,11 +763,12 @@ export const formatPct = (pct) => {
 };
 
 /**
- * Adequacy is judged against EAR (ICMR 2020). Energy has no RDA.
+ * Adequacy is judged against RDA (ICMR 2020). Energy has no RDA and uses EER.
+ * EAR is accepted so callers can still display it; status uses RDA.
  */
 export const intakeStatus = (got, ear, rda, { isEnergy = false, refLabel } = {}) => {
-  const ref = ear != null ? ear : rda;
-  const name = refLabel || (isEnergy ? "EER" : "EAR");
+  const ref = isEnergy ? ear : rda != null ? rda : ear;
+  const name = refLabel || (isEnergy ? "EER" : "RDA");
   if (ref == null || ref === 0) {
     return { key: "na", label: "n/a", color: "#64748B", pct: null };
   }
@@ -780,8 +782,8 @@ export const intakeStatus = (got, ear, rda, { isEnergy = false, refLabel } = {})
   if (isEnergy && pct > 20) {
     return { key: "surplus", label: `${formatPct(pct)} vs EER`, color: "#2563EB", pct };
   }
-  if (!isEnergy && rda != null && got > rda * 1.1 && pct > 10) {
-    return { key: "surplus", label: `${formatPct(pct)} (above RDA)`, color: "#2563EB", pct };
+  if (!isEnergy && pct > 10) {
+    return { key: "surplus", label: `${formatPct(pct)} (above ${name})`, color: "#2563EB", pct };
   }
   return { key: "adequate", label: `${formatPct(pct)} (meets ${name})`, color: "#15803D", pct };
 };
@@ -871,11 +873,11 @@ export const calculateIndividualIntake = (recallItems, foods, profile) => {
   const proteinOneGPerKg = Math.round((profile.proteinRda / 0.83) * 10) / 10;
 
   const kcalDiff = percentDiff(totals.kcal, profile.kcal);
-  const proteinDiff = percentDiff(totals.protein, proteinEar);
-  const calciumDiff = percentDiff(totals.calcium, profile.calciumEar);
-  const ironDiff = percentDiff(totals.iron, profile.ironEar);
-  const vitCDiff = percentDiff(totals.vitC, profile.vitCEar);
-  const folateDiff = percentDiff(totals.folate, profile.folateEar);
+  const proteinDiff = percentDiff(totals.protein, profile.proteinRda);
+  const calciumDiff = percentDiff(totals.calcium, profile.calciumRda);
+  const ironDiff = percentDiff(totals.iron, profile.ironRda);
+  const vitCDiff = percentDiff(totals.vitC, profile.vitCRda);
+  const folateDiff = percentDiff(totals.folate, profile.folateRda);
   const visibleFatDiff = percentDiff(totals.visibleFatGrams, profile.visibleFat);
 
   return {
@@ -979,32 +981,32 @@ export const generateClinicalImpression = (result, profile) => {
 
   if (kcalDef < -20 && proDef < -20) {
     parts.push(
-      `Energy (${Math.abs(kcalDef).toFixed(1)}% below EER) and protein (${Math.abs(proDef).toFixed(1)}% below EAR) are both low`
+      `Energy (${Math.abs(kcalDef).toFixed(1)}% below EER) and protein (${Math.abs(proDef).toFixed(1)}% below RDA) are both low`
     );
   } else if (kcalDef < -10 && proDef < -10) {
-    parts.push(`Moderate energy and protein gap versus ICMR-NIN 2020 EER / EAR`);
+    parts.push(`Moderate energy and protein gap versus ICMR-NIN 2020 EER / RDA`);
   } else if (kcalDef < -10 && proDef >= -10) {
-    parts.push(`Energy is ${Math.abs(kcalDef).toFixed(1)}% below EER; protein meets EAR`);
+    parts.push(`Energy is ${Math.abs(kcalDef).toFixed(1)}% below EER; protein meets RDA`);
   } else if (kcalDef >= -10 && proDef < -10) {
-    parts.push(`Energy meets EER; protein is ${Math.abs(proDef).toFixed(1)}% below EAR`);
+    parts.push(`Energy meets EER; protein is ${Math.abs(proDef).toFixed(1)}% below RDA`);
   } else if (kcalDef > 20) {
     parts.push(`Energy is ${kcalDef.toFixed(1)}% above EER`);
   } else {
-    parts.push("Energy and protein are broadly adequate versus ICMR-NIN 2020 EER / EAR");
+    parts.push("Energy and protein are broadly adequate versus ICMR-NIN 2020 EER / RDA");
   }
 
   if (result.lowQualityProtein) {
     parts.push(
-      "Cereal-heavy pattern: ICMR 2020 uses 1 g protein/kg when cereal protein quality is poor (shown as the adjusted EAR)"
+      "Cereal-heavy pattern: ICMR 2020 uses 1 g protein/kg when cereal protein quality is poor. Status uses official RDA."
     );
   }
 
   const micros = [];
-  if (result.ironDiff < -25) micros.push(`iron (${Math.abs(result.ironDiff).toFixed(1)}% below EAR)`);
-  if (result.calciumDiff < -25) micros.push(`calcium (${Math.abs(result.calciumDiff).toFixed(1)}% below EAR)`);
-  if (result.vitCDiff < -30) micros.push(`vitamin C (${Math.abs(result.vitCDiff).toFixed(1)}% below EAR)`);
-  if (result.folateDiff < -25) micros.push(`folate (${Math.abs(result.folateDiff).toFixed(1)}% below EAR)`);
-  if (micros.length) parts.push(`Micronutrient gaps versus EAR: ${micros.join(", ")}`);
+  if (result.ironDiff < -25) micros.push(`iron (${Math.abs(result.ironDiff).toFixed(1)}% below RDA)`);
+  if (result.calciumDiff < -25) micros.push(`calcium (${Math.abs(result.calciumDiff).toFixed(1)}% below RDA)`);
+  if (result.vitCDiff < -30) micros.push(`vitamin C (${Math.abs(result.vitCDiff).toFixed(1)}% below RDA)`);
+  if (result.folateDiff < -25) micros.push(`folate (${Math.abs(result.folateDiff).toFixed(1)}% below RDA)`);
+  if (micros.length) parts.push(`Micronutrient gaps versus RDA: ${micros.join(", ")}`);
 
   if (result.visibleFatDiff != null && profile.visibleFat > 0) {
     if (result.visibleFatDiff < -20) {
@@ -1035,16 +1037,16 @@ export const generateDietaryCounseling = (result, profile) => {
   if (!result || !profile) return [];
   const tips = [];
   const kcalGap = Math.round(profile.kcal - result.kcal);
-  const proGap = profile.proteinEar - result.protein;
-  const feGap = profile.ironEar - result.iron;
-  const caGap = profile.calciumEar - result.calcium;
-  const folGap = profile.folateEar - result.folate;
+  const proGap = profile.proteinRda - result.protein;
+  const feGap = profile.ironRda - result.iron;
+  const caGap = profile.calciumRda - result.calcium;
+  const folGap = profile.folateRda - result.folate;
 
   if (kcalGap > 150 || proGap > 5) {
     tips.push({
       title: "Energy and protein, low cost",
       icon: "food-apple",
-      description: `About ${Math.max(kcalGap, 0)} kcal and ${Math.max(proGap, 0).toFixed(1)} g protein below EER / EAR:`,
+      description: `About ${Math.max(kcalGap, 0)} kcal and ${Math.max(proGap, 0).toFixed(1)} g protein below EER / RDA:`,
       bullets: [
         "30 g roasted Bengal gram / sattu (IFCT whole Bengal gram: about 86 kcal and 5.6 g protein).",
         "30 g ground nut (IFCT: about 156 kcal and 7.1 g protein).",
@@ -1056,9 +1058,9 @@ export const generateDietaryCounseling = (result, profile) => {
 
   if (feGap > 3) {
     tips.push({
-      title: "Iron (EAR)",
+      title: "Iron (RDA)",
       icon: "pill",
-      description: `About ${feGap.toFixed(1)} mg below iron EAR.`,
+      description: `About ${feGap.toFixed(1)} mg below iron RDA.`,
       bullets: [
         "Cook drumstick leaves, methi, or amaranth in an iron kadai.",
         "IFCT rice flakes (poha) provide about 4.5 mg iron per 100 g.",
@@ -1072,7 +1074,7 @@ export const generateDietaryCounseling = (result, profile) => {
     tips.push({
       title: "Calcium",
       icon: "bottle-tonic-plus",
-      description: `About ${Math.round(caGap)} mg below calcium EAR:`,
+      description: `About ${Math.round(caGap)} mg below calcium RDA:`,
       bullets: [
         "Ragi (IFCT: 364 mg calcium per 100 g) in roti or porridge.",
         "10 g brown gingelly (til) seeds: about 117 mg calcium.",
@@ -1083,13 +1085,11 @@ export const generateDietaryCounseling = (result, profile) => {
 
   if (folGap > 80) {
     const pregNote =
-      profile.category === "Pregnancy"
-        ? " Pregnancy RDA is 570 µg. The IFA tablet still supplies 500 µg folic acid."
-        : "";
+      profile.category === "Pregnancy" ? " The IFA tablet still supplies 500 µg folic acid." : "";
     tips.push({
       title: "Folate",
       icon: "leaf",
-      description: `About ${Math.round(folGap)} µg below folate EAR.${pregNote}`,
+      description: `About ${Math.round(folGap)} µg below folate RDA.${pregNote}`,
       bullets: [
         "Green leafy vegetables and whole pulses (rajma and Bengal gram are folate-dense in IFCT).",
       ],
@@ -1142,7 +1142,7 @@ ${groups}
 -----------------------------------------------------------
 NUTRIENTS PER CU:
 • Energy: ${fam.perCUKcal.toFixed(0)} kcal  (EER 2110) [${formatPct(fam.kcalDiff)}]
-• Protein: ${fam.perCUProtein.toFixed(1)} g  (EAR 42.9 / RDA 54.0)
+• Protein: ${fam.perCUProtein.toFixed(1)} g  (EAR 42.9 / RDA 54.0) [${formatPct(fam.proteinDiffRda)} vs RDA]
 • Per capita energy: ${fam.perCapitaKcal.toFixed(0)} kcal/person
 ===========================================================`;
   }
@@ -1163,19 +1163,19 @@ NUTRIENTS PER CU:
 ===========================================================
 Date: ${dateStr}
 Subject: ${profile.label}
-Adequacy judged against EAR (energy against EER). RDA is shown for completeness.
+Adequacy judged against RDA (energy against EER). EAR is shown for information.
 -----------------------------------------------------------
 INVENTORY:
 ${mealText || "  No items recorded"}
 -----------------------------------------------------------
 INTAKE vs EER / EAR / RDA:
 • Energy: ${result.kcal.toFixed(0)} kcal / EER ${profile.kcal} [${formatPct(result.kcalDiff)}]
-• Protein: ${result.protein.toFixed(1)} g / EAR ${result.proteinEar} / RDA ${profile.proteinRda} [${formatPct(result.proteinDiff)}]
+• Protein: ${result.protein.toFixed(1)} g / EAR ${result.proteinEar} / RDA ${profile.proteinRda} [${formatPct(result.proteinDiff)} vs RDA]
 • Visible fat: ${result.visibleFatGrams.toFixed(1)} g / ${profile.visibleFat} g
-• Calcium: ${result.calcium.toFixed(0)} mg / EAR ${profile.calciumEar} / RDA ${profile.calciumRda}
-• Iron: ${result.iron.toFixed(1)} mg / EAR ${profile.ironEar} / RDA ${profile.ironRda}
-• Vitamin C: ${result.vitC.toFixed(1)} mg / EAR ${profile.vitCEar} / RDA ${profile.vitCRda}
-• Folate: ${result.folate.toFixed(0)} µg / EAR ${profile.folateEar} / RDA ${profile.folateRda}
+• Calcium: ${result.calcium.toFixed(0)} mg / EAR ${profile.calciumEar} / RDA ${profile.calciumRda} [${formatPct(result.calciumDiff)} vs RDA]
+• Iron: ${result.iron.toFixed(1)} mg / EAR ${profile.ironEar} / RDA ${profile.ironRda} [${formatPct(result.ironDiff)} vs RDA]
+• Vitamin C: ${result.vitC.toFixed(1)} mg / EAR ${profile.vitCEar} / RDA ${profile.vitCRda} [${formatPct(result.vitCDiff)} vs RDA]
+• Folate: ${result.folate.toFixed(0)} µg / EAR ${profile.folateEar} / RDA ${profile.folateRda} [${formatPct(result.folateDiff)} vs RDA]
 -----------------------------------------------------------
 ACCEPTABLE MACRONUTRIENT DISTRIBUTION RANGE (AMDR):
 • Carbohydrate ${result.amdr?.carbPct || 0}% (about 50-60%)

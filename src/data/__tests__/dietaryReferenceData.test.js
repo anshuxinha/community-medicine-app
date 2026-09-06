@@ -12,6 +12,8 @@ import {
   SAMPLE_FAMILY_RATIONS,
   SAMPLE_RECALL_ITEMS,
   foodMatchesQuery,
+  intakeStatus,
+  percentDiff,
 } from "../dietaryReferenceData";
 import foodData from "../foodData.json";
 
@@ -125,16 +127,39 @@ describe("engines", () => {
     expect(result.kcal).toBeGreaterThan(900);
     expect(result.proteinEar).toBe(REFERENCE_PROFILES.preg_3rd_sedentary.proteinEar);
     expect(REFERENCE_PROFILES.preg_3rd_sedentary.ironRda).toBe(27);
+    expect(result.proteinDiff).toBeCloseTo(
+      percentDiff(result.protein, REFERENCE_PROFILES.preg_3rd_sedentary.proteinRda),
+      5
+    );
+    expect(result.ironDiff).toBeCloseTo(
+      percentDiff(result.iron, REFERENCE_PROFILES.preg_3rd_sedentary.ironRda),
+      5
+    );
     const impression = generateClinicalImpression(
       result,
       REFERENCE_PROFILES.preg_3rd_sedentary
     );
     expect(impression.length).toBeGreaterThan(20);
+    expect(impression).toMatch(/RDA/);
+    expect(impression).not.toMatch(/below EAR/);
     const tips = generateDietaryCounseling(result, REFERENCE_PROFILES.preg_3rd_sedentary);
     expect(tips.length).toBeGreaterThan(0);
     const blob = JSON.stringify(tips);
     expect(blob).not.toMatch(/Gopalan/i);
     expect(blob).not.toMatch(/not the /i);
+    expect(blob).toMatch(/RDA/);
+    expect(blob).not.toMatch(/below iron EAR/);
+  });
+
+  it("judges nutrient status against RDA and energy against EER", () => {
+    const proteinAboveEar = intakeStatus(43, 42.9, 54.0);
+    expect(proteinAboveEar.key).toBe("deficit");
+    expect(proteinAboveEar.label).toMatch(/RDA/);
+    const proteinAtRda = intakeStatus(54, 42.9, 54.0);
+    expect(proteinAtRda.key).toBe("adequate");
+    const energy = intakeStatus(2110, 2110, null, { isEnergy: true });
+    expect(energy.key).toBe("adequate");
+    expect(energy.label).toMatch(/EER/);
   });
 
   it("divides monthly family rations by 30 and errors on zero CU", () => {
@@ -183,6 +208,7 @@ describe("engines", () => {
     expect(summary).toContain("My Plate 2024");
     expect(summary).not.toContain("DAILY household purchase");
     expect(summary).not.toMatch(/not the /i);
+    expect(summary).toMatch(/vs RDA/);
   });
 
   it("writes an individual case sheet from IFCT names", () => {
@@ -210,5 +236,7 @@ describe("engines", () => {
     expect(summary).toContain("Visible fat");
     expect(summary).not.toContain("Total fat (IFCT)");
     expect(summary).not.toMatch(/not the /i);
+    expect(summary).toContain("judged against RDA");
+    expect(summary).toMatch(/vs RDA/);
   });
 });

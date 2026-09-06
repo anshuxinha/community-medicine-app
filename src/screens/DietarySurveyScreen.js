@@ -369,7 +369,7 @@ const DietarySurveyScreen = () => {
                     <Text style={styles.sectionTitle}>Subject and ICMR-NIN 2020 values</Text>
                   </View>
                   <Text style={styles.captionText}>
-                    Adequacy is judged against EAR. Energy is EER (no RDA). Protein RDA is 0.83 g/kg.
+                    Adequacy is judged against RDA. Energy is EER (no RDA). EAR is shown in the table. Protein RDA is 0.83 g/kg.
                   </Text>
                   <TouchableOpacity
                     style={styles.profilePickerBtn}
@@ -508,7 +508,7 @@ const DietarySurveyScreen = () => {
                         <Text style={styles.sectionTitle}>Intake vs EER / EAR / RDA</Text>
                       </View>
                       <Text style={styles.captionText}>
-                        Status uses EAR (energy uses EER). Visible fat is oil and ghee logged as grams.
+                        Status uses RDA (energy uses EER). EAR is shown for information. Visible fat is oil and ghee logged as grams.
                       </Text>
                       <View style={styles.tableHeaderRow}>
                         <Text style={[styles.tableColHeader, { flex: 2.1 }]}>Nutrient</Text>
@@ -607,8 +607,8 @@ const DietarySurveyScreen = () => {
                       {individualResult.lowQualityProtein ? (
                         <Text style={styles.captionText}>
                           Cereal-heavy pattern: ICMR 2020 uses 1 g protein/kg (about{" "}
-                          {individualResult.proteinOneGPerKg} g) when pulse is very low. The table
-                          still uses official EAR.
+                          {individualResult.proteinOneGPerKg} g) when pulse is very low. Status uses
+                          official RDA.
                         </Text>
                       ) : null}
                     </Card.Content>
@@ -931,8 +931,8 @@ const DietarySurveyScreen = () => {
                         <Text style={styles.sectionTitle}>Family results</Text>
                       </View>
                       <Text style={styles.captionText}>
-                        Per adult unit (CU). 1 CU is a sedentary man: 2110 kcal and 42.9 g protein
-                        (EAR).
+                        Per adult unit (CU). 1 CU is a sedentary man: 2110 kcal (EER) and 54.0 g
+                        protein (RDA). Protein EAR is 42.9 g.
                       </Text>
                       <View style={styles.familyMetricGrid}>
                         <View style={styles.familyMetricBox}>
@@ -970,7 +970,7 @@ const DietarySurveyScreen = () => {
                               },
                             ]}
                           >
-                            {formatPct(familyResult.proteinDiffEar)} vs EAR
+                            {formatPct(familyResult.proteinDiffRda)} vs RDA
                           </Text>
                         </View>
                       </View>
