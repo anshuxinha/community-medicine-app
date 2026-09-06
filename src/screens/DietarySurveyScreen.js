@@ -386,7 +386,7 @@ const DietarySurveyScreen = () => {
                     <View style={styles.rdaChipRow}>
                       {[
                         { v: `${currentProfile.kcal}`, l: "kcal EER" },
-                        { v: `${currentProfile.proteinEar}/${currentProfile.proteinRda}g`, l: "Pro EAR/RDA" },
+                        { v: `${currentProfile.proteinEar}/${currentProfile.proteinRda}g`, l: "EAR/RDA" },
                         { v: `${currentProfile.ironEar}/${currentProfile.ironRda}`, l: "Fe mg" },
                         { v: `${currentProfile.calciumEar}/${currentProfile.calciumRda}`, l: "Ca mg" },
                         { v: `${currentProfile.folateEar}/${currentProfile.folateRda}`, l: "Folate µg" },
@@ -559,7 +559,7 @@ const DietarySurveyScreen = () => {
                           label: "Total fat (IFCT)",
                           unit: "g",
                           got: individualResult.fat.toFixed(1),
-                          ear: "AMDR",
+                          ear: "% energy",
                           rda: "20-30%",
                           status: {
                             key: "info",
@@ -630,8 +630,13 @@ const DietarySurveyScreen = () => {
                     <Card.Content>
                       <View style={styles.cardTitleRow}>
                         <MaterialCommunityIcons name="chart-pie" size={20} color={colors.secondary} />
-                        <Text style={styles.sectionTitle}>AMDR and cereal:pulse:milk</Text>
+                        <Text style={styles.sectionTitle}>
+                          Acceptable Macronutrient Distribution Range (AMDR)
+                        </Text>
                       </View>
+                      <Text style={styles.captionText}>
+                        Share of energy from carbohydrate, protein, and fat.
+                      </Text>
                       {[
                         {
                           name: "Carbohydrate",
@@ -687,7 +692,7 @@ const DietarySurveyScreen = () => {
                       <Divider style={{ marginVertical: 12 }} />
                       <View style={styles.ratioRow}>
                         <View style={{ flex: 1, paddingRight: 8 }}>
-                          <Text style={styles.ratioTitle}>Cereal : pulse (raw eq.)</Text>
+                          <Text style={styles.ratioTitle}>Cereal : pulse : milk (raw g)</Text>
                           <Text style={styles.ratioSubtitle}>
                             Cereals {individualResult.cerealGrams.toFixed(0)} g • Pulses{" "}
                             {individualResult.pulseGrams.toFixed(0)} g • Milk{" "}
@@ -696,7 +701,10 @@ const DietarySurveyScreen = () => {
                           <Text style={styles.ratioSubtitle}>{individualResult.cpRatio.text}</Text>
                         </View>
                         <View style={{ alignItems: "flex-end" }}>
-                          <Text style={styles.ratioBadge}>{individualResult.cpRatio.ratio}</Text>
+                          <Text style={styles.ratioBadge}>
+                            {individualResult.cpRatio.triple || individualResult.cpRatio.ratio}
+                          </Text>
+                          <Text style={styles.ratioSubtitle}>target 3 : 1 : 2.5</Text>
                           <Text
                             style={[
                               styles.ratioStatus,
@@ -932,10 +940,11 @@ const DietarySurveyScreen = () => {
                     <Card.Content>
                       <View style={styles.cardTitleRow}>
                         <MaterialIcons name="assessment" size={22} color={colors.secondary} />
-                        <Text style={styles.sectionTitle}>Per CU vs sedentary man</Text>
+                        <Text style={styles.sectionTitle}>Family results</Text>
                       </View>
                       <Text style={styles.captionText}>
-                        Energy vs EER 2110 kcal. Protein vs EAR 42.9 g (RDA 54 g).
+                        Per adult unit (CU). 1 CU is a sedentary man: 2110 kcal and 42.9 g protein
+                        (EAR).
                       </Text>
                       <View style={styles.familyMetricGrid}>
                         <View style={styles.familyMetricBox}>
@@ -982,7 +991,7 @@ const DietarySurveyScreen = () => {
                         {familyResult.perCapitaProtein.toFixed(1)} g protein. Use per CU in viva.
                       </Text>
                       <Divider style={{ marginVertical: 12 }} />
-                      <Text style={styles.ratioTitle}>Food group per CU vs ICMR plate</Text>
+                      <Text style={styles.ratioTitle}>Daily food vs My Plate 2024 (per adult unit)</Text>
                       {familyResult.foodGroups.map((g) => (
                         <View key={g.key} style={styles.foodGroupRow}>
                           <Text style={styles.foodGroupLabel}>{g.label}</Text>

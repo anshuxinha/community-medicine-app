@@ -85,6 +85,15 @@ describe("IFCT 2017 food table", () => {
     const rotiHits = foodData.filter((f) => foodMatchesQuery(f, "roti"));
     expect(rotiHits.some((f) => f.id === "wheat_atta")).toBe(true);
   });
+
+  it("treats sabzi as other vegetables, leafy vegetables, and roots", () => {
+    const otherVeg = foodData.filter((f) => f.category === "Other Vegetables");
+    expect(otherVeg.length).toBeGreaterThan(7);
+    otherVeg.forEach((f) => expect(foodMatchesQuery(f, "sabzi")).toBe(true));
+    expect(foodMatchesQuery(byId.spinach, "sabzi")).toBe(true);
+    expect(foodMatchesQuery(byId.potato, "sabzi")).toBe(true);
+    expect(foodMatchesQuery(byId.wheat_atta, "sabzi")).toBe(false);
+  });
 });
 
 describe("engines", () => {
@@ -95,11 +104,13 @@ describe("engines", () => {
     expect(amdr.fatPct).toBe(25);
   });
 
-  it("calculates cereal to pulse ratio", () => {
+  it("calculates cereal to pulse to milk ratio", () => {
     const balanced = calculateCerealPulseRatio(150, 40, 100);
     expect(balanced.isBalanced).toBe(true);
+    expect(balanced.triple).toBe("3.8 : 1 : 2.5");
     const skewed = calculateCerealPulseRatio(250, 25);
     expect(skewed.isBalanced).toBe(false);
+    expect(skewed.triple).toBe("10.0 : 1 : 0.0");
   });
 
   it("computes individual intake live and separates visible fat from total fat", () => {
@@ -166,7 +177,7 @@ describe("engines", () => {
       },
     });
     expect(summary).toContain("MONTHLY");
-    expect(summary).toContain("ICMR-NIN 2020");
+    expect(summary).toContain("My Plate 2024");
     expect(summary).not.toContain("DAILY household purchase");
   });
 

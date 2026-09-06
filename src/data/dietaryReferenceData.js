@@ -501,17 +501,17 @@ export const CU_COEFFICIENT_OPTIONS = [
   { label: "Infant, 0 to 6 months, not sharing the pot (0.0 CU)", cu: 0.0 },
 ];
 
-/** ICMR-NIN suggested amounts per CU for a sedentary adult man. */
+/** ICMR-NIN My Plate for the Day, 2024 (2000 kcal). Vegetable split follows the 2024 guideline note. */
 export const BALANCED_DIET_PER_CU = [
-  { key: "cereals", label: "Cereals and millets", unit: "g", target: 275 },
-  { key: "pulses", label: "Pulses", unit: "g", target: 80 },
+  { key: "cereals", label: "Cereals and millets", unit: "g", target: 250 },
+  { key: "pulses", label: "Pulses", unit: "g", target: 85 },
   { key: "milk", label: "Milk and curd", unit: "ml", target: 300 },
   { key: "glv", label: "Green leafy vegetables", unit: "g", target: 100 },
-  { key: "otherVeg", label: "Other vegetables", unit: "g", target: 200 },
-  { key: "tubers", label: "Roots and tubers", unit: "g", target: 100 },
+  { key: "otherVeg", label: "Other vegetables", unit: "g", target: 250 },
+  { key: "tubers", label: "Roots and tubers", unit: "g", target: 50 },
   { key: "fruits", label: "Fruits", unit: "g", target: 100 },
-  { key: "nuts", label: "Nuts and oilseeds", unit: "g", target: 30 },
-  { key: "oil", label: "Visible fat (oil / ghee)", unit: "g", target: 25 },
+  { key: "nuts", label: "Nuts and oilseeds", unit: "g", target: 35 },
+  { key: "oil", label: "Visible fat (oil / ghee)", unit: "g", target: 27 },
   { key: "sugar", label: "Sugar", unit: "g", target: 25 },
 ];
 
@@ -612,6 +612,20 @@ export const FOOD_SEARCH_ALIASES = {
   snack_dosa: ["dosa", "dosai"],
 };
 
+const VEGETABLE_CATEGORIES = [
+  "Other Vegetables",
+  "Green Leafy Vegetables",
+  "Roots & Tubers",
+];
+
+const CATEGORY_QUERY_ALIASES = {
+  sabzi: VEGETABLE_CATEGORIES,
+  subzi: VEGETABLE_CATEGORIES,
+  sabji: VEGETABLE_CATEGORIES,
+  vegetable: VEGETABLE_CATEGORIES,
+  vegetables: VEGETABLE_CATEGORIES,
+};
+
 export const foodMatchesQuery = (food, query) => {
   const q = (query || "").trim().toLowerCase();
   if (!q) return true;
@@ -627,7 +641,11 @@ export const foodMatchesQuery = (food, query) => {
     .join(" ")
     .toLowerCase();
   const tokens = q.split(/\s+/).filter(Boolean);
-  return tokens.every((t) => hay.includes(t));
+  return tokens.every((t) => {
+    const cats = CATEGORY_QUERY_ALIASES[t];
+    if (cats && cats.includes(food.category)) return true;
+    return hay.includes(t);
+  });
 };
 
 export const SAMPLE_RECALL_ITEMS = [
@@ -681,11 +699,13 @@ export const calculateAMDR = (carbsG, proteinG, fatG, totalKcal) => {
 };
 
 export const calculateCerealPulseRatio = (cerealGrams, pulseGrams, milkGrams = 0) => {
+  const milkG = milkGrams || 0;
   if (!pulseGrams || pulseGrams <= 0) {
     if (!cerealGrams || cerealGrams <= 0) {
       return {
         ratioNum: 0,
         ratio: "N/A",
+        triple: "N/A",
         milkRatio: "N/A",
         text: "No cereals or pulses recorded",
         isBalanced: false,
@@ -694,6 +714,7 @@ export const calculateCerealPulseRatio = (cerealGrams, pulseGrams, milkGrams = 0
     return {
       ratioNum: 99,
       ratio: ">15:1",
+      triple: milkG > 0 ? `>15 : 1 : ${(milkG / Math.max(cerealGrams, 1)).toFixed(1)}` : ">15 : 1 : 0",
       milkRatio: "N/A",
       text: "No pulse intake (cereal-only protein)",
       isBalanced: false,
@@ -701,26 +722,29 @@ export const calculateCerealPulseRatio = (cerealGrams, pulseGrams, milkGrams = 0
   }
   const ratioNum = cerealGrams / pulseGrams;
   const ratioStr = ratioNum.toFixed(1);
-  const cerealPulseOk = ratioNum >= 2.5 && ratioNum <= 4.5;
-  const milkRatioNum = milkGrams > 0 ? milkGrams / pulseGrams : 0;
-  const milkOk = milkRatioNum >= 2.0 && milkRatioNum <= 3.5;
-  const isBalanced = cerealPulseOk && (milkGrams <= 0 || milkOk);
+  const milkRatioNum = milkG / pulseGrams;
+  const milkStr = milkRatioNum.toFixed(1);
+  const triple = `${ratioStr} : 1 : ${milkStr}`;
+  const cerealPulseOk = ratioNum >= 2.0 && ratioNum <= 4.0;
+  const milkOk = milkG > 0 && milkRatioNum >= 2.0 && milkRatioNum <= 4.0;
+  const isBalanced = cerealPulseOk && milkOk;
   let text;
-  if (cerealPulseOk && milkGrams > 0 && milkOk) {
-    text = `Near ICMR 2020 cereal:pulse:milk of 3:1:2.5 (here ${ratioStr}:1:${milkRatioNum.toFixed(1)})`;
+  if (isBalanced) {
+    text = `Cereal : pulse : milk is ${triple} (target about 3 : 1 : 2.5)`;
+  } else if (cerealPulseOk && milkG <= 0) {
+    text = `Cereal : pulse is ${ratioStr} : 1. Add milk or curd to reach about 3 : 1 : 2.5.`;
   } else if (cerealPulseOk) {
-    text = milkGrams > 0
-      ? `Cereal:pulse is in range; milk:pulse is ${milkRatioNum.toFixed(1)}:1 (target ~2.5:1)`
-      : "Cereal:pulse is in the 3:1 to 4:1 band. Add milk for the 3:1:2.5 pattern.";
-  } else if (ratioNum > 4.5) {
-    text = `High cereal share (${ratioStr}:1 vs 3:1 to 4:1)`;
+    text = `Cereal : pulse is in range. Milk : pulse is ${milkStr} : 1 (target about 2.5 : 1).`;
+  } else if (ratioNum > 4.0) {
+    text = `High cereal share (${ratioStr} : 1). Target about 3 : 1, with milk.`;
   } else {
-    text = `High pulse share (${ratioStr}:1)`;
+    text = `High pulse share (${ratioStr} : 1). Target about 3 : 1, with milk.`;
   }
   return {
     ratioNum: parseFloat(ratioStr),
     ratio: `${ratioStr} : 1`,
-    milkRatio: milkGrams > 0 ? `3 : 1 : ${milkRatioNum.toFixed(1)}` : "no milk logged",
+    triple,
+    milkRatio: milkG > 0 ? milkStr : "0",
     text,
     isBalanced,
   };
@@ -999,7 +1023,9 @@ export const generateClinicalImpression = (result, profile) => {
   }
 
   if (result.cpRatio && result.cpRatio.ratioNum > 5) {
-    parts.push(`Cereal-to-pulse ratio ${result.cpRatio.ratio} (ICMR 2020 pattern is 3:1:2.5 cereal:pulse:milk)`);
+    parts.push(
+      `Cereal : pulse : milk is ${result.cpRatio.triple || result.cpRatio.ratio} (target about 3 : 1 : 2.5)`
+    );
   }
 
   return `${parts.join(". ")}.`;
@@ -1023,7 +1049,7 @@ export const generateDietaryCounseling = (result, profile) => {
         "30 g roasted Bengal gram / sattu (IFCT whole Bengal gram: about 86 kcal and 5.6 g protein).",
         "30 g ground nut (IFCT: about 156 kcal and 7.1 g protein).",
         "1 boiled egg, about 50 g (IFCT: about 74 kcal and 6.7 g protein).",
-        "Keep cereal:pulse near 3:1 to 4:1, and add milk or curd toward 3:1:2.5.",
+        "Keep cereal : pulse : milk near 3 : 1 : 2.5.",
       ],
     });
   }
@@ -1111,7 +1137,7 @@ RATION ENTRIES (${period}):
 • GLV ${rations.glvKg || 0} kg  • Other veg ${rations.otherVegKg || 0} kg  • Tubers ${rations.tubersKg || 0} kg
 • Fruits ${rations.fruitsKg || 0} kg  • Nuts ${rations.nutsKg || 0} kg
 -----------------------------------------------------------
-FOOD GROUP PER CU vs ICMR sedentary-man plate:
+FOOD PER ADULT UNIT vs My Plate 2024:
 ${groups}
 -----------------------------------------------------------
 NUTRIENTS PER CU:
@@ -1146,17 +1172,17 @@ INTAKE vs EER / EAR / RDA:
 • Energy: ${result.kcal.toFixed(0)} kcal / EER ${profile.kcal} [${formatPct(result.kcalDiff)}]
 • Protein: ${result.protein.toFixed(1)} g / EAR ${result.proteinEar} / RDA ${profile.proteinRda} [${formatPct(result.proteinDiff)}]
 • Visible fat: ${result.visibleFatGrams.toFixed(1)} g / ${profile.visibleFat} g
-• Total fat (IFCT): ${result.fat.toFixed(1)} g  (use AMDR, not the visible-fat gram target)
+• Total fat (IFCT): ${result.fat.toFixed(1)} g  (use energy split below, not the visible-fat gram target)
 • Calcium: ${result.calcium.toFixed(0)} mg / EAR ${profile.calciumEar} / RDA ${profile.calciumRda}
 • Iron: ${result.iron.toFixed(1)} mg / EAR ${profile.ironEar} / RDA ${profile.ironRda}
 • Vitamin C: ${result.vitC.toFixed(1)} mg / EAR ${profile.vitCEar} / RDA ${profile.vitCRda}
 • Folate: ${result.folate.toFixed(0)} µg / EAR ${profile.folateEar} / RDA ${profile.folateRda}
 -----------------------------------------------------------
-AMDR (Atwater % of carb+protein+fat energy):
+ACCEPTABLE MACRONUTRIENT DISTRIBUTION RANGE (AMDR):
 • Carbohydrate ${result.amdr?.carbPct || 0}% (about 50-60%)
 • Protein ${result.amdr?.proteinPct || 0}% (about 10-15%)
 • Fat ${result.amdr?.fatPct || 0}% (about 20-30%)
-• Cereal:pulse ${result.cpRatio?.ratio || "N/A"}  (ICMR 2020 also wants milk, 3:1:2.5)
+• Cereal : pulse : milk ${result.cpRatio?.triple || result.cpRatio?.ratio || "N/A"}  (target about 3 : 1 : 2.5)
 -----------------------------------------------------------
 IMPRESSION:
 ${generateClinicalImpression(result, profile)}
