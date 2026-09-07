@@ -13,6 +13,8 @@ import {
   foodMatchesQuery,
   intakeStatus,
   percentDiff,
+  formatAbsDiff,
+  gramsForItem,
   carbGramsFromEer,
   carbAmdrStatus,
   MICRONUTRIENT_DEFS,
@@ -167,6 +169,28 @@ describe("engines", () => {
     const energy = intakeStatus(2110, 2110, null, { isEnergy: true });
     expect(energy.key).toBe("adequate");
     expect(energy.label).toMatch(/EER/);
+  });
+
+  it("formats absolute gaps against EER and RDA", () => {
+    expect(formatAbsDiff(992, 2010, "kcal")).toBe("1018 kcal less than 2010 kcal");
+    expect(formatAbsDiff(2200, 2010, "kcal")).toBe("190 kcal more than 2010 kcal");
+    expect(formatAbsDiff(2010, 2010, "kcal")).toBe("meets 2010 kcal");
+    expect(formatAbsDiff(40, 54, "g", { decimals: 1, wording: "below" })).toBe(
+      "14.0 g below 54.0 g"
+    );
+    expect(formatAbsDiff(60, 54, "g", { decimals: 1, wording: "below" })).toBe(
+      "6.0 g above 54.0 g"
+    );
+    const energy = intakeStatus(992, 2010, null, { isEnergy: true });
+    expect(energy.absLabel).toBe("1018 kcal less than 2010 kcal");
+  });
+
+  it("computes kcal and protein from wheat atta portion grams", () => {
+    const food = foodData.find((f) => f.id === "wheat_atta");
+    const grams = gramsForItem({ quantity: "2", portionId: "roti_med" }, food);
+    expect(grams).toBe(50);
+    expect((food.calories * grams) / 100).toBe(160);
+    expect(((food.protein * grams) / 100).toFixed(1)).toBe("5.3");
   });
 
   it("divides monthly family rations by 30 and errors on zero CU", () => {

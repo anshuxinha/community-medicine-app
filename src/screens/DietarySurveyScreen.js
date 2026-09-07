@@ -45,6 +45,7 @@ import {
   gramsForItem,
   intakeStatus,
   formatPct,
+  formatAbsDiff,
   MICRONUTRIENT_DEFS,
   DEFAULT_MICRO_KEYS,
   carbGramsFromEer,
@@ -99,6 +100,7 @@ const DietarySurveyScreen = () => {
   const [cuMemberId, setCuMemberId] = useState(null);
   const [selectedMicroKeys, setSelectedMicroKeys] = useState(DEFAULT_MICRO_KEYS);
   const [microModalVisible, setMicroModalVisible] = useState(false);
+  const [statusAbsMode, setStatusAbsMode] = useState(false);
 
   useEffect(() => {
     enableScreenCaptureProtection();
@@ -286,6 +288,20 @@ const DietarySurveyScreen = () => {
     }
   };
 
+  const toggleStatusMode = () => setStatusAbsMode((v) => !v);
+
+  const renderStatusHeader = (flexValue) => (
+    <TouchableOpacity
+      onPress={toggleStatusMode}
+      style={{ flex: flexValue, flexDirection: "row", alignItems: "center", justifyContent: "flex-end" }}
+      hitSlop={{ top: 10, bottom: 10, left: 8, right: 4 }}
+      accessibilityRole="button"
+      accessibilityLabel="Toggle status between percent and amount"
+    >
+      <Text style={[styles.tableColHeader, styles.tableStatusHeader]}>{"<> Status"}</Text>
+    </TouchableOpacity>
+  );
+
   const renderEnergyRow = (row) => (
     <View key={row.label} style={styles.tableDataRow}>
       <View style={{ flex: 2.2 }}>
@@ -294,9 +310,16 @@ const DietarySurveyScreen = () => {
       </View>
       <Text style={[styles.tableCellGot, { flex: 1.6 }]}>{row.got}</Text>
       <Text style={[styles.tableCellRef, { flex: 1.6 }]}>{row.eer}</Text>
-      <View style={{ flex: 2.2, alignItems: "flex-end" }}>
-        <Text style={[styles.diffBadge, { color: row.status.color }]}>{row.status.label}</Text>
-      </View>
+      <TouchableOpacity
+        onPress={toggleStatusMode}
+        style={{ flex: 2.2, alignItems: "flex-end" }}
+        accessibilityRole="button"
+        accessibilityLabel="Toggle status between percent and amount"
+      >
+        <Text style={[styles.diffBadge, { color: row.status.color }]}>
+          {statusAbsMode ? row.status.absLabel : row.status.label}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 
@@ -320,9 +343,16 @@ const DietarySurveyScreen = () => {
       <Text style={[styles.tableCellGot, { flex: 1.4 }]}>{row.got}</Text>
       <Text style={[styles.tableCellRef, { flex: 1.3 }]}>{row.ear}</Text>
       <Text style={[styles.tableCellRef, { flex: 1.3 }]}>{row.rda}</Text>
-      <View style={{ flex: 2.1, alignItems: "flex-end" }}>
-        <Text style={[styles.diffBadge, { color: row.status.color }]}>{row.status.label}</Text>
-      </View>
+      <TouchableOpacity
+        onPress={toggleStatusMode}
+        style={{ flex: 2.1, alignItems: "flex-end" }}
+        accessibilityRole="button"
+        accessibilityLabel="Toggle status between percent and amount"
+      >
+        <Text style={[styles.diffBadge, { color: row.status.color }]}>
+          {statusAbsMode ? row.status.absLabel : row.status.label}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 
@@ -499,6 +529,8 @@ const DietarySurveyScreen = () => {
                               grams: 1,
                             };
                           const grams = gramsForItem(item, food);
+                          const itemKcal = ((food?.calories || 0) * grams) / 100;
+                          const itemProtein = ((food?.protein || 0) * grams) / 100;
                           return (
                             <View key={item.id} style={styles.itemRowContainer}>
                               <View style={styles.itemInfoCol}>
@@ -531,8 +563,7 @@ const DietarySurveyScreen = () => {
                                   textColor={colors.textTitle}
                                 />
                                 <Text style={styles.computedGramsText}>
-                                  {grams.toFixed(0)} g
-                                  {portion.rawEquivalent ? " raw eq." : ""}
+                                  {itemKcal.toFixed(0)} kcal; {itemProtein.toFixed(1)} g protein
                                 </Text>
                               </View>
                               <TouchableOpacity
@@ -575,11 +606,7 @@ const DietarySurveyScreen = () => {
                               <Text style={[styles.tableColHeader, { flex: 2.2 }]}>Nutrient</Text>
                               <Text style={[styles.tableColHeader, { flex: 1.6 }]}>Intake</Text>
                               <Text style={[styles.tableColHeader, { flex: 1.6 }]}>EER</Text>
-                              <Text
-                                style={[styles.tableColHeader, { flex: 2.2, textAlign: "right" }]}
-                              >
-                                Status
-                              </Text>
+                              {renderStatusHeader(2.2)}
                             </View>
                             {renderEnergyRow({
                               label: "Energy",
@@ -590,7 +617,7 @@ const DietarySurveyScreen = () => {
                                 individualResult.kcal,
                                 currentProfile.kcal,
                                 null,
-                                { isEnergy: true }
+                                { isEnergy: true, unit: "kcal", decimals: 0 }
                               ),
                             })}
 
@@ -602,11 +629,7 @@ const DietarySurveyScreen = () => {
                               <Text style={[styles.tableColHeader, { flex: 1.4 }]}>Intake</Text>
                               <Text style={[styles.tableColHeader, { flex: 1.3 }]}>EAR</Text>
                               <Text style={[styles.tableColHeader, { flex: 1.3 }]}>RDA</Text>
-                              <Text
-                                style={[styles.tableColHeader, { flex: 2.1, textAlign: "right" }]}
-                              >
-                                Status
-                              </Text>
+                              {renderStatusHeader(2.1)}
                             </View>
                             {[
                               {
@@ -618,7 +641,8 @@ const DietarySurveyScreen = () => {
                                 status: intakeStatus(
                                   individualResult.protein,
                                   individualResult.proteinEar,
-                                  currentProfile.proteinRda
+                                  currentProfile.proteinRda,
+                                  { unit: "g", decimals: 1 }
                                 ),
                               },
                             ].map(renderNutrientRow)}
@@ -641,11 +665,7 @@ const DietarySurveyScreen = () => {
                               <Text style={[styles.tableColHeader, { flex: 1.4 }]}>Intake</Text>
                               <Text style={[styles.tableColHeader, { flex: 1.3 }]}>EAR</Text>
                               <Text style={[styles.tableColHeader, { flex: 1.3 }]}>RDA</Text>
-                              <Text
-                                style={[styles.tableColHeader, { flex: 2.1, textAlign: "right" }]}
-                              >
-                                Status
-                              </Text>
+                              {renderStatusHeader(2.1)}
                             </View>
                             {visibleMicros
                               .map((d) => ({
@@ -657,7 +677,8 @@ const DietarySurveyScreen = () => {
                                 status: intakeStatus(
                                   individualResult[d.gotKey],
                                   currentProfile[d.earKey],
-                                  currentProfile[d.rdaKey]
+                                  currentProfile[d.rdaKey],
+                                  { unit: d.unit, decimals: d.decimals }
                                 ),
                                 onRemove: () =>
                                   setSelectedMicroKeys((keys) => keys.filter((k) => k !== d.key)),
@@ -984,11 +1005,26 @@ const DietarySurveyScreen = () => {
                           <Text style={styles.familyMetricLabel}>Per CU energy</Text>
                           <Text
                             style={[
+                              styles.familyAbsDiff,
+                              {
+                                color: intakeStatus(familyResult.perCUKcal, 2110, null, {
+                                  isEnergy: true,
+                                }).color,
+                              },
+                            ]}
+                          >
+                            {formatAbsDiff(familyResult.perCUKcal, familyResult.refManKcal, "kcal", {
+                              wording: "below",
+                            })}
+                          </Text>
+                          <Text
+                            style={[
                               styles.diffBadge,
                               {
                                 color: intakeStatus(familyResult.perCUKcal, 2110, null, {
                                   isEnergy: true,
                                 }).color,
+                                textAlign: "center",
                               },
                             ]}
                           >
@@ -1002,6 +1038,25 @@ const DietarySurveyScreen = () => {
                           <Text style={styles.familyMetricLabel}>Per CU protein</Text>
                           <Text
                             style={[
+                              styles.familyAbsDiff,
+                              {
+                                color: intakeStatus(
+                                  familyResult.perCUProtein,
+                                  familyResult.refManProteinEar,
+                                  familyResult.refManProteinRda
+                                ).color,
+                              },
+                            ]}
+                          >
+                            {formatAbsDiff(
+                              familyResult.perCUProtein,
+                              familyResult.refManProteinRda,
+                              "g",
+                              { decimals: 1, wording: "below" }
+                            )}
+                          </Text>
+                          <Text
+                            style={[
                               styles.diffBadge,
                               {
                                 color: intakeStatus(
@@ -1009,6 +1064,7 @@ const DietarySurveyScreen = () => {
                                   familyResult.refManProteinEar,
                                   familyResult.refManProteinRda
                                 ).color,
+                                textAlign: "center",
                               },
                             ]}
                           >
@@ -1569,7 +1625,7 @@ const createStyles = (colors) =>
     foodNameText: { fontSize: 14, fontWeight: "600", color: colors.textTitle },
     portionBadgeBtn: { flexDirection: "row", alignItems: "center", marginTop: 3 },
     portionBadgeText: { fontSize: 12, color: colors.secondary, fontWeight: "500", maxWidth: 180 },
-    quantityCol: { flex: 1.5, alignItems: "center" },
+    quantityCol: { flex: 2, alignItems: "center" },
     qtyInput: {
       width: 64,
       height: 38,
@@ -1577,7 +1633,14 @@ const createStyles = (colors) =>
       backgroundColor: colors.surfacePrimary,
       fontSize: 14,
     },
-    computedGramsText: { fontSize: 10, color: colors.textSecondary, marginTop: 2 },
+    computedGramsText: {
+      fontSize: 10,
+      color: colors.textSecondary,
+      marginTop: 2,
+      textAlign: "center",
+      maxWidth: 88,
+      lineHeight: 13,
+    },
     removeBtn: { padding: 6, marginLeft: 4 },
     resultCard: {
       backgroundColor: colors.surfacePrimary,
@@ -1597,6 +1660,10 @@ const createStyles = (colors) =>
       color: colors.textSecondary,
       textTransform: "uppercase",
     },
+    tableStatusHeader: {
+      color: colors.secondary,
+      textDecorationLine: "underline",
+    },
     tableDataRow: {
       flexDirection: "row",
       alignItems: "center",
@@ -1609,7 +1676,7 @@ const createStyles = (colors) =>
     tableCellUnit: { fontSize: 10, color: colors.textSecondary },
     tableCellGot: { fontSize: 13, fontWeight: "600", color: colors.textTitle },
     tableCellRef: { fontSize: 12, color: colors.textSecondary },
-    diffBadge: { fontSize: 11, fontWeight: "bold", textAlign: "right" },
+    diffBadge: { fontSize: 11, fontWeight: "bold", textAlign: "right", flexShrink: 1 },
     amdrItem: { marginBottom: 12 },
     amdrLabelRow: {
       flexDirection: "row",
@@ -1696,6 +1763,12 @@ const createStyles = (colors) =>
     },
     familyMetricVal: { fontSize: 18, fontWeight: "bold", color: colors.textTitle },
     familyMetricLabel: { fontSize: 11, color: colors.textSecondary, marginVertical: 4 },
+    familyAbsDiff: {
+      fontSize: 11,
+      fontWeight: "600",
+      textAlign: "center",
+      marginBottom: 2,
+    },
     perCapitaText: { fontSize: 12, color: colors.textTitle, marginBottom: 4 },
     foodGroupRow: {
       flexDirection: "row",

@@ -898,29 +898,54 @@ export const formatPct = (pct) => {
 };
 
 /**
+ * Absolute gap against a reference, using the same rounding as the table cells.
+ * wording "lessThan": "1018 kcal less than 2010 kcal"
+ * wording "below": "1018 kcal below 2010 kcal"
+ */
+export const formatAbsDiff = (got, ref, unit, { decimals = 0, wording = "lessThan" } = {}) => {
+  if (ref == null || Number.isNaN(Number(got)) || Number.isNaN(Number(ref))) return "n/a";
+  const places = decimals;
+  const g = Number(Number(got).toFixed(places));
+  const r = Number(Number(ref).toFixed(places));
+  const gap = r - g;
+  const refTxt = places === 0 ? String(Math.round(r)) : r.toFixed(places);
+  const gapTxt = places === 0 ? String(Math.round(Math.abs(gap))) : Math.abs(gap).toFixed(places);
+  if (gap === 0) return `meets ${refTxt} ${unit}`;
+  if (wording === "below") {
+    const dir = gap > 0 ? "below" : "above";
+    return `${gapTxt} ${unit} ${dir} ${refTxt} ${unit}`;
+  }
+  const dir = gap > 0 ? "less than" : "more than";
+  return `${gapTxt} ${unit} ${dir} ${refTxt} ${unit}`;
+};
+
+/**
  * Adequacy is judged against RDA (ICMR 2020). Energy has no RDA and uses EER.
  * EAR is accepted so callers can still display it; status uses RDA.
  */
-export const intakeStatus = (got, ear, rda, { isEnergy = false, refLabel } = {}) => {
+export const intakeStatus = (got, ear, rda, { isEnergy = false, refLabel, unit, decimals } = {}) => {
   const ref = isEnergy ? ear : rda != null ? rda : ear;
   const name = refLabel || (isEnergy ? "EER" : "RDA");
+  const unitName = unit || (isEnergy ? "kcal" : "g");
+  const places = decimals != null ? decimals : isEnergy ? 0 : 1;
   if (ref == null || ref === 0) {
-    return { key: "na", label: "n/a", color: "#64748B", pct: null };
+    return { key: "na", label: "n/a", color: "#64748B", pct: null, absLabel: "n/a" };
   }
   const pct = percentDiff(got, ref);
+  const absLabel = formatAbsDiff(got, ref, unitName, { decimals: places });
   if (pct < -30) {
-    return { key: "severe", label: `${formatPct(pct)} vs ${name}`, color: "#B91C1C", pct };
+    return { key: "severe", label: `${formatPct(pct)} vs ${name}`, color: "#B91C1C", pct, absLabel };
   }
   if (pct < -10) {
-    return { key: "deficit", label: `${formatPct(pct)} vs ${name}`, color: "#D97706", pct };
+    return { key: "deficit", label: `${formatPct(pct)} vs ${name}`, color: "#D97706", pct, absLabel };
   }
   if (isEnergy && pct > 20) {
-    return { key: "surplus", label: `${formatPct(pct)} vs EER`, color: "#2563EB", pct };
+    return { key: "surplus", label: `${formatPct(pct)} vs EER`, color: "#2563EB", pct, absLabel };
   }
   if (!isEnergy && pct > 10) {
-    return { key: "surplus", label: `${formatPct(pct)} (above ${name})`, color: "#2563EB", pct };
+    return { key: "surplus", label: `${formatPct(pct)} (above ${name})`, color: "#2563EB", pct, absLabel };
   }
-  return { key: "adequate", label: `${formatPct(pct)} (meets ${name})`, color: "#15803D", pct };
+  return { key: "adequate", label: `${formatPct(pct)} (meets ${name})`, color: "#15803D", pct, absLabel };
 };
 
 /** Carbohydrate AMDR grams from EER (50-60% of energy at 4 kcal/g). */
