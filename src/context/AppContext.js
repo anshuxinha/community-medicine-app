@@ -30,6 +30,11 @@ import {
 } from "firebase/firestore";
 import { getDeviceId } from "../utils/deviceUtils";
 import {
+  LOCAL_AUTH_STORAGE_KEYS,
+  isForeignDeviceSession,
+  shouldReleaseDeviceClaim,
+} from "../utils/sessionPolicy";
+import {
   tryRestoreSignIn,
   ensureRestoreKey,
   clearRestoreKey,
@@ -428,6 +433,7 @@ export const AppProvider = ({ children }) => {
   }
   const prevStreakRef = useRef(0);
   const userRef = useRef(user);
+  const kickLocalSessionRef = useRef(async () => {});
   const learningStateRef = useRef({
     readItems: [],
     readItemVersions: {},
@@ -820,24 +826,21 @@ export const AppProvider = ({ children }) => {
             // session. Fresh logins are handled by the LoginScreen modal.
             // Android backup / Restore Credentials is a device transfer, not
             // a second live session, so claim this phone instead of signing out.
-            if (isInitialLoad && data.currentDeviceId && data.currentDeviceId !== deviceId) {
+            if (isInitialLoad && isForeignDeviceSession(data.currentDeviceId, deviceId)) {
               const restored = await consumeAppDataRestoredFlag();
               if (restored) {
                 try {
                   await updateDoc(userDocRef, { currentDeviceId: deviceId });
                 } catch (_) {}
               } else {
-                try { await signOut(auth); } catch(e) {}
-                setUser(null);
-                setAccountPremium(false);
-                cloudHydratedRef.current = true;
+                await kickLocalSessionRef.current();
                 return;
               }
             }
 
             // Fresh login with device conflict: don't set user here.
             // LoginScreen's conflict modal will handle it and call login().
-            if (!isInitialLoad && data.currentDeviceId && data.currentDeviceId !== deviceId) {
+            if (!isInitialLoad && isForeignDeviceSession(data.currentDeviceId, deviceId)) {
               return;
             }
 
@@ -1068,21 +1071,10 @@ export const AppProvider = ({ children }) => {
           cloudHydratedRef.current = false;
           initialLoadRef.current = false;
           currentDeviceIdRef.current = null;
-
-          try {
-            const storedUser = await AsyncStorage.getItem("user");
-            if (storedUser) {
-              const parsed = JSON.parse(storedUser);
-              setUser(parsed);
-              setAccountPremium(Boolean(parsed.isPremium));
-            } else {
-              setUser(null);
-              setAccountPremium(false);
-            }
-          } catch {
-            setUser(null);
-            setAccountPremium(false);
-          }
+          // Firebase auth is the source of truth. Painting AsyncStorage
+          // here used to put a kicked device back in after signOut.
+          setUser(null);
+          setAccountPremium(false);
         }
       });
 
@@ -1106,6 +1098,15 @@ export const AppProvider = ({ children }) => {
 
       if (userDoc.exists()) {
         const data = userDoc.data();
+        if (
+          isForeignDeviceSession(
+            data.currentDeviceId,
+            currentDeviceIdRef.current,
+          )
+        ) {
+          await kickLocalSessionRef.current();
+          return;
+        }
         await refreshLibraryContent();
 
         const cachedAccountRaw = await loadLocalLearningSnapshot(uid);
@@ -1963,59 +1964,38 @@ export const AppProvider = ({ children }) => {
     }
   }, [persistLearningLocally]);
 
-  const logout = useCallback(async () => {
-    try {
-      await flushCloudLearningSave();
-    } catch (_) {}
+  const beginLocalSignOut = useCallback(async () => {
     cloudLearningSaveTaskRef.current?.cancel();
     isLoggingOutRef.current = true;
     cloudHydratedRef.current = false;
+    currentDeviceIdRef.current = null;
 
-    // Clear currentDeviceId in Firestore so re-login won't trigger conflict
-    const uid = user?.uid || auth.currentUser?.uid;
-    if (uid) {
-      try {
-        await updateDoc(doc(db, "users", uid), { currentDeviceId: null });
-      } catch (e) {
-        console.warn("Failed to clear currentDeviceId on logout:", e?.message);
-      }
-    }
+    try {
+      await AsyncStorage.removeItem("user");
+    } catch (_) {}
 
     try {
       await clearRestoreKey();
     } catch (_) {}
     try {
       await signOut(auth);
-    } catch (_) { }
+    } catch (_) {}
     if (Constants.appOwnership !== "expo" && GoogleSignin) {
       try {
         await GoogleSignin.signOut();
-      } catch (_) { }
+      } catch (_) {}
     }
-    // Log out of RevenueCat
     if (Constants.appOwnership !== "expo" && Purchases) {
       try {
         await Purchases.logOut();
-      } catch (_) { }
+      } catch (_) {}
     }
-    await AsyncStorage.multiRemove([
-      "user",
-      "isPremium",
-      "readItems",
-      "readItemVersions",
-      "bookmarks",
-      "highlights",
-      "currentStreak",
-      "lastReadDate",
-      "studyScore",
-      "dailyReadHistory",
-    ]);
+    await AsyncStorage.multiRemove(LOCAL_AUTH_STORAGE_KEYS);
 
     setUser(null);
     setAccountPremium(false);
     setRevenueCatPremium(false);
-    
-    currentDeviceIdRef.current = null;
+
     setReadItems([]);
     setReadItemVersions({});
     setBookmarks([]);
@@ -2024,7 +2004,33 @@ export const AppProvider = ({ children }) => {
     setLastReadDate(null);
     setStudyScore(0);
     setDailyReadHistory({});
-  }, [flushCloudLearningSave]);
+  }, []);
+
+  const logout = useCallback(
+    async (options = {}) => {
+      const kickedByOtherDevice = options?.kickedByOtherDevice === true;
+      if (shouldReleaseDeviceClaim({ kickedByOtherDevice })) {
+        try {
+          await flushCloudLearningSave();
+        } catch (_) {}
+        const uid = userRef.current?.uid || auth.currentUser?.uid;
+        if (uid) {
+          try {
+            await updateDoc(doc(db, "users", uid), { currentDeviceId: null });
+          } catch (e) {
+            console.warn(
+              "Failed to clear currentDeviceId on logout:",
+              e?.message,
+            );
+          }
+        }
+      }
+      await beginLocalSignOut();
+    },
+    [flushCloudLearningSave, beginLocalSignOut],
+  );
+  kickLocalSessionRef.current = () =>
+    logout({ kickedByOtherDevice: true });
 
   const upgradeToPremium = useCallback(async (metadata = {}) => {
     setAccountPremium(true);
