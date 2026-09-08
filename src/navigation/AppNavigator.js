@@ -109,6 +109,9 @@ const TabNavigator = () => {
           shadowOffset: { width: 0, height: -5 },
           height: tabBarBaseHeight + insets.bottom,
           paddingBottom: insets.bottom || (isLandscape ? 4 : 8),
+          ...(route.params?.hideTabBar
+            ? { display: "none", height: 0, paddingBottom: 0 }
+            : null),
         },
       })}
     >

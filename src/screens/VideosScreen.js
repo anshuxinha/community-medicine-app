@@ -2,12 +2,14 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
 import {
   Alert,
+  BackHandler,
   FlatList,
   ImageBackground,
   Modal,
@@ -441,17 +443,25 @@ const VideosScreen = ({ navigation, route }) => {
     };
   }, []);
 
-  // Hide OS notification/status bar in video fullscreen / landscape.
-  // pushStackEntry is more reliable than setHidden alone (especially with Modal
-  // and App.js theme updates fighting a single global setHidden call).
-  useEffect(() => {
+  // RN Modal is a separate window, so StatusBar.setHidden never reaches the
+  // player chrome (Paper iOS captures hidden at init; Android edge-to-edge
+  // copies insets only when the dialog is shown). Player is a same-window
+  // overlay; native-stack statusBarHidden is what actually hides the OS bar.
+  useLayoutEffect(() => {
     const hideOsChrome = Boolean(selectedVideo && effectivePlayerFullscreen);
+    const stackNav = navigation.getParent();
+    stackNav?.setOptions({
+      statusBarHidden: hideOsChrome,
+      statusBarAnimation: "fade",
+    });
+    StatusBar.setHidden(hideOsChrome, "fade");
     if (!hideOsChrome) {
-      StatusBar.setHidden(false, "fade");
-      return undefined;
+      return () => {
+        stackNav?.setOptions({ statusBarHidden: false });
+        StatusBar.setHidden(false, "fade");
+      };
     }
 
-    StatusBar.setHidden(true, "fade");
     const stackEntry = StatusBar.pushStackEntry({
       hidden: true,
       animated: true,
@@ -462,6 +472,7 @@ const VideosScreen = ({ navigation, route }) => {
     });
 
     return () => {
+      stackNav?.setOptions({ statusBarHidden: false });
       try {
         StatusBar.popStackEntry(stackEntry);
       } catch (_err) {
@@ -469,7 +480,13 @@ const VideosScreen = ({ navigation, route }) => {
       }
       StatusBar.setHidden(false, "fade");
     };
-  }, [selectedVideo, effectivePlayerFullscreen]);
+  }, [selectedVideo, effectivePlayerFullscreen, navigation]);
+
+  useLayoutEffect(() => {
+    const hideTabBar = Boolean(selectedVideo);
+    if (Boolean(route?.params?.hideTabBar) === hideTabBar) return;
+    navigation.setParams({ hideTabBar });
+  }, [navigation, route?.params?.hideTabBar, selectedVideo]);
 
   useEffect(() => {
     let mounted = true;
@@ -604,13 +621,31 @@ const VideosScreen = ({ navigation, route }) => {
     }
   };
 
-  const closePlayerModal = () => {
+  const closePlayerModal = useCallback(() => {
     setPlayerFullscreen(false);
     setPlaybackUri(null);
     setPlaybackError(null);
     setPlaybackLoading(false);
     setSelectedVideo(null);
-  };
+  }, []);
+
+  useEffect(() => {
+    if (!selectedVideo) return undefined;
+    const sub = BackHandler.addEventListener("hardwareBackPress", () => {
+      if (effectivePlayerFullscreen) {
+        exitPlayerFullscreen();
+        return true;
+      }
+      closePlayerModal();
+      return true;
+    });
+    return () => sub.remove();
+  }, [
+    selectedVideo,
+    effectivePlayerFullscreen,
+    exitPlayerFullscreen,
+    closePlayerModal,
+  ]);
 
   const userEmail = user?.email?.toLowerCase();
   const isAdmin =
@@ -1175,7 +1210,8 @@ const VideosScreen = ({ navigation, route }) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.safeArea}>
+      <SafeAreaView style={styles.safeArea} edges={["top", "right", "bottom", "left"]}>
       <FlatList
         data={displayedVideos}
         keyExtractor={(item) => item.id}
@@ -1278,25 +1314,10 @@ const VideosScreen = ({ navigation, route }) => {
           )
         }
       />
+      </SafeAreaView>
 
-      <Modal
-        visible={Boolean(selectedVideo)}
-        animationType="slide"
-        // fullScreen lets iOS hand status-bar control to us (pageSheet keeps OS chrome).
-        presentationStyle="fullScreen"
-        // iOS Modal defaults to portrait-only; allow landscape while video is open.
-        supportedOrientations={ALL_ORIENTATIONS}
-        statusBarTranslucent={effectivePlayerFullscreen}
-        navigationBarTranslucent={effectivePlayerFullscreen}
-        onRequestClose={() => {
-          // First back leaves fullscreen (incl. landscape). Second closes.
-          if (effectivePlayerFullscreen) {
-            exitPlayerFullscreen();
-            return;
-          }
-          closePlayerModal();
-        }}
-      >
+      {selectedVideo ? (
+        <View style={styles.playerOverlay}>
         <StatusBar
           key={
             effectivePlayerFullscreen ? "player-fs-hidden" : "player-fs-visible"
@@ -1601,7 +1622,8 @@ const VideosScreen = ({ navigation, route }) => {
               ))}
           </KeyboardAvoidingView>
         </SafeAreaView>
-      </Modal>
+        </View>
+      ) : null}
 
       <Modal
         visible={fullscreenPdf}
@@ -1647,7 +1669,7 @@ const VideosScreen = ({ navigation, route }) => {
         </SafeAreaView>
       </Modal>
 
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -1947,6 +1969,12 @@ const createStyles = (colors) => StyleSheet.create({
     color: colors.primary,
     fontWeight: "700",
     fontSize: 14,
+  },
+  playerOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 30,
+    elevation: 30,
+    backgroundColor: colors.surfacePrimary,
   },
   playerSafeArea: {
     flex: 1,
