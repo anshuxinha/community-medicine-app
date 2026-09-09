@@ -22,10 +22,7 @@ import {
   enableScreenCaptureProtection,
   disableScreenCaptureProtection,
 } from "../utils/screenCaptureProtection";
-
-const MIN_ZOOM = 1;
-const MAX_ZOOM = 3;
-const ZOOM_STEP = 0.5;
+import FullscreenImageViewer from "../components/FullscreenImageViewer";
 
 // Individual card component to manage its own image loading state
 const MuseumCard = ({ item, initiallyExpanded = false }) => {
@@ -35,8 +32,11 @@ const MuseumCard = ({ item, initiallyExpanded = false }) => {
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
   const [viewerVisible, setViewerVisible] = useState(false);
-  const [zoomScale, setZoomScale] = useState(MIN_ZOOM);
   const { width, height } = useWindowDimensions();
+  const [viewerViewport, setViewerViewport] = useState({
+    width: Math.max(width - 32, 240),
+    height: Math.max(height * 0.78, 260),
+  });
 
   useEffect(() => {
     if (initiallyExpanded) {
@@ -44,20 +44,12 @@ const MuseumCard = ({ item, initiallyExpanded = false }) => {
     }
   }, [initiallyExpanded]);
 
-  useEffect(() => {
-    if (!viewerVisible) {
-      setZoomScale(MIN_ZOOM);
-    }
-  }, [viewerVisible]);
-
-  const viewportWidth = Math.max(width - 32, 240);
-  const viewportHeight = Math.max(height - 220, 260);
-  const zoomedImageSize = useMemo(
+  const viewerBaseSize = useMemo(
     () => ({
-      width: viewportWidth * zoomScale,
-      height: viewportHeight * zoomScale,
+      width: viewerViewport.width,
+      height: viewerViewport.height,
     }),
-    [viewportHeight, viewportWidth, zoomScale],
+    [viewerViewport.height, viewerViewport.width],
   );
 
   return (
@@ -123,7 +115,7 @@ const MuseumCard = ({ item, initiallyExpanded = false }) => {
             )}
 
             <Text style={styles.imageHint}>
-              Tap the image to open and zoom.
+              Tap the image to open. Pinch to zoom.
             </Text>
             <DescriptionBlock text={item.description} />
           </Card.Content>
@@ -137,79 +129,20 @@ const MuseumCard = ({ item, initiallyExpanded = false }) => {
         onRequestClose={() => setViewerVisible(false)}
         supportedOrientations={ALL_ORIENTATIONS}
       >
-        <View style={styles.viewerBackdrop}>
-          <SafeAreaView style={styles.viewerSafeArea}>
-            <View style={styles.viewerHeader}>
-              <Text style={styles.viewerTitle} numberOfLines={2}>
-                {item.title}
-              </Text>
-              <Pressable
-                accessibilityRole="button"
-                onPress={() => setViewerVisible(false)}
-                style={styles.viewerCloseButton}
-              >
-                <MaterialIcons name="close" size={24} color="#FFFFFF" />
-              </Pressable>
-            </View>
-
-            <View style={styles.viewerBody}>
-              <ScrollView
-                horizontal
-                bounces={false}
-                contentContainerStyle={styles.viewerOuterScrollContent}
-                maximumZoomScale={MAX_ZOOM}
-                minimumZoomScale={MIN_ZOOM}
-              >
-                <ScrollView
-                  bounces={false}
-                  contentContainerStyle={styles.viewerInnerScrollContent}
-                >
-                  <Image
-                    source={{ uri: item.image }}
-                    style={zoomedImageSize}
-                    resizeMode="contain"
-                  />
-                </ScrollView>
-              </ScrollView>
-            </View>
-
-            <View style={styles.viewerControls}>
-              <Pressable
-                accessibilityRole="button"
-                disabled={zoomScale <= MIN_ZOOM}
-                onPress={() =>
-                  setZoomScale((current) =>
-                    Math.max(MIN_ZOOM, current - ZOOM_STEP),
-                  )
-                }
-                style={[
-                  styles.viewerControlButton,
-                  zoomScale <= MIN_ZOOM && styles.viewerControlButtonDisabled,
-                ]}
-              >
-                <MaterialIcons name="remove" size={22} color="#FFFFFF" />
-              </Pressable>
-              <Text style={styles.viewerZoomLabel}>
-                {Math.round(zoomScale * 100)}%
-              </Text>
-              <Pressable
-                accessibilityRole="button"
-                disabled={zoomScale >= MAX_ZOOM}
-                onPress={() =>
-                  setZoomScale((current) =>
-                    Math.min(MAX_ZOOM, current + ZOOM_STEP),
-                  )
-                }
-                style={[
-                  styles.viewerControlButton,
-                  zoomScale >= MAX_ZOOM && styles.viewerControlButtonDisabled,
-                ]}
-              >
-                <MaterialIcons name="add" size={22} color="#FFFFFF" />
-              </Pressable>
-            </View>
-          </SafeAreaView>
-        </View>
+        <FullscreenImageViewer
+          visible={viewerVisible}
+          source={item.image ? { uri: item.image } : null}
+          alt={item.title}
+          baseSize={viewerBaseSize}
+          rotation={0}
+          showRotate={false}
+          onClose={() => setViewerVisible(false)}
+          onViewportLayout={(event) => {
+            const { width: layoutWidth, height: layoutHeight } =
+              event.nativeEvent.layout;
+            setViewerViewport({ width: layoutWidth, height: layoutHeight });
+          }}
+        />
       </Modal>
     </>
   );

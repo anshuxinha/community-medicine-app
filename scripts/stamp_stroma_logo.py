@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 RAW_DIR = ROOT / "reading-illustrations" / "raw"
 OUT_DIR = ROOT / "reading-illustrations"
 LOGO_PATH = Path(r"D:\Stroma Files\Logos and Banners\stroma_logo small.png")
-JOBS_PATH = ROOT / "scripts" / "clinical_diagram_jobs.json"
+DEFAULT_JOBS_PATH = ROOT / "scripts" / "clinical_diagram_jobs.json"
 CANVAS = 1400
 LOGO_SIZE = 96
 MARGIN = 28
@@ -44,8 +44,9 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--id", action="append", dest="ids")
     parser.add_argument("--all", action="store_true")
+    parser.add_argument("--jobs", default=str(DEFAULT_JOBS_PATH))
     args = parser.parse_args()
-    jobs = json.loads(JOBS_PATH.read_text(encoding="utf-8"))
+    jobs = json.loads(Path(args.jobs).read_text(encoding="utf-8"))
     if args.ids:
         wanted = set(args.ids)
         jobs = [j for j in jobs if j["id"] in wanted]

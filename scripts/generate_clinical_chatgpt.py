@@ -12,7 +12,7 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-JOBS_PATH = ROOT / "scripts" / "clinical_diagram_jobs.json"
+DEFAULT_JOBS_PATH = ROOT / "scripts" / "clinical_diagram_jobs.json"
 RAW_DIR = ROOT / "reading-illustrations" / "raw"
 PAGE_ID = "6312e9ed-6117-4a0d-9c98-61bbce0329dc"
 
@@ -134,8 +134,9 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--id", action="append", dest="ids")
     parser.add_argument("--all", action="store_true")
+    parser.add_argument("--jobs", default=str(DEFAULT_JOBS_PATH))
     args = parser.parse_args()
-    jobs = json.loads(JOBS_PATH.read_text(encoding="utf-8"))
+    jobs = json.loads(Path(args.jobs).read_text(encoding="utf-8"))
     if args.ids:
         wanted = set(args.ids)
         jobs = [j for j in jobs if j["id"] in wanted]

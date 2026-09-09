@@ -2,12 +2,13 @@
 """Merge ChatGPT clinical diagrams into topicIllustrations.seed.json."""
 from __future__ import annotations
 
+import argparse
 import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SEED_PATH = ROOT / "src" / "data" / "topicIllustrations.seed.json"
-JOBS_PATH = ROOT / "scripts" / "clinical_diagram_jobs.json"
+DEFAULT_JOBS_PATH = ROOT / "scripts" / "clinical_diagram_jobs.json"
 
 
 def image_entry(job: dict) -> dict:
@@ -24,8 +25,11 @@ def image_entry(job: dict) -> dict:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--jobs", default=str(DEFAULT_JOBS_PATH))
+    args = parser.parse_args()
     seed = json.loads(SEED_PATH.read_text(encoding="utf-8"))
-    jobs = json.loads(JOBS_PATH.read_text(encoding="utf-8"))
+    jobs = json.loads(Path(args.jobs).read_text(encoding="utf-8"))
     by_key = {entry["contentKey"]: entry for entry in seed}
     added = 0
     for job in jobs:

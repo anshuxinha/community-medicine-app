@@ -51,6 +51,7 @@ import {
 } from "../utils/chapterSearch";
 import { splitSentences } from "../utils/splitSentences";
 import { classifyReadingEnd, SHORT_CONTENT_TOLERANCE } from "../utils/readingEnd";
+import FullscreenImageViewer from "./FullscreenImageViewer";
 
 if (
   Platform.OS === "android" &&
@@ -832,9 +833,6 @@ const mergeBlocksWithIllustrations = (blocks, illustrations = []) => {
 
 const FIT_CONFIRM_MS = 450;
 const SCROLL_BOTTOM_PADDING = 80;
-const MIN_ZOOM = 1;
-const MAX_ZOOM = 3;
-const ZOOM_STEP = 0.5;
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
@@ -944,7 +942,6 @@ const ReadingView = ({
   const [scrollProgress, setScrollProgress] = useState(0);
   const [imageRotationMap, setImageRotationMap] = useState({});
   const [fullscreenImage, setFullscreenImage] = useState(null);
-  const [viewerZoomScale, setViewerZoomScale] = useState(MIN_ZOOM);
   const [fullscreenRotation, setFullscreenRotation] = useState(0);
   const [fullscreenViewport, setFullscreenViewport] = useState({
     width: windowWidth - 32,
@@ -1097,7 +1094,6 @@ const ReadingView = ({
 
   const openFullscreenImage = ({ source, alt, aspectRatio, rotationKey }) => {
     const currentRotation = imageRotationMap[rotationKey] || 0;
-    setViewerZoomScale(MIN_ZOOM);
     setFullscreenRotation(currentRotation);
     setFullscreenImage({
       source,
@@ -1109,7 +1105,6 @@ const ReadingView = ({
 
   useEffect(() => {
     if (!fullscreenImage) {
-      setViewerZoomScale(MIN_ZOOM);
       setFullscreenRotation(0);
     }
   }, [fullscreenImage]);
@@ -1134,14 +1129,6 @@ const ReadingView = ({
     fullscreenViewport.height,
     fullscreenViewport.width,
   ]);
-
-  const fullscreenZoomedSize = useMemo(
-    () => ({
-      width: fullscreenBaseSize.width * viewerZoomScale,
-      height: fullscreenBaseSize.height * viewerZoomScale,
-    }),
-    [fullscreenBaseSize.height, fullscreenBaseSize.width, viewerZoomScale],
-  );
 
   const shouldHighlightText = (text) =>
     showHighlightsLocal &&
@@ -2548,116 +2535,32 @@ const ReadingView = ({
         supportedOrientations={ALL_ORIENTATIONS}
         onRequestClose={() => setFullscreenImage(null)}
       >
-        <View style={styles.fullscreenBackdrop}>
-          <Pressable
-            style={styles.fullscreenClose}
-            onPress={() => setFullscreenImage(null)}
-          >
-            <MaterialIcons name="close" size={28} color="#FFFFFF" />
-          </Pressable>
-
-          <View
-            style={styles.fullscreenViewport}
-            onLayout={(event) => {
-              const { width, height } = event.nativeEvent.layout;
-              setFullscreenViewport({ width, height });
-            }}
-          >
-            <ScrollView
-              horizontal
-              bounces={false}
-              contentContainerStyle={styles.viewerOuterScrollContent}
-            >
-              <ScrollView
-                bounces={false}
-                contentContainerStyle={styles.viewerInnerScrollContent}
-              >
-                {fullscreenImage ? (
-                  <Image
-                    source={fullscreenImage.source}
-                    style={[
-                      styles.fullscreenImage,
-                      fullscreenZoomedSize,
-                      { transform: [{ rotate: `${fullscreenRotation}deg` }] },
-                    ]}
-                    resizeMode="contain"
-                    accessible
-                    accessibilityLabel={fullscreenImage.alt}
-                  />
-                ) : null}
-              </ScrollView>
-            </ScrollView>
-          </View>
-
-          <View style={styles.viewerControls}>
-            <Pressable
-              accessibilityRole="button"
-              disabled={viewerZoomScale <= MIN_ZOOM}
-              onPress={() =>
-                setViewerZoomScale((current) =>
-                  Math.max(MIN_ZOOM, current - ZOOM_STEP),
-                )
-              }
-              style={[
-                styles.viewerControlButton,
-                viewerZoomScale <= MIN_ZOOM &&
-                  styles.viewerControlButtonDisabled,
-              ]}
-            >
-              <MaterialIcons name="remove" size={22} color="#FFFFFF" />
-            </Pressable>
-            <Text style={styles.viewerZoomLabel}>
-              {Math.round(viewerZoomScale * 100)}%
-            </Text>
-            <Pressable
-              accessibilityRole="button"
-              disabled={viewerZoomScale >= MAX_ZOOM}
-              onPress={() =>
-                setViewerZoomScale((current) =>
-                  Math.min(MAX_ZOOM, current + ZOOM_STEP),
-                )
-              }
-              style={[
-                styles.viewerControlButton,
-                viewerZoomScale >= MAX_ZOOM &&
-                  styles.viewerControlButtonDisabled,
-              ]}
-            >
-              <MaterialIcons name="add" size={22} color="#FFFFFF" />
-            </Pressable>
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => {
-                if (fullscreenImage?.rotationKey) {
-                  rotateImage(fullscreenImage.rotationKey, -90);
-                }
-                setFullscreenRotation(
-                  (current) => (((current - 90) % 360) + 360) % 360,
-                );
-              }}
-              style={styles.viewerControlButton}
-            >
-              <MaterialIcons name="rotate-left" size={22} color="#FFFFFF" />
-            </Pressable>
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => {
-                if (fullscreenImage?.rotationKey) {
-                  rotateImage(fullscreenImage.rotationKey, 90);
-                }
-                setFullscreenRotation((current) => (current + 90) % 360);
-              }}
-              style={styles.viewerControlButton}
-            >
-              <MaterialIcons name="rotate-right" size={22} color="#FFFFFF" />
-            </Pressable>
-          </View>
-
-          <Text style={styles.fullscreenHint}>
-            Use + / - to zoom. Rotate buttons work in both reading and
-            fullscreen views.
-          </Text>
-        </View>
+        <FullscreenImageViewer
+          visible={Boolean(fullscreenImage)}
+          source={fullscreenImage?.source}
+          alt={fullscreenImage?.alt}
+          baseSize={fullscreenBaseSize}
+          rotation={fullscreenRotation}
+          onClose={() => setFullscreenImage(null)}
+          onViewportLayout={(event) => {
+            const { width, height } = event.nativeEvent.layout;
+            setFullscreenViewport({ width, height });
+          }}
+          onRotateLeft={() => {
+            if (fullscreenImage?.rotationKey) {
+              rotateImage(fullscreenImage.rotationKey, -90);
+            }
+            setFullscreenRotation(
+              (current) => (((current - 90) % 360) + 360) % 360,
+            );
+          }}
+          onRotateRight={() => {
+            if (fullscreenImage?.rotationKey) {
+              rotateImage(fullscreenImage.rotationKey, 90);
+            }
+            setFullscreenRotation((current) => (current + 90) % 360);
+          }}
+        />
       </Modal>
 
       <Modal
