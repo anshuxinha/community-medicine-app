@@ -115,7 +115,7 @@ const MuseumCard = ({ item, initiallyExpanded = false }) => {
             )}
 
             <Text style={styles.imageHint}>
-              Tap the image to open. Pinch to zoom.
+              Tap the image to open.
             </Text>
             <DescriptionBlock text={item.description} />
           </Card.Content>
@@ -134,8 +134,6 @@ const MuseumCard = ({ item, initiallyExpanded = false }) => {
           source={item.image ? { uri: item.image } : null}
           alt={item.title}
           baseSize={viewerBaseSize}
-          rotation={0}
-          showRotate={false}
           onClose={() => setViewerVisible(false)}
           onViewportLayout={(event) => {
             const { width: layoutWidth, height: layoutHeight } =

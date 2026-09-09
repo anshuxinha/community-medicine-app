@@ -5,7 +5,6 @@ import {
   PanResponder,
   Pressable,
   StyleSheet,
-  Text,
   View,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -30,13 +29,8 @@ const FullscreenImageViewer = ({
   source,
   alt,
   baseSize,
-  rotation = 0,
   onClose,
-  onRotateLeft,
-  onRotateRight,
   onViewportLayout,
-  showRotate = true,
-  hint,
 }) => {
   const scale = useRef(new Animated.Value(1)).current;
   const translate = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
@@ -73,7 +67,7 @@ const FullscreenImageViewer = ({
 
   useEffect(() => {
     resetTransform();
-  }, [resetTransform, rotation, source]);
+  }, [resetTransform, source]);
 
   const maxPan = useCallback(
     (nextScale) => {
@@ -169,12 +163,6 @@ const FullscreenImageViewer = ({
     return null;
   }
 
-  const hintText =
-    hint ||
-    (showRotate
-      ? "Pinch to zoom. Double-tap to zoom in or out. Rotate with the buttons below."
-      : "Pinch to zoom. Double-tap to zoom in or out.");
-
   return (
     <View style={styles.backdrop}>
       <Pressable
@@ -197,7 +185,6 @@ const FullscreenImageViewer = ({
                 { translateX: translate.x },
                 { translateY: translate.y },
                 { scale },
-                { rotate: `${rotation}deg` },
               ],
             },
           ]}
@@ -211,29 +198,6 @@ const FullscreenImageViewer = ({
           />
         </Animated.View>
       </View>
-
-      {showRotate ? (
-        <View style={styles.controls}>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Rotate left"
-            onPress={onRotateLeft}
-            style={styles.controlButton}
-          >
-            <MaterialIcons name="rotate-left" size={22} color="#FFFFFF" />
-          </Pressable>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Rotate right"
-            onPress={onRotateRight}
-            style={styles.controlButton}
-          >
-            <MaterialIcons name="rotate-right" size={22} color="#FFFFFF" />
-          </Pressable>
-        </View>
-      ) : null}
-
-      <Text style={styles.hint}>{hintText}</Text>
     </View>
   );
 };
@@ -261,7 +225,7 @@ const styles = StyleSheet.create({
   },
   viewport: {
     width: "100%",
-    height: "78%",
+    height: "92%",
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
@@ -273,28 +237,6 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
-  },
-  controls: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
-    marginTop: 16,
-  },
-  controlButton: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.16)",
-  },
-  hint: {
-    marginTop: 12,
-    color: "rgba(255,255,255,0.72)",
-    fontSize: 13,
-    lineHeight: 18,
-    textAlign: "center",
   },
 });
 

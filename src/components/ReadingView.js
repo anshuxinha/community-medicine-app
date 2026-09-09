@@ -942,7 +942,6 @@ const ReadingView = ({
   const [scrollProgress, setScrollProgress] = useState(0);
   const [imageRotationMap, setImageRotationMap] = useState({});
   const [fullscreenImage, setFullscreenImage] = useState(null);
-  const [fullscreenRotation, setFullscreenRotation] = useState(0);
   const [fullscreenViewport, setFullscreenViewport] = useState({
     width: windowWidth - 32,
     height: windowHeight * 0.78,
@@ -1077,24 +1076,7 @@ const ReadingView = ({
   onReachEndRef.current = onReachEnd;
   allBlocksVisibleRef.current = allBlocksVisible;
 
-  const rotateImage = (rotationKey, delta) => {
-    if (!rotationKey) {
-      return;
-    }
-
-    setImageRotationMap((current) => {
-      const nextRotation =
-        ((((current[rotationKey] || 0) + delta) % 360) + 360) % 360;
-      return {
-        ...current,
-        [rotationKey]: nextRotation,
-      };
-    });
-  };
-
   const openFullscreenImage = ({ source, alt, aspectRatio, rotationKey }) => {
-    const currentRotation = imageRotationMap[rotationKey] || 0;
-    setFullscreenRotation(currentRotation);
     setFullscreenImage({
       source,
       alt,
@@ -1103,29 +1085,18 @@ const ReadingView = ({
     });
   };
 
-  useEffect(() => {
-    if (!fullscreenImage) {
-      setFullscreenRotation(0);
-    }
-  }, [fullscreenImage]);
-
   const fullscreenBaseSize = useMemo(() => {
     const originalAspectRatio = resolveAspectRatio(
       fullscreenImage?.source,
       fullscreenImage?.aspectRatio || 1,
     );
-    const rotatedAspectRatio = getRotatedAspectRatio(
-      originalAspectRatio,
-      fullscreenRotation,
-    );
     return getContainSize(
-      rotatedAspectRatio,
+      originalAspectRatio,
       fullscreenViewport.width,
       fullscreenViewport.height,
     );
   }, [
     fullscreenImage,
-    fullscreenRotation,
     fullscreenViewport.height,
     fullscreenViewport.width,
   ]);
@@ -2540,25 +2511,10 @@ const ReadingView = ({
           source={fullscreenImage?.source}
           alt={fullscreenImage?.alt}
           baseSize={fullscreenBaseSize}
-          rotation={fullscreenRotation}
           onClose={() => setFullscreenImage(null)}
           onViewportLayout={(event) => {
             const { width, height } = event.nativeEvent.layout;
             setFullscreenViewport({ width, height });
-          }}
-          onRotateLeft={() => {
-            if (fullscreenImage?.rotationKey) {
-              rotateImage(fullscreenImage.rotationKey, -90);
-            }
-            setFullscreenRotation(
-              (current) => (((current - 90) % 360) + 360) % 360,
-            );
-          }}
-          onRotateRight={() => {
-            if (fullscreenImage?.rotationKey) {
-              rotateImage(fullscreenImage.rotationKey, 90);
-            }
-            setFullscreenRotation((current) => (current + 90) % 360);
           }}
         />
       </Modal>
@@ -3379,84 +3335,6 @@ const createStyles = (colors) => StyleSheet.create({
     fontSize: 14,
     fontWeight: "700",
     color: colors.onPrimary || colors.surfacePrimary,
-  },
-
-  // ── Fullscreen Image Viewer ──
-  fullscreenBackdrop: {
-    flex: 1,
-    backgroundColor: "rgba(13, 20, 28, 0.95)",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 24,
-  },
-  fullscreenClose: {
-    position: "absolute",
-    top: 18,
-    right: 18,
-    zIndex: 10,
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: "rgba(255,255,255,0.16)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  fullscreenContent: {
-    width: "100%",
-    alignItems: "center",
-  },
-  fullscreenViewport: {
-    width: "100%",
-    height: "78%",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  viewerOuterScrollContent: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  viewerInnerScrollContent: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  fullscreenImage: {
-    width: "100%",
-    maxWidth: "100%",
-    height: "60%",
-  },
-  viewerControls: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    flexWrap: "wrap",
-    gap: 10,
-    marginTop: 16,
-  },
-  viewerControlButton: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.16)",
-  },
-  viewerControlButtonDisabled: {
-    opacity: 0.45,
-  },
-  viewerZoomLabel: {
-    minWidth: 58,
-    textAlign: "center",
-    color: colors.surfacePrimary,
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  fullscreenHint: {
-    marginTop: 12,
-    color: colors.surfaceSecondary,
-    fontSize: 13,
-    lineHeight: 18,
-    textAlign: "center",
   },
 
   // ── Search Term Highlight ──
