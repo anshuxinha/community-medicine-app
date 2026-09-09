@@ -20,14 +20,14 @@ describe("FullscreenImageViewer", () => {
     onClose: jest.fn(),
   };
 
-  test("shows a close control and no zoom or rotate chrome", () => {
-    const { getByLabelText, queryByLabelText, queryByText } = render(
+  test("shows a close control and a double-tap zoom hint", () => {
+    const { getByLabelText, getByText, queryByLabelText, queryByText } = render(
       <FullscreenImageViewer {...props} />,
     );
     expect(getByLabelText("Close fullscreen image")).toBeTruthy();
+    expect(getByText("Double tap to zoom in or out.")).toBeTruthy();
     expect(queryByLabelText("Rotate left")).toBeNull();
     expect(queryByLabelText("Rotate right")).toBeNull();
-    expect(queryByText(/Pinch to zoom/i)).toBeNull();
     expect(queryByText(/Rotate with the buttons below/i)).toBeNull();
     expect(queryByText("%")).toBeNull();
   });

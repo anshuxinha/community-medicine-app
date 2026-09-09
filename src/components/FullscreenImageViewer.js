@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import {
   Animated,
   Image,
-  PanResponder,
   Pressable,
   StyleSheet,
+  Text,
   View,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -13,16 +13,12 @@ export const MIN_IMAGE_ZOOM = 1;
 export const MAX_IMAGE_ZOOM = 4;
 const DOUBLE_TAP_MS = 280;
 const DOUBLE_TAP_ZOOM = 2.5;
+const TAP_MOVE_SLOP = 14;
+const HINT = "Double tap to zoom in or out.";
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-const touchDistance = (nativeEvent) => {
-  const touches = nativeEvent?.touches || [];
-  if (touches.length < 2) return 0;
-  const dx = touches[0].pageX - touches[1].pageX;
-  const dy = touches[0].pageY - touches[1].pageY;
-  return Math.hypot(dx, dy);
-};
+const distanceBetween = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 
 const FullscreenImageViewer = ({
   visible,
@@ -34,12 +30,15 @@ const FullscreenImageViewer = ({
 }) => {
   const scale = useRef(new Animated.Value(1)).current;
   const translate = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
+  const pointers = useRef(new Map());
   const gesture = useRef({
     mode: null,
     startScale: 1,
-    startDistance: 0,
+    startDistance: 1,
     startTx: 0,
     startTy: 0,
+    startPageX: 0,
+    startPageY: 0,
     currentScale: 1,
     currentTx: 0,
     currentTy: 0,
@@ -47,11 +46,14 @@ const FullscreenImageViewer = ({
   }).current;
 
   const resetTransform = useCallback(() => {
+    pointers.current.clear();
     gesture.mode = null;
     gesture.startScale = 1;
-    gesture.startDistance = 0;
+    gesture.startDistance = 1;
     gesture.startTx = 0;
     gesture.startTy = 0;
+    gesture.startPageX = 0;
+    gesture.startPageY = 0;
     gesture.currentScale = 1;
     gesture.currentTx = 0;
     gesture.currentTy = 0;
@@ -70,11 +72,10 @@ const FullscreenImageViewer = ({
   }, [resetTransform, source]);
 
   const maxPan = useCallback(
-    (nextScale) => {
-      const extraX = Math.max(0, (baseSize.width * nextScale - baseSize.width) / 2);
-      const extraY = Math.max(0, (baseSize.height * nextScale - baseSize.height) / 2);
-      return { extraX, extraY };
-    },
+    (nextScale) => ({
+      extraX: Math.max(0, (baseSize.width * nextScale - baseSize.width) / 2),
+      extraY: Math.max(0, (baseSize.height * nextScale - baseSize.height) / 2),
+    }),
     [baseSize.height, baseSize.width],
   );
 
@@ -93,71 +94,108 @@ const FullscreenImageViewer = ({
     [gesture, maxPan, scale, translate],
   );
 
-  const panResponder = useMemo(
-    () =>
-      PanResponder.create({
-        onStartShouldSetPanResponder: () => true,
-        onMoveShouldSetPanResponder: (_, event) =>
-          (event.nativeEvent.touches || []).length >= 2 ||
-          gesture.currentScale > 1.02,
-        onPanResponderGrant: (event) => {
-          const touches = event.nativeEvent.touches || [];
-          gesture.startScale = gesture.currentScale;
-          gesture.startTx = gesture.currentTx;
-          gesture.startTy = gesture.currentTy;
-          if (touches.length >= 2) {
-            gesture.mode = "pinch";
-            gesture.startDistance = touchDistance(event.nativeEvent) || 1;
-            return;
+  const syncPointers = (nativeEvent) => {
+    const next = new Map();
+    const touches = nativeEvent.touches || [];
+    for (let i = 0; i < touches.length; i += 1) {
+      const touch = touches[i];
+      next.set(touch.identifier, { x: touch.pageX, y: touch.pageY });
+    }
+    pointers.current = next;
+    return [...next.values()];
+  };
+
+  const beginPinch = (points) => {
+    gesture.mode = "pinch";
+    gesture.startScale = gesture.currentScale;
+    gesture.startDistance = distanceBetween(points[0], points[1]) || 1;
+    gesture.startTx = gesture.currentTx;
+    gesture.startTy = gesture.currentTy;
+  };
+
+  const beginPan = (point) => {
+    gesture.mode = "pan";
+    gesture.startTx = gesture.currentTx;
+    gesture.startTy = gesture.currentTy;
+    gesture.startPageX = point.x;
+    gesture.startPageY = point.y;
+  };
+
+  const handleTouchStart = (event) => {
+    const points = syncPointers(event.nativeEvent);
+    if (points.length >= 2) {
+      beginPinch(points);
+      return;
+    }
+    if (points.length === 1) {
+      beginPan(points[0]);
+    }
+  };
+
+  const handleTouchMove = (event) => {
+    const points = syncPointers(event.nativeEvent);
+    if (points.length >= 2) {
+      if (gesture.mode !== "pinch") {
+        beginPinch(points);
+      }
+      const distance = distanceBetween(points[0], points[1]);
+      if (!distance || !gesture.startDistance) return;
+      applyTransform(
+        gesture.startScale * (distance / gesture.startDistance),
+        gesture.startTx,
+        gesture.startTy,
+      );
+      return;
+    }
+    if (points.length === 1 && gesture.currentScale > 1.02) {
+      if (gesture.mode !== "pan") {
+        beginPan(points[0]);
+      }
+      applyTransform(
+        gesture.currentScale,
+        gesture.startTx + (points[0].x - gesture.startPageX),
+        gesture.startTy + (points[0].y - gesture.startPageY),
+      );
+    }
+  };
+
+  const handleTouchEnd = (event) => {
+    const ended = event.nativeEvent.changedTouches || [];
+    const remaining = syncPointers(event.nativeEvent);
+
+    if (gesture.mode === "pinch") {
+      if (remaining.length >= 2) {
+        beginPinch(remaining);
+      } else if (remaining.length === 1) {
+        beginPan(remaining[0]);
+      } else {
+        gesture.mode = null;
+      }
+      return;
+    }
+
+    if (remaining.length === 0 && ended.length >= 1) {
+      const lift = ended[0];
+      const moved = Math.hypot(
+        lift.pageX - gesture.startPageX,
+        lift.pageY - gesture.startPageY,
+      );
+      const now = Date.now();
+      if (moved < TAP_MOVE_SLOP) {
+        if (now - gesture.lastTapAt < DOUBLE_TAP_MS) {
+          gesture.lastTapAt = 0;
+          if (gesture.currentScale > 1.05) {
+            applyTransform(1, 0, 0);
+          } else {
+            applyTransform(DOUBLE_TAP_ZOOM, 0, 0);
           }
-          gesture.mode = "pan";
-        },
-        onPanResponderMove: (event, state) => {
-          const touches = event.nativeEvent.touches || [];
-          if (touches.length >= 2) {
-            if (gesture.mode !== "pinch") {
-              gesture.mode = "pinch";
-              gesture.startScale = gesture.currentScale;
-              gesture.startDistance = touchDistance(event.nativeEvent) || 1;
-            }
-            const distance = touchDistance(event.nativeEvent);
-            if (!distance || !gesture.startDistance) return;
-            applyTransform(
-              gesture.startScale * (distance / gesture.startDistance),
-              gesture.currentTx,
-              gesture.currentTy,
-            );
-            return;
-          }
-          if (gesture.currentScale <= 1.02) return;
-          applyTransform(
-            gesture.currentScale,
-            gesture.startTx + state.dx,
-            gesture.startTy + state.dy,
-          );
-        },
-        onPanResponderRelease: (_event, state) => {
-          const now = Date.now();
-          const moved = Math.hypot(state.dx, state.dy);
-          const wasTap = gesture.mode !== "pinch" && moved < 12;
-          if (wasTap && now - gesture.lastTapAt < DOUBLE_TAP_MS) {
-            gesture.lastTapAt = 0;
-            if (gesture.currentScale > 1.05) {
-              applyTransform(1, 0, 0);
-            } else {
-              applyTransform(DOUBLE_TAP_ZOOM, 0, 0);
-            }
-          } else if (wasTap) {
-            gesture.lastTapAt = now;
-          }
-          gesture.mode = null;
-        },
-        onPanResponderTerminate: () => {
-          gesture.mode = null;
-        },
-      }),
-    [applyTransform, gesture],
-  );
+        } else {
+          gesture.lastTapAt = now;
+        }
+      }
+      gesture.mode = null;
+    }
+  };
 
   if (!visible || !source) {
     return null;
@@ -174,7 +212,21 @@ const FullscreenImageViewer = ({
         <MaterialIcons name="close" size={28} color="#FFFFFF" />
       </Pressable>
 
-      <View style={styles.viewport} onLayout={onViewportLayout} {...panResponder.panHandlers}>
+      <View
+        collapsable={false}
+        pointerEvents="box-only"
+        style={styles.viewport}
+        onLayout={onViewportLayout}
+        onStartShouldSetResponder={() => true}
+        onStartShouldSetResponderCapture={() => true}
+        onMoveShouldSetResponder={() => true}
+        onMoveShouldSetResponderCapture={() => true}
+        onResponderTerminationRequest={() => false}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchEnd}
+      >
         <Animated.View
           style={[
             styles.imageWrap,
@@ -198,6 +250,8 @@ const FullscreenImageViewer = ({
           />
         </Animated.View>
       </View>
+
+      <Text style={styles.hint}>{HINT}</Text>
     </View>
   );
 };
@@ -215,7 +269,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 18,
     right: 18,
-    zIndex: 10,
+    zIndex: 20,
     width: 44,
     height: 44,
     borderRadius: 22,
@@ -225,10 +279,11 @@ const styles = StyleSheet.create({
   },
   viewport: {
     width: "100%",
-    height: "92%",
+    height: "86%",
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
+    zIndex: 1,
   },
   imageWrap: {
     alignItems: "center",
@@ -237,6 +292,13 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
+  },
+  hint: {
+    marginTop: 12,
+    color: "rgba(255,255,255,0.72)",
+    fontSize: 13,
+    lineHeight: 18,
+    textAlign: "center",
   },
 });
 
