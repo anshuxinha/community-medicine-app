@@ -1500,5 +1500,205 @@
         "aspectRatio": 1
       }
     ]
+  },
+  {
+    "contentKey": "theory:5-1",
+    "section": "theory",
+    "topicId": "5-1",
+    "topicTitle": "Respiratory Infections - Part A (Smallpox, Mpox, Chickenpox, Measles, Rubella, Mumps, Diphtheria, Pertussis)",
+    "images": [
+      {
+        "id": "measles-clinical-course",
+        "fileName": "ch5_1_measles_clinical_course.png",
+        "alt": "Measles clinical course from incubation through prodrome with Koplik spots, downward-spreading rash, and key complications",
+        "caption": "Measles clinical course: about 10 days to fever and 14 days to rash. The 4-day prodrome brings coryza, cough, conjunctivitis, and Koplik spots. The dusky-red rash starts behind the ears and spreads downward. Infectious period is 4 days before to 4 days after the rash.",
+        "purpose": "",
+        "anchorText": "MEASLES (RUBEOLA)",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:5-3",
+    "section": "theory",
+    "topicId": "5-3",
+    "topicTitle": "Intestinal Infections - Part A (Poliomyelitis, Viral Hepatitis A, B, C, D, E)",
+    "images": [
+      {
+        "id": "polio-clinical-spectrum",
+        "fileName": "ch5_3_polio_clinical_spectrum.png",
+        "alt": "Polio clinical spectrum from inapparent infection through abortive illness, non-paralytic meningitis, and paralytic disease",
+        "caption": "Polio clinical spectrum: 91 to 96 percent of infections are inapparent. About 4 to 8 percent are abortive minor illness. About 1 percent is non-paralytic (aseptic meningitis). Less than 1 percent is paralytic, with asymmetrical flaccid paralysis and no sensory loss.",
+        "purpose": "",
+        "anchorText": "POLIOMYELITIS",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:5-5",
+    "section": "theory",
+    "topicId": "5-5",
+    "topicTitle": "Arthropod-Borne Infections (Dengue Syndrome, Malaria, Lymphatic Filariasis, Zika Virus)",
+    "images": [
+      {
+        "id": "malaria-life-cycle",
+        "fileName": "ch5_5_malaria_life_cycle.png",
+        "alt": "Malaria life cycle showing human hepatic and erythrocytic schizogony and mosquito sporogony from gametocyte to salivary sporozoite",
+        "caption": "Malaria life cycle. In humans, sporozoites start hepatic schizogony (hypnozoites in P. vivax and P. ovale), then erythrocytic schizogony. Gametocytes infect the mosquito. Sporogony runs gametocyte to zygote, ookinete, oocyst, then salivary-gland sporozoites.",
+        "purpose": "",
+        "anchorText": "LIFE CYCLE",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "dengue-clinical-ladder",
+        "fileName": "ch5_5_dengue_clinical.png",
+        "alt": "Dengue clinical ladder from undifferentiated fever through classical dengue fever, dengue haemorrhagic fever, and dengue shock syndrome",
+        "caption": "Dengue clinical ladder: undifferentiated fever, classical dengue fever (break-bone pain, retro-orbital pain, biphasic fever, rash), dengue haemorrhagic fever with plasma leakage, and dengue shock syndrome. Secondary infection with a different serotype can trigger antibody-dependent enhancement.",
+        "purpose": "",
+        "anchorText": "DENGUE SYNDROME",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:5-6",
+    "section": "theory",
+    "topicId": "5-6",
+    "topicTitle": "Zoonoses (Rabies, Yellow Fever, Japanese Encephalitis, Rickettsial Zoonoses)",
+    "images": [
+      {
+        "id": "rabies-pathogenesis",
+        "fileName": "ch5_6_rabies_pathogenesis.png",
+        "alt": "Rabies pathogenesis from bite-site replication through centripetal nerve spread to the CNS and centrifugal spread to salivary glands",
+        "caption": "Rabies pathogenesis: virus replicates near the bite, travels centripetally along peripheral nerves to the CNS, then spreads centrifugally to salivary glands and other tissues. Clinical picture includes prodrome, hydrophobia, aerophobia, and spasms.",
+        "purpose": "",
+        "anchorText": "PATHOGENESIS",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:5-7",
+    "section": "theory",
+    "topicId": "5-7",
+    "topicTitle": "Surface Infections - Part A (Tetanus, Leprosy)",
+    "images": [
+      {
+        "id": "leprosy-spectrum",
+        "fileName": "ch5_7_leprosy_spectrum.png",
+        "alt": "Leprosy Ridley-Jopling immuno-histological spectrum from TT to LL mapped onto WHO paucibacillary and multibacillary classes",
+        "caption": "Leprosy spectrum. Ridley-Jopling runs TT, BT, BB, BL, LL according to cell-mediated immunity. WHO control classes: paucibacillary (1 to 5 skin lesions, one nerve, smear negative) and multibacillary (6 or more lesions, more than one nerve, or any positive smear).",
+        "purpose": "",
+        "anchorText": "CLASSIFICATION OF LEPROSY",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:5-8",
+    "section": "theory",
+    "topicId": "5-8",
+    "topicTitle": "Surface Infections - Part B (STDs, HIV/AIDS) & 5.6 Emerging/Re-emerging Infections & 5.7 Hospital Acquired Infections",
+    "images": [
+      {
+        "id": "hiv-who-staging",
+        "fileName": "ch5_8_hiv_who_staging.png",
+        "alt": "WHO clinical staging of HIV disease from asymptomatic stage 1 through opportunistic infections of stage 4",
+        "caption": "WHO clinical staging of HIV: Stage 1 asymptomatic or persistent generalized lymphadenopathy. Stage 2 moderate weight loss under 10 percent, zoster, recurrent respiratory infection. Stage 3 severe weight loss, chronic diarrhoea, oral candidiasis, pulmonary TB. Stage 4 AIDS-defining illness including PCP, extra-pulmonary TB, and HIV wasting.",
+        "purpose": "",
+        "anchorText": "WHO CLINICAL STAGING OF HIV DISEASE",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:6-1",
+    "section": "theory",
+    "topicId": "6-1",
+    "topicTitle": "Coronary Heart Disease, Hypertension, Stroke, and Rheumatic Heart Disease",
+    "images": [
+      {
+        "id": "rhd-pathogenesis-jones",
+        "fileName": "ch6_1_rhd_pathogenesis.png",
+        "alt": "Pathogenesis of rheumatic heart disease from Group A streptococcal pharyngitis through acute rheumatic fever to chronic valvular damage, with Jones criteria",
+        "caption": "Rheumatic heart disease pathogenesis: untreated Group A streptococcal pharyngitis, molecular mimicry with cardiac myosin, acute rheumatic fever 2 to 3 weeks later in 1 to 3 percent of untreated cases, then cumulative valvular damage after recurrences. Jones diagnosis needs evidence of preceding GAS plus 2 major, or 1 major and 2 minor, manifestations.",
+        "purpose": "",
+        "anchorText": "RHEUMATIC HEART DISEASE (RHD)",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "chd-clinical-pathogenesis",
+        "fileName": "ch6_1_chd_pathogenesis.png",
+        "alt": "Coronary heart disease pathway from atherosclerotic risk factors to angina, myocardial infarction, heart failure, arrhythmia, and sudden death",
+        "caption": "Coronary heart disease: obstructive atherosclerotic change in coronary arteries produces a mismatch between myocardial blood supply and demand. Clinical outcomes are angina, myocardial infarction, heart failure, arrhythmia, and sudden cardiac death. South Asian onset is about a decade earlier than in Western cohorts.",
+        "purpose": "",
+        "anchorText": "CORONARY HEART DISEASE (CHD)",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:15-4",
+    "section": "theory",
+    "topicId": "15-4",
+    "topicTitle": "Environment and Health: Waste & Excreta Disposal",
+    "images": [
+      {
+        "id": "f-diagram",
+        "fileName": "ch15_4_f_diagram.png",
+        "alt": "F-diagram of faecal-oral transmission through fingers, flies, fields, fluids, fomites and food, with primary and secondary sanitation barriers",
+        "caption": "F-diagram: faecal pathogens reach a new host through fingers, flies, fields, fluids, fomites, and food. The primary barrier is isolation of excreta at the latrine. Secondary barriers are safe water, food hygiene, fly control, and handwashing with soap.",
+        "purpose": "",
+        "anchorText": "THE FAECAL-ORAL TRANSMISSION CHAIN (THE F-DIAGRAM)",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:15-5",
+    "section": "theory",
+    "topicId": "15-5",
+    "topicTitle": "Entomology: Vectors & Disease Transmission",
+    "images": [
+      {
+        "id": "biological-transmission",
+        "fileName": "ch15_5_biological_transmission.png",
+        "alt": "Three modes of biological transmission in arthropods: cyclo-developmental, propagative, and cyclo-propagative, with classic examples",
+        "caption": "Biological transmission inside the arthropod. Cyclo-developmental: development without multiplication (Wuchereria in Culex). Propagative: multiplication without cyclical change (Yersinia in the rat flea; dengue and yellow fever viruses in Aedes). Cyclo-propagative: both development and multiplication (Plasmodium in Anopheles).",
+        "purpose": "",
+        "anchorText": "BIOLOGICAL TRANSMISSION MODES",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:8-5",
+    "section": "theory",
+    "topicId": "8-5",
+    "topicTitle": "Contraceptive Methods Part 2: Hormonal and Non-Hormonal Methods",
+    "images": [
+      {
+        "id": "ocp-mechanism",
+        "fileName": "ch8_5_ocp_mechanism.png",
+        "alt": "Mechanism of combined oral contraceptives and progestogen-only pills on GnRH, FSH, LH, cervical mucus, and endometrium",
+        "caption": "Combined oral pills suppress ovulation by negative feedback on hypothalamic GnRH, blocking pituitary FSH and LH. Secondary actions thicken cervical mucus and alter the endometrium. Progestogen-only pills mainly thicken mucus, slow tubal transport, and desynchronize the endometrium.",
+        "purpose": "",
+        "anchorText": "MECHANISM OF ACTION OF ORAL PILLS",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
   }
 ]
