@@ -1,0 +1,28 @@
+[
+  {
+    "id": "shake-test",
+    "fileName": "ch3_6_shake_test.png",
+    "contentKey": "theory:3-6",
+    "section": "theory",
+    "topicId": "3-6",
+    "topicTitle": "Immunization, Cold Chain, National Immunization Schedule, and AEFI",
+    "anchorText": "THE SHAKE TEST",
+    "placement": "after",
+    "alt": "Shake test comparing a suspect aluminium-adsorbed vaccine vial with a frozen-thawed control to detect freeze damage",
+    "caption": "Shake test: used for aluminium-adsorbed freeze-sensitive vaccines (DPT, Td, TT, Hepatitis B, pentavalent, PCV). Shake a suspect vial and a frozen-thawed control from the same batch for 10 to 15 seconds, then watch sedimentation for 30 minutes. Pass: the suspect vial stays cloudy longer than the control. Fail: the suspect vial sediments as fast as or faster than the control; discard it.",
+    "prompt": "Create a square 1:1 medical textbook infographic titled \"Shake test\". Do not draw any empty box, frame, placeholder square, border, watermark, or logo in any corner. Fill the whole square canvas with the diagram. Title at top-left. Clean white background, navy and teal, large readable sans-serif labels, no watermark, no logo. Show two glass vaccine vials side by side after shaking: left vial labelled Suspect, right vial labelled Frozen-thawed control. Four numbered steps: 1 Take a suspect vial of DPT, Td, TT, Hep B, pentavalent or PCV. 2 Freeze then thaw a same-batch control. 3 Shake both 10 to 15 seconds. 4 Watch 30 minutes. Two outcomes: PASS, suspect stays cloudy longer than control, use the vaccine. FAIL, suspect sediments as fast or faster, discard. Perfect square."
+  },
+  {
+    "id": "tb-natural-history",
+    "fileName": "ch5_2_tb_natural_history.png",
+    "contentKey": "theory:5-2",
+    "section": "theory",
+    "topicId": "5-2",
+    "topicTitle": "Respiratory Infections - Part B (Influenza, Acute Respiratory Infections, Pneumonia, Tuberculosis)",
+    "anchorText": "TUBERCULOSIS",
+    "placement": "after",
+    "alt": "Natural history of tuberculosis from droplet-nucleus exposure through latent infection to active disease and onward transmission",
+    "caption": "Natural history of tuberculosis: inhalation of droplet nuclei from a sputum-positive case leads to infection (tuberculin conversion in 3 to 6 weeks). About 90 percent of infected people contain the bacilli as latent infection. Five to 10 percent develop clinical disease in a lifetime. An untreated infectious pulmonary case can infect 10 to 15 people in a year. Effective treatment cuts infectivity by about 90 percent within 48 hours. HIV is the strongest risk factor for progression from infection to disease.",
+    "prompt": "Create a square 1:1 medical textbook infographic titled \"Natural history of tuberculosis\". Do not draw any empty box, frame, placeholder square, border, watermark, or logo in any corner. Fill the whole square canvas with the diagram. Title at top-left. Clean white background, navy and teal flowchart, large readable sans-serif labels, no watermark, no logo. Flow: Exposure to droplet nuclei from sputum-positive case; Infection (tuberculin conversion 3 to 6 weeks); split 90 percent Latent TB infection contained, and 5 to 10 percent Active TB disease in a lifetime. Active TB: pulmonary infectious or extrapulmonary. Note: untreated infectious case infects 10 to 15 people per year. Note: treatment reduces infectivity 90 percent in 48 hours. Small callout: HIV strongest risk for progression. Perfect square."
+  }
+]

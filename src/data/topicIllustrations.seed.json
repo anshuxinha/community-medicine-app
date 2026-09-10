@@ -168,6 +168,16 @@
         "anchorText": "COLD CHAIN HIERARCHY AND VULNERABILITIES IN INDIA",
         "placement": "after",
         "aspectRatio": 1
+      },
+      {
+        "id": "shake-test",
+        "fileName": "ch3_6_shake_test.png",
+        "alt": "Shake test comparing a suspect aluminium-adsorbed vaccine vial with a frozen-thawed control to detect freeze damage",
+        "caption": "Shake test: used for aluminium-adsorbed freeze-sensitive vaccines (DPT, Td, TT, Hepatitis B, pentavalent, PCV). Shake a suspect vial and a frozen-thawed control from the same batch for 10 to 15 seconds, then watch sedimentation for 30 minutes. Pass: the suspect vial stays cloudy longer than the control. Fail: the suspect vial sediments as fast as or faster than the control; discard it.",
+        "purpose": "",
+        "anchorText": "THE SHAKE TEST",
+        "placement": "after",
+        "aspectRatio": 1
       }
     ]
   },
@@ -1940,6 +1950,24 @@
         "caption": "Modes of transmission. Direct: physical contact, droplet spray under 1 metre, inoculation, contact with soil, and vertical (transplacental) spread. Indirect routes include vehicles such as the classic environmental 5 Fs.",
         "purpose": "",
         "anchorText": "CLASSIFICATION OF MODES OF DISEASE TRANSMISSION",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:5-2",
+    "section": "theory",
+    "topicId": "5-2",
+    "topicTitle": "Respiratory Infections - Part B (Influenza, Acute Respiratory Infections, Pneumonia, Tuberculosis)",
+    "images": [
+      {
+        "id": "tb-natural-history",
+        "fileName": "ch5_2_tb_natural_history.png",
+        "alt": "Natural history of tuberculosis from droplet-nucleus exposure through latent infection to active disease and onward transmission",
+        "caption": "Natural history of tuberculosis: inhalation of droplet nuclei from a sputum-positive case leads to infection (tuberculin conversion in 3 to 6 weeks). About 90 percent of infected people contain the bacilli as latent infection. Five to 10 percent develop clinical disease in a lifetime. An untreated infectious pulmonary case can infect 10 to 15 people in a year. Effective treatment cuts infectivity by about 90 percent within 48 hours. HIV is the strongest risk factor for progression from infection to disease.",
+        "purpose": "",
+        "anchorText": "TUBERCULOSIS",
         "placement": "after",
         "aspectRatio": 1
       }
