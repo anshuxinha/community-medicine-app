@@ -158,6 +158,16 @@
         "anchorText": "Vaccine Vial Monitor (VVM)",
         "placement": "after",
         "aspectRatio": 1
+      },
+      {
+        "id": "cold-chain-hierarchy",
+        "fileName": "ch3_6_cold_chain_hierarchy.png",
+        "alt": "Indian vaccine cold chain from state WIC/WIF through district and PHC ILRs to sub-centre vaccine carriers",
+        "caption": "Cold chain in India: state WIC/WIF holds 3 months of stock; district and PHC ILR/DF hold 1 month; sub-centre vaccine carriers last 24 to 48 hours. Failure risk is highest at session sites.",
+        "purpose": "",
+        "anchorText": "COLD CHAIN HIERARCHY AND VULNERABILITIES IN INDIA",
+        "placement": "after",
+        "aspectRatio": 1
       }
     ]
   },
@@ -174,6 +184,16 @@
         "caption": "Overlapping distributions of well and diseased people, showing how a shifting cut-off trades sensitivity for specificity.",
         "purpose": "",
         "anchorText": "Interpretation of Distribution Curve (Shifting Cut-offs)",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "lead-time-screening",
+        "fileName": "ch4_lead_time.png",
+        "alt": "Screening timeline from biological onset through first detectable point, lead time, critical point, clinical diagnosis, and death",
+        "caption": "Lead time is the interval from detection by screening to the usual clinical diagnosis. Screening helps only between the first detectable point and the final critical point. Lead-time bias lengthens apparent survival without delaying death.",
+        "purpose": "",
+        "anchorText": "Lead Time and Associated Methodological Biases",
         "placement": "after",
         "aspectRatio": 1
       }
@@ -1830,6 +1850,96 @@
         "caption": "Levels of health care. Primary care is first contact at Sub-centres (Ayushman Arogya Mandirs) and PHCs. Secondary care is first referral at CHCs and district hospitals. Tertiary care is superspecialty at medical colleges and regional institutes.",
         "purpose": "",
         "anchorText": "LEVELS OF HEALTH CARE",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:9-1",
+    "section": "theory",
+    "topicId": "9-1",
+    "topicTitle": "Introduction, Maternity Cycle, Antenatal, Intranatal, and Postnatal Care",
+    "images": [
+      {
+        "id": "maternity-cycle",
+        "fileName": "ch9_1_maternity_cycle.png",
+        "alt": "Five-phase maternity cycle from fertilization through antenatal, intranatal, postnatal, and inter-conceptional periods",
+        "caption": "Maternity cycle: fertilization in the tubal ampulla, antenatal (prenatal) period, intranatal period, postnatal period, then the inter-conceptional interval. Implantation in the endometrium occurs 8 to 10 days after fertilization.",
+        "purpose": "",
+        "anchorText": "MATERNITY CYCLE AND PERIODS OF GROWTH",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:6-4",
+    "section": "theory",
+    "topicId": "6-4",
+    "topicTitle": "Accidents, Injuries, Haddon Matrix, and Snakebite Envenoming",
+    "images": [
+      {
+        "id": "haddon-matrix",
+        "fileName": "ch6_4_haddon_matrix.png",
+        "alt": "Haddon matrix 3-by-3 grid of host, vector or agent, and environment across pre-event, event, and post-event phases",
+        "caption": "Haddon matrix: a 3-by-3 grid that crosses the epidemiological triad (host, vector or agent, physical and socioeconomic environment) with time (pre-event, event, post-event) to plan injury prevention.",
+        "purpose": "",
+        "anchorText": "ACCIDENTS AND INJURIES",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:9-4",
+    "section": "theory",
+    "topicId": "9-4",
+    "topicTitle": "Growth Charts, Low Birth Weight, Prematurity, and Kangaroo Mother Care",
+    "images": [
+      {
+        "id": "growth-chart",
+        "fileName": "ch9_4_growth_chart.png",
+        "alt": "Road to Health weight-for-age growth chart with direction of growth and reference curves",
+        "caption": "Growth chart (Road to Health): a weight-for-age plot for infants and young children. Weight falls first in undernutrition. India uses sex-specific charts on the Mother and Child Protection card (blue for boys, pink for girls).",
+        "purpose": "",
+        "anchorText": "GROWTH CHART",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:3-3",
+    "section": "theory",
+    "topicId": "3-3",
+    "topicTitle": "Analytical Epidemiology: Case Control, Cohort, Cross-Sectional, and Ecological Studies",
+    "images": [
+      {
+        "id": "case-control-vs-cohort",
+        "fileName": "ch3_3_case_control_vs_cohort.png",
+        "alt": "Case-control studies look backward from disease to exposure; cohort studies look forward from exposure to disease",
+        "caption": "Case-control studies start with diseased and non-diseased people and look backward to exposure; they give an odds ratio. Cohort studies start with exposed and unexposed people who are disease-free and follow them forward; they give incidence and relative risk.",
+        "purpose": "",
+        "anchorText": "DIFFERENCES BETWEEN CASE-CONTROL AND COHORT STUDIES",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:3-5",
+    "section": "theory",
+    "topicId": "3-5",
+    "topicTitle": "Infectious Disease Epidemiology, Transmission Dynamics, and Disease Control",
+    "images": [
+      {
+        "id": "modes-of-transmission",
+        "fileName": "ch3_5_modes_of_transmission.png",
+        "alt": "Direct and indirect modes of disease transmission including contact, droplet, inoculation, soil, vertical, and vehicle routes",
+        "caption": "Modes of transmission. Direct: physical contact, droplet spray under 1 metre, inoculation, contact with soil, and vertical (transplacental) spread. Indirect routes include vehicles such as the classic environmental 5 Fs.",
+        "purpose": "",
+        "anchorText": "CLASSIFICATION OF MODES OF DISEASE TRANSMISSION",
         "placement": "after",
         "aspectRatio": 1
       }

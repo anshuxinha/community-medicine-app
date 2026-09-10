@@ -1,0 +1,93 @@
+[
+  {
+    "id": "maternity-cycle",
+    "fileName": "ch9_1_maternity_cycle.png",
+    "contentKey": "theory:9-1",
+    "section": "theory",
+    "topicId": "9-1",
+    "topicTitle": "Introduction, Maternity Cycle, Antenatal, Intranatal, and Postnatal Care",
+    "anchorText": "MATERNITY CYCLE AND PERIODS OF GROWTH",
+    "placement": "after",
+    "alt": "Five-phase maternity cycle from fertilization through antenatal, intranatal, postnatal, and inter-conceptional periods",
+    "caption": "Maternity cycle: fertilization in the tubal ampulla, antenatal (prenatal) period, intranatal period, postnatal period, then the inter-conceptional interval. Implantation in the endometrium occurs 8 to 10 days after fertilization.",
+    "prompt": "Create a square 1:1 medical textbook infographic titled \"Maternity cycle\". Do not draw any empty box, frame, placeholder square, border, watermark, or logo in any corner. Fill the whole square canvas with the diagram. Title at top-left. Clean white background, navy and teal five-step circular or linear flowchart, large readable sans-serif labels, no watermark, no logo. Five stages: 1 Fertilization (ampulla of fallopian tube). 2 Antenatal / prenatal period. 3 Intranatal period. 4 Postnatal period. 5 Inter-conceptional period. Small note: implantation in 8 to 10 days. Perfect square."
+  },
+  {
+    "id": "cold-chain-hierarchy",
+    "fileName": "ch3_6_cold_chain_hierarchy.png",
+    "contentKey": "theory:3-6",
+    "section": "theory",
+    "topicId": "3-6",
+    "topicTitle": "Immunization, Cold Chain, National Immunization Schedule, and AEFI",
+    "anchorText": "COLD CHAIN HIERARCHY AND VULNERABILITIES IN INDIA",
+    "placement": "after",
+    "alt": "Indian vaccine cold chain from state WIC/WIF through district and PHC ILRs to sub-centre vaccine carriers",
+    "caption": "Cold chain in India: state WIC/WIF holds 3 months of stock; district and PHC ILR/DF hold 1 month; sub-centre vaccine carriers last 24 to 48 hours. Failure risk is highest at session sites.",
+    "prompt": "Create a square 1:1 medical textbook infographic titled \"Cold chain hierarchy in India\". Do not draw any empty box, frame, placeholder square, border, watermark, or logo in any corner. Fill the whole square canvas with the diagram. Title at top-left. Clean white background, navy and teal four-level pyramid, large readable sans-serif labels, no watermark, no logo. Top: State WIC / WIF, 3 months stock. Next: District vaccine store, large ILR / DF, 1 month. Next: CHC / PHC, small ILR / DF, 1 month. Base: Sub-centre / village, vaccine carrier, 24-48 hours; highest failure risk. Perfect square."
+  },
+  {
+    "id": "haddon-matrix",
+    "fileName": "ch6_4_haddon_matrix.png",
+    "contentKey": "theory:6-4",
+    "section": "theory",
+    "topicId": "6-4",
+    "topicTitle": "Accidents, Injuries, Haddon Matrix, and Snakebite Envenoming",
+    "anchorText": "ACCIDENTS AND INJURIES",
+    "placement": "after",
+    "alt": "Haddon matrix 3-by-3 grid of host, vector or agent, and environment across pre-event, event, and post-event phases",
+    "caption": "Haddon matrix: a 3-by-3 grid that crosses the epidemiological triad (host, vector or agent, physical and socioeconomic environment) with time (pre-event, event, post-event) to plan injury prevention.",
+    "prompt": "Create a square 1:1 medical textbook infographic titled \"Haddon matrix\". Do not draw any empty box, frame, placeholder square, border, watermark, or logo in any corner. Fill the whole square canvas with the diagram. Title at top-left. Clean white background, navy and teal 3-by-3 grid, large readable sans-serif labels, no watermark, no logo. Columns: Pre-event, Event, Post-event. Rows: Host, Vector / Agent, Environment. One short example phrase in each cell for a road crash (speed, helmet, brakes, road design, emergency care). Perfect square."
+  },
+  {
+    "id": "growth-chart",
+    "fileName": "ch9_4_growth_chart.png",
+    "contentKey": "theory:9-4",
+    "section": "theory",
+    "topicId": "9-4",
+    "topicTitle": "Growth Charts, Low Birth Weight, Prematurity, and Kangaroo Mother Care",
+    "anchorText": "GROWTH CHART",
+    "placement": "after",
+    "alt": "Road to Health weight-for-age growth chart with direction of growth and reference curves",
+    "caption": "Growth chart (Road to Health): a weight-for-age plot for infants and young children. Weight falls first in undernutrition. India uses sex-specific charts on the Mother and Child Protection card (blue for boys, pink for girls).",
+    "prompt": "Create a square 1:1 medical textbook infographic titled \"Growth chart (Road to Health)\". Do not draw any empty box, frame, placeholder square, border, watermark, or logo in any corner. Fill the whole square canvas with the diagram. Title at top-left. Clean white background, navy and teal weight-for-age chart, large readable sans-serif labels, no watermark, no logo. X-axis age in months, Y-axis weight. Upper and lower reference curves. A plotted child trajectory staying between curves. Side notes: weight-for-age; David Morley / WHO; MCP card blue boys, pink girls. Perfect square."
+  },
+  {
+    "id": "case-control-vs-cohort",
+    "fileName": "ch3_3_case_control_vs_cohort.png",
+    "contentKey": "theory:3-3",
+    "section": "theory",
+    "topicId": "3-3",
+    "topicTitle": "Analytical Epidemiology: Case Control, Cohort, Cross-Sectional, and Ecological Studies",
+    "anchorText": "DIFFERENCES BETWEEN CASE-CONTROL AND COHORT STUDIES",
+    "placement": "after",
+    "alt": "Case-control studies look backward from disease to exposure; cohort studies look forward from exposure to disease",
+    "caption": "Case-control studies start with diseased and non-diseased people and look backward to exposure; they give an odds ratio. Cohort studies start with exposed and unexposed people who are disease-free and follow them forward; they give incidence and relative risk.",
+    "prompt": "Create a square 1:1 medical textbook infographic titled \"Case-control versus cohort\". Do not draw any empty box, frame, placeholder square, border, watermark, or logo in any corner. Fill the whole square canvas with the diagram. Title at top-left. Clean white background, navy and teal two-panel flowchart, large readable sans-serif labels, no watermark, no logo. Left panel Case-control: start with Cases and Controls, arrow backward to Exposure, output Odds Ratio, good for rare disease. Right panel Cohort: start with Exposed and Unexposed, arrow forward to Disease, output Relative Risk, good for rare exposure. Perfect square."
+  },
+  {
+    "id": "modes-of-transmission",
+    "fileName": "ch3_5_modes_of_transmission.png",
+    "contentKey": "theory:3-5",
+    "section": "theory",
+    "topicId": "3-5",
+    "topicTitle": "Infectious Disease Epidemiology, Transmission Dynamics, and Disease Control",
+    "anchorText": "CLASSIFICATION OF MODES OF DISEASE TRANSMISSION",
+    "placement": "after",
+    "alt": "Direct and indirect modes of disease transmission including contact, droplet, inoculation, soil, vertical, and vehicle routes",
+    "caption": "Modes of transmission. Direct: physical contact, droplet spray under 1 metre, inoculation, contact with soil, and vertical (transplacental) spread. Indirect routes include vehicles such as the classic environmental 5 Fs.",
+    "prompt": "Create a square 1:1 medical textbook infographic titled \"Modes of disease transmission\". Do not draw any empty box, frame, placeholder square, border, watermark, or logo in any corner. Fill the whole square canvas with the diagram. Title at top-left. Clean white background, navy and teal two-column diagram, large readable sans-serif labels, no watermark, no logo. Column Direct: contact, droplet spray less than 1 metre, inoculation, soil contact, vertical transplacental TORCH. Column Indirect: 5 Fs (fingers, flies, fomites, food, fluids) plus airborne droplet nuclei. Perfect square."
+  },
+  {
+    "id": "lead-time-screening",
+    "fileName": "ch4_lead_time.png",
+    "contentKey": "theory:4",
+    "section": "theory",
+    "topicId": "4",
+    "topicTitle": "Screening for Disease",
+    "anchorText": "Lead Time and Associated Methodological Biases",
+    "placement": "after",
+    "alt": "Screening timeline from biological onset through first detectable point, lead time, critical point, clinical diagnosis, and death",
+    "caption": "Lead time is the interval from detection by screening to the usual clinical diagnosis. Screening helps only between the first detectable point and the final critical point. Lead-time bias lengthens apparent survival without delaying death.",
+    "prompt": "Create a square 1:1 medical textbook infographic titled \"Lead time in screening\". Do not draw any empty box, frame, placeholder square, border, watermark, or logo in any corner. Fill the whole square canvas with the diagram. Title at top-left. Clean white background, navy and teal horizontal timeline, large readable sans-serif labels, no watermark, no logo. Points in order: Biological onset, First detectable point, Final critical point, Usual clinical diagnosis, Death. Bracket Lead time between first detectable point and usual clinical diagnosis. Note: screening useful only before the critical point. Perfect square."
+  }
+]

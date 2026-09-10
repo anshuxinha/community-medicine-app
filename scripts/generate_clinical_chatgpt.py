@@ -122,7 +122,7 @@ def generate_one(job: dict, max_wait: int = 150) -> bool:
         now = estuary_ids()
         new = [u for u in now if u not in before]
         elapsed = int(time.time() - start)
-        if new:
+        if new and elapsed >= 28:
             print(f"[+] new image after {elapsed}s")
             return download_image(new[-1], out_path)
         print(f"[*] waiting... {elapsed}s")
