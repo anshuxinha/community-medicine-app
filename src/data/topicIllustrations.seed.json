@@ -102,6 +102,16 @@
         "anchorText": "CHANGING CONCEPTS OF HEALTH",
         "placement": "after",
         "aspectRatio": 1
+      },
+      {
+        "id": "web-of-causation",
+        "fileName": "ch2_web_of_causation.png",
+        "alt": "Web of causation showing multiple interacting agent, host, and environmental factors rather than a single cause",
+        "caption": "Web of causation: most diseases arise from interacting agent, host, and environmental factors, not from a single germ. Pettenkofer argued for multifactorial causation. Breaking any sufficient strand in the web can prevent disease.",
+        "purpose": "",
+        "anchorText": "FACTORS IN DISEASE CAUSATION",
+        "placement": "after",
+        "aspectRatio": 1
       }
     ]
   },
@@ -176,6 +186,16 @@
         "caption": "Shake test: used for aluminium-adsorbed freeze-sensitive vaccines (DPT, Td, TT, Hepatitis B, pentavalent, PCV). Shake a suspect vial and a frozen-thawed control from the same batch for 10 to 15 seconds, then watch sedimentation for 30 minutes. Pass: the suspect vial stays cloudy longer than the control. Fail: the suspect vial sediments as fast as or faster than the control; discard it.",
         "purpose": "",
         "anchorText": "THE SHAKE TEST",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "open-vial-policy",
+        "fileName": "ch3_6_open_vial_policy.png",
+        "alt": "Open vial policy allowing 28-day reuse of liquid multi-dose vaccines with preservative, excluding reconstituted live vaccines",
+        "caption": "Open vial policy (2015): opened liquid multi-dose vials with preservative (bOPV, IPV, pentavalent, Hep B, DPT, Td, TT, liquid PCV) may be reused for 28 days if expiry, +2 to +8 C, clean septum, aseptic withdrawal, and VVM are all acceptable. Reconstituted BCG, measles/MR, JE and rotavirus are excluded; discard within 4 hours (2 hours for JE) or at session end.",
+        "purpose": "",
+        "anchorText": "OPEN VIAL POLICY (2015)",
         "placement": "after",
         "aspectRatio": 1
       }
@@ -646,6 +666,16 @@
         "anchorText": "MOSQUITO VECTORS: COMPARATIVE CHARACTERISTICS",
         "placement": "after",
         "aspectRatio": 1
+      },
+      {
+        "id": "mosquito-lifecycle",
+        "fileName": "ch15_6_mosquito_lifecycle.png",
+        "alt": "Mosquito life cycle of egg, larva, pupa, and adult with resting posture differences of Anopheles, Culex, and Aedes",
+        "caption": "Mosquitoes have four stages: egg, larva, pupa, adult. Only the adult female bites. Anopheles eggs are laid singly with floats; larvae lie parallel to water; adults rest at an angle. Culex eggs are rafts; larvae hang at an angle; adults rest parallel to the surface. Aedes eggs are singly, not on water only; adults rest indoors, black and white.",
+        "purpose": "",
+        "anchorText": "MOSQUITO LIFECYCLE AND BIONOMICS",
+        "placement": "after",
+        "aspectRatio": 1
       }
     ]
   },
@@ -680,6 +710,16 @@
         "caption": "Disaster Triage Color Tags showing the four triage categories used in mass casualty incidents.",
         "purpose": "",
         "anchorText": "COLOR CODING SYSTEM FOR TRIAGE",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "disaster-cycle",
+        "fileName": "ch17_disaster_cycle.png",
+        "alt": "Disaster management cycle of mitigation, preparedness, response, and recovery",
+        "caption": "The disaster management cycle is a continuous loop: mitigation (reduce risk before the event), preparedness (plans, stocks, drills), response (search, rescue, relief, triage), and recovery (rehabilitation and reconstruction). Mitigation and preparedness happen before impact; response and recovery after.",
+        "purpose": "",
+        "anchorText": "THE DISASTER MANAGEMENT CYCLE",
         "placement": "after",
         "aspectRatio": 1
       }
@@ -1572,6 +1612,16 @@
         "anchorText": "SAFE strategy",
         "placement": "after",
         "aspectRatio": 1
+      },
+      {
+        "id": "fisto-trachoma",
+        "fileName": "ch5_11_fisto.png",
+        "alt": "WHO simplified trachoma grading FISTO: follicles, intense inflammation, scarring, trichiasis, corneal opacity",
+        "caption": "WHO simplified trachoma grading (FISTO): TF follicular trachoma, TI intense inflammatory trachoma, TS conjunctival scarring, TT trichiasis, CO corneal opacity. SAFE strategy (already a separate figure) treats the programme side; FISTO is the clinical grading.",
+        "purpose": "",
+        "anchorText": "WHO SIMPLIFIED TRACHOMA GRADING CLASSIFICATION (FISTO FRAMEWORK)",
+        "placement": "after",
+        "aspectRatio": 1
       }
     ]
   },
@@ -1626,6 +1676,16 @@
         "anchorText": "MEASLES (RUBEOLA)",
         "placement": "after",
         "aspectRatio": 1
+      },
+      {
+        "id": "smallpox-vs-chickenpox",
+        "fileName": "ch5_1_smallpox_vs_chickenpox.png",
+        "alt": "Side-by-side comparison of smallpox and chickenpox rash distribution, depth, and evolution",
+        "caption": "Smallpox rash is centrifugal, deep-seated, and all lesions are at the same stage; palms and soles are often involved. Chickenpox rash is centripetal, superficial, appears in crops, and lesions at different stages coexist; palms and soles are usually spared.",
+        "purpose": "",
+        "anchorText": "DIFFERENCES BETWEEN SMALLPOX AND CHICKENPOX",
+        "placement": "after",
+        "aspectRatio": 1
       }
     ]
   },
@@ -1642,6 +1702,26 @@
         "caption": "Polio clinical spectrum: 91 to 96 percent of infections are inapparent. About 4 to 8 percent are abortive minor illness. About 1 percent is non-paralytic (aseptic meningitis). Less than 1 percent is paralytic, with asymmetrical flaccid paralysis and no sensory loss.",
         "purpose": "",
         "anchorText": "POLIOMYELITIS",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "hepatitis-comparison",
+        "fileName": "ch5_3_hepatitis_comparison.png",
+        "alt": "Comparison of hepatitis A, B, C, D, and E by route, incubation, chronicity, and vaccine",
+        "caption": "Hepatitis A and E spread faecal-orally and do not become chronic; E is dangerous in pregnancy. Hepatitis B, C, and D spread parenterally; B and C can become chronic. D needs B. Vaccines exist for A and B (and therefore D). Incubation is shortest for A and E, longest for B.",
+        "purpose": "",
+        "anchorText": "VIRAL HEPATITIS",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "hep-b-natural-history",
+        "fileName": "ch5_3_hepb_natural_history.png",
+        "alt": "Natural history of hepatitis B from acute infection through chronic carriage to cirrhosis and hepatocellular carcinoma",
+        "caption": "Hepatitis B: after acute infection, most adults recover and become immune (anti-HBs). A minority become chronic HBsAg carriers; risk is highest if infection is acquired at birth. Chronic infection can progress to cirrhosis and hepatocellular carcinoma. Vaccine and birth-dose plus HBIG for exposed newborns prevent this path.",
+        "purpose": "",
+        "anchorText": "HEPATITIS B",
         "placement": "after",
         "aspectRatio": 1
       }
@@ -1672,6 +1752,16 @@
         "anchorText": "DENGUE SYNDROME",
         "placement": "after",
         "aspectRatio": 1
+      },
+      {
+        "id": "filaria-lifecycle",
+        "fileName": "ch5_5_filaria_lifecycle.png",
+        "alt": "Life cycle of Wuchereria bancrofti between human definitive host and Culex mosquito intermediate host",
+        "caption": "Lymphatic filariasis (Wuchereria bancrofti in India): humans are the definitive host; Culex quinquefasciatus is the intermediate host and vector. Microfilariae show nocturnal periodicity. The mosquito takes up microfilariae, which develop to infective larvae, then are deposited on skin during a later bite.",
+        "purpose": "",
+        "anchorText": "LYMPHATIC FILARIASIS",
+        "placement": "after",
+        "aspectRatio": 1
       }
     ]
   },
@@ -1690,6 +1780,16 @@
         "anchorText": "PATHOGENESIS",
         "placement": "after",
         "aspectRatio": 1
+      },
+      {
+        "id": "je-cycle",
+        "fileName": "ch5_6_je_cycle.png",
+        "alt": "Japanese encephalitis zoonotic cycle with ardeid birds, pigs as amplifiers, Culex tritaeniorhynchus, and humans as dead-end hosts",
+        "caption": "Japanese encephalitis: Culex tritaeniorhynchus (and related rice-field Culex) transmit JE virus. Ardeid birds are the natural reservoir. Pigs are amplifying hosts. Humans and horses are dead-end hosts; they do not infect mosquitoes. Incubation is about 5 to 15 days.",
+        "purpose": "",
+        "anchorText": "JAPANESE ENCEPHALITIS (JE)",
+        "placement": "after",
+        "aspectRatio": 1
       }
     ]
   },
@@ -1706,6 +1806,16 @@
         "caption": "Leprosy spectrum. Ridley-Jopling runs TT, BT, BB, BL, LL according to cell-mediated immunity. WHO control classes: paucibacillary (1 to 5 skin lesions, one nerve, smear negative) and multibacillary (6 or more lesions, more than one nerve, or any positive smear).",
         "purpose": "",
         "anchorText": "CLASSIFICATION OF LEPROSY",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "tetanus-wound-prophylaxis",
+        "fileName": "ch5_7_tetanus_wound.png",
+        "alt": "Tetanus wound prophylaxis combining wound care, tetanus toxoid, and TIG according to immunization status and wound type",
+        "caption": "After injury: clean the wound. Completely immunized people (3 or more TT doses, last dose within 5 years) need no booster for clean wounds; a booster if the last dose was more than 5 years ago for dirty wounds, or more than 10 years for clean wounds, depending on Park/NIS tables. Unimmunized or unknown status: TT plus TIG for dirty/tetanus-prone wounds. TIG is passive; TT is active.",
+        "purpose": "",
+        "anchorText": "PREVENTION OF TETANUS AFTER INJURY",
         "placement": "after",
         "aspectRatio": 1
       }
@@ -1826,6 +1936,16 @@
         "anchorText": "BRADFORD HILL CRITERIA FOR CAUSAL INFERENCE",
         "placement": "after",
         "aspectRatio": 1
+      },
+      {
+        "id": "rct-steps",
+        "fileName": "ch3_4_rct_steps.png",
+        "alt": "Six sequential steps of a randomized controlled trial from protocol through outcome assessment",
+        "caption": "RCT steps: (1) drawing up the protocol, (2) selecting reference and experimental populations, (3) randomization, (4) manipulation or intervention, (5) follow-up, (6) assessment of outcome. Randomization is the heart of the trial and balances known and unknown confounders.",
+        "purpose": "",
+        "anchorText": "STEPS OF A RANDOMIZED CONTROLLED TRIAL",
+        "placement": "after",
+        "aspectRatio": 1
       }
     ]
   },
@@ -1860,6 +1980,16 @@
         "caption": "Levels of health care. Primary care is first contact at Sub-centres (Ayushman Arogya Mandirs) and PHCs. Secondary care is first referral at CHCs and district hospitals. Tertiary care is superspecialty at medical colleges and regional institutes.",
         "purpose": "",
         "anchorText": "LEVELS OF HEALTH CARE",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "phc-elements",
+        "fileName": "ch10_1_phc_elements.png",
+        "alt": "Eight essential elements of primary health care from the Alma-Ata declaration plus four principles",
+        "caption": "Alma-Ata primary health care has eight essential elements: education, nutrition, safe water and sanitation, MCH including family planning, immunization, prevention and control of endemic diseases, treatment of common diseases and injuries, and essential drugs. Four principles: equitable distribution, community participation, intersectoral coordination, and appropriate technology.",
+        "purpose": "",
+        "anchorText": "ELEMENTS OF PRIMARY HEALTH CARE",
         "placement": "after",
         "aspectRatio": 1
       }
@@ -1916,6 +2046,16 @@
         "anchorText": "GROWTH CHART",
         "placement": "after",
         "aspectRatio": 1
+      },
+      {
+        "id": "kangaroo-mother-care",
+        "fileName": "ch9_4_kmc.png",
+        "alt": "Kangaroo mother care with prolonged skin-to-skin contact, exclusive breastfeeding, early discharge, and follow-up for LBW infants",
+        "caption": "Kangaroo mother care for low-birth-weight infants: prolonged skin-to-skin contact between baby and mother (or father), exclusive breastfeeding, early discharge with support, and close follow-up. It keeps the infant warm, supports feeding, and reduces infection and mortality.",
+        "purpose": "",
+        "anchorText": "PREVENTION OF LOW BIRTH WEIGHT",
+        "placement": "after",
+        "aspectRatio": 1
       }
     ]
   },
@@ -1952,6 +2092,36 @@
         "anchorText": "CLASSIFICATION OF MODES OF DISEASE TRANSMISSION",
         "placement": "after",
         "aspectRatio": 1
+      },
+      {
+        "id": "classification-of-carriers",
+        "fileName": "ch3_5_carriers.png",
+        "alt": "Classification of carriers by clinical phase, duration of shedding, and portal of exit",
+        "caption": "Carriers shed pathogen without current illness, or after it. By phase: incubatory, convalescent, healthy (asymptomatic). By duration: temporary versus chronic (for example Salmonella Typhi, hepatitis B). Chronic carriers keep disease endemic.",
+        "purpose": "",
+        "anchorText": "CLASSIFICATION OF CARRIERS",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "isolation-vs-quarantine",
+        "fileName": "ch3_5_isolation_quarantine.png",
+        "alt": "Isolation separates infected people during communicability; quarantine restricts healthy contacts during the longest incubation period",
+        "caption": "Isolation separates infected persons or animals during the period of communicability. Quarantine restricts healthy contacts of a case for the longest usual incubation period. Isolation is for the sick; quarantine is for the well who were exposed.",
+        "purpose": "",
+        "anchorText": "ISOLATION",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "herd-immunity",
+        "fileName": "ch3_5_herd_immunity.png",
+        "alt": "Herd immunity as group resistance that blocks chains of transmission once a threshold of immune people is reached",
+        "caption": "Herd immunity is the resistance of a group to invasion and spread of an infectious agent because a large proportion of members are immune. Transmission chains break when the immune fraction exceeds about 1 minus 1/R0. It protects remaining susceptibles, including people who cannot be vaccinated.",
+        "purpose": "",
+        "anchorText": "HOST DEFENCES AND IMMUNOLOGICAL RESPONSES",
+        "placement": "after",
+        "aspectRatio": 1
       }
     ]
   },
@@ -1968,6 +2138,190 @@
         "caption": "Natural history of tuberculosis: inhalation of droplet nuclei from a sputum-positive case leads to infection (tuberculin conversion in 3 to 6 weeks). About 90 percent of infected people contain the bacilli as latent infection. Five to 10 percent develop clinical disease in a lifetime. An untreated infectious pulmonary case can infect 10 to 15 people in a year. Effective treatment cuts infectivity by about 90 percent within 48 hours. HIV is the strongest risk factor for progression from infection to disease.",
         "purpose": "",
         "anchorText": "TUBERCULOSIS",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "imci-pneumonia",
+        "fileName": "ch5_2_imci_pneumonia.png",
+        "alt": "IMCI classification of cough or difficult breathing in children 2 months to 5 years by danger signs, chest indrawing, and fast breathing",
+        "caption": "IMCI (2 months to 5 years): cough or difficult breathing. Severe pneumonia or very severe disease: any general danger sign, chest indrawing, or stridor in a calm child. Pneumonia: fast breathing. No pneumonia: cough or cold. Fast breathing is 50 or more per minute at 2 to 12 months, and 40 or more at 12 months to 5 years.",
+        "purpose": "",
+        "anchorText": "CLINICAL ASSESSMENT (IMCI GUIDELINES)",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "influenza-shift-drift",
+        "fileName": "ch5_2_influenza_shift_drift.png",
+        "alt": "Antigenic shift as major reassortment causing pandemics versus antigenic drift as gradual mutation causing seasonal epidemics",
+        "caption": "Influenza A surface antigens are haemagglutinin and neuraminidase. Antigenic drift is gradual point mutation and causes seasonal epidemics. Antigenic shift is sudden reassortment of gene segments, can create a novel subtype, and causes pandemics (1918, 1957, 1968). Only influenza A undergoes shift.",
+        "purpose": "",
+        "anchorText": "AGENT FACTORS",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:6-2",
+    "section": "theory",
+    "topicId": "6-2",
+    "topicTitle": "Diabetes Mellitus, Obesity, Physical Activity, and WHO STEPS",
+    "images": [
+      {
+        "id": "who-steps",
+        "fileName": "ch6_2_who_steps.png",
+        "alt": "WHO STEPS NCD risk-factor surveillance with questionnaire, physical measurements, and biochemistry",
+        "caption": "WHO STEPS is stepwise NCD risk-factor surveillance. Step 1 is a questionnaire (tobacco, alcohol, diet, physical activity, history). Step 2 is physical measurements (blood pressure, height, weight, waist). Step 3 is biochemistry (fasting glucose, lipids, optional urine). Each country can stop after the step it can afford, but all three give a full risk profile.",
+        "purpose": "",
+        "anchorText": "WHO STEPwise APPROACH TO NCD RISK FACTOR SURVEILLANCE (STEPS)",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:6-3",
+    "section": "theory",
+    "topicId": "6-3",
+    "topicTitle": "Cancers: Epidemiology, Downstaging, and Cervical Cancer Elimination",
+    "images": [
+      {
+        "id": "cancer-downstaging",
+        "fileName": "ch6_3_cancer_downstaging.png",
+        "alt": "Cancer downstaging as detection at an earlier clinical stage through awareness and simple screening, illustrated with cervical cancer",
+        "caption": "Downstaging of cancer means finding the disease at an earlier clinical stage, when treatment works better. It uses awareness of early signs plus simple tests (for cervix: VIA/VILI or HPV testing and cytology). It is not the same as preventing the first cancer cell; it shifts stage at diagnosis downward.",
+        "purpose": "",
+        "anchorText": "DOWNSTAGING OF CANCERS",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:8-4",
+    "section": "theory",
+    "topicId": "8-4",
+    "topicTitle": "Contraceptive Methods Part 1: Spacing Methods and Intra-Uterine Devices",
+    "images": [
+      {
+        "id": "contraceptive-classification",
+        "fileName": "ch8_4_contraceptive_classes.png",
+        "alt": "Classification of contraceptive methods into spacing and terminal methods with major spacing subgroups",
+        "caption": "Contraceptive methods: spacing (barrier, IUDs, hormonal, natural/traditional) and terminal (male and female sterilization). Spacing methods are reversible. Terminal methods are intended to be permanent. Cafeteria choice means the couple picks from the available range.",
+        "purpose": "",
+        "anchorText": "CLASSIFICATION OF CONTRACEPTIVE METHODS",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "iud-mechanism",
+        "fileName": "ch8_4_iud_mechanism.png",
+        "alt": "Copper IUD mechanism: sterile inflammatory reaction in the uterus that is spermicidal and impairs implantation",
+        "caption": "Copper IUDs (for example CuT 380A) act mainly before fertilization: copper ions and a sterile uterine inflammatory reaction are spermicidal and impair sperm and ovum. They also make the endometrium hostile to implantation. They do not work as abortifacients in the clinical sense used in Park. CuT 380A is approved for 10 years.",
+        "purpose": "",
+        "anchorText": "MECHANISM OF ACTION OF IUDs",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:9-2",
+    "section": "theory",
+    "topicId": "9-2",
+    "topicTitle": "Breastfeeding, Baby Friendly Hospital Initiative, and Artificial Feeding",
+    "images": [
+      {
+        "id": "bfhi-ten-steps",
+        "fileName": "ch9_2_bfhi_ten_steps.png",
+        "alt": "Ten Steps to Successful Breastfeeding of the Baby Friendly Hospital Initiative",
+        "caption": "Baby Friendly Hospital Initiative uses the Ten Steps to Successful Breastfeeding: written policy, staff training, antenatal information, early skin-to-skin and initiation, show mothers how, no food or drink other than breast milk unless indicated, rooming-in, cue-based feeding, no teats or pacifiers, and discharge support including community groups.",
+        "purpose": "",
+        "anchorText": "TEN STEPS TO SUCCESSFUL BREASTFEEDING",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:5-4",
+    "section": "theory",
+    "topicId": "5-4",
+    "topicTitle": "Intestinal Infections - Part B (Acute Diarrhoeal Diseases, Cholera, Typhoid Fever, Food Poisoning, Amoebiasis, Helminthiasis)",
+    "images": [
+      {
+        "id": "typhoid-pathogenesis",
+        "fileName": "ch5_4_typhoid_pathogenesis.png",
+        "alt": "Typhoid pathogenesis from faecal-oral ingestion through Peyer patches to bacteraemia and chronic gallbladder carriage",
+        "caption": "Typhoid (Salmonella Typhi): faecal-oral ingestion, invasion of Peyer patches, then bacteraemia (step-ladder fever, relative bradycardia). Complications include haemorrhage and perforation in the third week. A chronic carrier state, often gallbladder, can persist. Incubation is usually 10 to 14 days.",
+        "purpose": "",
+        "anchorText": "TYPHOID FEVER",
+        "placement": "after",
+        "aspectRatio": 1
+      },
+      {
+        "id": "cholera-ors",
+        "fileName": "ch5_4_cholera_ors.png",
+        "alt": "Cholera rice-water stools and WHO dehydration treatment plans A, B, and C",
+        "caption": "Cholera (Vibrio cholerae O1/O139) causes painless rice-water stools and rapid dehydration. WHO Plan A is home ORS for no dehydration, Plan B is ORS on-site for some dehydration, Plan C is IV Ringer lactate for severe dehydration. Zinc in children. Prevention: safe water, sanitation, and vaccination in outbreaks.",
+        "purpose": "",
+        "anchorText": "CARRIERS IN CHOLERA",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:5-10",
+    "section": "theory",
+    "topicId": "5-10",
+    "topicTitle": "Plague, Leptospirosis, Kyasanur Forest Disease, and Nipah",
+    "images": [
+      {
+        "id": "plague-cycle",
+        "fileName": "ch5_10_plague_cycle.png",
+        "alt": "Plague cycle of Yersinia pestis with rodent reservoir, Xenopsylla cheopis flea, and proventricular blockage, not salivary transmission",
+        "caption": "Plague (Yersinia pestis): wild and commensal rodents are the reservoir. The classic vector is the rat flea Xenopsylla cheopis. After a blood meal, bacilli block the proventriculus; the starving flea regurgitates bacilli into the next bite. This is not salivary-gland transmission. Urban cycle: Rattus rattus / R. norvegicus to flea to humans.",
+        "purpose": "",
+        "anchorText": "PLAGUE",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:6-5",
+    "section": "theory",
+    "topicId": "6-5",
+    "topicTitle": "Blindness, Deafness, Disability Rights, and Pesticide Genetic Effects",
+    "images": [
+      {
+        "id": "blindness-definitions",
+        "fileName": "ch6_5_blindness_definitions.png",
+        "alt": "WHO versus NPCB definitions of blindness by presenting visual acuity",
+        "caption": "WHO blindness is presenting visual acuity worse than 3/60 in the better eye. NPCB (India) uses worse than 6/60 in the better eye for programme blindness. Low vision sits between 6/18 and the blindness cut-off. Cataract is the leading avoidable cause in India.",
+        "purpose": "",
+        "anchorText": "BLINDNESS AND VISUAL IMPAIRMENT",
+        "placement": "after",
+        "aspectRatio": 1
+      }
+    ]
+  },
+  {
+    "contentKey": "theory:9-5",
+    "section": "theory",
+    "topicId": "9-5",
+    "topicTitle": "Mortality Indicators: Maternal, Perinatal, Neonatal, Infant, and Child Mortality",
+    "images": [
+      {
+        "id": "mdsr-cycle",
+        "fileName": "ch9_5_mdsr_cycle.png",
+        "alt": "Maternal death surveillance and response cycle from identification through response and monitoring",
+        "caption": "Maternal Death Surveillance and Response (MDSR) is a continuous cycle: identify and notify every maternal death, review the medical and social causes, analyse findings, respond with actions that prevent similar deaths, and monitor that the actions happened. It is surveillance for action, not a blame exercise.",
+        "purpose": "",
+        "anchorText": "THE MDSR CYCLE",
         "placement": "after",
         "aspectRatio": 1
       }

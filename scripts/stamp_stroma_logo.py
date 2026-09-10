@@ -34,6 +34,14 @@ def stamp(src: Path, dest: Path, logo: Image.Image) -> None:
     sq = to_square(im)
     x = sq.width - LOGO_SIZE - MARGIN
     y = MARGIN
+    # White pad so the logo never sits on title letters.
+    pad = 8
+    wipe = Image.new(
+        "RGB",
+        (LOGO_SIZE + pad * 2, LOGO_SIZE + pad * 2),
+        (255, 255, 255),
+    )
+    sq.paste(wipe, (x - pad, y - pad))
     sq.paste(logo, (x, y), logo if logo.mode == "RGBA" else None)
     dest.parent.mkdir(parents=True, exist_ok=True)
     sq.save(dest, "PNG", optimize=True)
