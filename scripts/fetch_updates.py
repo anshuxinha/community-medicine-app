@@ -524,6 +524,61 @@ def extractive_summary(article: Dict[str, Any], title_hint: str, today_date: str
     }
 
 
+PIB_LISTING_URLS = [
+    "https://www.pib.gov.in/allrelease.aspx?reg=3&lang=1",
+    "https://www.pib.gov.in/allRel.aspx?reg=3&lang=1",
+]
+PIB_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Referer": "https://www.pib.gov.in/indexd.aspx",
+}
+MOHFW_KEYWORDS = ["Health and Family Welfare", "स्वास्थ्य", "परिवार कल्याण"]
+MOHFW_FALLBACK_ID = "31"  # Known stable value on pib.gov.in
+PIB_GET_TIMEOUT = 30
+PIB_POST_TIMEOUT = 30
+
+
+def _prid_canonical_link(href: str) -> Optional[str]:
+    if not href or "PRID=" not in href:
+        return None
+    prid = href.split("PRID=")[-1].split("&")[0].strip()
+    if not prid:
+        return None
+    return f"https://pib.gov.in/PressReleasePage.aspx?PRID={prid}"
+
+
+def _is_mohfw_heading(text: str) -> bool:
+    return any(kw in (text or "") for kw in MOHFW_KEYWORDS)
+
+
+def extract_mohfw_feed_items(soup: Any) -> List[Dict[str, Any]]:
+    """MoHFW press releases from the all-releases page (h3 section, then sibling <li>s)."""
+    heading = None
+    for h3 in soup.find_all("h3"):
+        title = " ".join(h3.get_text(" ", strip=True).split())
+        if _is_mohfw_heading(title):
+            heading = h3
+            break
+    items: List[Dict[str, Any]] = []
+    seen: Set[str] = set()
+    if heading is None:
+        return items
+    for sib in heading.next_siblings:
+        if getattr(sib, "name", None) == "h3":
+            break
+        anchors = sib.find_all("a") if getattr(sib, "find_all", None) else []
+        for a in anchors:
+            text = a.get_text(" ", strip=True)
+            link = _prid_canonical_link(a.get("href", ""))
+            if not text or not link or link in seen:
+                continue
+            seen.add(link)
+            items.append({"id": len(items), "title": text, "link": link})
+    return items
+
+
 def load_local_update_files() -> Tuple[List[Dict[str, Any]], Dict[str, List[Dict[str, Any]]]]:
     existing_updates: List[Dict[str, Any]] = []
     if UPDATES_PATH.exists():
@@ -551,12 +606,11 @@ def fetch_health_updates(*, publish: bool = True, notify: bool = True):
         raise ImportError("requests is required to scrape PIB updates")
     from bs4 import BeautifulSoup  # type: ignore
 
-    # Force English (lang=1) and Delhi region (reg=3) to get consistent results
-    url = "https://www.pib.gov.in/allRel.aspx?reg=3&lang=1"
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "Referer": "https://www.pib.gov.in/indexd.aspx"
-    }
+    # Force English (lang=1) and Delhi region (reg=3) to get consistent results.
+    # Prefer allrelease.aspx GET: it already groups releases by ministry. POST to
+    # allRel.aspx 404s from GitHub Actions (PIB WAF), which failed the 2026-09-10 run.
+    url = PIB_LISTING_URLS[0]
+    headers = PIB_HEADERS
     
     output_dir = str(DATA_DIR)
     output_path = str(UPDATES_PATH)
@@ -621,95 +675,120 @@ def fetch_health_updates(*, publish: bool = True, notify: bool = True):
     try:
         session = requests.Session()
         
-        print("Fetching initial ViewState tokens from PIB...")
-        # Step 1: GET the English page to grab ASP.NET viewstates and dynamic names
-        response = session.get(url, headers=headers, timeout=15)
-        response.raise_for_status()
-        soup = BeautifulSoup(response.text, 'html.parser')
+        soup = None
+        last_get_error: Optional[BaseException] = None
+        for candidate in PIB_LISTING_URLS:
+            print(f"Fetching PIB listing: {candidate}")
+            try:
+                response = session.get(candidate, headers=headers, timeout=PIB_GET_TIMEOUT)
+                response.raise_for_status()
+                url = candidate
+                soup = BeautifulSoup(response.text, "html.parser")
+                last_get_error = None
+                break
+            except requests.RequestException as exc:
+                last_get_error = exc
+                print(f"PIB listing GET failed ({candidate}): {exc}")
+        if soup is None:
+            raise requests.exceptions.RequestException(
+                last_get_error or "PIB listing GET failed on all URLs"
+            )
 
-        viewstate = soup.find("input", {"id": "__VIEWSTATE"})
-        viewstate_val = viewstate["value"] if viewstate else ""
-        
-        viewstategenerator = soup.find("input", {"id": "__VIEWSTATEGENERATOR"})
-        viewstategen_val = viewstategenerator["value"] if viewstategenerator else ""
-        
-        eventvalidation = soup.find("input", {"id": "__EVENTVALIDATION"})
-        eventvalidation_val = eventvalidation["value"] if eventvalidation else ""
-
-        # Dynamically find the dropdown names
-        min_dropdown = soup.find("select", id=re.compile(r".*ddlMinistry.*", re.IGNORECASE))
-        min_name = min_dropdown.get("name") if min_dropdown else "ctl00$ContentPlaceHolder1$ddlMinistry"
-        
-        day_dropdown = soup.find("select", id=re.compile(r".*ddlday.*", re.IGNORECASE))
-        day_name = day_dropdown.get("name") if day_dropdown else "ctl00$ContentPlaceHolder1$ddlday"
-        
-        month_dropdown = soup.find("select", id=re.compile(r".*ddlMonth.*", re.IGNORECASE))
-        month_name = month_dropdown.get("name") if month_dropdown else "ctl00$ContentPlaceHolder1$ddlMonth"
-        
-        year_dropdown = soup.find("select", id=re.compile(r".*ddlYear.*", re.IGNORECASE))
-        year_name = year_dropdown.get("name") if year_dropdown else "ctl00$ContentPlaceHolder1$ddlYear"
-
-        # Find the specific ID for Ministry of Health and Family Welfare
-        # The page may load in Hindi by default, so check both languages.
-        MOHFW_KEYWORDS = ["Health and Family Welfare", "स्वास्थ्य", "परिवार कल्याण"]
-        MOHFW_FALLBACK_ID = "31"  # Known stable value on pib.gov.in
-
-        mohfw_id = "0"
-        if min_dropdown:
-            for option in min_dropdown.find_all("option"):
-                if any(kw in option.text for kw in MOHFW_KEYWORDS):
-                    mohfw_id = option["value"]
-                    break
-
-        if mohfw_id == "0":
-            print(f"MoHFW not found in dropdown; using fallback ID {MOHFW_FALLBACK_ID}")
-            mohfw_id = MOHFW_FALLBACK_ID
-
-        # Use current dates (now/current_year already set above)
         current_month = override_month if override_month else str(now.month)
         current_year_to_fetch = override_year if override_year else current_year
         current_day = override_day
+        need_date_post = bool(
+            override_month or override_year or (override_day not in ("", "0", None))
+        )
 
-        print(f"Querying MoHFW (ID: {mohfw_id}) updates for Day: {current_day}, Month: {current_month}, Year: {current_year_to_fetch}...")
-        # Step 2: POST request to filter by MoHFW and current month
-        payload = {
-            "__EVENTTARGET": min_name,
-            "__EVENTARGUMENT": "",
-            "__VIEWSTATE": viewstate_val,
-            "__VIEWSTATEGENERATOR": viewstategen_val,
-            "__EVENTVALIDATION": eventvalidation_val,
-            "__VIEWSTATEENCRYPTED": "",
-            min_name: mohfw_id,
-            day_name: current_day,
-            month_name: current_month,
-            year_name: current_year_to_fetch,
-            # Hidden region/language state fields required by PIB ASP.NET form
-            "ctl00$ContentPlaceHolder1$hydregionid": "3",   # Delhi
-            "ctl00$ContentPlaceHolder1$hydLangid": "1",     # English
-        }
+        feed_items = extract_mohfw_feed_items(soup)
+        if feed_items:
+            print(f"Parsed {len(feed_items)} MoHFW release(s) from listing GET.")
+        else:
+            print("MoHFW section missing on GET page.")
 
-        post_response = session.post(url, data=payload, headers=headers, timeout=15)
-        post_response.raise_for_status()
-        post_soup = BeautifulSoup(post_response.text, 'html.parser')
-        
-        feed_items: List[Dict[str, Any]] = []
-        for a in post_soup.find_all('a'):
-            href = a.get('href', '')
-            text = a.text.strip()
-            if text and 'PRID=' in href:
-                prid = href.split('PRID=')[-1].split('&')[0]
-                link = f"https://pib.gov.in/PressReleasePage.aspx?PRID={prid}"
-                
-                # Skip links already present in the dashboard
-                if link in existing_links:
-                    continue
-                
-                if not any(i['link'] == link for i in feed_items):
-                    feed_items.append({"id": len(feed_items), "title": text, "link": link})
-                    
-        # Only take top 50 to avoid passing too much text
-        feed_items = feed_items[:50]  # type: ignore
-        
+        if need_date_post or not feed_items:
+            viewstate = soup.find("input", {"id": "__VIEWSTATE"})
+            viewstate_val = viewstate["value"] if viewstate else ""
+            viewstategenerator = soup.find("input", {"id": "__VIEWSTATEGENERATOR"})
+            viewstategen_val = viewstategenerator["value"] if viewstategenerator else ""
+            eventvalidation = soup.find("input", {"id": "__EVENTVALIDATION"})
+            eventvalidation_val = eventvalidation["value"] if eventvalidation else ""
+
+            min_dropdown = soup.find("select", id=re.compile(r".*ddlMinistry.*", re.IGNORECASE))
+            min_name = min_dropdown.get("name") if min_dropdown else "ctl00$ContentPlaceHolder1$ddlMinistry"
+            day_dropdown = soup.find("select", id=re.compile(r".*ddlday.*", re.IGNORECASE))
+            day_name = day_dropdown.get("name") if day_dropdown else "ctl00$ContentPlaceHolder1$ddlday"
+            month_dropdown = soup.find("select", id=re.compile(r".*ddlMonth.*", re.IGNORECASE))
+            month_name = month_dropdown.get("name") if month_dropdown else "ctl00$ContentPlaceHolder1$ddlMonth"
+            year_dropdown = soup.find("select", id=re.compile(r".*ddlYear.*", re.IGNORECASE))
+            year_name = year_dropdown.get("name") if year_dropdown else "ctl00$ContentPlaceHolder1$ddlYear"
+
+            mohfw_id = "0"
+            if min_dropdown:
+                for option in min_dropdown.find_all("option"):
+                    if any(kw in option.text for kw in MOHFW_KEYWORDS):
+                        mohfw_id = option["value"]
+                        break
+            if mohfw_id == "0":
+                print(f"MoHFW not found in dropdown; using fallback ID {MOHFW_FALLBACK_ID}")
+                mohfw_id = MOHFW_FALLBACK_ID
+
+            print(
+                f"Querying MoHFW (ID: {mohfw_id}) via POST for Day: {current_day}, "
+                f"Month: {current_month}, Year: {current_year_to_fetch}..."
+            )
+            payload = {
+                "__EVENTTARGET": min_name,
+                "__EVENTARGUMENT": "",
+                "__VIEWSTATE": viewstate_val,
+                "__VIEWSTATEGENERATOR": viewstategen_val,
+                "__EVENTVALIDATION": eventvalidation_val,
+                "__VIEWSTATEENCRYPTED": "",
+                min_name: mohfw_id,
+                day_name: current_day,
+                month_name: current_month,
+                year_name: current_year_to_fetch,
+                "ctl00$ContentPlaceHolder1$hydregionid": "3",
+                "ctl00$ContentPlaceHolder1$hydLangid": "1",
+            }
+            try:
+                post_response = session.post(
+                    url, data=payload, headers=headers, timeout=PIB_POST_TIMEOUT
+                )
+                post_response.raise_for_status()
+                post_soup = BeautifulSoup(post_response.text, "html.parser")
+                posted_items = extract_mohfw_feed_items(post_soup)
+                if not posted_items:
+                    for a in post_soup.find_all("a"):
+                        href = a.get("href", "")
+                        text = a.get_text(" ", strip=True)
+                        link = _prid_canonical_link(href)
+                        if not text or not link:
+                            continue
+                        if any(i["link"] == link for i in posted_items):
+                            continue
+                        posted_items.append(
+                            {"id": len(posted_items), "title": text, "link": link}
+                        )
+                if posted_items:
+                    feed_items = posted_items
+            except requests.RequestException as exc:
+                print(f"PIB ministry POST failed: {exc}")
+                if not feed_items:
+                    raise
+
+        new_items: List[Dict[str, Any]] = []
+        for item in feed_items:
+            if item["link"] in existing_links:
+                continue
+            if any(i["link"] == item["link"] for i in new_items):
+                continue
+            new_items.append(
+                {"id": len(new_items), "title": item["title"], "link": item["link"]}
+            )
+        feed_items = new_items[:50]
+
         if not feed_items:
             raise SkipPIB("No new links found on PIB page for MoHFW this month.")
 
