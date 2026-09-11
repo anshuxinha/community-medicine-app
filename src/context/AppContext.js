@@ -74,6 +74,12 @@ import {
   resolveOnboardingCompleted,
 } from "../utils/onboardingStorage";
 import {
+  getLocalLearningProfile,
+  setLocalLearningProfile,
+  resolveLearningProfile,
+  learningProfileNeedsCloudBackfill,
+} from "../utils/learningProfileStorage";
+import {
   CLOUD_LEARNING_SAVE_DEBOUNCE_MS,
   createDebouncedTask,
 } from "../utils/debouncedTask";
@@ -762,6 +768,7 @@ export const AppProvider = ({ children }) => {
           // LoginScreen still sees user === undefined until checks finish.
           let cachedAccountRaw = null;
           let cachedUsername = null;
+          let cachedUserSnapshot = null;
           if (isInitialLoad) {
             try {
               // Apply last-known library overrides BEFORE progress paint so
@@ -782,6 +789,7 @@ export const AppProvider = ({ children }) => {
               if (cachedUserStr) {
                 const cachedUser = JSON.parse(cachedUserStr);
                 if (cachedUser?.uid === firebaseUser.uid) {
+                  cachedUserSnapshot = cachedUser;
                   cachedUsername = cachedUser.username || null;
                   // Merge accountState + individual keys so a partial prior
                   // save cannot paint one-read-behind progress.
@@ -898,6 +906,23 @@ export const AppProvider = ({ children }) => {
               }
             }
 
+            const dedicatedProfile = await getLocalLearningProfile(
+              firebaseUser.uid,
+            );
+            const learningProfile = resolveLearningProfile(
+              data,
+              dedicatedProfile,
+              cachedUserSnapshot,
+            );
+            if (learningProfileNeedsCloudBackfill(data, learningProfile)) {
+              void setDoc(
+                doc(db, "users", firebaseUser.uid),
+                learningProfile,
+                { merge: true },
+              ).catch(() => {});
+            }
+            void setLocalLearningProfile(firebaseUser.uid, learningProfile);
+
             const userData = {
               uid: firebaseUser.uid,
               email: firebaseUser.email,
@@ -908,14 +933,7 @@ export const AppProvider = ({ children }) => {
               referralCode,
               premiumType: fetchedPremiumType,
               onboardingCompleted,
-              learnerRole: data.learnerRole || null,
-              trainingYear:
-                typeof data.trainingYear === "number" ? data.trainingYear : null,
-              preferredPaperFocus: data.preferredPaperFocus || "all",
-              residentMode:
-                typeof data.residentMode === "boolean"
-                  ? data.residentMode
-                  : undefined,
+              ...learningProfile,
             };
 
             try {
@@ -1016,34 +1034,16 @@ export const AppProvider = ({ children }) => {
                 null,
               ));
 
-            let cachedLearningProfile = {};
-            try {
-              const cachedUserStr = await AsyncStorage.getItem("user");
-              if (cachedUserStr) {
-                const cachedUser = JSON.parse(cachedUserStr);
-                if (cachedUser?.uid === firebaseUser.uid) {
-                  const localOnboardingDone = await getLocalOnboardingCompleted(
-                    firebaseUser.uid,
-                  );
-                  cachedLearningProfile = {
-                    onboardingCompleted: resolveOnboardingCompleted(
-                      cachedUser.onboardingCompleted,
-                      localOnboardingDone,
-                    ),
-                    learnerRole: cachedUser.learnerRole || null,
-                    trainingYear:
-                      typeof cachedUser.trainingYear === "number"
-                        ? cachedUser.trainingYear
-                        : null,
-                    preferredPaperFocus: cachedUser.preferredPaperFocus || "all",
-                    residentMode:
-                      typeof cachedUser.residentMode === "boolean"
-                        ? cachedUser.residentMode
-                        : undefined,
-                  };
-                }
-              }
-            } catch (_) {}
+            const dedicatedProfile = await getLocalLearningProfile(
+              firebaseUser.uid,
+            );
+            const learningProfile = resolveLearningProfile(
+              dedicatedProfile,
+              cachedUserSnapshot,
+            );
+            const localOnboardingDone = await getLocalOnboardingCompleted(
+              firebaseUser.uid,
+            );
 
             const userData = {
               uid: firebaseUser.uid,
@@ -1053,13 +1053,18 @@ export const AppProvider = ({ children }) => {
               isAdmin: claimsAdmin,
               pushToken: null,
               referralCode,
-              ...cachedLearningProfile,
+              onboardingCompleted: resolveOnboardingCompleted(
+                cachedUserSnapshot?.onboardingCompleted,
+                localOnboardingDone,
+              ),
+              ...learningProfile,
             };
 
             setUser(userData);
             setAccountPremium(Boolean(claimsPremium));
             cloudHydratedRef.current = true;
             void AsyncStorage.setItem("user", JSON.stringify(userData));
+            void setLocalLearningProfile(firebaseUser.uid, learningProfile);
             void ensureRestoreKey(userData);
           }
         } else {
@@ -2115,6 +2120,7 @@ export const AppProvider = ({ children }) => {
     try {
       await AsyncStorage.setItem("user", JSON.stringify(mergedLocal));
     } catch (_) {}
+    await setLocalLearningProfile(user.uid, next);
 
     if (next.onboardingCompleted === true) {
       await setLocalOnboardingCompleted(user.uid);
@@ -2143,6 +2149,7 @@ export const AppProvider = ({ children }) => {
     try {
       await AsyncStorage.setItem("user", JSON.stringify(mergedLocal));
     } catch (_) {}
+    await setLocalLearningProfile(user.uid, mergedLocal);
     try {
       await setDoc(doc(db, "users", user.uid), next, { merge: true });
     } catch (err) {

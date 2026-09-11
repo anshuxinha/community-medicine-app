@@ -131,7 +131,7 @@ const UpdateDetailDialog = ({ visible, update, onDismiss }) => {
                 <View style={styles.shareFooterTextCol}>
                   <Text style={styles.shareAppName}>STROMA</Text>
                   <Text style={styles.shareAppTagline}>
-                    Community Medicine Learning App
+                    Community Medicine · Simplified
                   </Text>
                 </View>
               </View>

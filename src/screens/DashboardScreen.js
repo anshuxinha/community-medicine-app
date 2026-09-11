@@ -6,7 +6,6 @@ import {
   Platform,
   TouchableOpacity,
   Animated,
-  InteractionManager,
 } from "react-native";
 import {
   Text,
@@ -55,11 +54,13 @@ const GuidelinesFeedSkeleton = () => {
           toValue: 1,
           duration: 750,
           useNativeDriver: true,
+          isInteraction: false,
         }),
         Animated.timing(pulse, {
           toValue: 0.45,
           duration: 750,
           useNativeDriver: true,
+          isInteraction: false,
         }),
       ]),
     );
@@ -110,13 +111,14 @@ const DashboardScreen = ({ navigation, route }) => {
   const { isTablet, horizontalPadding, scaleFactor, contentMaxWidth } =
     useResponsive();
 
-  // Refresh after first paint so mount does not contend with Dashboard render.
+  // Defer one tick so first paint is not blocked. Do not wait on
+  // InteractionManager: the guidelines skeleton loop would hold it.
   useEffect(() => {
     if (!refreshFromCloud) return;
-    const handle = InteractionManager.runAfterInteractions(() => {
+    const timer = setTimeout(() => {
       refreshFromCloud();
-    });
-    return () => handle.cancel();
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -146,7 +148,9 @@ const DashboardScreen = ({ navigation, route }) => {
           progressAnim.setValue(current);
           setDisplayedProgressPercent(progressToPercent(current));
           setProgressDeltaPercent(0);
-          await setLastSeenReadingProgress(current);
+          if (current > 0) {
+            await setLastSeenReadingProgress(current);
+          }
           return;
         }
 
@@ -172,6 +176,7 @@ const DashboardScreen = ({ navigation, route }) => {
           toValue: current,
           duration: 800,
           useNativeDriver: false,
+          isInteraction: false,
         });
         animRef.start(async ({ finished }) => {
           if (cancelled || !finished) return;

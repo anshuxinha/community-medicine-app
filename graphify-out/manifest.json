@@ -1,6 +1,6 @@
 {
   "D:\\The App\\App.js": {
-    "mtime": 1789122207.4968214,
+    "mtime": 1789122917.110955,
     "hash": "0084a851b644ac1d97c995c6988a86b9"
   },
   "D:\\The App\\ast_extract.py": {
@@ -960,8 +960,8 @@
     "hash": "55e5963fe3e00f018052e9deb1adfaf2"
   },
   "D:\\The App\\src\\components\\AppUpdatedToast.js": {
-    "mtime": 1789122015.326945,
-    "hash": "ec548a45664707e1a3d19f674f5cc774"
+    "mtime": 1789122917.169255,
+    "hash": "21e81659ac0008c0f90fac3a842763fe"
   },
   "D:\\The App\\src\\components\\ChapterCompleteSheet.js": {
     "mtime": 1786816818.3749356,
@@ -1008,8 +1008,8 @@
     "hash": "662fce19336799e8d6aa1b058f4d68db"
   },
   "D:\\The App\\src\\components\\UpdateDetailDialog.js": {
-    "mtime": 1789122073.6015518,
-    "hash": "0dcbcdfde19d9af221ae6eeace77e141"
+    "mtime": 1789125897.5902648,
+    "hash": "e009800c7a817b7fbb4c1b9b76edacf6"
   },
   "D:\\The App\\src\\components\\VideoRequestModal.js": {
     "mtime": 1786805849.00881,
@@ -1036,8 +1036,8 @@
     "hash": "28aff4aa2aa407d8be48e8aed5bb252a"
   },
   "D:\\The App\\src\\context\\AppContext.js": {
-    "mtime": 1788768074.9418468,
-    "hash": "c941c375962f6cb30de415d52dd21b67"
+    "mtime": 1789125961.0163853,
+    "hash": "e25754cab8ce95995d86a5468381575d"
   },
   "D:\\The App\\src\\data\\defaultTopicIllustrations.js": {
     "mtime": 1786881885.1823778,
@@ -1080,8 +1080,8 @@
     "hash": "bc326cfd6adbba22f561d679d579d1d0"
   },
   "D:\\The App\\src\\hooks\\useUpdatesFeed.js": {
-    "mtime": 1789122073.5436268,
-    "hash": "6542e61bf8091bf4e513005f3d2e541b"
+    "mtime": 1789122917.1731577,
+    "hash": "062f4229619b868c31734bb27992ec99"
   },
   "D:\\The App\\src\\hooks\\__tests__\\useSessionEnforcer.test.js": {
     "mtime": 1788768074.944604,
@@ -1112,12 +1112,12 @@
     "hash": "f1e7ade8058d26abf467d904414ca50b"
   },
   "D:\\The App\\src\\screens\\DashboardScreen.js": {
-    "mtime": 1789122551.0093906,
-    "hash": "419e112381ace3ada548987e4b17bf38"
+    "mtime": 1789125960.972159,
+    "hash": "e450a5eada5b49d4fb2300d82f788930"
   },
   "D:\\The App\\src\\screens\\DietarySurveyScreen.js": {
-    "mtime": 1789122731.8446708,
-    "hash": "1dbf26c2706d577bf1c19454a0e55615"
+    "mtime": 1789122917.1791646,
+    "hash": "56decf2e75c7f8cee4b40c84caebde13"
   },
   "D:\\The App\\src\\screens\\FieldToolboxScreen.js": {
     "mtime": 1788635272.1587248,
@@ -1236,7 +1236,7 @@
     "hash": "2e97f9fae198d3f94ab87018343b085b"
   },
   "D:\\The App\\src\\services\\notificationService.js": {
-    "mtime": 1789122550.9402056,
+    "mtime": 1789122917.1801624,
     "hash": "19ebf8d797857402558a6ae0940b8b96"
   },
   "D:\\The App\\src\\services\\restoreCredentials.js": {
@@ -1248,8 +1248,8 @@
     "hash": "e923139fd1233f91118093974fe16aa2"
   },
   "D:\\The App\\src\\services\\updatesService.js": {
-    "mtime": 1789122551.0161552,
-    "hash": "a422febf3c318d484ba6a5d4f25e9e35"
+    "mtime": 1789122917.1834311,
+    "hash": "452515bb6785c13c651b3586df9cd7b3"
   },
   "D:\\The App\\src\\services\\videoLoadErrors.js": {
     "mtime": 1786639031.7185729,
@@ -1315,6 +1315,10 @@
     "mtime": 1785306331.1362023,
     "hash": "239648fbbaef3026562ee16324fea4c2"
   },
+  "D:\\The App\\src\\utils\\learningProfileStorage.js": {
+    "mtime": 1789125839.0471985,
+    "hash": "c9b4e9102ee67904b10ab7b3de784873"
+  },
   "D:\\The App\\src\\utils\\learningProgress.js": {
     "mtime": 1785993203.9006617,
     "hash": "ba56499826ddddda28d3b85d22f7b9d0"
@@ -1344,8 +1348,8 @@
     "hash": "5d565782124990413b9517a6cb27f828"
   },
   "D:\\The App\\src\\utils\\otaUpdates.js": {
-    "mtime": 1789122265.6126297,
-    "hash": "ad3ecb198b745aead2e414acede2e4ec"
+    "mtime": 1789122917.1860843,
+    "hash": "73c781187cd699c63a8cb5558792e951"
   },
   "D:\\The App\\src\\utils\\progressPresentation.js": {
     "mtime": 1784650210.305622,
@@ -1407,6 +1411,10 @@
     "mtime": 1787946994.8590744,
     "hash": "70fd2b823b2d044b1328ed3a027323b1"
   },
+  "D:\\The App\\src\\utils\\__tests__\\learningProfileStorage.test.js": {
+    "mtime": 1789125839.0471985,
+    "hash": "6cfd4822c8d5de4d0d31ff2b14b7c002"
+  },
   "D:\\The App\\src\\utils\\__tests__\\learningProgress.test.js": {
     "mtime": 1787383305.9431407,
     "hash": "2f96f676932074f87d77634c70e3046b"
@@ -1432,8 +1440,8 @@
     "hash": "00e01d55470d7f096e2cda9914532a90"
   },
   "D:\\The App\\src\\utils\\__tests__\\otaUpdates.test.js": {
-    "mtime": 1789122015.3259418,
-    "hash": "bbea106e2175f23719a8ae2876e199a9"
+    "mtime": 1789122917.184983,
+    "hash": "ddc17f8b17ef350725593de21a0248f9"
   },
   "D:\\The App\\src\\utils\\__tests__\\progressPresentation.test.js": {
     "mtime": 1784650282.931558,
