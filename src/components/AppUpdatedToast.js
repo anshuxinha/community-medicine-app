@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, Image, StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+import { Portal, Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemedStyles } from "../styles/useThemedStyles";
+import { onSplashHidden } from "../utils/appSplash";
 import { consumeAppliedOtaToast } from "../utils/otaUpdates";
 
 const appIcon = require("../../assets/icon.png");
 
-const SHOW_DELAY_MS = 700;
-const VISIBLE_MS = 3200;
+const AFTER_SPLASH_MS = 800;
+const VISIBLE_MS = 4200;
 
 /**
  * Compact top toast after an OTA is applied on the next app open.
@@ -26,47 +27,48 @@ const AppUpdatedToast = () => {
     let showTimer = null;
     let hideTimer = null;
 
-    (async () => {
-      const shouldShow = await consumeAppliedOtaToast();
-      if (cancelled || !shouldShow) return;
-
+    const unsubscribe = onSplashHidden(() => {
       showTimer = setTimeout(() => {
-        if (cancelled) return;
-        setVisible(true);
-        Animated.parallel([
-          Animated.timing(opacity, {
-            toValue: 1,
-            duration: 220,
-            useNativeDriver: true,
-          }),
-          Animated.timing(translateY, {
-            toValue: 0,
-            duration: 220,
-            useNativeDriver: true,
-          }),
-        ]).start();
-
-        hideTimer = setTimeout(() => {
+        (async () => {
+          const shouldShow = await consumeAppliedOtaToast();
+          if (cancelled || !shouldShow) return;
+          setVisible(true);
           Animated.parallel([
             Animated.timing(opacity, {
-              toValue: 0,
-              duration: 200,
+              toValue: 1,
+              duration: 220,
               useNativeDriver: true,
             }),
             Animated.timing(translateY, {
-              toValue: -8,
-              duration: 200,
+              toValue: 0,
+              duration: 220,
               useNativeDriver: true,
             }),
-          ]).start(({ finished }) => {
-            if (finished && !cancelled) setVisible(false);
-          });
-        }, VISIBLE_MS);
-      }, SHOW_DELAY_MS);
-    })();
+          ]).start();
+
+          hideTimer = setTimeout(() => {
+            Animated.parallel([
+              Animated.timing(opacity, {
+                toValue: 0,
+                duration: 220,
+                useNativeDriver: true,
+              }),
+              Animated.timing(translateY, {
+                toValue: -8,
+                duration: 220,
+                useNativeDriver: true,
+              }),
+            ]).start(({ finished }) => {
+              if (finished && !cancelled) setVisible(false);
+            });
+          }, VISIBLE_MS);
+        })();
+      }, AFTER_SPLASH_MS);
+    });
 
     return () => {
       cancelled = true;
+      unsubscribe();
       if (showTimer) clearTimeout(showTimer);
       if (hideTimer) clearTimeout(hideTimer);
     };
@@ -75,23 +77,25 @@ const AppUpdatedToast = () => {
   if (!visible) return null;
 
   return (
-    <View
-      pointerEvents="none"
-      style={[styles.wrap, { top: Math.max(insets.top, 8) + 6 }]}
-    >
-      <Animated.View
-        accessibilityRole="status"
-        accessibilityLiveRegion="polite"
-        accessibilityLabel="App updated"
-        style={[
-          styles.toast,
-          { opacity, transform: [{ translateY }] },
-        ]}
+    <Portal>
+      <View
+        pointerEvents="none"
+        style={[styles.wrap, { top: Math.max(insets.top, 12) + 8 }]}
       >
-        <Image source={appIcon} style={styles.logo} />
-        <Text style={styles.label}>App updated</Text>
-      </Animated.View>
-    </View>
+        <Animated.View
+          accessibilityRole="status"
+          accessibilityLiveRegion="polite"
+          accessibilityLabel="App updated"
+          style={[
+            styles.toast,
+            { opacity, transform: [{ translateY }] },
+          ]}
+        >
+          <Image source={appIcon} style={styles.logo} />
+          <Text style={styles.label}>App updated</Text>
+        </Animated.View>
+      </View>
+    </Portal>
   );
 };
 

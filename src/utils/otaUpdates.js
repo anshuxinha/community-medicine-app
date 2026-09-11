@@ -5,13 +5,24 @@ import * as Updates from "expo-updates";
 export const LAST_SEEN_OTA_ID_KEY = "stromaLastSeenOtaUpdateId";
 
 /**
- * True when this launch is running a different OTA than the last one we recorded.
- * First launch (no stored id) does not count.
+ * True when this launch should announce an applied OTA.
+ * Store binary first paint (embedded, no stored id) stays quiet.
+ * An OTA with no stored id, or a different stored id, should announce.
  */
-export function shouldShowAppUpdatedToast(lastSeenId, currentId) {
+export function shouldShowAppUpdatedToast(
+  lastSeenId,
+  currentId,
+  isEmbeddedLaunch = false,
+) {
   if (!currentId) return false;
-  if (!lastSeenId) return false;
+  if (!lastSeenId) return !isEmbeddedLaunch;
   return lastSeenId !== currentId;
+}
+
+function runningUpdateId() {
+  if (Updates.updateId) return Updates.updateId;
+  const manifestId = Updates.manifest?.id;
+  return typeof manifestId === "string" && manifestId ? manifestId : null;
 }
 
 /**
@@ -21,11 +32,16 @@ export function shouldShowAppUpdatedToast(lastSeenId, currentId) {
 export async function consumeAppliedOtaToast() {
   try {
     if (__DEV__ || !Updates.isEnabled) return false;
-    const currentId = Updates.updateId;
+    const currentId = runningUpdateId();
     if (!currentId) return false;
     const lastSeen = await AsyncStorage.getItem(LAST_SEEN_OTA_ID_KEY);
+    const show = shouldShowAppUpdatedToast(
+      lastSeen,
+      currentId,
+      Updates.isEmbeddedLaunch === true,
+    );
     await AsyncStorage.setItem(LAST_SEEN_OTA_ID_KEY, currentId);
-    return shouldShowAppUpdatedToast(lastSeen, currentId);
+    return show;
   } catch (error) {
     console.warn("OTA toast state failed:", error?.message);
     return false;
