@@ -66,8 +66,10 @@ export default function App() {
     return () => stopSilentOta();
   }, []);
 
-  // Do not call Updates.reloadAsync here or in index.js. That blacklisted OTAs.
-  // Downloads run in the background; the new bundle starts on the next process launch.
+  // Native expo-updates (checkAutomatically ON_LOAD) downloads on cold start.
+  // Do not fetch or reloadAsync in this effect. A JS fetch on launch races the
+  // native loader and can restart the React host. The new bundle starts on the
+  // next process launch; AppUpdatedToast then shows "App updated".
   return (
     <SafeAreaProvider>
       <ErrorBoundary>

@@ -19,8 +19,8 @@ export function shouldShowAppUpdatedToast(lastSeenId, currentId) {
  * Never calls reloadAsync; Expo applies a downloaded update on the next process start.
  */
 export async function consumeAppliedOtaToast() {
-  if (__DEV__ || !Updates.isEnabled) return false;
   try {
+    if (__DEV__ || !Updates.isEnabled) return false;
     const currentId = Updates.updateId;
     if (!currentId) return false;
     const lastSeen = await AsyncStorage.getItem(LAST_SEEN_OTA_ID_KEY);
@@ -33,9 +33,8 @@ export async function consumeAppliedOtaToast() {
 }
 
 async function downloadPendingUpdate() {
-  if (__DEV__ || !Updates.isEnabled) return;
   try {
-    if (Updates.isUpdatePending) return;
+    if (__DEV__ || !Updates.isEnabled) return;
     const result = await Updates.checkForUpdateAsync();
     if (!result?.isAvailable) return;
     await Updates.fetchUpdateAsync();
@@ -45,23 +44,21 @@ async function downloadPendingUpdate() {
 }
 
 /**
- * Download OTAs in the background. The new bundle runs the next time the app process starts.
+ * Native expo-updates already downloads on cold start (checkAutomatically ON_LOAD).
+ * A JS fetch on that same launch races the native loader and can restart the
+ * React host, which looks like the app closed. Only fetch after a later resume.
  */
 const MIN_OTA_CHECK_INTERVAL_MS = 2 * 60 * 1000;
 
 export function startSilentOtaDownloads() {
-  if (__DEV__ || !Updates.isEnabled) {
-    return () => {};
-  }
-
   let cancelled = false;
   let inFlight = false;
-  let lastCheckAt = 0;
+  let lastCheckAt = Date.now();
 
   const run = async () => {
     if (cancelled || inFlight) return;
     const now = Date.now();
-    if (lastCheckAt && now - lastCheckAt < MIN_OTA_CHECK_INTERVAL_MS) return;
+    if (now - lastCheckAt < MIN_OTA_CHECK_INTERVAL_MS) return;
     lastCheckAt = now;
     inFlight = true;
     try {
@@ -70,8 +67,6 @@ export function startSilentOtaDownloads() {
       inFlight = false;
     }
   };
-
-  run();
 
   const sub = AppState.addEventListener("change", (state) => {
     if (state === "active") run();
