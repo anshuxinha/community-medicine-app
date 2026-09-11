@@ -153,11 +153,12 @@ export async function fetchRemoteUpdatesMonths() {
   }
 }
 
-/**
- * Resolve feed with fallback order: network → cache → bundled.
- * @returns {{ months: Object, source: 'remote'|'cache'|'bundled' }}
- */
-export async function loadUpdatesMonths() {
+let inFlightLoad = null;
+let lastResult = null;
+let lastResultAt = 0;
+const RESULT_TTL_MS = 30 * 1000;
+
+async function loadUpdatesMonthsInner() {
   const remote = await fetchRemoteUpdatesMonths();
   if (remote) {
     return { months: remote, source: "remote" };
@@ -169,6 +170,34 @@ export async function loadUpdatesMonths() {
   }
 
   return { months: monthsFromBundled(), source: "bundled" };
+}
+
+/**
+ * Resolve feed with fallback order: network → cache → bundled.
+ * Concurrent callers share one in-flight request.
+ * @returns {Promise<{ months: Object, source: 'remote'|'cache'|'bundled' }>}
+ */
+export function loadUpdatesMonths() {
+  if (lastResult && Date.now() - lastResultAt < RESULT_TTL_MS) {
+    return Promise.resolve(lastResult);
+  }
+  if (!inFlightLoad) {
+    inFlightLoad = loadUpdatesMonthsInner()
+      .then((result) => {
+        lastResult = result;
+        lastResultAt = Date.now();
+        return result;
+      })
+      .finally(() => {
+        inFlightLoad = null;
+      });
+  }
+  return inFlightLoad;
+}
+
+/** Kick off the feed fetch at app start so Dashboard is not waiting on first paint. */
+export function prefetchUpdatesMonths() {
+  return loadUpdatesMonths();
 }
 
 export function yearMonthKey(date = new Date()) {

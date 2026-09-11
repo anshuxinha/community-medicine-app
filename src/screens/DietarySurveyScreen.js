@@ -493,12 +493,14 @@ const DietarySurveyScreen = () => {
                           </View>
                         </View>
                         <Button
-                          mode="contained-tonal"
+                          mode="contained"
                           compact
                           icon="plus"
                           onPress={() => handleOpenAddPicker(slot.id)}
                           style={styles.addBtnSmall}
-                          labelStyle={{ fontSize: 12 }}
+                          buttonColor={colors.secondary}
+                          textColor={colors.onPrimary}
+                          labelStyle={styles.addBtnSmallLabel}
                         >
                           Add
                         </Button>
@@ -1607,7 +1609,12 @@ const createStyles = (colors) =>
     },
     mealMacroValue: { fontSize: 12, fontWeight: "bold", color: colors.secondary },
     mealMacroLabel: { fontSize: 9, color: colors.textSecondary },
-    addBtnSmall: { backgroundColor: colors.primaryLight || "#EEF2FF", borderRadius: 6 },
+    addBtnSmall: { borderRadius: 6 },
+    addBtnSmallLabel: {
+      fontSize: 12,
+      color: colors.onPrimary,
+      fontWeight: "700",
+    },
     emptyMealText: {
       fontSize: 12,
       color: colors.textPlaceholder,

@@ -304,7 +304,7 @@ const createStyles = (colors) => StyleSheet.create({
     marginTop: 12,
   },
   shareFooter: {
-    backgroundColor: colors.inverseSurface,
+    backgroundColor: colors.brandHero,
     padding: 20,
   },
   shareFooterTop: {
@@ -324,17 +324,19 @@ const createStyles = (colors) => StyleSheet.create({
   shareAppName: {
     fontSize: 16,
     fontWeight: "bold",
-    color: colors.surfacePrimary,
+    color: colors.onInverseSurface,
     letterSpacing: 2,
   },
   shareAppTagline: {
     fontSize: 11,
-    color: colors.textPlaceholder,
+    color: colors.onInverseSurface,
+    opacity: 0.72,
     marginTop: 2,
   },
   shareCTA: {
     fontSize: 12,
-    color: colors.borderStrong,
+    color: colors.onInverseSurface,
+    opacity: 0.8,
     lineHeight: 18,
   },
 

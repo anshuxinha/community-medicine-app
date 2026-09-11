@@ -311,7 +311,11 @@ export function setupNotificationTapHandler(navigationRef) {
     const screen = response.notification.request.content.data?.screen;
     if (screen && navigationRef?.current) {
       if (["Dashboard", "Library", "Videos", "Updates"].includes(screen)) {
-        navigationRef.current.navigate("MainTabs", { screen });
+        navigationRef.current.navigate("MainTabs", {
+          screen,
+          params:
+            screen === "Dashboard" ? { awaitUpdatesFeed: true } : undefined,
+        });
         return;
       }
 

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { InteractionManager } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import {
@@ -8,24 +8,27 @@ import {
 } from "../services/updatesService";
 
 /**
- * Load Updates feed (remote → cache → bundled). Refreshes on focus
- * after interactions so Dashboard first paint stays on bundled/cache.
+ * Load Updates feed (remote → cache → bundled).
+ * First visit waits for the resolved feed so the Dashboard list does not
+ * paint bundled items and then jump when the remote item arrives.
  */
 export default function useUpdatesFeed() {
   const [months, setMonths] = useState(() => monthsFromBundled());
   const [source, setSource] = useState("bundled");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const didLoadRef = useRef(false);
 
-  const refresh = useCallback(async () => {
-    setLoading(true);
+  const refresh = useCallback(async ({ silent = false } = {}) => {
+    if (!silent) setLoading(true);
     setError(null);
     try {
-      // Paint cache immediately if available
-      const cached = await readCachedUpdatesMonths();
-      if (cached) {
-        setMonths(cached);
-        setSource("cache");
+      if (silent) {
+        const cached = await readCachedUpdatesMonths();
+        if (cached) {
+          setMonths(cached);
+          setSource("cache");
+        }
       }
 
       const result = await loadUpdatesMonths();
@@ -42,8 +45,18 @@ export default function useUpdatesFeed() {
 
   useFocusEffect(
     useCallback(() => {
+      if (!didLoadRef.current) {
+        let cancelled = false;
+        refresh().then(() => {
+          if (!cancelled) didLoadRef.current = true;
+        });
+        return () => {
+          cancelled = true;
+        };
+      }
+
       const handle = InteractionManager.runAfterInteractions(() => {
-        refresh();
+        refresh({ silent: true });
       });
       return () => handle.cancel();
     }, [refresh]),

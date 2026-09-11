@@ -11,12 +11,10 @@ import {
 import {
   Text,
   Card,
-  ProgressBar,
   Button,
   Dialog,
   Portal,
 } from "react-native-paper";
-import * as Updates from "expo-updates";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -44,173 +42,49 @@ import { isResidentModeEnabled } from "../utils/residentMode";
 
 const DASHBOARD_NEW_BADGES_STORAGE_KEY = "dashboardNewBadgesSeen:v1";
 const SEARCH_FEATURE_TIP_STORAGE_KEY = "searchFeatureTipSeen:v1";
+const GUIDELINES_SKELETON_COUNT = 5;
 
-const OTA_RELOAD_TIMEOUT_MS = 10000;
-const OTA_RELOAD_SETTLE_MS = 3000;
-
-const UpdateDownloadIndicator = () => {
-  const { styles, colors } = useThemedStyles(createStyles);
-
-  const {
-    isDownloading,
-    isUpdatePending,
-    downloadProgress,
-  } = Updates.useUpdates();
-  const [phase, setPhase] = useState("idle"); // idle | checking | downloading | applying | error
-  const [errorMessage, setErrorMessage] = useState(null);
-  const checkedRef = React.useRef(false);
-  const installingRef = React.useRef(false);
-
-  const installNow = React.useCallback(async () => {
-    // Guard: reloadAsync can hang; never stack multiple attempts.
-    if (installingRef.current) return;
-    installingRef.current = true;
-    setPhase("applying");
-    setErrorMessage(null);
-    try {
-      // Paint "Installing…" before native reload; calling reload in the same
-      // tick as the press can hang on some Android devices.
-      await new Promise((resolve) => setTimeout(resolve, 150));
-
-      await Promise.race([
-        Updates.reloadAsync(),
-        new Promise((_, reject) =>
-          setTimeout(
-            () => reject(new Error("RELOAD_TIMEOUT")),
-            OTA_RELOAD_TIMEOUT_MS,
-          ),
-        ),
-      ]);
-
-      // reloadAsync resolves immediately before the actual reload. If JS is
-      // still alive after a short settle window, the native reload never ran.
-      await new Promise((resolve) =>
-        setTimeout(resolve, OTA_RELOAD_SETTLE_MS),
-      );
-      setPhase("error");
-      setErrorMessage(
-        "Update is ready, but the app did not refresh. Close the app fully and open it again.",
-      );
-    } catch (error) {
-      const isTimeout = error?.message === "RELOAD_TIMEOUT";
-      setPhase("error");
-      setErrorMessage(
-        isTimeout
-          ? "Update is ready, but the app did not refresh. Close the app fully and open it again."
-          : "Couldn't apply the update. Please close the app fully and open it again.",
-      );
-      console.warn("Updates.reloadAsync failed:", error);
-    } finally {
-      installingRef.current = false;
-    }
-  }, []);
+const GuidelinesFeedSkeleton = () => {
+  const { styles } = useThemedStyles(createStyles);
+  const pulse = useRef(new Animated.Value(0.45)).current;
 
   useEffect(() => {
-    if (__DEV__ || !Updates.isEnabled || checkedRef.current) return;
-    checkedRef.current = true;
-    let cancelled = false;
-
-    (async () => {
-      try {
-        if (Updates.isUpdatePending) {
-          if (!cancelled) setPhase("ready");
-          return;
-        }
-        // Silent check — only show UI when something needs user action
-        const result = await Updates.checkForUpdateAsync();
-        if (cancelled) return;
-        if (!result.isAvailable) {
-          setPhase("idle");
-          return;
-        }
-        setPhase("downloading");
-        await Updates.fetchUpdateAsync();
-        if (!cancelled) setPhase("ready");
-      } catch (error) {
-        if (!cancelled) {
-          setPhase("idle");
-          console.warn("App update check failed:", error);
-        }
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const showDownloading = phase === "downloading" || isDownloading;
-  const showReady = phase === "ready" || isUpdatePending;
-  const showApplying = phase === "applying";
-  // Never show technical codes or idle "checking" state to users.
-  const showBanner =
-    errorMessage || showDownloading || showReady || showApplying;
-
-  if (!showBanner) return null;
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, {
+          toValue: 1,
+          duration: 750,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulse, {
+          toValue: 0.45,
+          duration: 750,
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [pulse]);
 
   return (
-    <View style={styles.updateDownloadIndicator}>
-      <View style={styles.updateDownloadIcon}>
-        <MaterialIcons
-          name={
-            errorMessage
-              ? "error-outline"
-              : showApplying || showReady
-                ? "system-update"
-                : "cloud-download"
-          }
-          size={20}
-          color={
-            errorMessage
-              ? colors.error
-              : showApplying || showReady
-                ? colors.successStrong
-                : colors.secondary
-          }
-        />
-      </View>
-      <View style={styles.updateDownloadTextColumn}>
-        <Text style={styles.updateDownloadTitle}>
-          {errorMessage
-            ? "Update couldn't install"
-            : showApplying
-              ? "Installing update"
-              : showReady
-                ? "Update available"
-                : "Downloading update"}
-        </Text>
-        <Text style={styles.updateDownloadSubtitle}>
-          {errorMessage
-            ? errorMessage
-            : showApplying
-              ? "Almost done. The app will refresh shortly."
-              : showReady
-                ? "A new version is ready. Tap below to install it now."
-                : "Please keep the app open while we finish downloading."}
-        </Text>
-        {showDownloading && !showReady && !showApplying ? (
-          <ProgressBar
-            progress={downloadProgress || 0.12}
-            color={colors.secondary}
-            style={styles.updateDownloadProgress}
-          />
-        ) : null}
-        {(showReady || errorMessage) && !showApplying ? (
-          <TouchableOpacity
-            style={styles.updateInstallButton}
-            onPress={installNow}
-          >
-            <Text style={styles.updateInstallButtonText}>
-              {errorMessage ? "Try again" : "Install now"}
-            </Text>
-          </TouchableOpacity>
-        ) : null}
-      </View>
+    <View style={styles.guidelinesFeedSlot}>
+      {Array.from({ length: GUIDELINES_SKELETON_COUNT }).map((_, index) => (
+        <Animated.View
+          key={`guidelines-skel-${index}`}
+          style={[styles.updateCard, styles.guidelinesSkeletonCard, { opacity: pulse }]}
+        >
+          <View style={[styles.guidelinesSkeletonBar, styles.guidelinesSkeletonDate]} />
+          <View style={[styles.guidelinesSkeletonBar, styles.guidelinesSkeletonTitle]} />
+          <View style={[styles.guidelinesSkeletonBar, styles.guidelinesSkeletonLine]} />
+          <View style={[styles.guidelinesSkeletonBar, styles.guidelinesSkeletonLineShort]} />
+        </Animated.View>
+      ))}
     </View>
   );
 };
 
-const DashboardScreen = ({ navigation }) => {
+const DashboardScreen = ({ navigation, route }) => {
   const { styles, colors } = useThemedStyles(createStyles);
 
   const {
@@ -484,11 +358,21 @@ const DashboardScreen = ({ navigation }) => {
     return new Date().toLocaleDateString(undefined, options);
   };
 
-  const { months: updatesMonths } = useUpdatesFeed();
+  const {
+    months: updatesMonths,
+    loading: updatesLoading,
+    refresh: refreshUpdates,
+  } = useUpdatesFeed();
   const visibleUpdates = React.useMemo(
-    () => pickDashboardUpdates(updatesMonths, { maxItems: 5 }),
+    () => pickDashboardUpdates(updatesMonths, { maxItems: GUIDELINES_SKELETON_COUNT }),
     [updatesMonths],
   );
+
+  useEffect(() => {
+    if (!route?.params?.awaitUpdatesFeed) return;
+    refreshUpdates();
+    navigation.setParams({ awaitUpdatesFeed: undefined });
+  }, [route?.params?.awaitUpdatesFeed, refreshUpdates, navigation]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -598,9 +482,7 @@ const DashboardScreen = ({ navigation }) => {
           </Text>
         </View>
 
-        <UpdateDownloadIndicator />
-
-        <Card
+        <Card>
           style={styles.progressCard}
           onPress={() => navigation.navigate("LearningProgress")}
           accessibilityRole="button"
@@ -808,52 +690,56 @@ const DashboardScreen = ({ navigation }) => {
           Latest Guidelines and Updates
         </Text>
 
-        {visibleUpdates.map((update) => (
-          <Card key={update.id} style={styles.updateCard}>
-            <Card.Content>
-              <Text variant="labelSmall" style={styles.dateText}>
-                {update.date}
-              </Text>
-              {update.category ? (
-                <Text variant="labelSmall" style={styles.updateCategory}>
-                  {update.category}
+        {updatesLoading ? (
+          <GuidelinesFeedSkeleton />
+        ) : (
+          visibleUpdates.map((update) => (
+            <Card key={update.id} style={styles.updateCard}>
+              <Card.Content>
+                <Text variant="labelSmall" style={styles.dateText}>
+                  {update.date}
                 </Text>
-              ) : null}
-              <Text variant="titleMedium" style={styles.updateTitle}>
-                {update.title}
-              </Text>
-              <Text
-                variant="bodyMedium"
-                style={styles.updateSummary}
-                numberOfLines={3}
-                ellipsizeMode="tail"
-              >
-                {update.summary}
-              </Text>
-              {update.source ? (
-                <Text variant="labelSmall" style={styles.updateSource}>
-                  Source: {update.source}
+                {update.category ? (
+                  <Text variant="labelSmall" style={styles.updateCategory}>
+                    {update.category}
+                  </Text>
+                ) : null}
+                <Text variant="titleMedium" style={styles.updateTitle}>
+                  {update.title}
                 </Text>
-              ) : null}
-            </Card.Content>
-            <Card.Actions>
-              <Button
-                textColor={theme.colors.secondary}
-                onPress={() => {
-                  if (!isPremium) {
-                    navigation.navigate("Paywall");
-                  } else {
-                    showDialog(update);
-                  }
-                }}
-                mode="text"
-                compact
-              >
-                Read More
-              </Button>
-            </Card.Actions>
-          </Card>
-        ))}
+                <Text
+                  variant="bodyMedium"
+                  style={styles.updateSummary}
+                  numberOfLines={3}
+                  ellipsizeMode="tail"
+                >
+                  {update.summary}
+                </Text>
+                {update.source ? (
+                  <Text variant="labelSmall" style={styles.updateSource}>
+                    Source: {update.source}
+                  </Text>
+                ) : null}
+              </Card.Content>
+              <Card.Actions>
+                <Button
+                  textColor={theme.colors.secondary}
+                  onPress={() => {
+                    if (!isPremium) {
+                      navigation.navigate("Paywall");
+                    } else {
+                      showDialog(update);
+                    }
+                  }}
+                  mode="text"
+                  compact
+                >
+                  Read More
+                </Button>
+              </Card.Actions>
+            </Card>
+          ))
+        )}
       </ScrollView>
 
       <UpdateDetailDialog
@@ -1029,59 +915,6 @@ const createStyles = (colors) => StyleSheet.create({
     color: colors.textTertiary,
     marginTop: 8,
   },
-  updateDownloadIndicator: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: colors.border,
-    padding: 12,
-    marginBottom: 16,
-  },
-  updateDownloadIcon: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.primarySoft,
-    marginRight: 10,
-    marginTop: 2,
-  },
-  updateDownloadTextColumn: {
-    flex: 1,
-  },
-  updateDownloadTitle: {
-    color: colors.textTitle,
-    fontSize: 14,
-    fontWeight: "800",
-  },
-  updateDownloadSubtitle: {
-    color: colors.textSecondary,
-    fontSize: 12,
-    lineHeight: 17,
-    marginTop: 2,
-  },
-  updateDownloadProgress: {
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: colors.border,
-    marginTop: 8,
-  },
-  updateInstallButton: {
-    alignSelf: "flex-start",
-    marginTop: 10,
-    backgroundColor: colors.secondary,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 10,
-  },
-  updateInstallButtonText: {
-    color: colors.onPrimary,
-    fontSize: 13,
-    fontWeight: "700",
-  },
   progressCard: {
     marginBottom: 24,
     backgroundColor: colors.surfacePrimary,
@@ -1256,6 +1089,36 @@ const createStyles = (colors) => StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
+  },
+  guidelinesFeedSlot: {
+    minHeight: 840,
+  },
+  guidelinesSkeletonCard: {
+    padding: 16,
+    minHeight: 152,
+  },
+  guidelinesSkeletonBar: {
+    backgroundColor: colors.surfaceSecondary,
+    borderRadius: 6,
+  },
+  guidelinesSkeletonDate: {
+    width: 88,
+    height: 12,
+    marginBottom: 12,
+  },
+  guidelinesSkeletonTitle: {
+    width: "86%",
+    height: 18,
+    marginBottom: 12,
+  },
+  guidelinesSkeletonLine: {
+    width: "100%",
+    height: 12,
+    marginBottom: 8,
+  },
+  guidelinesSkeletonLineShort: {
+    width: "64%",
+    height: 12,
   },
   dateText: {
     color: colors.secondary,

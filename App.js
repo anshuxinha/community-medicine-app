@@ -12,7 +12,10 @@ import { scheduleAllNotifications } from "./src/services/notificationService";
 import UpdateBottomSheet from "./src/components/UpdateBottomSheet";
 import ReviewFeedbackModal from "./src/components/ReviewFeedbackModal";
 import ReviewRequestModal from "./src/components/ReviewRequestModal";
+import AppUpdatedToast from "./src/components/AppUpdatedToast";
 import { paperTheme as fallbackPaperTheme } from "./src/styles/theme";
+import { prefetchUpdatesMonths } from "./src/services/updatesService";
+import { startSilentOtaDownloads } from "./src/utils/otaUpdates";
 
 // Create Android notification channel at module level so incoming FCM pushes
 // on cold start are never dropped due to a missing channel.
@@ -43,6 +46,7 @@ function ThemedApp() {
       <UpdateBottomSheet />
       <ReviewFeedbackModal />
       <ReviewRequestModal />
+      <AppUpdatedToast />
     </PaperProvider>
   );
 }
@@ -56,9 +60,14 @@ export default function App() {
     scheduleAllNotifications().catch((err) =>
       console.warn("Failed to schedule notifications:", err?.message),
     );
+
+    prefetchUpdatesMonths();
+    const stopSilentOta = startSilentOtaDownloads();
+    return () => stopSilentOta();
   }, []);
 
-  // No Updates.reloadAsync here or in index.js — that caused OTA blacklisting.
+  // Do not call Updates.reloadAsync here or in index.js. That blacklisted OTAs.
+  // Downloads run in the background; the new bundle starts on the next process launch.
   return (
     <SafeAreaProvider>
       <ErrorBoundary>
