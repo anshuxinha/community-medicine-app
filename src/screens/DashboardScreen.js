@@ -482,7 +482,7 @@ const DashboardScreen = ({ navigation, route }) => {
           </Text>
         </View>
 
-        <Card>
+        <Card
           style={styles.progressCard}
           onPress={() => navigation.navigate("LearningProgress")}
           accessibilityRole="button"
