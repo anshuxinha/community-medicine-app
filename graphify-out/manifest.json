@@ -1,7 +1,7 @@
 {
   "D:\\The App\\App.js": {
-    "mtime": 1789131935.490513,
-    "hash": "9ea39fa15bca21d2e868a7d6caaa2840"
+    "mtime": 1789306000.9583707,
+    "hash": "b3413209b31bddcd64f0f90bdff3c5c5"
   },
   "D:\\The App\\ast_extract.py": {
     "mtime": 1778159580.4395475,
@@ -964,8 +964,8 @@
     "hash": "55e5963fe3e00f018052e9deb1adfaf2"
   },
   "D:\\The App\\src\\components\\AppUpdatedToast.js": {
-    "mtime": 1789137905.5199575,
-    "hash": "a133cb4099f1c21c39a0bc98ccbbf140"
+    "mtime": 1789306000.9583707,
+    "hash": "df01a6adf4257d918937df8a90b7e4ac"
   },
   "D:\\The App\\src\\components\\ChapterCompleteSheet.js": {
     "mtime": 1786816818.3749356,
@@ -992,7 +992,7 @@
     "hash": "ee80de9ca72397fd02e0fb31ed09698c"
   },
   "D:\\The App\\src\\components\\ReadingView.js": {
-    "mtime": 1789301834.2255828,
+    "mtime": 1789302135.5234344,
     "hash": "437621707ac813b0f2548e8a529fccef"
   },
   "D:\\The App\\src\\components\\ReviewFeedbackModal.js": {
@@ -1184,7 +1184,7 @@
     "hash": "f968241eb8b01706ae26202300310ee9"
   },
   "D:\\The App\\src\\screens\\ReadingScreen.js": {
-    "mtime": 1789301653.4688826,
+    "mtime": 1789302135.526702,
     "hash": "f197fd1c36ebced7d080943d3b3361e2"
   },
   "D:\\The App\\src\\screens\\SearchScreen.js": {
@@ -1280,8 +1280,8 @@
     "hash": "34c2be6fa56708b10839c0dff74bbdd9"
   },
   "D:\\The App\\src\\styles\\theme.js": {
-    "mtime": 1789301653.4698815,
-    "hash": "3af37b2c92a1200bf09755f47031b9b1"
+    "mtime": 1789302135.527694,
+    "hash": "9ae90d8ec5cb9bf317bd7b8abe176c40"
   },
   "D:\\The App\\src\\styles\\ThemeContext.js": {
     "mtime": 1785162442.7906754,
@@ -1352,8 +1352,8 @@
     "hash": "5d565782124990413b9517a6cb27f828"
   },
   "D:\\The App\\src\\utils\\otaUpdates.js": {
-    "mtime": 1789137905.4256876,
-    "hash": "98b1d2f1f323c9d0aca008bb621d3655"
+    "mtime": 1789306000.9583707,
+    "hash": "bc7244fe1e418a9d8cead765e92f826a"
   },
   "D:\\The App\\src\\utils\\progressPresentation.js": {
     "mtime": 1784650210.305622,
@@ -1392,8 +1392,8 @@
     "hash": "3dfb7ae237bff7a669dc1daa90462f95"
   },
   "D:\\The App\\src\\utils\\userHighlightColors.js": {
-    "mtime": 1789301653.3931391,
-    "hash": "a38eb06b044a99c7152bb2856024611e"
+    "mtime": 1789302135.529696,
+    "hash": "6f043b80894710b96d4726138f1422da"
   },
   "D:\\The App\\src\\utils\\__tests__\\chapterSearch.test.js": {
     "mtime": 1787812129.4978118,
@@ -1448,8 +1448,8 @@
     "hash": "00e01d55470d7f096e2cda9914532a90"
   },
   "D:\\The App\\src\\utils\\__tests__\\otaUpdates.test.js": {
-    "mtime": 1789137905.4256876,
-    "hash": "f8acc4634a1f35af4692c1241875d373"
+    "mtime": 1789306000.9583707,
+    "hash": "499ef69f84c996fd7b17478e88cfb71d"
   },
   "D:\\The App\\src\\utils\\__tests__\\progressPresentation.test.js": {
     "mtime": 1784650282.931558,
@@ -1480,8 +1480,8 @@
     "hash": "3d842b0f76517755c8069a3a4beabccc"
   },
   "D:\\The App\\src\\utils\\__tests__\\userHighlightColors.test.js": {
-    "mtime": 1789301653.3931391,
-    "hash": "12873322f2a0698ceffca029ae263af9"
+    "mtime": 1789302135.528694,
+    "hash": "3b4804b6baeee35df2decc45656b2bbc"
   },
   "D:\\The App\\AGENTS.md": {
     "mtime": 1785916675.9318168,

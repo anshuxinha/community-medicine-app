@@ -1,28 +1,48 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Animated, Image, StyleSheet, View } from "react-native";
-import { Portal, Text } from "react-native-paper";
+import React, { Component, useEffect, useRef, useState } from "react";
+import { Animated, StyleSheet, Text, View } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemedStyles } from "../styles/useThemedStyles";
 import { onSplashHidden } from "../utils/appSplash";
-import { consumeAppliedOtaToast } from "../utils/otaUpdates";
-
-const appIcon = require("../../assets/icon.png");
+import {
+  markAppUpdatedToastShown,
+  peekAppliedOtaToast,
+} from "../utils/otaUpdates";
 
 const AFTER_SPLASH_MS = 800;
 const VISIBLE_MS = 4200;
 
+class ToastGuard extends Component {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  componentDidCatch() {
+    markAppUpdatedToastShown();
+  }
+
+  render() {
+    if (this.state.failed) return null;
+    return this.props.children;
+  }
+}
+
 /**
  * Compact top toast after an OTA is applied on the next app open.
- * Matches Chrome on Windows: small logo + short "updated" line, then it fades.
  */
 const AppUpdatedToast = () => {
-  const { styles } = useThemedStyles(createStyles);
+  const { styles, colors } = useThemedStyles(createStyles);
   const insets = useSafeAreaInsets();
   const [visible, setVisible] = useState(false);
   const opacity = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(-10)).current;
+  const markedRef = useRef(false);
 
   useEffect(() => {
+    if (__DEV__) return undefined;
+
     let cancelled = false;
     let showTimer = null;
     let hideTimer = null;
@@ -30,7 +50,7 @@ const AppUpdatedToast = () => {
     const unsubscribe = onSplashHidden(() => {
       showTimer = setTimeout(() => {
         (async () => {
-          const shouldShow = await consumeAppliedOtaToast();
+          const shouldShow = await peekAppliedOtaToast();
           if (cancelled || !shouldShow) return;
           setVisible(true);
           Animated.parallel([
@@ -74,28 +94,36 @@ const AppUpdatedToast = () => {
     };
   }, [opacity, translateY]);
 
+  const onShown = () => {
+    if (markedRef.current) return;
+    markedRef.current = true;
+    markAppUpdatedToastShown();
+  };
+
   if (!visible) return null;
 
   return (
-    <Portal>
+    <ToastGuard>
       <View
         pointerEvents="none"
         style={[styles.wrap, { top: Math.max(insets.top, 12) + 8 }]}
       >
         <Animated.View
           accessibilityRole="status"
-          accessibilityLiveRegion="polite"
           accessibilityLabel="App updated"
-          style={[
-            styles.toast,
-            { opacity, transform: [{ translateY }] },
-          ]}
+          onLayout={onShown}
+          style={[styles.toast, { opacity, transform: [{ translateY }] }]}
         >
-          <Image source={appIcon} style={styles.logo} />
+          <MaterialIcons
+            name="system-update-alt"
+            size={20}
+            color={colors.primary}
+            style={styles.logo}
+          />
           <Text style={styles.label}>App updated</Text>
         </Animated.View>
       </View>
-    </Portal>
+    </ToastGuard>
   );
 };
 
@@ -125,9 +153,6 @@ const createStyles = (colors) =>
       elevation: 8,
     },
     logo: {
-      width: 22,
-      height: 22,
-      borderRadius: 6,
       marginRight: 10,
     },
     label: {

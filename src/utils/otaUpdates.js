@@ -1,6 +1,6 @@
 import { AppState } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as Updates from "expo-updates";
+import { requireOptionalNativeModule } from "expo-modules-core";
 
 export const LAST_SEEN_OTA_ID_KEY = "stromaLastSeenOtaUpdateId";
 
@@ -19,62 +19,104 @@ export function shouldShowAppUpdatedToast(
   return lastSeenId !== currentId;
 }
 
-function runningUpdateId() {
-  if (Updates.updateId) return Updates.updateId;
-  const manifestId = Updates.manifest?.id;
-  return typeof manifestId === "string" && manifestId ? manifestId : null;
+function getExpoUpdates() {
+  try {
+    return requireOptionalNativeModule("ExpoUpdates");
+  } catch (_) {
+    return null;
+  }
+}
+
+function runningUpdateId(native) {
+  const module = native || getExpoUpdates();
+  if (!module) return null;
+  if (module.updateId && typeof module.updateId === "string") {
+    return module.updateId.toLowerCase();
+  }
+  try {
+    const manifest = module.manifestString
+      ? JSON.parse(module.manifestString)
+      : module.manifest;
+    const id = manifest?.id;
+    return typeof id === "string" && id ? id.toLowerCase() : null;
+  } catch (_) {
+    return null;
+  }
 }
 
 /**
- * Record the running update id. Returns true once, on the launch that applied a new OTA.
- * Never calls reloadAsync; Expo applies a downloaded update on the next process start.
+ * Whether this launch should show "App updated". Does not persist.
+ * Persist only after the toast has actually laid out, so a crash on first
+ * open of a new OTA still announces on the next launch.
+ *
+ * Do not import expo-updates here. That package registers a native state
+ * listener at module load; ON_LOAD download events then JSON.parse in JS and
+ * can kill the React host.
  */
-export async function consumeAppliedOtaToast() {
+export async function peekAppliedOtaToast() {
   try {
-    if (__DEV__ || !Updates.isEnabled) return false;
-    const currentId = runningUpdateId();
+    const native = getExpoUpdates();
+    if (!native?.isEnabled) return false;
+    const currentId = runningUpdateId(native);
     if (!currentId) return false;
     const lastSeen = await AsyncStorage.getItem(LAST_SEEN_OTA_ID_KEY);
-    const show = shouldShowAppUpdatedToast(
+    return shouldShowAppUpdatedToast(
       lastSeen,
       currentId,
-      Updates.isEmbeddedLaunch === true,
+      native.isEmbeddedLaunch === true,
     );
-    await AsyncStorage.setItem(LAST_SEEN_OTA_ID_KEY, currentId);
-    return show;
   } catch (error) {
-    console.warn("OTA toast state failed:", error?.message);
+    console.warn("OTA toast peek failed:", error?.message);
     return false;
+  }
+}
+
+/** Record the running update id after the toast is on screen. */
+export async function markAppUpdatedToastShown() {
+  try {
+    const currentId = runningUpdateId();
+    if (!currentId) return;
+    await AsyncStorage.setItem(LAST_SEEN_OTA_ID_KEY, currentId);
+  } catch (error) {
+    console.warn("OTA toast mark failed:", error?.message);
   }
 }
 
 async function downloadPendingUpdate() {
   try {
-    if (__DEV__ || !Updates.isEnabled) return;
-    const result = await Updates.checkForUpdateAsync();
+    if (__DEV__) return;
+    const native = getExpoUpdates();
+    if (!native?.isEnabled) return;
+    if (typeof native.checkForUpdateAsync !== "function") return;
+    const result = await native.checkForUpdateAsync();
     if (!result?.isAvailable) return;
-    await Updates.fetchUpdateAsync();
+    if (typeof native.fetchUpdateAsync !== "function") return;
+    await native.fetchUpdateAsync();
   } catch (error) {
     console.warn("Silent OTA check failed:", error?.message);
   }
 }
 
 /**
- * Native expo-updates already downloads on cold start (checkAutomatically ON_LOAD).
- * A JS fetch on that same launch races the native loader and can restart the
- * React host, which looks like the app closed. Only fetch after a later resume.
+ * Never fetch on cold start and never call reloadAsync. Native ON_LOAD (older
+ * binaries) already downloads then; a JS fetch on that launch can restart the
+ * React host. After a delay, fetch so future binaries with checkAutomatically
+ * NEVER still pick up OTAs. The new bundle runs on the next process start.
  */
 const MIN_OTA_CHECK_INTERVAL_MS = 2 * 60 * 1000;
+const FIRST_CHECK_DELAY_MS = 60 * 1000;
 
 export function startSilentOtaDownloads() {
+  if (__DEV__) return () => {};
+
   let cancelled = false;
   let inFlight = false;
-  let lastCheckAt = Date.now();
+  let lastCheckAt = 0;
 
   const run = async () => {
     if (cancelled || inFlight) return;
     const now = Date.now();
-    if (now - lastCheckAt < MIN_OTA_CHECK_INTERVAL_MS) return;
+    if (lastCheckAt && now - lastCheckAt < MIN_OTA_CHECK_INTERVAL_MS) return;
     lastCheckAt = now;
     inFlight = true;
     try {
@@ -87,9 +129,11 @@ export function startSilentOtaDownloads() {
   const sub = AppState.addEventListener("change", (state) => {
     if (state === "active") run();
   });
+  const initialTimer = setTimeout(run, FIRST_CHECK_DELAY_MS);
 
   return () => {
     cancelled = true;
+    clearTimeout(initialTimer);
     sub.remove();
   };
 }
