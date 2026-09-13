@@ -1160,13 +1160,12 @@ const ReadingView = ({
       if (next) {
         setIsAnnotationMode(false);
         setShowHighlightColorPicker(true);
-        showToast("Click on any sentence to highlight it");
       } else {
         setShowHighlightColorPicker(false);
       }
       return next;
     });
-  }, [showToast]);
+  }, []);
 
   const dismissHighlightColorPicker = useCallback(() => {
     setShowHighlightColorPicker(false);
