@@ -679,6 +679,10 @@
     "mtime": 1772355533.378721,
     "hash": "340987431de13941db032f91d2540782"
   },
+  "D:\\The App\\scripts\\deploy_compressed_ch2_ch17_v2.js": {
+    "mtime": 1789275681.3326626,
+    "hash": "b1b42a493de3cac7f00d52116c456021"
+  },
   "D:\\The App\\scripts\\deploy_v2_visuals.js": {
     "mtime": 1788428496.9910777,
     "hash": "c08e97095c4720397331ec5991b3daca"
@@ -2596,388 +2600,568 @@
     "hash": "50d7e74d25fa255afbd2b1958adea595"
   },
   "D:\\The App\\reading-illustrations\\ch10_1_levels_of_health_care.png": {
-    "mtime": 1788956710.958247,
-    "hash": "5a06ca1d4eca266709d1dc1376ff87e1"
+    "mtime": 1789271761.2330942,
+    "hash": "4207bffdefbf977cd8a511870483b073"
+  },
+  "D:\\The App\\reading-illustrations\\ch10_1_levels_of_health_care_v2.png": {
+    "mtime": 1789271761.2330942,
+    "hash": "4207bffdefbf977cd8a511870483b073"
   },
   "D:\\The App\\reading-illustrations\\ch10_1_phc_elements.png": {
-    "mtime": 1789046094.890954,
-    "hash": "8e8742bda4900abefb9c186f3ccad38b"
+    "mtime": 1789271761.2554853,
+    "hash": "f1788f3b7393714c3eebc52e9d53e48c"
+  },
+  "D:\\The App\\reading-illustrations\\ch10_1_phc_elements_v2.png": {
+    "mtime": 1789271761.2554853,
+    "hash": "f1788f3b7393714c3eebc52e9d53e48c"
   },
   "D:\\The App\\reading-illustrations\\ch15_4_f_diagram.png": {
-    "mtime": 1788941851.0288706,
-    "hash": "8175060741974d4993120718d20410dd"
+    "mtime": 1789271761.2630472,
+    "hash": "02f7163fb5c169c8e7e90c410822d9e2"
+  },
+  "D:\\The App\\reading-illustrations\\ch15_4_f_diagram_v2.png": {
+    "mtime": 1789271761.2630472,
+    "hash": "02f7163fb5c169c8e7e90c410822d9e2"
   },
   "D:\\The App\\reading-illustrations\\ch15_5_biological_transmission.png": {
-    "mtime": 1788943201.1455328,
-    "hash": "26938df09ff81c6d23b124db9acad131"
+    "mtime": 1789271761.2949657,
+    "hash": "899cb7a907cd47d77fdee0cff71ef852"
+  },
+  "D:\\The App\\reading-illustrations\\ch15_5_biological_transmission_v2.png": {
+    "mtime": 1789271761.2949657,
+    "hash": "899cb7a907cd47d77fdee0cff71ef852"
   },
   "D:\\The App\\reading-illustrations\\ch15_6_mosquito_lifecycle.png": {
-    "mtime": 1789046097.1445837,
-    "hash": "92b7c2ac54c56f10edd8e0a2de7317d8"
+    "mtime": 1789272346.755484,
+    "hash": "0191bee7965d224f9dc75d5e6934c213"
+  },
+  "D:\\The App\\reading-illustrations\\ch15_6_mosquito_lifecycle_v2.png": {
+    "mtime": 1789272346.755484,
+    "hash": "0191bee7965d224f9dc75d5e6934c213"
   },
   "D:\\The App\\reading-illustrations\\ch17_disaster_cycle.png": {
-    "mtime": 1789046959.8897998,
-    "hash": "5d3e71013e68406ae4e9091bb81fe40c"
+    "mtime": 1789272346.7804897,
+    "hash": "228137b1d4b816035ffef2d19617eb26"
+  },
+  "D:\\The App\\reading-illustrations\\ch17_disaster_cycle_v2.png": {
+    "mtime": 1789272346.7804897,
+    "hash": "228137b1d4b816035ffef2d19617eb26"
   },
   "D:\\The App\\reading-illustrations\\ch2_changing_concepts_of_health.png": {
-    "mtime": 1788956536.0663126,
-    "hash": "f8dd5eff67914820d30aca85a579ab55"
+    "mtime": 1789271760.1357994,
+    "hash": "2bfac98730102812445acee41a751120"
+  },
+  "D:\\The App\\reading-illustrations\\ch2_changing_concepts_of_health_v2.png": {
+    "mtime": 1789271760.1357994,
+    "hash": "2bfac98730102812445acee41a751120"
   },
   "D:\\The App\\reading-illustrations\\ch2_determinants_of_health.png": {
-    "mtime": 1788956522.4630623,
-    "hash": "bd66e8de64f1b64c0846fadaa3920642"
+    "mtime": 1789271760.1610873,
+    "hash": "d7da8f23246b5d6da48aa3344cedd3d4"
+  },
+  "D:\\The App\\reading-illustrations\\ch2_determinants_of_health_v2.png": {
+    "mtime": 1789271760.1610873,
+    "hash": "d7da8f23246b5d6da48aa3344cedd3d4"
   },
   "D:\\The App\\reading-illustrations\\ch2_dimensions_of_health.png": {
-    "mtime": 1788956518.4147391,
-    "hash": "e2289ad1d948c3640f4a5faa21648e94"
+    "mtime": 1789271760.1688972,
+    "hash": "2954eb1017840a6aa29ef61e78e4fa91"
+  },
+  "D:\\The App\\reading-illustrations\\ch2_dimensions_of_health_v2.png": {
+    "mtime": 1789271760.1688972,
+    "hash": "2954eb1017840a6aa29ef61e78e4fa91"
   },
   "D:\\The App\\reading-illustrations\\ch2_epidemiological_triad.png": {
-    "mtime": 1788956526.7603178,
-    "hash": "23a083759dd32c0430e2ce5f06adc6e4"
+    "mtime": 1789271760.1864853,
+    "hash": "35c23f320ef5f57c7cd6dcbcd809181f"
+  },
+  "D:\\The App\\reading-illustrations\\ch2_epidemiological_triad_v2.png": {
+    "mtime": 1789271760.1864853,
+    "hash": "35c23f320ef5f57c7cd6dcbcd809181f"
   },
   "D:\\The App\\reading-illustrations\\ch2_natural_history_of_disease.png": {
-    "mtime": 1788956531.7543676,
-    "hash": "faa37eb00c03e17aea949dc203604e94"
+    "mtime": 1789271760.2163885,
+    "hash": "8dd0fbad525d4e6a2eb8bf295aea7203"
+  },
+  "D:\\The App\\reading-illustrations\\ch2_natural_history_of_disease_v2.png": {
+    "mtime": 1789271760.2163885,
+    "hash": "8dd0fbad525d4e6a2eb8bf295aea7203"
   },
   "D:\\The App\\reading-illustrations\\ch2_spectrum_of_health.png": {
-    "mtime": 1788956514.6579473,
-    "hash": "4d1b8bdb3c7430ee6f85985c75d73625"
+    "mtime": 1789271760.237277,
+    "hash": "659b67c2ec79475710ad4f588ac92d71"
+  },
+  "D:\\The App\\reading-illustrations\\ch2_spectrum_of_health_v2.png": {
+    "mtime": 1789271760.237277,
+    "hash": "659b67c2ec79475710ad4f588ac92d71"
   },
   "D:\\The App\\reading-illustrations\\ch2_web_of_causation.png": {
-    "mtime": 1789044492.5562067,
-    "hash": "3a9da1b511a3ce6f097074522d51f2c6"
+    "mtime": 1789271760.248286,
+    "hash": "21078e7f7cd76e40aa20f91fecbbaccf"
   },
-  "D:\\The App\\reading-illustrations\\ch31_1_demographic_transition_pyramid.png": {
-    "mtime": 1788415508.3325067,
-    "hash": "0f8676ef7be4f9fe1f43846238396c1b"
+  "D:\\The App\\reading-illustrations\\ch2_web_of_causation_v2.png": {
+    "mtime": 1789271760.248286,
+    "hash": "21078e7f7cd76e40aa20f91fecbbaccf"
   },
   "D:\\The App\\reading-illustrations\\ch31_1_demographic_transition_pyramid_v2.png": {
     "mtime": 1788415508.3325067,
     "hash": "0f8676ef7be4f9fe1f43846238396c1b"
   },
-  "D:\\The App\\reading-illustrations\\ch31_2_srs_dual_record_flowchart.png": {
-    "mtime": 1788412320.6189013,
-    "hash": "f6197724a1834a97b0e74f3753276ac9"
-  },
   "D:\\The App\\reading-illustrations\\ch31_2_srs_dual_record_flowchart_v2.png": {
     "mtime": 1788412320.6189013,
     "hash": "f6197724a1834a97b0e74f3753276ac9"
-  },
-  "D:\\The App\\reading-illustrations\\ch31_3_nfhs_indicators_dashboard.png": {
-    "mtime": 1788415606.4123518,
-    "hash": "75fdb0cea7b1b9cab4f1dee58d684b29"
   },
   "D:\\The App\\reading-illustrations\\ch31_3_nfhs_indicators_dashboard_v2.png": {
     "mtime": 1788415606.4123518,
     "hash": "75fdb0cea7b1b9cab4f1dee58d684b29"
   },
-  "D:\\The App\\reading-illustrations\\ch31_4_disease_care_cascades.png": {
-    "mtime": 1788415702.926332,
-    "hash": "398d0f66d5a9adb54f17197d25705ceb"
-  },
   "D:\\The App\\reading-illustrations\\ch31_4_disease_care_cascades_v2.png": {
     "mtime": 1788415702.926332,
     "hash": "398d0f66d5a9adb54f17197d25705ceb"
-  },
-  "D:\\The App\\reading-illustrations\\ch31_5_nhp_continuum_aam_architecture.png": {
-    "mtime": 1788412509.4650724,
-    "hash": "2baad5d7d59008e028740ba2d9daa59d"
   },
   "D:\\The App\\reading-illustrations\\ch31_5_nhp_continuum_aam_architecture_v2.png": {
     "mtime": 1788412509.4650724,
     "hash": "2baad5d7d59008e028740ba2d9daa59d"
   },
-  "D:\\The App\\reading-illustrations\\ch31_6_health_information_systems_continuum.png": {
-    "mtime": 1788415818.3621647,
-    "hash": "7419d529b8dda41ec6f684a23a48cb94"
-  },
   "D:\\The App\\reading-illustrations\\ch31_6_health_information_systems_continuum_v2.png": {
     "mtime": 1788415818.3621647,
     "hash": "7419d529b8dda41ec6f684a23a48cb94"
-  },
-  "D:\\The App\\reading-illustrations\\ch32_10_healthcare_ghg_scopes_green_hospital.png": {
-    "mtime": 1788413508.6298723,
-    "hash": "1bf9ab9c3dbe9832c14fc97d58fef2c6"
   },
   "D:\\The App\\reading-illustrations\\ch32_10_healthcare_ghg_scopes_green_hospital_v2.png": {
     "mtime": 1788413508.6298723,
     "hash": "1bf9ab9c3dbe9832c14fc97d58fef2c6"
   },
-  "D:\\The App\\reading-illustrations\\ch32_11_yellow_fever_ihr_decision_tree.png": {
-    "mtime": 1788413629.216014,
-    "hash": "2e6d6ee190132f45f7e074a16d03eeb8"
-  },
   "D:\\The App\\reading-illustrations\\ch32_11_yellow_fever_ihr_decision_tree_v2.png": {
     "mtime": 1788413629.216014,
     "hash": "2e6d6ee190132f45f7e074a16d03eeb8"
-  },
-  "D:\\The App\\reading-illustrations\\ch32_1_abdm_architecture.png": {
-    "mtime": 1788415933.3472726,
-    "hash": "81ceb9113ed5b2279459b7c88b8065a5"
   },
   "D:\\The App\\reading-illustrations\\ch32_1_abdm_architecture_v2.png": {
     "mtime": 1788415933.3472726,
     "hash": "81ceb9113ed5b2279459b7c88b8065a5"
   },
-  "D:\\The App\\reading-illustrations\\ch32_2_ai_cad_screening_workflow.png": {
-    "mtime": 1788416017.1492302,
-    "hash": "d85c55c216f24778ea64ef1295808c39"
-  },
   "D:\\The App\\reading-illustrations\\ch32_2_ai_cad_screening_workflow_v2.png": {
     "mtime": 1788416017.1492302,
     "hash": "d85c55c216f24778ea64ef1295808c39"
-  },
-  "D:\\The App\\reading-illustrations\\ch32_3_idrone_logistics_model.png": {
-    "mtime": 1788412848.0199873,
-    "hash": "7d20bc8049fdb67efac05e9426529970"
   },
   "D:\\The App\\reading-illustrations\\ch32_3_idrone_logistics_model_v2.png": {
     "mtime": 1788412848.0199873,
     "hash": "7d20bc8049fdb67efac05e9426529970"
   },
-  "D:\\The App\\reading-illustrations\\ch32_4_adult_immunization_framework.png": {
-    "mtime": 1788416115.5481882,
-    "hash": "d83eff11a21d9b7c36f1c028461310d5"
-  },
   "D:\\The App\\reading-illustrations\\ch32_4_adult_immunization_framework_v2.png": {
     "mtime": 1788416115.5481882,
     "hash": "d83eff11a21d9b7c36f1c028461310d5"
-  },
-  "D:\\The App\\reading-illustrations\\ch32_5_biosafety_levels_bioterrorism.png": {
-    "mtime": 1788416229.0341134,
-    "hash": "0bf8d85c1f4136e4247423f1bcf0f305"
   },
   "D:\\The App\\reading-illustrations\\ch32_5_biosafety_levels_bioterrorism_v2.png": {
     "mtime": 1788416229.0341134,
     "hash": "0bf8d85c1f4136e4247423f1bcf0f305"
   },
-  "D:\\The App\\reading-illustrations\\ch32_6_nap_amr_aware_one_health.png": {
-    "mtime": 1788413047.8963945,
-    "hash": "426b4fa2ae4f6494bac51d2a4b1b6ee3"
-  },
   "D:\\The App\\reading-illustrations\\ch32_6_nap_amr_aware_one_health_v2.png": {
     "mtime": 1788413047.8963945,
     "hash": "426b4fa2ae4f6494bac51d2a4b1b6ee3"
-  },
-  "D:\\The App\\reading-illustrations\\ch32_7_gis_thematic_layers_buffering.png": {
-    "mtime": 1788413283.6379619,
-    "hash": "0127fdeb55551743cdecf804d6d63404"
   },
   "D:\\The App\\reading-illustrations\\ch32_7_gis_thematic_layers_buffering_v2.png": {
     "mtime": 1788413283.6379619,
     "hash": "0127fdeb55551743cdecf804d6d63404"
   },
-  "D:\\The App\\reading-illustrations\\ch32_8_prisma_roc_geometry.png": {
-    "mtime": 1788416348.579846,
-    "hash": "fa4ae8ed891e0f9a0b2f65da288297f5"
-  },
   "D:\\The App\\reading-illustrations\\ch32_8_prisma_roc_geometry_v2.png": {
     "mtime": 1788416348.579846,
     "hash": "fa4ae8ed891e0f9a0b2f65da288297f5"
-  },
-  "D:\\The App\\reading-illustrations\\ch32_9_millers_pyramid_fap_timeline.png": {
-    "mtime": 1788413409.112374,
-    "hash": "8287bd5fa6563dce5ad1de37238ffb06"
   },
   "D:\\The App\\reading-illustrations\\ch32_9_millers_pyramid_fap_timeline_v2.png": {
     "mtime": 1788413409.112374,
     "hash": "8287bd5fa6563dce5ad1de37238ffb06"
   },
   "D:\\The App\\reading-illustrations\\ch3_1_prevalence_incidence.png": {
-    "mtime": 1789044475.3242867,
-    "hash": "7d3f38ca83eeb7502a77c70bf0e4f0d2"
+    "mtime": 1789271760.2643278,
+    "hash": "e4442c0b4256780e191466601ac99923"
+  },
+  "D:\\The App\\reading-illustrations\\ch3_1_prevalence_incidence_v2.png": {
+    "mtime": 1789271760.2643278,
+    "hash": "e4442c0b4256780e191466601ac99923"
   },
   "D:\\The App\\reading-illustrations\\ch3_2_epidemic_curves.png": {
-    "mtime": 1788956539.9057243,
-    "hash": "e8bef6ed0e8ed9c4b55d91bacf1da148"
+    "mtime": 1789271760.2959416,
+    "hash": "b1289850664a4227e5465760014fb290"
+  },
+  "D:\\The App\\reading-illustrations\\ch3_2_epidemic_curves_v2.png": {
+    "mtime": 1789271760.2959416,
+    "hash": "b1289850664a4227e5465760014fb290"
   },
   "D:\\The App\\reading-illustrations\\ch3_2_outbreak_investigation.png": {
-    "mtime": 1788956542.8896933,
-    "hash": "2a88cb3617c658b2b5c4cdeabdd70afc"
+    "mtime": 1789271760.3137074,
+    "hash": "91af413532bc9ee82f2701521c0c8e43"
+  },
+  "D:\\The App\\reading-illustrations\\ch3_2_outbreak_investigation_v2.png": {
+    "mtime": 1789271760.3137074,
+    "hash": "91af413532bc9ee82f2701521c0c8e43"
   },
   "D:\\The App\\reading-illustrations\\ch3_3_case_control_vs_cohort.png": {
-    "mtime": 1789044477.6387591,
-    "hash": "b8ae9ebbbfb247ccbc851ea42d0ff73f"
+    "mtime": 1789271760.3288813,
+    "hash": "3c16a9ba6993a7480d4f83304b5a8d92"
+  },
+  "D:\\The App\\reading-illustrations\\ch3_3_case_control_vs_cohort_v2.png": {
+    "mtime": 1789271760.3288813,
+    "hash": "3c16a9ba6993a7480d4f83304b5a8d92"
   },
   "D:\\The App\\reading-illustrations\\ch3_4_bradford_hill.png": {
-    "mtime": 1788956546.5759866,
-    "hash": "7367750761538a7c65e72cf00b916eab"
+    "mtime": 1789271760.3498905,
+    "hash": "7af387fc4164d3c2871314338aec4d8b"
+  },
+  "D:\\The App\\reading-illustrations\\ch3_4_bradford_hill_v2.png": {
+    "mtime": 1789271760.3498905,
+    "hash": "7af387fc4164d3c2871314338aec4d8b"
   },
   "D:\\The App\\reading-illustrations\\ch3_4_rct_steps.png": {
-    "mtime": 1789044494.6612208,
-    "hash": "4ab7a9bc608451dc364ece86fb6d7a32"
+    "mtime": 1789271760.3645546,
+    "hash": "c45edc183fc0e18d930803754f4e9768"
+  },
+  "D:\\The App\\reading-illustrations\\ch3_4_rct_steps_v2.png": {
+    "mtime": 1789271760.3645546,
+    "hash": "c45edc183fc0e18d930803754f4e9768"
   },
   "D:\\The App\\reading-illustrations\\ch3_5_carriers.png": {
-    "mtime": 1789044497.0143256,
-    "hash": "9f8ff060c8dc0405c70bbf1c547d8550"
+    "mtime": 1789271760.3901787,
+    "hash": "f925146b5a11152b270610420f7368fe"
+  },
+  "D:\\The App\\reading-illustrations\\ch3_5_carriers_v2.png": {
+    "mtime": 1789271760.3901787,
+    "hash": "f925146b5a11152b270610420f7368fe"
   },
   "D:\\The App\\reading-illustrations\\ch3_5_herd_immunity.png": {
-    "mtime": 1789044504.4279573,
-    "hash": "2fbd20d30f57ab51be95cd24ea6a2de4"
+    "mtime": 1789271760.4062636,
+    "hash": "e91ca6db685ec88876fcdd6600cd7062"
+  },
+  "D:\\The App\\reading-illustrations\\ch3_5_herd_immunity_v2.png": {
+    "mtime": 1789271760.4062636,
+    "hash": "e91ca6db685ec88876fcdd6600cd7062"
   },
   "D:\\The App\\reading-illustrations\\ch3_5_isolation_quarantine.png": {
-    "mtime": 1789044499.6152477,
-    "hash": "958bf1491c0a5f13b8627d6c887567fa"
+    "mtime": 1789271760.4219482,
+    "hash": "da6c5b5d52747d2de5f975afaf3da915"
+  },
+  "D:\\The App\\reading-illustrations\\ch3_5_isolation_quarantine_v2.png": {
+    "mtime": 1789271760.4219482,
+    "hash": "da6c5b5d52747d2de5f975afaf3da915"
   },
   "D:\\The App\\reading-illustrations\\ch3_5_modes_of_transmission.png": {
-    "mtime": 1789044479.9246287,
-    "hash": "f84fa58ec97605a6d2e26f582d1f6850"
+    "mtime": 1789271760.441363,
+    "hash": "d28a608184aba32a6d34ad639d1370ea"
+  },
+  "D:\\The App\\reading-illustrations\\ch3_5_modes_of_transmission_v2.png": {
+    "mtime": 1789271760.441363,
+    "hash": "d28a608184aba32a6d34ad639d1370ea"
   },
   "D:\\The App\\reading-illustrations\\ch3_6_cold_chain_hierarchy.png": {
-    "mtime": 1789044482.0259495,
-    "hash": "aa6ce4f70e6ba50ca38f1492369a2de9"
+    "mtime": 1789271760.4668896,
+    "hash": "b9b69877d5b39352e9f417f47eef6cb4"
+  },
+  "D:\\The App\\reading-illustrations\\ch3_6_cold_chain_hierarchy_v2.png": {
+    "mtime": 1789271760.4668896,
+    "hash": "b9b69877d5b39352e9f417f47eef6cb4"
   },
   "D:\\The App\\reading-illustrations\\ch3_6_open_vial_policy.png": {
-    "mtime": 1789044502.059443,
-    "hash": "5b5dbae94556d1ba49068bedfa517a5f"
+    "mtime": 1789271760.4698226,
+    "hash": "6d2509a23eb83971a67d05e91a57a71b"
+  },
+  "D:\\The App\\reading-illustrations\\ch3_6_open_vial_policy_v2.png": {
+    "mtime": 1789271760.4698226,
+    "hash": "6d2509a23eb83971a67d05e91a57a71b"
   },
   "D:\\The App\\reading-illustrations\\ch3_6_shake_test.png": {
-    "mtime": 1789016781.7619286,
-    "hash": "241aa7b9db9538bae714b28c86dfab24"
+    "mtime": 1789271760.5017078,
+    "hash": "14263e3784b16bf820958be6c5a7388b"
+  },
+  "D:\\The App\\reading-illustrations\\ch3_6_shake_test_v2.png": {
+    "mtime": 1789271760.5017078,
+    "hash": "14263e3784b16bf820958be6c5a7388b"
   },
   "D:\\The App\\reading-illustrations\\ch4_lead_time.png": {
-    "mtime": 1789044484.15945,
-    "hash": "b7c230b75d9d670d9debbc2736a616a9"
+    "mtime": 1789271760.517764,
+    "hash": "b3c4a918dd4afa1222a5d744be7de9a0"
+  },
+  "D:\\The App\\reading-illustrations\\ch4_lead_time_v2.png": {
+    "mtime": 1789271760.517764,
+    "hash": "b3c4a918dd4afa1222a5d744be7de9a0"
   },
   "D:\\The App\\reading-illustrations\\ch5_10_plague_cycle.png": {
-    "mtime": 1789046185.0840898,
-    "hash": "3c504451af2c52863e600f0a0865da73"
+    "mtime": 1789271760.9005892,
+    "hash": "2f3f480d0b014a3897630e1ebac8fd00"
+  },
+  "D:\\The App\\reading-illustrations\\ch5_10_plague_cycle_v2.png": {
+    "mtime": 1789271760.9005892,
+    "hash": "2f3f480d0b014a3897630e1ebac8fd00"
   },
   "D:\\The App\\reading-illustrations\\ch5_11_fisto.png": {
-    "mtime": 1789046108.1079605,
-    "hash": "5031cc4f057f730d7eab5036b951b563"
+    "mtime": 1789271760.9142227,
+    "hash": "e6ebf0921e82ec8c646bee0beed7008e"
+  },
+  "D:\\The App\\reading-illustrations\\ch5_11_fisto_v2.png": {
+    "mtime": 1789271760.9142227,
+    "hash": "e6ebf0921e82ec8c646bee0beed7008e"
   },
   "D:\\The App\\reading-illustrations\\ch5_1_measles_clinical_course.png": {
-    "mtime": 1788940822.617288,
-    "hash": "5631f8f923602bef4cbaffe186704745"
+    "mtime": 1789271760.533549,
+    "hash": "fc956502f3e3d1f4392f01084279b9d3"
+  },
+  "D:\\The App\\reading-illustrations\\ch5_1_measles_clinical_course_v2.png": {
+    "mtime": 1789271760.533549,
+    "hash": "fc956502f3e3d1f4392f01084279b9d3"
   },
   "D:\\The App\\reading-illustrations\\ch5_1_smallpox_vs_chickenpox.png": {
-    "mtime": 1789044509.1514306,
-    "hash": "8b9eb7acec87f691fd3207bc0fc18c40"
+    "mtime": 1789271760.5494783,
+    "hash": "97ce88dd59e860b6e2e27770946d4064"
+  },
+  "D:\\The App\\reading-illustrations\\ch5_1_smallpox_vs_chickenpox_v2.png": {
+    "mtime": 1789271760.5494783,
+    "hash": "97ce88dd59e860b6e2e27770946d4064"
   },
   "D:\\The App\\reading-illustrations\\ch5_2_imci_pneumonia.png": {
-    "mtime": 1789044506.7362728,
-    "hash": "a5dcffee28be22101eda1afd9cc03825"
+    "mtime": 1789271760.5684586,
+    "hash": "0f79d1c3c073d29265e2fd8a09d2f352"
+  },
+  "D:\\The App\\reading-illustrations\\ch5_2_imci_pneumonia_v2.png": {
+    "mtime": 1789271760.5684586,
+    "hash": "0f79d1c3c073d29265e2fd8a09d2f352"
   },
   "D:\\The App\\reading-illustrations\\ch5_2_influenza_shift_drift.png": {
-    "mtime": 1789046114.971867,
-    "hash": "2dca4e1ccfcd2c88597ccccaf7285ca1"
+    "mtime": 1789271760.5974162,
+    "hash": "f7248b957366d59030a8c05f6b07f40a"
+  },
+  "D:\\The App\\reading-illustrations\\ch5_2_influenza_shift_drift_v2.png": {
+    "mtime": 1789271760.5974162,
+    "hash": "f7248b957366d59030a8c05f6b07f40a"
   },
   "D:\\The App\\reading-illustrations\\ch5_2_tb_natural_history.png": {
-    "mtime": 1789044486.3200724,
-    "hash": "3d00c0ce36ab48f2e87d0c0477240b48"
+    "mtime": 1789271760.619556,
+    "hash": "ea52a2ecb19e075f7c3af01d6ee1d708"
+  },
+  "D:\\The App\\reading-illustrations\\ch5_2_tb_natural_history_v2.png": {
+    "mtime": 1789271760.619556,
+    "hash": "ea52a2ecb19e075f7c3af01d6ee1d708"
   },
   "D:\\The App\\reading-illustrations\\ch5_3_hepatitis_comparison.png": {
-    "mtime": 1789044511.555753,
-    "hash": "d0baaee199c31008cb156dd1bd29cef2"
+    "mtime": 1789271760.6294768,
+    "hash": "2e2003ac2d8363621f4142e69c8be974"
+  },
+  "D:\\The App\\reading-illustrations\\ch5_3_hepatitis_comparison_v2.png": {
+    "mtime": 1789271760.6294768,
+    "hash": "2e2003ac2d8363621f4142e69c8be974"
   },
   "D:\\The App\\reading-illustrations\\ch5_3_hepb_natural_history.png": {
-    "mtime": 1789044513.8331246,
-    "hash": "be794d43c8e13d9fc9656171d12f6bd9"
+    "mtime": 1789271760.645251,
+    "hash": "965a2cc3e34adf2035359c51ddf16fc5"
+  },
+  "D:\\The App\\reading-illustrations\\ch5_3_hepb_natural_history_v2.png": {
+    "mtime": 1789271760.645251,
+    "hash": "965a2cc3e34adf2035359c51ddf16fc5"
   },
   "D:\\The App\\reading-illustrations\\ch5_3_polio_clinical_spectrum.png": {
-    "mtime": 1788941105.6114848,
-    "hash": "8d66e3b2235d0b43c4272e39643f5d97"
+    "mtime": 1789271760.6710644,
+    "hash": "3a63c8174699d982f588ad8a0c2c6c20"
+  },
+  "D:\\The App\\reading-illustrations\\ch5_3_polio_clinical_spectrum_v2.png": {
+    "mtime": 1789271760.6710644,
+    "hash": "3a63c8174699d982f588ad8a0c2c6c20"
   },
   "D:\\The App\\reading-illustrations\\ch5_4_cholera_ors.png": {
-    "mtime": 1789046104.0164773,
-    "hash": "85b86aa4a765b6f30a3813559e34661b"
+    "mtime": 1789271760.6925488,
+    "hash": "625f24a40d2787207a5ebbb9ef5883cf"
+  },
+  "D:\\The App\\reading-illustrations\\ch5_4_cholera_ors_v2.png": {
+    "mtime": 1789271760.6925488,
+    "hash": "625f24a40d2787207a5ebbb9ef5883cf"
   },
   "D:\\The App\\reading-illustrations\\ch5_4_typhoid_pathogenesis.png": {
-    "mtime": 1789046101.6950543,
-    "hash": "0e2e71f6b5d33e824016506915c0b2da"
+    "mtime": 1789271760.70866,
+    "hash": "aef90e08fefa5bbd2044c7757ac1d5d0"
+  },
+  "D:\\The App\\reading-illustrations\\ch5_4_typhoid_pathogenesis_v2.png": {
+    "mtime": 1789271760.70866,
+    "hash": "aef90e08fefa5bbd2044c7757ac1d5d0"
   },
   "D:\\The App\\reading-illustrations\\ch5_5_dengue_clinical.png": {
-    "mtime": 1788941111.8956313,
-    "hash": "d347d413f8ef2d10ab03f60d9423ef49"
+    "mtime": 1789271760.7296312,
+    "hash": "a75964c4c9955803dc18f32b3f8a7425"
+  },
+  "D:\\The App\\reading-illustrations\\ch5_5_dengue_clinical_v2.png": {
+    "mtime": 1789271760.7296312,
+    "hash": "a75964c4c9955803dc18f32b3f8a7425"
   },
   "D:\\The App\\reading-illustrations\\ch5_5_filaria_lifecycle.png": {
-    "mtime": 1789046076.0894706,
-    "hash": "dbc85b1e0abedaa449f37b61646fa51e"
+    "mtime": 1789271760.7561965,
+    "hash": "1a21641238dde1fe8fcd7e9adba6f400"
+  },
+  "D:\\The App\\reading-illustrations\\ch5_5_filaria_lifecycle_v2.png": {
+    "mtime": 1789271760.7561965,
+    "hash": "1a21641238dde1fe8fcd7e9adba6f400"
   },
   "D:\\The App\\reading-illustrations\\ch5_5_malaria_life_cycle.png": {
-    "mtime": 1788941108.9893527,
-    "hash": "fa9b5ef1a42ad74d2025924827877be0"
+    "mtime": 1789271760.7731936,
+    "hash": "6b5b6ddc070bf0d63bef78eb670484f8"
+  },
+  "D:\\The App\\reading-illustrations\\ch5_5_malaria_life_cycle_v2.png": {
+    "mtime": 1789271760.7731936,
+    "hash": "6b5b6ddc070bf0d63bef78eb670484f8"
   },
   "D:\\The App\\reading-illustrations\\ch5_6_je_cycle.png": {
-    "mtime": 1789046105.9618585,
-    "hash": "be289c4f7275a599e99ac98487f71e03"
+    "mtime": 1789271760.7985666,
+    "hash": "86bd512c2825a0297ffef9b8d7e96bcc"
+  },
+  "D:\\The App\\reading-illustrations\\ch5_6_je_cycle_v2.png": {
+    "mtime": 1789271760.7985666,
+    "hash": "86bd512c2825a0297ffef9b8d7e96bcc"
   },
   "D:\\The App\\reading-illustrations\\ch5_6_rabies_pathogenesis.png": {
-    "mtime": 1788941826.3060017,
-    "hash": "0431e7fbb5f5bd0e2c7d1121371729ca"
+    "mtime": 1789271760.81927,
+    "hash": "3a97ac055e9eb879627c2d02aee7aacb"
+  },
+  "D:\\The App\\reading-illustrations\\ch5_6_rabies_pathogenesis_v2.png": {
+    "mtime": 1789271760.81927,
+    "hash": "3a97ac055e9eb879627c2d02aee7aacb"
   },
   "D:\\The App\\reading-illustrations\\ch5_7_leprosy_spectrum.png": {
-    "mtime": 1788941832.3414152,
-    "hash": "ef736d70b626696b76c44e58be37dc54"
+    "mtime": 1789271760.8429706,
+    "hash": "0300d39ce565fa5aac289a693b606a27"
+  },
+  "D:\\The App\\reading-illustrations\\ch5_7_leprosy_spectrum_v2.png": {
+    "mtime": 1789271760.8429706,
+    "hash": "0300d39ce565fa5aac289a693b606a27"
   },
   "D:\\The App\\reading-illustrations\\ch5_7_tetanus_wound.png": {
-    "mtime": 1789046078.689691,
-    "hash": "60be7753eeb552b6f2964509e613533d"
+    "mtime": 1789271760.859198,
+    "hash": "2939fa04da30c4c9494ad44062489f92"
+  },
+  "D:\\The App\\reading-illustrations\\ch5_7_tetanus_wound_v2.png": {
+    "mtime": 1789271760.859198,
+    "hash": "2939fa04da30c4c9494ad44062489f92"
   },
   "D:\\The App\\reading-illustrations\\ch5_8_hiv_who_staging.png": {
-    "mtime": 1788941838.7009745,
-    "hash": "56eb523b8501d50df668e90cdb241204"
+    "mtime": 1789271760.8749006,
+    "hash": "e7f9ad6335a56aafeda636dac9c3de50"
+  },
+  "D:\\The App\\reading-illustrations\\ch5_8_hiv_who_staging_v2.png": {
+    "mtime": 1789271760.8749006,
+    "hash": "e7f9ad6335a56aafeda636dac9c3de50"
   },
   "D:\\The App\\reading-illustrations\\ch6_1_chd_pathogenesis.png": {
-    "mtime": 1789044488.5671537,
-    "hash": "c02dc23f28c29cf849d7bf8dd36b2218"
+    "mtime": 1789271760.9295926,
+    "hash": "43381b44ac72290d2220df70f9a6881c"
+  },
+  "D:\\The App\\reading-illustrations\\ch6_1_chd_pathogenesis_v2.png": {
+    "mtime": 1789271760.9295926,
+    "hash": "43381b44ac72290d2220df70f9a6881c"
   },
   "D:\\The App\\reading-illustrations\\ch6_1_rhd_pathogenesis.png": {
-    "mtime": 1788941844.3063385,
-    "hash": "304078e7d7a94932e1953b362f3bae38"
+    "mtime": 1789271760.9778097,
+    "hash": "9f9a3ab5465c7cd037670b9b14963257"
+  },
+  "D:\\The App\\reading-illustrations\\ch6_1_rhd_pathogenesis_v2.png": {
+    "mtime": 1789271760.9778097,
+    "hash": "9f9a3ab5465c7cd037670b9b14963257"
   },
   "D:\\The App\\reading-illustrations\\ch6_2_who_steps.png": {
-    "mtime": 1789046081.2454064,
-    "hash": "a38e588978ef5ece5137868ba608fa87"
+    "mtime": 1789271760.9935164,
+    "hash": "7ea0c33417003c2e1205e0ae9fc5f201"
+  },
+  "D:\\The App\\reading-illustrations\\ch6_2_who_steps_v2.png": {
+    "mtime": 1789271760.9935164,
+    "hash": "7ea0c33417003c2e1205e0ae9fc5f201"
   },
   "D:\\The App\\reading-illustrations\\ch6_3_cancer_downstaging.png": {
-    "mtime": 1789046083.6459632,
-    "hash": "7ae516bc0a0eb633b3a483556c7a23e9"
+    "mtime": 1789271761.0093918,
+    "hash": "390f7d5bc7e29ccdf54c222d23368da7"
+  },
+  "D:\\The App\\reading-illustrations\\ch6_3_cancer_downstaging_v2.png": {
+    "mtime": 1789271761.0093918,
+    "hash": "390f7d5bc7e29ccdf54c222d23368da7"
   },
   "D:\\The App\\reading-illustrations\\ch6_4_haddon_matrix.png": {
-    "mtime": 1789015853.105857,
-    "hash": "29a48ad17208bec7aed229677e40d33d"
+    "mtime": 1789271761.0295858,
+    "hash": "170e05169cca73fc39136b42969224ee"
+  },
+  "D:\\The App\\reading-illustrations\\ch6_4_haddon_matrix_v2.png": {
+    "mtime": 1789271761.0295858,
+    "hash": "170e05169cca73fc39136b42969224ee"
   },
   "D:\\The App\\reading-illustrations\\ch6_5_blindness_definitions.png": {
-    "mtime": 1789046110.3350437,
-    "hash": "8fa05e373b506f3a6e1b409b444d5f1f"
+    "mtime": 1789271761.054621,
+    "hash": "92bcc2c67c5531c9fbac6d7545fb8d60"
+  },
+  "D:\\The App\\reading-illustrations\\ch6_5_blindness_definitions_v2.png": {
+    "mtime": 1789271761.054621,
+    "hash": "92bcc2c67c5531c9fbac6d7545fb8d60"
   },
   "D:\\The App\\reading-illustrations\\ch8_1_demographic_cycle.png": {
-    "mtime": 1788956555.3188696,
-    "hash": "29ff3ab4ab85f7d768f3b74f78584ee9"
+    "mtime": 1789271761.0727875,
+    "hash": "01997d2de5d7b694a79295965b4db0e2"
+  },
+  "D:\\The App\\reading-illustrations\\ch8_1_demographic_cycle_v2.png": {
+    "mtime": 1789271761.0727875,
+    "hash": "01997d2de5d7b694a79295965b4db0e2"
   },
   "D:\\The App\\reading-illustrations\\ch8_4_contraceptive_classes.png": {
-    "mtime": 1789046085.88494,
-    "hash": "30d9aa4cf426fca9de7ce738173257f0"
+    "mtime": 1789271761.0886226,
+    "hash": "3a2d48746364a66a491b7e0556caf5e7"
+  },
+  "D:\\The App\\reading-illustrations\\ch8_4_contraceptive_classes_v2.png": {
+    "mtime": 1789271761.0886226,
+    "hash": "3a2d48746364a66a491b7e0556caf5e7"
   },
   "D:\\The App\\reading-illustrations\\ch8_4_iud_mechanism.png": {
-    "mtime": 1789046087.9981444,
-    "hash": "512040a65cf2cf4b0550b96956142f08"
+    "mtime": 1789271761.1052003,
+    "hash": "760fd4e23f1330782ca734d85a66624b"
+  },
+  "D:\\The App\\reading-illustrations\\ch8_4_iud_mechanism_v2.png": {
+    "mtime": 1789271761.1052003,
+    "hash": "760fd4e23f1330782ca734d85a66624b"
   },
   "D:\\The App\\reading-illustrations\\ch8_5_ocp_mechanism.png": {
-    "mtime": 1788943203.9946234,
-    "hash": "0c024da3ebe1e49719edde32c56146d4"
+    "mtime": 1789271761.1299026,
+    "hash": "7caab9601f3c78ba3985f67bc4e97fad"
+  },
+  "D:\\The App\\reading-illustrations\\ch8_5_ocp_mechanism_v2.png": {
+    "mtime": 1789271761.1299026,
+    "hash": "7caab9601f3c78ba3985f67bc4e97fad"
   },
   "D:\\The App\\reading-illustrations\\ch9_1_maternity_cycle.png": {
-    "mtime": 1789015848.368379,
-    "hash": "d006fd5f904361cf683e42960bf8dee5"
+    "mtime": 1789271761.1362092,
+    "hash": "ea8b536afe9cf61451811897dfa1254f"
+  },
+  "D:\\The App\\reading-illustrations\\ch9_1_maternity_cycle_v2.png": {
+    "mtime": 1789271761.1362092,
+    "hash": "ea8b536afe9cf61451811897dfa1254f"
   },
   "D:\\The App\\reading-illustrations\\ch9_2_bfhi_ten_steps.png": {
-    "mtime": 1789046090.5092793,
-    "hash": "82e6cd001a18ae5ed161edbab7847dfc"
+    "mtime": 1789271761.168026,
+    "hash": "41f178b0103d62d87a475a7019dd2b92"
+  },
+  "D:\\The App\\reading-illustrations\\ch9_2_bfhi_ten_steps_v2.png": {
+    "mtime": 1789271761.168026,
+    "hash": "41f178b0103d62d87a475a7019dd2b92"
   },
   "D:\\The App\\reading-illustrations\\ch9_4_growth_chart.png": {
-    "mtime": 1789044490.6478636,
-    "hash": "2b6979ae128af2f3a08ec03af3354372"
+    "mtime": 1789271761.1837282,
+    "hash": "562b50d28c7b8ef0159cbbfbca9784de"
+  },
+  "D:\\The App\\reading-illustrations\\ch9_4_growth_chart_v2.png": {
+    "mtime": 1789271761.1837282,
+    "hash": "562b50d28c7b8ef0159cbbfbca9784de"
   },
   "D:\\The App\\reading-illustrations\\ch9_4_kmc.png": {
-    "mtime": 1789046092.7168517,
-    "hash": "80fac6201ed2ed3b1c4b8d6142965ef9"
+    "mtime": 1789271761.1994095,
+    "hash": "818b5e18dbf7bb062a2a48a79830c46e"
+  },
+  "D:\\The App\\reading-illustrations\\ch9_4_kmc_v2.png": {
+    "mtime": 1789271761.1994095,
+    "hash": "818b5e18dbf7bb062a2a48a79830c46e"
   },
   "D:\\The App\\reading-illustrations\\ch9_5_mdsr_cycle.png": {
-    "mtime": 1789046112.6572354,
-    "hash": "793b73f5d71d63b3834d802f1df8ab9c"
+    "mtime": 1789271761.2151256,
+    "hash": "00c153c56076a21e8e8eb35d7bf72654"
+  },
+  "D:\\The App\\reading-illustrations\\ch9_5_mdsr_cycle_v2.png": {
+    "mtime": 1789271761.2151256,
+    "hash": "00c153c56076a21e8e8eb35d7bf72654"
   },
   "D:\\The App\\reading-illustrations\\gn_15_8_climate.png": {
     "mtime": 1788260250.1854274,
