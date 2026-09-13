@@ -30,6 +30,7 @@ import {
   subscribeHighlights,
   saveHighlights,
 } from "../services/highlightService";
+import { nextHighlightValue } from "../utils/userHighlightColors";
 const buildReadingParamsFromEntry = (entry) => {
   const item = entry?.item || {};
   return buildLibraryReadingParams(item, entry.section);
@@ -144,13 +145,14 @@ const ReadingScreen = ({ route, navigation }) => {
   }, [user?.uid, effectiveContentKey]);
 
   const handleToggleHighlight = useCallback(
-    (key) => {
+    (key, colorId) => {
       setUserHighlights((prev) => {
         const next = { ...prev };
-        if (next[key]) {
+        const nextValue = nextHighlightValue(next[key], colorId);
+        if (nextValue == null) {
           delete next[key];
         } else {
-          next[key] = true;
+          next[key] = nextValue;
         }
         if (user?.uid && effectiveContentKey) {
           saveHighlights(user.uid, effectiveContentKey, next);

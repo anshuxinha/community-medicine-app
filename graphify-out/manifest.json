@@ -680,8 +680,8 @@
     "hash": "340987431de13941db032f91d2540782"
   },
   "D:\\The App\\scripts\\deploy_compressed_ch2_ch17_v2.js": {
-    "mtime": 1789275681.3326626,
-    "hash": "b1b42a493de3cac7f00d52116c456021"
+    "mtime": 1789276872.4647832,
+    "hash": "ecb79f87b0054f0e876e2099159e2159"
   },
   "D:\\The App\\scripts\\deploy_v2_visuals.js": {
     "mtime": 1788428496.9910777,
@@ -992,8 +992,8 @@
     "hash": "ee80de9ca72397fd02e0fb31ed09698c"
   },
   "D:\\The App\\src\\components\\ReadingView.js": {
-    "mtime": 1788957802.8442197,
-    "hash": "538228e42ace5b8a50be2a68fe324b85"
+    "mtime": 1789301834.2255828,
+    "hash": "437621707ac813b0f2548e8a529fccef"
   },
   "D:\\The App\\src\\components\\ReviewFeedbackModal.js": {
     "mtime": 1785328661.2858431,
@@ -1184,8 +1184,8 @@
     "hash": "f968241eb8b01706ae26202300310ee9"
   },
   "D:\\The App\\src\\screens\\ReadingScreen.js": {
-    "mtime": 1787947219.2723083,
-    "hash": "37885e64dbc12a4d5c2c49bf42bce88a"
+    "mtime": 1789301653.4688826,
+    "hash": "f197fd1c36ebced7d080943d3b3361e2"
   },
   "D:\\The App\\src\\screens\\SearchScreen.js": {
     "mtime": 1787947074.7724802,
@@ -1280,8 +1280,8 @@
     "hash": "34c2be6fa56708b10839c0dff74bbdd9"
   },
   "D:\\The App\\src\\styles\\theme.js": {
-    "mtime": 1788019311.583995,
-    "hash": "445a323779cdca8e5fc763373e4d1eca"
+    "mtime": 1789301653.4698815,
+    "hash": "3af37b2c92a1200bf09755f47031b9b1"
   },
   "D:\\The App\\src\\styles\\ThemeContext.js": {
     "mtime": 1785162442.7906754,
@@ -1391,6 +1391,10 @@
     "mtime": 1787901780.1874683,
     "hash": "3dfb7ae237bff7a669dc1daa90462f95"
   },
+  "D:\\The App\\src\\utils\\userHighlightColors.js": {
+    "mtime": 1789301653.3931391,
+    "hash": "a38eb06b044a99c7152bb2856024611e"
+  },
   "D:\\The App\\src\\utils\\__tests__\\chapterSearch.test.js": {
     "mtime": 1787812129.4978118,
     "hash": "889bcfd492e6bd6aa68a2198e745a2ba"
@@ -1474,6 +1478,10 @@
   "D:\\The App\\src\\utils\\__tests__\\splitSentences.test.js": {
     "mtime": 1787901780.1874683,
     "hash": "3d842b0f76517755c8069a3a4beabccc"
+  },
+  "D:\\The App\\src\\utils\\__tests__\\userHighlightColors.test.js": {
+    "mtime": 1789301653.3931391,
+    "hash": "12873322f2a0698ceffca029ae263af9"
   },
   "D:\\The App\\AGENTS.md": {
     "mtime": 1785916675.9318168,

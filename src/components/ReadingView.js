@@ -51,6 +51,13 @@ import {
 } from "../utils/chapterSearch";
 import { splitSentences } from "../utils/splitSentences";
 import { classifyReadingEnd, SHORT_CONTENT_TOLERANCE } from "../utils/readingEnd";
+import {
+  DEFAULT_HIGHLIGHT_COLOR,
+  HIGHLIGHT_COLOR_IDS,
+  HIGHLIGHT_COLOR_LABELS,
+  HIGHLIGHT_COLOR_SWATCHES,
+  normalizeHighlightColor,
+} from "../utils/userHighlightColors";
 import FullscreenImageViewer from "./FullscreenImageViewer";
 
 if (
@@ -951,6 +958,11 @@ const ReadingView = ({
   const [annotationText, setAnnotationText] = useState("");
   const [showHighlightsLocal, setShowHighlightsLocal] = useState(showUpdateHighlights);
   const [isHighlightMode, setIsHighlightMode] = useState(false);
+  const [showHighlightColorPicker, setShowHighlightColorPicker] = useState(false);
+  const [selectedHighlightColor, setSelectedHighlightColor] = useState(
+    DEFAULT_HIGHLIGHT_COLOR,
+  );
+  const [toolbarHeight, setToolbarHeight] = useState(56);
   const [noteModalVisible, setNoteModalVisible] = useState(false);
   const [wordCopyHintVisible, setWordCopyHintVisible] = useState(false);
   const [visibleCount, setVisibleCount] = useState(INITIAL_BLOCK_COUNT);
@@ -1147,11 +1159,51 @@ const ReadingView = ({
       const next = !prev;
       if (next) {
         setIsAnnotationMode(false);
+        setShowHighlightColorPicker(true);
         showToast("Click on any sentence to highlight it");
+      } else {
+        setShowHighlightColorPicker(false);
       }
       return next;
     });
   }, [showToast]);
+
+  const dismissHighlightColorPicker = useCallback(() => {
+    setShowHighlightColorPicker(false);
+  }, []);
+
+  const selectHighlightColor = useCallback((colorId) => {
+    setSelectedHighlightColor(colorId);
+    setShowHighlightColorPicker(false);
+    setIsHighlightMode(true);
+    setIsAnnotationMode(false);
+  }, []);
+
+  const handleUserHighlightPress = useCallback(
+    (hlKey) => {
+      setShowHighlightColorPicker(false);
+      if (onToggleHighlight) {
+        onToggleHighlight(hlKey, selectedHighlightColor);
+      }
+    },
+    [onToggleHighlight, selectedHighlightColor],
+  );
+
+  const userHighlightSentenceStyle = (value) => {
+    const id = normalizeHighlightColor(value);
+    if (id === "green") return styles.userHighlightSentenceGreen;
+    if (id === "pink") return styles.userHighlightSentencePink;
+    if (id) return styles.userHighlightSentence;
+    return null;
+  };
+
+  const userHighlightBlockStyle = (value) => {
+    const id = normalizeHighlightColor(value);
+    if (id === "green") return styles.userHighlightBlockGreen;
+    if (id === "pink") return styles.userHighlightBlockPink;
+    if (id) return styles.userHighlightBlock;
+    return null;
+  };
 
 
 
@@ -1611,14 +1663,14 @@ const ReadingView = ({
         const inner = (
           <View
             key={index}
-            style={[highlighted ? styles.highlightBlock : null, userHighlighted ? styles.userHighlightBlock : null]}
+            style={[highlighted ? styles.highlightBlock : null, userHighlightBlockStyle(userHighlighted)]}
             
           >
             {renderFormattedText(block.text, styles.h1)}
           </View>
         );
         return (
-          <Pressable key={index} disabled={!isHighlightMode} onPress={() => onToggleHighlight(hlKey)}>
+          <Pressable key={index} disabled={!isHighlightMode} onPress={() => handleUserHighlightPress(hlKey)}>
             {inner}
           </Pressable>
         );
@@ -1630,14 +1682,14 @@ const ReadingView = ({
         const inner = (
           <View
             key={index}
-            style={[highlighted ? styles.highlightBlock : null, userHighlighted ? styles.userHighlightBlock : null]}
+            style={[highlighted ? styles.highlightBlock : null, userHighlightBlockStyle(userHighlighted)]}
             
           >
             {renderFormattedText(block.text, styles.h2)}
           </View>
         );
         return (
-          <Pressable key={index} disabled={!isHighlightMode} onPress={() => onToggleHighlight(hlKey)}>
+          <Pressable key={index} disabled={!isHighlightMode} onPress={() => handleUserHighlightPress(hlKey)}>
             {inner}
           </Pressable>
         );
@@ -1728,10 +1780,10 @@ const ReadingView = ({
                   return (
                     <Text
                       key={sIdx}
-                      style={isHl ? styles.userHighlightSentence : null}
+                      style={userHighlightSentenceStyle(isHl)}
                       selectable={false}
                       contextMenuHidden
-                      onPress={isHighlightMode ? () => onToggleHighlight(hlKey) : undefined}
+                      onPress={isHighlightMode ? () => handleUserHighlightPress(hlKey) : undefined}
                       suppressHighlighting={true}
                     >
                       {sIdx > 0 ? " " : ""}{renderFormattedText(sentence, null, false)}
@@ -1774,10 +1826,10 @@ const ReadingView = ({
                   return (
                     <Text
                       key={sIdx}
-                      style={isHl ? styles.userHighlightSentence : null}
+                      style={userHighlightSentenceStyle(isHl)}
                       selectable={false}
                       contextMenuHidden
-                      onPress={isHighlightMode ? () => onToggleHighlight(hlKey) : undefined}
+                      onPress={isHighlightMode ? () => handleUserHighlightPress(hlKey) : undefined}
                       suppressHighlighting={true}
                     >
                       {sIdx > 0 ? " " : ""}{renderFormattedText(sentence, null, false)}
@@ -1812,7 +1864,7 @@ const ReadingView = ({
                   style={[
                     styles.bulletRow,
                     highlighted ? styles.highlightBulletRow : null,
-                    isHl ? styles.userHighlightSentence : null,
+                    userHighlightSentenceStyle(isHl),
                   ]}
                 >
                   <Text style={styles.bulletDot} selectable={false}>{"\u2022"}</Text>
@@ -1827,7 +1879,7 @@ const ReadingView = ({
                 <Pressable
                   key={itemIndex}
                   disabled={!isHighlightMode}
-                  onPress={() => onToggleHighlight(hlKey)}
+                  onPress={() => handleUserHighlightPress(hlKey)}
                 >
                   {row}
                 </Pressable>
@@ -1850,7 +1902,7 @@ const ReadingView = ({
                   style={[
                     styles.nestedBulletRow,
                     highlighted ? styles.highlightBulletRow : null,
-                    isHl ? styles.userHighlightSentence : null,
+                    userHighlightSentenceStyle(isHl),
                   ]}
                 >
                   <Text style={styles.nestedBulletDot} selectable={false}>{"\u2013"}</Text>
@@ -1865,7 +1917,7 @@ const ReadingView = ({
                 <Pressable
                   key={itemIndex}
                   disabled={!isHighlightMode}
-                  onPress={() => onToggleHighlight(hlKey)}
+                  onPress={() => handleUserHighlightPress(hlKey)}
                 >
                   {row}
                 </Pressable>
@@ -2340,6 +2392,7 @@ const ReadingView = ({
         onLayout={handleLayout}
         onContentSizeChange={handleContentSizeChange}
         onScroll={handleScroll}
+        onScrollBeginDrag={dismissHighlightColorPicker}
         scrollEventThrottle={16}
       >
         {/* Chapter intro block */}
@@ -2374,11 +2427,50 @@ const ReadingView = ({
         )}
       </ScrollView>
 
+      {showHighlightColorPicker ? (
+        <View
+          pointerEvents="box-none"
+          style={[
+            styles.highlightColorPickerDock,
+            { bottom: toolbarHeight + 8 },
+          ]}
+        >
+          <View style={styles.highlightColorPickerInner}>
+            {HIGHLIGHT_COLOR_IDS.map((id) => (
+              <Pressable
+                key={id}
+                onPress={() => selectHighlightColor(id)}
+                style={[
+                  styles.highlightSwatchOuter,
+                  selectedHighlightColor === id && styles.highlightSwatchOuterSelected,
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel={HIGHLIGHT_COLOR_LABELS[id]}
+                accessibilityState={{ selected: selectedHighlightColor === id }}
+              >
+                <View
+                  style={[
+                    styles.highlightSwatch,
+                    { backgroundColor: HIGHLIGHT_COLOR_SWATCHES[id] },
+                  ]}
+                />
+              </Pressable>
+            ))}
+          </View>
+        </View>
+      ) : null}
+
       {/* ── Bottom Toolbar ── */}
-      <View style={[styles.bottomToolbar, { paddingBottom: insets.bottom || 8 }]}>
+      <View
+        style={[styles.bottomToolbar, { paddingBottom: insets.bottom || 8 }]}
+        onLayout={(event) => setToolbarHeight(event.nativeEvent.layout.height)}
+      >
         <TouchableOpacity
           style={styles.toolbarItem}
-          onPress={() => navigation?.navigate("MainTabs", { screen: "Library" })}
+          onPress={() => {
+            setShowHighlightColorPicker(false);
+            navigation?.navigate("MainTabs", { screen: "Library" });
+          }}
           activeOpacity={0.7}
         >
           <MaterialIcons name="menu-book" size={22} color={colors.textTertiary} />
@@ -2388,6 +2480,9 @@ const ReadingView = ({
           style={styles.toolbarItem}
           onPress={toggleHighlightMode}
           activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel="Highlight"
+          accessibilityState={{ selected: isHighlightMode }}
         >
           <MaterialIcons
             name="border-color"
@@ -2411,6 +2506,7 @@ const ReadingView = ({
               const next = !prev;
               if (next) {
                 setIsHighlightMode(false);
+                setShowHighlightColorPicker(false);
                 showToast("Tap on any paragraph to add a note");
               }
               return next;
@@ -2964,6 +3060,20 @@ const createStyles = (colors) => StyleSheet.create({
     paddingVertical: 2,
     marginVertical: 1,
   },
+  userHighlightBlockGreen: {
+    backgroundColor: colors.userHighlightGreenBg,
+    borderRadius: 4,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    marginVertical: 1,
+  },
+  userHighlightBlockPink: {
+    backgroundColor: colors.userHighlightPinkBg,
+    borderRadius: 4,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    marginVertical: 1,
+  },
   highlightModeBlock: {
     borderRadius: 6,
     borderWidth: 1,
@@ -2972,6 +3082,14 @@ const createStyles = (colors) => StyleSheet.create({
   },
   userHighlightSentence: {
     backgroundColor: colors.userHighlightSentence,
+    borderRadius: 2,
+  },
+  userHighlightSentenceGreen: {
+    backgroundColor: colors.userHighlightGreenSentence,
+    borderRadius: 2,
+  },
+  userHighlightSentencePink: {
+    backgroundColor: colors.userHighlightPinkSentence,
     borderRadius: 2,
   },
   sentenceWrap: {
@@ -3151,6 +3269,51 @@ const createStyles = (colors) => StyleSheet.create({
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.06,
     shadowRadius: 4,
+    overflow: "visible",
+    zIndex: 20,
+  },
+  highlightColorPickerDock: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    zIndex: 30,
+    elevation: 16,
+  },
+  highlightColorPickerInner: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.surfacePrimary,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
+    borderRadius: 22,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    gap: 10,
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.16,
+    shadowRadius: 8,
+    elevation: 16,
+  },
+  highlightSwatchOuter: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+    borderColor: "transparent",
+  },
+  highlightSwatchOuterSelected: {
+    borderColor: colors.textPrimary,
+  },
+  highlightSwatch: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 2,
+    borderColor: colors.border,
   },
   toolbarItem: {
     alignItems: "center",

@@ -92,6 +92,10 @@ export const lightColors = {
   highlightBg: "#FDFAF3",
   userHighlightBg: "#FEF9C3",
   userHighlightSentence: "#FEF08A",
+  userHighlightGreenBg: "#DCFCE7",
+  userHighlightGreenSentence: "#BBF7D0",
+  userHighlightPinkBg: "#FCE7F3",
+  userHighlightPinkSentence: "#FBCFE8",
 
   // Library exam-tip box (library-chapter-review skill light palette)
   examTipBorder: "#4338CA",
@@ -161,6 +165,10 @@ export const darkColors = {
   highlightBg: "#2A2310",
   userHighlightBg: "#3F3A12",
   userHighlightSentence: "#4A4418",
+  userHighlightGreenBg: "#14532D",
+  userHighlightGreenSentence: "#166534",
+  userHighlightPinkBg: "#4A1030",
+  userHighlightPinkSentence: "#9D174D",
 
   // Same indigo family as light, slightly less bright on dark surfaces
   examTipBorder: "#4338CA",
