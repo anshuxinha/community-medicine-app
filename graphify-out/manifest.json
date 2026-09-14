@@ -875,6 +875,10 @@
     "mtime": 1786815047.058584,
     "hash": "1dd9e1fed3a7e1bc7d3f1556900dd3fe"
   },
+  "D:\\The App\\scripts\\smoke_ollama_thinking.py": {
+    "mtime": 1789413247.106481,
+    "hash": "0e7e1aaa5b513e8d4b72542f4dfc5bdf"
+  },
   "D:\\The App\\scripts\\split_library_ch6_and_p0.py": {
     "mtime": 1788253891.3524928,
     "hash": "eaecfc13e4e31a62c9e7b9288d1b67ba"
@@ -1360,8 +1364,8 @@
     "hash": "5d565782124990413b9517a6cb27f828"
   },
   "D:\\The App\\src\\utils\\otaUpdates.js": {
-    "mtime": 1789306000.9583707,
-    "hash": "bc7244fe1e418a9d8cead765e92f826a"
+    "mtime": 1789413245.2465587,
+    "hash": "fea827a6d1686bd518f60ef729af048a"
   },
   "D:\\The App\\src\\utils\\progressPresentation.js": {
     "mtime": 1784650210.305622,
@@ -1456,8 +1460,8 @@
     "hash": "00e01d55470d7f096e2cda9914532a90"
   },
   "D:\\The App\\src\\utils\\__tests__\\otaUpdates.test.js": {
-    "mtime": 1789306000.9583707,
-    "hash": "499ef69f84c996fd7b17478e88cfb71d"
+    "mtime": 1789413245.3511083,
+    "hash": "9d4de949bc4127e5c3ca74a7cedf71d0"
   },
   "D:\\The App\\src\\utils\\__tests__\\progressPresentation.test.js": {
     "mtime": 1784650282.931558,
