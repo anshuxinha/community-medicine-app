@@ -1,84 +1,48 @@
-import React, { useEffect } from "react";
-import { Platform, StatusBar as RNStatusBar } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { Provider as PaperProvider } from "react-native-paper";
-import * as Notifications from "expo-notifications";
-import * as ScreenOrientation from "expo-screen-orientation";
-import AppNavigator from "./src/navigation/AppNavigator";
-import { AppProvider } from "./src/context/AppContext";
-import { ThemeProvider, useAppTheme } from "./src/styles/ThemeContext";
-import ErrorBoundary from "./src/components/ErrorBoundary";
-import { scheduleAllNotifications } from "./src/services/notificationService";
-import UpdateBottomSheet from "./src/components/UpdateBottomSheet";
-import ReviewFeedbackModal from "./src/components/ReviewFeedbackModal";
-import ReviewRequestModal from "./src/components/ReviewRequestModal";
-import AppUpdatedToast from "./src/components/AppUpdatedToast";
-import { paperTheme as fallbackPaperTheme } from "./src/styles/theme";
-import { prefetchUpdatesMonths } from "./src/services/updatesService";
-import { startSilentOtaDownloads } from "./src/utils/otaUpdates";
+import React, { useEffect, useState } from "react";
+import { View, StyleSheet } from "react-native";
+import { hideSplash } from "./src/utils/appSplash";
 
-// Create Android notification channel at module level so incoming FCM pushes
-// on cold start are never dropped due to a missing channel.
-if (Platform.OS === "android") {
-  Notifications.setNotificationChannelAsync("default", {
-    name: "Video & app updates",
-    importance: Notifications.AndroidImportance.MAX,
-    vibrationPattern: [0, 250, 250, 250],
-    lightColor: "#6C3AE0",
-    sound: "default",
-    enableVibrate: true,
-    showBadge: true,
-  });
-}
+const SHELL_BG = "#0D1B2A";
 
-function ThemedApp() {
-  const { paperTheme, isDark } = useAppTheme();
-
-  // Imperative barStyle only when the status bar is visible. Avoid calling
-  // setBackgroundColor while video fullscreen may have the bar hidden.
-  useEffect(() => {
-    RNStatusBar.setBarStyle(isDark ? "light-content" : "dark-content", true);
-  }, [isDark]);
-
-  return (
-    <PaperProvider theme={paperTheme || fallbackPaperTheme}>
-      <AppNavigator />
-      <UpdateBottomSheet />
-      <ReviewFeedbackModal />
-      <ReviewRequestModal />
-      <AppUpdatedToast />
-    </PaperProvider>
-  );
-}
-
+/**
+ * Tiny first paint so expo-updates can fire CONTENT_APPEARED before Firebase,
+ * navigation, and expo-constants touch ExpoUpdates. A throw in that window on
+ * the first launch of a new OTA blacklists the update and kills the process.
+ */
 export default function App() {
+  const [Root, setRoot] = useState(null);
+
   useEffect(() => {
-    ScreenOrientation.unlockAsync().catch((err) =>
-      console.warn("Failed to unlock screen orientation:", err?.message),
-    );
-
-    scheduleAllNotifications().catch((err) =>
-      console.warn("Failed to schedule notifications:", err?.message),
-    );
-
-    prefetchUpdatesMonths();
-    const stopSilentOta = startSilentOtaDownloads();
-    return () => stopSilentOta();
+    let cancelled = false;
+    let innerTimer = null;
+    const frame = requestAnimationFrame(() => {
+      innerTimer = setTimeout(() => {
+        try {
+          const mod = require("./src/AppRoot");
+          if (!cancelled) setRoot(() => mod.default);
+        } catch (error) {
+          console.warn("AppRoot failed to load:", error?.message);
+          hideSplash();
+        }
+      }, 0);
+    });
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(frame);
+      if (innerTimer) clearTimeout(innerTimer);
+    };
   }, []);
 
-  // Do not import expo-updates or call reloadAsync here. The JS Updates module
-  // subscribes to native download events at import time and can kill the React
-  // host on first open of a new OTA. Downloads run after a delay; the new
-  // bundle starts on the next process launch.
-  return (
-    <SafeAreaProvider>
-      <ErrorBoundary>
-        <ThemeProvider>
-          <AppProvider>
-            <ThemedApp />
-          </AppProvider>
-        </ThemeProvider>
-      </ErrorBoundary>
-    </SafeAreaProvider>
-  );
+  if (!Root) {
+    return <View style={styles.shell} />;
+  }
+
+  return <Root />;
 }
+
+const styles = StyleSheet.create({
+  shell: {
+    flex: 1,
+    backgroundColor: SHELL_BG,
+  },
+});

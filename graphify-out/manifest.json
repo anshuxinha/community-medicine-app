@@ -1,7 +1,7 @@
 {
   "D:\\The App\\App.js": {
-    "mtime": 1789306000.9583707,
-    "hash": "b3413209b31bddcd64f0f90bdff3c5c5"
+    "mtime": 1789412171.713798,
+    "hash": "e6aae20bfdaddc5b774639da1c7f6e81"
   },
   "D:\\The App\\ast_extract.py": {
     "mtime": 1778159580.4395475,
@@ -32,8 +32,8 @@
     "hash": "38b5d2dd80847395a7caef1e901cf267"
   },
   "D:\\The App\\index.js": {
-    "mtime": 1788671494.4981945,
-    "hash": "25c4023d3743ba4ba0dbf93d2f986b9f"
+    "mtime": 1789412133.6604834,
+    "hash": "04261a477cf45c1b0bab57eb54f69874"
   },
   "D:\\The App\\jest.config.js": {
     "mtime": 1784212373.0537157,
@@ -708,8 +708,8 @@
     "hash": "e7f673cf7825009d1a06c662180645c2"
   },
   "D:\\The App\\scripts\\fetch_updates.py": {
-    "mtime": 1789033264.9929895,
-    "hash": "7bfb10c9b2c2220d84db76be954edb04"
+    "mtime": 1789412193.2685995,
+    "hash": "e6652d4c8b13a0faea99f7e6feaf2b10"
   },
   "D:\\The App\\scripts\\fix_broken_color_props.js": {
     "mtime": 1784212218.394447,
@@ -963,6 +963,10 @@
     "mtime": 1786731947.0287924,
     "hash": "55e5963fe3e00f018052e9deb1adfaf2"
   },
+  "D:\\The App\\src\\AppRoot.js": {
+    "mtime": 1789412133.6694,
+    "hash": "63758ccfafe30546687372427f484dfe"
+  },
   "D:\\The App\\src\\components\\AppUpdatedToast.js": {
     "mtime": 1789306000.9583707,
     "hash": "df01a6adf4257d918937df8a90b7e4ac"
@@ -1168,8 +1172,8 @@
     "hash": "d1c493bfcba8ba07ff8341d1f8cfc804"
   },
   "D:\\The App\\src\\screens\\ProfileScreen.js": {
-    "mtime": 1787747108.504368,
-    "hash": "1fffd5aeff9d4a1d545fc627d81ead10"
+    "mtime": 1789410690.196435,
+    "hash": "9763a565a9416fbc7f92177a9389e143"
   },
   "D:\\The App\\src\\screens\\PYQCreateScreen.js": {
     "mtime": 1785161583.88528,
@@ -1294,6 +1298,10 @@
   "D:\\The App\\src\\utils\\appSplash.js": {
     "mtime": 1789137905.4256876,
     "hash": "b5c4595d305dfc03a60dd111e7d8eded"
+  },
+  "D:\\The App\\src\\utils\\appSplashInit.js": {
+    "mtime": 1789412133.6638658,
+    "hash": "4bb5071ba13d54df264c3fa805eb5b91"
   },
   "D:\\The App\\src\\utils\\chapterSearch.js": {
     "mtime": 1787812099.5555847,

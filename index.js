@@ -1,9 +1,6 @@
-import { registerRootComponent } from 'expo';
-
-import App from './App';
-import { preventAutoHideSplash } from './src/utils/appSplash';
-
-preventAutoHideSplash();
+import "./src/utils/appSplashInit";
+import { registerRootComponent } from "expo";
+import App from "./App";
 
 // registerRootComponent calls AppRegistry.registerComponent('main', () => App);
 // It also ensures that whether you load the app in Expo Go or in a native build,
