@@ -129,7 +129,11 @@ const TabNavigator = () => {
           },
         })}
       />
-      <Tab.Screen name="QBank" getComponent={getPYQCreateScreen} />
+      <Tab.Screen
+        name="QBank"
+        getComponent={getPYQCreateScreen}
+        options={{ title: "MCQs" }}
+      />
     </Tab.Navigator>
   );
 };
