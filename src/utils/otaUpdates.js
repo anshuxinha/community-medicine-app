@@ -100,11 +100,18 @@ async function downloadPendingUpdate() {
 /**
  * Never fetch on cold start and never call reloadAsync. Native ON_LOAD (older
  * binaries) already downloads then; a JS fetch on that launch can restart the
- * React host. After a delay, fetch so future binaries with checkAutomatically
- * NEVER still pick up OTAs. The new bundle runs on the next process start.
+ * React host. Splash hide often emits AppState "active"; ignore that until the
+ * first delayed check. After that, fetch so NEVER binaries still pick up OTAs.
+ * The new bundle runs on the next process start.
  */
-const MIN_OTA_CHECK_INTERVAL_MS = 2 * 60 * 1000;
-const FIRST_CHECK_DELAY_MS = 60 * 1000;
+export const MIN_OTA_CHECK_INTERVAL_MS = 2 * 60 * 1000;
+export const FIRST_CHECK_DELAY_MS = 60 * 1000;
+
+export function canRunSilentOtaCheck(resumeChecksAllowed, lastCheckAt, now) {
+  if (!resumeChecksAllowed) return false;
+  if (lastCheckAt && now - lastCheckAt < MIN_OTA_CHECK_INTERVAL_MS) return false;
+  return true;
+}
 
 export function startSilentOtaDownloads() {
   if (__DEV__) return () => {};
@@ -112,11 +119,12 @@ export function startSilentOtaDownloads() {
   let cancelled = false;
   let inFlight = false;
   let lastCheckAt = 0;
+  let resumeChecksAllowed = false;
 
   const run = async () => {
     if (cancelled || inFlight) return;
     const now = Date.now();
-    if (lastCheckAt && now - lastCheckAt < MIN_OTA_CHECK_INTERVAL_MS) return;
+    if (!canRunSilentOtaCheck(resumeChecksAllowed, lastCheckAt, now)) return;
     lastCheckAt = now;
     inFlight = true;
     try {
@@ -126,10 +134,14 @@ export function startSilentOtaDownloads() {
     }
   };
 
+  const initialTimer = setTimeout(() => {
+    resumeChecksAllowed = true;
+    run();
+  }, FIRST_CHECK_DELAY_MS);
+
   const sub = AppState.addEventListener("change", (state) => {
     if (state === "active") run();
   });
-  const initialTimer = setTimeout(run, FIRST_CHECK_DELAY_MS);
 
   return () => {
     cancelled = true;

@@ -2,6 +2,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { requireOptionalNativeModule } from "expo-modules-core";
 import {
   LAST_SEEN_OTA_ID_KEY,
+  MIN_OTA_CHECK_INTERVAL_MS,
+  canRunSilentOtaCheck,
   markAppUpdatedToastShown,
   peekAppliedOtaToast,
   shouldShowAppUpdatedToast,
@@ -82,5 +84,25 @@ describe("peekAppliedOtaToast / markAppUpdatedToastShown", () => {
 
     expect(await peekAppliedOtaToast()).toBe(false);
     expect(await AsyncStorage.getItem(LAST_SEEN_OTA_ID_KEY)).toBeNull();
+  });
+});
+
+describe("canRunSilentOtaCheck", () => {
+  it("blocks AppState resume until the first delayed check is allowed", () => {
+    expect(canRunSilentOtaCheck(false, 0, 1_000)).toBe(false);
+  });
+
+  it("allows the first check once resume checks are enabled", () => {
+    expect(canRunSilentOtaCheck(true, 0, 60_000)).toBe(true);
+  });
+
+  it("throttles checks inside the minimum interval", () => {
+    const last = 100_000;
+    expect(
+      canRunSilentOtaCheck(true, last, last + MIN_OTA_CHECK_INTERVAL_MS - 1),
+    ).toBe(false);
+    expect(
+      canRunSilentOtaCheck(true, last, last + MIN_OTA_CHECK_INTERVAL_MS),
+    ).toBe(true);
   });
 });
