@@ -207,9 +207,42 @@ def _normalize_whitespace(value: str) -> str:
     return re.sub(r"\s+", " ", value).strip()
 
 
-def _extract_candidate_text(payload: Dict[str, Any]) -> Optional[str]:
-    message = payload.get("message", {})
+_GEMMA4_THOUGHT_RE = re.compile(
+    r"<\|channel>thought\s*.*?<channel\|>",
+    flags=re.DOTALL | re.IGNORECASE,
+)
+_XML_THINK_RE = re.compile(r"<think>.*?</think>", flags=re.DOTALL | re.IGNORECASE)
+
+
+def _is_gemma4(model: str) -> bool:
+    return "gemma4" in (model or "").lower()
+
+
+def _think_param_for_model(model: str):
+    # Gemma 4 thinking is on/off. "max" is a MiniMax/Qwen level.
+    if _is_gemma4(model):
+        return True
+    return "high"
+
+
+def _chat_messages(model: str, prompt: str) -> List[Dict[str, str]]:
+    messages: List[Dict[str, str]] = []
+    if _is_gemma4(model):
+        messages.append({"role": "system", "content": "<|think|>"})
+    messages.append({"role": "user", "content": prompt})
+    return messages
+
+
+def _extract_candidate_text(payload: Dict[str, Any], model: str = "") -> Optional[str]:
+    message = payload.get("message") or {}
     content = message.get("content")
+    thinking = message.get("thinking")
+    if isinstance(thinking, str) and thinking.strip():
+        print(f"Ollama thinking mode active on {model or 'model'} ({len(thinking)} chars).")
+    elif isinstance(content, str) and ("<|channel>" in content or "<think>" in content):
+        print(f"Ollama thinking trace inlined in content on {model or 'model'}.")
+    elif _is_gemma4(model):
+        print(f"Ollama response from {model} had no thinking trace.")
     return content if isinstance(content, str) else None
 
 
@@ -233,7 +266,8 @@ def _strip_code_fence(text: str) -> str:
 
 
 def _extract_json_payload(text: str) -> Optional[Any]:
-    clean_text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL)
+    clean_text = _GEMMA4_THOUGHT_RE.sub("", text)
+    clean_text = _XML_THINK_RE.sub("", clean_text)
     candidate = _strip_code_fence(clean_text)
     try:
         return json.loads(candidate)
@@ -259,7 +293,10 @@ def call_ollama(prompt: str) -> Optional[Any]:
     last_error = None
 
     for model in _ollama_models_to_try():
-        print(f"Calling Ollama model: {model}")
+        print(
+            f"Calling Ollama model: {model} "
+            f"(think={_think_param_for_model(model)!r})"
+        )
         for attempt in range(1 + MAX_RETRIES):
             try:
                 response = requests.post(
@@ -270,12 +307,9 @@ def call_ollama(prompt: str) -> Optional[Any]:
                     },
                     json={
                         "model": model,
-                        "messages": [
-                            {"role": "system", "content": "<|think|>"},
-                            {"role": "user", "content": prompt}
-                        ],
+                        "messages": _chat_messages(model, prompt),
                         "stream": False,
-                        "think": "max",
+                        "think": _think_param_for_model(model),
                         "options": {"temperature": 0.1},
                     },
                     timeout=REQUEST_TIMEOUT_SECONDS,
@@ -283,7 +317,7 @@ def call_ollama(prompt: str) -> Optional[Any]:
 
                 if response.status_code == 200:
                     data = response.json()
-                    text_response = _extract_candidate_text(data)
+                    text_response = _extract_candidate_text(data, model)
                     if text_response:
                         payload = _extract_json_payload(text_response)
                         if payload is not None:
