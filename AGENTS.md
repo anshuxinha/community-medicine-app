@@ -34,11 +34,27 @@ Rules:
 - After modifying code files in this session, run `graphify update .` to keep the graph current (AST-only, no API cost)
 
 
+# Production plan-first (live app)
+
+This app is in production. Hundreds of people open it. Always-approve skips permission prompts. It does not skip planning.
+
+Use the same approach as Grok CLI plan mode (`/plan`, `enter_plan_mode`) before the first edit to shipped app code (`src/`, `App.js`, `index.js`, OTA-deliverable assets, launch path).
+
+1. Explore the real launch and usage path. Do not patch from a single symptom.
+2. Write the approach in the turn: context, files, what you will not touch, how you will verify.
+3. List cases before editing: first process start, second open after an OTA is already installed, splash hide / AppState `active`, delayed timers, every screen (a launch timer runs wherever the user is).
+4. If the change can close the process, freeze the UI, or run on a clock for every user (OTA, ExpoUpdates, Play in-app updates, splash, AppState, `setTimeout` on launch), call `enter_plan_mode` even when always-approve is on. Do not implement until that plan exists.
+5. Do not add delayed launch work that talks to ExpoUpdates, Play immediate-update, or `reloadAsync`. A 15s "quiet window" still fires on every session, on every screen.
+
+A one-line label with no launch-path may skip the TUI plan gate. Still list the cases in the turn.
+
+Global copy of this rule: `~/.grok/rules/plan-first-production.md`.
+
 # Karpathy Coding Guidelines
 
 Behavioral guidelines to reduce common LLM coding mistakes, derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876).
 
-**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
+**Tradeoff:** These guidelines bias toward caution over speed. On this live app, plan-first still applies. Skip only the TUI plan gate for a one-line label with no launch-path.
 
 ## 1. Think Before Coding
 
