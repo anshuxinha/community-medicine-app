@@ -968,8 +968,8 @@
     "hash": "55e5963fe3e00f018052e9deb1adfaf2"
   },
   "D:\\The App\\src\\AppRoot.js": {
-    "mtime": 1789452923.0001123,
-    "hash": "8f3c80fd0510950351c763f75bc6e408"
+    "mtime": 1789454988.8650763,
+    "hash": "63758ccfafe30546687372427f484dfe"
   },
   "D:\\The App\\src\\components\\AppUpdatedToast.js": {
     "mtime": 1789306000.9583707,
@@ -1016,8 +1016,8 @@
     "hash": "a07716bdcfa35ffba96971983763c5cc"
   },
   "D:\\The App\\src\\components\\UpdateBottomSheet.js": {
-    "mtime": 1784224587.4038665,
-    "hash": "662fce19336799e8d6aa1b058f4d68db"
+    "mtime": 1789454988.7835069,
+    "hash": "ab0f808b999ac0f7548d8c5983a26ad7"
   },
   "D:\\The App\\src\\components\\UpdateDetailDialog.js": {
     "mtime": 1789125897.5902648,
@@ -1403,6 +1403,10 @@
     "mtime": 1787901780.1874683,
     "hash": "3dfb7ae237bff7a669dc1daa90462f95"
   },
+  "D:\\The App\\src\\utils\\storeUpdates.js": {
+    "mtime": 1789454957.670319,
+    "hash": "7cadbb2d2a59c0ea12e99175e7ff84eb"
+  },
   "D:\\The App\\src\\utils\\userHighlightColors.js": {
     "mtime": 1789302135.529696,
     "hash": "6f043b80894710b96d4726138f1422da"
@@ -1491,17 +1495,21 @@
     "mtime": 1787901780.1874683,
     "hash": "3d842b0f76517755c8069a3a4beabccc"
   },
+  "D:\\The App\\src\\utils\\__tests__\\storeUpdates.test.js": {
+    "mtime": 1789454988.7835069,
+    "hash": "4383ed814569e0987e31eafbcbbf7ee8"
+  },
   "D:\\The App\\src\\utils\\__tests__\\userHighlightColors.test.js": {
     "mtime": 1789302135.528694,
     "hash": "3b4804b6baeee35df2decc45656b2bbc"
   },
   "D:\\The App\\AGENTS.md": {
-    "mtime": 1785916675.9318168,
-    "hash": "c98a113eb85a05795abeb6b7c86d1e66"
+    "mtime": 1789454314.306741,
+    "hash": "83da502ad2ab8fd9574285a5348c4965"
   },
   "D:\\The App\\CLAUDE.md": {
-    "mtime": 1785916675.930818,
-    "hash": "647acf6cd82f26b312d239ac41668627"
+    "mtime": 1789454294.7199514,
+    "hash": "d63eea446385116e9ec161c3f642484f"
   },
   "D:\\The App\\COUPON_SETUP.md": {
     "mtime": 1778570823.4695475,

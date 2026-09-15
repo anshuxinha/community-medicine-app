@@ -9,10 +9,13 @@ import { AppProvider } from "./context/AppContext";
 import { ThemeProvider, useAppTheme } from "./styles/ThemeContext";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { scheduleAllNotifications } from "./services/notificationService";
+import UpdateBottomSheet from "./components/UpdateBottomSheet";
 import ReviewFeedbackModal from "./components/ReviewFeedbackModal";
 import ReviewRequestModal from "./components/ReviewRequestModal";
+import AppUpdatedToast from "./components/AppUpdatedToast";
 import { paperTheme as fallbackPaperTheme } from "./styles/theme";
 import { prefetchUpdatesMonths } from "./services/updatesService";
+import { startSilentOtaDownloads } from "./utils/otaUpdates";
 
 // Create Android notification channel at module level so incoming FCM pushes
 // on cold start are never dropped due to a missing channel.
@@ -40,8 +43,10 @@ function ThemedApp() {
   return (
     <PaperProvider theme={paperTheme || fallbackPaperTheme}>
       <AppNavigator />
+      <UpdateBottomSheet />
       <ReviewFeedbackModal />
       <ReviewRequestModal />
+      <AppUpdatedToast />
     </PaperProvider>
   );
 }
@@ -57,6 +62,8 @@ export default function AppRoot() {
     );
 
     prefetchUpdatesMonths();
+    const stopSilentOta = startSilentOtaDownloads();
+    return () => stopSilentOta();
   }, []);
 
   return (
