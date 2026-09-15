@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Platform, StatusBar as RNStatusBar } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider as PaperProvider } from "react-native-paper";
@@ -9,13 +9,10 @@ import { AppProvider } from "./context/AppContext";
 import { ThemeProvider, useAppTheme } from "./styles/ThemeContext";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { scheduleAllNotifications } from "./services/notificationService";
-import UpdateBottomSheet from "./components/UpdateBottomSheet";
 import ReviewFeedbackModal from "./components/ReviewFeedbackModal";
 import ReviewRequestModal from "./components/ReviewRequestModal";
-import AppUpdatedToast from "./components/AppUpdatedToast";
 import { paperTheme as fallbackPaperTheme } from "./styles/theme";
 import { prefetchUpdatesMonths } from "./services/updatesService";
-import { startSilentOtaDownloads } from "./utils/otaUpdates";
 
 // Create Android notification channel at module level so incoming FCM pushes
 // on cold start are never dropped due to a missing channel.
@@ -31,9 +28,7 @@ if (Platform.OS === "android") {
   });
 }
 
-const POST_LAUNCH_QUIET_MS = 15 * 1000;
-
-function ThemedApp({ quietDone }) {
+function ThemedApp() {
   const { paperTheme, isDark } = useAppTheme();
 
   // Imperative barStyle only when the status bar is visible. Avoid calling
@@ -45,22 +40,13 @@ function ThemedApp({ quietDone }) {
   return (
     <PaperProvider theme={paperTheme || fallbackPaperTheme}>
       <AppNavigator />
-      {quietDone ? <UpdateBottomSheet /> : null}
       <ReviewFeedbackModal />
       <ReviewRequestModal />
-      {quietDone ? <AppUpdatedToast /> : null}
     </PaperProvider>
   );
 }
 
 export default function AppRoot() {
-  const [quietDone, setQuietDone] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setQuietDone(true), POST_LAUNCH_QUIET_MS);
-    return () => clearTimeout(timer);
-  }, []);
-
   useEffect(() => {
     ScreenOrientation.unlockAsync().catch((err) =>
       console.warn("Failed to unlock screen orientation:", err?.message),
@@ -73,17 +59,12 @@ export default function AppRoot() {
     prefetchUpdatesMonths();
   }, []);
 
-  useEffect(() => {
-    if (!quietDone) return undefined;
-    return startSilentOtaDownloads();
-  }, [quietDone]);
-
   return (
     <ErrorBoundary>
       <SafeAreaProvider>
         <ThemeProvider>
           <AppProvider>
-            <ThemedApp quietDone={quietDone} />
+            <ThemedApp />
           </AppProvider>
         </ThemeProvider>
       </SafeAreaProvider>
