@@ -8,7 +8,7 @@ Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-s
 
 - **graphify** ([SKILL.md](file:///C:/Users/Anshuman%20Sinha/.gemini/skills/graphify/SKILL.md)) - any input to knowledge graph. Trigger: `/graphify`
 
-**Production plan-first:** This app is live. Always-approve does not skip planning. Before shipped-app edits, use the Grok plan-mode approach (explore, write the approach, list launch/OTA/timer/AppState cases). Call `enter_plan_mode` for anything that can close the process or run on a clock for every user. See `Agents.md` (Production plan-first) and `~/.grok/rules/plan-first-production.md`.
+**Production plan-first:** This app is live. Always-approve does not skip planning. Before shipped-app edits, use Grok plan-mode philosophy in a **task-dependent** way: explore, write the approach, list cases *this assignment* can hit (not a fixed launch checklist). Call `enter_plan_mode` when this change can close the process or run on a clock for every user. See `Agents.md` (Production plan-first) and `~/.grok/rules/plan-first-production.md`.
 
 **App Change Ship Protocol (MANDATORY):** After any change that affects the shipped app (`src/`, client JS, OTA-deliverable assets), always **commit → push → `eas update`**, then end with a **manual test checklist** for the user. Commit/push first (never OTA a dirty related tree). See `Agents.md` (App Change Ship Protocol) and `CUSTOM_INSTRUCTION_EAS.md`. Native-only changes need a store build, not just OTA. Still commit/push and say so.
 

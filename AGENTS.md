@@ -38,23 +38,24 @@ Rules:
 
 This app is in production. Hundreds of people open it. Always-approve skips permission prompts. It does not skip planning.
 
-Use the same approach as Grok CLI plan mode (`/plan`, `enter_plan_mode`) before the first edit to shipped app code (`src/`, `App.js`, `index.js`, OTA-deliverable assets, launch path).
+Use Grok CLI plan-mode philosophy (`/plan`, `enter_plan_mode`) before the first edit to shipped app code. The philosophy is **task-dependent**: explore, design, then list the cases *this assignment* can hit. Do not replay first-start / second-open / splash on every request.
 
-1. Explore the real launch and usage path. Do not patch from a single symptom.
-2. Write the approach in the turn: context, files, what you will not touch, how you will verify.
-3. List cases before editing: first process start, second open after an OTA is already installed, splash hide / AppState `active`, delayed timers, every screen (a launch timer runs wherever the user is).
-4. If the change can close the process, freeze the UI, or run on a clock for every user (OTA, ExpoUpdates, Play in-app updates, splash, AppState, `setTimeout` on launch), call `enter_plan_mode` even when always-approve is on. Do not implement until that plan exists.
-5. Do not add delayed launch work that talks to ExpoUpdates, Play immediate-update, or `reloadAsync`. A 15s "quiet window" still fires on every session, on every screen.
+1. Restate the assignment. Name assumptions. Present competing interpretations.
+2. Explore the flows this task touches. Reuse existing functions.
+3. Write the approach in the turn: files, what you will not touch, how you will verify.
+4. Derive cases from the task (nav label vs route; highlight enter/exit; launch/OTA only when the change lives on that path).
+5. If *this* change can close the process, freeze the UI, or run on a clock for every user, call `enter_plan_mode` even when always-approve is on.
+6. When the task is launch, OTA, ExpoUpdates, Play in-app updates, splash, or AppState: do not add delayed launch work that talks to those APIs. A quiet window still fires on every session.
 
-A one-line label with no launch-path may skip the TUI plan gate. Still list the cases in the turn.
+A one-line label with no launch-path may skip the TUI plan gate. Still list the cases that belong to that label change.
 
-Global copy of this rule: `~/.grok/rules/plan-first-production.md`.
+Global copy: `~/.grok/rules/plan-first-production.md`.
 
 # Karpathy Coding Guidelines
 
 Behavioral guidelines to reduce common LLM coding mistakes, derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876).
 
-**Tradeoff:** These guidelines bias toward caution over speed. On this live app, plan-first still applies. Skip only the TUI plan gate for a one-line label with no launch-path.
+**Tradeoff:** These guidelines bias toward caution over speed. Plan-first is task-dependent. Skip the TUI plan gate when the assignment has a clear path and no process-lifetime risk.
 
 ## 1. Think Before Coding
 
