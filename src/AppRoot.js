@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Platform, StatusBar as RNStatusBar } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider as PaperProvider } from "react-native-paper";
@@ -31,7 +31,9 @@ if (Platform.OS === "android") {
   });
 }
 
-function ThemedApp() {
+const POST_LAUNCH_QUIET_MS = 15 * 1000;
+
+function ThemedApp({ quietDone }) {
   const { paperTheme, isDark } = useAppTheme();
 
   // Imperative barStyle only when the status bar is visible. Avoid calling
@@ -43,15 +45,22 @@ function ThemedApp() {
   return (
     <PaperProvider theme={paperTheme || fallbackPaperTheme}>
       <AppNavigator />
-      <UpdateBottomSheet />
+      {quietDone ? <UpdateBottomSheet /> : null}
       <ReviewFeedbackModal />
       <ReviewRequestModal />
-      <AppUpdatedToast />
+      {quietDone ? <AppUpdatedToast /> : null}
     </PaperProvider>
   );
 }
 
 export default function AppRoot() {
+  const [quietDone, setQuietDone] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setQuietDone(true), POST_LAUNCH_QUIET_MS);
+    return () => clearTimeout(timer);
+  }, []);
+
   useEffect(() => {
     ScreenOrientation.unlockAsync().catch((err) =>
       console.warn("Failed to unlock screen orientation:", err?.message),
@@ -62,16 +71,19 @@ export default function AppRoot() {
     );
 
     prefetchUpdatesMonths();
-    const stopSilentOta = startSilentOtaDownloads();
-    return () => stopSilentOta();
   }, []);
+
+  useEffect(() => {
+    if (!quietDone) return undefined;
+    return startSilentOtaDownloads();
+  }, [quietDone]);
 
   return (
     <ErrorBoundary>
       <SafeAreaProvider>
         <ThemeProvider>
           <AppProvider>
-            <ThemedApp />
+            <ThemedApp quietDone={quietDone} />
           </AppProvider>
         </ThemeProvider>
       </SafeAreaProvider>
