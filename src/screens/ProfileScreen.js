@@ -165,7 +165,7 @@ const ProfileScreen = () => {
 
     try {
       await Share.share({
-        message: `Hey! I'm using STROMA to prep for Community Medicine. Join me using my referral code ${user.referralCode} to get 15% discount on the yearly membership! 📚✨\n\nDownload now:\nAndroid: https://bit.ly/stromaapp\niOS: https://apple.co/4oaVlLi`,
+        message: `Hey! I'm using STROMA to prep for Community Medicine. Join me using my referral code ${user.referralCode} to get 15% discount on the yearly membership! 📚✨\n\nDownload now:\nAndroid: https://tinyurl.com/playstroma\niOS: https://tinyurl.com/appstroma`,
       });
     } catch (error) {
       console.warn("Failed to share referral code:", error.message);
@@ -597,8 +597,8 @@ const ProfileScreen = () => {
             <Card style={styles.card} mode="elevated">
               <Card.Content>
                 <Text style={styles.referralSubtitle}>
-                  Give friends Yearly STROMA for ₹999 and get 30 days free when
-                  they join with your code.
+                  Give friends 15% discount on the yearly membership and get 30
+                  days free when they join with your code.
                 </Text>
 
                 <View style={styles.referralCodeBox}>
