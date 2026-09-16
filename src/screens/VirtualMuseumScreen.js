@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useState, useContext } from "react";
+import React, { useEffect, useMemo, useState, useContext, useCallback, memo } from "react";
 import {
   View,
   StyleSheet,
-  ScrollView,
+  FlatList,
   Image,
   ActivityIndicator,
   Modal,
@@ -24,9 +24,11 @@ import {
 } from "../utils/screenCaptureProtection";
 import FullscreenImageViewer from "../components/FullscreenImageViewer";
 
+const museumKeyExtractor = (item) => String(item.id);
+
 // Individual card component to manage its own image loading state
-const MuseumCard = ({ item, initiallyExpanded = false }) => {
-  const { styles, colors } = useThemedStyles(createStyles);
+const MuseumCard = memo(function MuseumCard({ item, initiallyExpanded = false }) {
+  const { styles } = useThemedStyles(createStyles);
 
   const [expanded, setExpanded] = useState(initiallyExpanded);
   const [imageLoading, setImageLoading] = useState(true);
@@ -71,7 +73,7 @@ const MuseumCard = ({ item, initiallyExpanded = false }) => {
         </View>
 
         {/* Expanded content */}
-        {expanded && (
+        {expanded ? (
           <Card.Content style={styles.expandedContent}>
             <Divider style={styles.contentDivider} />
 
@@ -81,17 +83,17 @@ const MuseumCard = ({ item, initiallyExpanded = false }) => {
                 style={styles.imageWrapper}
                 onPress={() => setViewerVisible(true)}
               >
-                {imageLoading && (
+                {imageLoading ? (
                   <View style={styles.imageLoadingOverlay}>
                     <ActivityIndicator
                       size="large"
                       color={theme.colors.secondary}
                     />
                   </View>
-                )}
+                ) : null}
                 <Image
                   source={{ uri: item.image }}
-                  style={[styles.itemImage, imageLoading && { opacity: 0 }]}
+                  style={[styles.itemImage, imageLoading ? { opacity: 0 } : null]}
                   resizeMode="contain"
                   onLoad={() => setImageLoading(false)}
                   onError={() => {
@@ -119,7 +121,7 @@ const MuseumCard = ({ item, initiallyExpanded = false }) => {
             </Text>
             <DescriptionBlock text={item.description} />
           </Card.Content>
-        )}
+        ) : null}
       </Card>
 
       <Modal
@@ -144,7 +146,7 @@ const MuseumCard = ({ item, initiallyExpanded = false }) => {
       </Modal>
     </>
   );
-};
+});
 
 // ── Main screen ─────────────────────────────────────────────
 const VirtualMuseumScreen = () => {
@@ -156,13 +158,13 @@ const VirtualMuseumScreen = () => {
   const [activeCategory, setActiveCategory] = useState(FREE_CATEGORY);
   const [focusItemId, setFocusItemId] = useState(null);
 
-  const handleCategoryPress = (cat) => {
+  const handleCategoryPress = useCallback((cat) => {
     if (!isPremium && cat !== FREE_CATEGORY && cat !== "All") {
       navigation.replace("Paywall");
       return;
     }
     setActiveCategory(cat);
-  };
+  }, [isPremium, navigation]);
 
   // Deep-open a spotter from global search.
   useEffect(() => {
@@ -187,34 +189,31 @@ const VirtualMuseumScreen = () => {
     navigation.setParams?.({ focusItemId: undefined });
   }, [route?.params?.focusItemId, isPremium, navigation]);
 
-  const filtered =
-    activeCategory === "All"
-      ? MUSEUM_ITEMS
-      : MUSEUM_ITEMS.filter((i) => i.category === activeCategory);
+  const filtered = useMemo(
+    () =>
+      activeCategory === "All"
+        ? MUSEUM_ITEMS
+        : MUSEUM_ITEMS.filter((i) => i.category === activeCategory),
+    [activeCategory],
+  );
 
-  useEffect(() => {
-    enableScreenCaptureProtection();
-    return () => {
-      disableScreenCaptureProtection();
-    };
-  }, []);
+  const renderMuseumItem = useCallback(
+    ({ item }) => (
+      <MuseumCard
+        item={item}
+        initiallyExpanded={focusItemId === String(item.id)}
+      />
+    ),
+    [focusItemId],
+  );
 
-  return (
-    <SafeAreaView style={styles.safeArea} edges={['left', 'right', 'bottom']}>
-      {isScreenCapturePrevented && (
-        <View style={styles.captureProtectedOverlay}>
-          <Text style={styles.captureProtectedText}>
-            Screen recording is not allowed
-          </Text>
-        </View>
-      )}
-      <ScrollView contentContainerStyle={styles.container}>
+  const listHeader = useMemo(
+    () => (
+      <View>
         <Text style={styles.headerText}>🏛️ Virtual Museum</Text>
         <Text style={styles.subText}>
           Tap any spotter to view its image and description.
         </Text>
-
-        {/* Category filter chips */}
         <View style={styles.chipRow}>
           {CATEGORIES.map((cat) => {
             const isFreeCategory = cat === FREE_CATEGORY;
@@ -227,7 +226,7 @@ const VirtualMuseumScreen = () => {
                 onPress={() => handleCategoryPress(cat)}
                 style={[
                   styles.chip,
-                  activeCategory === cat && styles.chipActive,
+                  activeCategory === cat ? styles.chipActive : null,
                 ]}
                 textStyle={
                   activeCategory === cat
@@ -236,20 +235,52 @@ const VirtualMuseumScreen = () => {
                 }
               >
                 {cat}
-                {showFreeLabel && <Text style={styles.freeLabel}> 🎫FREE</Text>}
+                {showFreeLabel ? (
+                  <Text style={styles.freeLabel}> 🎫FREE</Text>
+                ) : null}
               </Chip>
             );
           })}
         </View>
+      </View>
+    ),
+    [
+      activeCategory,
+      colors.onPrimary,
+      handleCategoryPress,
+      isPremium,
+      styles,
+    ],
+  );
 
-        {filtered.map((item) => (
-          <MuseumCard
-            key={item.id}
-            item={item}
-            initiallyExpanded={focusItemId === String(item.id)}
-          />
-        ))}
-      </ScrollView>
+  useEffect(() => {
+    enableScreenCaptureProtection();
+    return () => {
+      disableScreenCaptureProtection();
+    };
+  }, []);
+
+  return (
+    <SafeAreaView style={styles.safeArea} edges={['left', 'right', 'bottom']}>
+      {isScreenCapturePrevented ? (
+        <View style={styles.captureProtectedOverlay}>
+          <Text style={styles.captureProtectedText}>
+            Screen recording is not allowed
+          </Text>
+        </View>
+      ) : null}
+      <FlatList
+        data={filtered}
+        keyExtractor={museumKeyExtractor}
+        renderItem={renderMuseumItem}
+        ListHeaderComponent={listHeader}
+        contentContainerStyle={styles.container}
+        extraData={focusItemId}
+        initialNumToRender={8}
+        maxToRenderPerBatch={6}
+        windowSize={8}
+        keyboardShouldPersistTaps="handled"
+      />
     </SafeAreaView>
   );
 };

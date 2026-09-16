@@ -1,4 +1,5 @@
 import React, {
+  memo,
   useCallback,
   useContext,
   useEffect,
@@ -266,6 +267,61 @@ const getThumbnailSource = (thumbnailUrl) => {
   return { uri: thumbnailUrl };
 };
 
+const VideoRow = memo(function VideoRow({
+  id,
+  title,
+  thumbnailUrl,
+  duration,
+  publishedAt,
+  categoryLabel,
+  showNewBadge,
+  showFreeBadge,
+  onPress,
+}) {
+  const { styles } = useThemedStyles(createStyles);
+  const thumbnailSource = getThumbnailSource(thumbnailUrl);
+
+  return (
+    <Pressable style={styles.videoItem} onPress={() => onPress(id)}>
+      <View style={styles.videoLeft}>
+        <ImageBackground
+          source={thumbnailSource}
+          style={styles.itemThumbnail}
+          imageStyle={styles.itemThumbnailImage}
+        >
+          <View style={styles.itemPlayOverlay}>
+            <MaterialIcons name="play-arrow" size={20} color="#FFFFFF" />
+          </View>
+          {duration ? (
+            <View style={styles.itemDurationBadge}>
+              <Text style={styles.itemDurationText}>{duration}</Text>
+            </View>
+          ) : null}
+        </ImageBackground>
+      </View>
+
+      <View style={styles.videoRight}>
+        <View style={styles.itemTitleRow}>
+          <Text style={styles.itemTitle}>{title}</Text>
+          {showNewBadge ? <Text style={styles.videoNewBadge}>NEW</Text> : null}
+          {showFreeBadge ? <FreeLabel /> : null}
+        </View>
+        <Text style={styles.itemMeta}>
+          {publishedAt}  •  {categoryLabel}
+        </Text>
+      </View>
+
+      <IconButton
+        icon="dots-vertical"
+        size={20}
+        iconColor={theme.colors.textTertiary}
+        onPress={() => {}}
+        style={styles.itemOptions}
+      />
+    </Pressable>
+  );
+});
+
 const EmptyState = ({ isFiltered }) => {
   const { styles, colors } = useThemedStyles(createStyles);
   return (
@@ -508,7 +564,7 @@ const VideosScreen = ({ navigation, route }) => {
     };
   }, []);
 
-  const markVideoSeen = (videoId) => {
+  const markVideoSeen = useCallback((videoId) => {
     if (!videoId) return;
 
     setSeenVideoIds((previousIds) => {
@@ -527,7 +583,7 @@ const VideosScreen = ({ navigation, route }) => {
 
       return nextIds;
     });
-  };
+  }, []);
 
   useEffect(() => {
     setActiveTab("doubts");
@@ -1151,63 +1207,30 @@ const VideosScreen = ({ navigation, route }) => {
     retryVideosLoad();
   };
 
-  const renderVideoItem = ({ item }) => {
-    const duration = formatDuration(item.duration);
-    const publishedAt = formatPublishedDate(item.publishedAt || item.createdAt);
-    const thumbnailSource = getThumbnailSource(item.thumbnailUrl);
-    const showNewBadge = item.isNew === true && !seenVideoIds[item.id];
-    const showFreeBadge = !isPremium && isVideoFree(item);
+  const onPressVideo = useCallback((id) => {
+    const item = videos.find((video) => video.id === id);
+    if (!item) return;
+    if (!isPremium && !isVideoFree(item)) {
+      navigation.getParent()?.navigate("Paywall");
+      return;
+    }
+    markVideoSeen(item.id);
+    setSelectedVideo(item);
+  }, [videos, isPremium, navigation, markVideoSeen]);
 
-    return (
-      <Pressable
-        style={styles.videoItem}
-        onPress={() => {
-          if (!isPremium && !isVideoFree(item)) {
-            navigation.getParent()?.navigate("Paywall");
-            return;
-          }
-          markVideoSeen(item.id);
-          setSelectedVideo(item);
-        }}
-      >
-        <View style={styles.videoLeft}>
-          <ImageBackground
-            source={thumbnailSource}
-            style={styles.itemThumbnail}
-            imageStyle={styles.itemThumbnailImage}
-          >
-            <View style={styles.itemPlayOverlay}>
-              <MaterialIcons name="play-arrow" size={20} color="#FFFFFF" />
-            </View>
-            {duration ? (
-              <View style={styles.itemDurationBadge}>
-                <Text style={styles.itemDurationText}>{duration}</Text>
-              </View>
-            ) : null}
-          </ImageBackground>
-        </View>
-        
-        <View style={styles.videoRight}>
-          <View style={styles.itemTitleRow}>
-            <Text style={styles.itemTitle}>{item.title || "Untitled video"}</Text>
-            {showNewBadge ? <Text style={styles.videoNewBadge}>NEW</Text> : null}
-            {showFreeBadge ? <FreeLabel /> : null}
-          </View>
-          <Text style={styles.itemMeta}>
-            {publishedAt}  •  {item.categoryLabel || "Lecture"}
-          </Text>
-        </View>
-
-        <IconButton
-          icon="dots-vertical"
-          size={20}
-          iconColor={theme.colors.textTertiary}
-          onPress={() => {}}
-          style={styles.itemOptions}
-        />
-      </Pressable>
-    );
-  };
+  const renderVideoItem = useCallback(({ item }) => (
+    <VideoRow
+      id={item.id}
+      title={item.title || "Untitled video"}
+      thumbnailUrl={item.thumbnailUrl}
+      duration={formatDuration(item.duration)}
+      publishedAt={formatPublishedDate(item.publishedAt || item.createdAt)}
+      categoryLabel={item.categoryLabel || "Lecture"}
+      showNewBadge={item.isNew === true && !seenVideoIds[item.id]}
+      showFreeBadge={!isPremium && isVideoFree(item)}
+      onPress={onPressVideo}
+    />
+  ), [isPremium, onPressVideo, seenVideoIds]);
 
   return (
     <View style={styles.safeArea}>

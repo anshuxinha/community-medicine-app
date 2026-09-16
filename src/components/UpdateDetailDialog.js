@@ -106,22 +106,22 @@ const UpdateDetailDialog = ({ visible, update, onDismiss }) => {
 
             {/* Content */}
             <View style={styles.shareContent}>
-              {update.category && (
+              {update.category ? (
                 <Text style={styles.shareCategory}>
                   {update.category}
                 </Text>
-              )}
+              ) : null}
               <Text style={styles.shareTitle}>{update.title}</Text>
               <Text style={styles.shareDate}>
                 {formatDate(update.date)}
               </Text>
               <View style={styles.shareDivider} />
               <Text style={styles.shareSummary}>{update.summary}</Text>
-              {update.source && (
+              {update.source ? (
                 <Text style={styles.shareSource}>
                   Source: {update.source}
                 </Text>
-              )}
+              ) : null}
             </View>
 
             {/* Branded footer */}
@@ -170,7 +170,7 @@ const UpdateDetailDialog = ({ visible, update, onDismiss }) => {
                 </Chip>
               </View>
 
-              {update.category && (
+              {update.category ? (
                 <Chip
                   style={styles.categoryChip}
                   textStyle={styles.categoryChipText}
@@ -178,7 +178,7 @@ const UpdateDetailDialog = ({ visible, update, onDismiss }) => {
                 >
                   {update.category}
                 </Chip>
-              )}
+              ) : null}
 
               {/* Title */}
               <Text style={styles.title}>{update.title}</Text>
@@ -202,13 +202,13 @@ const UpdateDetailDialog = ({ visible, update, onDismiss }) => {
                 )}
 
               {/* Source + link */}
-              {update.source && (
+              {update.source ? (
                 <Text style={styles.sourceText}>
                   Source: {update.source}
                 </Text>
-              )}
+              ) : null}
 
-              {update.link && (
+              {update.link ? (
                 <Button
                   mode="outlined"
                   onPress={() => Linking.openURL(update.link)}
@@ -219,7 +219,7 @@ const UpdateDetailDialog = ({ visible, update, onDismiss }) => {
                 >
                   View Source Article
                 </Button>
-              )}
+              ) : null}
             </ScrollView>
           </Dialog.ScrollArea>
 

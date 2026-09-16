@@ -1000,8 +1000,8 @@
     "hash": "ee80de9ca72397fd02e0fb31ed09698c"
   },
   "D:\\The App\\src\\components\\ReadingView.js": {
-    "mtime": 1789306727.8531585,
-    "hash": "bed5f7be8f98ec6e55a9751ee9b1948c"
+    "mtime": 1789584844.6865416,
+    "hash": "709b36677c3c48a88be624bb455eae44"
   },
   "D:\\The App\\src\\components\\ReviewFeedbackModal.js": {
     "mtime": 1785328661.2858431,
@@ -1020,8 +1020,8 @@
     "hash": "ab0f808b999ac0f7548d8c5983a26ad7"
   },
   "D:\\The App\\src\\components\\UpdateDetailDialog.js": {
-    "mtime": 1789125897.5902648,
-    "hash": "e009800c7a817b7fbb4c1b9b76edacf6"
+    "mtime": 1789584844.5184343,
+    "hash": "6dc33521259806602405812eb409ccbf"
   },
   "D:\\The App\\src\\components\\VideoRequestModal.js": {
     "mtime": 1786805849.00881,
@@ -1120,8 +1120,8 @@
     "hash": "77261ef4f3a431023f33b15a62e7388e"
   },
   "D:\\The App\\src\\screens\\BookmarksScreen.js": {
-    "mtime": 1787947074.8395865,
-    "hash": "f1e7ade8058d26abf467d904414ca50b"
+    "mtime": 1789584742.4743574,
+    "hash": "e5178b0dfb2021131263ddb043b37244"
   },
   "D:\\The App\\src\\screens\\DashboardScreen.js": {
     "mtime": 1789125960.972159,
@@ -1136,8 +1136,8 @@
     "hash": "ac7454dff362abc12cc97e0ef4d6ac22"
   },
   "D:\\The App\\src\\screens\\GemsScreen.js": {
-    "mtime": 1784224587.3576026,
-    "hash": "aa3688842ec7c1abad4f7b83e2894bf8"
+    "mtime": 1789585000.3943071,
+    "hash": "2bacfe79e51bcec0d8fad944f2ccdb82"
   },
   "D:\\The App\\src\\screens\\LearningProgressScreen.js": {
     "mtime": 1787947074.8250465,
@@ -1196,8 +1196,8 @@
     "hash": "f197fd1c36ebced7d080943d3b3361e2"
   },
   "D:\\The App\\src\\screens\\SearchScreen.js": {
-    "mtime": 1787947074.7724802,
-    "hash": "1976ef6a96f4080482beabbe8366f561"
+    "mtime": 1789584697.2044353,
+    "hash": "94dc4e445afa971da7f05866f7d941ee"
   },
   "D:\\The App\\src\\screens\\SESCalculatorScreen.js": {
     "mtime": 1784225615.121064,
@@ -1216,12 +1216,12 @@
     "hash": "1158ea7445f87550cae373bc83fdce7d"
   },
   "D:\\The App\\src\\screens\\VideosScreen.js": {
-    "mtime": 1788855074.7768767,
-    "hash": "15b6631467cd686efbc3aceda9af34be"
+    "mtime": 1789584652.379163,
+    "hash": "ca595089ab32d2a0988696bcf00c8543"
   },
   "D:\\The App\\src\\screens\\VirtualMuseumScreen.js": {
-    "mtime": 1788955325.5628562,
-    "hash": "67fd544d9f2c01d0799e0e5d103c3d33"
+    "mtime": 1789585098.1314692,
+    "hash": "e4495e9e270a32b02476364debbb85cc"
   },
   "D:\\The App\\src\\screens\\__tests__\\NFHSTrendsScreen.test.js": {
     "mtime": 1780386057.1180468,

@@ -19,6 +19,7 @@ import {
   LayoutAnimation,
   UIManager,
   InteractionManager,
+  Animated,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -946,7 +947,7 @@ const ReadingView = ({
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setExpandedExerciseId((prev) => (prev === id ? null : id));
   }, []);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const scrollProgressAnim = useRef(new Animated.Value(0)).current;
   const [imageRotationMap, setImageRotationMap] = useState({});
   const [fullscreenImage, setFullscreenImage] = useState(null);
   const [fullscreenViewport, setFullscreenViewport] = useState({
@@ -979,8 +980,6 @@ const ReadingView = ({
   const pendingExactScrollRef = useRef(null);
   const scrollViewRef = useRef(null);
   const didScrollToSearchRef = useRef(false);
-  const lastProgressEmitRef = useRef(0);
-  const lastProgressPctRef = useRef(-1);
   const findInputRef = useRef(null);
   const [findOpen, setFindOpen] = useState(() =>
     Boolean(String(searchTerms || "").trim()),
@@ -1044,7 +1043,7 @@ const ReadingView = ({
       clearTimeout(fitTimerRef.current);
       fitTimerRef.current = null;
     }
-    setScrollProgress(0);
+    scrollProgressAnim.setValue(0);
     viewportHeightRef.current = 0;
     contentHeightRef.current = 0;
     blockYMapRef.current = {};
@@ -1052,8 +1051,6 @@ const ReadingView = ({
     scrollOffsetYRef.current = 0;
     pendingExactScrollRef.current = null;
     didScrollToSearchRef.current = false;
-    lastProgressEmitRef.current = 0;
-    lastProgressPctRef.current = -1;
     const incoming = String(searchTerms || "");
     setFindQuery(incoming);
     setFindOpen(Boolean(incoming.trim()));
@@ -1335,16 +1332,7 @@ const ReadingView = ({
 
     viewportHeightRef.current = viewportHeight;
     contentHeightRef.current = contentHeight;
-    const pct = Math.round(progress * 100);
-    const now = Date.now();
-    if (
-      pct !== lastProgressPctRef.current &&
-      (now - lastProgressEmitRef.current >= 80 || pct === 0 || pct === 100)
-    ) {
-      lastProgressEmitRef.current = now;
-      lastProgressPctRef.current = pct;
-      setScrollProgress(progress);
-    }
+    scrollProgressAnim.setValue(progress);
     maybeMarkAsReachedEnd(contentOffset.y, viewportHeight, contentHeight);
   };
 
@@ -2371,10 +2359,10 @@ const ReadingView = ({
 
       {/* ── Progress Bar ── */}
       <View style={styles.progressBarBackground}>
-        <View
+        <Animated.View
           style={[
             styles.progressBarFill,
-            { width: `${scrollProgress * 100}%` },
+            { transform: [{ scaleX: scrollProgressAnim }] },
           ]}
         />
       </View>
@@ -2748,7 +2736,9 @@ const createStyles = (colors) => StyleSheet.create({
   },
   progressBarFill: {
     height: "100%",
+    width: "100%",
     backgroundColor: colors.primary,
+    transformOrigin: "left center",
   },
 
   // ── Chapter Intro ──

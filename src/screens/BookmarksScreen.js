@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { memo, useCallback, useContext, useEffect } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { Text, Button, List, Divider } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -21,6 +21,48 @@ import {
   navigateToLibraryContent,
 } from "../utils/libraryNavigation";
 
+const bookmarkKeyExtractor = (item, index) =>
+  item.contentKey || `${item.title}-${index}`;
+
+const bookmarkLeft = (leftProps) => (
+  <List.Icon
+    {...leftProps}
+    icon={() => (
+      <MaterialIcons
+        name="bookmark"
+        size={24}
+        color={theme.colors.secondary}
+      />
+    )}
+  />
+);
+
+const bookmarkRight = (rightProps) => (
+  <List.Icon
+    {...rightProps}
+    icon={() => (
+      <MaterialIcons
+        name="chevron-right"
+        size={24}
+        color={theme.colors.textTertiary}
+      />
+    )}
+  />
+);
+
+const BookmarkRow = memo(function BookmarkRow({ title, item, onOpen }) {
+  const { styles } = useThemedStyles(createStyles);
+  return (
+    <List.Item
+      title={title}
+      titleStyle={styles.itemTitle}
+      left={bookmarkLeft}
+      right={bookmarkRight}
+      onPress={() => onOpen(item)}
+    />
+  );
+});
+
 const BookmarksScreen = ({ navigation }) => {
   const { styles, colors } = useThemedStyles(createStyles);
 
@@ -33,7 +75,7 @@ const BookmarksScreen = ({ navigation }) => {
     };
   }, []);
 
-  const openBookmark = (bookmark) => {
+  const openBookmark = useCallback((bookmark) => {
     const currentEntry = getCurrentContentEntry(bookmark);
     const currentItem = currentEntry?.item || bookmark;
     const effectiveSection = currentEntry?.section || bookmark.section || null;
@@ -71,7 +113,11 @@ const BookmarksScreen = ({ navigation }) => {
       destination: "Reading",
       params: readingParams,
     });
-  };
+  }, [isPremium, navigation, readItemVersions]);
+
+  const renderBookmark = useCallback(({ item }) => (
+    <BookmarkRow title={item.title} item={item} onOpen={openBookmark} />
+  ), [openBookmark]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -91,41 +137,12 @@ const BookmarksScreen = ({ navigation }) => {
         ) : (
           <FlatList
             data={bookmarks}
-            keyExtractor={(item, index) =>
-              item.contentKey || `${item.title}-${index}`
-            }
-            renderItem={({ item }) => (
-              <List.Item
-                title={item.title}
-                titleStyle={styles.itemTitle}
-                left={(leftProps) => (
-                  <List.Icon
-                    {...leftProps}
-                    icon={() => (
-                      <MaterialIcons
-                        name="bookmark"
-                        size={24}
-                        color={theme.colors.secondary}
-                      />
-                    )}
-                  />
-                )}
-                right={(rightProps) => (
-                  <List.Icon
-                    {...rightProps}
-                    icon={() => (
-                      <MaterialIcons
-                        name="chevron-right"
-                        size={24}
-                        color={theme.colors.textTertiary}
-                      />
-                    )}
-                  />
-                )}
-                onPress={() => openBookmark(item)}
-              />
-            )}
+            keyExtractor={bookmarkKeyExtractor}
+            renderItem={renderBookmark}
             ItemSeparatorComponent={Divider}
+            initialNumToRender={12}
+            maxToRenderPerBatch={8}
+            windowSize={8}
           />
         )}
       </View>

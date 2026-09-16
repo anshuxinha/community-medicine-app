@@ -1,9 +1,9 @@
-import React, { useState, useMemo, useContext } from "react";
+import React, { useState, useMemo, useContext, useCallback, memo } from "react";
 import {
   View,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
+  FlatList,
 } from "react-native";
 import {
   Text,
@@ -21,6 +21,8 @@ import gemsData from "../data/gemsData.json";
 
 const ALL_SECTIONS_ID = "all";
 
+const gemKeyExtractor = (row) => `${row.sectionId}:${row.gem.id}`;
+
 const stripGemMarkup = (value = "") =>
   value
     .replace(/\*\[Image Placeholders?:\s*.+?\]\*/gi, "")
@@ -30,8 +32,62 @@ const stripGemMarkup = (value = "") =>
     .replace(/\s+/g, " ")
     .trim();
 
+const GemRow = memo(function GemRow({
+  gem,
+  sectionId,
+  sectionTitle,
+  isGemBookmarked,
+  onOpen,
+  onToggleBookmark,
+}) {
+  const { styles } = useThemedStyles(createStyles);
+
+  return (
+    <Card
+      style={styles.gemCard}
+      onPress={() => onOpen(gem, sectionId, sectionTitle)}
+    >
+      <Card.Content style={styles.gemCardContent}>
+        <View style={styles.gemHeader}>
+          <View style={styles.gemIconContainer}>
+            <MaterialIcons name="diamond" size={20} color={theme.colors.primary} />
+          </View>
+          <Text style={styles.gemTitle} variant="titleMedium">{gem.title}</Text>
+          <IconButton
+            icon={isGemBookmarked ? "bookmark" : "bookmark-outline"}
+            iconColor={isGemBookmarked ? theme.colors.secondary : undefined}
+            size={20}
+            onPress={() => onToggleBookmark(gem, sectionTitle)}
+          />
+        </View>
+        <Text
+          numberOfLines={3}
+          style={styles.gemSnippet}
+          variant="bodyMedium"
+        >
+          {stripGemMarkup(gem.content)}
+        </Text>
+        <View style={styles.cardFooter}>
+          <Text style={styles.readMoreText}>Tap to read full gem</Text>
+          <MaterialIcons name="chevron-right" size={18} color={theme.colors.secondary} />
+        </View>
+      </Card.Content>
+    </Card>
+  );
+});
+
+const GemsEmpty = memo(function GemsEmpty() {
+  const { styles } = useThemedStyles(createStyles);
+  return (
+    <View style={styles.emptyState}>
+      <MaterialIcons name="search-off" size={64} color={theme.colors.textPlaceholder} />
+      <Text style={styles.emptyText}>No gems found matching your search</Text>
+    </View>
+  );
+});
+
 const GemsScreen = ({ navigation }) => {
-  const { styles, colors } = useThemedStyles(createStyles);
+  const { styles } = useThemedStyles(createStyles);
 
   const [searchQuery, setSearchbarQuery] = useState("");
   const { isBookmarked, toggleBookmark, isPremium } = useContext(AppContext);
@@ -83,7 +139,7 @@ const GemsScreen = ({ navigation }) => {
     );
   }, [filteredSections, selectedSection]);
 
-  const handleGemPress = (gem, sectionId, sectionTitle) => {
+  const handleGemPress = useCallback((gem, sectionId, sectionTitle) => {
     if (!isPremium) {
       navigation.navigate("Paywall");
       return;
@@ -96,9 +152,9 @@ const GemsScreen = ({ navigation }) => {
       contentKey: `gems:${sectionId}:${gem.id}`,
       isGem: true,
     });
-  };
+  }, [isPremium, navigation]);
 
-  const handleToggleBookmark = (gem, sectionTitle) => {
+  const handleToggleBookmark = useCallback((gem, sectionTitle) => {
     if (!isPremium) {
       navigation.navigate("Paywall");
       return;
@@ -111,7 +167,30 @@ const GemsScreen = ({ navigation }) => {
       isGem: true,
       category: "Gems"
     });
-  };
+  }, [isPremium, navigation, toggleBookmark]);
+
+  const renderGemItem = useCallback(({ item }) => (
+    <GemRow
+      gem={item.gem}
+      sectionId={item.sectionId}
+      sectionTitle={item.sectionTitle}
+      isGemBookmarked={isBookmarked({
+        id: item.gem.id,
+        title: item.gem.title,
+        isGem: true,
+      })}
+      onOpen={handleGemPress}
+      onToggleBookmark={handleToggleBookmark}
+    />
+  ), [handleGemPress, handleToggleBookmark, isBookmarked]);
+
+  const gemsListContentStyle = useMemo(
+    () => [
+      styles.gemsListContent,
+      isTablet && { maxWidth: contentMaxWidth, alignSelf: "center" },
+    ],
+    [styles.gemsListContent, isTablet, contentMaxWidth],
+  );
 
   return (
     <SafeAreaView style={styles.container} edges={["left", "right", "bottom"]}>
@@ -167,58 +246,19 @@ const GemsScreen = ({ navigation }) => {
         </ScrollView>
       </View>
 
-      <ScrollView 
+      <FlatList
+        data={visibleGemItems}
+        keyExtractor={gemKeyExtractor}
+        renderItem={renderGemItem}
         style={styles.gemsList}
-        contentContainerStyle={[
-          styles.gemsListContent,
-          isTablet && { maxWidth: contentMaxWidth, alignSelf: 'center' }
-        ]}
-      >
-        {visibleGemItems.map(({ gem, sectionId, sectionTitle }) => {
-          const isGemBookmarked = isBookmarked({ id: gem.id, title: gem.title, isGem: true });
-          
-          return (
-            <Card 
-              key={`${sectionId}:${gem.id}`}
-              style={styles.gemCard}
-              onPress={() => handleGemPress(gem, sectionId, sectionTitle)}
-            >
-              <Card.Content style={styles.gemCardContent}>
-                <View style={styles.gemHeader}>
-                  <View style={styles.gemIconContainer}>
-                    <MaterialIcons name="diamond" size={20} color={theme.colors.primary} />
-                  </View>
-                  <Text style={styles.gemTitle} variant="titleMedium">{gem.title}</Text>
-                  <IconButton 
-                    icon={isGemBookmarked ? "bookmark" : "bookmark-outline"} 
-                    iconColor={isGemBookmarked ? theme.colors.secondary : undefined}
-                    size={20} 
-                    onPress={() => handleToggleBookmark(gem, sectionTitle)}
-                  />
-                </View>
-                <Text 
-                  numberOfLines={3} 
-                  style={styles.gemSnippet}
-                  variant="bodyMedium"
-                >
-                  {stripGemMarkup(gem.content)}
-                </Text>
-                <View style={styles.cardFooter}>
-                  <Text style={styles.readMoreText}>Tap to read full gem</Text>
-                  <MaterialIcons name="chevron-right" size={18} color={theme.colors.secondary} />
-                </View>
-              </Card.Content>
-            </Card>
-          );
-        })}
-
-        {visibleGemItems.length === 0 && (
-          <View style={styles.emptyState}>
-            <MaterialIcons name="search-off" size={64} color={theme.colors.textPlaceholder} />
-            <Text style={styles.emptyText}>No gems found matching your search</Text>
-          </View>
-        )}
-      </ScrollView>
+        contentContainerStyle={gemsListContentStyle}
+        initialNumToRender={8}
+        maxToRenderPerBatch={6}
+        windowSize={8}
+        removeClippedSubviews
+        ListEmptyComponent={GemsEmpty}
+        keyboardShouldPersistTaps="handled"
+      />
     </SafeAreaView>
   );
 };

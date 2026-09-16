@@ -1,4 +1,5 @@
 import React, {
+  memo,
   useCallback,
   useContext,
   useEffect,
@@ -70,6 +71,60 @@ const TypeIcon = ({ type, size = 22, color }) => {
   }
   return <MaterialIcons name={meta.name} size={size} color={color} />;
 };
+
+const ResultSeparator = memo(function ResultSeparator() {
+  const { styles } = useThemedStyles(createStyles);
+  return <View style={styles.separator} />;
+});
+
+const SearchResultRow = memo(function SearchResultRow({
+  item,
+  query,
+  showFreeBadge,
+  accentColor,
+  placeholderColor,
+  onPress,
+}) {
+  const { styles } = useThemedStyles(createStyles);
+  return (
+    <Pressable
+      style={styles.resultRow}
+      onPress={() => onPress(item)}
+      accessibilityRole="button"
+      accessibilityLabel={`${item.title}, ${item.subtitle || item.type}`}
+    >
+      <View style={styles.resultIconWrap}>
+        <TypeIcon type={item.type} color={accentColor} size={22} />
+      </View>
+      <View style={styles.resultBody}>
+        <View style={styles.resultTitleRow}>
+          <Text style={styles.resultTitle} numberOfLines={2}>
+            {item.emoji ? `${item.emoji} ` : ""}
+            {item.title}
+          </Text>
+          {showFreeBadge ? (
+            <Badge style={styles.freeBadge}>FREE</Badge>
+          ) : null}
+        </View>
+        {item.subtitle ? (
+          <Text style={styles.resultSubtitle} numberOfLines={1}>
+            {item.subtitle}
+          </Text>
+        ) : null}
+        <HighlightedExcerpt
+          text={getSnippetSource(item)}
+          query={query}
+          styles={styles}
+        />
+      </View>
+      <MaterialIcons
+        name="chevron-right"
+        size={22}
+        color={placeholderColor}
+      />
+    </Pressable>
+  );
+});
 
 const HighlightedExcerpt = ({ text, query, styles }) => {
   const excerpt = getExcerptAroundMatch(text, query);
@@ -305,44 +360,22 @@ const SearchScreen = ({ navigation }) => {
     ],
   );
 
-  const renderResult = ({ item }) => (
-    <Pressable
-      style={styles.resultRow}
-      onPress={() => openResult(item)}
-      accessibilityRole="button"
-      accessibilityLabel={`${item.title}, ${item.subtitle || item.type}`}
-    >
-      <View style={styles.resultIconWrap}>
-        <TypeIcon type={item.type} color={colors.secondary} size={22} />
-      </View>
-      <View style={styles.resultBody}>
-        <View style={styles.resultTitleRow}>
-          <Text style={styles.resultTitle} numberOfLines={2}>
-            {item.emoji ? `${item.emoji} ` : ""}
-            {item.title}
-          </Text>
-          {item.isFree && !isPremium ? (
-            <Badge style={styles.freeBadge}>FREE</Badge>
-          ) : null}
-        </View>
-        {item.subtitle ? (
-          <Text style={styles.resultSubtitle} numberOfLines={1}>
-            {item.subtitle}
-          </Text>
-        ) : null}
-        <HighlightedExcerpt
-          text={getSnippetSource(item)}
-          query={debouncedQuery}
-          styles={styles}
-        />
-      </View>
-      <MaterialIcons
-        name="chevron-right"
-        size={22}
-        color={colors.textPlaceholder}
-      />
-    </Pressable>
-  );
+  const renderResult = useCallback(({ item }) => (
+    <SearchResultRow
+      item={item}
+      query={debouncedQuery}
+      showFreeBadge={Boolean(item.isFree) && !isPremium}
+      accentColor={colors.secondary}
+      placeholderColor={colors.textPlaceholder}
+      onPress={openResult}
+    />
+  ), [
+    colors.secondary,
+    colors.textPlaceholder,
+    debouncedQuery,
+    isPremium,
+    openResult,
+  ]);
 
   const showEmptyQuery = !debouncedQuery;
   const showNoResults =
@@ -519,7 +552,7 @@ const SearchScreen = ({ navigation }) => {
               keyboardShouldPersistTaps="handled"
               style={styles.resultsList}
               contentContainerStyle={styles.listContainer}
-              ItemSeparatorComponent={() => <View style={styles.separator} />}
+              ItemSeparatorComponent={ResultSeparator}
               ListEmptyComponent={
                 <View style={styles.centered}>
                   <Text style={styles.emptySubtitle}>No results in this tab.</Text>
