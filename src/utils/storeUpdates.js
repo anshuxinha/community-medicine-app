@@ -1,7 +1,11 @@
 import { Alert, InteractionManager, Linking, NativeModules, Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Constants from "expo-constants";
 import { onSplashHidden } from "./appSplash";
+
+function getExpoConstants() {
+  const mod = require("expo-constants");
+  return mod?.default ?? mod;
+}
 
 export const STORE_PROMPT_DISMISS_KEY = "stromaStoreUpdateDismissVersion";
 export const PLAY_UPDATE_AVAILABLE = 2;
@@ -153,7 +157,7 @@ async function promptFromFirestore(platform) {
     10,
   );
   const { currentVersion, currentBuild } = readNativeVersion(
-    Constants,
+    getExpoConstants(),
     platform,
   );
   if (
@@ -219,7 +223,7 @@ async function promptIosStoreAlert() {
     return;
   }
 
-  const { currentVersion } = readNativeVersion(Constants, "ios");
+  const { currentVersion } = readNativeVersion(getExpoConstants(), "ios");
   if (!needsStoreUpdate(currentVersion, latestVersion, 0, 0)) return;
   const dismissed = await AsyncStorage.getItem(STORE_PROMPT_DISMISS_KEY);
   if (!shouldShowStorePrompt(dismissed, latestVersion)) return;
