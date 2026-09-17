@@ -1,9 +1,11 @@
-let SplashScreen = null;
-try {
-  // Optional: older store binaries may not include this native module.
-  SplashScreen = require("expo-splash-screen");
-} catch (_) {
-  SplashScreen = null;
+import { requireOptionalNativeModule } from "expo-modules-core";
+
+function getSplash() {
+  try {
+    return requireOptionalNativeModule("ExpoSplashScreen");
+  } catch (_) {
+    return null;
+  }
 }
 
 let splashHidden = false;
@@ -11,13 +13,18 @@ const splashHiddenListeners = new Set();
 
 export function preventAutoHideSplash() {
   try {
-    SplashScreen?.preventAutoHideAsync?.().catch(() => {});
+    const splash = getSplash();
+    const result = splash?.preventAutoHideAsync?.();
+    if (result && typeof result.catch === "function") result.catch(() => {});
   } catch (_) {}
 }
 
 export function hideSplash() {
   try {
-    SplashScreen?.hideAsync?.().catch(() => {});
+    const splash = getSplash();
+    splash?.hide?.();
+    const result = splash?.hideAsync?.();
+    if (result && typeof result.catch === "function") result.catch(() => {});
   } catch (_) {}
   if (splashHidden) return;
   splashHidden = true;
