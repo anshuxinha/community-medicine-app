@@ -2,7 +2,7 @@
   "expo": {
     "name": "Stroma",
     "slug": "community-medicine",
-    "version": "1.0.11",
+    "version": "1.0.12",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "buildNumber": "17",
+      "buildNumber": "18",
       "usesAppleSignIn": true,
       "bundleIdentifier": "com.communitymed.app",
       "googleServicesFile": "./GoogleService-Info.plist",
