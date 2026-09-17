@@ -1048,8 +1048,8 @@
     "hash": "28aff4aa2aa407d8be48e8aed5bb252a"
   },
   "D:\\The App\\src\\context\\AppContext.js": {
-    "mtime": 1789125961.0163853,
-    "hash": "e25754cab8ce95995d86a5468381575d"
+    "mtime": 1789629780.3110476,
+    "hash": "089996e82dfb9b7096e5877023372749"
   },
   "D:\\The App\\src\\data\\defaultTopicIllustrations.js": {
     "mtime": 1786881885.1823778,
@@ -1120,8 +1120,8 @@
     "hash": "77261ef4f3a431023f33b15a62e7388e"
   },
   "D:\\The App\\src\\screens\\BookmarksScreen.js": {
-    "mtime": 1789584742.4743574,
-    "hash": "e5178b0dfb2021131263ddb043b37244"
+    "mtime": 1789629780.4918282,
+    "hash": "bfb8a4f4aee4c4764ef8275414bf1053"
   },
   "D:\\The App\\src\\screens\\DashboardScreen.js": {
     "mtime": 1789125960.972159,
@@ -1136,8 +1136,8 @@
     "hash": "ac7454dff362abc12cc97e0ef4d6ac22"
   },
   "D:\\The App\\src\\screens\\GemsScreen.js": {
-    "mtime": 1789585000.3943071,
-    "hash": "2bacfe79e51bcec0d8fad944f2ccdb82"
+    "mtime": 1789629472.5380037,
+    "hash": "56ceab6d487b62eb55e058e97809b342"
   },
   "D:\\The App\\src\\screens\\LearningProgressScreen.js": {
     "mtime": 1787947074.8250465,
@@ -1192,12 +1192,12 @@
     "hash": "f968241eb8b01706ae26202300310ee9"
   },
   "D:\\The App\\src\\screens\\ReadingScreen.js": {
-    "mtime": 1789302135.526702,
-    "hash": "f197fd1c36ebced7d080943d3b3361e2"
+    "mtime": 1789629382.179263,
+    "hash": "0f138952954431c772cc0c553119df56"
   },
   "D:\\The App\\src\\screens\\SearchScreen.js": {
-    "mtime": 1789584697.2044353,
-    "hash": "94dc4e445afa971da7f05866f7d941ee"
+    "mtime": 1789629691.3264358,
+    "hash": "684cd93f10207c965be4ec3797e398d6"
   },
   "D:\\The App\\src\\screens\\SESCalculatorScreen.js": {
     "mtime": 1784225615.121064,
@@ -1307,6 +1307,10 @@
     "mtime": 1789412133.6638658,
     "hash": "4bb5071ba13d54df264c3fa805eb5b91"
   },
+  "D:\\The App\\src\\utils\\bookmarkIdentity.js": {
+    "mtime": 1789629173.9682996,
+    "hash": "f39311f4d58f9803f71fd00c2460c02f"
+  },
   "D:\\The App\\src\\utils\\chapterSearch.js": {
     "mtime": 1787812099.5555847,
     "hash": "ebc4c3a67f8eae29e527d79d3260b61c"
@@ -1410,6 +1414,10 @@
   "D:\\The App\\src\\utils\\userHighlightColors.js": {
     "mtime": 1789302135.529696,
     "hash": "6f043b80894710b96d4726138f1422da"
+  },
+  "D:\\The App\\src\\utils\\__tests__\\bookmarkIdentity.test.js": {
+    "mtime": 1789629238.2127168,
+    "hash": "871797f6e700df67a5516fe301592855"
   },
   "D:\\The App\\src\\utils\\__tests__\\chapterSearch.test.js": {
     "mtime": 1787812129.4978118,

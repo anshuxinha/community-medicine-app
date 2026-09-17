@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useEffect } from "react";
+import React, { memo, useCallback, useContext, useEffect, useMemo } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { Text, Button, List, Divider } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -20,9 +20,17 @@ import {
   isFreeLibraryItem,
   navigateToLibraryContent,
 } from "../utils/libraryNavigation";
+import {
+  buildGemContentKey,
+  findGemRecord,
+  getBookmarkIdentity,
+  isGemBookmark,
+} from "../utils/bookmarkIdentity";
 
-const bookmarkKeyExtractor = (item, index) =>
-  item.contentKey || `${item.title}-${index}`;
+const bookmarkKeyExtractor = (row, index) => {
+  if (row.type === "header") return `header-${row.id}`;
+  return row.item.contentKey || `${row.item.title}-${index}`;
+};
 
 const bookmarkLeft = (leftProps) => (
   <List.Icon
@@ -50,12 +58,25 @@ const bookmarkRight = (rightProps) => (
   />
 );
 
+const BookmarkSeparator = ({ leadingItem }) =>
+  leadingItem?.type === "header" ? null : <Divider />;
+
+const BookmarkSectionHeader = memo(function BookmarkSectionHeader({ title }) {
+  const { styles } = useThemedStyles(createStyles);
+  return (
+    <View style={styles.sectionHeader}>
+      <Text style={styles.sectionHeaderText}>{title}</Text>
+    </View>
+  );
+});
+
 const BookmarkRow = memo(function BookmarkRow({ title, item, onOpen }) {
   const { styles } = useThemedStyles(createStyles);
   return (
     <List.Item
       title={title}
       titleStyle={styles.itemTitle}
+      titleNumberOfLines={3}
       left={bookmarkLeft}
       right={bookmarkRight}
       onPress={() => onOpen(item)}
@@ -64,7 +85,7 @@ const BookmarkRow = memo(function BookmarkRow({ title, item, onOpen }) {
 });
 
 const BookmarksScreen = ({ navigation }) => {
-  const { styles, colors } = useThemedStyles(createStyles);
+  const { styles } = useThemedStyles(createStyles);
 
   const { bookmarks, readItemVersions, isPremium } = useContext(AppContext);
 
@@ -75,7 +96,51 @@ const BookmarksScreen = ({ navigation }) => {
     };
   }, []);
 
+  const listData = useMemo(() => {
+    const library = [];
+    const gems = [];
+    const seen = new Set();
+    bookmarks.forEach((bookmark) => {
+      const identity = getBookmarkIdentity(bookmark);
+      if (identity) {
+        if (seen.has(identity)) return;
+        seen.add(identity);
+      }
+      if (isGemBookmark(bookmark)) gems.push(bookmark);
+      else library.push(bookmark);
+    });
+    const rows = [];
+    if (library.length > 0) {
+      rows.push({ type: "header", id: "library", title: "Library" });
+      library.forEach((item) => rows.push({ type: "item", item }));
+    }
+    if (gems.length > 0) {
+      rows.push({ type: "header", id: "gems", title: "Gems" });
+      gems.forEach((item) => rows.push({ type: "item", item }));
+    }
+    return rows;
+  }, [bookmarks]);
+
   const openBookmark = useCallback((bookmark) => {
+    if (isGemBookmark(bookmark)) {
+      const record = findGemRecord(bookmark);
+      const gem = record?.gem || bookmark;
+      const sectionId = record?.sectionId || bookmark.sectionId;
+      const sectionTitle =
+        record?.sectionTitle || bookmark.section || "Gems";
+      navigation.navigate("Reading", {
+        id: gem.id,
+        title: gem.title,
+        content: gem.content,
+        section: sectionTitle,
+        sectionId,
+        contentKey:
+          bookmark.contentKey || buildGemContentKey(sectionId, gem.id),
+        isGem: true,
+      });
+      return;
+    }
+
     const currentEntry = getCurrentContentEntry(bookmark);
     const currentItem = currentEntry?.item || bookmark;
     const effectiveSection = currentEntry?.section || bookmark.section || null;
@@ -83,48 +148,37 @@ const BookmarksScreen = ({ navigation }) => {
       ? getItemStatus(currentItem, effectiveSection, readItemVersions)
       : "none";
 
-    const readingParams = bookmark.isGem
-      ? {
-          id: currentItem.id,
-          title: currentItem.title,
-          content: currentItem.content,
-          section: effectiveSection,
-          contentKey:
-            bookmark.contentKey ||
-            (effectiveSection
-              ? getContentKey(effectiveSection, currentItem.id)
-              : null),
-          isGem: true,
-        }
-      : {
-          ...buildLibraryReadingParams(currentItem, effectiveSection, {
-            status: itemStatus,
-          }),
-          contentKey:
-            bookmark.contentKey ||
-            (effectiveSection
-              ? getContentKey(effectiveSection, currentItem.id)
-              : null),
-        };
+    const readingParams = {
+      ...buildLibraryReadingParams(currentItem, effectiveSection, {
+        status: itemStatus,
+      }),
+      contentKey:
+        bookmark.contentKey ||
+        (effectiveSection
+          ? getContentKey(effectiveSection, currentItem.id)
+          : null),
+    };
 
     navigateToLibraryContent(navigation, {
       isPremium,
-      isFree: !bookmark.isGem && isFreeLibraryItem(currentItem),
+      isFree: isFreeLibraryItem(currentItem),
       destination: "Reading",
       params: readingParams,
     });
   }, [isPremium, navigation, readItemVersions]);
 
-  const renderBookmark = useCallback(({ item }) => (
-    <BookmarkRow title={item.title} item={item} onOpen={openBookmark} />
-  ), [openBookmark]);
+  const renderBookmark = useCallback(({ item: row }) => {
+    if (row.type === "header") {
+      return <BookmarkSectionHeader title={row.title} />;
+    }
+    return (
+      <BookmarkRow title={row.item.title} item={row.item} onOpen={openBookmark} />
+    );
+  }, [openBookmark]);
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={["left", "right", "bottom"]}>
       <View style={styles.container}>
-        <Text variant="headlineMedium" style={styles.header}>
-          Bookmarks
-        </Text>
         {bookmarks.length === 0 ? (
           <View style={styles.emptyState}>
             <Text variant="bodyLarge" style={styles.emptyText}>
@@ -136,10 +190,10 @@ const BookmarksScreen = ({ navigation }) => {
           </View>
         ) : (
           <FlatList
-            data={bookmarks}
+            data={listData}
             keyExtractor={bookmarkKeyExtractor}
             renderItem={renderBookmark}
-            ItemSeparatorComponent={Divider}
+            ItemSeparatorComponent={BookmarkSeparator}
             initialNumToRender={12}
             maxToRenderPerBatch={8}
             windowSize={8}
@@ -157,13 +211,20 @@ const createStyles = (colors) => StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingTop: 8,
     backgroundColor: colors.surfacePrimary,
   },
-  header: {
-    marginBottom: 16,
-    fontWeight: "bold",
-    color: colors.textTitle,
+  sectionHeader: {
+    paddingTop: 16,
+    paddingBottom: 6,
+  },
+  sectionHeaderText: {
+    fontSize: 13,
+    fontWeight: "700",
+    letterSpacing: 0.6,
+    textTransform: "uppercase",
+    color: colors.textTertiary,
   },
   itemTitle: {
     color: colors.textTitle,

@@ -51,10 +51,8 @@ import { theme } from "../styles/theme";
 import { triggerStreakMilestone } from "../services/notificationService";
 import {
   VALID_MASTER_TITLES,
-  VALID_CONTENT_KEYS,
   TOTAL_LEAF_CONTENT_ITEMS,
   getEffectiveReadCount,
-  getContentKey,
   getReadTitles,
   hydrateContentRegistry,
   migrateLegacyReadItems,
@@ -68,6 +66,13 @@ import { syncAllAnnotations } from "../services/annotationService";
 import { syncAllHighlights } from "../services/highlightService";
 import { generateReferralCode } from "../utils/referralUtils";
 import { claimReferralRewards } from "../services/couponService";
+import {
+  bookmarksMatch,
+  isGemBookmark,
+  mergeBookmarksLists,
+  normalizeBookmarks,
+  resolveBookmarkContentKey,
+} from "../utils/bookmarkIdentity";
 import {
   getLocalOnboardingCompleted,
   setLocalOnboardingCompleted,
@@ -186,38 +191,6 @@ const resolveReferralCode = async (uid, username, existingCode) => {
   return referralCode;
 };
 
-const resolveBookmarkContentKey = (item) => {
-  if (!item || typeof item !== "object") return null;
-  if (
-    typeof item.contentKey === "string" &&
-    VALID_CONTENT_KEYS.has(item.contentKey)
-  ) {
-    return item.contentKey;
-  }
-  if (typeof item.section === "string" && item.id !== undefined) {
-    const derivedKey = getContentKey(item.section, item.id);
-    if (VALID_CONTENT_KEYS.has(derivedKey)) {
-      return derivedKey;
-    }
-  }
-  return null;
-};
-
-const normalizeBookmarks = (items) => {
-  if (!Array.isArray(items)) return [];
-  return items
-    .filter(
-      (item) =>
-        item &&
-        typeof item.title === "string" &&
-        VALID_MASTER_TITLES.has(item.title),
-    )
-    .map((item) => ({
-      ...item,
-      contentKey: resolveBookmarkContentKey(item) || item.contentKey || null,
-    }));
-};
-
 const sanitizeCloudState = (data = {}) => ({
   readItems: Array.isArray(data.readItems)
     ? data.readItems.filter((title) => VALID_MASTER_TITLES.has(title))
@@ -265,17 +238,6 @@ const mergeDailyReadHistory = (...histories) => {
     });
   });
   return merged;
-};
-
-const mergeBookmarksLists = (...lists) => {
-  const map = new Map();
-  lists.flat().forEach((item) => {
-    if (!item || typeof item.title !== "string") return;
-    const key =
-      (typeof item.contentKey === "string" && item.contentKey) || item.title;
-    if (!map.has(key)) map.set(key, item);
-  });
-  return normalizeBookmarks([...map.values()]);
 };
 
 const mergeLearningStates = (...rawStates) => {
@@ -1563,47 +1525,33 @@ export const AppProvider = ({ children }) => {
     }
   }, [persistLearningLocally]);
 
-  const getBookmarkIdentity = (itemOrTitle) => {
-    if (!itemOrTitle) return null;
-    if (typeof itemOrTitle === "string") return itemOrTitle;
-    return (
-      resolveBookmarkContentKey(itemOrTitle) ||
-      itemOrTitle.contentKey ||
-      itemOrTitle.title ||
-      null
-    );
-  };
-
   const isBookmarked = useCallback((itemOrTitle) => {
-    const targetIdentity = getBookmarkIdentity(itemOrTitle);
-    if (!targetIdentity) return false;
-    return bookmarks.some(
-      (bookmark) => getBookmarkIdentity(bookmark) === targetIdentity,
-    );
+    if (!itemOrTitle) return false;
+    return bookmarks.some((bookmark) => bookmarksMatch(bookmark, itemOrTitle));
   }, [bookmarks]);
 
   const toggleBookmark = useCallback((item) => {
-    const targetIdentity = getBookmarkIdentity(item);
-    if (!targetIdentity) return;
+    if (!item) return;
 
     const prev = learningStateRef.current;
     const previousBookmarks = prev.bookmarks || [];
-    const alreadyBookmarked = previousBookmarks.some(
-      (bookmark) => getBookmarkIdentity(bookmark) === targetIdentity,
+    const alreadyBookmarked = previousBookmarks.some((bookmark) =>
+      bookmarksMatch(bookmark, item),
     );
 
-    const nextBookmarks = alreadyBookmarked
-      ? previousBookmarks.filter(
-          (bookmark) => getBookmarkIdentity(bookmark) !== targetIdentity,
-        )
-      : [
-          ...previousBookmarks,
-          {
-            ...item,
-            contentKey:
-              resolveBookmarkContentKey(item) || item.contentKey || null,
-          },
-        ];
+    const nextBookmarks = normalizeBookmarks(
+      alreadyBookmarked
+        ? previousBookmarks.filter((bookmark) => !bookmarksMatch(bookmark, item))
+        : [
+            ...previousBookmarks,
+            {
+              ...item,
+              contentKey:
+                resolveBookmarkContentKey(item) || item.contentKey || null,
+              isGem: isGemBookmark(item),
+            },
+          ],
+    );
 
     const snapshot = {
       ...prev,

@@ -321,6 +321,7 @@ const SearchScreen = ({ navigation }) => {
           content: item.content,
           title: item.title,
           section: item.sectionTitle,
+          sectionId: item.sectionId,
           contentKey: item.contentKey,
           isGem: true,
           searchTerms: debouncedQuery,

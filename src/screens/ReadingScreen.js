@@ -31,6 +31,7 @@ import {
   saveHighlights,
 } from "../services/highlightService";
 import { nextHighlightValue } from "../utils/userHighlightColors";
+import { buildGemContentKey } from "../utils/bookmarkIdentity";
 const buildReadingParamsFromEntry = (entry) => {
   const item = entry?.item || {};
   return buildLibraryReadingParams(item, entry.section);
@@ -82,8 +83,8 @@ const ReadingScreen = ({ route, navigation }) => {
   const [celebration, setCelebration] = useState(null);
 
   const currentEntry = useMemo(
-    () => getCurrentContentEntry(route.params),
-    [route.params, contentRegistryVersion],
+    () => (isGem ? null : getCurrentContentEntry(route.params)),
+    [isGem, route.params, contentRegistryVersion],
   );
   const currentItem = currentEntry?.item || null;
 
@@ -95,9 +96,10 @@ const ReadingScreen = ({ route, navigation }) => {
     content ||
     "# No Content\n\nThis topic has no content yet.";
   const effectiveQuizzes = currentItem?.quizzes || quizzes;
-  const effectiveContentKey =
-    contentKey ||
-    (effectiveSection ? getContentKey(effectiveSection, effectiveId) : null);
+  const effectiveContentKey = isGem
+    ? contentKey || buildGemContentKey(route.params?.sectionId, effectiveId)
+    : contentKey ||
+      (effectiveSection ? getContentKey(effectiveSection, effectiveId) : null);
   const effectiveContentSignature =
     contentSignature || getContentSignature(currentItem || route.params);
   const effectiveUpdatedSegments = currentItem
@@ -240,14 +242,17 @@ const ReadingScreen = ({ route, navigation }) => {
         content: effectiveContent,
         quizzes: effectiveQuizzes,
         section: effectiveSection,
+        sectionId: route.params?.sectionId,
         contentKey: effectiveContentKey,
         isGem: true,
+        category: "Gems",
       }
     : {
         id: effectiveId,
         title: effectiveTitle,
         section: effectiveSection,
         contentKey: effectiveContentKey,
+        isGem: false,
       };
 
   const bookmarked = isBookmarked(bookmarkPayload);

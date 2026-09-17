@@ -18,6 +18,7 @@ import { theme, useResponsive } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
 import { AppContext } from "../context/AppContext";
 import gemsData from "../data/gemsData.json";
+import { buildGemContentKey } from "../utils/bookmarkIdentity";
 
 const ALL_SECTIONS_ID = "all";
 
@@ -57,7 +58,7 @@ const GemRow = memo(function GemRow({
             icon={isGemBookmarked ? "bookmark" : "bookmark-outline"}
             iconColor={isGemBookmarked ? theme.colors.secondary : undefined}
             size={20}
-            onPress={() => onToggleBookmark(gem, sectionTitle)}
+            onPress={() => onToggleBookmark(gem, sectionId, sectionTitle)}
           />
         </View>
         <Text
@@ -149,12 +150,13 @@ const GemsScreen = ({ navigation }) => {
       content: gem.content,
       title: gem.title,
       section: sectionTitle,
-      contentKey: `gems:${sectionId}:${gem.id}`,
+      sectionId,
+      contentKey: buildGemContentKey(sectionId, gem.id),
       isGem: true,
     });
   }, [isPremium, navigation]);
 
-  const handleToggleBookmark = useCallback((gem, sectionTitle) => {
+  const handleToggleBookmark = useCallback((gem, sectionId, sectionTitle) => {
     if (!isPremium) {
       navigation.navigate("Paywall");
       return;
@@ -164,8 +166,10 @@ const GemsScreen = ({ navigation }) => {
       title: gem.title,
       content: gem.content,
       section: sectionTitle,
+      sectionId,
+      contentKey: buildGemContentKey(sectionId, gem.id),
       isGem: true,
-      category: "Gems"
+      category: "Gems",
     });
   }, [isPremium, navigation, toggleBookmark]);
 
@@ -177,6 +181,8 @@ const GemsScreen = ({ navigation }) => {
       isGemBookmarked={isBookmarked({
         id: item.gem.id,
         title: item.gem.title,
+        sectionId: item.sectionId,
+        contentKey: buildGemContentKey(item.sectionId, item.gem.id),
         isGem: true,
       })}
       onOpen={handleGemPress}
