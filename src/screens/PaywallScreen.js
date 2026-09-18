@@ -14,9 +14,9 @@ import { Text, Button, Card } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import NetInfo from "@react-native-community/netinfo";
-import Constants from "expo-constants";
+import { isExpoGo } from "../utils/safeExpoGo";
 let Purchases;
-if (Constants.appOwnership !== "expo") {
+if (!isExpoGo()) {
   Purchases = require("react-native-purchases").default;
 }
 import { AppContext } from "../context/AppContext";
@@ -171,7 +171,7 @@ const PaywallScreen = ({ navigation }) => {
 
   // Fetch offerings from RevenueCat on mount
   const fetchOfferings = async (forcedOfferingId = undefined, retryCount = 0) => {
-    if (Constants.appOwnership === "expo" || !Purchases) {
+    if (isExpoGo() || !Purchases) {
       setLoadError("Purchases are not supported in Expo Go.");
       return;
     }

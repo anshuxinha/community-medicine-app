@@ -28,8 +28,9 @@ jest.mock("react-native", () => ({
   },
 }));
 
-jest.mock("expo-constants", () => ({
-  appOwnership: "standalone",
+jest.mock("../../utils/safeExpoGo", () => ({
+  isExpoGo: () => false,
+  getAppOwnership: () => "standalone",
 }));
 
 jest.mock("@react-native-async-storage/async-storage", () =>

@@ -15,7 +15,7 @@ import {
 } from "../utils/screenCaptureProtection";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Device from "expo-device";
-import Constants from "expo-constants";
+import { isExpoGo } from "../utils/safeExpoGo";
 import { db, auth } from "../config/firebase";
 import {
   collection,
@@ -46,9 +46,7 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import * as Notifications from "expo-notifications";
 import { theme } from "../styles/theme";
-import { triggerStreakMilestone } from "../services/notificationService";
 import {
   VALID_MASTER_TITLES,
   TOTAL_LEAF_CONTENT_ITEMS,
@@ -91,7 +89,7 @@ import {
 
 let Purchases;
 let GoogleSignin;
-if (Constants.appOwnership !== "expo") {
+if (!isExpoGo()) {
   Purchases = require("react-native-purchases").default;
   GoogleSignin =
     require("@react-native-google-signin/google-signin").GoogleSignin;
@@ -359,8 +357,6 @@ const resolveDisplayUsername = (firestoreUsername, authDisplayName, fallback) =>
   }
   return "User";
 };
-
-const SafeNotifications = Notifications;
 
 export const AppContext = createContext();
 
@@ -1309,6 +1305,14 @@ export const AppProvider = ({ children }) => {
   }, [user?.uid]);
 
   async function registerForPushNotificationsAsync() {
+    let Notifications;
+    try {
+      Notifications = require("expo-notifications");
+    } catch (error) {
+      console.warn("Push registration skipped:", error?.message);
+      return null;
+    }
+
     let token;
 
     if (!Notifications) {
@@ -1484,7 +1488,12 @@ export const AppProvider = ({ children }) => {
     prevStreakRef.current = currentStreak;
 
     if (currentStreak > 0 && currentStreak > previousStreak) {
-      triggerStreakMilestone(currentStreak);
+      try {
+        const { triggerStreakMilestone } = require("../services/notificationService");
+        triggerStreakMilestone(currentStreak);
+      } catch (error) {
+        console.warn("Streak notification skipped:", error?.message);
+      }
     }
   }, [currentStreak]);
 
@@ -1594,7 +1603,7 @@ export const AppProvider = ({ children }) => {
 
   // RevenueCat: configure and sync customer info on mount
   useEffect(() => {
-    if (Constants.appOwnership === "expo") return;
+    if (isExpoGo()) return;
     if (!Purchases) return;
 
     const iosKey = process.env.EXPO_PUBLIC_RC_API_KEY_IOS;
@@ -1738,7 +1747,7 @@ export const AppProvider = ({ children }) => {
 
   // Sync RevenueCat identity when user logs in
   useEffect(() => {
-    if (Constants.appOwnership === "expo") return;
+    if (isExpoGo()) return;
     if (!Purchases) return;
     if (!user?.uid) return;
 
@@ -1795,7 +1804,7 @@ export const AppProvider = ({ children }) => {
   }, []);
 
   const login = useCallback(async (userData) => {
-    if (Constants.appOwnership !== "expo" && Purchases && userData.uid) {
+    if (!isExpoGo() && Purchases && userData.uid) {
       Purchases.logIn(userData.uid)
         .then(({ customerInfo }) => {
           const hasPremium = hasRevenueCatPremiumEntitlement(customerInfo);
@@ -1933,12 +1942,12 @@ export const AppProvider = ({ children }) => {
     try {
       await signOut(auth);
     } catch (_) {}
-    if (Constants.appOwnership !== "expo" && GoogleSignin) {
+    if (!isExpoGo() && GoogleSignin) {
       try {
         await GoogleSignin.signOut();
       } catch (_) {}
     }
-    if (Constants.appOwnership !== "expo" && Purchases) {
+    if (!isExpoGo() && Purchases) {
       try {
         await Purchases.logOut();
       } catch (_) {}

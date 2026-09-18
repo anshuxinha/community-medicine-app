@@ -2,7 +2,7 @@ import { NativeModules, Platform } from "react-native";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { signInWithCustomToken } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Constants from "expo-constants";
+import { isExpoGo } from "../utils/safeExpoGo";
 import { app, auth } from "../config/firebase";
 import { getDeviceId } from "../utils/deviceUtils";
 
@@ -11,7 +11,7 @@ const RestoreCredentials = NativeModules.RestoreCredentials;
 
 const nativeAvailable = () =>
   Platform.OS === "android" &&
-  Constants.appOwnership !== "expo" &&
+  !isExpoGo() &&
   !!RestoreCredentials;
 
 const functions = () => getFunctions(app, "us-central1");

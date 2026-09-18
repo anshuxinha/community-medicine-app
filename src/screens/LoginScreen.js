@@ -34,14 +34,14 @@ import {
   signOut,
 } from "firebase/auth";
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
-import Constants from "expo-constants";
+import { isExpoGo } from "../utils/safeExpoGo";
 import { useThemedStyles } from '../styles/useThemedStyles';
 import { ALL_ORIENTATIONS } from "../constants/orientations";
 import * as AppleAuthentication from "expo-apple-authentication";
 import * as Crypto from "expo-crypto";
 
 let GoogleSignin;
-if (Constants.appOwnership !== "expo") {
+if (!isExpoGo()) {
   GoogleSignin =
     require("@react-native-google-signin/google-signin").GoogleSignin;
   GoogleSignin.configure({
@@ -199,7 +199,7 @@ const LoginScreen = () => {
   };
 
   const handleGoogleLogin = async () => {
-    if (Constants.appOwnership === "expo") {
+    if (isExpoGo()) {
       alert(
         "Google Sign-In is not supported in Expo Go. Please use email/password or use a development build.",
       );

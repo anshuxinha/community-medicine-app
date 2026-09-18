@@ -35,6 +35,12 @@ jest.mock('firebase/auth', () => ({
   getAuth: jest.fn(),
   initializeAuth: jest.fn(),
   getReactNativePersistence: jest.fn(),
+  signInWithCustomToken: jest.fn(),
+}));
+
+jest.mock('firebase/functions', () => ({
+  getFunctions: jest.fn(() => ({})),
+  httpsCallable: jest.fn(() => jest.fn()),
 }));
 
 jest.mock('firebase/firestore', () => ({
@@ -102,8 +108,9 @@ jest.mock('@react-native-community/netinfo', () => ({
   fetch: jest.fn().mockResolvedValue({ isConnected: true }),
 }));
 
-jest.mock('expo-constants', () => ({
-  appOwnership: 'standalone',
+jest.mock('../../utils/safeExpoGo', () => ({
+  isExpoGo: () => false,
+  getAppOwnership: () => 'standalone',
 }));
 
 jest.mock('@expo/vector-icons', () => ({
