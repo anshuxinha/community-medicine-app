@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Platform, Linking } from 'react-native';
+import { View, StyleSheet, ScrollView, Linking } from 'react-native';
 import { TextInput, Button, Card, Text, SegmentedButtons } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DropdownPicker from '../components/DropdownPicker';
 import { theme } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
+import {
+    DEFAULT_CPI_IW,
+    DEFAULT_CPI_IW_LABEL,
+    calculateKuppuswamy,
+    calculateBGPrasad,
+    formatSlabRange,
+} from '../utils/sesCalculator';
 
 const EDUCATION_OPTIONS = [
     { label: 'Profession or Honours', value: 7 },
@@ -38,86 +45,26 @@ const SESCalculatorScreen = () => {
 
     // BG Prasad State
     const [perCapitaIncome, setPerCapitaIncome] = useState('');
-    const [cpi, setCpi] = useState('148.6'); // CPI for BG Prasad (Base 2016 = 100)
-    const [kCpi, setKCpi] = useState('148.6'); // CPI for Kuppuswamy (Base 2016 = 100)
+    const [cpi, setCpi] = useState(String(DEFAULT_CPI_IW));
+    const [kCpi, setKCpi] = useState(String(DEFAULT_CPI_IW));
 
     // Result
     const [result, setResult] = useState(null);
 
-    const calculateKuppuswamy = () => {
-        if (!familyIncome || isNaN(Number(familyIncome)) || !kCpi || isNaN(Number(kCpi))) {
-            setResult({ error: 'Please enter valid numbers for Income and CPI' });
-            return;
-        }
-
-        const income = Number(familyIncome);
-        const currentCPI = Number(kCpi);
-        const conversionFactor = currentCPI / 100;
-
-        // Thresholds for Base 2016 (CPI = 100)
-        const t12 = 51646 * conversionFactor;
-        const t10 = 25811 * conversionFactor;
-        const t6 = 19351 * conversionFactor;
-        const t4 = 12890 * conversionFactor;
-        const t3 = 7725 * conversionFactor;
-        const t2 = 2586 * conversionFactor;
-
-        let incomeScore = 1;
-        if (income >= t12) incomeScore = 12;
-        else if (income >= t10) incomeScore = 10;
-        else if (income >= t6) incomeScore = 6;
-        else if (income >= t4) incomeScore = 4;
-        else if (income >= t3) incomeScore = 3;
-        else if (income >= t2) incomeScore = 2;
-        else incomeScore = 1;
-
-        const totalScore = education + occupation + incomeScore;
-
-        let sesClass = '';
-        if (totalScore >= 26) sesClass = 'Upper (Class I)';
-        else if (totalScore >= 16) sesClass = 'Upper Middle (Class II)';
-        else if (totalScore >= 11) sesClass = 'Lower Middle (Class III)';
-        else if (totalScore >= 5) sesClass = 'Upper Lower (Class IV)';
-        else sesClass = 'Lower (Class V)';
-
-        setResult({
-            score: totalScore,
-            class: sesClass,
-            details: `Education: ${education} | Occupation: ${occupation} | Income Score: ${incomeScore} (Threshold Class I: ₹${t12.toFixed(0)})`
-        });
-    };
-
-    const calculateBGPrasad = () => {
-        if (!perCapitaIncome || isNaN(Number(perCapitaIncome)) || !cpi || isNaN(Number(cpi))) {
-            setResult({ error: 'Please enter valid numbers for Income and CPI' });
-            return;
-        }
-
-        const currentCPI = Number(cpi);
-        // Multiplication Factor from 1961 to 2016 = 2.88 * 4.63 * 4.93 = 65.731392
-        const linkingFactor = 65.731392;
-        const conversionFactor = (currentCPI / 100) * linkingFactor;
-        
-        const income = Number(perCapitaIncome);
-
-        let sesClass = '';
-        if (income >= 100 * conversionFactor) sesClass = 'Upper (Class I)';
-        else if (income >= 50 * conversionFactor) sesClass = 'Upper Middle (Class II)';
-        else if (income >= 30 * conversionFactor) sesClass = 'Middle (Class III)';
-        else if (income >= 15 * conversionFactor) sesClass = 'Lower Middle (Class IV)';
-        else sesClass = 'Lower (Class V)';
-
-        const classIThreshold = 100 * conversionFactor;
-
-        setResult({
-            class: sesClass,
-            details: `Threshold for Class I: ₹${classIThreshold.toFixed(0)}`
-        });
-    };
-
     const handleCalculate = () => {
-        if (scaleType === 'kuppuswamy') calculateKuppuswamy();
-        else calculateBGPrasad();
+        if (scaleType === 'kuppuswamy') {
+            setResult(calculateKuppuswamy({
+                education,
+                occupation,
+                familyIncome,
+                cpi: kCpi,
+            }));
+        } else {
+            setResult(calculateBGPrasad({
+                perCapitaIncome,
+                cpi,
+            }));
+        }
     };
 
     return (
@@ -126,7 +73,7 @@ const SESCalculatorScreen = () => {
                 
                 <View style={styles.hintContainer}>
                     <Text style={styles.hintText}>
-                        Tip: You can get the latest CPI-IW data from the Labour Bureau website:{" "}
+                        Default CPI-IW is {DEFAULT_CPI_IW} ({DEFAULT_CPI_IW_LABEL}; base 2016 = 100). Replace it with a newer Labour Bureau month if you have one:{" "}
                         <Text 
                             style={styles.linkText} 
                             onPress={() => Linking.openURL('https://labourbureau.gov.in')}
@@ -156,7 +103,7 @@ const SESCalculatorScreen = () => {
                             <Text style={styles.sectionTitle}>Modified Kuppuswamy Scale</Text>
 
                             <TextInput
-                                label="Current CPI-IW (Base 2016 = 100)"
+                                label={`CPI-IW (2016=100), default ${DEFAULT_CPI_IW_LABEL}`}
                                 value={kCpi}
                                 onChangeText={setKCpi}
                                 keyboardType="numeric"
@@ -198,7 +145,7 @@ const SESCalculatorScreen = () => {
                             <Text style={styles.sectionTitle}>BG Prasad Scale</Text>
 
                             <TextInput
-                                label="Current CPI-IW (Base 2016 = 100)"
+                                label={`CPI-IW (2016=100), default ${DEFAULT_CPI_IW_LABEL}`}
                                 value={cpi}
                                 onChangeText={setCpi}
                                 keyboardType="numeric"
@@ -234,9 +181,25 @@ const SESCalculatorScreen = () => {
                                 <>
                                     <Text style={styles.resultTitle}>Result: {result.class}</Text>
                                     {result.score !== undefined && (
-                                        <Text variant="titleMedium" style={{ color: theme.colors.textTitle }}>Total Score: {result.score}</Text>
+                                        <Text variant="titleMedium" style={{ color: theme.colors.textTitle }}>Total Score: {result.score} (income score {result.incomeScore})</Text>
                                     )}
-                                    <Text style={{ marginTop: 8, color: theme.colors.textTertiary }}>{result.details}</Text>
+                                    <Text style={{ marginTop: 8, color: theme.colors.textTertiary }}>
+                                        CPI-IW {result.cpi} ({DEFAULT_CPI_IW_LABEL})
+                                    </Text>
+                                    {result.slabs ? (
+                                        <View style={{ marginTop: 10 }}>
+                                            <Text style={{ fontWeight: 'bold', color: theme.colors.textTitle, marginBottom: 4 }}>
+                                                Income slabs at this CPI
+                                            </Text>
+                                            {result.slabs.map((slab) => (
+                                                <Text key={slab.score || slab.label} style={{ color: theme.colors.textTertiary, marginBottom: 2 }}>
+                                                    {slab.score != null
+                                                        ? `Score ${slab.score}: ${formatSlabRange(slab.min, slab.maxExclusive)}`
+                                                        : `${slab.label}: ${formatSlabRange(slab.min, slab.maxExclusive)}`}
+                                                </Text>
+                                            ))}
+                                        </View>
+                                    ) : null}
                                 </>
                             )}
                         </Card.Content>

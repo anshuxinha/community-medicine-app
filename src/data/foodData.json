@@ -2600,6 +2600,2066 @@
     "vitaminD": 0.5
   },
   {
+    "id": "barley",
+    "name": "Barley (jau)",
+    "category": "Cereals & Millets",
+    "ifctCode": "A004",
+    "source": "IFCT 2017",
+    "calories": 316,
+    "protein": 10.94,
+    "fat": 1.3,
+    "carbs": 61.29,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_cooked",
+        "label": "Cooked barley, 1 katori (~40 g raw)",
+        "grams": 40,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 28.64,
+    "iron": 1.56,
+    "vitC": 0.0,
+    "folate": 31.6,
+    "zinc": 1.5,
+    "magnesium": 48.97,
+    "vitaminA": 0.0,
+    "thiamine": 0.36,
+    "riboflavin": 0.18,
+    "niacin": 2.84,
+    "vitB6": 0.31,
+    "vitaminD": 0.0
+  },
+  {
+    "id": "maize_dry",
+    "name": "Maize, dry (makka)",
+    "category": "Cereals & Millets",
+    "ifctCode": "A006",
+    "source": "IFCT 2017",
+    "calories": 334,
+    "protein": 8.8,
+    "fat": 3.77,
+    "carbs": 64.77,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "roti_makka",
+        "label": "Makki roti (~40 g flour)",
+        "grams": 40,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 8.91,
+    "iron": 2.49,
+    "vitC": 0.0,
+    "folate": 25.8,
+    "zinc": 2.27,
+    "magnesium": 145.0,
+    "vitaminA": 296.0,
+    "thiamine": 0.33,
+    "riboflavin": 0.09,
+    "niacin": 2.69,
+    "vitB6": 0.34,
+    "vitaminD": 33.6
+  },
+  {
+    "id": "rice_brown",
+    "name": "Rice, raw, brown",
+    "category": "Cereals & Millets",
+    "ifctCode": "A013",
+    "source": "IFCT 2017",
+    "calories": 354,
+    "protein": 9.16,
+    "fat": 1.24,
+    "carbs": 74.8,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_cooked",
+        "label": "Cooked brown rice, 1 katori (~50 g raw)",
+        "grams": 50,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 10.93,
+    "iron": 1.02,
+    "vitC": 0.0,
+    "folate": 11.5,
+    "zinc": 1.68,
+    "magnesium": 93.91,
+    "vitaminA": 0.0,
+    "thiamine": 0.27,
+    "riboflavin": 0.06,
+    "niacin": 3.4,
+    "vitB6": 0.37,
+    "vitaminD": 0.0
+  },
+  {
+    "id": "wheat_whole",
+    "name": "Wheat, whole grain",
+    "category": "Cereals & Millets",
+    "ifctCode": "A020",
+    "source": "IFCT 2017",
+    "calories": 322,
+    "protein": 10.59,
+    "fat": 1.47,
+    "carbs": 64.72,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori grain (~100 g)",
+        "grams": 100,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 39.36,
+    "iron": 3.97,
+    "vitC": 0.0,
+    "folate": 30.1,
+    "zinc": 2.85,
+    "magnesium": 125.0,
+    "vitaminA": 3.0,
+    "thiamine": 0.46,
+    "riboflavin": 0.15,
+    "niacin": 2.68,
+    "vitB6": 0.26,
+    "vitaminD": 17.5
+  },
+  {
+    "id": "vermicelli",
+    "name": "Wheat vermicelli (seviyan)",
+    "category": "Cereals & Millets",
+    "ifctCode": "A023",
+    "source": "IFCT 2017",
+    "calories": 333,
+    "protein": 9.7,
+    "fat": 0.45,
+    "carbs": 70.39,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_cooked",
+        "label": "Cooked seviyan, 1 katori (~30 g dry)",
+        "grams": 30,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 19.42,
+    "iron": 2.02,
+    "vitC": 0.0,
+    "folate": 14.3,
+    "zinc": 0.83,
+    "magnesium": 34.18,
+    "vitaminA": 1.7,
+    "thiamine": 0.13,
+    "riboflavin": 0.01,
+    "niacin": 0.86,
+    "vitB6": 0.03,
+    "vitaminD": 4.1
+  },
+  {
+    "id": "horse_gram",
+    "name": "Horse gram, whole (kulthi / kulith)",
+    "category": "Pulses & Legumes",
+    "ifctCode": "B012",
+    "source": "IFCT 2017",
+    "calories": 330,
+    "protein": 21.73,
+    "fat": 0.62,
+    "carbs": 57.24,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_med",
+        "label": "Cooked dal, 1 medium katori (~25 g raw)",
+        "grams": 25,
+        "rawEquivalent": true
+      },
+      {
+        "id": "katori_thin",
+        "label": "Cooked dal, thin, 1 katori (~15 g raw)",
+        "grams": 15,
+        "rawEquivalent": true
+      },
+      {
+        "id": "katori_thick",
+        "label": "Cooked dal, thick, 1 katori (~35 g raw)",
+        "grams": 35,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 269.0,
+    "iron": 8.76,
+    "vitC": 0.0,
+    "folate": 163.0,
+    "zinc": 2.71,
+    "magnesium": 152.0,
+    "vitaminA": 58.6,
+    "thiamine": 0.32,
+    "riboflavin": 0.24,
+    "niacin": 1.82,
+    "vitB6": 0.21,
+    "vitaminD": 1.8
+  },
+  {
+    "id": "cowpea",
+    "name": "Cowpea, brown (lobia)",
+    "category": "Pulses & Legumes",
+    "ifctCode": "B005",
+    "source": "IFCT 2017",
+    "calories": 320,
+    "protein": 20.36,
+    "fat": 1.15,
+    "carbs": 54.62,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_cooked",
+        "label": "Cooked lobia, 1 katori (~35 g raw)",
+        "grams": 35,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 81.73,
+    "iron": 5.9,
+    "vitC": 0.0,
+    "folate": 231.0,
+    "zinc": 3.41,
+    "magnesium": 213.0,
+    "vitaminA": 7.1,
+    "thiamine": 0.33,
+    "riboflavin": 0.09,
+    "niacin": 1.64,
+    "vitB6": 0.3,
+    "vitaminD": 0.9
+  },
+  {
+    "id": "peas_dry",
+    "name": "Peas, dry (matar, dried)",
+    "category": "Pulses & Legumes",
+    "ifctCode": "B017",
+    "source": "IFCT 2017",
+    "calories": 303,
+    "protein": 20.43,
+    "fat": 1.89,
+    "carbs": 48.93,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_cooked",
+        "label": "Cooked dry peas, 1 katori (~35 g raw)",
+        "grams": 35,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 75.11,
+    "iron": 5.09,
+    "vitC": 0.0,
+    "folate": 110.0,
+    "zinc": 3.1,
+    "magnesium": 123.0,
+    "vitaminA": 65.7,
+    "thiamine": 0.56,
+    "riboflavin": 0.16,
+    "niacin": 2.69,
+    "vitB6": 0.26,
+    "vitaminD": 15.2
+  },
+  {
+    "id": "urad_whole",
+    "name": "Black gram, whole (sabut urad)",
+    "category": "Pulses & Legumes",
+    "ifctCode": "B004",
+    "source": "IFCT 2017",
+    "calories": 291,
+    "protein": 21.97,
+    "fat": 1.58,
+    "carbs": 43.99,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_cooked",
+        "label": "Cooked sabut urad, 1 katori (~30 g raw)",
+        "grams": 30,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 86.18,
+    "iron": 5.97,
+    "vitC": 0.0,
+    "folate": 134.0,
+    "zinc": 3.05,
+    "magnesium": 190.0,
+    "vitaminA": 12.8,
+    "thiamine": 0.32,
+    "riboflavin": 0.11,
+    "niacin": 1.85,
+    "vitB6": 0.53,
+    "vitaminD": 16.8
+  },
+  {
+    "id": "bathua",
+    "name": "Bathua leaves",
+    "category": "Green Leafy Vegetables",
+    "ifctCode": "C008",
+    "source": "IFCT 2017",
+    "calories": 28,
+    "protein": 2.5,
+    "fat": 0.44,
+    "carbs": 2.56,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_cooked",
+        "label": "Cooked sabzi, 1 katori (~100 g raw)",
+        "grams": 100,
+        "rawEquivalent": true
+      },
+      {
+        "id": "half_katori",
+        "label": "Cooked sabzi, 1/2 katori (~50 g raw)",
+        "grams": 50,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 211.0,
+    "iron": 2.66,
+    "vitC": 41.03,
+    "folate": 42.5,
+    "zinc": 0.98,
+    "magnesium": 48.41,
+    "vitaminA": 1075.0,
+    "thiamine": 0.06,
+    "riboflavin": 0.51,
+    "niacin": 0.54,
+    "vitB6": 0.17,
+    "vitaminD": 1.0
+  },
+  {
+    "id": "colocasia_leaves",
+    "name": "Colocasia leaves (arbi patta)",
+    "category": "Green Leafy Vegetables",
+    "ifctCode": "C018",
+    "source": "IFCT 2017",
+    "calories": 43,
+    "protein": 3.42,
+    "fat": 1.38,
+    "carbs": 3.69,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_cooked",
+        "label": "Cooked sabzi, 1 katori (~100 g raw)",
+        "grams": 100,
+        "rawEquivalent": true
+      },
+      {
+        "id": "half_katori",
+        "label": "Cooked sabzi, 1/2 katori (~50 g raw)",
+        "grams": 50,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 216.0,
+    "iron": 3.41,
+    "vitC": 40.71,
+    "folate": 159.0,
+    "zinc": 0.82,
+    "magnesium": 59.44,
+    "vitaminA": 5758.0,
+    "thiamine": 0.08,
+    "riboflavin": 0.07,
+    "niacin": 0.8,
+    "vitB6": 0.29,
+    "vitaminD": 1.7
+  },
+  {
+    "id": "basella",
+    "name": "Basella leaves (poi / pui saag)",
+    "category": "Green Leafy Vegetables",
+    "ifctCode": "C007",
+    "source": "IFCT 2017",
+    "calories": 20,
+    "protein": 1.57,
+    "fat": 0.45,
+    "carbs": 2.01,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_cooked",
+        "label": "Cooked sabzi, 1 katori (~100 g raw)",
+        "grams": 100,
+        "rawEquivalent": true
+      },
+      {
+        "id": "half_katori",
+        "label": "Cooked sabzi, 1/2 katori (~50 g raw)",
+        "grams": 50,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 93.89,
+    "iron": 4.2,
+    "vitC": 63.35,
+    "folate": 90.3,
+    "zinc": 0.39,
+    "magnesium": 153.0,
+    "vitaminA": 2473.0,
+    "thiamine": 0.06,
+    "riboflavin": 0.15,
+    "niacin": 0.46,
+    "vitB6": 0.18,
+    "vitaminD": 9.2
+  },
+  {
+    "id": "karela",
+    "name": "Bitter gourd / karela",
+    "category": "Other Vegetables",
+    "ifctCode": "D004",
+    "source": "IFCT 2017",
+    "calories": 21,
+    "protein": 1.44,
+    "fat": 0.24,
+    "carbs": 2.82,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 21.36,
+    "iron": 1.15,
+    "vitC": 46.53,
+    "folate": 60.3,
+    "zinc": 0.31,
+    "magnesium": 32.14,
+    "vitaminA": 122.0,
+    "thiamine": 0.05,
+    "riboflavin": 0.04,
+    "niacin": 0.27,
+    "vitB6": 0.05,
+    "vitaminD": 1.9
+  },
+  {
+    "id": "capsicum_green",
+    "name": "Capsicum, green (shimla mirch)",
+    "category": "Other Vegetables",
+    "ifctCode": "D033",
+    "source": "IFCT 2017",
+    "calories": 16,
+    "protein": 1.11,
+    "fat": 0.34,
+    "carbs": 1.84,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 14.75,
+    "iron": 0.48,
+    "vitC": 123.0,
+    "folate": 51.9,
+    "zinc": 0.15,
+    "magnesium": 11.84,
+    "vitaminA": 328.0,
+    "thiamine": 0.05,
+    "riboflavin": 0.03,
+    "niacin": 0.56,
+    "vitB6": 0.15,
+    "vitaminD": 0.7
+  },
+  {
+    "id": "cluster_beans",
+    "name": "Cluster beans (gawar / gowar)",
+    "category": "Other Vegetables",
+    "ifctCode": "D039",
+    "source": "IFCT 2017",
+    "calories": 40,
+    "protein": 3.55,
+    "fat": 0.37,
+    "carbs": 4.91,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 121.0,
+    "iron": 3.9,
+    "vitC": 17.96,
+    "folate": 41.2,
+    "zinc": 0.61,
+    "magnesium": 81.74,
+    "vitaminA": 241.0,
+    "thiamine": 0.05,
+    "riboflavin": 0.03,
+    "niacin": 0.71,
+    "vitB6": 0.12,
+    "vitaminD": 13.7
+  },
+  {
+    "id": "ash_gourd",
+    "name": "Ash gourd (petha / winter melon)",
+    "category": "Other Vegetables",
+    "ifctCode": "D001",
+    "source": "IFCT 2017",
+    "calories": 17,
+    "protein": 0.79,
+    "fat": 0.14,
+    "carbs": 2.84,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 19.39,
+    "iron": 0.47,
+    "vitC": 11.41,
+    "folate": 14.1,
+    "zinc": 0.13,
+    "magnesium": 19.95,
+    "vitaminA": 0.0,
+    "thiamine": 0.03,
+    "riboflavin": 0.01,
+    "niacin": 0.12,
+    "vitB6": 0.18,
+    "vitaminD": 1.4
+  },
+  {
+    "id": "ridge_gourd",
+    "name": "Ridge gourd (turai / dodka)",
+    "category": "Other Vegetables",
+    "ifctCode": "D068",
+    "source": "IFCT 2017",
+    "calories": 13,
+    "protein": 0.91,
+    "fat": 0.14,
+    "carbs": 1.72,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 13.7,
+    "iron": 0.42,
+    "vitC": 5.42,
+    "folate": 29.3,
+    "zinc": 0.22,
+    "magnesium": 16.15,
+    "vitaminA": 348.0,
+    "thiamine": 0.02,
+    "riboflavin": 0.01,
+    "niacin": 0.2,
+    "vitB6": 0.07,
+    "vitaminD": 0.4
+  },
+  {
+    "id": "drumstick_pods",
+    "name": "Drumstick pods (sahjan phali)",
+    "category": "Other Vegetables",
+    "ifctCode": "D046",
+    "source": "IFCT 2017",
+    "calories": 29,
+    "protein": 2.62,
+    "fat": 0.12,
+    "carbs": 3.76,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 33.3,
+    "iron": 0.73,
+    "vitC": 71.86,
+    "folate": 62.7,
+    "zinc": 0.31,
+    "magnesium": 38.1,
+    "vitaminA": 17.3,
+    "thiamine": 0.04,
+    "riboflavin": 0.07,
+    "niacin": 0.62,
+    "vitB6": 0.12,
+    "vitaminD": 1.7
+  },
+  {
+    "id": "pumpkin",
+    "name": "Pumpkin, green, cylindrical",
+    "category": "Other Vegetables",
+    "ifctCode": "D065",
+    "source": "IFCT 2017",
+    "calories": 25,
+    "protein": 0.87,
+    "fat": 0.18,
+    "carbs": 4.22,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 24.1,
+    "iron": 0.29,
+    "vitC": 7.29,
+    "folate": 31.6,
+    "zinc": 0.14,
+    "magnesium": 13.27,
+    "vitaminA": 426.9,
+    "thiamine": 0.03,
+    "riboflavin": 0.02,
+    "niacin": 0.44,
+    "vitB6": 0.05,
+    "vitaminD": 1.1
+  },
+  {
+    "id": "snake_gourd",
+    "name": "Snake gourd (chichinda)",
+    "category": "Other Vegetables",
+    "ifctCode": "D070",
+    "source": "IFCT 2017",
+    "calories": 12,
+    "protein": 0.98,
+    "fat": 0.25,
+    "carbs": 1.27,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 24.6,
+    "iron": 0.32,
+    "vitC": 2.72,
+    "folate": 18.3,
+    "zinc": 0.14,
+    "magnesium": 18.7,
+    "vitaminA": 61.3,
+    "thiamine": 0.03,
+    "riboflavin": 0.03,
+    "niacin": 0.34,
+    "vitB6": 0.1,
+    "vitaminD": 2.7
+  },
+  {
+    "id": "french_beans",
+    "name": "French beans, country",
+    "category": "Other Vegetables",
+    "ifctCode": "D049",
+    "source": "IFCT 2017",
+    "calories": 24,
+    "protein": 2.49,
+    "fat": 0.26,
+    "carbs": 2.68,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 55.99,
+    "iron": 1.25,
+    "vitC": 15.81,
+    "folate": 47.5,
+    "zinc": 0.5,
+    "magnesium": 43.01,
+    "vitaminA": 416.6,
+    "thiamine": 0.04,
+    "riboflavin": 0.06,
+    "niacin": 0.83,
+    "vitB6": 0.37,
+    "vitaminD": 1.8
+  },
+  {
+    "id": "tinda",
+    "name": "Tinda, tender",
+    "category": "Other Vegetables",
+    "ifctCode": "D073",
+    "source": "IFCT 2017",
+    "calories": 14,
+    "protein": 1.02,
+    "fat": 0.17,
+    "carbs": 1.9,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 19.68,
+    "iron": 0.41,
+    "vitC": 14.2,
+    "folate": 43.2,
+    "zinc": 0.2,
+    "magnesium": 18.96,
+    "vitaminA": 8.0,
+    "thiamine": 0.02,
+    "riboflavin": 0.03,
+    "niacin": 0.56,
+    "vitB6": 0.06,
+    "vitaminD": 2.8
+  },
+  {
+    "id": "arbi",
+    "name": "Colocasia corm (arbi)",
+    "category": "Roots & Tubers",
+    "ifctCode": "F004",
+    "source": "IFCT 2017",
+    "calories": 89,
+    "protein": 3.31,
+    "fat": 0.17,
+    "carbs": 17.85,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori_sabzi",
+        "label": "Sabzi, 1 katori (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 30.18,
+    "iron": 0.66,
+    "vitC": 1.83,
+    "folate": 19.9,
+    "zinc": 0.41,
+    "magnesium": 36.93,
+    "vitaminA": 6.5,
+    "thiamine": 0.06,
+    "riboflavin": 0.03,
+    "niacin": 0.51,
+    "vitB6": 0.17,
+    "vitaminD": 0.3
+  },
+  {
+    "id": "radish_white",
+    "name": "Radish, elongate, white skin (mooli)",
+    "category": "Roots & Tubers",
+    "ifctCode": "F010",
+    "source": "IFCT 2017",
+    "calories": 32,
+    "protein": 0.77,
+    "fat": 0.15,
+    "carbs": 6.56,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "salad",
+        "label": "Salad / sabzi, 1 katori (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 30.2,
+    "iron": 0.36,
+    "vitC": 19.91,
+    "folate": 29.8,
+    "zinc": 0.22,
+    "magnesium": 16.07,
+    "vitaminA": 0.0,
+    "thiamine": 0.02,
+    "riboflavin": 0.02,
+    "niacin": 0.3,
+    "vitB6": 0.07,
+    "vitaminD": 0.0
+  },
+  {
+    "id": "beetroot",
+    "name": "Beet root",
+    "category": "Roots & Tubers",
+    "ifctCode": "F001",
+    "source": "IFCT 2017",
+    "calories": 36,
+    "protein": 1.95,
+    "fat": 0.14,
+    "carbs": 6.18,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "med",
+        "label": "1 medium (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 17.28,
+    "iron": 0.76,
+    "vitC": 5.26,
+    "folate": 97.4,
+    "zinc": 0.3,
+    "magnesium": 33.21,
+    "vitaminA": 10.1,
+    "thiamine": 0.01,
+    "riboflavin": 0.01,
+    "niacin": 0.21,
+    "vitB6": 0.07,
+    "vitaminD": 0.2
+  },
+  {
+    "id": "tapioca",
+    "name": "Tapioca (kappa / cassava)",
+    "category": "Roots & Tubers",
+    "ifctCode": "F015",
+    "source": "IFCT 2017",
+    "calories": 80,
+    "protein": 1.03,
+    "fat": 0.2,
+    "carbs": 17.81,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "piece",
+        "label": "1 piece (~100 g)",
+        "grams": 100,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 25.89,
+    "iron": 0.81,
+    "vitC": 15.51,
+    "folate": 25.6,
+    "zinc": 0.17,
+    "magnesium": 23.08,
+    "vitaminA": 0.0,
+    "thiamine": 0.07,
+    "riboflavin": 0.02,
+    "niacin": 0.45,
+    "vitB6": 0.09,
+    "vitaminD": 0.1
+  },
+  {
+    "id": "grapes",
+    "name": "Grapes, seedless, round, green",
+    "category": "Fruits",
+    "ifctCode": "E026",
+    "source": "IFCT 2017",
+    "calories": 54,
+    "protein": 0.62,
+    "fat": 0.26,
+    "carbs": 11.81,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~100 g)",
+        "grams": 100,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 14.22,
+    "iron": 0.24,
+    "vitC": 16.47,
+    "folate": 8.3,
+    "zinc": 0.05,
+    "magnesium": 8.43,
+    "vitaminA": 25.5,
+    "thiamine": 0.04,
+    "riboflavin": 0.03,
+    "niacin": 0.12,
+    "vitB6": 0.08,
+    "vitaminD": 3.5
+  },
+  {
+    "id": "pomegranate",
+    "name": "Pomegranate, maroon seeds (anar)",
+    "category": "Fruits",
+    "ifctCode": "E055",
+    "source": "IFCT 2017",
+    "calories": 55,
+    "protein": 1.33,
+    "fat": 0.15,
+    "carbs": 11.58,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori arils (~100 g)",
+        "grams": 100,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 10.65,
+    "iron": 0.31,
+    "vitC": 12.69,
+    "folate": 38.6,
+    "zinc": 0.18,
+    "magnesium": 11.07,
+    "vitaminA": 2.0,
+    "thiamine": 0.06,
+    "riboflavin": 0.01,
+    "niacin": 0.2,
+    "vitB6": 0.29,
+    "vitaminD": 109.0
+  },
+  {
+    "id": "watermelon",
+    "name": "Water melon, dark green",
+    "category": "Fruits",
+    "ifctCode": "E065",
+    "source": "IFCT 2017",
+    "calories": 20,
+    "protein": 0.6,
+    "fat": 0.16,
+    "carbs": 3.86,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~150 g)",
+        "grams": 150,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 5.29,
+    "iron": 0.22,
+    "vitC": 13.26,
+    "folate": 5.9,
+    "zinc": 0.1,
+    "magnesium": 9.91,
+    "vitaminA": 605.0,
+    "thiamine": 0.02,
+    "riboflavin": 0.02,
+    "niacin": 0.28,
+    "vitB6": 0.1,
+    "vitaminD": 0.6
+  },
+  {
+    "id": "dates_dry",
+    "name": "Dates, dry, pale brown (khajoor)",
+    "category": "Fruits",
+    "ifctCode": "E017",
+    "source": "IFCT 2017",
+    "calories": 320,
+    "protein": 2.45,
+    "fat": 0.35,
+    "carbs": 74.91,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "three",
+        "label": "3 dates (~24 g)",
+        "grams": 24,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 71.2,
+    "iron": 3.2,
+    "vitC": 4.42,
+    "folate": 18.6,
+    "zinc": 0.7,
+    "magnesium": 73.79,
+    "vitaminA": 2700.0,
+    "thiamine": 0.03,
+    "riboflavin": 0.03,
+    "niacin": 1.47,
+    "vitB6": 0.14,
+    "vitaminD": 2.6
+  },
+  {
+    "id": "custard_apple",
+    "name": "Custard apple (sitaphal)",
+    "category": "Fruits",
+    "ifctCode": "E016",
+    "source": "IFCT 2017",
+    "calories": 99,
+    "protein": 1.62,
+    "fat": 0.67,
+    "carbs": 20.38,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "one",
+        "label": "1 fruit pulp (~120 g)",
+        "grams": 120,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 28.2,
+    "iron": 0.42,
+    "vitC": 21.51,
+    "folate": 7.6,
+    "zinc": 0.22,
+    "magnesium": 38.47,
+    "vitaminA": 0.0,
+    "thiamine": 0.13,
+    "riboflavin": 0.09,
+    "niacin": 0.69,
+    "vitB6": 0.07,
+    "vitaminD": 0.2
+  },
+  {
+    "id": "jackfruit",
+    "name": "Jack fruit, ripe (kathal)",
+    "category": "Fruits",
+    "ifctCode": "E030",
+    "source": "IFCT 2017",
+    "calories": 72,
+    "protein": 2.74,
+    "fat": 0.15,
+    "carbs": 14.01,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~100 g)",
+        "grams": 100,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 35.03,
+    "iron": 0.36,
+    "vitC": 6.73,
+    "folate": 32.2,
+    "zinc": 0.17,
+    "magnesium": 31.84,
+    "vitaminA": 23.5,
+    "thiamine": 0.05,
+    "riboflavin": 0.01,
+    "niacin": 0.42,
+    "vitB6": 0.22,
+    "vitaminD": 7.5
+  },
+  {
+    "id": "pineapple",
+    "name": "Pineapple",
+    "category": "Fruits",
+    "ifctCode": "E053",
+    "source": "IFCT 2017",
+    "calories": 43,
+    "protein": 0.52,
+    "fat": 0.16,
+    "carbs": 9.42,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~100 g)",
+        "grams": 100,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 10.88,
+    "iron": 0.28,
+    "vitC": 36.37,
+    "folate": 18.2,
+    "zinc": 0.1,
+    "magnesium": 12.68,
+    "vitaminA": 31.2,
+    "thiamine": 0.05,
+    "riboflavin": 0.03,
+    "niacin": 0.12,
+    "vitB6": 0.13,
+    "vitaminD": 0.2
+  },
+  {
+    "id": "sapota",
+    "name": "Sapota (chikoo)",
+    "category": "Fruits",
+    "ifctCode": "E060",
+    "source": "IFCT 2017",
+    "calories": 73,
+    "protein": 0.92,
+    "fat": 1.26,
+    "carbs": 13.9,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "one",
+        "label": "1 sapota (~80 g)",
+        "grams": 80,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 17.87,
+    "iron": 0.49,
+    "vitC": 20.96,
+    "folate": 10.8,
+    "zinc": 0.18,
+    "magnesium": 16.19,
+    "vitaminA": 80.7,
+    "thiamine": 0.01,
+    "riboflavin": 0.03,
+    "niacin": 0.24,
+    "vitB6": 0.12,
+    "vitaminD": 0.7
+  },
+  {
+    "id": "musk_melon",
+    "name": "Musk melon, orange flesh (kharbooja)",
+    "category": "Fruits",
+    "ifctCode": "E045",
+    "source": "IFCT 2017",
+    "calories": 23,
+    "protein": 0.42,
+    "fat": 0.35,
+    "carbs": 4.24,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~150 g)",
+        "grams": 150,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 9.8,
+    "iron": 0.18,
+    "vitC": 22.76,
+    "folate": 22.3,
+    "zinc": 0.09,
+    "magnesium": 11.62,
+    "vitaminA": 771.0,
+    "thiamine": 0.01,
+    "riboflavin": 0.01,
+    "niacin": 0.41,
+    "vitB6": 0.05,
+    "vitaminD": 4.4
+  },
+  {
+    "id": "mosambi",
+    "name": "Sweet lime pulp (mosambi)",
+    "category": "Fruits",
+    "ifctCode": "E034",
+    "source": "IFCT 2017",
+    "calories": 27,
+    "protein": 0.76,
+    "fat": 0.2,
+    "carbs": 5.18,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "one",
+        "label": "1 mosambi pulp (~100 g)",
+        "grams": 100,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 25.79,
+    "iron": 0.11,
+    "vitC": 46.96,
+    "folate": 15.4,
+    "zinc": 0.05,
+    "magnesium": 15.4,
+    "vitaminA": 2.5,
+    "thiamine": 0.06,
+    "riboflavin": 0.01,
+    "niacin": 0.17,
+    "vitB6": 0.05,
+    "vitaminD": 0.3
+  },
+  {
+    "id": "khoa",
+    "name": "Khoa / mawa",
+    "category": "Milk & Dairy",
+    "ifctCode": "L004",
+    "source": "IFCT 2017",
+    "calories": 316,
+    "protein": 16.34,
+    "fat": 20.62,
+    "carbs": 16.53,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "piece",
+        "label": "Small piece (~20 g)",
+        "grams": 20,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ],
+    "calcium": 602.0,
+    "iron": 2.32,
+    "vitC": 0.0,
+    "folate": 94.2,
+    "zinc": 2.34,
+    "magnesium": 58.53,
+    "vitaminA": 3.5,
+    "thiamine": 0.11,
+    "riboflavin": 0.11,
+    "niacin": 0.43,
+    "vitB6": 0.06,
+    "vitaminD": 0.1
+  },
+  {
+    "id": "groundnut_oil",
+    "name": "Groundnut oil (visible fat; 9 kcal/g Atwater)",
+    "category": "Fats & Oils",
+    "ifctCode": "T005",
+    "source": "IFCT 2017",
+    "calories": 900,
+    "protein": 0,
+    "fat": 100,
+    "carbs": 0,
+    "visibleFat": true,
+    "portions": [
+      {
+        "id": "tsp",
+        "label": "1 teaspoon (5 g)",
+        "grams": 5,
+        "rawEquivalent": false
+      },
+      {
+        "id": "tbsp",
+        "label": "1 tablespoon (15 g)",
+        "grams": 15,
+        "rawEquivalent": false
+      },
+      {
+        "id": "ladle",
+        "label": "Small ladle in cooking (~20 g)",
+        "grams": 20,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ],
+    "calcium": 0,
+    "iron": 0,
+    "vitC": 0,
+    "folate": 0,
+    "zinc": 0,
+    "magnesium": 0,
+    "vitaminA": 0,
+    "thiamine": 0,
+    "riboflavin": 0,
+    "niacin": 0,
+    "vitB6": 0,
+    "vitaminD": 0
+  },
+  {
+    "id": "sunflower_oil",
+    "name": "Sunflower oil (visible fat; 9 kcal/g Atwater)",
+    "category": "Fats & Oils",
+    "ifctCode": "T012",
+    "source": "IFCT 2017",
+    "calories": 900,
+    "protein": 0,
+    "fat": 100,
+    "carbs": 0,
+    "visibleFat": true,
+    "portions": [
+      {
+        "id": "tsp",
+        "label": "1 teaspoon (5 g)",
+        "grams": 5,
+        "rawEquivalent": false
+      },
+      {
+        "id": "tbsp",
+        "label": "1 tablespoon (15 g)",
+        "grams": 15,
+        "rawEquivalent": false
+      },
+      {
+        "id": "ladle",
+        "label": "Small ladle in cooking (~20 g)",
+        "grams": 20,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ],
+    "calcium": 0,
+    "iron": 0,
+    "vitC": 0,
+    "folate": 0,
+    "zinc": 0,
+    "magnesium": 0,
+    "vitaminA": 0,
+    "thiamine": 0,
+    "riboflavin": 0,
+    "niacin": 0,
+    "vitB6": 0,
+    "vitaminD": 0
+  },
+  {
+    "id": "coconut_oil",
+    "name": "Coconut oil (visible fat; 9 kcal/g Atwater)",
+    "category": "Fats & Oils",
+    "ifctCode": "T001",
+    "source": "IFCT 2017",
+    "calories": 900,
+    "protein": 0,
+    "fat": 100,
+    "carbs": 0,
+    "visibleFat": true,
+    "portions": [
+      {
+        "id": "tsp",
+        "label": "1 teaspoon (5 g)",
+        "grams": 5,
+        "rawEquivalent": false
+      },
+      {
+        "id": "tbsp",
+        "label": "1 tablespoon (15 g)",
+        "grams": 15,
+        "rawEquivalent": false
+      },
+      {
+        "id": "ladle",
+        "label": "Small ladle in cooking (~20 g)",
+        "grams": 20,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ],
+    "calcium": 0,
+    "iron": 0,
+    "vitC": 0,
+    "folate": 0,
+    "zinc": 0,
+    "magnesium": 0,
+    "vitaminA": 0,
+    "thiamine": 0,
+    "riboflavin": 0,
+    "niacin": 0,
+    "vitB6": 0,
+    "vitaminD": 0
+  },
+  {
+    "id": "vanaspati",
+    "name": "Vanaspati (visible fat; 9 kcal/g Atwater)",
+    "category": "Fats & Oils",
+    "ifctCode": "T014",
+    "source": "IFCT 2017",
+    "calories": 900,
+    "protein": 0,
+    "fat": 100,
+    "carbs": 0,
+    "visibleFat": true,
+    "portions": [
+      {
+        "id": "tsp",
+        "label": "1 teaspoon (5 g)",
+        "grams": 5,
+        "rawEquivalent": false
+      },
+      {
+        "id": "tbsp",
+        "label": "1 tablespoon (15 g)",
+        "grams": 15,
+        "rawEquivalent": false
+      },
+      {
+        "id": "ladle",
+        "label": "Small ladle in cooking (~20 g)",
+        "grams": 20,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ],
+    "calcium": 0,
+    "iron": 0,
+    "vitC": 0,
+    "folate": 0,
+    "zinc": 0,
+    "magnesium": 0,
+    "vitaminA": 0,
+    "thiamine": 0,
+    "riboflavin": 0,
+    "niacin": 0,
+    "vitB6": 0,
+    "vitaminD": 0
+  },
+  {
+    "id": "chicken_liver",
+    "name": "Chicken liver",
+    "category": "Egg & Meat",
+    "ifctCode": "N005",
+    "source": "IFCT 2017",
+    "calories": 124,
+    "protein": 21.57,
+    "fat": 4.08,
+    "carbs": 0.0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "piece",
+        "label": "1 piece (~40 g)",
+        "grams": 40,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ],
+    "calcium": 4.1,
+    "iron": 9.92,
+    "vitC": 0.0,
+    "folate": 1032.0,
+    "zinc": 2.65,
+    "magnesium": 16.0,
+    "vitaminA": 3486.0,
+    "thiamine": 0.28,
+    "riboflavin": 0.2,
+    "niacin": 4.44,
+    "vitB6": 0.92,
+    "vitaminD": 2.6
+  },
+  {
+    "id": "goat_liver",
+    "name": "Goat liver",
+    "category": "Egg & Meat",
+    "ifctCode": "O008",
+    "source": "IFCT 2017",
+    "calories": 126,
+    "protein": 20.32,
+    "fat": 4.88,
+    "carbs": 0.0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "piece",
+        "label": "1 piece (~40 g)",
+        "grams": 40,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ],
+    "calcium": 6.09,
+    "iron": 6.56,
+    "vitC": 0.0,
+    "folate": 0.0,
+    "zinc": 3.48,
+    "magnesium": 18.0,
+    "vitaminA": 15655.0,
+    "thiamine": 0.2,
+    "riboflavin": 0.37,
+    "niacin": 12.88,
+    "vitB6": 0.65,
+    "vitaminD": 0.7
+  },
+  {
+    "id": "fish_catla",
+    "name": "Catla (freshwater fish)",
+    "category": "Egg & Meat",
+    "ifctCode": "S002",
+    "source": "IFCT 2017",
+    "calories": 94,
+    "protein": 17.94,
+    "fat": 2.15,
+    "carbs": 0.0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "piece",
+        "label": "1 piece (~80 g)",
+        "grams": 80,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ],
+    "calcium": 43.53,
+    "iron": 1.14,
+    "vitC": 0.0,
+    "folate": 0.0,
+    "zinc": 0.68,
+    "magnesium": 25.58,
+    "vitaminA": 4.3,
+    "thiamine": 0.01,
+    "riboflavin": 0.03,
+    "niacin": 2.21,
+    "vitB6": 116.0,
+    "vitaminD": 2.1
+  },
+  {
+    "id": "prawns_small",
+    "name": "Prawns, small",
+    "category": "Egg & Meat",
+    "ifctCode": "S009",
+    "source": "IFCT 2017",
+    "calories": 71,
+    "protein": 13.07,
+    "fat": 0.78,
+    "carbs": 0.0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~80 g)",
+        "grams": 80,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ],
+    "calcium": 67.99,
+    "iron": 0.87,
+    "vitC": 0.0,
+    "folate": 0.0,
+    "zinc": 0.87,
+    "magnesium": 26.91,
+    "vitaminA": 2.8,
+    "thiamine": 0.01,
+    "riboflavin": 0.03,
+    "niacin": 0.54,
+    "vitB6": 207.0,
+    "vitaminD": 1.1
+  },
+  {
+    "id": "egg_yolk",
+    "name": "Egg, poultry, yolk, raw",
+    "category": "Egg & Meat",
+    "ifctCode": "M003",
+    "source": "IFCT 2017",
+    "calories": 297,
+    "protein": 15.74,
+    "fat": 26.34,
+    "carbs": 0.0,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "one",
+        "label": "Yolk of 1 egg (~18 g)",
+        "grams": 18,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ],
+    "calcium": 116.0,
+    "iron": 3.17,
+    "vitC": 0.0,
+    "folate": 112.0,
+    "zinc": 1.64,
+    "magnesium": 13.17,
+    "vitaminA": 630.0,
+    "thiamine": 0.11,
+    "riboflavin": 0.16,
+    "niacin": 0.69,
+    "vitB6": 0.29,
+    "vitaminD": 3.3
+  },
+  {
+    "id": "cashew",
+    "name": "Cashew nut",
+    "category": "Nuts & Oilseeds",
+    "ifctCode": "H005",
+    "source": "IFCT 2017",
+    "calories": 583,
+    "protein": 18.78,
+    "fat": 45.2,
+    "carbs": 25.46,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "five",
+        "label": "5 cashews (~10 g)",
+        "grams": 10,
+        "rawEquivalent": true
+      },
+      {
+        "id": "ten",
+        "label": "10 cashews (~20 g)",
+        "grams": 20,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 34.0,
+    "iron": 5.95,
+    "vitC": 0.0,
+    "folate": 25.2,
+    "zinc": 5.34,
+    "magnesium": 307.0,
+    "vitaminA": 0.0,
+    "thiamine": 0.61,
+    "riboflavin": 0.03,
+    "niacin": 1.03,
+    "vitB6": 0.16,
+    "vitaminD": 3.9
+  },
+  {
+    "id": "coconut_fresh",
+    "name": "Coconut, kernel, fresh",
+    "category": "Nuts & Oilseeds",
+    "ifctCode": "H007",
+    "source": "IFCT 2017",
+    "calories": 409,
+    "protein": 3.84,
+    "fat": 41.38,
+    "carbs": 6.3,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "piece",
+        "label": "2 tablespoons grated (~20 g)",
+        "grams": 20,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 8.0,
+    "iron": 1.3,
+    "vitC": 0.8,
+    "folate": 25.4,
+    "zinc": 0.58,
+    "magnesium": 35.0,
+    "vitaminA": 2.7,
+    "thiamine": 0.03,
+    "riboflavin": 0.08,
+    "niacin": 0.3,
+    "vitB6": 0.1,
+    "vitaminD": 0.0
+  },
+  {
+    "id": "coconut_dry",
+    "name": "Coconut, kernel, dry (copra)",
+    "category": "Nuts & Oilseeds",
+    "ifctCode": "H006",
+    "source": "IFCT 2017",
+    "calories": 624,
+    "protein": 7.27,
+    "fat": 63.26,
+    "carbs": 8.01,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "tbsp",
+        "label": "1 tablespoon grated (~8 g)",
+        "grams": 8,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 32.0,
+    "iron": 3.13,
+    "vitC": 0.0,
+    "folate": 24.3,
+    "zinc": 1.41,
+    "magnesium": 97.21,
+    "vitaminA": 0.0,
+    "thiamine": 0.04,
+    "riboflavin": 0.04,
+    "niacin": 0.71,
+    "vitB6": 0.15,
+    "vitaminD": 0.0
+  },
+  {
+    "id": "walnut",
+    "name": "Walnut",
+    "category": "Nuts & Oilseeds",
+    "ifctCode": "H021",
+    "source": "IFCT 2017",
+    "calories": 671,
+    "protein": 14.92,
+    "fat": 64.27,
+    "carbs": 10.14,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "two",
+        "label": "2 walnut halves (~8 g)",
+        "grams": 8,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 105.0,
+    "iron": 3.21,
+    "vitC": 0.88,
+    "folate": 57.9,
+    "zinc": 2.94,
+    "magnesium": 180.0,
+    "vitaminA": 14.5,
+    "thiamine": 0.4,
+    "riboflavin": 0.12,
+    "niacin": 0.86,
+    "vitB6": 0.8,
+    "vitaminD": 46.3
+  },
+  {
+    "id": "pistachio",
+    "name": "Pistachio nuts",
+    "category": "Nuts & Oilseeds",
+    "ifctCode": "H018",
+    "source": "IFCT 2017",
+    "calories": 539,
+    "protein": 23.35,
+    "fat": 42.49,
+    "carbs": 15.82,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "ten",
+        "label": "10 pistachios (~10 g)",
+        "grams": 10,
+        "rawEquivalent": true
+      },
+      {
+        "id": "g",
+        "label": "Grams, raw (g)",
+        "grams": 1,
+        "rawEquivalent": true
+      }
+    ],
+    "calcium": 135.0,
+    "iron": 4.5,
+    "vitC": 0.0,
+    "folate": 64.9,
+    "zinc": 2.42,
+    "magnesium": 149.0,
+    "vitaminA": 110.0,
+    "thiamine": 0.98,
+    "riboflavin": 0.04,
+    "niacin": 0.86,
+    "vitB6": 0.96,
+    "vitaminD": 1.8
+  },
+  {
+    "id": "coconut_water",
+    "name": "Coconut water",
+    "category": "Fruits",
+    "ifctCode": "K002",
+    "source": "IFCT 2017",
+    "calories": 15,
+    "protein": 0.26,
+    "fat": 0.16,
+    "carbs": 3.16,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "glass",
+        "label": "1 glass (200 ml)",
+        "grams": 200,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ],
+    "calcium": 27.47,
+    "iron": 0.06,
+    "vitC": 0.64,
+    "folate": 10.9,
+    "zinc": 0.04,
+    "magnesium": 18.19,
+    "vitaminA": 0.0,
+    "thiamine": 0.01,
+    "riboflavin": 0.01,
+    "niacin": 0.04,
+    "vitB6": 0.06,
+    "vitaminD": 0.0
+  },
+  {
     "id": "snack_idli",
     "name": "Idli (steamed; 32 g parboiled rice + 8 g urad dal per 100 g)",
     "category": "Cooked Snacks",
@@ -2682,6 +4742,52 @@
         "id": "one_dosa",
         "label": "1 medium dosa (~75 g)",
         "grams": 75,
+        "rawEquivalent": false
+      },
+      {
+        "id": "g",
+        "label": "Grams (g)",
+        "grams": 1,
+        "rawEquivalent": false
+      }
+    ]
+  },
+  {
+    "id": "snack_khichdi",
+    "name": "Khichdi (40 g milled rice + 20 g toor dal per 100 g cooked-equivalent mix)",
+    "category": "Cooked Snacks",
+    "ifctCode": "recipe:A015+B021",
+    "source": "Derived from IFCT 2017 (milled rice + red gram dal)",
+    "countsAsCerealGramsPer100": 40,
+    "countsAsPulseGramsPer100": 20,
+    "calories": 209,
+    "protein": 7.52,
+    "fat": 0.52,
+    "carbs": 42.34,
+    "calcium": 17.34,
+    "iron": 1.04,
+    "vitC": 0.0,
+    "folate": 25.3,
+    "zinc": 1.01,
+    "magnesium": 31.52,
+    "vitaminA": 25.4,
+    "thiamine": 0.11,
+    "riboflavin": 0.04,
+    "niacin": 1.09,
+    "vitB6": 0.1,
+    "vitaminD": 0.4,
+    "visibleFat": false,
+    "portions": [
+      {
+        "id": "katori",
+        "label": "1 katori (~150 g)",
+        "grams": 150,
+        "rawEquivalent": false
+      },
+      {
+        "id": "plate",
+        "label": "1 plate (~250 g)",
+        "grams": 250,
         "rawEquivalent": false
       },
       {

@@ -94,6 +94,17 @@ describe("IFCT 2017 food table", () => {
     expect(rotiHits.some((f) => f.id === "wheat_atta")).toBe(true);
   });
 
+  it("includes extra IFCT 2017 recall foods such as karela, makka, and cashew", () => {
+    expect(foodData.length).toBeGreaterThan(100);
+    expect(byId.karela.ifctCode).toBe("D004");
+    expect(byId.maize_dry.ifctCode).toBe("A006");
+    expect(byId.cashew.ifctCode).toBe("H005");
+    expect(foodMatchesQuery(byId.karela, "karela")).toBe(true);
+    expect(foodMatchesQuery(byId.maize_dry, "makka")).toBe(true);
+    expect(foodMatchesQuery(byId.cashew, "kaju")).toBe(true);
+    expect(foodMatchesQuery(byId.snack_khichdi, "khichdi")).toBe(true);
+  });
+
   it("treats sabzi as other vegetables, leafy vegetables, and roots", () => {
     const otherVeg = foodData.filter((f) => f.category === "Other Vegetables");
     expect(otherVeg.length).toBeGreaterThan(7);

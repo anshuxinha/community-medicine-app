@@ -540,6 +540,307 @@ def main():
         as_g,
     ])
 
+    add(
+        "A004",
+        by,
+        id="barley",
+        name="Barley (jau)",
+        category="Cereals & Millets",
+        portions=[
+            {"id": "katori_cooked", "label": "Cooked barley, 1 katori (~40 g raw)", "grams": 40, "rawEquivalent": True},
+            raw_g,
+        ],
+    )
+    add(
+        "A006",
+        by,
+        id="maize_dry",
+        name="Maize, dry (makka)",
+        category="Cereals & Millets",
+        portions=[
+            {"id": "roti_makka", "label": "Makki roti (~40 g flour)", "grams": 40, "rawEquivalent": True},
+            raw_g,
+        ],
+    )
+    add(
+        "A013",
+        by,
+        id="rice_brown",
+        name="Rice, raw, brown",
+        category="Cereals & Millets",
+        portions=[
+            {"id": "katori_cooked", "label": "Cooked brown rice, 1 katori (~50 g raw)", "grams": 50, "rawEquivalent": True},
+            raw_g,
+        ],
+    )
+    add(
+        "A020",
+        by,
+        id="wheat_whole",
+        name="Wheat, whole grain",
+        category="Cereals & Millets",
+        portions=[
+            {"id": "katori", "label": "1 katori grain (~100 g)", "grams": 100, "rawEquivalent": True},
+            raw_g,
+        ],
+    )
+    add(
+        "A023",
+        by,
+        id="vermicelli",
+        name="Wheat vermicelli (seviyan)",
+        category="Cereals & Millets",
+        portions=[
+            {"id": "katori_cooked", "label": "Cooked seviyan, 1 katori (~30 g dry)", "grams": 30, "rawEquivalent": True},
+            raw_g,
+        ],
+    )
+
+    add("B012", by, id="horse_gram", name="Horse gram, whole (kulthi / kulith)", category="Pulses & Legumes", portions=dal_portions)
+    add(
+        "B005",
+        by,
+        id="cowpea",
+        name="Cowpea, brown (lobia)",
+        category="Pulses & Legumes",
+        portions=[
+            {"id": "katori_cooked", "label": "Cooked lobia, 1 katori (~35 g raw)", "grams": 35, "rawEquivalent": True},
+            raw_g,
+        ],
+    )
+    add(
+        "B017",
+        by,
+        id="peas_dry",
+        name="Peas, dry (matar, dried)",
+        category="Pulses & Legumes",
+        portions=[
+            {"id": "katori_cooked", "label": "Cooked dry peas, 1 katori (~35 g raw)", "grams": 35, "rawEquivalent": True},
+            raw_g,
+        ],
+    )
+    add(
+        "B004",
+        by,
+        id="urad_whole",
+        name="Black gram, whole (sabut urad)",
+        category="Pulses & Legumes",
+        portions=[
+            {"id": "katori_cooked", "label": "Cooked sabut urad, 1 katori (~30 g raw)", "grams": 30, "rawEquivalent": True},
+            raw_g,
+        ],
+    )
+
+    add("C008", by, id="bathua", name="Bathua leaves", category="Green Leafy Vegetables", portions=glv_portions)
+    add("C018", by, id="colocasia_leaves", name="Colocasia leaves (arbi patta)", category="Green Leafy Vegetables", portions=glv_portions)
+    add("C007", by, id="basella", name="Basella leaves (poi / pui saag)", category="Green Leafy Vegetables", portions=glv_portions)
+
+    add("D004", by, id="karela", name="Bitter gourd / karela", category="Other Vegetables", portions=veg_katori)
+    add("D033", by, id="capsicum_green", name="Capsicum, green (shimla mirch)", category="Other Vegetables", portions=veg_katori)
+    add("D039", by, id="cluster_beans", name="Cluster beans (gawar / gowar)", category="Other Vegetables", portions=veg_katori)
+    add("D001", by, id="ash_gourd", name="Ash gourd (petha / winter melon)", category="Other Vegetables", portions=veg_katori)
+    add("D068", by, id="ridge_gourd", name="Ridge gourd (turai / dodka)", category="Other Vegetables", portions=veg_katori)
+    add("D046", by, id="drumstick_pods", name="Drumstick pods (sahjan phali)", category="Other Vegetables", portions=veg_katori)
+    add("D065", by, id="pumpkin", name="Pumpkin, green, cylindrical", category="Other Vegetables", portions=veg_katori)
+    add("D070", by, id="snake_gourd", name="Snake gourd (chichinda)", category="Other Vegetables", portions=veg_katori)
+    add("D049", by, id="french_beans", name="French beans, country", category="Other Vegetables", portions=veg_katori)
+    add("D073", by, id="tinda", name="Tinda, tender", category="Other Vegetables", portions=veg_katori)
+
+    add(
+        "F004",
+        by,
+        id="arbi",
+        name="Colocasia corm (arbi)",
+        category="Roots & Tubers",
+        portions=[
+            {"id": "katori_sabzi", "label": "Sabzi, 1 katori (~80 g)", "grams": 80, "rawEquivalent": True},
+            raw_g,
+        ],
+    )
+    add(
+        "F010",
+        by,
+        id="radish_white",
+        name="Radish, elongate, white skin (mooli)",
+        category="Roots & Tubers",
+        portions=[
+            {"id": "salad", "label": "Salad / sabzi, 1 katori (~80 g)", "grams": 80, "rawEquivalent": True},
+            raw_g,
+        ],
+    )
+    add(
+        "F001",
+        by,
+        id="beetroot",
+        name="Beet root",
+        category="Roots & Tubers",
+        portions=[
+            {"id": "med", "label": "1 medium (~80 g)", "grams": 80, "rawEquivalent": True},
+            raw_g,
+        ],
+    )
+    add(
+        "F015",
+        by,
+        id="tapioca",
+        name="Tapioca (kappa / cassava)",
+        category="Roots & Tubers",
+        portions=[
+            {"id": "piece", "label": "1 piece (~100 g)", "grams": 100, "rawEquivalent": True},
+            raw_g,
+        ],
+    )
+
+    add("E026", by, id="grapes", name="Grapes, seedless, round, green", category="Fruits", portions=[
+        {"id": "katori", "label": "1 katori (~100 g)", "grams": 100, "rawEquivalent": True},
+        raw_g,
+    ])
+    add("E055", by, id="pomegranate", name="Pomegranate, maroon seeds (anar)", category="Fruits", portions=[
+        {"id": "katori", "label": "1 katori arils (~100 g)", "grams": 100, "rawEquivalent": True},
+        raw_g,
+    ])
+    add("E065", by, id="watermelon", name="Water melon, dark green", category="Fruits", portions=[
+        {"id": "katori", "label": "1 katori (~150 g)", "grams": 150, "rawEquivalent": True},
+        raw_g,
+    ])
+    add("E017", by, id="dates_dry", name="Dates, dry, pale brown (khajoor)", category="Fruits", portions=[
+        {"id": "three", "label": "3 dates (~24 g)", "grams": 24, "rawEquivalent": True},
+        raw_g,
+    ])
+    add("E016", by, id="custard_apple", name="Custard apple (sitaphal)", category="Fruits", portions=[
+        {"id": "one", "label": "1 fruit pulp (~120 g)", "grams": 120, "rawEquivalent": True},
+        raw_g,
+    ])
+    add("E030", by, id="jackfruit", name="Jack fruit, ripe (kathal)", category="Fruits", portions=[
+        {"id": "katori", "label": "1 katori (~100 g)", "grams": 100, "rawEquivalent": True},
+        raw_g,
+    ])
+    add("E053", by, id="pineapple", name="Pineapple", category="Fruits", portions=[
+        {"id": "katori", "label": "1 katori (~100 g)", "grams": 100, "rawEquivalent": True},
+        raw_g,
+    ])
+    add("E060", by, id="sapota", name="Sapota (chikoo)", category="Fruits", portions=[
+        {"id": "one", "label": "1 sapota (~80 g)", "grams": 80, "rawEquivalent": True},
+        raw_g,
+    ])
+    add("E045", by, id="musk_melon", name="Musk melon, orange flesh (kharbooja)", category="Fruits", portions=[
+        {"id": "katori", "label": "1 katori (~150 g)", "grams": 150, "rawEquivalent": True},
+        raw_g,
+    ])
+    add("E034", by, id="mosambi", name="Sweet lime pulp (mosambi)", category="Fruits", portions=[
+        {"id": "one", "label": "1 mosambi pulp (~100 g)", "grams": 100, "rawEquivalent": True},
+        raw_g,
+    ])
+
+    add("L004", by, id="khoa", name="Khoa / mawa", category="Milk & Dairy", portions=[
+        {"id": "piece", "label": "Small piece (~20 g)", "grams": 20, "rawEquivalent": False},
+        as_g,
+    ])
+
+    add(
+        "T005",
+        by,
+        id="groundnut_oil",
+        name="Groundnut oil (visible fat; 9 kcal/g Atwater)",
+        category="Fats & Oils",
+        calories=900,
+        protein=0,
+        fat=100,
+        carbs=0,
+        **ZERO_MICROS,
+        visibleFat=True,
+        portions=oil_portions,
+    )
+    add(
+        "T012",
+        by,
+        id="sunflower_oil",
+        name="Sunflower oil (visible fat; 9 kcal/g Atwater)",
+        category="Fats & Oils",
+        calories=900,
+        protein=0,
+        fat=100,
+        carbs=0,
+        **ZERO_MICROS,
+        visibleFat=True,
+        portions=oil_portions,
+    )
+    add(
+        "T001",
+        by,
+        id="coconut_oil",
+        name="Coconut oil (visible fat; 9 kcal/g Atwater)",
+        category="Fats & Oils",
+        calories=900,
+        protein=0,
+        fat=100,
+        carbs=0,
+        **ZERO_MICROS,
+        visibleFat=True,
+        portions=oil_portions,
+    )
+    add(
+        "T014",
+        by,
+        id="vanaspati",
+        name="Vanaspati (visible fat; 9 kcal/g Atwater)",
+        category="Fats & Oils",
+        calories=900,
+        protein=0,
+        fat=100,
+        carbs=0,
+        **ZERO_MICROS,
+        visibleFat=True,
+        portions=oil_portions,
+    )
+
+    add("N005", by, id="chicken_liver", name="Chicken liver", category="Egg & Meat", portions=[
+        {"id": "piece", "label": "1 piece (~40 g)", "grams": 40, "rawEquivalent": False},
+        as_g,
+    ])
+    add("O008", by, id="goat_liver", name="Goat liver", category="Egg & Meat", portions=[
+        {"id": "piece", "label": "1 piece (~40 g)", "grams": 40, "rawEquivalent": False},
+        as_g,
+    ])
+    add("S002", by, id="fish_catla", name="Catla (freshwater fish)", category="Egg & Meat", portions=[
+        {"id": "piece", "label": "1 piece (~80 g)", "grams": 80, "rawEquivalent": False},
+        as_g,
+    ])
+    add("S009", by, id="prawns_small", name="Prawns, small", category="Egg & Meat", portions=[
+        {"id": "katori", "label": "1 katori (~80 g)", "grams": 80, "rawEquivalent": False},
+        as_g,
+    ])
+    add("M003", by, id="egg_yolk", name="Egg, poultry, yolk, raw", category="Egg & Meat", portions=[
+        {"id": "one", "label": "Yolk of 1 egg (~18 g)", "grams": 18, "rawEquivalent": False},
+        as_g,
+    ])
+
+    add("H005", by, id="cashew", name="Cashew nut", category="Nuts & Oilseeds", portions=[
+        {"id": "five", "label": "5 cashews (~10 g)", "grams": 10, "rawEquivalent": True},
+        {"id": "ten", "label": "10 cashews (~20 g)", "grams": 20, "rawEquivalent": True},
+        raw_g,
+    ])
+    add("H007", by, id="coconut_fresh", name="Coconut, kernel, fresh", category="Nuts & Oilseeds", portions=[
+        {"id": "piece", "label": "2 tablespoons grated (~20 g)", "grams": 20, "rawEquivalent": True},
+        raw_g,
+    ])
+    add("H006", by, id="coconut_dry", name="Coconut, kernel, dry (copra)", category="Nuts & Oilseeds", portions=[
+        {"id": "tbsp", "label": "1 tablespoon grated (~8 g)", "grams": 8, "rawEquivalent": True},
+        raw_g,
+    ])
+    add("H021", by, id="walnut", name="Walnut", category="Nuts & Oilseeds", portions=[
+        {"id": "two", "label": "2 walnut halves (~8 g)", "grams": 8, "rawEquivalent": True},
+        raw_g,
+    ])
+    add("H018", by, id="pistachio", name="Pistachio nuts", category="Nuts & Oilseeds", portions=[
+        {"id": "ten", "label": "10 pistachios (~10 g)", "grams": 10, "rawEquivalent": True},
+        raw_g,
+    ])
+    add("K002", by, id="coconut_water", name="Coconut water", category="Fruits", portions=[
+        {"id": "glass", "label": "1 glass (200 ml)", "grams": 200, "rawEquivalent": False},
+        as_g,
+    ])
+
     idli = mix([("A014", 32), ("B003", 8)], by)
     foods.append({
         "id": "snack_idli",
@@ -574,6 +875,23 @@ def main():
         "visibleFat": False,
         "portions": [
             {"id": "one_dosa", "label": "1 medium dosa (~75 g)", "grams": 75, "rawEquivalent": False},
+            as_g,
+        ],
+    })
+    khichdi = mix([("A015", 40), ("B021", 20)], by)
+    foods.append({
+        "id": "snack_khichdi",
+        "name": "Khichdi (40 g milled rice + 20 g toor dal per 100 g cooked-equivalent mix)",
+        "category": "Cooked Snacks",
+        "ifctCode": "recipe:A015+B021",
+        "source": "Derived from IFCT 2017 (milled rice + red gram dal)",
+        "countsAsCerealGramsPer100": 40,
+        "countsAsPulseGramsPer100": 20,
+        **khichdi,
+        "visibleFat": False,
+        "portions": [
+            {"id": "katori", "label": "1 katori (~150 g)", "grams": 150, "rawEquivalent": False},
+            {"id": "plate", "label": "1 plate (~250 g)", "grams": 250, "rawEquivalent": False},
             as_g,
         ],
     })

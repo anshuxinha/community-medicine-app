@@ -1,156 +1,71 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { Text, Card } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { theme } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
 
-const TOOLBOX_NEW_BADGES_STORAGE_KEY = 'toolboxNewBadgesSeen:v1';
+const TOOLS = [
+    {
+        key: 'ses',
+        title: 'SES Calculator',
+        desc: 'Compute Socio-Economic Status (Modified Kuppuswamy & BG Prasad)',
+        icon: 'calculate',
+        route: 'SESCalculator',
+    },
+    {
+        key: 'diet',
+        title: 'Dietary Survey',
+        desc: '24-hour recall and family CU vs ICMR-NIN 2020, using IFCT 2017 foods',
+        icon: 'restaurant-menu',
+        route: 'DietarySurvey',
+    },
+    {
+        key: 'anthro',
+        title: 'Anthropometry',
+        desc: 'Calculate BMI, MUAC, WHR, WHtR, and Ideal Body Weight',
+        icon: 'accessibility-new',
+        route: 'Anthropometry',
+    },
+    {
+        key: 'nfhs',
+        title: 'NFHS Tools',
+        desc: 'NFHS-5 vs NFHS-6, rural vs urban, and trends across rounds 1 to 6',
+        icon: 'insert-chart',
+        route: 'NFHSTools',
+    },
+    {
+        key: 'biostats',
+        title: 'Biostats Assistant',
+        desc: 'Sample size, 2x2 table (OR, RR, Se/Sp), vaccine efficacy, IMR',
+        icon: 'functions',
+        route: 'BiostatsAssistant',
+    },
+];
 
 const FieldToolboxScreen = ({ navigation }) => {
-  const { styles, colors } = useThemedStyles(createStyles);
-
-    const [seenNewBadges, setSeenNewBadges] = useState({});
-
-    useEffect(() => {
-        let mounted = true;
-
-        AsyncStorage.getItem(TOOLBOX_NEW_BADGES_STORAGE_KEY)
-            .then((storedBadges) => {
-                if (!mounted || !storedBadges) return;
-                const parsedBadges = JSON.parse(storedBadges);
-                if (parsedBadges && typeof parsedBadges === 'object' && !Array.isArray(parsedBadges)) {
-                    setSeenNewBadges(parsedBadges);
-                }
-            })
-            .catch((error) => {
-                console.warn('Failed to load toolbox NEW badges:', error?.message);
-            });
-
-        return () => {
-            mounted = false;
-        };
-    }, []);
-
-    const markToolboxBadgeSeen = (badgeKey) => {
-        setSeenNewBadges((previousBadges) => {
-            if (previousBadges[badgeKey]) return previousBadges;
-
-            const nextBadges = {
-                ...previousBadges,
-                [badgeKey]: true,
-            };
-
-            AsyncStorage.setItem(
-                TOOLBOX_NEW_BADGES_STORAGE_KEY,
-                JSON.stringify(nextBadges),
-            ).catch((error) => {
-                console.warn('Failed to save toolbox NEW badge:', error?.message);
-            });
-
-            return nextBadges;
-        });
-    };
+  const { styles } = useThemedStyles(createStyles);
 
     return (
         <SafeAreaView style={styles.safeArea} edges={['left', 'right', 'bottom']}>
             <ScrollView contentContainerStyle={styles.container}>
                 <Text variant="headlineMedium" style={styles.title}>Field Toolbox</Text>
-
-                <Card style={styles.card} onPress={() => navigation.navigate('SESCalculator')}>
-                    <Card.Content style={styles.cardContent}>
-                        <MaterialIcons name="calculate" size={40} color={theme.colors.secondary} />
-                        <View style={styles.textContainer}>
-                            <Text style={styles.cardTitle}>SES Calculator</Text>
-                            <Text style={styles.cardDesc}>Compute Socio-Economic Status (Modified Kuppuswamy & BG Prasad)</Text>
-                        </View>
-                    </Card.Content>
-                </Card>
-
-                <Card style={styles.card} onPress={() => navigation.navigate('DietarySurvey')}>
-                    <Card.Content style={styles.cardContent}>
-                        <MaterialIcons name="restaurant-menu" size={40} color={theme.colors.secondary} />
-                        <View style={styles.textContainer}>
-                            <Text style={styles.cardTitle}>Dietary Survey</Text>
-                            <Text style={styles.cardDesc}>24-hour recall and family CU vs ICMR-NIN 2020, using IFCT 2017 foods</Text>
-                        </View>
-                    </Card.Content>
-                </Card>
-
-                <Card style={styles.card} onPress={() => navigation.navigate('Anthropometry')}>
-                    <Card.Content style={styles.cardContent}>
-                        <MaterialIcons name="accessibility-new" size={40} color={theme.colors.secondary} />
-                        <View style={styles.textContainer}>
-                            <Text style={styles.cardTitle}>Anthropometry</Text>
-                            <Text style={styles.cardDesc}>Calculate BMI, MUAC, WHR, WHtR, and Ideal Body Weight</Text>
-                        </View>
-                    </Card.Content>
-                </Card>
-
-                <Card
-                    style={styles.card}
-                    onPress={() => {
-                        markToolboxBadgeSeen('nfhsComparison');
-                        navigation.navigate('NFHSComparison');
-                    }}
-                >
-                    <Card.Content style={styles.cardContent}>
-                        <MaterialIcons name="compare-arrows" size={40} color={theme.colors.secondary} />
-                        <View style={styles.textContainer}>
-                            <View style={styles.titleRow}>
-                                <Text style={styles.cardTitle}>NFHS-5 vs NFHS-6</Text>
-                                {!seenNewBadges.nfhsComparison ? (
-                                    <Text style={styles.newBadge}>NEW</Text>
-                                ) : null}
+                {TOOLS.map((tool) => (
+                    <Card
+                        key={tool.key}
+                        style={styles.card}
+                        onPress={() => navigation.navigate(tool.route)}
+                    >
+                        <Card.Content style={styles.cardContent}>
+                            <MaterialIcons name={tool.icon} size={40} color={theme.colors.secondary} />
+                            <View style={styles.textContainer}>
+                                <Text style={styles.cardTitle}>{tool.title}</Text>
+                                <Text style={styles.cardDesc}>{tool.desc}</Text>
                             </View>
-                            <Text style={styles.cardDesc}>Compare India key indicators with NFHS-6 rural and urban context</Text>
-                        </View>
-                    </Card.Content>
-                </Card>
-
-                <Card
-                    style={styles.card}
-                    onPress={() => {
-                        markToolboxBadgeSeen('nfhsRuralUrban');
-                        navigation.navigate('NFHSRuralUrban');
-                    }}
-                >
-                    <Card.Content style={styles.cardContent}>
-                        <MaterialIcons name="location-city" size={40} color={theme.colors.secondary} />
-                        <View style={styles.textContainer}>
-                            <View style={styles.titleRow}>
-                                <Text style={styles.cardTitle}>NFHS-6 Rural vs Urban</Text>
-                                {!seenNewBadges.nfhsRuralUrban ? (
-                                    <Text style={styles.newBadge}>NEW</Text>
-                                ) : null}
-                            </View>
-                            <Text style={styles.cardDesc}>Compare NFHS-6 India fact sheet indicators by residence</Text>
-                        </View>
-                    </Card.Content>
-                </Card>
-
-                <Card
-                    style={styles.card}
-                    onPress={() => {
-                        markToolboxBadgeSeen('nfhsTrends');
-                        navigation.navigate('NFHSTrends');
-                    }}
-                >
-                    <Card.Content style={styles.cardContent}>
-                        <MaterialIcons name="trending-up" size={40} color={theme.colors.secondary} />
-                        <View style={styles.textContainer}>
-                            <View style={styles.titleRow}>
-                                <Text style={styles.cardTitle}>NFHS Trends</Text>
-                                {!seenNewBadges.nfhsTrends ? (
-                                    <Text style={styles.newBadge}>NEW</Text>
-                                ) : null}
-                            </View>
-                            <Text style={styles.cardDesc}>Visualize harmonized indicators across NFHS rounds 1 to 6</Text>
-                        </View>
-                    </Card.Content>
-                </Card>
+                        </Card.Content>
+                    </Card>
+                ))}
             </ScrollView>
         </SafeAreaView>
     );
@@ -184,27 +99,11 @@ const createStyles = (colors) => StyleSheet.create({
         marginLeft: 16,
         flex: 1,
     },
-    titleRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        marginBottom: 4,
-    },
     cardTitle: {
         fontWeight: 'bold',
         fontSize: 18,
         color: colors.textTitle,
-        marginRight: 8,
-    },
-    newBadge: {
-        backgroundColor: colors.primarySoft,
-        color: colors.primaryDark,
-        borderRadius: 6,
-        overflow: 'hidden',
-        paddingHorizontal: 6,
-        paddingVertical: 2,
-        fontSize: 10,
-        fontWeight: '900',
+        marginBottom: 4,
     },
     cardDesc: {
         fontSize: 14,

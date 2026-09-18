@@ -618,15 +618,10 @@ const DashboardScreen = ({ navigation, route }) => {
         <View style={styles.quickAccessRow}>
           <Card
             style={styles.quickCard}
-            onPress={() => {
-              markDashboardBadgeSeen("toolbox");
-              navigation.navigate("FieldToolbox");
-            }}
+            onPress={() => navigation.navigate("FieldToolbox")}
           >
             <Card.Content style={styles.quickCardContent}>
-              {!seenNewBadges.toolbox ? (
-                <Text style={styles.quickNewBadge}>NEW</Text>
-              ) : null}
+              <Text style={styles.quickNewBadge}>FREE</Text>
               <MaterialIcons
                 name="build"
                 size={32}
@@ -670,21 +665,6 @@ const DashboardScreen = ({ navigation, route }) => {
               />
               <Text variant="labelMedium" style={styles.quickText}>
                 Museum
-              </Text>
-            </Card.Content>
-          </Card>
-          <Card
-            style={[styles.quickCard, { marginLeft: 8 }]}
-            onPress={() => navigation.navigate("BiostatsAssistant")}
-          >
-            <Card.Content style={styles.quickCardContent}>
-              <MaterialIcons
-                name="insert-chart"
-                size={32}
-                color={theme.colors.secondary}
-              />
-              <Text variant="labelMedium" style={styles.quickText}>
-                Biostats
               </Text>
             </Card.Content>
           </Card>

@@ -9,6 +9,7 @@ import {
   NFHS_COMPARISON_CATEGORIES,
   NFHS_COMPARISON_INDICATORS,
   NFHS_COMPARISON_SOURCES,
+  getAreaValue,
 } from "../data/nfhsComparisonData";
 
 const AREA_LABELS = {
@@ -33,13 +34,16 @@ const getDeltaTone = (delta, lowerIsBetter) => {
 
 const IndicatorRow = ({ item, area }) => {
   const { styles, colors } = useThemedStyles(createStyles);
-  const nfhs6Value = item.nfhs6[area];
-  const hasComparison = nfhs6Value !== null && nfhs6Value !== undefined;
-  const delta = hasComparison ? nfhs6Value - item.nfhs5 : null;
+  const nfhs5Value = getAreaValue(item.nfhs5, area);
+  const nfhs6Value = getAreaValue(item.nfhs6, area);
+  const hasNfhs5 = nfhs5Value !== null && nfhs5Value !== undefined;
+  const hasNfhs6 = nfhs6Value !== null && nfhs6Value !== undefined;
+  const hasComparison = hasNfhs5 && hasNfhs6;
+  const delta = hasComparison ? nfhs6Value - nfhs5Value : null;
   const tone = getDeltaTone(delta, item.lowerIsBetter);
-  const maxValue = Math.max(item.nfhs5, hasComparison ? nfhs6Value : 0, 1);
-  const nfhs5Width = `${Math.max((item.nfhs5 / maxValue) * 100, 8)}%`;
-  const nfhs6Width = hasComparison ? `${Math.max((nfhs6Value / maxValue) * 100, 8)}%` : "0%";
+  const maxValue = Math.max(hasNfhs5 ? nfhs5Value : 0, hasNfhs6 ? nfhs6Value : 0, 1);
+  const nfhs5Width = hasNfhs5 ? `${Math.max((nfhs5Value / maxValue) * 100, 8)}%` : "0%";
+  const nfhs6Width = hasNfhs6 ? `${Math.max((nfhs6Value / maxValue) * 100, 8)}%` : "0%";
   const toneIconColor =
     tone === "good"
       ? colors.successStrong
@@ -66,7 +70,7 @@ const IndicatorRow = ({ item, area }) => {
       <View style={styles.matrixRow}>
         <View style={styles.yearCell}>
           <Text style={styles.yearLabel}>NFHS-5</Text>
-          <Text style={styles.nfhs5Value}>{formatValue(item.nfhs5, item.unit)}</Text>
+          <Text style={styles.nfhs5Value}>{formatValue(nfhs5Value, item.unit)}</Text>
         </View>
         <View style={styles.yearCell}>
           <Text style={styles.yearLabel}>NFHS-6</Text>
@@ -76,10 +80,10 @@ const IndicatorRow = ({ item, area }) => {
 
       <View style={styles.barArea}>
         <View style={styles.barTrack}>
-          <View style={[styles.barFill, styles.nfhs5Bar, { width: nfhs5Width }]} />
+          {hasNfhs5 ? <View style={[styles.barFill, styles.nfhs5Bar, { width: nfhs5Width }]} /> : null}
         </View>
         <View style={styles.barTrack}>
-          {hasComparison ? <View style={[styles.barFill, styles.nfhs6Bar, { width: nfhs6Width }]} /> : null}
+          {hasNfhs6 ? <View style={[styles.barFill, styles.nfhs6Bar, { width: nfhs6Width }]} /> : null}
         </View>
       </View>
 
@@ -88,7 +92,7 @@ const IndicatorRow = ({ item, area }) => {
   );
 };
 
-const NFHSComparisonScreen = () => {
+const NFHSComparisonScreen = ({ embedded = false }) => {
   const { styles, colors } = useThemedStyles(createStyles);
 
   const [area, setArea] = useState("total");
@@ -100,8 +104,8 @@ const NFHSComparisonScreen = () => {
   );
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["left", "right", "bottom"]}>
-      <ScrollView contentContainerStyle={styles.container}>
+    <SafeAreaView style={styles.safeArea} edges={embedded ? [] : ["left", "right", "bottom"]}>
+      <ScrollView contentContainerStyle={[styles.container, embedded && styles.embeddedContainer]}>
         <View style={styles.hero}>
           <Text style={styles.kicker}>NFHS-5 vs NFHS-6</Text>
           <Text style={styles.title}>Master Matrix</Text>
@@ -124,7 +128,7 @@ const NFHSComparisonScreen = () => {
 
         <Card style={styles.controlCard}>
           <Card.Content>
-            <Text style={styles.controlLabel}>NFHS-6 area lens</Text>
+            <Text style={styles.controlLabel}>Residence (both rounds)</Text>
             <SegmentedButtons
               value={area}
               onValueChange={setArea}
@@ -136,8 +140,7 @@ const NFHSComparisonScreen = () => {
               style={styles.segmented}
             />
             <Text style={styles.helperText}>
-              NFHS-5 column uses national totals. NFHS-6 can be viewed as {AREA_LABELS[area].toLowerCase()} values
-              from the attached fact sheet.
+              Both rounds use the {AREA_LABELS[area].toLowerCase()} column. NR means that residence split is not in the source for this indicator.
             </Text>
           </Card.Content>
         </Card>
@@ -202,6 +205,9 @@ const createStyles = (colors) => StyleSheet.create({
   container: {
     padding: 16,
     paddingBottom: 32,
+  },
+  embeddedContainer: {
+    paddingTop: 8,
   },
   hero: {
     backgroundColor: "#08111F",

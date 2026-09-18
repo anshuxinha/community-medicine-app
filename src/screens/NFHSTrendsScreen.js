@@ -20,7 +20,7 @@ const YEARS = {
     "NFHS-6": "2023-24"
 };
 
-const NFHSTrendsScreen = () => {
+const NFHSTrendsScreen = ({ embedded = false }) => {
   const { styles, colors } = useThemedStyles(createStyles);
 
     // 1. Selector States
@@ -344,8 +344,8 @@ const NFHSTrendsScreen = () => {
     `, []);
 
     return (
-        <SafeAreaView style={styles.safeArea} edges={['left', 'right', 'bottom']}>
-            <ScrollView contentContainerStyle={styles.container}>
+        <SafeAreaView style={styles.safeArea} edges={embedded ? [] : ['left', 'right', 'bottom']}>
+            <ScrollView contentContainerStyle={[styles.container, embedded && { paddingTop: 8 }]}>
                 {/* 1. Category / Indicator Dropdowns */}
                 <Card style={styles.filterCard}>
                     <Card.Content style={{ padding: 12 }}>

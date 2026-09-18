@@ -89,7 +89,7 @@ const RuralUrbanRow = ({ item }) => {
   );
 };
 
-const NFHSRuralUrbanScreen = () => {
+const NFHSRuralUrbanScreen = ({ embedded = false }) => {
   const { styles, colors } = useThemedStyles(createStyles);
 
   const [category, setCategory] = useState("headline");
@@ -102,8 +102,8 @@ const NFHSRuralUrbanScreen = () => {
   );
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["left", "right", "bottom"]}>
-      <ScrollView contentContainerStyle={styles.container}>
+    <SafeAreaView style={styles.safeArea} edges={embedded ? [] : ["left", "right", "bottom"]}>
+      <ScrollView contentContainerStyle={[styles.container, embedded && { paddingTop: 8 }]}>
         <View style={styles.hero}>
           <Text style={styles.kicker}>NFHS-6</Text>
           <Text style={styles.title}>Rural vs Urban</Text>

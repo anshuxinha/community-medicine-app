@@ -4,14 +4,11 @@ import { Text, TextInput, Button, Card, Divider, SegmentedButtons } from 'react-
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { theme } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
-
-/* ─── BMI cut-offs (Asian Indian) ──────────────────────────────────────── */
-const BMI_CATEGORIES_ASIAN = [
-    { max: 18.5, label: 'Underweight', color: theme.colors.chartBlue },
-    { max: 23.0, label: 'Normal', color: '#15803D' },
-    { max: 25.0, label: 'Overweight', color: theme.colors.accent },
-    { max: Infinity, label: 'Obese', color: '#B91C1C' },
-];
+import {
+    bmiFromCmKg,
+    interpretMuac,
+    calculateIbw,
+} from '../utils/anthropometry';
 
 /* ─── Waist-Hip Ratio risk (WHO) ────────────────────────────────────────── */
 const whrRisk = (whr, sex) => {
@@ -24,21 +21,6 @@ const whrRisk = (whr, sex) => {
         if (whr < 0.85) return { label: 'Moderate Risk', color: theme.colors.accent };
         return { label: 'High Risk', color: '#B91C1C' };
     }
-};
-
-/* ─── MUAC — child (6–59 months, WHO SMART criteria) ───────────────────── */
-const muacChildStatus = (muac) => {
-    if (muac < 11.5) return { label: 'SAM — Severe Acute Malnutrition', color: '#B91C1C', band: 'RED' };
-    if (muac < 12.5) return { label: 'MAM — Moderate Acute Malnutrition', color: theme.colors.accent, band: 'YELLOW' };
-    return { label: 'Normal / Well-Nourished', color: '#15803D', band: 'GREEN' };
-};
-
-/* ─── MUAC — adult ──────────────────────────────────────────────────────── */
-const muacAdultStatus = (muac) => {
-    if (muac < 18.5) return { label: 'Severely Malnourished', color: '#B91C1C' };
-    if (muac < 22.0) return { label: 'Malnourished', color: theme.colors.accent };
-    if (muac < 23.0) return { label: 'At-Risk', color: theme.colors.accent };
-    return { label: 'Normal', color: '#15803D' };
 };
 
 const AnthropometryScreen = () => {
@@ -67,21 +49,19 @@ const AnthropometryScreen = () => {
 
     /* ── IBW state ─────────────────────────────────────────────────────── */
     const [ibwHeight, setIbwHeight] = useState('');
+    const [ibwWeight, setIbwWeight] = useState('');
     const [ibwSex, setIbwSex] = useState('male');
+    const [ibwMethod, setIbwMethod] = useState('broca');
     const [ibwResult, setIbwResult] = useState(null);
 
     /* ── Calculators ───────────────────────────────────────────────────── */
     const calculateBMI = () => {
-        const h = parseFloat(height);
-        const w = parseFloat(weight);
-        if (isNaN(h) || isNaN(w) || h <= 0 || w <= 0) {
-            setBmiResult({ error: 'Enter valid height (cm) and weight (kg).' });
+        const result = bmiFromCmKg(height, weight);
+        if (result.error) {
+            setBmiResult(result);
             return;
         }
-        const hM = h / 100;
-        const bmi = w / (hM * hM);
-        const category = BMI_CATEGORIES_ASIAN.find(c => bmi < c.max);
-        setBmiResult({ bmi: bmi.toFixed(1), category: category.label, color: category.color });
+        setBmiResult({ ...result, bmi: result.bmi.toFixed(1) });
     };
 
     const calculateWHR = () => {
@@ -113,32 +93,26 @@ const AnthropometryScreen = () => {
     };
 
     const calculateMUAC = () => {
-        const m = parseFloat(muacValue);
-        if (isNaN(m) || m <= 0) {
-            setMuacResult({ error: 'Enter a valid MUAC measurement (cm).' });
+        const result = interpretMuac(muacValue, muacMode);
+        if (result.error) {
+            setMuacResult(result);
             return;
         }
-        const status = muacMode === 'child' ? muacChildStatus(m) : muacAdultStatus(m);
-        setMuacResult({ muac: m.toFixed(1), mode: muacMode, ...status });
+        setMuacResult({ ...result, muac: result.muac.toFixed(1) });
     };
 
     const calculateIBW = () => {
-        const h = parseFloat(ibwHeight);
-        if (isNaN(h) || h <= 0) {
-            setIbwResult({ error: 'Enter a valid height (cm).' });
+        const result = calculateIbw({
+            heightCm: ibwHeight,
+            sex: ibwSex,
+            method: ibwMethod,
+            actualKg: ibwWeight,
+        });
+        if (result.error) {
+            setIbwResult(result);
             return;
         }
-        // Devine formula (height in inches)
-        const hInch = h / 2.54;
-        const base = ibwSex === 'male' ? 50 : 45.5;
-        const ibw = base + 2.3 * (hInch - 60);
-        const abw = ibw + 0.4 * (parseFloat(weight) - ibw);
-        setIbwResult({
-            ibw: ibw.toFixed(1),
-            abwNote: (weight && !isNaN(parseFloat(weight)))
-                ? `Adjusted BW (if obese): ${abw.toFixed(1)} kg`
-                : null,
-        });
+        setIbwResult({ ...result, ibw: result.ibw.toFixed(1) });
     };
 
     /* ── Shared result box ─────────────────────────────────────────────── */
@@ -276,8 +250,9 @@ const AnthropometryScreen = () => {
                             value={muacMode}
                             onValueChange={(v) => { setMuacMode(v); setMuacResult(null); }}
                             buttons={[
-                                { value: 'child', label: 'Child (6–59 mo)' },
+                                { value: 'child', label: 'Child 6-59 mo' },
                                 { value: 'adult', label: 'Adult' },
+                                { value: 'pregnant', label: 'Pregnant' },
                             ]}
                             style={styles.segmented}
                         />
@@ -328,35 +303,40 @@ const AnthropometryScreen = () => {
                                 {muacResult.mode === 'child' ? (
                                     <>
                                         <Text style={[styles.noteText, { fontWeight: '700', marginBottom: 4 }]}>
-                                            WHO Reference — Children 6–59 months
+                                            WHO SMART: children 6-59 months
                                         </Text>
                                         <View style={styles.refRow}>
                                             <View style={[styles.refDot, { backgroundColor: '#B91C1C' }]} />
-                                            <Text style={styles.noteText}>{'<'}11.5 cm → SAM (Severe Acute Malnutrition) — refer for therapeutic feeding</Text>
+                                            <Text style={styles.noteText}>{'<'}11.5 cm: SAM. Refer for therapeutic feeding.</Text>
                                         </View>
                                         <View style={styles.refRow}>
                                             <View style={[styles.refDot, { backgroundColor: theme.colors.accent }]} />
-                                            <Text style={styles.noteText}>11.5–12.4 cm → MAM (Moderate Acute Malnutrition) — supplementary feeding</Text>
+                                            <Text style={styles.noteText}>11.5-12.4 cm: MAM. Supplementary feeding.</Text>
                                         </View>
                                         <View style={styles.refRow}>
                                             <View style={[styles.refDot, { backgroundColor: '#15803D' }]} />
-                                            <Text style={styles.noteText}>≥12.5 cm → Normal / Well-Nourished</Text>
+                                            <Text style={styles.noteText}>≥12.5 cm: Normal / well-nourished</Text>
                                         </View>
-                                        <Text style={[styles.noteText, { marginTop: 6, fontStyle: 'italic' }]}>
-                                            Source: WHO SMART methodology; used in ICDS, NHM, SAM protocols
+                                    </>
+                                ) : muacResult.mode === 'pregnant' ? (
+                                    <>
+                                        <Text style={[styles.noteText, { fontWeight: '700', marginBottom: 4 }]}>
+                                            Pregnancy cut-off (ICDS / NHM)
                                         </Text>
+                                        <Text style={styles.noteText}>{'<'}23.0 cm: undernourished. Extra ration and counselling.</Text>
+                                        <Text style={styles.noteText}>≥23.0 cm: above this programme cut-off</Text>
                                     </>
                                 ) : (
                                     <>
                                         <Text style={[styles.noteText, { fontWeight: '700', marginBottom: 4 }]}>
-                                            Reference — Adults
+                                            Adult field bands (Indian surveys; CED often {'<'}23 cm)
                                         </Text>
-                                        <Text style={styles.noteText}>{'<'}18.5 cm → Severely Malnourished</Text>
-                                        <Text style={styles.noteText}>18.5–21.9 cm → Malnourished</Text>
-                                        <Text style={styles.noteText}>22.0–22.9 cm → At-Risk</Text>
-                                        <Text style={styles.noteText}>≥23.0 cm → Normal</Text>
+                                        <Text style={styles.noteText}>{'<'}19.0 cm: severe undernutrition</Text>
+                                        <Text style={styles.noteText}>19.0-21.9 cm: moderate undernutrition</Text>
+                                        <Text style={styles.noteText}>22.0-22.9 cm: at risk</Text>
+                                        <Text style={styles.noteText}>≥23.0 cm: normal</Text>
                                         <Text style={[styles.noteText, { marginTop: 6, fontStyle: 'italic' }]}>
-                                            Source: Jelliffe (1966); used in field nutrition surveys
+                                            Source: FANTA adult MUAC practice and NNMB-style {'<'}23 cm CED cut-off.
                                         </Text>
                                     </>
                                 )}
@@ -370,8 +350,19 @@ const AnthropometryScreen = () => {
                     <Card.Content>
                         <Text style={styles.sectionTitle}>Ideal Body Weight (IBW)</Text>
                         <Text variant="bodySmall" style={styles.subtitle}>
-                            Devine formula — used in drug dosing & nutrition planning
+                            Default Broca (Indian clinico-social). BMI 22 for Asian adults. Devine for drug dosing.
                         </Text>
+                        <SegmentedButtons
+                            value={ibwMethod}
+                            onValueChange={(v) => { setIbwMethod(v); setIbwResult(null); }}
+                            buttons={[
+                                { value: 'broca', label: 'Broca' },
+                                { value: 'bmi22', label: 'BMI 22' },
+                                { value: 'devine', label: 'Devine' },
+                            ]}
+                            style={styles.segmented}
+                        />
+                        {ibwMethod !== 'bmi22' ? (
                         <SegmentedButtons
                             value={ibwSex}
                             onValueChange={setIbwSex}
@@ -381,12 +372,15 @@ const AnthropometryScreen = () => {
                             ]}
                             style={styles.segmented}
                         />
+                        ) : null}
                         <TextInput label="Height (cm)" value={ibwHeight}
                             onChangeText={setIbwHeight} keyboardType="numeric"
                             mode="outlined" textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} style={styles.input} />
-                        <TextInput label="Actual weight (kg) — optional, for ABW" value={weight}
-                            onChangeText={setWeight} keyboardType="numeric"
+                        {ibwMethod === 'devine' ? (
+                        <TextInput label="Actual weight (kg), optional for adjusted BW" value={ibwWeight}
+                            onChangeText={setIbwWeight} keyboardType="numeric"
                             mode="outlined" textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} style={styles.input} />
+                        ) : null}
                         <Button mode="contained" textColor="#FFFFFF" onPress={calculateIBW} style={styles.calcButton}>
                             Calculate IBW
                         </Button>
@@ -407,9 +401,7 @@ const AnthropometryScreen = () => {
                                 )}
                                 <Divider style={{ marginVertical: 8 }} />
                                 <Text variant="bodySmall" style={styles.noteText}>
-                                    {ibwSex === 'male'
-                                        ? 'Male: 50 kg + 2.3 kg per inch over 5 ft'
-                                        : 'Female: 45.5 kg + 2.3 kg per inch over 5 ft'}
+                                    {ibwResult.formula}
                                 </Text>
                             </ResultBox>
                         )}

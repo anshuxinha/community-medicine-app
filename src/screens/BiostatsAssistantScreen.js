@@ -5,20 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
-
-function calcChi2(a, b, c, d) {
-    const n = a + b + c + d;
-    const chi2 = n * Math.pow(Math.abs(a * d - b * c) - n / 2, 2) /
-        ((a + b) * (c + d) * (a + c) * (b + d));
-    const significant = chi2 > 3.84;
-    return {
-        chi2: chi2.toFixed(3),
-        result: significant
-            ? `χ²=${chi2.toFixed(2)} > 3.84 → Significant (p < 0.05)`
-            : `χ²=${chi2.toFixed(2)} < 3.84 → Not Significant (p > 0.05)`,
-        significant,
-    };
-}
+import { analyzeTwoByTwo, formatPercent, formatRatio } from '../utils/epiTwoByTwo';
 function calcEfficacy(arV, arU) { return { ve: (((arU - arV) / arU) * 100).toFixed(1) }; }
 function calcIMR(deaths, births) { return { imr: ((deaths / births) * 1000).toFixed(1) }; }
 
@@ -94,6 +81,7 @@ const BiostatsAssistantScreen = () => {
     // Solver state
     const [a, setA] = useState(''); const [b, setB] = useState('');
     const [c, setC] = useState(''); const [d, setD] = useState('');
+    const [yates, setYates] = useState(false);
     const [arV, setArV] = useState(''); const [arU, setArU] = useState('');
     const [deaths, setDeaths] = useState(''); const [births, setBirths] = useState('');
     const [result, setResult] = useState(null);
@@ -119,8 +107,8 @@ const BiostatsAssistantScreen = () => {
 
     const runChi2 = () => {
         const vals = [a, b, c, d].map(Number);
-        if (vals.some(isNaN)) { setResult({ error: 'Enter numbers in all four cells.' }); return; }
-        setResultType('chi2'); setResult(calcChi2(...vals));
+        if (vals.some((v) => !Number.isFinite(v))) { setResult({ error: 'Enter numbers in all four cells.' }); return; }
+        setResultType('chi2'); setResult(analyzeTwoByTwo(...vals, { yates }));
     };
     const runEfficacy = () => {
         const v = parseFloat(arV), u = parseFloat(arU);
@@ -292,7 +280,16 @@ const BiostatsAssistantScreen = () => {
                             <Card style={styles.card}>
                                 <Card.Content>
                                     <Title style={styles.cardTitle}>Chi-Square Test (2×2)</Title>
-                                    <Text style={styles.hint}>Yates' corrected formula</Text>
+                                    <Text style={styles.hint}>Uncorrected χ² by default. Same cells also give OR, RR, Se, Sp, PPV, NPV. E+ is Test+ for a screening table.</Text>
+                                    <Button
+                                        mode={yates ? 'contained' : 'outlined'}
+                                        onPress={() => { setYates((v) => !v); setResult(null); }}
+                                        style={{ marginBottom: 8, alignSelf: 'flex-start' }}
+                                        compact
+                                        textColor={yates ? colors.buttonText : colors.textTitle}
+                                    >
+                                        {yates ? 'Yates correction ON' : 'Yates correction OFF'}
+                                    </Button>
                                     <View style={styles.grid2x2}>
                                         <View style={styles.gridRow}>
                                             <TextInput label="a (D+, E+)" value={a} onChangeText={setA} keyboardType="numeric" mode="outlined" style={styles.cell} dense textColor={colors.textTitle} placeholderTextColor={colors.textPlaceholder} outlineColor={colors.borderStrong} activeOutlineColor={colors.secondary} />
@@ -307,6 +304,16 @@ const BiostatsAssistantScreen = () => {
                                     {result && resultType === 'chi2' && !result.error && (
                                         <View style={[styles.resultBox, { borderLeftColor: result.significant ? '#15803D' : '#B91C1C' }]}>
                                             <Text style={{ fontWeight: 'bold', color: result.significant ? '#15803D' : '#B91C1C' }}>{result.result}</Text>
+                                            <Text style={{ color: colors.textSecondary, marginTop: 6, fontSize: 12 }}>
+                                                {result.yates ? 'Yates correction applied.' : 'Uncorrected χ² (df=1, critical value 3.84).'}
+                                                {result.fisherSuggested ? ' Smallest expected cell < 5: consider Fisher exact.' : ''}
+                                            </Text>
+                                            <Divider style={{ marginVertical: 8 }} />
+                                            <Text style={{ color: theme.colors.textTitle }}>OR = {formatRatio(result.or)}</Text>
+                                            <Text style={{ color: theme.colors.textTitle }}>RR = {formatRatio(result.rr)}</Text>
+                                            <Text style={{ color: theme.colors.textTitle }}>AR = {formatPercent(result.ar)}</Text>
+                                            <Text style={{ color: theme.colors.textTitle, marginTop: 6 }}>Se = {formatPercent(result.sensitivity)}  Sp = {formatPercent(result.specificity)}</Text>
+                                            <Text style={{ color: theme.colors.textTitle }}>PPV = {formatPercent(result.ppv)}  NPV = {formatPercent(result.npv)}</Text>
                                         </View>
                                     )}
                                 </Card.Content>

@@ -38,9 +38,7 @@ const getFieldToolboxScreen = () => require("../screens/FieldToolboxScreen").def
 const getSESCalculatorScreen = () => require("../screens/SESCalculatorScreen").default;
 const getDietarySurveyScreen = () => require("../screens/DietarySurveyScreen").default;
 const getAnthropometryScreen = () => require("../screens/AnthropometryScreen").default;
-const getNFHSComparisonScreen = () => require("../screens/NFHSComparisonScreen").default;
-const getNFHSRuralUrbanScreen = () => require("../screens/NFHSRuralUrbanScreen").default;
-const getNFHSTrendsScreen = () => require("../screens/NFHSTrendsScreen").default;
+const getNFHSToolsScreen = () => require("../screens/NFHSToolsScreen").default;
 const getVirtualMuseumScreen = () => require("../screens/VirtualMuseumScreen").default;
 const getBiostatsAssistantScreen = () =>
   require("../screens/BiostatsAssistantScreen").default;
@@ -300,19 +298,27 @@ const AppNavigator = () => {
               options={{ title: "Anthropometry" }}
             />
             <Stack.Screen
+              name="NFHSTools"
+              getComponent={getNFHSToolsScreen}
+              options={{ title: "NFHS Tools" }}
+            />
+            <Stack.Screen
               name="NFHSComparison"
-              getComponent={getNFHSComparisonScreen}
-              options={{ title: "NFHS-5 vs NFHS-6" }}
+              getComponent={getNFHSToolsScreen}
+              initialParams={{ mode: "comparison" }}
+              options={{ title: "NFHS Tools" }}
             />
             <Stack.Screen
               name="NFHSRuralUrban"
-              getComponent={getNFHSRuralUrbanScreen}
-              options={{ title: "NFHS-6 Rural vs Urban" }}
+              getComponent={getNFHSToolsScreen}
+              initialParams={{ mode: "ruralUrban" }}
+              options={{ title: "NFHS Tools" }}
             />
             <Stack.Screen
               name="NFHSTrends"
-              getComponent={getNFHSTrendsScreen}
-              options={{ title: "NFHS Trends" }}
+              getComponent={getNFHSToolsScreen}
+              initialParams={{ mode: "trends" }}
+              options={{ title: "NFHS Tools" }}
             />
             <Stack.Screen
               name="VirtualMuseum"
