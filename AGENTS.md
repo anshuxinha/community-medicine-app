@@ -34,28 +34,11 @@ Rules:
 - After modifying code files in this session, run `graphify update .` to keep the graph current (AST-only, no API cost)
 
 
-# Production plan-first (live app)
-
-This app is in production. Hundreds of people open it. Always-approve skips permission prompts. It does not skip planning.
-
-Use Grok CLI plan-mode philosophy (`/plan`, `enter_plan_mode`) before the first edit to shipped app code. The philosophy is **task-dependent**: explore, design, then list the cases *this assignment* can hit. Do not replay first-start / second-open / splash on every request.
-
-1. Restate the assignment. Name assumptions. Present competing interpretations.
-2. Explore the flows this task touches. Reuse existing functions.
-3. Write the approach in the turn: files, what you will not touch, how you will verify.
-4. Derive cases from the task (nav label vs route; highlight enter/exit; launch/OTA only when the change lives on that path).
-5. If *this* change can close the process, freeze the UI, or run on a clock for every user, call `enter_plan_mode` even when always-approve is on.
-6. When the task is launch, OTA, ExpoUpdates, Play in-app updates, splash, or AppState: do not add delayed launch work that talks to those APIs. A quiet window still fires on every session.
-
-A one-line label with no launch-path may skip the TUI plan gate. Still list the cases that belong to that label change.
-
-Global copy: `~/.grok/rules/plan-first-production.md`.
-
 # Karpathy Coding Guidelines
 
 Behavioral guidelines to reduce common LLM coding mistakes, derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876).
 
-**Tradeoff:** These guidelines bias toward caution over speed. Plan-first is task-dependent. Skip the TUI plan gate when the assignment has a clear path and no process-lifetime risk.
+**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
 
 ## 1. Think Before Coding
 
