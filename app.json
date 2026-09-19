@@ -2,7 +2,7 @@
   "expo": {
     "name": "Stroma",
     "slug": "community-medicine",
-    "version": "1.0.12",
+    "version": "1.0.13",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "buildNumber": "18",
+      "buildNumber": "19",
       "usesAppleSignIn": true,
       "bundleIdentifier": "com.communitymed.app",
       "googleServicesFile": "./GoogleService-Info.plist",
@@ -33,7 +33,7 @@
       "edgeToEdgeEnabled": true,
       "package": "com.communitymed.app",
       "playStoreUrl": "https://play.google.com/store/apps/details?id=com.communitymed.app",
-      "versionCode": 18,
+      "versionCode": 19,
       "googleServicesFile": "./google-services.json",
       "permissions": [
         "android.permission.POST_NOTIFICATIONS",
