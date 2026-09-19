@@ -19,7 +19,7 @@ import { auth, db } from "../config/firebase";
 import { AppContext } from "../context/AppContext";
 import { theme } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
-import Constants from "expo-constants";
+import { getAppVersion } from "../utils/expoConstants";
 import { ALL_ORIENTATIONS } from "../constants/orientations";
 
 const BASE_MENU_ITEMS = [
@@ -256,9 +256,9 @@ const DrawerMenu = ({ visible, onClose, user }) => {
           })}
         </ScrollView>
 
-        {/* Footer version */}
+        {/* Footer version. Read Constants only while the drawer is open. */}
         <Text style={styles.version}>
-          STROMA v{Constants.expoConfig?.version || "1.0.0"}
+          STROMA v{visible ? getAppVersion() : "1.0.0"}
         </Text>
       </Animated.View>
       {isLoggingOut && (

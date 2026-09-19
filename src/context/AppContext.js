@@ -89,14 +89,35 @@ import {
 
 let Purchases;
 let GoogleSignin;
-if (!isExpoGo()) {
-  Purchases = require("react-native-purchases").default;
-  GoogleSignin =
-    require("@react-native-google-signin/google-signin").GoogleSignin;
-  GoogleSignin.configure({
-    webClientId:
-      "856703659616-8e0k1obmgom04783jjf695hkianm4hme.apps.googleusercontent.com",
-  });
+
+const GOOGLE_WEB_CLIENT_ID =
+  "856703659616-8e0k1obmgom04783jjf695hkianm4hme.apps.googleusercontent.com";
+const GOOGLE_IOS_CLIENT_ID =
+  "856703659616-pel4uk9eb2u2qc12m2ldgk4o8eitu75v.apps.googleusercontent.com";
+
+function getPurchases() {
+  if (Purchases || isExpoGo()) return Purchases;
+  try {
+    Purchases = require("react-native-purchases").default;
+  } catch (err) {
+    console.warn("Purchases module failed to load:", err?.message);
+  }
+  return Purchases;
+}
+
+function getGoogleSignin() {
+  if (GoogleSignin || isExpoGo()) return GoogleSignin;
+  try {
+    GoogleSignin =
+      require("@react-native-google-signin/google-signin").GoogleSignin;
+    GoogleSignin.configure({
+      webClientId: GOOGLE_WEB_CLIENT_ID,
+      iosClientId: GOOGLE_IOS_CLIENT_ID,
+    });
+  } catch (err) {
+    console.warn("Google Sign-In module failed to load:", err?.message);
+  }
+  return GoogleSignin;
 }
 
 
@@ -1601,10 +1622,10 @@ export const AppProvider = ({ children }) => {
     }
   }, []);
 
-  // RevenueCat: configure and sync customer info on mount
+  // RevenueCat: configure and sync customer info after first paint
   useEffect(() => {
     if (isExpoGo()) return;
-    if (!Purchases) return;
+    if (!getPurchases()) return;
 
     const iosKey = process.env.EXPO_PUBLIC_RC_API_KEY_IOS;
     const androidKey = process.env.EXPO_PUBLIC_RC_API_KEY_ANDROID;
@@ -1748,7 +1769,7 @@ export const AppProvider = ({ children }) => {
   // Sync RevenueCat identity when user logs in
   useEffect(() => {
     if (isExpoGo()) return;
-    if (!Purchases) return;
+    if (!getPurchases()) return;
     if (!user?.uid) return;
 
     Purchases.logIn(user.uid)
@@ -1804,7 +1825,7 @@ export const AppProvider = ({ children }) => {
   }, []);
 
   const login = useCallback(async (userData) => {
-    if (!isExpoGo() && Purchases && userData.uid) {
+    if (!isExpoGo() && getPurchases() && userData.uid) {
       Purchases.logIn(userData.uid)
         .then(({ customerInfo }) => {
           const hasPremium = hasRevenueCatPremiumEntitlement(customerInfo);
@@ -1942,12 +1963,12 @@ export const AppProvider = ({ children }) => {
     try {
       await signOut(auth);
     } catch (_) {}
-    if (!isExpoGo() && GoogleSignin) {
+    if (!isExpoGo() && getGoogleSignin()) {
       try {
         await GoogleSignin.signOut();
       } catch (_) {}
     }
-    if (!isExpoGo() && Purchases) {
+    if (!isExpoGo() && getPurchases()) {
       try {
         await Purchases.logOut();
       } catch (_) {}

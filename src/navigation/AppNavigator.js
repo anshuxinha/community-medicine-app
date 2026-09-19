@@ -16,17 +16,16 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { AppContext } from "../context/AppContext";
 import { useSessionEnforcer } from "../hooks/useSessionEnforcer";
-import { setupNotificationTapHandler } from "../services/notificationService";
 import { useAppTheme } from "../styles/ThemeContext";
 import { hideSplash } from "../utils/appSplash";
 
-// Eager: first-paint surfaces only
+// Eager: first-paint surfaces only (logged-in home)
 import DashboardScreen from "../screens/DashboardScreen";
 import LibraryScreen from "../screens/LibraryScreen";
-import LoginScreen from "../screens/LoginScreen";
-import PaywallScreen from "../screens/PaywallScreen";
 
 // Deferred screens: loaded on first navigation via getComponent
+const getLoginScreen = () => require("../screens/LoginScreen").default;
+const getPaywallScreen = () => require("../screens/PaywallScreen").default;
 const getVideosScreen = () => require("../screens/VideosScreen").default;
 const getUpdatesScreen = () => require("../screens/UpdatesScreen").default;
 const getPYQCreateScreen = () => require("../screens/PYQCreateScreen").default;
@@ -164,7 +163,12 @@ const AppNavigator = () => {
   useSessionEnforcer();
 
   useEffect(() => {
-    setupNotificationTapHandler(navigationRef);
+    try {
+      const { setupNotificationTapHandler } = require("../services/notificationService");
+      setupNotificationTapHandler(navigationRef);
+    } catch (error) {
+      console.warn("Notification tap handler failed to load:", error?.message);
+    }
   }, []);
 
   useEffect(() => {
@@ -244,7 +248,7 @@ const AppNavigator = () => {
         {!user ? (
           <Stack.Screen
             name="Login"
-            component={LoginScreen}
+            getComponent={getLoginScreen}
             options={{ headerShown: false }}
           />
         ) : (
@@ -337,7 +341,7 @@ const AppNavigator = () => {
             />
             <Stack.Screen
               name="Paywall"
-              component={PaywallScreen}
+              getComponent={getPaywallScreen}
               options={{ headerShown: false, presentation: "fullScreenModal" }}
             />
             <Stack.Screen

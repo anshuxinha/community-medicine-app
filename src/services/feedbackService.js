@@ -1,10 +1,10 @@
 import { Platform } from "react-native";
-import Constants from "expo-constants";
 import {
   addDoc,
   collection,
   serverTimestamp,
 } from "firebase/firestore";
+import { getAppVersion } from "../utils/expoConstants";
 import { auth, db } from "../config/firebase";
 
 export const APP_FEEDBACK_COLLECTION = "appFeedback";
@@ -71,10 +71,7 @@ export async function submitAppFeedback(message, options = {}) {
     throw new Error("Sign in to send feedback.");
   }
 
-  const appVersion =
-    Constants.expoConfig?.version ||
-    Constants.nativeAppVersion ||
-    "unknown";
+  const appVersion = getAppVersion("unknown");
 
   const ratingRaw = options.rating;
   const rating =

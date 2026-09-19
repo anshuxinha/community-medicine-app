@@ -1,9 +1,10 @@
-import gemsData from "../data/gemsData.json";
 import {
   VALID_CONTENT_KEYS,
   VALID_MASTER_TITLES,
   getContentKey,
 } from "./contentRegistry";
+
+const getGemsData = () => require("../data/gemsData.json");
 
 export const buildGemContentKey = (sectionId, gemId) => {
   if (!sectionId || gemId == null || gemId === "") return null;
@@ -35,6 +36,7 @@ export const isGemBookmark = (item) => {
 export const findGemRecord = (item) => {
   if (!item || typeof item !== "object") return null;
 
+  const gemsData = getGemsData();
   const parsed = parseGemContentKey(item.contentKey);
   if (parsed) {
     const section = gemsData.find((entry) => entry.id === parsed.sectionId);

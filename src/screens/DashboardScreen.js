@@ -22,7 +22,6 @@ import { AppContext } from "../context/AppContext";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import DrawerMenu from "../components/DrawerMenu";
 import UpdateDetailDialog from "../components/UpdateDetailDialog";
-import { scheduleAllNotifications } from "../services/notificationService";
 import { auth } from "../config/firebase";
 import useUpdatesFeed from "../hooks/useUpdatesFeed";
 import { pickDashboardUpdates } from "../services/updatesService";

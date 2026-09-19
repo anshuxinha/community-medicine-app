@@ -18,6 +18,13 @@ describe("silent library content updates (progress preservation)", () => {
     hydrateContentRegistry([]);
   });
 
+  it("does not rebuild the base tree on a second zero-override hydrate", () => {
+    hydrateContentRegistry([]);
+    const leaf = LEAF_CONTENT_ENTRIES[0];
+    hydrateContentRegistry([]);
+    expect(LEAF_CONTENT_ENTRIES[0]).toBe(leaf);
+  });
+
   it("keeps read progress when signature changes without recentlyUpdated", () => {
     const entry = LEAF_CONTENT_ENTRIES.find((e) => e.section === "theory");
     expect(entry).toBeTruthy();

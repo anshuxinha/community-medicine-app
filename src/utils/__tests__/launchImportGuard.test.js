@@ -7,6 +7,11 @@ function read(rel) {
   return fs.readFileSync(path.join(ROOT, rel), "utf8");
 }
 
+function hasStaticFromImport(src, moduleId) {
+  const escaped = moduleId.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`from ["']${escaped}["']`).test(src);
+}
+
 describe("first-open OTA launch graph", () => {
   const launchFiles = [
     "App.js",
@@ -17,14 +22,43 @@ describe("first-open OTA launch graph", () => {
     "src/screens/PaywallScreen.js",
     "src/services/restoreCredentials.js",
     "src/navigation/AppNavigator.js",
+    "src/screens/DashboardScreen.js",
+    "src/screens/LibraryScreen.js",
   ];
 
   it("does not statically import expo-constants or expo-notifications on the first AppRoot path", () => {
     launchFiles.forEach((rel) => {
       const src = read(rel);
-      expect(src).not.toMatch(/from ["']expo-constants["']/);
-      expect(src).not.toMatch(/from ["']expo-notifications["']/);
-      expect(src).not.toMatch(/from ["']expo["']/);
+      expect(hasStaticFromImport(src, "expo-constants")).toBe(false);
+      expect(hasStaticFromImport(src, "expo-notifications")).toBe(false);
+      expect(hasStaticFromImport(src, "expo")).toBe(false);
+    });
+  });
+
+  it("does not statically import notificationService on eager surfaces", () => {
+    [
+      "src/navigation/AppNavigator.js",
+      "src/screens/DashboardScreen.js",
+      "src/screens/LibraryScreen.js",
+      "src/AppRoot.js",
+    ].forEach((rel) => {
+      const src = read(rel);
+      expect(hasStaticFromImport(src, "../services/notificationService")).toBe(
+        false,
+      );
+      expect(hasStaticFromImport(src, "./services/notificationService")).toBe(
+        false,
+      );
+    });
+  });
+
+  it("does not statically import expo-constants from drawer or feedback helpers", () => {
+    [
+      "src/components/DrawerMenu.js",
+      "src/services/feedbackService.js",
+    ].forEach((rel) => {
+      const src = read(rel);
+      expect(hasStaticFromImport(src, "expo-constants")).toBe(false);
     });
   });
 
