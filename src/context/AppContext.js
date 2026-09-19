@@ -1311,28 +1311,35 @@ export const AppProvider = ({ children }) => {
     const uid = user?.uid;
     if (!uid) return;
 
-    registerForPushNotificationsAsync().then((token) => {
-      if (!token) return;
+    const timer = setTimeout(() => {
+      registerForPushNotificationsAsync()
+        .then((token) => {
+          if (!token) return;
 
-      setUser((currentUser) => {
-        if (!currentUser || currentUser.uid !== uid) return currentUser;
-        if (currentUser.pushToken === token) return currentUser;
-        return { ...currentUser, pushToken: token };
-      });
+          setUser((currentUser) => {
+            if (!currentUser || currentUser.uid !== uid) return currentUser;
+            if (currentUser.pushToken === token) return currentUser;
+            return { ...currentUser, pushToken: token };
+          });
 
-      // Always keep video notifications on; store platform for debugging.
-      setDoc(
-        doc(db, "users", uid),
-        {
-          pushToken: token,
-          pushTokenUpdatedAt: serverTimestamp(),
-          pushTokenPlatform: Platform.OS,
-          videoNotificationsEnabled: true,
-          videoNotificationsUpdatedAt: serverTimestamp(),
-        },
-        { merge: true },
-      ).catch((err) => console.log("Error saving push token", err));
-    });
+          setDoc(
+            doc(db, "users", uid),
+            {
+              pushToken: token,
+              pushTokenUpdatedAt: serverTimestamp(),
+              pushTokenPlatform: Platform.OS,
+              videoNotificationsEnabled: true,
+              videoNotificationsUpdatedAt: serverTimestamp(),
+            },
+            { merge: true },
+          ).catch((err) => console.log("Error saving push token", err));
+        })
+        .catch((err) =>
+          console.warn("Push registration failed:", err?.message),
+        );
+    }, 12000);
+
+    return () => clearTimeout(timer);
   }, [user?.uid]);
 
   async function registerForPushNotificationsAsync() {
@@ -1675,7 +1682,12 @@ export const AppProvider = ({ children }) => {
       return;
     }
 
-    Purchases.configure({ apiKey: rcApiKey });
+    try {
+      Purchases.configure({ apiKey: rcApiKey });
+    } catch (err) {
+      console.warn("RevenueCat configure failed:", err?.message);
+      return;
+    }
 
     Purchases.addCustomerInfoUpdateListener((info) => {
       const { hasPremium, premiumType: pType, expiresDate } =

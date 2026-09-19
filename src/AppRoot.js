@@ -60,17 +60,24 @@ function setupNotificationsAfterPaint() {
   }
 }
 
+const EXPO_MODULE_DELAY_MS = 12000;
+
 export default function AppRoot() {
   useEffect(() => {
     ScreenOrientation.unlockAsync().catch((err) =>
       console.warn("Failed to unlock screen orientation:", err?.message),
     );
 
-    setupNotificationsAfterPaint();
+    const notifyTimer = setTimeout(() => {
+      setupNotificationsAfterPaint();
+    }, EXPO_MODULE_DELAY_MS);
 
     prefetchUpdatesMonths();
     const stopSilentOta = startSilentOtaDownloads();
-    return () => stopSilentOta();
+    return () => {
+      clearTimeout(notifyTimer);
+      stopSilentOta();
+    };
   }, []);
 
   return (

@@ -30,18 +30,14 @@ function getExpoUpdates() {
 function runningUpdateId(native) {
   const module = native || getExpoUpdates();
   if (!module) return null;
-  if (module.updateId && typeof module.updateId === "string") {
-    return module.updateId.toLowerCase();
-  }
   try {
-    const manifest = module.manifestString
-      ? JSON.parse(module.manifestString)
-      : module.manifest;
-    const id = manifest?.id;
-    return typeof id === "string" && id ? id.toLowerCase() : null;
+    if (module.updateId && typeof module.updateId === "string") {
+      return module.updateId.toLowerCase();
+    }
   } catch (_) {
     return null;
   }
+  return null;
 }
 
 /**

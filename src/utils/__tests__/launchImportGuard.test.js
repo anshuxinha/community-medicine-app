@@ -62,6 +62,19 @@ describe("first-open OTA launch graph", () => {
     });
   });
 
+  it("does not statically import expo-store-review on the AppRoot path", () => {
+    [
+      "src/AppRoot.js",
+      "src/components/ReviewRequestModal.js",
+      "src/components/ReviewFeedbackModal.js",
+      "src/utils/reviewPrompt.js",
+    ].forEach((rel) => {
+      const src = read(rel);
+      expect(hasStaticFromImport(src, "expo-store-review")).toBe(false);
+      expect(hasStaticFromImport(src, "expo-constants")).toBe(false);
+    });
+  });
+
   it("keeps production index.js off registerRootComponent", () => {
     const src = read("index.js");
     expect(src).toMatch(/AppRegistry\.registerComponent/);

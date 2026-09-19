@@ -3,8 +3,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { onSplashHidden } from "./appSplash";
 
 function getExpoConstants() {
-  const mod = require("expo-constants");
-  return mod?.default ?? mod;
+  try {
+    const mod = require("expo-constants");
+    return mod?.default ?? mod;
+  } catch (error) {
+    console.warn("expo-constants failed to load:", error?.message);
+    return null;
+  }
 }
 
 export const STORE_PROMPT_DISMISS_KEY = "stromaStoreUpdateDismissVersion";
@@ -262,16 +267,20 @@ export function startStoreUpdateChecks() {
   let cancelled = false;
   let interactionHandle = null;
 
+  let delayTimer = null;
   const unsubscribe = onSplashHidden(() => {
-    interactionHandle = InteractionManager.runAfterInteractions(() => {
-      if (cancelled) return;
-      void promptIfStoreUpdateAvailable();
-    });
+    delayTimer = setTimeout(() => {
+      interactionHandle = InteractionManager.runAfterInteractions(() => {
+        if (cancelled) return;
+        void promptIfStoreUpdateAvailable();
+      });
+    }, 12000);
   });
 
   return () => {
     cancelled = true;
     unsubscribe();
+    if (delayTimer) clearTimeout(delayTimer);
     interactionHandle?.cancel?.();
   };
 }

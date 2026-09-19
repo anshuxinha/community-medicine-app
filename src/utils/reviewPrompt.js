@@ -1,6 +1,15 @@
 import { Alert, InteractionManager, Linking, Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as StoreReview from "expo-store-review";
+
+function getStoreReview() {
+  try {
+    const mod = require("expo-store-review");
+    return mod?.default ?? mod;
+  } catch (err) {
+    console.warn("reviewPrompt: expo-store-review failed to load", err?.message);
+    return null;
+  }
+}
 
 const STORAGE_KEY_HAS_SHOWN = "reviewPrompt_hasShown";
 const STORAGE_KEY_HAS_RATED = "reviewPrompt_hasRated";
@@ -429,9 +438,10 @@ export async function requestNativeStoreReview(options = {}) {
   try {
     // 1) Prefer native in-app review when the module reports support.
     //    Do not use hasAction() alone: it is true merely if playStoreUrl is set.
+    const StoreReview = getStoreReview();
     let nativeAvailable = false;
     try {
-      if (typeof StoreReview.isAvailableAsync === "function") {
+      if (typeof StoreReview?.isAvailableAsync === "function") {
         nativeAvailable = await StoreReview.isAvailableAsync();
       }
     } catch (err) {
@@ -486,7 +496,7 @@ async function openStoreReviewPage() {
   }
 
   try {
-    const fromExpo = StoreReview.storeUrl?.();
+    const fromExpo = getStoreReview()?.storeUrl?.();
     if (fromExpo) {
       candidates.push(fromExpo);
     }

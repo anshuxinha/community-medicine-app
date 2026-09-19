@@ -75,8 +75,12 @@ const TabNavigator = () => {
 
   useEffect(() => {
     const handle = InteractionManager.runAfterInteractions(() => {
-      getReadingScreen();
-      getSubTopicsScreen();
+      try {
+        getReadingScreen();
+        getSubTopicsScreen();
+      } catch (error) {
+        console.warn("Deferred screen preload failed:", error?.message);
+      }
     });
     return () => handle.cancel();
   }, []);
@@ -163,12 +167,15 @@ const AppNavigator = () => {
   useSessionEnforcer();
 
   useEffect(() => {
-    try {
-      const { setupNotificationTapHandler } = require("../services/notificationService");
-      setupNotificationTapHandler(navigationRef);
-    } catch (error) {
-      console.warn("Notification tap handler failed to load:", error?.message);
-    }
+    const timer = setTimeout(() => {
+      try {
+        const { setupNotificationTapHandler } = require("../services/notificationService");
+        setupNotificationTapHandler(navigationRef);
+      } catch (error) {
+        console.warn("Notification tap handler failed to load:", error?.message);
+      }
+    }, 12000);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {

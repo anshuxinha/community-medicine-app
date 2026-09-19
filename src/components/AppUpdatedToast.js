@@ -9,7 +9,7 @@ import {
   peekAppliedOtaToast,
 } from "../utils/otaUpdates";
 
-const AFTER_SPLASH_MS = 800;
+const AFTER_SPLASH_MS = 12000;
 const VISIBLE_MS = 4200;
 
 class ToastGuard extends Component {
