@@ -3,6 +3,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { requireOptionalNativeModule } from "expo-modules-core";
 
 export const LAST_SEEN_OTA_ID_KEY = "stromaLastSeenOtaUpdateId";
+export const EXPO_HOST_MODULES_OK_KEY = "stromaExpoHostModulesOk";
+export const EXPO_HOST_MODULES_SURVIVE_MS = 15 * 1000;
 
 /**
  * True when this launch should announce an applied OTA.
@@ -76,6 +78,71 @@ export async function markAppUpdatedToastShown() {
   } catch (error) {
     console.warn("OTA toast mark failed:", error?.message);
   }
+}
+
+/**
+ * expo-notifications imports `expo` (Expo.fx → expo-constants), which
+ * JSON.parse(ExpoUpdates.manifestString) with no try/catch. On the first
+ * process of a new OTA that throw kills the host. Skip those modules until
+ * this updateId has already survived one launch.
+ */
+export function shouldAllowExpoHostModules({
+  updateId,
+  isEmbeddedLaunch,
+  lastOkId,
+}) {
+  if (isEmbeddedLaunch) return true;
+  if (!updateId) return true;
+  return lastOkId === updateId;
+}
+
+export async function canLoadExpoHostModules() {
+  try {
+    const native = getExpoUpdates();
+    const updateId = runningUpdateId(native);
+    const lastOkId = await AsyncStorage.getItem(EXPO_HOST_MODULES_OK_KEY);
+    return shouldAllowExpoHostModules({
+      updateId,
+      isEmbeddedLaunch: native?.isEmbeddedLaunch === true,
+      lastOkId,
+    });
+  } catch (_) {
+    return false;
+  }
+}
+
+export async function markExpoHostModulesSafe() {
+  try {
+    const currentId = runningUpdateId();
+    if (!currentId) return;
+    await AsyncStorage.setItem(EXPO_HOST_MODULES_OK_KEY, currentId);
+  } catch (error) {
+    console.warn("Expo host-module gate mark failed:", error?.message);
+  }
+}
+
+export function runWhenExpoHostModulesAllowed(fn) {
+  let cancelled = false;
+  (async () => {
+    const allowed = await canLoadExpoHostModules();
+    if (cancelled || !allowed) return;
+    try {
+      fn();
+    } catch (error) {
+      console.warn("Deferred Expo host module failed:", error?.message);
+    }
+  })();
+  return () => {
+    cancelled = true;
+  };
+}
+
+export function startExpoHostModulesSurvivalMark() {
+  if (__DEV__) return () => {};
+  const timer = setTimeout(() => {
+    void markExpoHostModulesSafe();
+  }, EXPO_HOST_MODULES_SURVIVE_MS);
+  return () => clearTimeout(timer);
 }
 
 async function downloadPendingUpdate() {

@@ -6,6 +6,7 @@ import {
   canRunSilentOtaCheck,
   markAppUpdatedToastShown,
   peekAppliedOtaToast,
+  shouldAllowExpoHostModules,
   shouldShowAppUpdatedToast,
 } from "../otaUpdates";
 
@@ -84,6 +85,55 @@ describe("peekAppliedOtaToast / markAppUpdatedToastShown", () => {
 
     expect(await peekAppliedOtaToast()).toBe(false);
     expect(await AsyncStorage.getItem(LAST_SEEN_OTA_ID_KEY)).toBeNull();
+  });
+});
+
+describe("shouldAllowExpoHostModules", () => {
+  it("allows the embedded store binary", () => {
+    expect(
+      shouldAllowExpoHostModules({
+        updateId: "update-a",
+        isEmbeddedLaunch: true,
+        lastOkId: null,
+      }),
+    ).toBe(true);
+  });
+
+  it("allows when there is no running update id", () => {
+    expect(
+      shouldAllowExpoHostModules({
+        updateId: null,
+        isEmbeddedLaunch: false,
+        lastOkId: null,
+      }),
+    ).toBe(true);
+  });
+
+  it("blocks the first process of a new OTA", () => {
+    expect(
+      shouldAllowExpoHostModules({
+        updateId: "update-b",
+        isEmbeddedLaunch: false,
+        lastOkId: null,
+      }),
+    ).toBe(false);
+    expect(
+      shouldAllowExpoHostModules({
+        updateId: "update-b",
+        isEmbeddedLaunch: false,
+        lastOkId: "update-a",
+      }),
+    ).toBe(false);
+  });
+
+  it("allows a later launch after the updateId survived", () => {
+    expect(
+      shouldAllowExpoHostModules({
+        updateId: "update-b",
+        isEmbeddedLaunch: false,
+        lastOkId: "update-b",
+      }),
+    ).toBe(true);
   });
 });
 

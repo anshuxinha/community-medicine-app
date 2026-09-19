@@ -86,6 +86,7 @@ import {
   resolveLearningProfile,
   learningProfileNeedsCloudBackfill,
 } from "../utils/learningProfileStorage";
+import { canLoadExpoHostModules } from "../utils/otaUpdates";
 import {
   CLOUD_LEARNING_SAVE_DEBOUNCE_MS,
   createDebouncedTask,
@@ -1311,35 +1312,40 @@ export const AppProvider = ({ children }) => {
     const uid = user?.uid;
     if (!uid) return;
 
-    const timer = setTimeout(() => {
-      registerForPushNotificationsAsync()
-        .then((token) => {
-          if (!token) return;
+    let cancelled = false;
+    canLoadExpoHostModules()
+      .then((allowed) => {
+        if (cancelled || !allowed) return;
+        return registerForPushNotificationsAsync();
+      })
+      .then((token) => {
+        if (cancelled || !token) return;
 
-          setUser((currentUser) => {
-            if (!currentUser || currentUser.uid !== uid) return currentUser;
-            if (currentUser.pushToken === token) return currentUser;
-            return { ...currentUser, pushToken: token };
-          });
+        setUser((currentUser) => {
+          if (!currentUser || currentUser.uid !== uid) return currentUser;
+          if (currentUser.pushToken === token) return currentUser;
+          return { ...currentUser, pushToken: token };
+        });
 
-          setDoc(
-            doc(db, "users", uid),
-            {
-              pushToken: token,
-              pushTokenUpdatedAt: serverTimestamp(),
-              pushTokenPlatform: Platform.OS,
-              videoNotificationsEnabled: true,
-              videoNotificationsUpdatedAt: serverTimestamp(),
-            },
-            { merge: true },
-          ).catch((err) => console.log("Error saving push token", err));
-        })
-        .catch((err) =>
-          console.warn("Push registration failed:", err?.message),
-        );
-    }, 12000);
+        setDoc(
+          doc(db, "users", uid),
+          {
+            pushToken: token,
+            pushTokenUpdatedAt: serverTimestamp(),
+            pushTokenPlatform: Platform.OS,
+            videoNotificationsEnabled: true,
+            videoNotificationsUpdatedAt: serverTimestamp(),
+          },
+          { merge: true },
+        ).catch((err) => console.log("Error saving push token", err));
+      })
+      .catch((err) =>
+        console.warn("Push registration failed:", err?.message),
+      );
 
-    return () => clearTimeout(timer);
+    return () => {
+      cancelled = true;
+    };
   }, [user?.uid]);
 
   async function registerForPushNotificationsAsync() {

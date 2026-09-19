@@ -18,6 +18,7 @@ import { useSession } from "../context/AppContext";
 import { useSessionEnforcer } from "../hooks/useSessionEnforcer";
 import { useAppTheme } from "../styles/ThemeContext";
 import { hideSplash } from "../utils/appSplash";
+import { runWhenExpoHostModulesAllowed } from "../utils/otaUpdates";
 
 // Eager: first-paint surfaces only (logged-in home)
 import DashboardScreen from "../screens/DashboardScreen";
@@ -167,15 +168,10 @@ const AppNavigator = () => {
   useSessionEnforcer();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      try {
-        const { setupNotificationTapHandler } = require("../services/notificationService");
-        setupNotificationTapHandler(navigationRef);
-      } catch (error) {
-        console.warn("Notification tap handler failed to load:", error?.message);
-      }
-    }, 12000);
-    return () => clearTimeout(timer);
+    return runWhenExpoHostModulesAllowed(() => {
+      const { setupNotificationTapHandler } = require("../services/notificationService");
+      setupNotificationTapHandler(navigationRef);
+    });
   }, []);
 
   useEffect(() => {

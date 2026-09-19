@@ -1,6 +1,7 @@
 import { Alert, InteractionManager, Linking, NativeModules, Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { onSplashHidden } from "./appSplash";
+import { canLoadExpoHostModules } from "./otaUpdates";
 
 function getExpoConstants() {
   try {
@@ -267,20 +268,19 @@ export function startStoreUpdateChecks() {
   let cancelled = false;
   let interactionHandle = null;
 
-  let delayTimer = null;
   const unsubscribe = onSplashHidden(() => {
-    delayTimer = setTimeout(() => {
-      interactionHandle = InteractionManager.runAfterInteractions(() => {
-        if (cancelled) return;
-        void promptIfStoreUpdateAvailable();
+    interactionHandle = InteractionManager.runAfterInteractions(() => {
+      if (cancelled) return;
+      void canLoadExpoHostModules().then((allowed) => {
+        if (cancelled || !allowed) return;
+        return promptIfStoreUpdateAvailable();
       });
-    }, 12000);
+    });
   });
 
   return () => {
     cancelled = true;
     unsubscribe();
-    if (delayTimer) clearTimeout(delayTimer);
     interactionHandle?.cancel?.();
   };
 }

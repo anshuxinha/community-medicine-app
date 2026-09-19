@@ -13,7 +13,11 @@ import ReviewRequestModal from "./components/ReviewRequestModal";
 import AppUpdatedToast from "./components/AppUpdatedToast";
 import { paperTheme as fallbackPaperTheme } from "./styles/theme";
 import { prefetchUpdatesMonths } from "./services/updatesService";
-import { startSilentOtaDownloads } from "./utils/otaUpdates";
+import {
+  runWhenExpoHostModulesAllowed,
+  startExpoHostModulesSurvivalMark,
+  startSilentOtaDownloads,
+} from "./utils/otaUpdates";
 
 function ThemedApp() {
   const { paperTheme, isDark } = useAppTheme();
@@ -60,22 +64,22 @@ function setupNotificationsAfterPaint() {
   }
 }
 
-const EXPO_MODULE_DELAY_MS = 12000;
-
 export default function AppRoot() {
   useEffect(() => {
     ScreenOrientation.unlockAsync().catch((err) =>
       console.warn("Failed to unlock screen orientation:", err?.message),
     );
 
-    const notifyTimer = setTimeout(() => {
+    const stopSurvivalMark = startExpoHostModulesSurvivalMark();
+    const stopNotify = runWhenExpoHostModulesAllowed(() => {
       setupNotificationsAfterPaint();
-    }, EXPO_MODULE_DELAY_MS);
+    });
 
     prefetchUpdatesMonths();
     const stopSilentOta = startSilentOtaDownloads();
     return () => {
-      clearTimeout(notifyTimer);
+      stopSurvivalMark();
+      stopNotify();
       stopSilentOta();
     };
   }, []);
