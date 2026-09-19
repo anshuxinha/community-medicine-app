@@ -310,7 +310,7 @@ const ProfileScreen = () => {
   const handleResetReviewCta = () => {
     Alert.alert(
       "Reset review CTA?",
-      "Clears the local 5-star review flags on this device so the Review Request can show again. Does not remove Play Store reviews.",
+      "Clears the local review flags on this device so the 5-day clock starts over. Does not remove Play Store reviews.",
       [
         { text: "Cancel", style: "cancel" },
         {
@@ -320,7 +320,7 @@ const ProfileScreen = () => {
               await resetReviewPromptState(user?.uid);
               Alert.alert(
                 "Reset done",
-                "Force-close and reopen the app to see the Review Request again on this device.",
+                "Force-close and reopen the app. That open starts the 5-day clock and does not show the Review Request. It can appear again after 5 days.",
               );
             } catch (err) {
               Alert.alert(
