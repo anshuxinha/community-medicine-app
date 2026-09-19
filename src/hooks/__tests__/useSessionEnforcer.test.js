@@ -25,8 +25,14 @@ jest.mock("../../utils/deviceUtils", () => ({
 
 jest.mock("../../context/AppContext", () => {
   const ReactActual = require("react");
+  const SessionContext = ReactActual.createContext({
+    user: null,
+    logout: jest.fn(),
+  });
   return {
-    AppContext: ReactActual.createContext({ user: null, logout: jest.fn() }),
+    AppContext: SessionContext,
+    SessionContext,
+    useSession: () => ReactActual.useContext(SessionContext),
   };
 });
 

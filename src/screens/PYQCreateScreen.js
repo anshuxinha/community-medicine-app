@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   View,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
   Alert,
+  InteractionManager,
 } from "react-native";
 import {
   Text,
@@ -22,8 +23,7 @@ import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { theme, useResponsive } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
-import { AppContext } from "../context/AppContext";
-import pyqData from "../data/pyq_data.json";
+import { useSession } from "../context/AppContext";
 
 const STORAGE_ATTEMPTS_KEY = "pyq_attempts_v1";
 const STORAGE_BOOKMARKS_KEY = "pyq_bookmarks_v1";
@@ -31,12 +31,13 @@ const STORAGE_BOOKMARKS_KEY = "pyq_bookmarks_v1";
 const PYQCreateScreen = ({ navigation }) => {
   const { styles, colors } = useThemedStyles(createStyles);
 
-  const { isPremium } = useContext(AppContext);
+  const { isPremium } = useSession();
   const { isTablet, horizontalPadding, contentMaxWidth } = useResponsive();
 
   const [loading, setLoading] = useState(true);
   const [attempts, setAttempts] = useState({});
   const [bookmarks, setBookmarks] = useState([]);
+  const [pyqData, setPyqData] = useState(null);
 
   // Selections
   const [selectedExams, setSelectedExams] = useState(isPremium ? ["AIIMS", "NEET", "INI-CET"] : ["AIIMS"]);
@@ -46,6 +47,13 @@ const PYQCreateScreen = ({ navigation }) => {
 
   useEffect(() => {
     loadUserHistory();
+  }, []);
+
+  useEffect(() => {
+    const handle = InteractionManager.runAfterInteractions(() => {
+      setPyqData(require("../data/pyq_data.json"));
+    });
+    return () => handle.cancel();
   }, []);
 
   const loadUserHistory = async () => {
@@ -94,22 +102,18 @@ const PYQCreateScreen = ({ navigation }) => {
     setQuestionCount(count);
   };
 
-  // Helper to filter and build the question list
-  const getFilteredQuestions = () => {
+  const filteredQuestions = useMemo(() => {
+    if (!Array.isArray(pyqData)) return [];
     return pyqData.filter((q) => {
-      // 1. Exam group filter
-      // Exam names are e.g. "AIIMS 2017", "NEET 2018", "INI-CET 2021"
       const isMatchGroup = selectedExams.some((group) =>
         q.exam.toUpperCase().includes(group.toUpperCase())
       );
       if (!isMatchGroup) return false;
 
-      // 1b. Premium check: non-premium can only practice AIIMS 2017
       if (!isPremium) {
         if (q.exam !== "AIIMS 2017") return false;
       }
 
-      // 2. Status filter
       const attempt = attempts[q.id];
       const isBmk = bookmarks.includes(q.id);
 
@@ -125,10 +129,17 @@ const PYQCreateScreen = ({ navigation }) => {
 
       return true;
     });
-  };
+  }, [pyqData, selectedExams, isPremium, attempts, bookmarks, selectedStatus]);
 
   const handleCreateModule = () => {
-    const filtered = getFilteredQuestions();
+    if (!pyqData) {
+      Alert.alert(
+        "Loading questions",
+        "The question bank is still loading. Try again in a moment.",
+      );
+      return;
+    }
+    const filtered = filteredQuestions;
 
     if (filtered.length === 0) {
       Alert.alert(
@@ -158,7 +169,7 @@ const PYQCreateScreen = ({ navigation }) => {
   }
 
   // Count matches
-  const totalMatches = getFilteredQuestions().length;
+  const totalMatches = filteredQuestions.length;
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -446,10 +457,10 @@ const PYQCreateScreen = ({ navigation }) => {
         <View style={styles.summaryContainer}>
           <View style={styles.matchingStats}>
             <Text style={styles.matchingText}>
-              Matching Questions: <Text style={styles.matchingBold}>{totalMatches}</Text>
+              Matching Questions: <Text style={styles.matchingBold}>{pyqData ? totalMatches : "…"}</Text>
             </Text>
             <Text style={styles.matchingText}>
-              Selected for practice: <Text style={styles.matchingBold}>{Math.min(totalMatches, questionCount)}</Text>
+              Selected for practice: <Text style={styles.matchingBold}>{pyqData ? Math.min(totalMatches, questionCount) : "…"}</Text>
             </Text>
           </View>
 
@@ -459,7 +470,7 @@ const PYQCreateScreen = ({ navigation }) => {
             style={styles.createButton}
             contentStyle={{ paddingVertical: 8 }}
             icon="play"
-            disabled={totalMatches === 0}
+            disabled={!pyqData || totalMatches === 0}
           >
             Start Module
           </Button>

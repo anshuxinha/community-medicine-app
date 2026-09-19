@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useContext, useCallback, memo } from "react";
+import React, { useState, useMemo, useCallback, memo, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -16,7 +16,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { theme, useResponsive } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
-import { AppContext } from "../context/AppContext";
+import { useSession, useLearning } from "../context/AppContext";
 import gemsData from "../data/gemsData.json";
 import { buildGemContentKey } from "../utils/bookmarkIdentity";
 
@@ -91,7 +91,14 @@ const GemsScreen = ({ navigation }) => {
   const { styles } = useThemedStyles(createStyles);
 
   const [searchQuery, setSearchbarQuery] = useState("");
-  const { isBookmarked, toggleBookmark, isPremium } = useContext(AppContext);
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const { isPremium } = useSession();
+  const { isBookmarked, toggleBookmark } = useLearning();
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedQuery(searchQuery), 280);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
   
     // Reorder data: Vital Indicators & Surveys first
     const sortedGemsData = useMemo(() => {
@@ -114,16 +121,16 @@ const GemsScreen = ({ navigation }) => {
   const { isTablet, contentMaxWidth } = useResponsive();
 
   const filteredSections = useMemo(() => {
-    if (!searchQuery) return sortedGemsData;
-    
+    if (!debouncedQuery) return sortedGemsData;
+    const q = debouncedQuery.toLowerCase();
     return sortedGemsData.map(section => ({
       ...section,
       gems: section.gems.filter(gem => 
-        gem.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        gem.content.toLowerCase().includes(searchQuery.toLowerCase())
+        gem.title.toLowerCase().includes(q) ||
+        gem.content.toLowerCase().includes(q)
       )
     })).filter(section => section.gems.length > 0);
-  }, [searchQuery, sortedGemsData]);
+  }, [debouncedQuery, sortedGemsData]);
 
   const visibleGemItems = useMemo(() => {
     const sections =

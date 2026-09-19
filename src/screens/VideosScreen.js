@@ -1,7 +1,6 @@
 import React, {
   memo,
   useCallback,
-  useContext,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -52,7 +51,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../config/firebase";
 import * as ScreenOrientation from "expo-screen-orientation";
-import { AppContext } from "../context/AppContext";
+import { useSession, useLearning } from "../context/AppContext";
 import { theme } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
 import {
@@ -200,34 +199,47 @@ const pdfViewerHtml = (pdfUrl, colors = {}) => {
 
     pdfjsLib.getDocument(url).promise.then(pdf => {
       loading.style.display = 'none';
-      
-      let renderPage = (pageNum) => {
-        if (pageNum > pdf.numPages) return;
+      const scale = Math.min(2, window.devicePixelRatio || 1.5);
+      let nextPage = 1;
+      let rendering = false;
 
+      function pageNearViewport(el) {
+        if (!el) return true;
+        const rect = el.getBoundingClientRect();
+        return rect.top < (window.innerHeight || 800) + 900;
+      }
+
+      function maybeRenderMore() {
+        if (rendering || nextPage > pdf.numPages) return;
+        const last = container.lastElementChild;
+        if (nextPage > 1 && last && !pageNearViewport(last)) return;
+        rendering = true;
+        const pageNum = nextPage;
         const pageContainer = document.createElement('div');
         pageContainer.className = 'page-container';
         container.appendChild(pageContainer);
-
         const canvas = document.createElement('canvas');
         pageContainer.appendChild(canvas);
-        const ctx = canvas.getContext('2d');
-
         pdf.getPage(pageNum).then(page => {
-          const viewport = page.getViewport({ scale: 2.0 });
+          const viewport = page.getViewport({ scale: scale });
           canvas.height = viewport.height;
           canvas.width = viewport.width;
-
-          const renderContext = {
-            canvasContext: ctx,
+          return page.render({
+            canvasContext: canvas.getContext('2d'),
             viewport: viewport
-          };
-          page.render(renderContext).promise.then(() => {
-            renderPage(pageNum + 1);
-          });
+          }).promise;
+        }).then(() => {
+          rendering = false;
+          nextPage = pageNum + 1;
+          maybeRenderMore();
+        }).catch(() => {
+          rendering = false;
         });
-      };
+      }
 
-      renderPage(1);
+      window.addEventListener('scroll', maybeRenderMore, { passive: true });
+      document.addEventListener('scroll', maybeRenderMore, { passive: true });
+      maybeRenderMore();
 
     }).catch(err => {
       loading.innerText = 'Failed to load notes. Please try again.';
@@ -345,7 +357,7 @@ const EmptyState = ({ isFiltered }) => {
 
 const VideosLoadErrorState = ({ errorInfo, onRetry }) => {
   const { styles, colors } = useThemedStyles(createStyles);
-  const { user } = useContext(AppContext);
+  const { user } = useSession();
   const device = getSupportDeviceSnapshot();
 
   const openSupport = () => {
@@ -422,7 +434,8 @@ const getDoubtTime = (createdAt) => {
 const VideosScreen = ({ navigation, route }) => {
   const { styles, colors, isDark } = useThemedStyles(createStyles);
 
-  const { isPremium, user, studyScore, setStudyScore } = useContext(AppContext);
+  const { isPremium, user } = useSession();
+  const { studyScore, setStudyScore } = useLearning();
   const [videos, setVideos] = useState([]);
   
   const [doubts, setDoubts] = useState([]);

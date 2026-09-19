@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   View,
   StyleSheet,
@@ -25,7 +25,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { theme, useResponsive } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
-import { AppContext } from "../context/AppContext";
+import { useSession, useLearning } from "../context/AppContext";
 import { pyqImageSource, pyqImageUrl } from "../data/pyqImages";
 import {
   getRelatedGemsForQuestion,
@@ -117,7 +117,8 @@ const PYQPracticeScreen = ({ route, navigation }) => {
   const { styles, colors } = useThemedStyles(createStyles);
 
   const { questions, mode, title } = route.params;
-  const { completeDailyGoal, isPremium } = useContext(AppContext);
+  const { isPremium } = useSession();
+  const { completeDailyGoal } = useLearning();
   const { isTablet, horizontalPadding, contentMaxWidth } = useResponsive();
 
   const [currentIdx, setCurrentIdx] = useState(0);

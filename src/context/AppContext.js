@@ -1,11 +1,15 @@
 import React, {
-  createContext,
   useState,
   useEffect,
   useRef,
   useCallback,
   useMemo,
 } from "react";
+import {
+  AppContext,
+  LearningContext,
+  SessionContext,
+} from "./appContexts";
 import { AppState, Platform } from "react-native";
 import {
   enableScreenCaptureProtection,
@@ -379,7 +383,13 @@ const resolveDisplayUsername = (firestoreUsername, authDisplayName, fallback) =>
   return "User";
 };
 
-export const AppContext = createContext();
+export {
+  AppContext,
+  LearningContext,
+  SessionContext,
+  useLearning,
+  useSession,
+} from "./appContexts";
 
 export const AppProvider = ({ children }) => {
   const [readItems, setReadItems] = useState([]);
@@ -2136,7 +2146,36 @@ export const AppProvider = ({ children }) => {
     }
   }, [user]);
 
-  const contextValue = useMemo(
+  const sessionValue = useMemo(
+    () => ({
+      user,
+      isPremium,
+      premiumType,
+      subscriptionExpiry,
+      login,
+      logout,
+      upgradeToPremium,
+      updateUsername,
+      updateLearningProfile,
+      setResidentMode,
+      isScreenCapturePrevented,
+    }),
+    [
+      user,
+      isPremium,
+      premiumType,
+      subscriptionExpiry,
+      login,
+      logout,
+      upgradeToPremium,
+      updateUsername,
+      updateLearningProfile,
+      setResidentMode,
+      isScreenCapturePrevented,
+    ],
+  );
+
+  const learningValue = useMemo(
     () => ({
       readItems,
       readItemVersions,
@@ -2160,17 +2199,6 @@ export const AppProvider = ({ children }) => {
       refreshFromCloud,
       refreshLibraryContent,
       contentRegistryVersion,
-      user,
-      isPremium,
-      premiumType,
-      subscriptionExpiry,
-      login,
-      logout,
-      upgradeToPremium,
-      updateUsername,
-      updateLearningProfile,
-      setResidentMode,
-      isScreenCapturePrevented,
     }),
     [
       readItems,
@@ -2194,23 +2222,24 @@ export const AppProvider = ({ children }) => {
       refreshFromCloud,
       refreshLibraryContent,
       contentRegistryVersion,
-      user,
-      isPremium,
-      premiumType,
-      subscriptionExpiry,
-      login,
-      logout,
-      upgradeToPremium,
-      updateUsername,
-      updateLearningProfile,
-      setResidentMode,
-      isScreenCapturePrevented,
     ],
   );
 
+  const contextValue = useMemo(
+    () => ({
+      ...learningValue,
+      ...sessionValue,
+    }),
+    [learningValue, sessionValue],
+  );
+
   return (
-    <AppContext.Provider value={contextValue}>
-      {children}
-    </AppContext.Provider>
+    <SessionContext.Provider value={sessionValue}>
+      <LearningContext.Provider value={learningValue}>
+        <AppContext.Provider value={contextValue}>
+          {children}
+        </AppContext.Provider>
+      </LearningContext.Provider>
+    </SessionContext.Provider>
   );
 };

@@ -1,5 +1,4 @@
 import React, {
-  useContext,
   useState,
   useEffect,
   useMemo,
@@ -28,7 +27,7 @@ import {
 } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
-import { AppContext } from "../context/AppContext";
+import { useSession, useLearning } from "../context/AppContext";
 import {
   CONTENT_SECTIONS,
   buildLibraryReadingParams,
@@ -204,15 +203,10 @@ const LibraryScreen = (props) => {
 
   const { navigation } = props;
   const route = useRoute();
-  const {
-    readItemVersions,
-    markAsUnread,
-    isPremium,
-    isScreenCapturePrevented,
-    contentRegistryVersion,
-    user,
-    setResidentMode,
-  } = useContext(AppContext);
+  const { isPremium, isScreenCapturePrevented, user, setResidentMode } =
+    useSession();
+  const { readItemVersions, markAsUnread, contentRegistryVersion } =
+    useLearning();
   const [activeSection, setActiveSection] = useState("theory");
   const residentMode = isResidentModeEnabled(user);
   const [residentModeSaving, setResidentModeSaving] = useState(false);

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -9,7 +9,7 @@ import {
 import { Text, Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
-import { AppContext } from "../context/AppContext";
+import { useSession } from "../context/AppContext";
 import { useThemedStyles } from "../styles/useThemedStyles";
 import { useResponsive } from "../styles/theme";
 import { LEARNER_ROLES, NMC_PAPERS } from "../data/nmcCurriculum";
@@ -17,7 +17,7 @@ import { LEARNER_ROLES, NMC_PAPERS } from "../data/nmcCurriculum";
 const OnboardingScreen = ({ navigation, route }) => {
   const { styles, colors } = useThemedStyles(createStyles);
   const { horizontalPadding, contentMaxWidth } = useResponsive();
-  const { user, updateLearningProfile } = useContext(AppContext);
+  const { user, updateLearningProfile } = useSession();
   const isEdit = route?.params?.edit === true;
 
   const [step, setStep] = useState(0);

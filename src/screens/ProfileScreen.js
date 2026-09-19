@@ -25,7 +25,7 @@ import { useNavigation } from "@react-navigation/native";
 import { signOut, deleteUser } from "firebase/auth";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
-import { AppContext } from "../context/AppContext";
+import { useSession, useLearning } from "../context/AppContext";
 import { useThemedStyles } from "../styles/useThemedStyles";
 import { ALL_ORIENTATIONS } from "../constants/orientations";
 import { useAppTheme } from "../styles/ThemeContext";
@@ -58,14 +58,11 @@ const ProfileScreen = () => {
     isPremium,
     premiumType,
     subscriptionExpiry,
-    currentStreak,
-    studyScore,
-    readingProgress,
-    bookmarks,
-    readItems,
     logout,
     updateUsername,
-  } = React.useContext(AppContext);
+  } = useSession();
+  const { currentStreak, studyScore, readingProgress, bookmarks, readItems } =
+    useLearning();
 
   const roleLabel = (() => {
     if (user?.learnerRole === "md_resident") return "MD resident";

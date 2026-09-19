@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
   Linking,
@@ -30,7 +30,7 @@ import {
 } from "firebase/firestore";
 import { MaterialIcons } from "@expo/vector-icons";
 import { db } from "../config/firebase";
-import { AppContext } from "../context/AppContext";
+import { useSession, useLearning } from "../context/AppContext";
 import { theme } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
 import { ALL_ORIENTATIONS } from "../constants/orientations";
@@ -142,7 +142,8 @@ const sendLibraryUpdateNotification = async (libraryTitle) => {
 const AdminLibraryReviewScreen = () => {
   const { styles, colors } = useThemedStyles(createStyles);
 
-  const { user, refreshLibraryContent } = useContext(AppContext);
+  const { user } = useSession();
+  const { refreshLibraryContent } = useLearning();
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);

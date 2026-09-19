@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   ScrollView,
   View,
@@ -18,7 +18,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import publicHealthDays from "../data/publicHealthDays.json";
-import { AppContext } from "../context/AppContext";
+import { useSession, useLearning } from "../context/AppContext";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import DrawerMenu from "../components/DrawerMenu";
 import UpdateDetailDialog from "../components/UpdateDetailDialog";
@@ -87,17 +87,16 @@ const GuidelinesFeedSkeleton = () => {
 const DashboardScreen = ({ navigation, route }) => {
   const { styles, colors } = useThemedStyles(createStyles);
 
+  const { user, isPremium } = useSession();
   const {
     readingProgress,
     currentStreak,
     studyScore,
-    user,
     refreshFromCloud,
-    isPremium,
     readItemVersions,
     lastOpenedContentKey,
     contentRegistryVersion,
-  } = useContext(AppContext);
+  } = useLearning();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [seenNewBadges, setSeenNewBadges] = useState({});
   const [searchTipEligible, setSearchTipEligible] = useState(false);

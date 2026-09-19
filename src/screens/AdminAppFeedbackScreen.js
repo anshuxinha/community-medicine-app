@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Alert,
   ScrollView,
@@ -23,7 +23,7 @@ import {
 } from "firebase/firestore";
 import { MaterialIcons } from "@expo/vector-icons";
 import { db } from "../config/firebase";
-import { AppContext } from "../context/AppContext";
+import { useSession } from "../context/AppContext";
 import {
   APP_FEEDBACK_COLLECTION,
   FEEDBACK_KIND_FEEDBACK,
@@ -72,7 +72,7 @@ const categoryLabelFor = (item) => {
 
 const AdminAppFeedbackScreen = ({ route }) => {
   const { styles, colors } = useThemedStyles(createStyles);
-  const { user } = useContext(AppContext);
+  const { user } = useSession();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("new");

@@ -59,7 +59,6 @@ export const buildLibraryIndex = () => {
         walk(item.subsections, section, item.title || parentTitle);
         return;
       }
-      const content = item.content || "";
       result.push({
         id: String(item.id),
         type: "library",
@@ -69,7 +68,6 @@ export const buildLibraryIndex = () => {
           : section === "practical"
             ? "Practical"
             : "Theory",
-        searchText: `${item.title || ""} ${content}`,
         isFree: isLibraryFree({
           id: item.id,
           title: item.title,
@@ -77,7 +75,6 @@ export const buildLibraryIndex = () => {
         }),
         section,
         parentTitle,
-        content,
         quizzes: item.quizzes,
         contentKey: getContentKey(section, item.id),
         rawItem: item,
@@ -95,17 +92,15 @@ export const buildGemsIndex = (gemsData = []) => {
   gemsData.forEach((section) => {
     const sectionTitle = section.title || "";
     (section.gems || []).forEach((gem) => {
-      const content = gem.content || "";
       result.push({
         id: String(gem.id),
         type: "gems",
         title: gem.title || "",
         subtitle: sectionTitle.replace(/SECTION \d+:\s*/i, ""),
-        searchText: `${gem.title || ""} ${content}`,
         isFree: false,
         sectionId: section.id,
         sectionTitle,
-        content,
+        content: gem.content || "",
         contentKey: `gems:${section.id}:${gem.id}`,
       });
     });
@@ -122,7 +117,7 @@ export const buildMuseumIndex = (museumItems = []) => {
       type: "museum",
       title: item.title || "",
       subtitle: item.category || "Museum",
-      searchText: `${item.title || ""} ${description} ${keyFact} ${item.category || ""}`,
+      searchText: `${item.category || ""} ${keyFact}`,
       isFree: isMuseumItemFree(item),
       emoji: item.emoji,
       category: item.category,
@@ -158,7 +153,11 @@ export const matchIndex = (index = [], query = "") => {
     const titleMatch = includesQuery(entry.title, q);
     const bodyMatch =
       !titleMatch &&
-      (includesQuery(entry.searchText, q) || includesQuery(entry.subtitle, q));
+      (includesQuery(entry.subtitle, q) ||
+        includesQuery(entry.content, q) ||
+        includesQuery(entry.description, q) ||
+        includesQuery(entry.searchText, q) ||
+        includesQuery(entry.rawItem?.content, q));
     if (titleMatch || bodyMatch) {
       hits.push({ ...entry, _titleMatch: titleMatch });
     }
@@ -168,7 +167,13 @@ export const matchIndex = (index = [], query = "") => {
 
 /** Plain text used for result snippets (built only for displayed rows). */
 export const getSnippetSource = (entry) =>
-  stripMarkup(entry?.content || entry?.description || entry?.snippetSource || "");
+  stripMarkup(
+    entry?.content ||
+      entry?.rawItem?.content ||
+      entry?.description ||
+      entry?.snippetSource ||
+      "",
+  );
 
 export const searchAll = (indexes, query) => {
   const q = String(query || "").trim();

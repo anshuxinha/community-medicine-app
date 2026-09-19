@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -14,7 +14,7 @@ import {
 import { Text } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { ALL_ORIENTATIONS } from "../constants/orientations";
-import { AppContext } from "../context/AppContext";
+import { useSession } from "../context/AppContext";
 import {
   FEEDBACK_MESSAGE_MAX_LENGTH,
   submitAppFeedback,
@@ -38,7 +38,7 @@ import {
  */
 const ReviewRequestModal = () => {
   const { styles, colors } = useThemedStyles(createStyles);
-  const { user } = useContext(AppContext);
+  const { user } = useSession();
   const [visible, setVisible] = useState(false);
   const [selectedStars, setSelectedStars] = useState(0);
   const [feedbackText, setFeedbackText] = useState("");

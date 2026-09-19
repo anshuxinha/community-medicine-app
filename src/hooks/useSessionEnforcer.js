@@ -1,5 +1,5 @@
-import { useEffect, useContext, useRef } from 'react';
-import { AppContext } from '../context/AppContext';
+import { useEffect, useRef } from 'react';
+import { useSession } from '../context/AppContext';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { getDeviceId } from '../utils/deviceUtils';
@@ -7,7 +7,7 @@ import { isForeignDeviceSession } from '../utils/sessionPolicy';
 import { Alert } from 'react-native';
 
 export const useSessionEnforcer = () => {
-  const { user, logout } = useContext(AppContext);
+  const { user, logout } = useSession();
   const hasLoggedOutRef = useRef(false);
 
   useEffect(() => {

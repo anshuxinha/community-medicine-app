@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -13,7 +13,7 @@ import {
 import { Text } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import Constants from "expo-constants";
-import { AppContext } from "../context/AppContext";
+import { useSession } from "../context/AppContext";
 import { useThemedStyles } from "../styles/useThemedStyles";
 
 if (
@@ -109,7 +109,7 @@ export const buildSupportMailto = ({ subject, userEmail }) => {
 
 const SupportScreen = () => {
   const { styles, colors } = useThemedStyles(createStyles);
-  const { user } = useContext(AppContext);
+  const { user } = useSession();
   const [expandedId, setExpandedId] = useState(FAQ_ITEMS[0].id);
 
   const openSupportEmail = useCallback(

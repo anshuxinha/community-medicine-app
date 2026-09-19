@@ -14,7 +14,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { AppContext } from "../context/AppContext";
+import { useSession } from "../context/AppContext";
 import { useSessionEnforcer } from "../hooks/useSessionEnforcer";
 import { useAppTheme } from "../styles/ThemeContext";
 import { hideSplash } from "../utils/appSplash";
@@ -70,7 +70,7 @@ const TabNavigator = () => {
   const { width, height } = useWindowDimensions();
   const isLandscape = width > height;
   const tabBarBaseHeight = isLandscape ? 48 : 60;
-  const { isPremium } = React.useContext(AppContext);
+  const { isPremium } = useSession();
   const { colors } = useAppTheme();
 
   useEffect(() => {
@@ -136,7 +136,7 @@ const TabNavigator = () => {
 };
 
 const PremiumGuard = ({ navigation, route }) => {
-  const { user, isPremium } = React.useContext(AppContext);
+  const { user, isPremium } = useSession();
   React.useEffect(() => {
     if (user === undefined) return;
     if (!user) {
@@ -156,7 +156,7 @@ const PremiumGuard = ({ navigation, route }) => {
 };
 
 const AppNavigator = () => {
-  const { user } = React.useContext(AppContext);
+  const { user } = useSession();
   const { colors, navigationTheme } = useAppTheme();
   const onboardingPromptedRef = useRef(false);
 

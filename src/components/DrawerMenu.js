@@ -16,7 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 import { signOut } from "firebase/auth";
 import { doc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
-import { AppContext } from "../context/AppContext";
+import { useSession, useLearning } from "../context/AppContext";
 import { theme } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
 import { getAppVersion } from "../utils/expoConstants";
@@ -66,8 +66,8 @@ const DrawerMenu = ({ visible, onClose, user }) => {
   const slideAnim = useRef(new Animated.Value(-320)).current;
   const backdropAnim = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation();
-  const { currentStreak, studyScore, readingProgress, logout } =
-    React.useContext(AppContext);
+  const { logout } = useSession();
+  const { currentStreak, studyScore, readingProgress } = useLearning();
   const [isLoggingOut, setIsLoggingOut] = React.useState(false);
 
   // Define displayName early so it's available in handleItem

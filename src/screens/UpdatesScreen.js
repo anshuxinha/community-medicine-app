@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useContext, useEffect } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   View,
   ScrollView,
@@ -9,7 +9,7 @@ import {
 import { Text, Card, Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
-import { AppContext } from "../context/AppContext";
+import { useSession } from "../context/AppContext";
 import { theme, useResponsive } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
 import UpdateDetailDialog from "../components/UpdateDetailDialog";
@@ -30,7 +30,7 @@ const MONTH_SHORT = [
 const UpdatesScreen = ({ navigation }) => {
   const { styles, colors } = useThemedStyles(createStyles);
 
-  const { isPremium } = useContext(AppContext);
+  const { isPremium } = useSession();
   const currentYear = new Date().getFullYear();
   const currentMonthIndex = new Date().getMonth(); // 0-based
 

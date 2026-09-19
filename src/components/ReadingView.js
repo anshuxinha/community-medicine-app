@@ -1055,17 +1055,10 @@ const ReadingView = ({
     setFindQuery(incoming);
     setFindOpen(Boolean(incoming.trim()));
     setActiveMatchIndex(0);
-    setVisibleCount(incoming.trim() ? Number.MAX_SAFE_INTEGER : INITIAL_BLOCK_COUNT);
+    setVisibleCount(INITIAL_BLOCK_COUNT);
   }, [content, title, searchTerms]);
 
   useEffect(() => {
-    if (findQuery.trim()) {
-      setVisibleCount(Number.MAX_SAFE_INTEGER);
-    }
-  }, [findQuery]);
-
-  useEffect(() => {
-    if (findQuery.trim()) return undefined;
     if (visibleCount >= mergedBlocks.length) return undefined;
     const handle = InteractionManager.runAfterInteractions(() => {
       setVisibleCount((current) =>
@@ -1073,7 +1066,7 @@ const ReadingView = ({
       );
     });
     return () => handle.cancel();
-  }, [visibleCount, mergedBlocks.length, findQuery]);
+  }, [visibleCount, mergedBlocks.length]);
 
   const visibleBlocks = useMemo(
     () => mergedBlocks.slice(0, visibleCount),
@@ -1369,6 +1362,17 @@ const ReadingView = ({
   );
   const activeMatchBlockIndex =
     searchMatches[activeMatchIndex]?.blockIndex ?? -1;
+
+  useEffect(() => {
+    if (typeof activeMatchBlockIndex !== "number" || activeMatchBlockIndex < 0) {
+      return;
+    }
+    setVisibleCount((current) =>
+      current > activeMatchBlockIndex
+        ? current
+        : Math.min(activeMatchBlockIndex + 1, mergedBlocks.length || activeMatchBlockIndex + 1),
+    );
+  }, [activeMatchBlockIndex, mergedBlocks.length]);
 
   const scrollToMatch = useCallback(
     (matchIndex, { delayed = false } = {}) => {

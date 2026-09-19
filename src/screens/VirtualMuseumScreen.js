@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useContext, useCallback, memo } from "react";
+import React, { useEffect, useMemo, useState, useCallback, memo } from "react";
 import {
   View,
   StyleSheet,
@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { MUSEUM_ITEMS, CATEGORIES, FREE_CATEGORY } from "../data/museumData";
-import { AppContext } from "../context/AppContext";
+import { useSession } from "../context/AppContext";
 import { theme } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
 import { ALL_ORIENTATIONS } from "../constants/orientations";
@@ -152,7 +152,7 @@ const MuseumCard = memo(function MuseumCard({ item, initiallyExpanded = false })
 const VirtualMuseumScreen = () => {
   const { styles, colors } = useThemedStyles(createStyles);
 
-  const { isPremium, isScreenCapturePrevented } = useContext(AppContext);
+  const { isPremium, isScreenCapturePrevented } = useSession();
   const navigation = useNavigation();
   const route = useRoute();
   const [activeCategory, setActiveCategory] = useState(FREE_CATEGORY);

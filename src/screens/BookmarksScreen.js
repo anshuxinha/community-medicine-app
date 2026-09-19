@@ -1,9 +1,9 @@
-import React, { memo, useCallback, useContext, useEffect, useMemo } from "react";
+import React, { memo, useCallback, useEffect, useMemo } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { Text, Button, List, Divider } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
-import { AppContext } from "../context/AppContext";
+import { useSession, useLearning } from "../context/AppContext";
 import { theme } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
 import {
@@ -87,7 +87,8 @@ const BookmarkRow = memo(function BookmarkRow({ title, item, onOpen }) {
 const BookmarksScreen = ({ navigation }) => {
   const { styles } = useThemedStyles(createStyles);
 
-  const { bookmarks, readItemVersions, isPremium } = useContext(AppContext);
+  const { isPremium } = useSession();
+  const { bookmarks, readItemVersions } = useLearning();
 
   useEffect(() => {
     enableScreenCaptureProtection();

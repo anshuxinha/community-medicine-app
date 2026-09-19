@@ -1,7 +1,6 @@
 import React, {
   memo,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -26,7 +25,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
-import { AppContext } from "../context/AppContext";
+import { useSession, useLearning } from "../context/AppContext";
 import {
   buildLibraryReadingParams,
   getItemStatus,
@@ -147,8 +146,8 @@ const HighlightedExcerpt = ({ text, query, styles }) => {
 
 const SearchScreen = ({ navigation }) => {
   const { styles, colors } = useThemedStyles(createStyles);
-  const { isPremium, readItemVersions, contentRegistryVersion } =
-    useContext(AppContext);
+  const { isPremium } = useSession();
+  const { readItemVersions, contentRegistryVersion } = useLearning();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -212,19 +211,24 @@ const SearchScreen = ({ navigation }) => {
     };
   }, [searchQuery]);
 
-  const indexes = useMemo(() => {
-    return {
+  const catalogIndexes = useMemo(
+    () => ({
       library: buildLibraryIndex(),
       gems: buildGemsIndex(gemsData),
       museum: buildMuseumIndex(MUSEUM_ITEMS),
-      videos: buildVideosIndex(videos),
-    };
-    // contentRegistryVersion refreshes library when overrides hydrate
-  }, [contentRegistryVersion, videos]);
+    }),
+    [contentRegistryVersion],
+  );
+
+  const videoIndex = useMemo(() => buildVideosIndex(videos), [videos]);
 
   const grouped = useMemo(
-    () => searchAll(indexes, debouncedQuery),
-    [indexes, debouncedQuery],
+    () =>
+      searchAll(
+        { ...catalogIndexes, videos: videoIndex },
+        debouncedQuery,
+      ),
+    [catalogIndexes, videoIndex, debouncedQuery],
   );
 
   const availableTypes = useMemo(

@@ -1,5 +1,4 @@
 import React, {
-  useContext,
   useState,
   useEffect,
   useMemo,
@@ -15,7 +14,7 @@ import {
 } from "react-native-safe-area-context";
 import { theme } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
-import { AppContext } from "../context/AppContext";
+import { useSession, useLearning } from "../context/AppContext";
 import {
   enableScreenCaptureProtection,
   disableScreenCaptureProtection,
@@ -184,8 +183,9 @@ const SubTopicsScreen = ({ route, navigation }) => {
     section = "theory",
     parentId,
   } = route.params;
-  const { readItemVersions, markAsUnread, contentRegistryVersion, isPremium } =
-    useContext(AppContext);
+  const { isPremium } = useSession();
+  const { readItemVersions, markAsUnread, contentRegistryVersion } =
+    useLearning();
 
   const items = useMemo(() => {
     if (parentId != null && parentId !== undefined) {

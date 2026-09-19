@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics, isSupported } from "firebase/analytics";
 import { initializeAuth, getReactNativePersistence } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
@@ -21,11 +20,6 @@ const auth = initializeAuth(app, {
 });
 const db = getFirestore(app);
 
-let analytics = null;
-isSupported().then((supported) => {
-    if (supported) {
-        analytics = getAnalytics(app);
-    }
-});
+const analytics = null;
 
 export { app, auth, db, analytics };

@@ -331,10 +331,17 @@ const NFHSTrendsScreen = ({ embedded = false }) => {
                 
                 // Signal ready when Plotly library is loaded and document is ready
                 window.onload = function() {
+                    const started = Date.now();
                     const checkInterval = setInterval(() => {
                         if (window.Plotly) {
                             clearInterval(checkInterval);
                             window.ReactNativeWebView.postMessage('READY');
+                            return;
+                        }
+                        if (Date.now() - started > 8000) {
+                            clearInterval(checkInterval);
+                            var loaderText = document.querySelector('.loader-text');
+                            if (loaderText) loaderText.textContent = 'Chart library failed to load.';
                         }
                     }, 50);
                 };

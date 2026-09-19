@@ -1,8 +1,8 @@
-import React, { useContext, useMemo, useEffect, useState, useCallback } from "react";
+import React, { useMemo, useEffect, useState, useCallback } from "react";
 import { View, StyleSheet, Platform, Vibration } from "react-native";
 import ReadingView from "../components/ReadingView";
 import ChapterCompleteSheet from "../components/ChapterCompleteSheet";
-import { AppContext } from "../context/AppContext";
+import { useSession, useLearning } from "../context/AppContext";
 import { useThemedStyles } from '../styles/useThemedStyles';
 import {
   buildLibraryReadingParams,
@@ -66,18 +66,16 @@ const ReadingScreen = ({ route, navigation }) => {
     isGem = false,
   } = route.params;
 
+  const { isScreenCapturePrevented, user, isPremium } = useSession();
   const {
     markAsRead,
     isBookmarked,
     toggleBookmark,
     readItemVersions,
-    isScreenCapturePrevented,
     contentRegistryVersion,
-    user,
     readingProgress,
     currentStreak,
-    isPremium,
-  } = useContext(AppContext);
+  } = useLearning();
   const [annotations, setAnnotations] = useState([]);
   const [userHighlights, setUserHighlights] = useState({});
   const [celebration, setCelebration] = useState(null);

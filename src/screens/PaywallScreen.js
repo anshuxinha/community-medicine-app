@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -19,7 +19,7 @@ let Purchases;
 if (!isExpoGo()) {
   Purchases = require("react-native-purchases").default;
 }
-import { AppContext } from "../context/AppContext";
+import { useSession } from "../context/AppContext";
 import { theme } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
 import {
@@ -152,7 +152,7 @@ const PaywallScreen = ({ navigation }) => {
   const [offerings, setOfferings] = useState(null);
   const [packages, setPackages] = useState({});
   const [loadError, setLoadError] = useState(null);
-  const { upgradeToPremium, isPremium, user } = useContext(AppContext);
+  const { upgradeToPremium, isPremium, user } = useSession();
 
   // Reset coupon when plan changes if it's not applicable
   useEffect(() => {

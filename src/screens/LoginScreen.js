@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import { Text, TextInput, Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { AppContext } from "../context/AppContext";
+import { useSession } from "../context/AppContext";
 import { getDeviceId } from "../utils/deviceUtils";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import { auth, db } from "../config/firebase";
@@ -83,7 +83,7 @@ const LoginScreen = () => {
   const { width, height } = useWindowDimensions();
   const isLandscape = width > height;
 
-  const { login } = useContext(AppContext);
+  const { login } = useSession();
   const [isRegistering, setIsRegistering] = useState(false);
 
   useEffect(() => {

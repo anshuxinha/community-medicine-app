@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useCallback } from "react";
+import React, { useMemo, useCallback } from "react";
 import {
   View,
   StyleSheet,
@@ -8,7 +8,7 @@ import {
 import { Text, Card, Button, ProgressBar } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
-import { AppContext } from "../context/AppContext";
+import { useSession, useLearning } from "../context/AppContext";
 import { useThemedStyles } from "../styles/useThemedStyles";
 import { useResponsive } from "../styles/theme";
 import {
@@ -44,16 +44,15 @@ const isFreeTheoryRoot = (rootChapterId) =>
 const LearningProgressScreen = ({ navigation }) => {
   const { styles, colors } = useThemedStyles(createStyles);
   const { horizontalPadding, contentMaxWidth } = useResponsive();
+  const { user, isPremium } = useSession();
   const {
     readItemVersions,
     readingProgress,
     currentStreak,
     dailyReadHistory,
     lastOpenedContentKey,
-    user,
-    isPremium,
     contentRegistryVersion,
-  } = useContext(AppContext);
+  } = useLearning();
 
   const overallPercent = progressToPercent(readingProgress);
   const residentMode = isResidentModeEnabled(user);

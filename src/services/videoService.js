@@ -153,31 +153,48 @@ export const getVideoCategories = (videos = []) => {
   return Array.from(categories.values());
 };
 
+let videosFirestoreUnsub = null;
+let cachedVideosList = null;
+const videoSubscribers = new Set();
+
 export const subscribeToVideos = ({ onData, onError }) => {
-  const videosQuery = query(
-    collection(db, "videos"),
-    // orderBy("publishedAt", "desc"),
-  );
+  const sub = { onData, onError };
+  videoSubscribers.add(sub);
+  if (cachedVideosList) onData(cachedVideosList);
 
-  return onSnapshot(
-    videosQuery,
-    (snapshot) => {
-      const videos = snapshot.docs
-        .map((videoDoc) => ({
-          id: videoDoc.id,
-          ...videoDoc.data(),
-        }))
-        .filter((video) => video.status !== "archived")
-        .sort(
-          (left, right) =>
-            getTimestamp(right.publishedAt || right.createdAt) -
-            getTimestamp(left.publishedAt || left.createdAt),
-        );
+  if (!videosFirestoreUnsub) {
+    const videosQuery = query(
+      collection(db, "videos"),
+      // orderBy("publishedAt", "desc"),
+    );
+    videosFirestoreUnsub = onSnapshot(
+      videosQuery,
+      (snapshot) => {
+        const videos = snapshot.docs
+          .map((videoDoc) => ({
+            id: videoDoc.id,
+            ...videoDoc.data(),
+          }))
+          .filter((video) => video.status !== "archived")
+          .sort(
+            (left, right) =>
+              getTimestamp(right.publishedAt || right.createdAt) -
+              getTimestamp(left.publishedAt || left.createdAt),
+          );
+        cachedVideosList = videos;
+        videoSubscribers.forEach((listener) => listener.onData(videos));
+      },
+      (error) => {
+        videoSubscribers.forEach((listener) => listener.onError?.(error));
+      },
+    );
+  }
 
-      onData(videos);
-    },
-    (error) => {
-      onError?.(error);
-    },
-  );
+  return () => {
+    videoSubscribers.delete(sub);
+    if (videoSubscribers.size === 0 && videosFirestoreUnsub) {
+      videosFirestoreUnsub();
+      videosFirestoreUnsub = null;
+    }
+  };
 };
