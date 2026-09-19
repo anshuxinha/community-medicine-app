@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   isReviewRequestDue,
   REVIEW_PROMPT_INTERVAL_MS,
@@ -14,21 +15,21 @@ const DAY = 24 * 60 * 60 * 1000;
 describe("isReviewRequestDue", () => {
   const now = 1_700_000_000_000;
 
-  test("first show is due when never shown and not rated", () => {
+  test("first open is not due when never shown and not rated", () => {
     expect(
       isReviewRequestDue({
         hasRated: false,
         lastShownAt: null,
         now,
       }),
-    ).toBe(true);
+    ).toBe(false);
     expect(
       isReviewRequestDue({
         hasRated: false,
         lastShownAt: "",
         now,
       }),
-    ).toBe(true);
+    ).toBe(false);
   });
 
   test("is not due inside the 5-day window", () => {
@@ -81,7 +82,19 @@ describe("reviewPrompt storage cadence", () => {
     await resetReviewPromptState("user-a");
   });
 
-  test("should show immediately, then hide until interval elapses", async () => {
+  test("first open starts the 5-day clock without showing", async () => {
+    await expect(shouldShowReviewRequest("user-a")).resolves.toBe(false);
+    const stored = await AsyncStorage.getItem("reviewPrompt_lastShownAt:user-a");
+    expect(Number(stored)).toBeGreaterThan(0);
+    await expect(shouldShowReviewRequest("user-a")).resolves.toBe(false);
+  });
+
+  test("shows after the 5-day clock from first open", async () => {
+    await shouldShowReviewRequest("user-a");
+    await AsyncStorage.setItem(
+      "reviewPrompt_lastShownAt:user-a",
+      String(Date.now() - REVIEW_PROMPT_INTERVAL_MS),
+    );
     await expect(shouldShowReviewRequest("user-a")).resolves.toBe(true);
     await markReviewPromptShown("user-a");
     await expect(shouldShowReviewRequest("user-a")).resolves.toBe(false);
@@ -92,11 +105,23 @@ describe("reviewPrompt storage cadence", () => {
     await expect(shouldShowReviewRequest("user-a")).resolves.toBe(false);
   });
 
-  test("reset makes the prompt due again", async () => {
+  test("stops after feedback mark even after the 5-day clock", async () => {
+    await shouldShowReviewRequest("user-a");
+    await markAsRated("user-a");
+    await AsyncStorage.setItem(
+      "reviewPrompt_lastShownAt:user-a",
+      String(Date.now() - 6 * DAY),
+    );
+    await expect(shouldShowReviewRequest("user-a")).resolves.toBe(false);
+  });
+
+  test("reset restarts the 5-day clock without showing immediately", async () => {
     await markAsRated("user-a");
     await markReviewPromptShown("user-a");
     await resetReviewPromptState("user-a");
-    await expect(shouldShowReviewRequest("user-a")).resolves.toBe(true);
+    await expect(shouldShowReviewRequest("user-a")).resolves.toBe(false);
+    const stored = await AsyncStorage.getItem("reviewPrompt_lastShownAt:user-a");
+    expect(Number(stored)).toBeGreaterThan(0);
   });
 
   test("reset clears every account on the device", async () => {
@@ -105,14 +130,21 @@ describe("reviewPrompt storage cadence", () => {
     await markReviewPromptShown("user-a");
     await markReviewPromptShown("user-b");
     await resetReviewPromptState("user-a");
-    await expect(shouldShowReviewRequest("user-a")).resolves.toBe(true);
-    await expect(shouldShowReviewRequest("user-b")).resolves.toBe(true);
+    await expect(shouldShowReviewRequest("user-a")).resolves.toBe(false);
+    await expect(shouldShowReviewRequest("user-b")).resolves.toBe(false);
   });
 
-  test("alternates copy index between the two variants", async () => {
-    expect(REVIEW_REQUEST_VARIANTS).toHaveLength(2);
+  test("rotates copy index through five variants", async () => {
+    expect(REVIEW_REQUEST_VARIANTS).toHaveLength(5);
+    REVIEW_REQUEST_VARIANTS.forEach((copy) => {
+      expect(copy.title.length).toBeGreaterThan(0);
+      expect(copy.body.length).toBeGreaterThan(0);
+    });
     await expect(takeNextReviewCopyIndex("user-a")).resolves.toBe(0);
     await expect(takeNextReviewCopyIndex("user-a")).resolves.toBe(1);
+    await expect(takeNextReviewCopyIndex("user-a")).resolves.toBe(2);
+    await expect(takeNextReviewCopyIndex("user-a")).resolves.toBe(3);
+    await expect(takeNextReviewCopyIndex("user-a")).resolves.toBe(4);
     await expect(takeNextReviewCopyIndex("user-a")).resolves.toBe(0);
   });
 });

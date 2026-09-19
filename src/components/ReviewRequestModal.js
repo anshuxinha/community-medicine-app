@@ -22,6 +22,7 @@ import {
 import { theme } from "../styles/theme";
 import { useThemedStyles } from "../styles/useThemedStyles";
 import {
+  markAsRated,
   maybeShowReviewRequest,
   registerOpenReviewRequest,
   requestNativeStoreReview,
@@ -31,8 +32,9 @@ import {
 } from "../utils/reviewPrompt";
 
 /**
- * Standalone Review Request. Shown when the user opens the app if the 5-day
- * clock allows it, until they tap 5 stars.
+ * Standalone Review Request. First eligible open starts a 5-day clock without
+ * showing. After that, shown on app open every 5 days until the user taps 5
+ * stars or submits feedback.
  */
 const ReviewRequestModal = () => {
   const { styles, colors } = useThemedStyles(createStyles);
@@ -149,6 +151,7 @@ const ReviewRequestModal = () => {
         source: "review_request_rating",
         rating: selectedStars,
       });
+      await markAsRated(uidRef.current);
       Alert.alert(
         "Thank you",
         "Your feedback was sent. We read every note and use it to improve STROMA.",

@@ -20,8 +20,20 @@ export const REVIEW_REQUEST_VARIANTS = [
     body: "If STROMA is helping your prep, please leave a 5-star review. It is the single biggest way other Community Medicine students find us.",
   },
   {
-    title: "Did this earn 5 stars?",
-    body: "An honest 5-star rating takes a few seconds and keeps STROMA growing for MD students like you. Tap 5 if we earned it.",
+    title: "Rate STROMA if it is helping your MD prep.",
+    body: "Tap 5 stars to open the store listing. Other Community Medicine students use that score when they pick a prep app.",
+  },
+  {
+    title: "Your store rating is how other MD students find STROMA.",
+    body: "If the library or Field Toolbox is part of your routine, tap 5 stars. Play Store and App Store rank listings using that score.",
+  },
+  {
+    title: "A 5-star rating takes a few seconds.",
+    body: "If STROMA is saving you time on Park or PYQs, tap 5. That listing score is how other MD Community Medicine students find us.",
+  },
+  {
+    title: "If STROMA helped this week, tap 5 stars.",
+    body: "Tap 5 to open Play Store or App Store. Your rating is what the next Community Medicine student sees before they download.",
   },
 ];
 
@@ -39,8 +51,9 @@ function scopedKey(base, uid) {
 
 /**
  * Pure eligibility check for the standalone Review Request.
- * First show is due when lastShownAt is missing. After that, wait intervalMs
- * unless the user already completed the 5-star path.
+ * Missing lastShownAt is not due: first open should seed the 5-day clock
+ * without showing. After a timestamp exists, wait intervalMs unless the user
+ * already completed the 5-star path or submitted feedback (hasRated).
  */
 export function isReviewRequestDue({
   hasRated,
@@ -51,7 +64,7 @@ export function isReviewRequestDue({
   if (hasRated) return false;
   const shownAt = Number(lastShownAt);
   if (lastShownAt == null || lastShownAt === "" || !Number.isFinite(shownAt)) {
-    return true;
+    return false;
   }
   const clock = Number.isFinite(Number(now)) ? Number(now) : Date.now();
   const interval = Number.isFinite(Number(intervalMs))
@@ -184,9 +197,19 @@ export async function shouldShowReviewRequest(uid) {
   try {
     await ensureReviewPromptMigrated(uid);
     const hasRated = await getHasRatedFiveStarReview(uid);
+    if (hasRated) return false;
     const rawLastShown = await AsyncStorage.getItem(
       scopedKey(STORAGE_KEY_LAST_SHOWN_AT, uid),
     );
+    const shownAt = Number(rawLastShown);
+    if (
+      rawLastShown == null ||
+      rawLastShown === "" ||
+      !Number.isFinite(shownAt)
+    ) {
+      await markReviewPromptShown(uid);
+      return false;
+    }
     return isReviewRequestDue({
       hasRated,
       lastShownAt: rawLastShown,
@@ -214,7 +237,7 @@ export async function markReviewPromptShown(uid) {
 }
 
 /**
- * Advance and persist the alternating Review Request copy index.
+ * Advance and persist the rotating Review Request copy index.
  * @param {string} [uid]
  * @returns {Promise<number>}
  */
@@ -241,7 +264,8 @@ export async function takeNextReviewCopyIndex(uid) {
 
 /**
  * Show the standalone Review Request on app open when the 5-day clock allows it.
- * Marks lastShownAt as soon as the modal handler is invoked.
+ * First eligible open seeds lastShownAt and does not show. Later opens wait
+ * the interval. Marks lastShownAt again as soon as the modal handler is invoked.
  * @param {string} [uid]
  * @returns {Promise<boolean>}
  */
