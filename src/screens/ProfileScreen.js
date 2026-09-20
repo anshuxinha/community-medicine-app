@@ -29,7 +29,7 @@ import { useSession, useLearning } from "../context/AppContext";
 import { useThemedStyles } from "../styles/useThemedStyles";
 import { ALL_ORIENTATIONS } from "../constants/orientations";
 import { useAppTheme } from "../styles/ThemeContext";
-import Constants from "expo-constants";
+import { getAppVersion } from "../utils/expoConstants";
 import {
   enableScreenCaptureProtection,
   disableScreenCaptureProtection,
@@ -818,7 +818,7 @@ const ProfileScreen = () => {
         </TouchableOpacity>
 
         <Text style={styles.version}>
-          STROMA v{Constants.expoConfig?.version || "1.0.0"}
+          STROMA v{getAppVersion()}
         </Text>
 
         <View style={styles.bottomPadding} />

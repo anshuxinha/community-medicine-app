@@ -12,12 +12,21 @@
  *  - Video / doubt-reply / legacy helpers that call Expo push APIs
  */
 
-import * as Notifications from "expo-notifications";
+// expo-notifications is lazily required via getNotifications() below to prevent
+// top-level evaluation of Expo.fx -> expo-constants on new OTA first-launch.
 import * as Device from "expo-device";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
+
+function getNotifications() {
+  try {
+    return require("expo-notifications");
+  } catch (_) {
+    return null;
+  }
+}
 
 const STREAK_MILESTONE_NOTIFICATION_KEY = "streakMilestoneLastNotified";
 const VIDEO_NOTIFICATION_STORAGE_KEY = "video_notification_subscribed";
@@ -65,6 +74,8 @@ export function ensureNotificationHandler() {
   if (notificationHandlerSet) return;
   notificationHandlerSet = true;
   try {
+    const Notifications = getNotifications();
+    if (!Notifications) return;
     Notifications.setNotificationHandler({
       handleNotification: async () => ({
         shouldShowAlert: true,
@@ -86,6 +97,9 @@ export function ensureNotificationHandler() {
 export async function requestPermissions() {
   if (!Device.isDevice) return false; // Simulators don't support push
 
+  const Notifications = getNotifications();
+  if (!Notifications) return false;
+
   const { status: existing } = await Notifications.getPermissionsAsync();
   if (existing === "granted") return true;
 
@@ -99,6 +113,9 @@ export async function requestPermissions() {
  * Safe to call multiple times.
  */
 export async function scheduleAllNotifications() {
+  const Notifications = getNotifications();
+  if (!Notifications) return;
+
   ensureNotificationHandler();
   const granted = await requestPermissions();
   if (!granted) return;
@@ -157,6 +174,9 @@ export async function triggerStreakMilestone(streak) {
   const granted = await requestPermissions();
   if (!granted) return;
 
+  const Notifications = getNotifications();
+  if (!Notifications) return;
+
   const { emoji, msg } = milestones[streak];
 
   await Notifications.scheduleNotificationAsync({
@@ -205,6 +225,9 @@ export async function sendWebinarNotification(
       console.log("Notification permissions not granted");
       return;
     }
+
+    const Notifications = getNotifications();
+    if (!Notifications) return;
 
     // Send the notification
     await Notifications.scheduleNotificationAsync({
@@ -307,6 +330,9 @@ export async function subscribeToWebinarNotifications() {
  * @param {object} navigationRef
  */
 export function setupNotificationTapHandler(navigationRef) {
+  const Notifications = getNotifications();
+  if (!Notifications?.addNotificationResponseReceivedListener) return;
+
   Notifications.addNotificationResponseReceivedListener((response) => {
     const screen = response.notification.request.content.data?.screen;
     if (screen && navigationRef?.current) {
@@ -336,6 +362,9 @@ export async function sendVideoNotification(videoTitle, videoDescription) {
       console.log("Notification permissions not granted");
       return;
     }
+
+    const Notifications = getNotifications();
+    if (!Notifications) return;
 
     await Notifications.scheduleNotificationAsync({
       content: {

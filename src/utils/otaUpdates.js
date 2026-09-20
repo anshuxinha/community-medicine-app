@@ -63,26 +63,16 @@ export async function getActiveOtaChannel() {
 }
 
 /**
- * Sets or clears the runtime update channel override.
- * Channel surfing via setUpdateRequestHeadersOverride is supported in Expo SDK 54+.
+ * Sets or clears the update channel preference in AsyncStorage.
+ * Note: Native header overriding requires a rebuild with disableAntiBrickingMeasures.
+ * Channel preferences are stored locally so admin tooling can track mode safely.
  */
 export async function setOtaChannelOverride(channelName) {
   try {
-    const native = getExpoUpdates();
-    if (!native) return false;
-
     if (channelName === PREVIEW_CHANNEL_NAME) {
-      if (typeof native.setUpdateRequestHeadersOverride === "function") {
-        native.setUpdateRequestHeadersOverride({
-          "expo-channel-name": PREVIEW_CHANNEL_NAME,
-        });
-      }
       await AsyncStorage.setItem(OTA_CHANNEL_OVERRIDE_KEY, PREVIEW_CHANNEL_NAME);
       return true;
     } else {
-      if (typeof native.setUpdateRequestHeadersOverride === "function") {
-        native.setUpdateRequestHeadersOverride(null);
-      }
       await AsyncStorage.removeItem(OTA_CHANNEL_OVERRIDE_KEY);
       return true;
     }

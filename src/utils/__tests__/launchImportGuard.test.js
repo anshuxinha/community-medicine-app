@@ -24,6 +24,11 @@ describe("first-open OTA launch graph", () => {
     "src/navigation/AppNavigator.js",
     "src/screens/DashboardScreen.js",
     "src/screens/LibraryScreen.js",
+    "src/screens/ProfileScreen.js",
+    "src/screens/SupportScreen.js",
+    "src/services/videoLoadErrors.js",
+    "src/components/GestureVideoPlayer.js",
+    "src/services/notificationService.js",
   ];
 
   it("does not statically import expo-constants or expo-notifications on the first AppRoot path", () => {
@@ -56,6 +61,7 @@ describe("first-open OTA launch graph", () => {
     [
       "src/components/DrawerMenu.js",
       "src/services/feedbackService.js",
+      "src/services/videoLoadErrors.js",
     ].forEach((rel) => {
       const src = read(rel);
       expect(hasStaticFromImport(src, "expo-constants")).toBe(false);

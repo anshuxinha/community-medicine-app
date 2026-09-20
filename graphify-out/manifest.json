@@ -1,7 +1,7 @@
 {
   "D:\\The App\\App.js": {
-    "mtime": 1789627101.7080948,
-    "hash": "9d2fccc0c8583ada6350b8e5c7ec386d"
+    "mtime": 1789750857.2050397,
+    "hash": "81a264ce4d14b0f5651398055ab7ecf4"
   },
   "D:\\The App\\ast_extract.py": {
     "mtime": 1778159580.4395475,
@@ -151,17 +151,25 @@
     "mtime": 1788190817.5361347,
     "hash": "1bf2b66660a4fdc19f812a6306df4719"
   },
+  "D:\\The App\\functions\\adminPush.js": {
+    "mtime": 1789890782.1741471,
+    "hash": "49b3d04fe16658af41c6584d4a938df6"
+  },
   "D:\\The App\\functions\\bunnyToken.js": {
     "mtime": 1784607395.433206,
     "hash": "597e6f363323f1f82a50df6e3fcd71de"
   },
   "D:\\The App\\functions\\index.js": {
-    "mtime": 1788180800.2905993,
-    "hash": "d2c9d414c584620f4a76aab1929eeb81"
+    "mtime": 1789890782.1741471,
+    "hash": "cabab715fc61d07c13fb2d56d830a7eb"
   },
   "D:\\The App\\functions\\restoreCredentials.js": {
     "mtime": 1788182208.6314883,
     "hash": "352a30c87ac5f39e251cf3ffd24c34c0"
+  },
+  "D:\\The App\\functions\\__tests__\\adminPush.test.js": {
+    "mtime": 1789890782.1731493,
+    "hash": "cc4d7f53b4939924dedab2db0a7562c7"
   },
   "D:\\The App\\plugins\\withPlayQuality.js": {
     "mtime": 1788180671.0995927,
@@ -768,8 +776,8 @@
     "hash": "fd05f69409d5ee263e64170139736be4"
   },
   "D:\\The App\\scripts\\generate_ifct_food_data.py": {
-    "mtime": 1788684100.90548,
-    "hash": "f8e7a03cc918d574ecdd0dceb20a282f"
+    "mtime": 1789746083.3816655,
+    "hash": "2c7d740c6693c439a631e217ea97cb15"
   },
   "D:\\The App\\scripts\\get_chatgpt_images.py": {
     "mtime": 1788412811.2492142,
@@ -968,11 +976,11 @@
     "hash": "55e5963fe3e00f018052e9deb1adfaf2"
   },
   "D:\\The App\\src\\AppRoot.js": {
-    "mtime": 1789454988.8650763,
-    "hash": "63758ccfafe30546687372427f484dfe"
+    "mtime": 1789815644.4639359,
+    "hash": "d71a258127e1f6f82d8962e4299b363b"
   },
   "D:\\The App\\src\\components\\AppUpdatedToast.js": {
-    "mtime": 1789306000.9583707,
+    "mtime": 1789815694.692541,
     "hash": "df01a6adf4257d918937df8a90b7e4ac"
   },
   "D:\\The App\\src\\components\\ChapterCompleteSheet.js": {
@@ -980,8 +988,8 @@
     "hash": "a133763bbe08bae087d5faa3ee6a061f"
   },
   "D:\\The App\\src\\components\\DrawerMenu.js": {
-    "mtime": 1787747070.9059465,
-    "hash": "50a955012d0747fcb843348e5ca033ef"
+    "mtime": 1789890805.6874707,
+    "hash": "57990e1a1fcebb5123f3cc5f08303aa4"
   },
   "D:\\The App\\src\\components\\DropdownPicker.js": {
     "mtime": 1787747108.5063808,
@@ -1000,16 +1008,16 @@
     "hash": "ee80de9ca72397fd02e0fb31ed09698c"
   },
   "D:\\The App\\src\\components\\ReadingView.js": {
-    "mtime": 1789584844.6865416,
-    "hash": "709b36677c3c48a88be624bb455eae44"
+    "mtime": 1789808983.3394508,
+    "hash": "e7ce5881baa70106a0cbf9dcf8abf000"
   },
   "D:\\The App\\src\\components\\ReviewFeedbackModal.js": {
     "mtime": 1785328661.2858431,
     "hash": "6cda1c79053ba2aa054cfbdb767bc13c"
   },
   "D:\\The App\\src\\components\\ReviewRequestModal.js": {
-    "mtime": 1786816795.6030817,
-    "hash": "223bc7ee933a31af492450577bf72194"
+    "mtime": 1789808726.2854223,
+    "hash": "4f2d2f96f90e0005746614e5aeb3e479"
   },
   "D:\\The App\\src\\components\\ThemeModePill.js": {
     "mtime": 1785071504.0687332,
@@ -1040,32 +1048,40 @@
     "hash": "fde7e43aaa83698a9eae9faaabe73250"
   },
   "D:\\The App\\src\\config\\firebase.js": {
-    "mtime": 1772355531.2110212,
-    "hash": "b6d28a52efa63c1ccfa616dabffb7bd9"
+    "mtime": 1789809010.4961715,
+    "hash": "02e5a11a84a9f6c147cbf6d5de314da8"
   },
   "D:\\The App\\src\\constants\\orientations.js": {
     "mtime": 1785261854.9955852,
     "hash": "28aff4aa2aa407d8be48e8aed5bb252a"
   },
   "D:\\The App\\src\\context\\AppContext.js": {
-    "mtime": 1789629780.3110476,
-    "hash": "089996e82dfb9b7096e5877023372749"
+    "mtime": 1789890805.7154818,
+    "hash": "04c1dcf8a5cd84711632f4b74903fe60"
+  },
+  "D:\\The App\\src\\context\\appContexts.js": {
+    "mtime": 1789809172.3971934,
+    "hash": "1b8f3316b3e7e8a3d82dda2c2c7a297c"
+  },
+  "D:\\The App\\src\\context\\__tests__\\contextSplit.test.js": {
+    "mtime": 1789809172.395195,
+    "hash": "f9ae77063afafed6af1be06175c87c7f"
   },
   "D:\\The App\\src\\data\\defaultTopicIllustrations.js": {
     "mtime": 1786881885.1823778,
     "hash": "a490e41b1ac815ddc9971f88c51c3945"
   },
   "D:\\The App\\src\\data\\dietaryReferenceData.js": {
-    "mtime": 1788796162.5073953,
-    "hash": "e85123b3e629b1d8573fb89c4bad01b6"
+    "mtime": 1789746083.4003508,
+    "hash": "8c9c02027f95bdb84371ad60e26eafe1"
   },
   "D:\\The App\\src\\data\\museumData.js": {
     "mtime": 1787543937.8590336,
     "hash": "9dd48219a83b89d50932080a21ee7529"
   },
   "D:\\The App\\src\\data\\nfhsComparisonData.js": {
-    "mtime": 1783704947.214938,
-    "hash": "bcb5f111e2f0e5f8ce3b4b2121c4609b"
+    "mtime": 1789746083.4140694,
+    "hash": "2c48808d40fe12d7bf7e390b89c9b7f6"
   },
   "D:\\The App\\src\\data\\nfhsTrendsData.js": {
     "mtime": 1783703853.1712928,
@@ -1080,156 +1096,164 @@
     "hash": "e73a0c56d25307e15eeb833f7a9665b4"
   },
   "D:\\The App\\src\\data\\__tests__\\dietaryReferenceData.test.js": {
-    "mtime": 1788796189.3910785,
-    "hash": "958b71aa35d1da14b68ad76699c267aa"
+    "mtime": 1789746083.388402,
+    "hash": "6f771d4ce4c0e513393e8a0725c96750"
+  },
+  "D:\\The App\\src\\data\\__tests__\\nfhsComparisonData.test.js": {
+    "mtime": 1789746083.3934424,
+    "hash": "5b5af34c838dc5b024c928f5f3e5f1af"
   },
   "D:\\The App\\src\\data\\__tests__\\pyqImages.test.js": {
     "mtime": 1786815484.5881505,
     "hash": "1796d49ccfe1f7b21ebee87d303ff5b9"
   },
   "D:\\The App\\src\\hooks\\useSessionEnforcer.js": {
-    "mtime": 1788768074.944604,
-    "hash": "bc326cfd6adbba22f561d679d579d1d0"
+    "mtime": 1789808477.9726088,
+    "hash": "8b2d0624d1fa1c1246dc6de7617d53db"
   },
   "D:\\The App\\src\\hooks\\useUpdatesFeed.js": {
     "mtime": 1789122917.1731577,
     "hash": "062f4229619b868c31734bb27992ec99"
   },
   "D:\\The App\\src\\hooks\\__tests__\\useSessionEnforcer.test.js": {
-    "mtime": 1788768074.944604,
-    "hash": "b27e9a013c6e18ff7a031898fcc1a075"
+    "mtime": 1789808477.9726088,
+    "hash": "f40ae412edbf218783870016e2376e42"
   },
   "D:\\The App\\src\\navigation\\AppNavigator.js": {
-    "mtime": 1789414711.4427874,
-    "hash": "e8ace38c3a1cbe9141c0c876027a50be"
+    "mtime": 1789815644.4629347,
+    "hash": "cffa2e88e4dbd5e552151678ac3a2b85"
   },
   "D:\\The App\\src\\screens\\AdminAppFeedbackScreen.js": {
-    "mtime": 1786804524.82716,
-    "hash": "870675f9636ebb714942217291b11418"
+    "mtime": 1789808726.2698405,
+    "hash": "c0fad40f856f8669e00ada332a324128"
   },
   "D:\\The App\\src\\screens\\AdminLibraryReviewScreen.js": {
-    "mtime": 1787747108.5198033,
-    "hash": "20c0bfab04544d077453912304922625"
+    "mtime": 1789808868.7884336,
+    "hash": "230b806c24b571b0263e738dae177a1e"
   },
   "D:\\The App\\src\\screens\\AnthropometryScreen.js": {
-    "mtime": 1784225615.1075914,
-    "hash": "0d81328243dfce5c62fdec33eca2f598"
+    "mtime": 1789746083.4260476,
+    "hash": "9f6e07c1f08b17a4c210f3c84472390e"
   },
   "D:\\The App\\src\\screens\\BiostatsAssistantScreen.js": {
-    "mtime": 1784225614.9335494,
-    "hash": "77261ef4f3a431023f33b15a62e7388e"
+    "mtime": 1789746083.4311213,
+    "hash": "92eed2d2701ce45d25661c9ddb899a0d"
   },
   "D:\\The App\\src\\screens\\BookmarksScreen.js": {
-    "mtime": 1789629780.4918282,
-    "hash": "bfb8a4f4aee4c4764ef8275414bf1053"
+    "mtime": 1789808800.2093773,
+    "hash": "dafd0616cfe3d1a86faa4a7d12425ac3"
   },
   "D:\\The App\\src\\screens\\DashboardScreen.js": {
-    "mtime": 1789125960.972159,
-    "hash": "e450a5eada5b49d4fb2300d82f788930"
+    "mtime": 1789808800.2771914,
+    "hash": "94ce05dc4ff318cc613245e5f21184e9"
   },
   "D:\\The App\\src\\screens\\DietarySurveyScreen.js": {
     "mtime": 1789122917.1791646,
     "hash": "56decf2e75c7f8cee4b40c84caebde13"
   },
   "D:\\The App\\src\\screens\\FieldToolboxScreen.js": {
-    "mtime": 1788635272.1587248,
-    "hash": "ac7454dff362abc12cc97e0ef4d6ac22"
+    "mtime": 1789746083.4459274,
+    "hash": "b8e8654f489b58a80348e41b7943ec18"
   },
   "D:\\The App\\src\\screens\\GemsScreen.js": {
-    "mtime": 1789629472.5380037,
-    "hash": "56ceab6d487b62eb55e058e97809b342"
+    "mtime": 1789809042.9095309,
+    "hash": "7a72ad72a08b0ec7ece5e87e77098cbe"
   },
   "D:\\The App\\src\\screens\\LearningProgressScreen.js": {
-    "mtime": 1787947074.8250465,
-    "hash": "73c4d221f284cb9d881ab7052147d0e7"
+    "mtime": 1789808845.889354,
+    "hash": "aaeffb5c449c72de4d2a5069f5ab9283"
   },
   "D:\\The App\\src\\screens\\LibraryScreen.js": {
-    "mtime": 1787947483.0389373,
-    "hash": "726879698a04a46b4b0e332e1d92e276"
+    "mtime": 1789808800.2093773,
+    "hash": "9adc65b770e6c7641d1069395c7bc02c"
   },
   "D:\\The App\\src\\screens\\LoginScreen.js": {
-    "mtime": 1787747176.030194,
-    "hash": "2cf31c0faaccf86cb91d1b15e86eb4f1"
+    "mtime": 1789808523.765361,
+    "hash": "e05d3c6313498dde2d33be83126b814c"
   },
   "D:\\The App\\src\\screens\\NFHSComparisonScreen.js": {
-    "mtime": 1784225550.695324,
-    "hash": "84e661979a0b7540853ec06e5984ce61"
+    "mtime": 1789746083.4511662,
+    "hash": "225552be78dbebe8410e2cbff616a238"
   },
   "D:\\The App\\src\\screens\\NFHSRuralUrbanScreen.js": {
-    "mtime": 1784225550.695324,
-    "hash": "3ea6b1792d40f0aa8c0a315e7cd70dd7"
+    "mtime": 1789746083.4564714,
+    "hash": "4db378fd5f14d1433edfb47effab1083"
+  },
+  "D:\\The App\\src\\screens\\NFHSToolsScreen.js": {
+    "mtime": 1789746083.4635375,
+    "hash": "29b63f4d82ff3b376ba1c82cf09d457f"
   },
   "D:\\The App\\src\\screens\\NFHSTrendsScreen.js": {
-    "mtime": 1787747108.5063808,
-    "hash": "a6013d3a0fead76326429f51a5f70e5c"
+    "mtime": 1789809010.4720893,
+    "hash": "d085de0243901d6c172bfb7e998bc485"
   },
   "D:\\The App\\src\\screens\\NotificationsScreen.js": {
     "mtime": 1785161583.88528,
     "hash": "0dfe08b6e6017e61d677f4ab4a15e727"
   },
   "D:\\The App\\src\\screens\\OnboardingScreen.js": {
-    "mtime": 1785699485.5823512,
-    "hash": "2956bf762db89ed2c808141c469d2e5c"
+    "mtime": 1789808726.2683208,
+    "hash": "c5f556357a987bbf00c62786e3cc48e0"
   },
   "D:\\The App\\src\\screens\\PaywallScreen.js": {
-    "mtime": 1785735429.0961113,
-    "hash": "d1c493bfcba8ba07ff8341d1f8cfc804"
+    "mtime": 1789808569.6820872,
+    "hash": "645908c06705c8d42ff45b2965216d09"
   },
   "D:\\The App\\src\\screens\\ProfileScreen.js": {
-    "mtime": 1789444980.455046,
-    "hash": "e2ccc6bbb144bacc3335afeeaa26d17c"
+    "mtime": 1789890805.6974702,
+    "hash": "e0e7499ed9cf16c42e30ed6ad290c9d4"
   },
   "D:\\The App\\src\\screens\\PYQCreateScreen.js": {
-    "mtime": 1785161583.88528,
-    "hash": "76e6a739445f2a916938625c3009ff52"
+    "mtime": 1789809116.5748003,
+    "hash": "6acb00aba497e6eedaf83d1a27ec5298"
   },
   "D:\\The App\\src\\screens\\PYQPracticeScreen.js": {
-    "mtime": 1786815527.9284897,
-    "hash": "0161b69f1b492b2c0f10edef7612d3ae"
+    "mtime": 1789808868.7884336,
+    "hash": "2b1b2bb7d5f3b62d08fde36fc28c6d16"
   },
   "D:\\The App\\src\\screens\\QuizScreen.js": {
     "mtime": 1784220348.7577372,
     "hash": "f968241eb8b01706ae26202300310ee9"
   },
   "D:\\The App\\src\\screens\\ReadingScreen.js": {
-    "mtime": 1789629382.179263,
-    "hash": "0f138952954431c772cc0c553119df56"
+    "mtime": 1789808800.265503,
+    "hash": "3537827bfea16c80555ea9dca4974bb4"
   },
   "D:\\The App\\src\\screens\\SearchScreen.js": {
-    "mtime": 1789629691.3264358,
-    "hash": "684cd93f10207c965be4ec3797e398d6"
+    "mtime": 1789808941.6019075,
+    "hash": "528093ce059244c66dd7fe6d0a5a1063"
   },
   "D:\\The App\\src\\screens\\SESCalculatorScreen.js": {
-    "mtime": 1784225615.121064,
-    "hash": "fb217cb7586d7fb2f616c1fe675dd0e9"
+    "mtime": 1789746083.4753003,
+    "hash": "2aa1b9a4b10e380f14fd492429311d62"
   },
   "D:\\The App\\src\\screens\\SubTopicsScreen.js": {
-    "mtime": 1787947606.6249375,
-    "hash": "f74bac5b6cacc2294cc290f9d1286777"
+    "mtime": 1789808800.2695036,
+    "hash": "688c3e021f7244d7302d08e330deca9d"
   },
   "D:\\The App\\src\\screens\\SupportScreen.js": {
-    "mtime": 1786340384.0302837,
-    "hash": "6d1d8cf6e6f506d78467e93ed67ed9e6"
+    "mtime": 1789808726.2708802,
+    "hash": "ea733f093381b31672c9acba5af1a8c3"
   },
   "D:\\The App\\src\\screens\\UpdatesScreen.js": {
-    "mtime": 1787721989.5379567,
-    "hash": "1158ea7445f87550cae373bc83fdce7d"
+    "mtime": 1789808726.2698405,
+    "hash": "8be072b5d1382df5420755e9d6fc0649"
   },
   "D:\\The App\\src\\screens\\VideosScreen.js": {
-    "mtime": 1789584652.379163,
-    "hash": "ca595089ab32d2a0988696bcf00c8543"
+    "mtime": 1789808941.6019075,
+    "hash": "531eb4cef8e53f225a62e851d7c2dac0"
   },
   "D:\\The App\\src\\screens\\VirtualMuseumScreen.js": {
-    "mtime": 1789585098.1314692,
-    "hash": "e4495e9e270a32b02476364debbb85cc"
+    "mtime": 1789808726.287432,
+    "hash": "3a92a44cbaeddda45ee631d714b81097"
   },
   "D:\\The App\\src\\screens\\__tests__\\NFHSTrendsScreen.test.js": {
     "mtime": 1780386057.1180468,
     "hash": "c600a7fab5af0e53db4449a6cd16890c"
   },
   "D:\\The App\\src\\screens\\__tests__\\PaywallScreen.analytics.test.js": {
-    "mtime": 1781325014.0474033,
-    "hash": "f6a7fe6dfc3c5a0c75caab716bb15b95"
+    "mtime": 1789750960.329594,
+    "hash": "561f42de4e542114ca0b4c9135698166"
   },
   "D:\\The App\\src\\services\\annotationService.js": {
     "mtime": 1777659007.7819853,
@@ -1240,8 +1264,8 @@
     "hash": "c28598e82ecfac5b2dbd51f5ad724698"
   },
   "D:\\The App\\src\\services\\feedbackService.js": {
-    "mtime": 1786804254.9167018,
-    "hash": "5e00e35e709ef9543f94d2435689394c"
+    "mtime": 1789805980.6618576,
+    "hash": "45701d4be37fa255adca33fb9f09f5ae"
   },
   "D:\\The App\\src\\services\\highlightService.js": {
     "mtime": 1777659005.6232884,
@@ -1252,8 +1276,8 @@
     "hash": "19ebf8d797857402558a6ae0940b8b96"
   },
   "D:\\The App\\src\\services\\restoreCredentials.js": {
-    "mtime": 1788180734.5537179,
-    "hash": "abfb82c7add2c81d8bcd5bf498bd8664"
+    "mtime": 1789750728.3631842,
+    "hash": "6108a20b41554aa08078c7167a08504a"
   },
   "D:\\The App\\src\\services\\topicIllustrations.js": {
     "mtime": 1786881885.3898406,
@@ -1268,8 +1292,8 @@
     "hash": "40d143c00def7e2392927cab8b8d7085"
   },
   "D:\\The App\\src\\services\\videoService.js": {
-    "mtime": 1786735251.04007,
-    "hash": "8c76858074bd8592653a3dde5a5d4d52"
+    "mtime": 1789808941.6019075,
+    "hash": "89d4dbc3599e9899c5d57bed45c833da"
   },
   "D:\\The App\\src\\services\\__tests__\\couponService.test.js": {
     "mtime": 1786464140.0135055,
@@ -1280,8 +1304,8 @@
     "hash": "c8cea99b3b3d30c164ba27743c50cf96"
   },
   "D:\\The App\\src\\services\\__tests__\\restoreCredentials.test.js": {
-    "mtime": 1788181184.121643,
-    "hash": "52d8ad944d6855119592b1293fd4bc7e"
+    "mtime": 1789750857.1569848,
+    "hash": "f61898b46b5284cec41dba851dcb18f4"
   },
   "D:\\The App\\src\\services\\__tests__\\topicIllustrations.test.js": {
     "mtime": 1778646220.8562944,
@@ -1299,6 +1323,10 @@
     "mtime": 1784220279.988786,
     "hash": "aeeb25e31f8c2b1e8ab34083cf63308a"
   },
+  "D:\\The App\\src\\utils\\anthropometry.js": {
+    "mtime": 1789746083.493001,
+    "hash": "cf5bb6d69ec35f98c27611b8861f495c"
+  },
   "D:\\The App\\src\\utils\\appSplash.js": {
     "mtime": 1789632333.6920137,
     "hash": "167cfd7d09d0d31807f166903cc2c848"
@@ -1308,8 +1336,8 @@
     "hash": "4bb5071ba13d54df264c3fa805eb5b91"
   },
   "D:\\The App\\src\\utils\\bookmarkIdentity.js": {
-    "mtime": 1789629173.9682996,
-    "hash": "f39311f4d58f9803f71fd00c2460c02f"
+    "mtime": 1789806036.7729237,
+    "hash": "55eb6de5aca800b3a3d03229c2f5342a"
   },
   "D:\\The App\\src\\utils\\chapterSearch.js": {
     "mtime": 1787812099.5555847,
@@ -1331,9 +1359,17 @@
     "mtime": 1776915497.5873566,
     "hash": "3173bec75bf9e2ad87bedbd9cf0360eb"
   },
+  "D:\\The App\\src\\utils\\epiTwoByTwo.js": {
+    "mtime": 1789746083.4940014,
+    "hash": "b02829c3a791dd03c70a68b30f93d315"
+  },
+  "D:\\The App\\src\\utils\\expoConstants.js": {
+    "mtime": 1789805980.5992422,
+    "hash": "6a2d817d30b7711be19535e89a99ea14"
+  },
   "D:\\The App\\src\\utils\\globalSearch.js": {
-    "mtime": 1785306331.1362023,
-    "hash": "239648fbbaef3026562ee16324fea4c2"
+    "mtime": 1789808941.6977615,
+    "hash": "16e1795ce3674b6b063f459a288f554e"
   },
   "D:\\The App\\src\\utils\\learningProfileStorage.js": {
     "mtime": 1789125839.0471985,
@@ -1368,8 +1404,8 @@
     "hash": "5d565782124990413b9517a6cb27f828"
   },
   "D:\\The App\\src\\utils\\otaUpdates.js": {
-    "mtime": 1789413245.2465587,
-    "hash": "fea827a6d1686bd518f60ef729af048a"
+    "mtime": 1789815644.4790094,
+    "hash": "94ef05ca66e4ca0822f966ddddfb840a"
   },
   "D:\\The App\\src\\utils\\progressPresentation.js": {
     "mtime": 1784650210.305622,
@@ -1392,28 +1428,40 @@
     "hash": "85c1ce7f7ebd468a199a848218db9d1b"
   },
   "D:\\The App\\src\\utils\\reviewPrompt.js": {
-    "mtime": 1786817197.652858,
-    "hash": "7f6a299997ddf76fc878849b1238a597"
+    "mtime": 1789812333.2148461,
+    "hash": "85ec16f2dfa35a07378f53eccc1ea52f"
+  },
+  "D:\\The App\\src\\utils\\safeExpoGo.js": {
+    "mtime": 1789750616.8720303,
+    "hash": "9c09c3e47ea841c8d95c9c7e6c652876"
   },
   "D:\\The App\\src\\utils\\screenCaptureProtection.js": {
     "mtime": 1780371717.8520322,
     "hash": "df7f8269babb6479cbe06602e784d124"
   },
+  "D:\\The App\\src\\utils\\sesCalculator.js": {
+    "mtime": 1789746083.4960778,
+    "hash": "b92a61674a9381bdd686b4b85a2e8a77"
+  },
   "D:\\The App\\src\\utils\\sessionPolicy.js": {
-    "mtime": 1788768074.944604,
-    "hash": "867cd20e482ba75efd36ac4843826fcd"
+    "mtime": 1789890782.1731493,
+    "hash": "9f4ebf849fa6bd54f7ee282a8ae36f91"
   },
   "D:\\The App\\src\\utils\\splitSentences.js": {
     "mtime": 1787901780.1874683,
     "hash": "3dfb7ae237bff7a669dc1daa90462f95"
   },
   "D:\\The App\\src\\utils\\storeUpdates.js": {
-    "mtime": 1789627133.2972014,
-    "hash": "ca53cdeed46d11cd8960f9beb5b3d007"
+    "mtime": 1789815694.7928357,
+    "hash": "1266b7f09d96a492d0796b7dc7c16125"
   },
   "D:\\The App\\src\\utils\\userHighlightColors.js": {
     "mtime": 1789302135.529696,
     "hash": "6f043b80894710b96d4726138f1422da"
+  },
+  "D:\\The App\\src\\utils\\__tests__\\anthropometry.test.js": {
+    "mtime": 1789746083.4807844,
+    "hash": "29236494ef25106497a8092d95207b8c"
   },
   "D:\\The App\\src\\utils\\__tests__\\bookmarkIdentity.test.js": {
     "mtime": 1789629238.2127168,
@@ -1432,8 +1480,8 @@
     "hash": "e8c779f96c365f6d62d8b03121a09feb"
   },
   "D:\\The App\\src\\utils\\__tests__\\contentRegistry.silentUpdate.test.js": {
-    "mtime": 1787943453.657562,
-    "hash": "220d372a85c1806be3d72b4aa1967cd3"
+    "mtime": 1789806099.551868,
+    "hash": "41ad907bbc6e52765bb56b79e1b71da0"
   },
   "D:\\The App\\src\\utils\\__tests__\\copyWord.test.js": {
     "mtime": 1786856743.8022223,
@@ -1442,6 +1490,18 @@
   "D:\\The App\\src\\utils\\__tests__\\debouncedTask.test.js": {
     "mtime": 1787946994.8590744,
     "hash": "70fd2b823b2d044b1328ed3a027323b1"
+  },
+  "D:\\The App\\src\\utils\\__tests__\\epiTwoByTwo.test.js": {
+    "mtime": 1789746083.4869764,
+    "hash": "27cf292dbe55e227f9d73849900a1fae"
+  },
+  "D:\\The App\\src\\utils\\__tests__\\globalSearch.test.js": {
+    "mtime": 1789809172.395195,
+    "hash": "88ea273464cd833373495310c4d4c7e3"
+  },
+  "D:\\The App\\src\\utils\\__tests__\\launchImportGuard.test.js": {
+    "mtime": 1789812384.8233206,
+    "hash": "aaa93ae467dd23e1fa2d8409df377d22"
   },
   "D:\\The App\\src\\utils\\__tests__\\learningProfileStorage.test.js": {
     "mtime": 1789125839.0471985,
@@ -1472,8 +1532,8 @@
     "hash": "00e01d55470d7f096e2cda9914532a90"
   },
   "D:\\The App\\src\\utils\\__tests__\\otaUpdates.test.js": {
-    "mtime": 1789413245.3511083,
-    "hash": "9d4de949bc4127e5c3ca74a7cedf71d0"
+    "mtime": 1789815694.7579591,
+    "hash": "8305928406f6318912c56c227483b29a"
   },
   "D:\\The App\\src\\utils\\__tests__\\progressPresentation.test.js": {
     "mtime": 1784650282.931558,
@@ -1492,12 +1552,20 @@
     "hash": "b8935f5468f84c945de7fa34750fcffc"
   },
   "D:\\The App\\src\\utils\\__tests__\\reviewPrompt.test.js": {
-    "mtime": 1786817197.5660062,
-    "hash": "3d68ddc140b733708b8165468f377190"
+    "mtime": 1789803385.9395173,
+    "hash": "7d25880e9a9dc37aad67672a52d734cf"
+  },
+  "D:\\The App\\src\\utils\\__tests__\\safeExpoGo.test.js": {
+    "mtime": 1789750857.1519828,
+    "hash": "aaf061e42252505c7c327e4614bf4bf9"
+  },
+  "D:\\The App\\src\\utils\\__tests__\\sesCalculator.test.js": {
+    "mtime": 1789746083.4889944,
+    "hash": "ad8be8e376a98118080927d6c0e4c39f"
   },
   "D:\\The App\\src\\utils\\__tests__\\sessionPolicy.test.js": {
-    "mtime": 1788768074.944604,
-    "hash": "446c5e812ae108fcaf66ebadf7d05c1b"
+    "mtime": 1789890782.220215,
+    "hash": "429f714878372b6020f67a0dac1dc4a9"
   },
   "D:\\The App\\src\\utils\\__tests__\\splitSentences.test.js": {
     "mtime": 1787901780.1874683,
@@ -1512,12 +1580,12 @@
     "hash": "3b4804b6baeee35df2decc45656b2bbc"
   },
   "D:\\The App\\AGENTS.md": {
-    "mtime": 1789454314.306741,
-    "hash": "83da502ad2ab8fd9574285a5348c4965"
+    "mtime": 1789750843.7021701,
+    "hash": "c98a113eb85a05795abeb6b7c86d1e66"
   },
   "D:\\The App\\CLAUDE.md": {
-    "mtime": 1789454294.7199514,
-    "hash": "d63eea446385116e9ec161c3f642484f"
+    "mtime": 1789750843.7021701,
+    "hash": "69b356ece5e10dcc0eec26acdf00441f"
   },
   "D:\\The App\\COUPON_SETUP.md": {
     "mtime": 1778570823.4695475,

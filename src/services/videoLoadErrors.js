@@ -6,7 +6,7 @@
  */
 
 import { Platform } from "react-native";
-import Constants from "expo-constants";
+import { getExpoConstants, getAppVersion } from "../utils/expoConstants";
 import * as Device from "expo-device";
 
 export const VIDEO_SUPPORT_EMAIL = "anshuxinha@gmail.com";
@@ -20,14 +20,12 @@ export const getSupportDeviceSnapshot = () => {
         ? `Android ${Platform.Version}`
         : String(Platform.OS || "unknown");
   const model = Device.modelName || Device.deviceName || null;
-  const appVersion =
-    Constants.expoConfig?.version ||
-    Constants.nativeAppVersion ||
-    "unknown";
+  const Constants = getExpoConstants();
+  const appVersion = getAppVersion("unknown");
   const nativeBuild =
-    Constants.nativeBuildVersion ||
-    Constants.expoConfig?.ios?.buildNumber ||
-    Constants.expoConfig?.android?.versionCode ||
+    Constants?.nativeBuildVersion ||
+    Constants?.expoConfig?.ios?.buildNumber ||
+    Constants?.expoConfig?.android?.versionCode ||
     null;
   const versionLine = nativeBuild
     ? `${appVersion} (${nativeBuild})`

@@ -50,38 +50,42 @@ const AppUpdatedToast = () => {
     const unsubscribe = onSplashHidden(() => {
       showTimer = setTimeout(() => {
         (async () => {
-          const shouldShow = await peekAppliedOtaToast();
-          if (cancelled || !shouldShow) return;
-          setVisible(true);
-          Animated.parallel([
-            Animated.timing(opacity, {
-              toValue: 1,
-              duration: 220,
-              useNativeDriver: true,
-            }),
-            Animated.timing(translateY, {
-              toValue: 0,
-              duration: 220,
-              useNativeDriver: true,
-            }),
-          ]).start();
-
-          hideTimer = setTimeout(() => {
+          try {
+            const shouldShow = await peekAppliedOtaToast();
+            if (cancelled || !shouldShow) return;
+            setVisible(true);
             Animated.parallel([
               Animated.timing(opacity, {
-                toValue: 0,
+                toValue: 1,
                 duration: 220,
                 useNativeDriver: true,
               }),
               Animated.timing(translateY, {
-                toValue: -8,
+                toValue: 0,
                 duration: 220,
                 useNativeDriver: true,
               }),
-            ]).start(({ finished }) => {
-              if (finished && !cancelled) setVisible(false);
-            });
-          }, VISIBLE_MS);
+            ]).start();
+
+            hideTimer = setTimeout(() => {
+              Animated.parallel([
+                Animated.timing(opacity, {
+                  toValue: 0,
+                  duration: 220,
+                  useNativeDriver: true,
+                }),
+                Animated.timing(translateY, {
+                  toValue: -8,
+                  duration: 220,
+                  useNativeDriver: true,
+                }),
+              ]).start(({ finished }) => {
+                if (finished && !cancelled) setVisible(false);
+              });
+            }, VISIBLE_MS);
+          } catch (e) {
+            console.warn("AppUpdatedToast error:", e?.message);
+          }
         })();
       }, AFTER_SPLASH_MS);
     });

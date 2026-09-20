@@ -8,7 +8,6 @@ import {
   Text,
   View,
 } from "react-native";
-import { useEvent } from "expo";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -980,6 +979,12 @@ function useEventListenerSafe(player, eventName, listener) {
       }
     };
   }, [player, eventName, listener]);
+}
+
+function useEvent(player, eventName, initialValue = null) {
+  const [event, setEvent] = useState(initialValue);
+  useEventListenerSafe(player, eventName, (e) => setEvent(e));
+  return event || initialValue;
 }
 
 const styles = StyleSheet.create({

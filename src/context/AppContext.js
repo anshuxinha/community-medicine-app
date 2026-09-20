@@ -1535,12 +1535,15 @@ export const AppProvider = ({ children }) => {
     prevStreakRef.current = currentStreak;
 
     if (currentStreak > 0 && currentStreak > previousStreak) {
-      try {
-        const { triggerStreakMilestone } = require("../services/notificationService");
-        triggerStreakMilestone(currentStreak);
-      } catch (error) {
-        console.warn("Streak notification skipped:", error?.message);
-      }
+      void canLoadExpoHostModules().then((allowed) => {
+        if (!allowed) return;
+        try {
+          const { triggerStreakMilestone } = require("../services/notificationService");
+          triggerStreakMilestone(currentStreak);
+        } catch (error) {
+          console.warn("Streak notification skipped:", error?.message);
+        }
+      });
     }
   }, [currentStreak]);
 

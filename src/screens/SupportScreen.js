@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Text } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-import Constants from "expo-constants";
+import { getAppVersion } from "../utils/expoConstants";
 import { useSession } from "../context/AppContext";
 import { useThemedStyles } from "../styles/useThemedStyles";
 
@@ -87,10 +87,7 @@ const getDeviceOsLabel = () => {
  * @param {{ subject: string, userEmail?: string|null }} opts
  */
 export const buildSupportMailto = ({ subject, userEmail }) => {
-  const appVersion =
-    Constants.expoConfig?.version ||
-    Constants.nativeAppVersion ||
-    "unknown";
+  const appVersion = getAppVersion("unknown");
   const body = [
     "Hi STROMA Support,",
     "",
