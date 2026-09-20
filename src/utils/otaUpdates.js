@@ -21,7 +21,11 @@ export function shouldShowAppUpdatedToast(
   return lastSeenId !== currentId;
 }
 
-function getExpoUpdates() {
+export const OTA_CHANNEL_OVERRIDE_KEY = "stromaOtaChannelOverride";
+export const PREVIEW_CHANNEL_NAME = "preview";
+export const PRODUCTION_CHANNEL_NAME = "production";
+
+export function getExpoUpdates() {
   try {
     return requireOptionalNativeModule("ExpoUpdates");
   } catch (_) {
@@ -29,7 +33,7 @@ function getExpoUpdates() {
   }
 }
 
-function runningUpdateId(native) {
+export function runningUpdateId(native) {
   const module = native || getExpoUpdates();
   if (!module) return null;
   try {
@@ -40,6 +44,120 @@ function runningUpdateId(native) {
     return null;
   }
   return null;
+}
+
+/**
+ * Returns the currently active update channel.
+ * If overridden at runtime (e.g. for admins), returns the overridden channel.
+ * Otherwise returns the build-time channel or "production".
+ */
+export async function getActiveOtaChannel() {
+  try {
+    const stored = await AsyncStorage.getItem(OTA_CHANNEL_OVERRIDE_KEY);
+    if (stored) return stored;
+    const native = getExpoUpdates();
+    return native?.channel || PRODUCTION_CHANNEL_NAME;
+  } catch (_) {
+    return PRODUCTION_CHANNEL_NAME;
+  }
+}
+
+/**
+ * Sets or clears the runtime update channel override.
+ * Channel surfing via setUpdateRequestHeadersOverride is supported in Expo SDK 54+.
+ */
+export async function setOtaChannelOverride(channelName) {
+  try {
+    const native = getExpoUpdates();
+    if (!native) return false;
+
+    if (channelName === PREVIEW_CHANNEL_NAME) {
+      if (typeof native.setUpdateRequestHeadersOverride === "function") {
+        native.setUpdateRequestHeadersOverride({
+          "expo-channel-name": PREVIEW_CHANNEL_NAME,
+        });
+      }
+      await AsyncStorage.setItem(OTA_CHANNEL_OVERRIDE_KEY, PREVIEW_CHANNEL_NAME);
+      return true;
+    } else {
+      if (typeof native.setUpdateRequestHeadersOverride === "function") {
+        native.setUpdateRequestHeadersOverride(null);
+      }
+      await AsyncStorage.removeItem(OTA_CHANNEL_OVERRIDE_KEY);
+      return true;
+    }
+  } catch (error) {
+    console.warn("[OTA] Failed to set update channel override:", error?.message);
+    return false;
+  }
+}
+
+/**
+ * Automatically syncs the OTA channel based on whether the current user is an admin.
+ * Admin users are assigned to "preview" channel so they test OTAs before public release.
+ * Regular users have overrides cleared to remain strictly on "production".
+ */
+export async function syncAdminOtaChannel(isAdmin) {
+  try {
+    const currentStored = await AsyncStorage.getItem(OTA_CHANNEL_OVERRIDE_KEY);
+    if (isAdmin) {
+      if (currentStored === PREVIEW_CHANNEL_NAME) return;
+      await setOtaChannelOverride(PREVIEW_CHANNEL_NAME);
+    } else {
+      if (currentStored) {
+        await setOtaChannelOverride(null);
+      }
+    }
+  } catch (error) {
+    console.warn("[OTA] Failed to sync admin update channel:", error?.message);
+  }
+}
+
+/**
+ * Manual on-demand check and fetch for admins from the UI.
+ */
+export async function checkAndFetchManualUpdate() {
+  try {
+    const native = getExpoUpdates();
+    if (!native?.isEnabled) {
+      return { status: "disabled", message: "OTA updates are disabled in this environment." };
+    }
+    if (typeof native.checkForUpdateAsync !== "function") {
+      return { status: "unsupported", message: "Update check is not available on this build." };
+    }
+
+    const checkResult = await native.checkForUpdateAsync();
+    if (!checkResult?.isAvailable) {
+      return { status: "up-to-date", message: "App is already on the latest version." };
+    }
+
+    if (typeof native.fetchUpdateAsync !== "function") {
+      return { status: "unsupported", message: "Update download is not supported on this build." };
+    }
+
+    await native.fetchUpdateAsync();
+    return {
+      status: "downloaded",
+      message: "Update downloaded successfully.",
+      updateId: checkResult.manifest?.id || null,
+    };
+  } catch (error) {
+    return { status: "error", message: error?.message || "Failed to check for updates." };
+  }
+}
+
+/**
+ * Reloads the app into the most recently downloaded bundle.
+ */
+export async function reloadAppAsync() {
+  try {
+    const native = getExpoUpdates();
+    if (typeof native?.reload === "function") {
+      await native.reload();
+    }
+  } catch (error) {
+    console.warn("[OTA] Failed to reload app:", error?.message);
+  }
 }
 
 /**

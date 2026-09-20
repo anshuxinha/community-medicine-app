@@ -36,6 +36,14 @@ import {
 } from "../utils/screenCaptureProtection";
 import { resetReviewPromptState } from "../utils/reviewPrompt";
 import { buildSessionReleaseUpdate } from "../utils/sessionPolicy";
+import { isUserAdmin } from "../utils/adminUtils";
+import {
+  getActiveOtaChannel,
+  setOtaChannelOverride,
+  checkAndFetchManualUpdate,
+  reloadAppAsync,
+  runningUpdateId,
+} from "../utils/otaUpdates";
 
 const APPEARANCE_OPTIONS = [
   { value: "light", label: "Light", icon: "wb-sunny" },
@@ -333,6 +341,57 @@ const ProfileScreen = () => {
         },
       ],
     );
+  };
+
+  const handleOpenAdminOta = async () => {
+    try {
+      const channel = await getActiveOtaChannel();
+      const currentId = runningUpdateId();
+      const idDisplay = currentId ? currentId.substring(0, 8) + "..." : "embedded";
+
+      Alert.alert(
+        "OTA Updates (Admin Testing)",
+        `Active Channel: ${channel.toUpperCase()}\nUpdate ID: ${idDisplay}\n\nThis device receives early updates published to the "${channel}" channel.`,
+        [
+          {
+            text: "Check & Apply",
+            onPress: async () => {
+              try {
+                const res = await checkAndFetchManualUpdate();
+                if (res.status === "downloaded") {
+                  Alert.alert(
+                    "Update Ready",
+                    "A new update was downloaded. Restart app now to apply it?",
+                    [
+                      { text: "Later", style: "cancel" },
+                      { text: "Restart Now", onPress: () => reloadAppAsync() },
+                    ]
+                  );
+                } else {
+                  Alert.alert("OTA Status", res.message);
+                }
+              } catch (e) {
+                Alert.alert("Error", e?.message || "Update check failed.");
+              }
+            },
+          },
+          {
+            text: channel === "preview" ? "Switch to Production" : "Switch to Preview",
+            onPress: async () => {
+              const target = channel === "preview" ? "production" : "preview";
+              await setOtaChannelOverride(target === "preview" ? "preview" : null);
+              Alert.alert(
+                "Channel Switched",
+                `Device is now set to "${target}" channel.`
+              );
+            },
+          },
+          { text: "Close", style: "cancel" },
+        ]
+      );
+    } catch (err) {
+      Alert.alert("Error", err?.message || "Could not retrieve OTA status.");
+    }
   };
 
   const navigateToBookmarks = () => navigation.navigate("Bookmarks");
@@ -706,9 +765,9 @@ const ProfileScreen = () => {
               icon="privacy-tip"
               label="Privacy Policy"
               onPress={handlePrivacyPolicy}
-              isLast={!user?.isAdmin}
+              isLast={!isUserAdmin(user)}
             />
-            {user?.isAdmin ? (
+            {isUserAdmin(user) ? (
               <>
                 <ActionRow
                   icon="fact-check"
@@ -724,6 +783,11 @@ const ProfileScreen = () => {
                   icon="refresh"
                   label="Reset Review CTA (this device)"
                   onPress={handleResetReviewCta}
+                />
+                <ActionRow
+                  icon="system-update"
+                  label="OTA Updates (Preview Channel)"
+                  onPress={handleOpenAdminOta}
                   isLast
                 />
               </>

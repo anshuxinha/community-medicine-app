@@ -20,6 +20,8 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Device from "expo-device";
 import { isExpoGo } from "../utils/safeExpoGo";
+import { isUserAdmin } from "../utils/adminUtils";
+import { syncAdminOtaChannel } from "../utils/otaUpdates";
 import { db, auth } from "../config/firebase";
 import {
   collection,
@@ -851,7 +853,7 @@ export const AppProvider = ({ children }) => {
               }
             }
             const premiumStatus = (data.isPremium === true && !isPremiumExpired) || claimsPremium;
-            const isAdmin = data.isAdmin === true || claimsAdmin;
+            const isAdmin = data.isAdmin === true || claimsAdmin || isUserAdmin({ email: firebaseUser.email });
             const fetchedPremiumType = data.premiumType || null;
             setPremiumType(fetchedPremiumType);
 
@@ -1041,7 +1043,7 @@ export const AppProvider = ({ children }) => {
               email: firebaseUser.email,
               username: fallbackUsername,
               isPremium: claimsPremium,
-              isAdmin: claimsAdmin,
+              isAdmin: claimsAdmin || isUserAdmin({ email: firebaseUser.email }),
               pushToken: null,
               referralCode,
               onboardingCompleted: resolveOnboardingCompleted(
@@ -1161,11 +1163,7 @@ export const AppProvider = ({ children }) => {
       isLoggingOutRef.current = false;
     }
 
-    const userEmail = user?.email?.toLowerCase();
-    const isAdmin =
-      user?.isAdmin === true ||
-      userEmail === "anshuxinha@gmail.com" ||
-      userEmail === "kaushikeec@gmail.com";
+    const isAdmin = isUserAdmin(user);
 
     if (isAdmin) {
       setScreenCaptureBypass(true);
@@ -1174,6 +1172,10 @@ export const AppProvider = ({ children }) => {
       setScreenCaptureBypass(false);
       enableScreenCaptureProtection();
     }
+
+    syncAdminOtaChannel(isAdmin).catch((err) =>
+      console.warn("[OTA] Channel sync error:", err?.message)
+    );
   }, [user]);
 
   // Initialize screen capture protection on app start
