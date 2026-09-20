@@ -113,7 +113,8 @@ const AppUpdatedToast = () => {
         style={[styles.wrap, { top: Math.max(insets.top, 12) + 8 }]}
       >
         <Animated.View
-          accessibilityRole="status"
+          accessibilityRole="alert"
+          accessibilityLiveRegion="polite"
           accessibilityLabel="App updated"
           onLayout={onShown}
           style={[styles.toast, { opacity, transform: [{ translateY }] }]}
