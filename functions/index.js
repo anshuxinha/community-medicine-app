@@ -12,18 +12,18 @@ if (!admin.apps.length) {
   admin.initializeApp();
 }
 
+const {
+  hasActiveAdminPushSession,
+} = require("./adminPush");
+
 const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
 
 // Known admin emails (same list as client isAdmin fallbacks in VideosScreen).
 const ADMIN_EMAILS = ["anshuxinha@gmail.com", "kaushikeec@gmail.com"];
 
-const isValidExpoPushToken = (token) =>
-  typeof token === "string" &&
-  (token.startsWith("ExponentPushToken[") ||
-    token.startsWith("ExpoPushToken["));
-
 /**
- * Collect Expo push tokens for all admin accounts.
+ * Collect Expo push tokens for admin accounts that currently hold a device
+ * session. A leftover token after logout would otherwise still ring that phone.
  * Sources: users where isAdmin == true, plus known admin emails via Auth.
  * @param {string|null} excludeUid - skip this user (e.g. comment author)
  * @returns {Promise<string[]>}
@@ -37,7 +37,7 @@ async function getAdminPushTokens(excludeUid = null) {
     if (!uid || (excludeUid && uid === excludeUid)) return;
     if (seenUids.has(uid)) return;
     seenUids.add(uid);
-    if (isValidExpoPushToken(data?.pushToken)) {
+    if (hasActiveAdminPushSession(data)) {
       tokens.add(data.pushToken);
     }
   };

@@ -24,3 +24,11 @@ export function isForeignDeviceSession(cloudDeviceId, localDeviceId) {
 export function shouldReleaseDeviceClaim({ kickedByOtherDevice } = {}) {
   return kickedByOtherDevice !== true;
 }
+
+// Fields to write on voluntary logout so admin pushes stop following this phone.
+export function buildSessionReleaseUpdate() {
+  return {
+    currentDeviceId: null,
+    pushToken: null,
+  };
+}

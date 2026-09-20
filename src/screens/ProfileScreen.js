@@ -35,6 +35,7 @@ import {
   disableScreenCaptureProtection,
 } from "../utils/screenCaptureProtection";
 import { resetReviewPromptState } from "../utils/reviewPrompt";
+import { buildSessionReleaseUpdate } from "../utils/sessionPolicy";
 
 const APPEARANCE_OPTIONS = [
   { value: "light", label: "Light", icon: "wb-sunny" },
@@ -197,7 +198,10 @@ const ProfileScreen = () => {
           const uid = auth.currentUser?.uid;
           if (uid) {
             try {
-              await updateDoc(doc(db, "users", uid), { currentDeviceId: null });
+              await updateDoc(
+                doc(db, "users", uid),
+                buildSessionReleaseUpdate(),
+              );
             } catch (_) {}
           }
           try {

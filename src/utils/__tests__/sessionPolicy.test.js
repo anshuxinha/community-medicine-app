@@ -1,4 +1,5 @@
 import {
+  buildSessionReleaseUpdate,
   isForeignDeviceSession,
   shouldReleaseDeviceClaim,
 } from "../sessionPolicy";
@@ -27,5 +28,14 @@ describe("shouldReleaseDeviceClaim", () => {
 
   test("a kick from another device leaves their claim in Firestore", () => {
     expect(shouldReleaseDeviceClaim({ kickedByOtherDevice: true })).toBe(false);
+  });
+});
+
+describe("buildSessionReleaseUpdate", () => {
+  test("clears the device claim and this phone's push token", () => {
+    expect(buildSessionReleaseUpdate()).toEqual({
+      currentDeviceId: null,
+      pushToken: null,
+    });
   });
 });

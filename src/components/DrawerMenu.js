@@ -21,6 +21,7 @@ import { theme } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
 import { getAppVersion } from "../utils/expoConstants";
 import { ALL_ORIENTATIONS } from "../constants/orientations";
+import { buildSessionReleaseUpdate } from "../utils/sessionPolicy";
 
 const BASE_MENU_ITEMS = [
   {
@@ -154,7 +155,10 @@ const DrawerMenu = ({ visible, onClose, user }) => {
                 const uid = auth.currentUser?.uid;
                 if (uid) {
                   try {
-                    await updateDoc(doc(db, "users", uid), { currentDeviceId: null });
+                    await updateDoc(
+                      doc(db, "users", uid),
+                      buildSessionReleaseUpdate(),
+                    );
                   } catch (_) {}
                 }
                 try {

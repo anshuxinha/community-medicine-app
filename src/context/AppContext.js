@@ -35,6 +35,7 @@ import {
 import { getDeviceId } from "../utils/deviceUtils";
 import {
   LOCAL_AUTH_STORAGE_KEYS,
+  buildSessionReleaseUpdate,
   isForeignDeviceSession,
   shouldReleaseDeviceClaim,
 } from "../utils/sessionPolicy";
@@ -2027,10 +2028,10 @@ export const AppProvider = ({ children }) => {
         const uid = userRef.current?.uid || auth.currentUser?.uid;
         if (uid) {
           try {
-            await updateDoc(doc(db, "users", uid), { currentDeviceId: null });
+            await updateDoc(doc(db, "users", uid), buildSessionReleaseUpdate());
           } catch (e) {
             console.warn(
-              "Failed to clear currentDeviceId on logout:",
+              "Failed to clear session claim on logout:",
               e?.message,
             );
           }
