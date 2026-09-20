@@ -262,7 +262,8 @@ async function downloadPendingUpdate() {
     const result = await native.checkForUpdateAsync();
     if (!result?.isAvailable) return;
     if (typeof native.fetchUpdateAsync !== "function") return;
-    await native.fetchUpdateAsync();
+    const fetchResult = await native.fetchUpdateAsync();
+    console.log("[OTA] Silent update downloaded successfully:", fetchResult?.manifest?.id || "complete");
   } catch (error) {
     console.warn("Silent OTA check failed:", error?.message);
   }
@@ -276,7 +277,8 @@ async function downloadPendingUpdate() {
  * The new bundle runs on the next process start.
  */
 export const MIN_OTA_CHECK_INTERVAL_MS = 2 * 60 * 1000;
-export const FIRST_CHECK_DELAY_MS = 60 * 1000;
+export const FIRST_CHECK_DELAY_MS = 5 * 1000;
+
 
 export function canRunSilentOtaCheck(resumeChecksAllowed, lastCheckAt, now) {
   if (!resumeChecksAllowed) return false;

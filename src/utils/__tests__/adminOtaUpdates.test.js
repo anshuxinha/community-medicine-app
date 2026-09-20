@@ -11,14 +11,16 @@ import {
 } from "../otaUpdates";
 
 describe("adminUtils", () => {
-  it("recognizes hardcoded admin emails case-insensitively", () => {
+  it("recognizes hardcoded admin emails case-insensitively and with whitespace", () => {
     expect(isUserAdmin({ email: "anshuxinha@gmail.com" })).toBe(true);
-    expect(isUserAdmin({ email: "ANSHUXINHA@GMAIL.COM" })).toBe(true);
-    expect(isUserAdmin({ email: "kaushikeec@gmail.com" })).toBe(true);
+    expect(isUserAdmin({ email: " ANSHUXINHA@GMAIL.COM " })).toBe(true);
+    expect(isUserAdmin({ email: "  kaushikeec@gmail.com  " })).toBe(true);
   });
 
-  it("recognizes isAdmin flag on user object", () => {
+  it("recognizes isAdmin flag on user object (boolean, string, or number)", () => {
     expect(isUserAdmin({ email: "student@test.com", isAdmin: true })).toBe(true);
+    expect(isUserAdmin({ email: "student@test.com", isAdmin: "true" })).toBe(true);
+    expect(isUserAdmin({ email: "student@test.com", isAdmin: 1 })).toBe(true);
   });
 
   it("returns false for regular users and falsy values", () => {

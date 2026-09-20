@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -392,6 +392,24 @@ const ProfileScreen = () => {
     } catch (err) {
       Alert.alert("Error", err?.message || "Could not retrieve OTA status.");
     }
+  };
+
+  const versionTapCountRef = useRef(0);
+  const versionTapTimerRef = useRef(null);
+
+  const handleVersionPress = () => {
+    versionTapCountRef.current += 1;
+    if (versionTapTimerRef.current) {
+      clearTimeout(versionTapTimerRef.current);
+    }
+    if (versionTapCountRef.current >= 5) {
+      versionTapCountRef.current = 0;
+      handleOpenAdminOta();
+      return;
+    }
+    versionTapTimerRef.current = setTimeout(() => {
+      versionTapCountRef.current = 0;
+    }, 2000);
   };
 
   const navigateToBookmarks = () => navigation.navigate("Bookmarks");
@@ -817,9 +835,16 @@ const ProfileScreen = () => {
           <Text style={styles.deleteAccountText}>Delete Account</Text>
         </TouchableOpacity>
 
-        <Text style={styles.version}>
-          STROMA v{getAppVersion()}
-        </Text>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={handleVersionPress}
+          accessibilityRole="button"
+          accessibilityLabel="App version"
+        >
+          <Text style={styles.version}>
+            STROMA v{getAppVersion()}
+          </Text>
+        </TouchableOpacity>
 
         <View style={styles.bottomPadding} />
       </ScrollView>
