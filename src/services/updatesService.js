@@ -1,63 +1,39 @@
 /**
- * Remote Updates feed: Firestore appContent/updatesFeed (production) or
- * appContent/updatesFeedPreview (preview / __DEV__), with offline cache
- * and bundled JSON fallback.
+ * Remote Updates feed: Firestore appContent/updatesFeed (usual short Updates),
+ * plus parallel PH Digest articles: appContent/articlesFeed.
+ * Offline cache and bundled JSON fallback for both.
  */
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Constants from "expo-constants";
-import * as Updates from "expo-updates";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
 import bundledCurrent from "../data/updates.json";
-import bundledPreview from "../data/updates_preview.json";
+import bundledArticles from "../data/articles.json";
 import bundledArchive from "../data/updates_archive.json";
 
 export const UPDATES_FEED_DOC_PRODUCTION = ["appContent", "updatesFeed"];
-export const UPDATES_FEED_DOC_PREVIEW = ["appContent", "updatesFeedPreview"];
+export const ARTICLES_FEED_DOC = ["appContent", "articlesFeed"];
 
-/** @deprecated Prefer resolveUpdatesFeedDocPath() */
+/** @deprecated Prefer UPDATES_FEED_DOC_PRODUCTION */
 export const UPDATES_FEED_DOC_PATH = UPDATES_FEED_DOC_PRODUCTION;
 
 const FETCH_TIMEOUT_MS = 5000;
 
 function timeoutPromise(ms) {
   return new Promise((_, reject) =>
-    setTimeout(() => reject(new Error("Updates feed request timed out")), ms),
+    setTimeout(() => reject(new Error("Feed request timed out")), ms),
   );
 }
 
-/**
- * Preview builds (EAS channel "preview"), explicit env, and __DEV__ read the
- * preview Firestore doc so PH Digest can land without touching production.
- */
-export function usePreviewUpdatesFeed() {
-  const envFlag = (
-    process.env.EXPO_PUBLIC_UPDATES_FEED || ""
-  ).toLowerCase();
-  if (envFlag === "preview") return true;
-  if (envFlag === "production") return false;
-
-  const channel = (
-    Updates.channel ||
-    Constants.expoConfig?.extra?.eas?.channel ||
-    ""
-  ).toLowerCase();
-  if (channel === "preview") return true;
-
-  if (typeof __DEV__ !== "undefined" && __DEV__) return true;
-  return false;
-}
-
 export function resolveUpdatesFeedDocPath() {
-  return usePreviewUpdatesFeed()
-    ? UPDATES_FEED_DOC_PREVIEW
-    : UPDATES_FEED_DOC_PRODUCTION;
+  return UPDATES_FEED_DOC_PRODUCTION;
 }
 
 export function updatesFeedCacheKey() {
-  return usePreviewUpdatesFeed()
-    ? "updatesFeedCachePreview"
-    : "updatesFeedCache";
+  return "updatesFeedCache";
+}
+
+export function articlesFeedCacheKey() {
+  return "articlesFeedCache";
 }
 
 /** @deprecated Prefer updatesFeedCacheKey() */
@@ -131,7 +107,6 @@ export function normalizeMonthsMap(raw) {
 
 /** Merge bundled updates JSON + archive into months map. */
 export function monthsFromBundled() {
-  const current = usePreviewUpdatesFeed() ? bundledPreview : bundledCurrent;
   const months = {};
   if (bundledArchive && typeof bundledArchive === "object") {
     for (const [key, list] of Object.entries(bundledArchive)) {
@@ -139,8 +114,25 @@ export function monthsFromBundled() {
       months[key] = sortItemsDesc(dedupeByLink(list));
     }
   }
-  if (Array.isArray(current)) {
-    for (const item of current) {
+  if (Array.isArray(bundledCurrent)) {
+    for (const item of bundledCurrent) {
+      const key = monthKeyFromDate(item?.date);
+      if (!key) continue;
+      months[key] = months[key] || [];
+      months[key].push(item);
+    }
+    for (const key of Object.keys(months)) {
+      months[key] = sortItemsDesc(dedupeByLink(months[key]));
+    }
+  }
+  return months;
+}
+
+/** Bundled PH Digest articles only (no Updates archive). */
+export function articlesMonthsFromBundled() {
+  const months = {};
+  if (Array.isArray(bundledArticles)) {
+    for (const item of bundledArticles) {
       const key = monthKeyFromDate(item?.date);
       if (!key) continue;
       months[key] = months[key] || [];
@@ -177,9 +169,32 @@ async function writeCachedUpdatesMonths(months) {
   }
 }
 
+export async function readCachedArticlesMonths() {
+  try {
+    const raw = await AsyncStorage.getItem(articlesFeedCacheKey());
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    const months = normalizeMonthsMap(parsed);
+    return Object.keys(months).length > 0 ? months : null;
+  } catch (err) {
+    console.warn("Failed to read articles feed cache:", err?.message);
+    return null;
+  }
+}
+
+async function writeCachedArticlesMonths(months) {
+  try {
+    await AsyncStorage.setItem(
+      articlesFeedCacheKey(),
+      JSON.stringify({ months, cachedAt: new Date().toISOString() }),
+    );
+  } catch (err) {
+    console.warn("Failed to cache articles feed:", err?.message);
+  }
+}
+
 /**
- * Fetch remote feed. Returns months map or null on failure.
- * Does not throw.
+ * Fetch remote Updates feed. Returns months map or null on failure.
  */
 export async function fetchRemoteUpdatesMonths() {
   try {
@@ -194,6 +209,26 @@ export async function fetchRemoteUpdatesMonths() {
     return months;
   } catch (err) {
     console.warn("Updates feed fetch failed:", err?.message);
+    return null;
+  }
+}
+
+/**
+ * Fetch remote PH Digest articles feed. Returns months map or null on failure.
+ */
+export async function fetchRemoteArticlesMonths() {
+  try {
+    const snap = await Promise.race([
+      getDoc(doc(db, ...ARTICLES_FEED_DOC)),
+      timeoutPromise(FETCH_TIMEOUT_MS),
+    ]);
+    if (!snap?.exists?.()) return null;
+    const months = normalizeMonthsMap(snap.data());
+    if (Object.keys(months).length === 0) return null;
+    await writeCachedArticlesMonths(months);
+    return months;
+  } catch (err) {
+    console.warn("Articles feed fetch failed:", err?.message);
     return null;
   }
 }
@@ -218,9 +253,7 @@ async function loadUpdatesMonthsInner() {
 }
 
 /**
- * Resolve feed with fallback order: network → cache → bundled.
- * Concurrent callers share one in-flight request.
- * @returns {Promise<{ months: Object, source: 'remote'|'cache'|'bundled' }>}
+ * Resolve Updates feed: network → cache → bundled.
  */
 export function loadUpdatesMonths() {
   if (lastResult && Date.now() - lastResultAt < RESULT_TTL_MS) {
@@ -240,9 +273,54 @@ export function loadUpdatesMonths() {
   return inFlightLoad;
 }
 
-/** Kick off the feed fetch at app start so Dashboard is not waiting on first paint. */
+let inFlightArticles = null;
+let lastArticles = null;
+let lastArticlesAt = 0;
+
+async function loadArticlesMonthsInner() {
+  const remote = await fetchRemoteArticlesMonths();
+  if (remote) {
+    return { months: remote, source: "remote" };
+  }
+
+  const cached = await readCachedArticlesMonths();
+  if (cached) {
+    return { months: cached, source: "cache" };
+  }
+
+  return { months: articlesMonthsFromBundled(), source: "bundled" };
+}
+
+/**
+ * Resolve articles feed: network → cache → bundled.
+ * Next app version can treat this as a separate post type from Updates.
+ */
+export function loadArticlesMonths() {
+  if (lastArticles && Date.now() - lastArticlesAt < RESULT_TTL_MS) {
+    return Promise.resolve(lastArticles);
+  }
+  if (!inFlightArticles) {
+    inFlightArticles = loadArticlesMonthsInner()
+      .then((result) => {
+        lastArticles = result;
+        lastArticlesAt = Date.now();
+        return result;
+      })
+      .finally(() => {
+        inFlightArticles = null;
+      });
+  }
+  return inFlightArticles;
+}
+
+/** Kick off Updates feed fetch at app start. */
 export function prefetchUpdatesMonths() {
   return loadUpdatesMonths();
+}
+
+/** Kick off articles feed fetch (safe to call even if UI not wired yet). */
+export function prefetchArticlesMonths() {
+  return loadArticlesMonths();
 }
 
 export function yearMonthKey(date = new Date()) {
@@ -258,7 +336,6 @@ export function previousYearMonthKey(date = new Date()) {
 
 /**
  * Dashboard strip: current month → previous → all non-academic, newest first.
- * Display slice applied by caller.
  */
 export function pickDashboardUpdates(months, { maxItems = 5 } = {}) {
   const filterNonAcademic = (list) =>
