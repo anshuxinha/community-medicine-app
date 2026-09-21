@@ -63,27 +63,16 @@ export async function getActiveOtaChannel() {
 }
 
 /**
- * Sets or clears the update channel preference in AsyncStorage and native ExpoUpdates headers.
- * Note: Native header overriding uses Expo Channel Surfing when supported by native binary.
+ * Sets or clears the update channel preference in AsyncStorage.
+ * Resets native requestHeaders override to prevent cold-start selection policy mismatches.
  */
 export async function setOtaChannelOverride(channelName) {
   try {
-    const targetChannel =
-      channelName === PREVIEW_CHANNEL_NAME
-        ? PREVIEW_CHANNEL_NAME
-        : PRODUCTION_CHANNEL_NAME;
     const native = getExpoUpdates();
     if (typeof native?.setUpdateRequestHeadersOverride === "function") {
       try {
-        native.setUpdateRequestHeadersOverride({
-          "expo-channel-name": targetChannel,
-        });
-      } catch (e) {
-        console.warn(
-          "[OTA] Native setUpdateRequestHeadersOverride failed:",
-          e?.message,
-        );
-      }
+        native.setUpdateRequestHeadersOverride(null);
+      } catch (_) {}
     }
 
     if (channelName === PREVIEW_CHANNEL_NAME) {
@@ -100,25 +89,19 @@ export async function setOtaChannelOverride(channelName) {
 }
 
 /**
- * Automatically syncs the OTA channel based on whether the current user is an admin.
- * Admin users are assigned to "preview" channel so they test OTAs before public release.
- * Regular users have overrides cleared to remain strictly on "production".
+ * Automatically syncs the OTA channel preference for admin users.
  */
 export async function syncAdminOtaChannel(isAdmin) {
   try {
+    const native = getExpoUpdates();
+    if (typeof native?.setUpdateRequestHeadersOverride === "function") {
+      try {
+        native.setUpdateRequestHeadersOverride(null);
+      } catch (_) {}
+    }
     const currentStored = await AsyncStorage.getItem(OTA_CHANNEL_OVERRIDE_KEY);
     if (isAdmin) {
-      if (currentStored === PREVIEW_CHANNEL_NAME) {
-        const native = getExpoUpdates();
-        if (typeof native?.setUpdateRequestHeadersOverride === "function") {
-          try {
-            native.setUpdateRequestHeadersOverride({
-              "expo-channel-name": PREVIEW_CHANNEL_NAME,
-            });
-          } catch (_) {}
-        }
-        return;
-      }
+      if (currentStored === PREVIEW_CHANNEL_NAME) return;
       await setOtaChannelOverride(PREVIEW_CHANNEL_NAME);
     } else {
       if (currentStored) {
@@ -143,13 +126,10 @@ export async function checkAndFetchManualUpdate() {
       return { status: "unsupported", message: "Update check is not available on this build." };
     }
 
-    // Assert header override before checking
-    const targetChannel = await getActiveOtaChannel();
-    if (typeof native.setUpdateRequestHeadersOverride === "function") {
+    // Ensure native header override is cleared so downloaded bundle has matching headers
+    if (typeof native?.setUpdateRequestHeadersOverride === "function") {
       try {
-        native.setUpdateRequestHeadersOverride({
-          "expo-channel-name": targetChannel,
-        });
+        native.setUpdateRequestHeadersOverride(null);
       } catch (_) {}
     }
 
