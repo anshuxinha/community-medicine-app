@@ -39,14 +39,3 @@ describe("buildSessionReleaseUpdate", () => {
     });
   });
 });
-
-describe("LOCAL_AUTH_STORAGE_KEYS", () => {
-  test("includes completedVideoIds to prevent cross-account progress leakage", () => {
-    const { LOCAL_AUTH_STORAGE_KEYS } = require("../sessionPolicy");
-    expect(LOCAL_AUTH_STORAGE_KEYS).toContain("completedVideoIds");
-    expect(LOCAL_AUTH_STORAGE_KEYS).toContain("readItems");
-    expect(LOCAL_AUTH_STORAGE_KEYS).toContain("bookmarks");
-    expect(LOCAL_AUTH_STORAGE_KEYS).toContain("user");
-  });
-});
-

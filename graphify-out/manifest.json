@@ -1004,8 +1004,8 @@
     "hash": "cbf9b577028e99f41e73e8dfac48b43f"
   },
   "D:\\The App\\src\\components\\GestureVideoPlayer.js": {
-    "mtime": 1789926945.0644374,
-    "hash": "bf90dd13fb1658f83b4c334961c640ff"
+    "mtime": 1789984879.4392622,
+    "hash": "ee4e176b65ceb2edcf89519efd620303"
   },
   "D:\\The App\\src\\components\\ReadingView.js": {
     "mtime": 1789808983.3394508,
@@ -1056,7 +1056,7 @@
     "hash": "28aff4aa2aa407d8be48e8aed5bb252a"
   },
   "D:\\The App\\src\\context\\AppContext.js": {
-    "mtime": 1789926785.131848,
+    "mtime": 1789984879.4422455,
     "hash": "f9663734202f4a1f515c4431972858e1"
   },
   "D:\\The App\\src\\context\\appContexts.js": {
@@ -1240,7 +1240,7 @@
     "hash": "8be072b5d1382df5420755e9d6fc0649"
   },
   "D:\\The App\\src\\screens\\VideosScreen.js": {
-    "mtime": 1789808941.6019075,
+    "mtime": 1789984879.4442506,
     "hash": "531eb4cef8e53f225a62e851d7c2dac0"
   },
   "D:\\The App\\src\\screens\\VirtualMuseumScreen.js": {
@@ -1408,8 +1408,8 @@
     "hash": "5d565782124990413b9517a6cb27f828"
   },
   "D:\\The App\\src\\utils\\otaUpdates.js": {
-    "mtime": 1789932762.8406007,
-    "hash": "fb9b54fbfd05d2c15a3abdb857d570f5"
+    "mtime": 1789979145.5040984,
+    "hash": "8f08c1dd0c0fdc5b63834da3b15efece"
   },
   "D:\\The App\\src\\utils\\progressPresentation.js": {
     "mtime": 1784650210.305622,
@@ -1448,7 +1448,7 @@
     "hash": "b92a61674a9381bdd686b4b85a2e8a77"
   },
   "D:\\The App\\src\\utils\\sessionPolicy.js": {
-    "mtime": 1789890782.1731493,
+    "mtime": 1789984879.4477518,
     "hash": "9f4ebf849fa6bd54f7ee282a8ae36f91"
   },
   "D:\\The App\\src\\utils\\splitSentences.js": {
@@ -1572,7 +1572,7 @@
     "hash": "ad8be8e376a98118080927d6c0e4c39f"
   },
   "D:\\The App\\src\\utils\\__tests__\\sessionPolicy.test.js": {
-    "mtime": 1789890782.220215,
+    "mtime": 1789984879.4462433,
     "hash": "429f714878372b6020f67a0dac1dc4a9"
   },
   "D:\\The App\\src\\utils\\__tests__\\splitSentences.test.js": {

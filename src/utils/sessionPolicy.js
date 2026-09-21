@@ -4,7 +4,6 @@ export const LOCAL_AUTH_STORAGE_KEYS = [
   "readItems",
   "readItemVersions",
   "bookmarks",
-  "completedVideoIds",
   "highlights",
   "currentStreak",
   "lastReadDate",
