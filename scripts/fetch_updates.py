@@ -1,1 +1,1 @@
-dGVzdA==
+/workspace/ph-digest/out/fetch_updates.py
