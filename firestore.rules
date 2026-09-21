@@ -205,6 +205,16 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Remote Articles feed (Grokbot etc.). Client read; writes via Admin SDK only.
+    match /articlesFeed/{docId} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+    match /artcilesFeed/{docId} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
     // --- App feedback (review prompt, chapter stars) and video requests ---
     match /appFeedback/{docId} {
       allow create: if request.auth != null

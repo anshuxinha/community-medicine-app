@@ -10,6 +10,7 @@ import {
   getUpdateType,
   pickDashboardUpdates,
   normalizeMonthsMap,
+  mergeMonthsMaps,
 } from "../../services/updatesService";
 
 describe("updatesFeedFilters", () => {
@@ -78,4 +79,41 @@ describe("updatesFeedFilters", () => {
       expect(normalized["2026-09"][1].tag).toBe("ARTICLE");
     });
   });
+
+  describe("mergeMonthsMaps", () => {
+    it("combines news and article maps into one sorted month map", () => {
+      const newsMap = {
+        "2026-09": [
+          { id: "n1", date: "2026-09-10", title: "News 1", tag: "NEWS" },
+        ],
+      };
+      const articlesMap = {
+        "2026-09": [
+          { id: "a1", date: "2026-09-15", title: "Article 1", tag: "ARTICLE" },
+        ],
+        "2026-08": [
+          { id: "a0", date: "2026-08-20", title: "Article 0", tag: "ARTICLE" },
+        ],
+      };
+
+      const merged = mergeMonthsMaps(newsMap, articlesMap);
+      expect(Object.keys(merged)).toEqual(["2026-09", "2026-08"]);
+      // 2026-09 should be sorted by date desc: a1 (15th) before n1 (10th)
+      expect(merged["2026-09"][0].id).toBe("a1");
+      expect(merged["2026-09"][1].id).toBe("n1");
+    });
+
+    it("deduplicates items with identical IDs", () => {
+      const map1 = {
+        "2026-09": [{ id: "dup1", date: "2026-09-10", title: "Item 1" }],
+      };
+      const map2 = {
+        "2026-09": [{ id: "dup1", date: "2026-09-10", title: "Item 1" }],
+      };
+
+      const merged = mergeMonthsMaps(map1, map2);
+      expect(merged["2026-09"].length).toBe(1);
+    });
+  });
 });
+

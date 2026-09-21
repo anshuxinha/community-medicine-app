@@ -400,7 +400,21 @@ export async function sendReplyNotification(pushToken, options = {}) {
   }
 
   const replierName = options.replierName || "Someone";
-  const videoTitle = options.videoTitle || "your video doubt";
+  const isUpdate =
+    options.targetType === "update" ||
+    Boolean(options.updateId) ||
+    (typeof options.videoId === "string" && options.videoId.startsWith("update_"));
+  const isArticle =
+    isUpdate && String(options.updateTag || options.tag || "").toUpperCase() === "ARTICLE";
+
+  const itemTitle =
+    options.itemTitle ||
+    options.videoTitle ||
+    (isUpdate ? (isArticle ? "your article comment" : "your news comment") : "your video doubt");
+
+  const title = isUpdate
+    ? (isArticle ? "New reply on your article comment" : "New reply on your news comment")
+    : "New reply to your doubt";
 
   try {
     const response = await fetch(EXPO_PUSH_URL, {
@@ -414,13 +428,18 @@ export async function sendReplyNotification(pushToken, options = {}) {
         to: pushToken,
         sound: "default",
         priority: "high",
-        title: "New reply to your doubt",
-        body: `${replierName} replied on ${videoTitle}.`,
+        title,
+        body: `${replierName} replied on ${itemTitle}.`,
         channelId: "default",
         data: {
-          screen: "Videos",
-          type: "video_doubt_reply",
-          videoId: options.videoId || null,
+          screen: isUpdate ? "Updates" : "Videos",
+          type: isUpdate
+            ? (isArticle ? "article_comment_reply" : "news_comment_reply")
+            : "video_doubt_reply",
+          videoId: isUpdate ? null : options.videoId || null,
+          updateId: options.updateId || null,
+          targetType: isUpdate ? "update" : "video",
+          targetTag: isUpdate ? (isArticle ? "ARTICLE" : "NEWS") : null,
           doubtId: options.doubtId || null,
         },
       }),

@@ -35,9 +35,10 @@ import {
 import { db } from "../config/firebase";
 import { useSession } from "../context/AppContext";
 import { useThemedStyles } from "../styles/useThemedStyles";
-import { theme, useResponsive } from "../styles/theme";
 import { getUpdateType } from "../services/updatesService";
 import { isUserAdmin } from "../utils/adminUtils";
+import { ArticleMarkdownView } from "../utils/articleMarkdown";
+import { sendReplyNotification } from "../services/notificationService";
 
 const appIcon = require("../../assets/icon.png");
 
@@ -51,6 +52,8 @@ const UpdateDetailScreen = ({ route, navigation }) => {
   const isAdmin = useMemo(() => isUserAdmin(user), [user]);
   const updateType = useMemo(() => getUpdateType(update), [update]);
   const viewShotRef = useRef(null);
+  const commentInputRef = useRef(null);
+  const scrollViewRef = useRef(null);
 
   // Comments state
   const [comments, setComments] = useState([]);
@@ -58,6 +61,13 @@ const UpdateDetailScreen = ({ route, navigation }) => {
   const [newCommentText, setNewCommentText] = useState("");
   const [replyingTo, setReplyingTo] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+
+  const handleReplyToComment = useCallback((comment) => {
+    setReplyingTo(comment);
+    setTimeout(() => {
+      commentInputRef.current?.focus();
+    }, 50);
+  }, []);
 
   const updateTargetId = useMemo(
     () => (update?.id ? `update_${update.id}` : null),
@@ -204,13 +214,30 @@ const UpdateDetailScreen = ({ route, navigation }) => {
         await updateDoc(commentRef, {
           replies: arrayUnion(replyItem),
         });
+
+        if (replyingTo.authorPushToken && replyingTo.userId !== user.uid) {
+          sendReplyNotification(replyingTo.authorPushToken, {
+            replierName: user.username || user.displayName || "Dr. Resident",
+            targetType: "update",
+            updateId: update?.id,
+            updateTag: updateType,
+            itemTitle:
+              update?.title ||
+              (updateType === "ARTICLE" ? "Article" : "Health News"),
+            doubtId: replyingTo.id,
+          });
+        }
+
         setReplyingTo(null);
       } else {
         await addDoc(collection(db, "videoDoubts"), {
           videoId: updateTargetId,
           updateId: update?.id,
           targetType: "update",
-          targetTitle: update?.title || "Health Update",
+          targetTag: updateType,
+          targetTitle:
+            update?.title ||
+            (updateType === "ARTICLE" ? "Article" : "Health News"),
           userId: user.uid,
           userEmail: user.email,
           username: user.username || user.displayName || "Dr. Resident",
@@ -411,10 +438,11 @@ const UpdateDetailScreen = ({ route, navigation }) => {
 
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0}
       >
         <ScrollView
+          ref={scrollViewRef}
           style={styles.container}
           contentContainerStyle={[
             styles.scrollContent,
@@ -493,8 +521,20 @@ const UpdateDetailScreen = ({ route, navigation }) => {
 
           <Divider style={styles.editorialDivider} />
 
-          {/* Body Prose */}
-          <Text style={styles.bodyText}>{update.summary}</Text>
+          {/* Lead Summary if distinct from full content */}
+          {update.summary &&
+          update.content &&
+          update.summary.trim() !== update.content.trim() ? (
+            <View style={styles.leadSummaryCard}>
+              <Text style={styles.leadSummaryText}>{update.summary}</Text>
+            </View>
+          ) : null}
+
+          {/* Body Prose with Markdown Subheadings & formatting */}
+          <ArticleMarkdownView
+            content={update.content || update.summary || ""}
+            colors={colors}
+          />
 
           {/* Related Curriculum Topics */}
           {Array.isArray(update.updatedItems) &&
@@ -581,58 +621,6 @@ const UpdateDetailScreen = ({ route, navigation }) => {
             <Text style={styles.discussionSubtitle}>
               Join the clinical dialogue with fellow Community Medicine residents and faculty.
             </Text>
-
-            {/* Comment Composer */}
-            <View style={styles.composerCard}>
-              {replyingTo && (
-                <View style={styles.replyBanner}>
-                  <Text style={styles.replyBannerText} numberOfLines={1}>
-                    Replying to{" "}
-                    <Text style={{ fontWeight: "700" }}>
-                      {replyingTo.username}
-                    </Text>
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() => setReplyingTo(null)}
-                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                  >
-                    <MaterialIcons
-                      name="close"
-                      size={16}
-                      color={colors.textTertiary}
-                    />
-                  </TouchableOpacity>
-                </View>
-              )}
-
-              <View style={styles.inputRow}>
-                <TextInput
-                  style={styles.commentInput}
-                  placeholder={
-                    replyingTo
-                      ? "Write your reply..."
-                      : "Add your comment or analysis..."
-                  }
-                  placeholderTextColor={colors.textPlaceholder}
-                  value={newCommentText}
-                  onChangeText={setNewCommentText}
-                  multiline
-                  maxLength={1000}
-                />
-                <IconButton
-                  icon="send"
-                  size={22}
-                  iconColor={
-                    newCommentText.trim()
-                      ? theme.colors.secondary
-                      : colors.textPlaceholder
-                  }
-                  disabled={!newCommentText.trim() || submitting}
-                  onPress={handleAddComment}
-                  style={styles.sendIconBtn}
-                />
-              </View>
-            </View>
 
             {/* Comments List */}
             {commentsLoading ? (
@@ -731,7 +719,7 @@ const UpdateDetailScreen = ({ route, navigation }) => {
 
                         <TouchableOpacity
                           style={styles.actionPill}
-                          onPress={() => setReplyingTo(comment)}
+                          onPress={() => handleReplyToComment(comment)}
                         >
                           <MaterialIcons
                             name="reply"
@@ -945,6 +933,64 @@ const UpdateDetailScreen = ({ route, navigation }) => {
             )}
           </View>
         </ScrollView>
+
+        {/* Anchored Bottom Comment Composer */}
+        <View
+          style={[
+            styles.anchoredComposerContainer,
+            { paddingBottom: Math.max(insets.bottom, 8) },
+          ]}
+        >
+          {replyingTo && (
+            <View style={styles.replyBanner}>
+              <Text style={styles.replyBannerText} numberOfLines={1}>
+                Replying to{" "}
+                <Text style={{ fontWeight: "700" }}>
+                  {replyingTo.username}
+                </Text>
+              </Text>
+              <TouchableOpacity
+                onPress={() => setReplyingTo(null)}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              >
+                <MaterialIcons
+                  name="close"
+                  size={16}
+                  color={colors.textTertiary}
+                />
+              </TouchableOpacity>
+            </View>
+          )}
+
+          <View style={styles.anchoredComposerInputBox}>
+            <TextInput
+              ref={commentInputRef}
+              style={styles.commentInput}
+              placeholder={
+                replyingTo
+                  ? "Write your reply..."
+                  : "Add your comment or analysis..."
+              }
+              placeholderTextColor={colors.textPlaceholder}
+              value={newCommentText}
+              onChangeText={setNewCommentText}
+              multiline
+              maxLength={1000}
+            />
+            <IconButton
+              icon="send"
+              size={22}
+              iconColor={
+                newCommentText.trim()
+                  ? theme.colors.secondary
+                  : colors.textPlaceholder
+              }
+              disabled={!newCommentText.trim() || submitting}
+              onPress={handleAddComment}
+              style={styles.sendIconBtn}
+            />
+          </View>
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -1059,6 +1105,20 @@ const createStyles = (colors) =>
       marginVertical: 14,
       backgroundColor: colors.borderLight || "#E5E7EB",
     },
+    leadSummaryCard: {
+      backgroundColor: colors.surfaceSecondary,
+      borderLeftWidth: 3.5,
+      borderLeftColor: theme.colors.secondary,
+      borderRadius: 8,
+      padding: 12,
+      marginBottom: 16,
+    },
+    leadSummaryText: {
+      fontSize: 15,
+      lineHeight: 22,
+      color: colors.textPrimary,
+      fontStyle: "italic",
+    },
     bodyText: {
       fontSize: 16,
       lineHeight: 26,
@@ -1169,18 +1229,28 @@ const createStyles = (colors) =>
       color: colors.textTertiary,
       marginBottom: 16,
     },
-    composerCard: {
+    anchoredComposerContainer: {
       backgroundColor: colors.surfacePrimary,
-      borderRadius: 14,
-      padding: 12,
+      borderTopWidth: 1,
+      borderTopColor: colors.borderLight || "#E5E7EB",
+      paddingHorizontal: 14,
+      paddingTop: 8,
+      shadowColor: colors.shadow || "#000",
+      shadowOpacity: 0.08,
+      shadowRadius: 6,
+      shadowOffset: { width: 0, height: -2 },
+      elevation: 8,
+    },
+    anchoredComposerInputBox: {
+      flexDirection: "row",
+      alignItems: "flex-end",
+      backgroundColor: colors.surfaceSecondary,
+      borderRadius: 22,
+      paddingLeft: 14,
+      paddingRight: 4,
+      paddingVertical: 2,
       borderWidth: 1,
       borderColor: colors.borderLight || "#E5E7EB",
-      marginBottom: 20,
-      shadowColor: colors.shadow || "#000",
-      shadowOpacity: 0.04,
-      shadowRadius: 6,
-      shadowOffset: { width: 0, height: 2 },
-      elevation: 1,
     },
     replyBanner: {
       flexDirection: "row",
@@ -1195,10 +1265,6 @@ const createStyles = (colors) =>
     replyBannerText: {
       fontSize: 12,
       color: colors.textSecondary,
-    },
-    inputRow: {
-      flexDirection: "row",
-      alignItems: "flex-end",
     },
     commentInput: {
       flex: 1,

@@ -11,6 +11,9 @@ import bundledArchive from "../data/updates_archive.json";
 export const UPDATES_FEED_CACHE_KEY = "updatesFeedCache";
 export const UPDATES_FEED_DOC_PATH = ["appContent", "updatesFeed"];
 
+export const ARTICLES_FEED_DOC_PATH = ["appContent", "articlesFeed"];
+export const ARTICLES_FEED_ALT_DOC_PATH = ["appContent", "artcilesFeed"];
+
 const FETCH_TIMEOUT_MS = 5000;
 
 function timeoutPromise(ms) {
@@ -36,43 +39,92 @@ function dedupeByLink(items) {
   const seen = new Set();
   const out = [];
   for (const item of items) {
-    const link = item?.link;
-    if (link) {
-      if (seen.has(link)) continue;
-      seen.add(link);
+    const key = item?.id || item?.link || item?.title;
+    if (key) {
+      if (seen.has(key)) continue;
+      seen.add(key);
     }
     out.push(item);
   }
   return out;
 }
 
-export function getUpdateType(item) {
+export function getUpdateType(item, fallback = "NEWS") {
   const val = String(item?.tag || item?.type || "").trim().toUpperCase();
   if (val === "ARTICLE") return "ARTICLE";
-  return "NEWS";
+  if (val === "NEWS") return "NEWS";
+  return fallback;
 }
 
-function normalizeItem(item) {
+function normalizeItem(item, defaultTag = "NEWS") {
   if (!item || typeof item !== "object") return item;
   return {
     ...item,
-    tag: getUpdateType(item),
+    tag: getUpdateType(item, defaultTag),
   };
+}
+
+/**
+ * Merge multiple months maps into one combined { "YYYY-MM": Update[] } map.
+ */
+export function mergeMonthsMaps(...maps) {
+  const combined = {};
+  for (const map of maps) {
+    if (!map || typeof map !== "object") continue;
+    for (const [key, list] of Object.entries(map)) {
+      if (!Array.isArray(list)) continue;
+      combined[key] = combined[key] || [];
+      combined[key].push(...list);
+    }
+  }
+  for (const key of Object.keys(combined)) {
+    combined[key] = sortItemsDesc(dedupeByLink(combined[key]));
+  }
+  return combined;
 }
 
 /**
  * Normalize any feed shape into { months: { "YYYY-MM": Update[] } }.
  */
-export function normalizeMonthsMap(raw) {
+export function normalizeMonthsMap(raw, defaultTag = "NEWS") {
   if (!raw || typeof raw !== "object") {
     return {};
+  }
+
+  // If raw is an array directly
+  if (Array.isArray(raw)) {
+    const months = {};
+    for (const item of raw) {
+      const key = monthKeyFromDate(item?.date) || yearMonthKey();
+      months[key] = months[key] || [];
+      months[key].push(normalizeItem(item, defaultTag));
+    }
+    for (const key of Object.keys(months)) {
+      months[key] = sortItemsDesc(dedupeByLink(months[key]));
+    }
+    return months;
   }
 
   if (raw.months && typeof raw.months === "object" && !Array.isArray(raw.months)) {
     const months = {};
     for (const [key, list] of Object.entries(raw.months)) {
       if (!Array.isArray(list)) continue;
-      months[key] = sortItemsDesc(dedupeByLink(list.map(normalizeItem)));
+      months[key] = sortItemsDesc(dedupeByLink(list.map((it) => normalizeItem(it, defaultTag))));
+    }
+    return months;
+  }
+
+  // Articles / items list shape: { articles: [...] } or { items: [...] }
+  const arraySource = raw.articles || raw.items;
+  if (Array.isArray(arraySource)) {
+    const months = {};
+    for (const item of arraySource) {
+      const key = monthKeyFromDate(item?.date) || yearMonthKey();
+      months[key] = months[key] || [];
+      months[key].push(normalizeItem(item, defaultTag));
+    }
+    for (const key of Object.keys(months)) {
+      months[key] = sortItemsDesc(dedupeByLink(months[key]));
     }
     return months;
   }
@@ -82,7 +134,7 @@ export function normalizeMonthsMap(raw) {
   if (raw.archive && typeof raw.archive === "object") {
     for (const [key, list] of Object.entries(raw.archive)) {
       if (!Array.isArray(list)) continue;
-      months[key] = sortItemsDesc(dedupeByLink(list.map(normalizeItem)));
+      months[key] = sortItemsDesc(dedupeByLink(list.map((it) => normalizeItem(it, defaultTag))));
     }
   }
   if (Array.isArray(raw.current)) {
@@ -90,7 +142,7 @@ export function normalizeMonthsMap(raw) {
       const key = monthKeyFromDate(item?.date);
       if (!key) continue;
       months[key] = months[key] || [];
-      months[key].push(normalizeItem(item));
+      months[key].push(normalizeItem(item, defaultTag));
     }
     for (const key of Object.keys(months)) {
       months[key] = sortItemsDesc(dedupeByLink(months[key]));
@@ -152,15 +204,35 @@ async function writeCachedUpdatesMonths(months) {
  */
 export async function fetchRemoteUpdatesMonths() {
   try {
-    const snap = await Promise.race([
-      getDoc(doc(db, ...UPDATES_FEED_DOC_PATH)),
-      timeoutPromise(FETCH_TIMEOUT_MS),
-    ]);
-    if (!snap?.exists?.()) return null;
-    const months = normalizeMonthsMap(snap.data());
-    if (Object.keys(months).length === 0) return null;
-    await writeCachedUpdatesMonths(months);
-    return months;
+    const fetchDocSafe = async (path) => {
+      try {
+        const snap = await Promise.race([
+          getDoc(doc(db, ...path)),
+          timeoutPromise(FETCH_TIMEOUT_MS),
+        ]);
+        return snap?.exists?.() ? snap.data() : null;
+      } catch (_) {
+        return null;
+      }
+    };
+
+    const [newsData, articlesDataMain, articlesDataAlt, articlesDataTop] =
+      await Promise.all([
+        fetchDocSafe(UPDATES_FEED_DOC_PATH),
+        fetchDocSafe(ARTICLES_FEED_DOC_PATH),
+        fetchDocSafe(ARTICLES_FEED_ALT_DOC_PATH),
+        fetchDocSafe(["articlesFeed", "current"]),
+      ]);
+
+    const newsMonths = newsData ? normalizeMonthsMap(newsData, "NEWS") : {};
+    const articlesRaw = articlesDataMain || articlesDataAlt || articlesDataTop;
+    const articlesMonths = articlesRaw ? normalizeMonthsMap(articlesRaw, "ARTICLE") : {};
+
+    const combined = mergeMonthsMaps(newsMonths, articlesMonths);
+    if (Object.keys(combined).length === 0) return null;
+
+    await writeCachedUpdatesMonths(combined);
+    return combined;
   } catch (err) {
     console.warn("Updates feed fetch failed:", err?.message);
     return null;
