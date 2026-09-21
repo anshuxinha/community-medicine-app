@@ -63,12 +63,29 @@ export async function getActiveOtaChannel() {
 }
 
 /**
- * Sets or clears the update channel preference in AsyncStorage.
- * Note: Native header overriding requires a rebuild with disableAntiBrickingMeasures.
- * Channel preferences are stored locally so admin tooling can track mode safely.
+ * Sets or clears the update channel preference in AsyncStorage and native ExpoUpdates headers.
+ * Note: Native header overriding uses Expo Channel Surfing when supported by native binary.
  */
 export async function setOtaChannelOverride(channelName) {
   try {
+    const targetChannel =
+      channelName === PREVIEW_CHANNEL_NAME
+        ? PREVIEW_CHANNEL_NAME
+        : PRODUCTION_CHANNEL_NAME;
+    const native = getExpoUpdates();
+    if (typeof native?.setUpdateRequestHeadersOverride === "function") {
+      try {
+        native.setUpdateRequestHeadersOverride({
+          "expo-channel-name": targetChannel,
+        });
+      } catch (e) {
+        console.warn(
+          "[OTA] Native setUpdateRequestHeadersOverride failed:",
+          e?.message,
+        );
+      }
+    }
+
     if (channelName === PREVIEW_CHANNEL_NAME) {
       await AsyncStorage.setItem(OTA_CHANNEL_OVERRIDE_KEY, PREVIEW_CHANNEL_NAME);
       return true;
@@ -91,7 +108,17 @@ export async function syncAdminOtaChannel(isAdmin) {
   try {
     const currentStored = await AsyncStorage.getItem(OTA_CHANNEL_OVERRIDE_KEY);
     if (isAdmin) {
-      if (currentStored === PREVIEW_CHANNEL_NAME) return;
+      if (currentStored === PREVIEW_CHANNEL_NAME) {
+        const native = getExpoUpdates();
+        if (typeof native?.setUpdateRequestHeadersOverride === "function") {
+          try {
+            native.setUpdateRequestHeadersOverride({
+              "expo-channel-name": PREVIEW_CHANNEL_NAME,
+            });
+          } catch (_) {}
+        }
+        return;
+      }
       await setOtaChannelOverride(PREVIEW_CHANNEL_NAME);
     } else {
       if (currentStored) {
@@ -114,6 +141,16 @@ export async function checkAndFetchManualUpdate() {
     }
     if (typeof native.checkForUpdateAsync !== "function") {
       return { status: "unsupported", message: "Update check is not available on this build." };
+    }
+
+    // Assert header override before checking
+    const targetChannel = await getActiveOtaChannel();
+    if (typeof native.setUpdateRequestHeadersOverride === "function") {
+      try {
+        native.setUpdateRequestHeadersOverride({
+          "expo-channel-name": targetChannel,
+        });
+      } catch (_) {}
     }
 
     const checkResult = await native.checkForUpdateAsync();
