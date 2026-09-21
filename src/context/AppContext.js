@@ -10,7 +10,7 @@ import {
   LearningContext,
   SessionContext,
 } from "./appContexts";
-import { AppState, Platform } from "react-native";
+import { AppState, Platform, Vibration } from "react-native";
 import {
   enableScreenCaptureProtection,
   disableScreenCaptureProtection,
@@ -218,12 +218,27 @@ const resolveReferralCode = async (uid, username, existingCode) => {
   return referralCode;
 };
 
+const sanitizeCompletedVideoIds = (value) => {
+  if (!value || typeof value !== "object") return {};
+  if (Array.isArray(value)) {
+    return value.reduce((accumulator, id) => {
+      if (typeof id === "string" && id) accumulator[id] = true;
+      return accumulator;
+    }, {});
+  }
+  return Object.entries(value).reduce((accumulator, [id, val]) => {
+    if (val) accumulator[id] = true;
+    return accumulator;
+  }, {});
+};
+
 const sanitizeCloudState = (data = {}) => ({
   readItems: Array.isArray(data.readItems)
     ? data.readItems.filter((title) => VALID_MASTER_TITLES.has(title))
     : [],
   readItemVersions: sanitizeReadItemVersions(data.readItemVersions),
   bookmarks: normalizeBookmarks(data.bookmarks),
+  completedVideoIds: sanitizeCompletedVideoIds(data.completedVideoIds),
   currentStreak:
     typeof data.currentStreak === "number" ? data.currentStreak : 0,
   lastReadDate:
@@ -267,6 +282,17 @@ const mergeDailyReadHistory = (...histories) => {
   return merged;
 };
 
+const mergeCompletedVideoIds = (...maps) => {
+  const merged = {};
+  maps.forEach((map) => {
+    if (!map || typeof map !== "object") return;
+    Object.entries(map).forEach(([id, val]) => {
+      if (val) merged[id] = true;
+    });
+  });
+  return merged;
+};
+
 const mergeLearningStates = (...rawStates) => {
   const states = rawStates
     .filter((state) => state && typeof state === "object")
@@ -277,6 +303,9 @@ const mergeLearningStates = (...rawStates) => {
   const readItemVersions = mergeReadItemVersions(states);
 
   const bookmarks = mergeBookmarksLists(...states.map((state) => state.bookmarks));
+  const completedVideoIds = mergeCompletedVideoIds(
+    ...states.map((state) => state.completedVideoIds),
+  );
   const dailyReadHistory = mergeDailyReadHistory(
     ...states.map((state) => state.dailyReadHistory),
   );
@@ -322,6 +351,7 @@ const mergeLearningStates = (...rawStates) => {
     readItems,
     readItemVersions,
     bookmarks,
+    completedVideoIds,
     currentStreak,
     lastReadDate,
     studyScore,
@@ -399,6 +429,7 @@ export const AppProvider = ({ children }) => {
   const [readItems, setReadItems] = useState([]);
   const [readItemVersions, setReadItemVersions] = useState({});
   const [bookmarks, setBookmarks] = useState([]);
+  const [completedVideoIds, setCompletedVideoIds] = useState({});
   const [highlights, setHighlights] = useState({});
   const [currentStreak, setCurrentStreak] = useState(0);
   const [lastReadDate, setLastReadDate] = useState(null);
@@ -437,6 +468,7 @@ export const AppProvider = ({ children }) => {
     readItems: [],
     readItemVersions: {},
     bookmarks: [],
+    completedVideoIds: {},
     currentStreak: 0,
     lastReadDate: null,
     studyScore: 0,
@@ -452,6 +484,7 @@ export const AppProvider = ({ children }) => {
       readItems,
       readItemVersions,
       bookmarks,
+      completedVideoIds,
       currentStreak,
       lastReadDate,
       studyScore,
@@ -461,6 +494,7 @@ export const AppProvider = ({ children }) => {
     readItems,
     readItemVersions,
     bookmarks,
+    completedVideoIds,
     currentStreak,
     lastReadDate,
     studyScore,
@@ -547,6 +581,10 @@ export const AppProvider = ({ children }) => {
         ],
         ["bookmarks", JSON.stringify(snapshot.bookmarks || [])],
         [
+          "completedVideoIds",
+          JSON.stringify(snapshot.completedVideoIds || {}),
+        ],
+        [
           "currentStreak",
           String(
             typeof snapshot.currentStreak === "number"
@@ -598,6 +636,7 @@ export const AppProvider = ({ children }) => {
         readItems: latest.readItems,
         readItemVersions: latest.readItemVersions,
         bookmarks: latest.bookmarks,
+        completedVideoIds: latest.completedVideoIds || {},
         currentStreak: latest.currentStreak,
         lastReadDate: latest.lastReadDate,
         dailyReadHistory: latest.dailyReadHistory,
@@ -631,6 +670,7 @@ export const AppProvider = ({ children }) => {
         "readItems",
         "readItemVersions",
         "bookmarks",
+        "completedVideoIds",
         "currentStreak",
         "lastReadDate",
         "studyScore",
@@ -656,6 +696,9 @@ export const AppProvider = ({ children }) => {
             ? JSON.parse(map.readItemVersions)
             : {},
           bookmarks: map.bookmarks ? JSON.parse(map.bookmarks) : [],
+          completedVideoIds: map.completedVideoIds
+            ? JSON.parse(map.completedVideoIds)
+            : {},
           currentStreak: map.currentStreak
             ? parseInt(map.currentStreak, 10) || 0
             : 0,
@@ -696,6 +739,7 @@ export const AppProvider = ({ children }) => {
       readItems: nextState.readItems,
       readItemVersions: nextState.readItemVersions,
       bookmarks: nextState.bookmarks,
+      completedVideoIds: nextState.completedVideoIds || {},
       currentStreak: nextState.currentStreak,
       lastReadDate: nextState.lastReadDate,
       studyScore: nextState.studyScore,
@@ -706,6 +750,7 @@ export const AppProvider = ({ children }) => {
     setReadItems(nextState.readItems);
     setReadItemVersions(migratedReadItemVersions);
     setBookmarks(nextState.bookmarks);
+    setCompletedVideoIds(nextState.completedVideoIds || {});
     setCurrentStreak(nextState.currentStreak);
     setLastReadDate(nextState.lastReadDate);
     setStudyScore(nextState.studyScore);
@@ -1584,6 +1629,122 @@ export const AppProvider = ({ children }) => {
     }
   }, [persistLearningLocally]);
 
+  const markVideoCompleted = useCallback((videoId) => {
+    if (!videoId) return { didComplete: false };
+
+    const prev = learningStateRef.current;
+    const previousCompleted = prev.completedVideoIds || {};
+    if (previousCompleted[videoId]) {
+      return { didComplete: false };
+    }
+
+    const todayStr = new Date().toDateString();
+    const previousStreak = prev.currentStreak || 0;
+    let nextStreak = previousStreak;
+    let nextLastRead = prev.lastReadDate || null;
+    let nextScore = prev.studyScore || 0;
+    let nextHistory = { ...(prev.dailyReadHistory || {}) };
+    let streakIncremented = false;
+
+    if (prev.lastReadDate !== todayStr) {
+      if (!prev.lastReadDate) {
+        nextStreak = 1;
+      } else {
+        const diffDays = dayDiffFromToday(prev.lastReadDate);
+        if (diffDays === 1) {
+          nextStreak = previousStreak + 1;
+        } else if (diffDays === null || diffDays > 1) {
+          nextStreak = 1;
+        }
+      }
+      nextLastRead = todayStr;
+      nextScore = (prev.studyScore || 0) + 10;
+      streakIncremented = nextStreak > previousStreak || previousStreak === 0;
+    }
+
+    const dateKey = new Date().toISOString().split("T")[0];
+    nextHistory = {
+      ...nextHistory,
+      [dateKey]: (nextHistory[dateKey] || 0) + 1,
+    };
+
+    const nextCompleted = {
+      ...previousCompleted,
+      [videoId]: true,
+    };
+
+    const snapshot = {
+      ...prev,
+      completedVideoIds: nextCompleted,
+      currentStreak: nextStreak,
+      lastReadDate: nextLastRead,
+      dailyReadHistory: nextHistory,
+      studyScore: nextScore,
+    };
+
+    learningStateRef.current = snapshot;
+    setCompletedVideoIds(nextCompleted);
+    setCurrentStreak(nextStreak);
+    setLastReadDate(nextLastRead);
+    setStudyScore(nextScore);
+    setDailyReadHistory(nextHistory);
+
+    try {
+      if (Platform.OS === "android") {
+        Vibration.vibrate(20);
+      } else if (Platform.OS === "ios") {
+        Vibration.vibrate();
+      }
+    } catch (_) {}
+
+    const uid = userRef.current?.uid;
+    if (uid) {
+      void persistLearningLocally(uid, snapshot);
+    }
+
+    return {
+      didComplete: true,
+      videoId,
+      currentStreak: nextStreak,
+      streakIncremented,
+      completedVideoIds: nextCompleted,
+    };
+  }, [persistLearningLocally]);
+
+  const markVideoIncomplete = useCallback((videoId) => {
+    if (!videoId) return;
+
+    const prev = learningStateRef.current;
+    const previousCompleted = prev.completedVideoIds || {};
+    if (!previousCompleted[videoId]) return;
+
+    const nextCompleted = { ...previousCompleted };
+    delete nextCompleted[videoId];
+
+    const snapshot = {
+      ...prev,
+      completedVideoIds: nextCompleted,
+    };
+
+    learningStateRef.current = snapshot;
+    setCompletedVideoIds(nextCompleted);
+
+    const uid = userRef.current?.uid;
+    if (uid) {
+      void persistLearningLocally(uid, snapshot);
+    }
+  }, [persistLearningLocally]);
+
+  const toggleVideoCompleted = useCallback((videoId) => {
+    if (!videoId) return;
+    const current = learningStateRef.current.completedVideoIds || {};
+    if (current[videoId]) {
+      markVideoIncomplete(videoId);
+    } else {
+      markVideoCompleted(videoId);
+    }
+  }, [markVideoCompleted, markVideoIncomplete]);
+
   const isBookmarked = useCallback((itemOrTitle) => {
     if (!itemOrTitle) return false;
     return bookmarks.some((bookmark) => bookmarksMatch(bookmark, itemOrTitle));
@@ -2016,6 +2177,7 @@ export const AppProvider = ({ children }) => {
     setReadItems([]);
     setReadItemVersions({});
     setBookmarks([]);
+    setCompletedVideoIds({});
     setHighlights({});
     setCurrentStreak(0);
     setLastReadDate(null);
@@ -2204,6 +2366,7 @@ export const AppProvider = ({ children }) => {
       readItems,
       readItemVersions,
       bookmarks,
+      completedVideoIds,
       totalItems,
       readingProgress,
       highlights,
@@ -2214,6 +2377,9 @@ export const AppProvider = ({ children }) => {
       dailyReadHistory,
       markAsRead,
       markAsUnread,
+      markVideoCompleted,
+      markVideoIncomplete,
+      toggleVideoCompleted,
       recordContentOpened,
       lastOpenedContentKey,
       isBookmarked,
@@ -2228,6 +2394,7 @@ export const AppProvider = ({ children }) => {
       readItems,
       readItemVersions,
       bookmarks,
+      completedVideoIds,
       totalItems,
       readingProgress,
       highlights,
@@ -2237,6 +2404,9 @@ export const AppProvider = ({ children }) => {
       dailyReadHistory,
       markAsRead,
       markAsUnread,
+      markVideoCompleted,
+      markVideoIncomplete,
+      toggleVideoCompleted,
       recordContentOpened,
       lastOpenedContentKey,
       isBookmarked,

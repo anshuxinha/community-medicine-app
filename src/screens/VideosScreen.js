@@ -31,10 +31,11 @@ import {
   Badge,
   Chip,
   IconButton,
+  Menu,
   Text,
 } from "react-native-paper";
 import { WebView } from "react-native-webview";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   collection,
@@ -288,9 +289,14 @@ const VideoRow = memo(function VideoRow({
   categoryLabel,
   showNewBadge,
   showFreeBadge,
+  isCompleted,
+  menuOpen,
   onPress,
+  onOpenMenu,
+  onCloseMenu,
+  onToggleComplete,
 }) {
-  const { styles } = useThemedStyles(createStyles);
+  const { styles, colors } = useThemedStyles(createStyles);
   const thumbnailSource = getThumbnailSource(thumbnailUrl);
 
   return (
@@ -323,13 +329,40 @@ const VideoRow = memo(function VideoRow({
         </Text>
       </View>
 
-      <IconButton
-        icon="dots-vertical"
-        size={20}
-        iconColor={theme.colors.textTertiary}
-        onPress={() => {}}
-        style={styles.itemOptions}
-      />
+      <View style={styles.rowRightActions}>
+        {isCompleted ? (
+          <View style={styles.readTickWrap}>
+            <MaterialCommunityIcons
+              name="check-bold"
+              size={13}
+              color={colors.onPrimary}
+            />
+          </View>
+        ) : null}
+        <Menu
+          visible={menuOpen}
+          onDismiss={onCloseMenu}
+          anchor={
+            <IconButton
+              icon="dots-vertical"
+              size={20}
+              iconColor={colors.textTertiary || theme.colors.textTertiary}
+              onPress={onOpenMenu}
+              style={styles.itemOptions}
+              accessibilityLabel="Video options"
+            />
+          }
+        >
+          <Menu.Item
+            title={isCompleted ? "Mark as incomplete" : "Mark as complete"}
+            leadingIcon={isCompleted ? "close" : "check"}
+            onPress={() => {
+              onCloseMenu();
+              onToggleComplete(id);
+            }}
+          />
+        </Menu>
+      </View>
     </Pressable>
   );
 });
@@ -435,7 +468,14 @@ const VideosScreen = ({ navigation, route }) => {
   const { styles, colors, isDark } = useThemedStyles(createStyles);
 
   const { isPremium, user } = useSession();
-  const { studyScore, setStudyScore } = useLearning();
+  const {
+    studyScore,
+    setStudyScore,
+    completedVideoIds = {},
+    markVideoCompleted,
+    toggleVideoCompleted,
+  } = useLearning();
+  const [openMenuVideoId, setOpenMenuVideoId] = useState(null);
   const [videos, setVideos] = useState([]);
   
   const [doubts, setDoubts] = useState([]);
@@ -1241,9 +1281,14 @@ const VideosScreen = ({ navigation, route }) => {
       categoryLabel={item.categoryLabel || "Lecture"}
       showNewBadge={item.isNew === true && !seenVideoIds[item.id]}
       showFreeBadge={!isPremium && isVideoFree(item)}
+      isCompleted={Boolean(completedVideoIds?.[item.id])}
+      menuOpen={openMenuVideoId === item.id}
       onPress={onPressVideo}
+      onOpenMenu={() => setOpenMenuVideoId(item.id)}
+      onCloseMenu={() => setOpenMenuVideoId(null)}
+      onToggleComplete={toggleVideoCompleted}
     />
-  ), [isPremium, onPressVideo, seenVideoIds]);
+  ), [completedVideoIds, isPremium, openMenuVideoId, onPressVideo, seenVideoIds, toggleVideoCompleted]);
 
   return (
     <View style={styles.safeArea}>
@@ -1454,6 +1499,21 @@ const VideosScreen = ({ navigation, route }) => {
                       ? Number(selectedVideo.duration)
                       : 0
                   }
+                  isCompleted={Boolean(completedVideoIds?.[selectedVideo?.id])}
+                  onToggleComplete={() => {
+                    if (selectedVideo?.id) {
+                      toggleVideoCompleted(selectedVideo.id);
+                    }
+                  }}
+                  onWatchProgress={(ratio) => {
+                    if (
+                      ratio >= 0.9 &&
+                      selectedVideo?.id &&
+                      !completedVideoIds?.[selectedVideo.id]
+                    ) {
+                      markVideoCompleted(selectedVideo.id);
+                    }
+                  }}
                   style={[
                     styles.player,
                     {
@@ -1886,6 +1946,20 @@ const createStyles = (colors) => StyleSheet.create({
   itemOptions: {
     margin: 0,
     marginRight: -8,
+  },
+  rowRightActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  readTickWrap: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.secondary,
+    borderWidth: 0,
   },
   loadMoreBtn: {
     flexDirection: "row",

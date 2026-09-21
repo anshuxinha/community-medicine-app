@@ -18,7 +18,7 @@ const LONG_PRESS_MS = 420;
 const HUD_MS = 700;
 const CONTROLS_HIDE_MS = 3200;
 const TOP_STRIP = 24;
-const BOTTOM_STRIP_BASE = 100;
+const BOTTOM_STRIP_BASE = 120;
 const VOLUME_EDGE = 56;
 const SEEKER_COLOR = "#9333EA";
 
@@ -115,6 +115,8 @@ const GestureVideoPlayer = ({
   onFullscreenPress,
   onClose,
   onWatchProgress,
+  isCompleted = false,
+  onToggleComplete,
   /** Optional catalog duration (seconds) when player duration is not ready yet. */
   fallbackDuration = 0,
   isDark = true,
@@ -937,6 +939,41 @@ const GestureVideoPlayer = ({
                 style={[styles.scrubThumb, { left: `${progress * 100}%` }]}
               />
             </View>
+
+            {/* Row below seeker: "Marked as Complete" option */}
+            <View style={styles.belowSeekerRow} pointerEvents="box-none">
+              <View style={styles.actionsSpacer} />
+              {typeof onToggleComplete === "function" ? (
+                <Pressable
+                  onPress={() => {
+                    onToggleComplete();
+                    revealControls();
+                  }}
+                  hitSlop={8}
+                  style={[
+                    styles.markCompleteBtn,
+                    isCompleted && styles.markCompleteBtnActive,
+                  ]}
+                  accessibilityLabel={
+                    isCompleted ? "Marked as Complete" : "Mark as Complete"
+                  }
+                >
+                  <MaterialIcons
+                    name={isCompleted ? "check-circle" : "check-circle-outline"}
+                    size={16}
+                    color={isCompleted ? "#C084FC" : "#FFFFFF"}
+                  />
+                  <Text
+                    style={[
+                      styles.markCompleteText,
+                      isCompleted && styles.markCompleteTextActive,
+                    ]}
+                  >
+                    {isCompleted ? "Marked as Complete" : "Mark as Complete"}
+                  </Text>
+                </Pressable>
+              ) : null}
+            </View>
           </View>
         </View>
       ) : null}
@@ -1133,6 +1170,37 @@ const styles = StyleSheet.create({
     marginLeft: -5,
     backgroundColor: SEEKER_COLOR,
     top: 5,
+  },
+  belowSeekerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingTop: 2,
+    paddingBottom: 4,
+  },
+  markCompleteBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 14,
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+  },
+  markCompleteBtnActive: {
+    backgroundColor: "rgba(147, 51, 234, 0.35)",
+    borderWidth: 1,
+    borderColor: "rgba(192, 132, 252, 0.4)",
+  },
+  markCompleteText: {
+    color: "#FFFFFF",
+    fontSize: 12,
+    fontWeight: "600",
+    letterSpacing: 0.2,
+  },
+  markCompleteTextActive: {
+    color: "#E9D5FF",
+    fontWeight: "700",
   },
 });
 
