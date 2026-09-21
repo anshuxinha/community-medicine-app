@@ -1,0 +1,248 @@
+import argparse
+import json
+import os
+import uuid
+import re
+import time
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import List, Dict, Any, Optional, Set, Tuple
+
+try:
+    import requests  # type: ignore
+except ImportError:  # seed-only path does not need requests
+    requests = None  # type: ignore
+
+OLLAMA_API_KEY = os.environ.get("OLLAMA_API_KEY")
+
+OLLAMA_API_URL = "https://ollama.com/api/chat"
+# MiniMax M3 left the Ollama Cloud free tier (HTTP 402). Gemma 4 31B remains on free.
+OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "gemma4:31b-cloud")
+OLLAMA_FALLBACK_MODELS = [
+    m.strip()
+    for m in os.environ.get(
+        "OLLAMA_FALLBACK_MODELS",
+        "gpt-oss:20b-cloud,gpt-oss:120b-cloud",
+    ).split(",")
+    if m.strip()
+]
+
+MAX_RETRIES = 2
+RETRY_DELAY_SECONDS = 5
+
+ROOT = Path(__file__).resolve().parents[1]
+DATA_DIR = ROOT / "src" / "data"
+UPDATES_PATH = DATA_DIR / "updates.json"
+ARCHIVE_PATH = DATA_DIR / "updates_archive.json"
+FEED_COLLECTION = "appContent"
+FEED_DOC_ID = "updatesFeed"
+FEED_DOC_ID_PREVIEW = "updatesFeedPreview"
+UPDATES_PREVIEW_PATH = DATA_DIR / "updates_preview.json"
+
+
+_GEMMA4_THOUGHT_RE = re.compile(
+    r"<\|channel>thought\s*.*?<channel\|>",
+    flags=re.DOTALL | re.IGNORECASE,
+)
+_XML_THINK_RE = re.compile(r"<think>.*?</think>", flags=re.DOTALL | re.IGNORECASE)
+
+
+def _is_gemma4(model: str) -> bool:
+    return "gemma4" in (model or "").lower()
+
+
+def _think_param_for_model(model: str):
+    # Gemma 4 thinking is on/off. "max" is a MiniMax/Qwen level.
+    if _is_gemma4(model):
+        return True
+    return "high"
+
+
+def _chat_messages(model: str, prompt: str) -> List[Dict[str, str]]:
+    messages: List[Dict[str, str]] = []
+    if _is_gemma4(model):
+        messages.append({"role": "system", "content": "<|think|>"})
+    messages.append({"role": "user", "content": prompt})
+    return messages
+
+
+def _extract_candidate_text(payload: Dict[str, Any], model: str = "") -> Optional[str]:
+    """Extract text from Ollama /api/chat response shape."""
+    message = payload.get("message") or {}
+    content = message.get("content")
+    thinking = message.get("thinking")
+    if isinstance(thinking, str) and thinking.strip():
+        print(f"Ollama thinking mode active on {model or 'model'} ({len(thinking)} chars).")
+    elif isinstance(content, str) and ("<|channel>" in content or "<think>" in content):
+        print(f"Ollama thinking trace inlined in content on {model or 'model'}.")
+    elif _is_gemma4(model):
+        print(f"Ollama response from {model} had no thinking trace.")
+    return content if isinstance(content, str) else None
+
+
+def _error_message_from_response(response: Any) -> str:
+    try:
+        payload = response.json()
+        error_obj = payload.get("error", {})
+        if isinstance(error_obj, dict):
+            return error_obj.get("message") or error_obj.get("status") or response.text
+        return response.text
+    except Exception:
+        return response.text
+
+
+def _strip_code_fence(text: str) -> str:
+    stripped = text.strip()
+    if stripped.startswith("```"):
+        lines = stripped.splitlines()
+        return "\n".join(lines[1:-1]).strip()
+    return stripped
+
+
+def _extract_json_payload(text: str) -> Optional[Any]:
+    clean_text = _GEMMA4_THOUGHT_RE.sub("", text)
+    clean_text = _XML_THINK_RE.sub("", clean_text)
+    candidate = _strip_code_fence(clean_text)
+    try:
+        return json.loads(candidate)
+    except json.JSONDecodeError:
+        match = re.search(r"(\[.*\]|\{.*\})", candidate, re.DOTALL)
+        if not match:
+            return None
+        try:
+            return json.loads(match.group(1))
+        except json.JSONDecodeError:
+            return None
+
+
+def _ollama_models_to_try() -> List[str]:
+    ordered: List[str] = []
+    for name in [OLLAMA_MODEL, *OLLAMA_FALLBACK_MODELS]:
+        if name and name not in ordered:
+            ordered.append(name)
+    return ordered
+
+
+def call_ollama(prompt: str) -> Optional[Any]:
+    last_error = None
+
+    for model in _ollama_models_to_try():
+        print(
+            f"Calling Ollama model: {model} "
+            f"(think={_think_param_for_model(model)!r})"
+        )
+        for attempt in range(1 + MAX_RETRIES):
+            try:
+                response = requests.post(
+                    OLLAMA_API_URL,
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {OLLAMA_API_KEY}",
+                    },
+                    json={
+                        "model": model,
+                        "messages": _chat_messages(model, prompt),
+                        "stream": False,
+                        "think": _think_param_for_model(model),
+                        "options": {"temperature": 0.1},
+                    },
+                    timeout=180
+                )
+
+                if response.status_code == 200:
+                    try:
+                        data = response.json()
+                    except (json.JSONDecodeError, ValueError) as exc:
+                        print(f"Ollama API returned non-JSON body (status 200): {exc}")
+                        last_error = "invalid JSON"
+                        continue
+                    text_response = _extract_candidate_text(data, model)
+                    if text_response:
+                        payload = _extract_json_payload(text_response)
+                        if payload is not None:
+                            print(f"Ollama model {model} returned a parseable payload.")
+                            return payload
+                    last_error = "empty or unparseable response body"
+                elif response.status_code == 402:
+                    last_error = f"HTTP 402 on {model}: {response.text[:200]}"
+                    print(
+                        f"Ollama model {model} needs a paid plan or extra usage. "
+                        "Trying the next model."
+                    )
+                    break
+                elif response.status_code in (429, 500, 503):
+                    last_error = f"HTTP {response.status_code}: {response.text[:200]}"
+                    print(f"Ollama API Error (attempt {attempt + 1}): {last_error}")
+                else:
+                    last_error = f"HTTP {response.status_code}: {response.text[:200]}"
+                    print(f"Ollama API Error {response.status_code}: {response.text[:200]}")
+                    break
+
+            except requests.RequestException as exc:
+                last_error = str(exc)
+                print(f"Ollama API request exception (attempt {attempt + 1}): {last_error}")
+
+            if attempt < MAX_RETRIES:
+                print(f"Retrying {model} in {RETRY_DELAY_SECONDS}s...")
+                time.sleep(RETRY_DELAY_SECONDS)
+
+    print(f"Ollama API failed after trying {_ollama_models_to_try()}. Last error: {last_error}")
+    return None
+
+
+
+
+def _load_service_account_info() -> Optional[Dict[str, Any]]:
+    raw_json = os.environ.get("FIREBASE_SERVICE_ACCOUNT_JSON")
+    if raw_json:
+        # Env may hold raw JSON or a filesystem path
+        if raw_json.strip().startswith("{"):
+            try:
+                return json.loads(raw_json)
+            except json.JSONDecodeError as exc:
+                print(f"FIREBASE_SERVICE_ACCOUNT_JSON is invalid JSON: {exc}")
+                return None
+        if os.path.exists(raw_json):
+            try:
+                with open(raw_json, "r", encoding="utf-8") as file:
+                    return json.load(file)
+            except Exception as exc:
+                print(f"Could not read FIREBASE_SERVICE_ACCOUNT_JSON path: {exc}")
+                return None
+
+    credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+    if credentials_path and os.path.exists(credentials_path):
+        try:
+            with open(credentials_path, "r", encoding="utf-8") as file:
+                return json.load(file)
+        except Exception as exc:
+            print(f"Could not read GOOGLE_APPLICATION_CREDENTIALS: {exc}")
+            return None
+
+    local_path = ROOT / "serviceAccountKey.json"
+    if local_path.exists():
+        try:
+            with open(local_path, "r", encoding="utf-8") as file:
+                return json.load(file)
+        except Exception as exc:
+            print(f"Could not read serviceAccountKey.json: {exc}")
+            return None
+    return None
+
+
+def _build_months_map(
+    archive: Dict[str, List[Dict[str, Any]]],
+    current_month_key: str,
+    current_items: List[Dict[str, Any]],
+    current_year: str,
+) -> Dict[str, List[Dict[str, Any]]]:
+    """Full months map for the current calendar year (no per-month item cap)."""
+    months: Dict[str, List[Dict[str, Any]]] = {}
+    for key, items in archive.items():
+        if not str(key).startswith(current_year):
+            continue
+        if not isinstance(items, list):
+            continue
+        months[key] = list(items)
+    if current_items:
+        months[current_month_key
