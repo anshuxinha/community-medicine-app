@@ -209,14 +209,16 @@ def seed_feed_from_local(*, notify: bool = False, feed: str = "production") -> N
     """Publish local updates JSON + archive without scraping.
 
     feed=production → updates.json → appContent/updatesFeed
-    feed=preview → updates_preview.json → appContent/updatesFeedPreview
+    feed=articles → articles.json → appContent/articlesFeed
     """
     feed = (feed or "production").strip().lower()
-    if feed not in ("production", "preview"):
-        raise SystemExit(f"Unknown feed {feed!r}; use production or preview.")
+    if feed == "preview":
+        feed = "articles"  # deprecated alias
+    if feed not in ("production", "articles"):
+        raise SystemExit(f"Unknown feed {feed!r}; use production or articles.")
 
-    updates_path = UPDATES_PREVIEW_PATH if feed == "preview" else UPDATES_PATH
-    feed_doc_id = FEED_DOC_ID_PREVIEW if feed == "preview" else FEED_DOC_ID
+    updates_path = ARTICLES_PATH if feed == "articles" else UPDATES_PATH
+    feed_doc_id = FEED_DOC_ID_ARTICLES if feed == "articles" else FEED_DOC_ID
 
     existing_updates: List[Dict[str, Any]] = []
     if updates_path.exists():
