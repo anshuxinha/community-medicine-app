@@ -1,6 +1,7 @@
 export const ADMIN_EMAILS = [
   "anshuxinha@gmail.com",
   "kaushikeec@gmail.com",
+  "emulator.admin@stroma.app",
 ];
 
 /**

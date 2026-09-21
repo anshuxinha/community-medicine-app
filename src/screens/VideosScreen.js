@@ -720,7 +720,8 @@ const VideosScreen = ({ navigation, route }) => {
   const isAdmin =
     user?.isAdmin === true ||
     userEmail === "anshuxinha@gmail.com" ||
-    userEmail === "kaushikeec@gmail.com";
+    userEmail === "kaushikeec@gmail.com" ||
+    userEmail === "emulator.admin@stroma.app";
 
   useEffect(() => {
     if (!selectedVideo || !user?.uid) {

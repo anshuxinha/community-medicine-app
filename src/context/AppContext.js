@@ -746,8 +746,9 @@ export const AppProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    setIsPremium(accountPremium || revenueCatPremium);
-  }, [accountPremium, revenueCatPremium]);
+    const admin = isUserAdmin(user);
+    setIsPremium(accountPremium || revenueCatPremium || admin);
+  }, [accountPremium, revenueCatPremium, user]);
 
   useEffect(() => {
       const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -852,8 +853,8 @@ export const AppProvider = ({ children }) => {
                 isPremiumExpired = true;
               }
             }
-            const premiumStatus = (data.isPremium === true && !isPremiumExpired) || claimsPremium;
             const isAdmin = data.isAdmin === true || claimsAdmin || isUserAdmin({ email: firebaseUser.email });
+            const premiumStatus = (data.isPremium === true && !isPremiumExpired) || claimsPremium || isAdmin;
             const fetchedPremiumType = data.premiumType || null;
             setPremiumType(fetchedPremiumType);
 
@@ -1038,12 +1039,14 @@ export const AppProvider = ({ children }) => {
               firebaseUser.uid,
             );
 
+            const isAdmin = claimsAdmin || isUserAdmin({ email: firebaseUser.email });
+            const effectivePremium = Boolean(claimsPremium || isAdmin);
             const userData = {
               uid: firebaseUser.uid,
               email: firebaseUser.email,
               username: fallbackUsername,
-              isPremium: claimsPremium,
-              isAdmin: claimsAdmin || isUserAdmin({ email: firebaseUser.email }),
+              isPremium: effectivePremium,
+              isAdmin,
               pushToken: null,
               referralCode,
               onboardingCompleted: resolveOnboardingCompleted(
@@ -1054,7 +1057,7 @@ export const AppProvider = ({ children }) => {
             };
 
             setUser(userData);
-            setAccountPremium(Boolean(claimsPremium));
+            setAccountPremium(effectivePremium);
             cloudHydratedRef.current = true;
             void AsyncStorage.setItem("user", JSON.stringify(userData));
             void setLocalLearningProfile(firebaseUser.uid, learningProfile);
