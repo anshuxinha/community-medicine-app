@@ -46,6 +46,20 @@ function dedupeByLink(items) {
   return out;
 }
 
+export function getUpdateType(item) {
+  const val = String(item?.tag || item?.type || "").trim().toUpperCase();
+  if (val === "ARTICLE") return "ARTICLE";
+  return "NEWS";
+}
+
+function normalizeItem(item) {
+  if (!item || typeof item !== "object") return item;
+  return {
+    ...item,
+    tag: getUpdateType(item),
+  };
+}
+
 /**
  * Normalize any feed shape into { months: { "YYYY-MM": Update[] } }.
  */
@@ -58,7 +72,7 @@ export function normalizeMonthsMap(raw) {
     const months = {};
     for (const [key, list] of Object.entries(raw.months)) {
       if (!Array.isArray(list)) continue;
-      months[key] = sortItemsDesc(dedupeByLink(list));
+      months[key] = sortItemsDesc(dedupeByLink(list.map(normalizeItem)));
     }
     return months;
   }
@@ -68,7 +82,7 @@ export function normalizeMonthsMap(raw) {
   if (raw.archive && typeof raw.archive === "object") {
     for (const [key, list] of Object.entries(raw.archive)) {
       if (!Array.isArray(list)) continue;
-      months[key] = sortItemsDesc(dedupeByLink(list));
+      months[key] = sortItemsDesc(dedupeByLink(list.map(normalizeItem)));
     }
   }
   if (Array.isArray(raw.current)) {
@@ -76,7 +90,7 @@ export function normalizeMonthsMap(raw) {
       const key = monthKeyFromDate(item?.date);
       if (!key) continue;
       months[key] = months[key] || [];
-      months[key].push(item);
+      months[key].push(normalizeItem(item));
     }
     for (const key of Object.keys(months)) {
       months[key] = sortItemsDesc(dedupeByLink(months[key]));
@@ -91,7 +105,7 @@ export function monthsFromBundled() {
   if (bundledArchive && typeof bundledArchive === "object") {
     for (const [key, list] of Object.entries(bundledArchive)) {
       if (!Array.isArray(list)) continue;
-      months[key] = sortItemsDesc(dedupeByLink(list));
+      months[key] = sortItemsDesc(dedupeByLink(list.map(normalizeItem)));
     }
   }
   if (Array.isArray(bundledCurrent)) {
@@ -99,7 +113,7 @@ export function monthsFromBundled() {
       const key = monthKeyFromDate(item?.date);
       if (!key) continue;
       months[key] = months[key] || [];
-      months[key].push(item);
+      months[key].push(normalizeItem(item));
     }
     for (const key of Object.keys(months)) {
       months[key] = sortItemsDesc(dedupeByLink(months[key]));
@@ -215,24 +229,28 @@ export function previousYearMonthKey(date = new Date()) {
  * Dashboard strip: current month → previous → all non-academic, newest first.
  * Display slice applied by caller.
  */
-export function pickDashboardUpdates(months, { maxItems = 5 } = {}) {
+export function pickDashboardUpdates(months, { maxItems = 5, filter = "ALL" } = {}) {
   const filterNonAcademic = (list) =>
     (list || []).filter((u) => u?.category !== "Academic Content Update");
+
+  const normalizedFilter = String(filter || "ALL").trim().toUpperCase();
+  const matchesFilter = (u) =>
+    normalizedFilter === "ALL" || getUpdateType(u) === normalizedFilter;
 
   const now = new Date();
   const currentKey = yearMonthKey(now);
   const prevKey = previousYearMonthKey(now);
 
-  let list = filterNonAcademic(months[currentKey]);
+  let list = filterNonAcademic(months?.[currentKey]).filter(matchesFilter);
   if (!list.length) {
-    list = filterNonAcademic(months[prevKey]);
+    list = filterNonAcademic(months?.[prevKey]).filter(matchesFilter);
   }
   if (!list.length) {
     const all = [];
     for (const items of Object.values(months || {})) {
       if (Array.isArray(items)) all.push(...items);
     }
-    list = sortItemsDesc(filterNonAcademic(all));
+    list = sortItemsDesc(filterNonAcademic(all).filter(matchesFilter));
   } else {
     list = sortItemsDesc(list);
   }

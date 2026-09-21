@@ -555,6 +555,7 @@ def extractive_summary(article: Dict[str, Any], title_hint: str, today_date: str
         "title": title_hint[:140],
         "summary": summary[:900],
         "date": today_date,
+        "tag": "NEWS",
     }
 
 
@@ -966,7 +967,8 @@ def fetch_health_updates(*, publish: bool = True, notify: bool = True):
                     "date": article_date if article_date else today_date,
                     "title": title,
                     "summary": summary,
-                    "link": article["link"]
+                    "link": article["link"],
+                    "tag": "NEWS",
                 })
                 added_links_in_run.add(article["link"])
                 

@@ -55,6 +55,8 @@ const getLearningProgressScreen = () =>
   require("../screens/LearningProgressScreen").default;
 const getOnboardingScreen = () => require("../screens/OnboardingScreen").default;
 const getSupportScreen = () => require("../screens/SupportScreen").default;
+const getUpdateDetailScreen = () =>
+  require("../screens/UpdateDetailScreen").default;
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -399,6 +401,14 @@ const AppNavigator = () => {
                 headerShown: false,
                 presentation: "modal",
                 gestureEnabled: true,
+              }}
+            />
+            <Stack.Screen
+              name="UpdateDetail"
+              getComponent={getUpdateDetailScreen}
+              options={{
+                headerShown: false,
+                animation: "slide_from_right",
               }}
             />
           </>

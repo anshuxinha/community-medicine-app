@@ -716,8 +716,8 @@
     "hash": "e7f673cf7825009d1a06c662180645c2"
   },
   "D:\\The App\\scripts\\fetch_updates.py": {
-    "mtime": 1789412396.1698403,
-    "hash": "c402b1bf5da0c0793f93879b04db8e7e"
+    "mtime": 1789989172.6573322,
+    "hash": "779a037c6b5a16e908fc5a2e90b1b040"
   },
   "D:\\The App\\scripts\\fix_broken_color_props.js": {
     "mtime": 1784212218.394447,
@@ -876,8 +876,8 @@
     "hash": "f84d29cdece495af834795eecfac44d0"
   },
   "D:\\The App\\scripts\\seed-updates-feed.js": {
-    "mtime": 1785775511.889063,
-    "hash": "bf1e0a59b3713803a975661c13c05a61"
+    "mtime": 1789989194.9187083,
+    "hash": "5c7250d6cc944ff722c2a69f42e94d71"
   },
   "D:\\The App\\scripts\\set_admin.js": {
     "mtime": 1786815047.058584,
@@ -1120,8 +1120,8 @@
     "hash": "f40ae412edbf218783870016e2376e42"
   },
   "D:\\The App\\src\\navigation\\AppNavigator.js": {
-    "mtime": 1789815644.4629347,
-    "hash": "cffa2e88e4dbd5e552151678ac3a2b85"
+    "mtime": 1789989299.7270463,
+    "hash": "75f55f791e8e4e61dd8f89625b4336a2"
   },
   "D:\\The App\\src\\screens\\AdminAppFeedbackScreen.js": {
     "mtime": 1789808726.2698405,
@@ -1144,8 +1144,8 @@
     "hash": "dafd0616cfe3d1a86faa4a7d12425ac3"
   },
   "D:\\The App\\src\\screens\\DashboardScreen.js": {
-    "mtime": 1789808800.2771914,
-    "hash": "94ce05dc4ff318cc613245e5f21184e9"
+    "mtime": 1789989508.3578222,
+    "hash": "c7f626c0a4ab4e9b857b65f276a29456"
   },
   "D:\\The App\\src\\screens\\DietarySurveyScreen.js": {
     "mtime": 1789122917.1791646,
@@ -1235,9 +1235,13 @@
     "mtime": 1789927002.6207976,
     "hash": "b35c0fcccc6deac125f8139e438b74eb"
   },
+  "D:\\The App\\src\\screens\\UpdateDetailScreen.js": {
+    "mtime": 1789989255.429362,
+    "hash": "a8ab1fe5a2374f3adeab5e98303ebcd8"
+  },
   "D:\\The App\\src\\screens\\UpdatesScreen.js": {
-    "mtime": 1789808726.2698405,
-    "hash": "8be072b5d1382df5420755e9d6fc0649"
+    "mtime": 1789989662.9328144,
+    "hash": "83ef4147160e62af6499fcc6d5a7b76f"
   },
   "D:\\The App\\src\\screens\\VideosScreen.js": {
     "mtime": 1789984879.4442506,
@@ -1284,8 +1288,8 @@
     "hash": "e923139fd1233f91118093974fe16aa2"
   },
   "D:\\The App\\src\\services\\updatesService.js": {
-    "mtime": 1789122917.1834311,
-    "hash": "452515bb6785c13c651b3586df9cd7b3"
+    "mtime": 1789989129.4415984,
+    "hash": "e2ef7df6a142471fc2d9d01952474e57"
   },
   "D:\\The App\\src\\services\\videoLoadErrors.js": {
     "mtime": 1789927019.2957554,
@@ -1582,6 +1586,10 @@
   "D:\\The App\\src\\utils\\__tests__\\storeUpdates.test.js": {
     "mtime": 1789454988.7835069,
     "hash": "4383ed814569e0987e31eafbcbbf7ee8"
+  },
+  "D:\\The App\\src\\utils\\__tests__\\updatesFeedFilters.test.js": {
+    "mtime": 1789989887.9058332,
+    "hash": "dd3aaa450dc4b15573084ab9e932101a"
   },
   "D:\\The App\\src\\utils\\__tests__\\userHighlightColors.test.js": {
     "mtime": 1789302135.528694,

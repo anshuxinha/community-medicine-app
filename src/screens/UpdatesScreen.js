@@ -12,9 +12,8 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useSession } from "../context/AppContext";
 import { theme, useResponsive } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
-import UpdateDetailDialog from "../components/UpdateDetailDialog";
 import useUpdatesFeed from "../hooks/useUpdatesFeed";
-import { monthsToYearIndexMap } from "../services/updatesService";
+import { monthsToYearIndexMap, getUpdateType } from "../services/updatesService";
 
 const MONTH_NAMES = [
   "January", "February", "March", "April",
@@ -35,8 +34,7 @@ const UpdatesScreen = ({ navigation }) => {
   const currentMonthIndex = new Date().getMonth(); // 0-based
 
   const [selectedMonth, setSelectedMonth] = useState(currentMonthIndex);
-  const [selectedUpdate, setSelectedUpdate] = useState(null);
-  const [dialogVisible, setDialogVisible] = useState(false);
+  const [updatesFilter, setUpdatesFilter] = useState("ALL");
   const { isTablet, horizontalPadding, contentMaxWidth } = useResponsive();
   const { months, loading } = useUpdatesFeed();
 
@@ -56,19 +54,18 @@ const UpdatesScreen = ({ navigation }) => {
     return null;
   }
 
-  const showUpdateDialog = (update) => {
-    setSelectedUpdate(update);
-    setDialogVisible(true);
-  };
-
   const renderMonthGrid = () => {
     const rows = [];
     for (let row = 0; row < 3; row++) {
       const cols = [];
       for (let col = 0; col < 4; col++) {
         const mIdx = row * 4 + col;
-        const updates = monthData[mIdx] || [];
-        const count = updates.length;
+        const allUpdates = monthData[mIdx] || [];
+        const filteredUpdates = allUpdates.filter((u) => {
+          if (updatesFilter === "ALL") return true;
+          return getUpdateType(u) === updatesFilter;
+        });
+        const count = filteredUpdates.length;
         const isSelected = selectedMonth === mIdx;
         const isCurrent = mIdx === currentMonthIndex;
         const hasData = count > 0;
@@ -133,7 +130,15 @@ const UpdatesScreen = ({ navigation }) => {
     return rows;
   };
 
-  const selectedUpdates = selectedMonth !== null ? monthData[selectedMonth] || [] : [];
+  const rawMonthUpdates = selectedMonth !== null ? monthData[selectedMonth] || [] : [];
+  const selectedUpdates = useMemo(
+    () =>
+      rawMonthUpdates.filter((u) => {
+        if (updatesFilter === "ALL") return true;
+        return getUpdateType(u) === updatesFilter;
+      }),
+    [rawMonthUpdates, updatesFilter],
+  );
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -158,6 +163,37 @@ const UpdatesScreen = ({ navigation }) => {
           />
         ) : null}
 
+        {/* 3 Filter Pills: All, News, Article */}
+        <View style={styles.filterPillsRow}>
+          {[
+            { id: "ALL", label: "All" },
+            { id: "NEWS", label: "News" },
+            { id: "ARTICLE", label: "Article" },
+          ].map((pill) => {
+            const selected = updatesFilter === pill.id;
+            return (
+              <TouchableOpacity
+                key={pill.id}
+                style={[
+                  styles.filterPill,
+                  selected && styles.filterPillActive,
+                ]}
+                onPress={() => setUpdatesFilter(pill.id)}
+                activeOpacity={0.7}
+              >
+                <Text
+                  style={[
+                    styles.filterPillText,
+                    selected && styles.filterPillTextActive,
+                  ]}
+                >
+                  {pill.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
         {/* Month Grid */}
         <Card style={styles.gridCard}>{renderMonthGrid()}</Card>
 
@@ -178,48 +214,72 @@ const UpdatesScreen = ({ navigation }) => {
             </View>
 
             {selectedUpdates.length === 0 ? (
-              <Text style={styles.emptyText}>No updates for this month.</Text>
+              <Text style={styles.emptyText}>
+                No {updatesFilter === "ARTICLE" ? "articles" : updatesFilter === "NEWS" ? "news" : "updates"} for this month.
+              </Text>
             ) : (
-              selectedUpdates.map((update) => (
-                <Card key={update.id} style={styles.updateCard}>
-                  <Card.Content>
-                    <Text variant="labelSmall" style={styles.dateText}>
-                      {update.date}
-                    </Text>
-                    <Text variant="titleMedium" style={styles.updateTitle}>
-                      {update.title}
-                    </Text>
-                    <Text
-                      variant="bodyMedium"
-                      style={styles.updateSummary}
-                      numberOfLines={3}
-                      ellipsizeMode="tail"
-                    >
-                      {update.summary}
-                    </Text>
-                  </Card.Content>
-                  <Card.Actions>
-                    <Button
-                      textColor={theme.colors.secondary}
-                      onPress={() => showUpdateDialog(update)}
-                      mode="text"
-                      compact
-                    >
-                      Read More
-                    </Button>
-                  </Card.Actions>
-                </Card>
-              ))
+              selectedUpdates.map((update) => {
+                const type = getUpdateType(update);
+                const isArticle = type === "ARTICLE";
+
+                return (
+                  <Card
+                    key={update.id}
+                    style={styles.updateCard}
+                    onPress={() => navigation.navigate("UpdateDetail", { update })}
+                  >
+                    <Card.Content>
+                      <View style={styles.cardHeaderRow}>
+                        <View
+                          style={[
+                            styles.cardTypeBadge,
+                            isArticle ? styles.articleBadge : styles.newsBadge,
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.cardTypeBadgeText,
+                              isArticle
+                                ? styles.articleBadgeText
+                                : styles.newsBadgeText,
+                            ]}
+                          >
+                            {type}
+                          </Text>
+                        </View>
+                        <Text variant="labelSmall" style={styles.dateText}>
+                          {update.date}
+                        </Text>
+                      </View>
+                      <Text variant="titleMedium" style={styles.updateTitle}>
+                        {update.title}
+                      </Text>
+                      <Text
+                        variant="bodyMedium"
+                        style={styles.updateSummary}
+                        numberOfLines={3}
+                        ellipsizeMode="tail"
+                      >
+                        {update.summary}
+                      </Text>
+                    </Card.Content>
+                    <Card.Actions>
+                      <Button
+                        textColor={theme.colors.secondary}
+                        onPress={() => navigation.navigate("UpdateDetail", { update })}
+                        mode="text"
+                        compact
+                      >
+                        Read More
+                      </Button>
+                    </Card.Actions>
+                  </Card>
+                );
+              })
             )}
           </View>
         )}
       </ScrollView>
-
-      <UpdateDetailDialog
-        visible={dialogVisible}
-        update={selectedUpdate}
-        onDismiss={() => setDialogVisible(false)}
-      />
     </SafeAreaView>
   );
 };
@@ -374,6 +434,61 @@ const createStyles = (colors) => StyleSheet.create({
   updateSummary: {
     color: colors.textTertiary,
     lineHeight: 22,
+  },
+  filterPillsRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginBottom: 16,
+  },
+  filterPill: {
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 20,
+    backgroundColor: colors.surfacePrimary,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  filterPillActive: {
+    backgroundColor: colors.primaryLight,
+    borderColor: colors.secondary,
+  },
+  filterPillText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: colors.textSecondary,
+  },
+  filterPillTextActive: {
+    color: colors.secondary,
+    fontWeight: "700",
+  },
+  cardHeaderRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 6,
+    flexWrap: "wrap",
+  },
+  cardTypeBadge: {
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  newsBadge: {
+    backgroundColor: colors.primarySoft || "#E0F2FE",
+  },
+  articleBadge: {
+    backgroundColor: "#EDE9FE",
+  },
+  cardTypeBadgeText: {
+    fontSize: 10,
+    fontWeight: "800",
+    letterSpacing: 0.5,
+  },
+  newsBadgeText: {
+    color: colors.primary || "#0369A1",
+  },
+  articleBadgeText: {
+    color: "#6D28D9",
   },
 });
 

@@ -21,10 +21,9 @@ import publicHealthDays from "../data/publicHealthDays.json";
 import { useSession, useLearning } from "../context/AppContext";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import DrawerMenu from "../components/DrawerMenu";
-import UpdateDetailDialog from "../components/UpdateDetailDialog";
 import { auth } from "../config/firebase";
 import useUpdatesFeed from "../hooks/useUpdatesFeed";
-import { pickDashboardUpdates } from "../services/updatesService";
+import { pickDashboardUpdates, getUpdateType } from "../services/updatesService";
 import { theme, useResponsive } from '../styles/theme';
 import { useThemedStyles } from '../styles/useThemedStyles';
 import {
@@ -310,7 +309,6 @@ const DashboardScreen = ({ navigation, route }) => {
     });
   };
 
-  const [visible, setVisible] = React.useState(false);
   const [healthDaysVisible, setHealthDaysVisible] = useState(false);
 
   const getNextHealthDay = () => {
@@ -332,14 +330,6 @@ const DashboardScreen = ({ navigation, route }) => {
     return nextDay || sortedDays[0];
   };
   const nextHealthDay = getNextHealthDay();
-  const [selectedUpdate, setSelectedUpdate] = React.useState(null);
-
-  const showDialog = (update) => {
-    setSelectedUpdate(update);
-    setVisible(true);
-  };
-
-  const hideDialog = () => setVisible(false);
 
   const normalizeHealthDayDescription = (text) =>
     (text || "").replace(/\s+/g, " ").trim();
@@ -361,14 +351,19 @@ const DashboardScreen = ({ navigation, route }) => {
     return new Date().toLocaleDateString(undefined, options);
   };
 
+  const [updatesFilter, setUpdatesFilter] = React.useState("ALL");
   const {
     months: updatesMonths,
     loading: updatesLoading,
     refresh: refreshUpdates,
   } = useUpdatesFeed();
   const visibleUpdates = React.useMemo(
-    () => pickDashboardUpdates(updatesMonths, { maxItems: GUIDELINES_SKELETON_COUNT }),
-    [updatesMonths],
+    () =>
+      pickDashboardUpdates(updatesMonths, {
+        maxItems: GUIDELINES_SKELETON_COUNT,
+        filter: updatesFilter,
+      }),
+    [updatesMonths, updatesFilter],
   );
 
   useEffect(() => {
@@ -673,63 +668,133 @@ const DashboardScreen = ({ navigation, route }) => {
           Latest Guidelines and Updates
         </Text>
 
+        {/* 3 Filter Pills: All, News, Article */}
+        <View style={styles.filterPillsRow}>
+          {[
+            { id: "ALL", label: "All" },
+            { id: "NEWS", label: "News" },
+            { id: "ARTICLE", label: "Article" },
+          ].map((pill) => {
+            const selected = updatesFilter === pill.id;
+            return (
+              <TouchableOpacity
+                key={pill.id}
+                style={[
+                  styles.filterPill,
+                  selected && styles.filterPillActive,
+                ]}
+                onPress={() => setUpdatesFilter(pill.id)}
+                activeOpacity={0.7}
+              >
+                <Text
+                  style={[
+                    styles.filterPillText,
+                    selected && styles.filterPillTextActive,
+                  ]}
+                >
+                  {pill.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
         {updatesLoading ? (
           <GuidelinesFeedSkeleton />
+        ) : visibleUpdates.length === 0 ? (
+          <View style={styles.emptyUpdatesBox}>
+            <MaterialIcons
+              name="feed"
+              size={36}
+              color={theme.colors.textPlaceholder}
+            />
+            <Text style={styles.emptyUpdatesText}>
+              No {updatesFilter === "ARTICLE" ? "articles" : updatesFilter === "NEWS" ? "news" : "updates"} found.
+            </Text>
+          </View>
         ) : (
-          visibleUpdates.map((update) => (
-            <Card key={update.id} style={styles.updateCard}>
-              <Card.Content>
-                <Text variant="labelSmall" style={styles.dateText}>
-                  {update.date}
-                </Text>
-                {update.category ? (
-                  <Text variant="labelSmall" style={styles.updateCategory}>
-                    {update.category}
+          visibleUpdates.map((update) => {
+            const type = getUpdateType(update);
+            const isArticle = type === "ARTICLE";
+
+            return (
+              <Card
+                key={update.id}
+                style={styles.updateCard}
+                onPress={() => {
+                  if (!isPremium) {
+                    navigation.navigate("Paywall");
+                  } else {
+                    navigation.navigate("UpdateDetail", { update });
+                  }
+                }}
+              >
+                <Card.Content>
+                  <View style={styles.cardHeaderRow}>
+                    <View
+                      style={[
+                        styles.cardTypeBadge,
+                        isArticle ? styles.articleBadge : styles.newsBadge,
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.cardTypeBadgeText,
+                          isArticle
+                            ? styles.articleBadgeText
+                            : styles.newsBadgeText,
+                        ]}
+                      >
+                        {type}
+                      </Text>
+                    </View>
+                    <Text variant="labelSmall" style={styles.dateText}>
+                      {update.date}
+                    </Text>
+                    {update.category ? (
+                      <Text variant="labelSmall" style={styles.updateCategory}>
+                        {update.category}
+                      </Text>
+                    ) : null}
+                  </View>
+                  <Text variant="titleMedium" style={styles.updateTitle}>
+                    {update.title}
                   </Text>
-                ) : null}
-                <Text variant="titleMedium" style={styles.updateTitle}>
-                  {update.title}
-                </Text>
-                <Text
-                  variant="bodyMedium"
-                  style={styles.updateSummary}
-                  numberOfLines={3}
-                  ellipsizeMode="tail"
-                >
-                  {update.summary}
-                </Text>
-                {update.source ? (
-                  <Text variant="labelSmall" style={styles.updateSource}>
-                    Source: {update.source}
+                  <Text
+                    variant="bodyMedium"
+                    style={styles.updateSummary}
+                    numberOfLines={3}
+                    ellipsizeMode="tail"
+                  >
+                    {update.summary}
                   </Text>
-                ) : null}
-              </Card.Content>
-              <Card.Actions>
-                <Button
-                  textColor={theme.colors.secondary}
-                  onPress={() => {
-                    if (!isPremium) {
-                      navigation.navigate("Paywall");
-                    } else {
-                      showDialog(update);
-                    }
-                  }}
-                  mode="text"
-                  compact
-                >
-                  Read More
-                </Button>
-              </Card.Actions>
-            </Card>
-          ))
+                  {update.source ? (
+                    <Text variant="labelSmall" style={styles.updateSource}>
+                      Source: {update.source}
+                    </Text>
+                  ) : null}
+                </Card.Content>
+                <Card.Actions>
+                  <Button
+                    textColor={theme.colors.secondary}
+                    onPress={() => {
+                      if (!isPremium) {
+                        navigation.navigate("Paywall");
+                      } else {
+                        navigation.navigate("UpdateDetail", { update });
+                      }
+                    }}
+                    mode="text"
+                    compact
+                  >
+                    Read More
+                  </Button>
+                </Card.Actions>
+              </Card>
+            );
+          })
         )}
       </ScrollView>
-
-      <UpdateDetailDialog
-        visible={visible}
-        update={selectedUpdate}
-        onDismiss={hideDialog}
-      />
 
       <Portal>
         <Dialog
@@ -1128,6 +1193,75 @@ const createStyles = (colors) => StyleSheet.create({
   updateSource: {
     marginTop: 8,
     color: colors.textSecondary,
+  },
+  filterPillsRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginBottom: 14,
+  },
+  filterPill: {
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 20,
+    backgroundColor: colors.surfacePrimary,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  filterPillActive: {
+    backgroundColor: colors.primaryLight,
+    borderColor: colors.secondary,
+  },
+  filterPillText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: colors.textSecondary,
+  },
+  filterPillTextActive: {
+    color: colors.secondary,
+    fontWeight: "700",
+  },
+  cardHeaderRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 6,
+    flexWrap: "wrap",
+  },
+  cardTypeBadge: {
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  newsBadge: {
+    backgroundColor: colors.primarySoft || "#E0F2FE",
+  },
+  articleBadge: {
+    backgroundColor: "#EDE9FE",
+  },
+  cardTypeBadgeText: {
+    fontSize: 10,
+    fontWeight: "800",
+    letterSpacing: 0.5,
+  },
+  newsBadgeText: {
+    color: colors.primary || "#0369A1",
+  },
+  articleBadgeText: {
+    color: "#6D28D9",
+  },
+  emptyUpdatesBox: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 32,
+    backgroundColor: colors.surfacePrimary,
+    borderRadius: 16,
+    marginBottom: 16,
+    gap: 8,
+  },
+  emptyUpdatesText: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    fontWeight: "600",
   },
   healthDaysDialog: {
     maxHeight: "82%",
