@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       feed:
-        description: "Which Firestore Updates feed to seed"
+        description: "Which Firestore feed to seed (Updates = production, PH Digest = articles)"
         required: true
         default: production
         type: choice
         options:
           - production
-          - preview
+          - articles
 
 jobs:
   seed:
@@ -31,7 +31,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install google-auth firebase-admin
 
-      - name: Publish local updates JSON to Firestore (no Expo push)
+      - name: Publish local JSON to Firestore (no Expo push)
         env:
           FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
           GOOGLE_CLOUD_PROJECT: community-med-app

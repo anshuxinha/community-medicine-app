@@ -147,9 +147,9 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--feed",
-        choices=("production", "preview"),
+        choices=("production", "articles", "preview"),
         default="production",
-        help="Which feed to seed with --seed-only (default: production).",
+        help="Which feed to seed with --seed-only: production (Updates) or articles (PH Digest). preview is a deprecated alias for articles.",
     )
     parser.add_argument(
         "--no-publish",

@@ -36,8 +36,8 @@ UPDATES_PATH = DATA_DIR / "updates.json"
 ARCHIVE_PATH = DATA_DIR / "updates_archive.json"
 FEED_COLLECTION = "appContent"
 FEED_DOC_ID = "updatesFeed"
-FEED_DOC_ID_PREVIEW = "updatesFeedPreview"
-UPDATES_PREVIEW_PATH = DATA_DIR / "updates_preview.json"
+FEED_DOC_ID_ARTICLES = "articlesFeed"
+ARTICLES_PATH = DATA_DIR / "articles.json"
 
 
 _GEMMA4_THOUGHT_RE = re.compile(
