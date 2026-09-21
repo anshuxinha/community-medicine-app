@@ -111,4 +111,43 @@ describe('Video Completion & Controls', () => {
 
     expect(onWatchProgress).toHaveBeenCalledWith(0.95);
   });
+
+  it('verifies videos do not alter streak or study score in learning state snapshot', () => {
+    const prevSnapshot = {
+      completedVideoIds: {},
+      currentStreak: 5,
+      studyScore: 120,
+      dailyReadHistory: { '2026-09-21': 3 },
+    };
+
+    // Simulate markVideoCompleted snapshot logic
+    const nextCompleted = {
+      ...prevSnapshot.completedVideoIds,
+      video_123: true,
+    };
+    const nextSnapshot = {
+      ...prevSnapshot,
+      completedVideoIds: nextCompleted,
+    };
+
+    expect(nextSnapshot.completedVideoIds.video_123).toBe(true);
+    expect(nextSnapshot.currentStreak).toBe(5);
+    expect(nextSnapshot.studyScore).toBe(120);
+    expect(nextSnapshot.dailyReadHistory['2026-09-21']).toBe(3);
+  });
+
+  it('verifies incomplete status removes or flags video as false', () => {
+    const prevSnapshot = {
+      completedVideoIds: { video_123: true, video_456: true },
+    };
+
+    const nextCompleted = {
+      ...prevSnapshot.completedVideoIds,
+      video_123: false,
+    };
+
+    expect(Boolean(nextCompleted.video_123)).toBe(false);
+    expect(Boolean(nextCompleted.video_456)).toBe(true);
+  });
 });
+

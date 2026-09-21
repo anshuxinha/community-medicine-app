@@ -287,10 +287,16 @@ const mergeCompletedVideoIds = (...maps) => {
   maps.forEach((map) => {
     if (!map || typeof map !== "object") return;
     Object.entries(map).forEach(([id, val]) => {
-      if (val) merged[id] = true;
+      if (merged[id] === undefined) {
+        merged[id] = Boolean(val);
+      }
     });
   });
-  return merged;
+  const result = {};
+  Object.entries(merged).forEach(([id, val]) => {
+    if (val) result[id] = true;
+  });
+  return result;
 };
 
 const mergeLearningStates = (...rawStates) => {
@@ -386,6 +392,7 @@ const collectLearningStateCandidates = (
     readItems: userDocData.readItems,
     readItemVersions: userDocData.readItemVersions,
     bookmarks: userDocData.bookmarks,
+    completedVideoIds: userDocData.completedVideoIds,
     currentStreak: userDocData.currentStreak,
     lastReadDate: userDocData.lastReadDate,
     studyScore: userDocData.studyScore,
@@ -1343,6 +1350,7 @@ export const AppProvider = ({ children }) => {
     readItems,
     readItemVersions,
     bookmarks,
+    completedVideoIds,
     currentStreak,
     lastReadDate,
     studyScore,
@@ -1642,39 +1650,9 @@ export const AppProvider = ({ children }) => {
 
     const prev = learningStateRef.current;
     const previousCompleted = prev.completedVideoIds || {};
-    if (previousCompleted[videoId]) {
+    if (previousCompleted[videoId] === true) {
       return { didComplete: false };
     }
-
-    const todayStr = new Date().toDateString();
-    const previousStreak = prev.currentStreak || 0;
-    let nextStreak = previousStreak;
-    let nextLastRead = prev.lastReadDate || null;
-    let nextScore = prev.studyScore || 0;
-    let nextHistory = { ...(prev.dailyReadHistory || {}) };
-    let streakIncremented = false;
-
-    if (prev.lastReadDate !== todayStr) {
-      if (!prev.lastReadDate) {
-        nextStreak = 1;
-      } else {
-        const diffDays = dayDiffFromToday(prev.lastReadDate);
-        if (diffDays === 1) {
-          nextStreak = previousStreak + 1;
-        } else if (diffDays === null || diffDays > 1) {
-          nextStreak = 1;
-        }
-      }
-      nextLastRead = todayStr;
-      nextScore = (prev.studyScore || 0) + 10;
-      streakIncremented = nextStreak > previousStreak || previousStreak === 0;
-    }
-
-    const dateKey = new Date().toISOString().split("T")[0];
-    nextHistory = {
-      ...nextHistory,
-      [dateKey]: (nextHistory[dateKey] || 0) + 1,
-    };
 
     const nextCompleted = {
       ...previousCompleted,
@@ -1684,18 +1662,10 @@ export const AppProvider = ({ children }) => {
     const snapshot = {
       ...prev,
       completedVideoIds: nextCompleted,
-      currentStreak: nextStreak,
-      lastReadDate: nextLastRead,
-      dailyReadHistory: nextHistory,
-      studyScore: nextScore,
     };
 
     learningStateRef.current = snapshot;
     setCompletedVideoIds(nextCompleted);
-    setCurrentStreak(nextStreak);
-    setLastReadDate(nextLastRead);
-    setStudyScore(nextScore);
-    setDailyReadHistory(nextHistory);
 
     try {
       if (Platform.OS === "android") {
@@ -1708,13 +1678,12 @@ export const AppProvider = ({ children }) => {
     const uid = userRef.current?.uid;
     if (uid) {
       void persistLearningLocally(uid, snapshot);
+      cloudLearningSaveTaskRef.current?.schedule();
     }
 
     return {
       didComplete: true,
       videoId,
-      currentStreak: nextStreak,
-      streakIncremented,
       completedVideoIds: nextCompleted,
     };
   }, [persistLearningLocally]);
@@ -1726,8 +1695,10 @@ export const AppProvider = ({ children }) => {
     const previousCompleted = prev.completedVideoIds || {};
     if (!previousCompleted[videoId]) return;
 
-    const nextCompleted = { ...previousCompleted };
-    delete nextCompleted[videoId];
+    const nextCompleted = {
+      ...previousCompleted,
+      [videoId]: false,
+    };
 
     const snapshot = {
       ...prev,
@@ -1740,6 +1711,7 @@ export const AppProvider = ({ children }) => {
     const uid = userRef.current?.uid;
     if (uid) {
       void persistLearningLocally(uid, snapshot);
+      cloudLearningSaveTaskRef.current?.schedule();
     }
   }, [persistLearningLocally]);
 
