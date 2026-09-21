@@ -35,6 +35,7 @@ import {
 import { db } from "../config/firebase";
 import { useSession } from "../context/AppContext";
 import { useThemedStyles } from "../styles/useThemedStyles";
+import { theme, useResponsive } from "../styles/theme";
 import { getUpdateType } from "../services/updatesService";
 import { isUserAdmin } from "../utils/adminUtils";
 import { ArticleMarkdownView } from "../utils/articleMarkdown";
