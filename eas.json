@@ -9,7 +9,8 @@
             "distribution": "internal",
             "env": {
                 "EXPO_PUBLIC_RC_API_KEY_IOS": "appl_bIbghsScVIeHGfrXogcChLzXKsS",
-                "EXPO_PUBLIC_RC_API_KEY_ANDROID": "goog_mfyywPtYwjSUQhFJoHeVysbUole"
+                "EXPO_PUBLIC_RC_API_KEY_ANDROID": "goog_mfyywPtYwjSUQhFJoHeVysbUole",
+                "EXPO_PUBLIC_UPDATES_FEED": "preview"
             }
         },
         "preview": {
@@ -20,7 +21,8 @@
             },
             "env": {
                 "EXPO_PUBLIC_RC_API_KEY_IOS": "appl_bIbghsScVIeHGfrXogcChLzXKsS",
-                "EXPO_PUBLIC_RC_API_KEY_ANDROID": "goog_mfyywPtYwjSUQhFJoHeVysbUole"
+                "EXPO_PUBLIC_RC_API_KEY_ANDROID": "goog_mfyywPtYwjSUQhFJoHeVysbUole",
+                "EXPO_PUBLIC_UPDATES_FEED": "preview"
             }
         },
         "production": {
@@ -30,7 +32,8 @@
             },
             "env": {
                 "EXPO_PUBLIC_RC_API_KEY_IOS": "appl_bIbghsScVIeHGfrXogcChLzXKsS",
-                "EXPO_PUBLIC_RC_API_KEY_ANDROID": "goog_mfyywPtYwjSUQhFJoHeVysbUole"
+                "EXPO_PUBLIC_RC_API_KEY_ANDROID": "goog_mfyywPtYwjSUQhFJoHeVysbUole",
+                "EXPO_PUBLIC_UPDATES_FEED": "production"
             }
         },
         "production-apk": {
@@ -40,7 +43,8 @@
             },
             "env": {
                 "EXPO_PUBLIC_RC_API_KEY_IOS": "appl_bIbghsScVIeHGfrXogcChLzXKsS",
-                "EXPO_PUBLIC_RC_API_KEY_ANDROID": "goog_mfyywPtYwjSUQhFJoHeVysbUole"
+                "EXPO_PUBLIC_RC_API_KEY_ANDROID": "goog_mfyywPtYwjSUQhFJoHeVysbUole",
+                "EXPO_PUBLIC_UPDATES_FEED": "production"
             }
         }
     },
