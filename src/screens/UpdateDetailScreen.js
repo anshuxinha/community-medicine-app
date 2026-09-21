@@ -43,6 +43,18 @@ import { sendReplyNotification } from "../services/notificationService";
 
 const appIcon = require("../../assets/icon.png");
 
+const SHARE_CARD_SIZE = 440;
+const SHARE_SUMMARY_LINE_HEIGHT = 22;
+
+/** Visible body lines that fit the leftover square. 0 hides the body. */
+export function articleShareBodyLineCount(
+  clipHeight,
+  lineHeight = SHARE_SUMMARY_LINE_HEIGHT,
+) {
+  if (!Number.isFinite(clipHeight) || clipHeight < lineHeight) return 0;
+  return Math.floor(clipHeight / lineHeight);
+}
+
 const UpdateDetailScreen = ({ route, navigation }) => {
   const { update } = route.params || {};
   const { styles, colors } = useThemedStyles(createStyles);
@@ -52,7 +64,9 @@ const UpdateDetailScreen = ({ route, navigation }) => {
 
   const isAdmin = useMemo(() => isUserAdmin(user), [user]);
   const updateType = useMemo(() => getUpdateType(update), [update]);
+  const isArticleShare = updateType === "ARTICLE";
   const viewShotRef = useRef(null);
+  const [articleBodyLines, setArticleBodyLines] = useState(0);
   const commentInputRef = useRef(null);
   const scrollViewRef = useRef(null);
 
@@ -155,6 +169,11 @@ const UpdateDetailScreen = ({ route, navigation }) => {
     const minutes = Math.max(1, Math.ceil(words / 70));
     return `${minutes} min read`;
   }, [update?.summary]);
+
+  const onArticleBodyClipLayout = useCallback((event) => {
+    const next = articleShareBodyLineCount(event?.nativeEvent?.layout?.height);
+    setArticleBodyLines((prev) => (prev === next ? prev : next));
+  }, []);
 
   const handleShare = useCallback(async () => {
     if (!update) return;
@@ -381,9 +400,18 @@ const UpdateDetailScreen = ({ route, navigation }) => {
       {/* Hidden card for branded image sharing */}
       <View style={styles.hiddenCapture}>
         <ViewShot ref={viewShotRef} options={{ format: "png", quality: 1 }}>
-          <View style={styles.shareCard}>
+          <View
+            style={[styles.shareCard, isArticleShare && styles.shareCardSquare]}
+            collapsable={false}
+            testID="update-share-card"
+          >
             <View style={styles.shareAccentBar} />
-            <View style={styles.shareContent}>
+            <View
+              style={[
+                styles.shareContent,
+                isArticleShare && styles.shareContentFill,
+              ]}
+            >
               <View style={styles.shareTagRow}>
                 <Text style={styles.shareTypeBadge}>{updateType}</Text>
                 {update.category ? (
@@ -393,7 +421,29 @@ const UpdateDetailScreen = ({ route, navigation }) => {
               <Text style={styles.shareTitle}>{update.title}</Text>
               <Text style={styles.shareDate}>{formatDate(update.date)}</Text>
               <View style={styles.shareDivider} />
-              <Text style={styles.shareSummary}>{update.summary}</Text>
+              {isArticleShare ? (
+                <View
+                  style={styles.shareSummaryClip}
+                  onLayout={onArticleBodyClipLayout}
+                  testID="update-share-body-clip"
+                >
+                  {/* Absolute so the full article cannot grow the square. */}
+                  <Text
+                    style={[styles.shareSummary, styles.shareSummaryClipped]}
+                    numberOfLines={
+                      articleBodyLines > 0 ? articleBodyLines : undefined
+                    }
+                    ellipsizeMode="tail"
+                    testID="update-share-body"
+                  >
+                    {update.summary}
+                  </Text>
+                </View>
+              ) : (
+                <Text style={styles.shareSummary} testID="update-share-body">
+                  {update.summary}
+                </Text>
+              )}
               {update.source ? (
                 <Text style={styles.shareSource}>Source: {update.source}</Text>
               ) : null}
@@ -1452,10 +1502,33 @@ const createStyles = (colors) =>
       top: -9999,
     },
     shareCard: {
-      width: 440,
+      width: SHARE_CARD_SIZE,
       backgroundColor: "#FFFFFF",
       borderRadius: 20,
       overflow: "hidden",
+    },
+    shareCardSquare: {
+      height: SHARE_CARD_SIZE,
+    },
+    shareContentFill: {
+      flex: 1,
+      minHeight: 0,
+      overflow: "hidden",
+    },
+    shareSummaryClip: {
+      flexGrow: 1,
+      flexShrink: 1,
+      flexBasis: 0,
+      minHeight: 0,
+      overflow: "hidden",
+      marginBottom: 12,
+    },
+    shareSummaryClipped: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      marginBottom: 0,
     },
     shareAccentBar: {
       height: 6,
@@ -1505,7 +1578,7 @@ const createStyles = (colors) =>
     },
     shareSummary: {
       fontSize: 14,
-      lineHeight: 22,
+      lineHeight: SHARE_SUMMARY_LINE_HEIGHT,
       color: "#334155",
       marginBottom: 12,
     },
