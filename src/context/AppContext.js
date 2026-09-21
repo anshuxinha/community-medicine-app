@@ -1274,6 +1274,14 @@ export const AppProvider = ({ children }) => {
           setBookmarks(normalizeBookmarks(JSON.parse(storedBookmarks)));
         }
 
+        const storedCompletedVideos =
+          await AsyncStorage.getItem("completedVideoIds");
+        if (storedCompletedVideos) {
+          setCompletedVideoIds(
+            sanitizeCompletedVideoIds(JSON.parse(storedCompletedVideos)),
+          );
+        }
+
         const storedHighlights = await AsyncStorage.getItem("highlights");
         if (storedHighlights) {
           setHighlights(JSON.parse(storedHighlights));
@@ -2169,6 +2177,9 @@ export const AppProvider = ({ children }) => {
       } catch (_) {}
     }
     await AsyncStorage.multiRemove(LOCAL_AUTH_STORAGE_KEYS);
+    try {
+      await AsyncStorage.removeItem("completedVideoIds");
+    } catch (_) {}
 
     setUser(null);
     setAccountPremium(false);
