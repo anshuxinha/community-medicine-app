@@ -1,15 +1,22 @@
 /**
- * Remote Updates feed: Firestore appContent/updatesFeed with offline cache
+ * Remote Updates feed: Firestore appContent/updatesFeed (production) or
+ * appContent/updatesFeedPreview (preview / __DEV__), with offline cache
  * and bundled JSON fallback.
  */
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Constants from "expo-constants";
+import * as Updates from "expo-updates";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
 import bundledCurrent from "../data/updates.json";
+import bundledPreview from "../data/updates_preview.json";
 import bundledArchive from "../data/updates_archive.json";
 
-export const UPDATES_FEED_CACHE_KEY = "updatesFeedCache";
-export const UPDATES_FEED_DOC_PATH = ["appContent", "updatesFeed"];
+export const UPDATES_FEED_DOC_PRODUCTION = ["appContent", "updatesFeed"];
+export const UPDATES_FEED_DOC_PREVIEW = ["appContent", "updatesFeedPreview"];
+
+/** @deprecated Prefer resolveUpdatesFeedDocPath() */
+export const UPDATES_FEED_DOC_PATH = UPDATES_FEED_DOC_PRODUCTION;
 
 const FETCH_TIMEOUT_MS = 5000;
 
@@ -18,6 +25,43 @@ function timeoutPromise(ms) {
     setTimeout(() => reject(new Error("Updates feed request timed out")), ms),
   );
 }
+
+/**
+ * Preview builds (EAS channel "preview"), explicit env, and __DEV__ read the
+ * preview Firestore doc so PH Digest can land without touching production.
+ */
+export function usePreviewUpdatesFeed() {
+  const envFlag = (
+    process.env.EXPO_PUBLIC_UPDATES_FEED || ""
+  ).toLowerCase();
+  if (envFlag === "preview") return true;
+  if (envFlag === "production") return false;
+
+  const channel = (
+    Updates.channel ||
+    Constants.expoConfig?.extra?.eas?.channel ||
+    ""
+  ).toLowerCase();
+  if (channel === "preview") return true;
+
+  if (typeof __DEV__ !== "undefined" && __DEV__) return true;
+  return false;
+}
+
+export function resolveUpdatesFeedDocPath() {
+  return usePreviewUpdatesFeed()
+    ? UPDATES_FEED_DOC_PREVIEW
+    : UPDATES_FEED_DOC_PRODUCTION;
+}
+
+export function updatesFeedCacheKey() {
+  return usePreviewUpdatesFeed()
+    ? "updatesFeedCachePreview"
+    : "updatesFeedCache";
+}
+
+/** @deprecated Prefer updatesFeedCacheKey() */
+export const UPDATES_FEED_CACHE_KEY = "updatesFeedCache";
 
 function monthKeyFromDate(dateStr) {
   if (typeof dateStr === "string" && dateStr.length >= 7) {
@@ -85,8 +129,9 @@ export function normalizeMonthsMap(raw) {
   return months;
 }
 
-/** Merge bundled updates.json + updates_archive.json into months map. */
+/** Merge bundled updates JSON + archive into months map. */
 export function monthsFromBundled() {
+  const current = usePreviewUpdatesFeed() ? bundledPreview : bundledCurrent;
   const months = {};
   if (bundledArchive && typeof bundledArchive === "object") {
     for (const [key, list] of Object.entries(bundledArchive)) {
@@ -94,8 +139,8 @@ export function monthsFromBundled() {
       months[key] = sortItemsDesc(dedupeByLink(list));
     }
   }
-  if (Array.isArray(bundledCurrent)) {
-    for (const item of bundledCurrent) {
+  if (Array.isArray(current)) {
+    for (const item of current) {
       const key = monthKeyFromDate(item?.date);
       if (!key) continue;
       months[key] = months[key] || [];
@@ -110,7 +155,7 @@ export function monthsFromBundled() {
 
 export async function readCachedUpdatesMonths() {
   try {
-    const raw = await AsyncStorage.getItem(UPDATES_FEED_CACHE_KEY);
+    const raw = await AsyncStorage.getItem(updatesFeedCacheKey());
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     const months = normalizeMonthsMap(parsed);
@@ -124,7 +169,7 @@ export async function readCachedUpdatesMonths() {
 async function writeCachedUpdatesMonths(months) {
   try {
     await AsyncStorage.setItem(
-      UPDATES_FEED_CACHE_KEY,
+      updatesFeedCacheKey(),
       JSON.stringify({ months, cachedAt: new Date().toISOString() }),
     );
   } catch (err) {
@@ -139,7 +184,7 @@ async function writeCachedUpdatesMonths(months) {
 export async function fetchRemoteUpdatesMonths() {
   try {
     const snap = await Promise.race([
-      getDoc(doc(db, ...UPDATES_FEED_DOC_PATH)),
+      getDoc(doc(db, ...resolveUpdatesFeedDocPath())),
       timeoutPromise(FETCH_TIMEOUT_MS),
     ]);
     if (!snap?.exists?.()) return null;
