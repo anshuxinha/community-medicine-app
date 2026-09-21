@@ -1,0 +1,93 @@
+[
+    {
+        "id": "8d852464-8639-4998-bafb-515c29cd0468",
+        "date": "2026-09-21",
+        "title": "Indian Sentinel Study Finds Pneumococcal Meningitis Share Falling After PCV Rollout",
+        "link": "https://doi.org/10.1016/j.lansea.2026.100790",
+        "summary": "Early Indian hospital surveillance after pneumococcal conjugate vaccine (PCV) introduction shows a clear drop in the share of pneumococcal meningitis among young children admitted with suspected meningitis — and a shift away from vaccine-covered serotypes.\n\nAn ICMR-supported meningitis network enrolled 12,971 children aged 1–59 months across 32 tertiary hospitals between 2019 and 2022. Pneumococcal meningitis was confirmed in 303 of those children (2.3%). When investigators divided the calendar into pre-PCV, early-PCV, and post-PCV windows around India’s real-world product switch — PCV13 in selected sites, then nationwide PCV10-SII (PNEUMOSIL) — the proportion of meningitis that was pneumococcal fell from 3.5% before introduction to 1.8% in both the early- and post-PCV periods.\n\nThat kind of aetiologic fraction is exactly what programme and surveillance teams hope to see when a new antigen enters the Universal Immunisation Programme. It does not, by itself, prove a drop in population incidence. But it is hard to ignore when it lines up with a serotype story that matches the vaccine.\n\n## Serotype shift mirrors the vaccine\n\nAmong cases with serotyping available, serotypes included in PCV10-SII declined from 41.4% before PCV to 25.9% after broader use. Residual disease still featured non-vaccine serotypes such as 18C/18B, 8, and 10F. Those leftovers matter. Conjugate vaccines reshape the landscape; they do not erase pneumococcus. For residents reading IDSP alerts or talking to paediatric wards, the question after PCV is no longer only “is coverage high?” but “which serotypes are still landing in hospital, and are they the ones we expected?”\n\nWhere outcome data were available, case fatality among pneumococcal meningitis cases was 6.9%. That figure should be read cautiously — tertiary referral hospitals enrich for severe disease — but it keeps the clinical stakes visible.\n\n## How the study was built\n\nThe design is sentinel and hospital-based, not a community cohort. That is both a strength and a limit. Strength: you get microbiologically characterised meningitis from a large multi-centre network over years that bracket a policy change. Limit: referral patterns, lab capacity, and clinical suspicion can move proportions even when true community risk is flat. The authors’ periodisation around the PCV13-to-PCV10-SII transition is the feature Community Medicine trainees should steal for journal club: define the intervention window clearly, then track both the bug fraction and the serotype mix.\n\n## Why this matters on the ground\n\nFor MD Community Medicine, the paper is a workable evaluation template more than a single success headline. It shows how to:\n\n- Periodise surveillance around a real UIP antigen change  \n- Pair aetiologic endpoints with serotype endpoints  \n- Interpret hospital meningitis signals in the years after introduction  \n- Keep residual non-vaccine types on the watch list for AEFI rounds, district immunisation reviews, and conversations with clinicians who only see “meningitis” on the discharge summary  \n\nCoverage charts will still dominate many district meetings. This study is a reminder to ask for the microbiology underneath them.\n\nSource: *Lancet Regional Health – Southeast Asia* (open access), DOI 10.1016/j.lansea.2026.100790."
+    },
+    {
+        "id": "f40ebe36-99a9-4dcc-8101-a99bdae777ba",
+        "date": "2026-09-21",
+        "title": "Launch of 7th National Formulary of India 2026 and Biovigilance Programme",
+        "summary": "The Union Ministry of Health and Family Welfare has launched the 7th National Formulary of India (NFI) 2026 and the Biovigilance Programme of India. Led by the Indian Pharmacopoeia Commission (IPC), the Biovigilance Programme will monitor adverse events linked to organ and tissue transplantation. Key updates include the launch of the ADR-PvPI 2.0 Mobile App for iOS and a new guidance document for reporting medical device-related adverse events. India's global rank in the WHO patient safety database has improved from 123rd to 8th. Currently, approximately 1,150 ADR Reporting Centres are operational, with plans to expand to the primary healthcare level. The 6th National Pharmacovigilance Week (17–23 September 2026) is themed “Promoting Rational Use of Medicines through Pharmacovigilance: A Step Towards Safer Healthcare.”",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2312930"
+    },
+    {
+        "id": "9bb9f7cb-7274-4679-8801-75d2025cbde7",
+        "date": "2026-09-18",
+        "title": "Union Health Ministry Observes World Patient Safety Day 2026 with Focus on NCDs",
+        "summary": "The Union Health Ministry commemorated World Patient Safety Day 2026 with the theme “Safe Care for Noncommunicable Diseases (NCDs).” The observance emphasized the need for a structured, time-bound approach to quality assurance across the continuum of NCD prevention, diagnosis, and long-term management. Smt. Aradhana Patnaik, Additional Secretary & Mission Director (NHM), highlighted that nearly 63% of all deaths in India are attributed to NCDs, making patient safety a critical component of healthcare delivery to address this growing burden.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2311769"
+    },
+    {
+        "id": "d3b5e1ce-51b9-4db5-b1cc-8d29889965a6",
+        "date": "2026-09-17",
+        "title": "Mandatory CCTV proposed for medical stores selling Schedule H, H1, and X drugs",
+        "summary": "The Union Health Ministry has proposed mandatory CCTV surveillance at medical stores to strengthen regulatory oversight of Schedule H, H1, and X drugs. Under Draft Gazette Notification G.S.R. 791 (E) dated September 8, 2026, the proposed amendments to the Drugs Rules, 1945, aim to curb unauthorized access and the sale of these drugs without valid prescriptions. The proposal, which was recommended by the Drugs Technical Advisory Board (DTAB), seeks to enhance transparency and accountability across the pharmaceutical supply chain. The Ministry is currently inviting objections and suggestions from stakeholders regarding this regulatory safeguard.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2311184"
+    },
+    {
+        "id": "34d3b0ca-b997-4ff2-9d52-e144436baca5",
+        "date": "2026-09-17",
+        "title": "Stem cell therapy restricted to Ministry-approved indications and clinical trials for ASD",
+        "summary": "The Ministry of Health and Family Welfare has issued an advisory restricting stem cell therapy as standard care to only those disease conditions included in the Ministry-approved list. Following a Supreme Court judgment (Yash Charitable Trust v. Union of India), the therapeutic use of stem cells for Autism Spectrum Disorder (ASD) is now strictly limited to approved clinical trials in accordance with the National Guidelines for Stem Cell Research, 2017, issued by ICMR and DBT. Unproven stem cell interventions must not be offered as routine or commercial clinical services. This advisory applies to all States and UTs that have adopted the Clinical Establishments (Registration and Regulation) Act, 2010.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2311179"
+    },
+    {
+        "id": "74284141-1674-49af-9e7e-f039745bc09b",
+        "date": "2026-09-17",
+        "title": "6th National Pharmacovigilance Week Launched to Promote Rational Medicine Use",
+        "summary": "The 6th National Pharmacovigilance Week is being observed across India from September 17–23, 2026, themed “Promoting Rational Use of Medicines through Pharmacovigilance – A Step Towards Safer Healthcare.” Organized by the Indian Pharmacopoeia Commission (IPC), which serves as the National Coordination Centre for the Pharmacovigilance Programme of India (NCC-PvPI), the campaign aims to sensitize healthcare professionals and the public on Adverse Drug Reaction (ADR) reporting. The initiative focuses on strengthening grassroots pharmacovigilance networks to better inform regulatory and clinical actions.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2311715"
+    },
+    {
+        "id": "2bd6e106-ce04-4c07-9cb5-32df34353a88",
+        "date": "2026-09-12",
+        "title": "Union Health Minister Inaugurates 10 Critical Care Blocks and 12 IPHLs in Andhra Pradesh",
+        "summary": "Union Health Minister Shri J P Nadda inaugurated 10 Critical Care Blocks (CCBs) and 12 Integrated Public Health Laboratories (IPHLs) in Andhra Pradesh. These facilities are part of the PM-ABHIM (Prime Minister Ayushman Bharat Health Infrastructure Mission), which has sanctioned 631 CCBs nationwide to enhance pandemic response and critical care capacity. The inaugurated blocks are located at GMCs in Kadapa, Nellore, Srikakulam, Visakhapatnam, Ongole, Rajamahendravaram, Kurnool, and SMC Vijaya, and District Hospitals in Anakapalli and Hindupur. Additionally, the Minister highlighted Andhra Pradesh's Sanjeevani programme, which facilitates doorstep healthcare and testing for 41 health parameters to strengthen the linkage between preventive and tertiary care.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2309440"
+    },
+    {
+        "id": "bf31c482-ea18-449a-aeac-1cdac849ee19",
+        "date": "2026-09-11",
+        "title": "India Administers 8 Million HPV Vaccine Doses Under National Campaign",
+        "summary": "India has administered over 80 lakh (8 million) doses of the HPV vaccine under the National HPV Vaccination Campaign since its launch in February 2026. The initiative provides free, voluntary single-dose HPV vaccination to 14-year-old girls at government health facilities with parental consent. Based on RGI 2021 estimates, the annual target cohort is approximately 1.2 crore girls. Gujarat, Uttar Pradesh, Madhya Pradesh, and Mizoram have achieved 100% coverage, while Bihar, Andhra Pradesh, and Assam have exceeded 90%. Uttar Pradesh leads with over 22 lakh vaccinations. All sessions are conducted under medical supervision with 24x7 arrangements for the management of Adverse Events Following Immunization (AEFI).",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2309109"
+    },
+    {
+        "id": "7036adcd-0d0b-47a9-a0c0-b03efa74d725",
+        "date": "2026-09-11",
+        "title": "IPC Launches Reference Substance for Enoxaparin Sodium",
+        "summary": "The Indian Pharmacopoeia Commission (IPC) has launched the Indian Pharmacopoeia Reference Substance (IPRS) for Enoxaparin Sodium for bioassays. This announcement was made during a two-day National Conference on \"Quality and Safety of Biosimilars: Strengthening India’s Biopharma SHAKTI Vision\" held on September 10–11, 2026, in Bengaluru. The initiative aligns with the government's Biopharma SHAKTI Vision to enhance the biopharmaceutical ecosystem through innovation and self-reliance. The conference, attended by 160 stakeholders, addressed critical regulatory and scientific challenges including pharmacopoeial standards, analytical characterization, immunogenicity, and pharmacovigilance to ensure the quality and safety of biosimilars in India.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2309187"
+    },
+    {
+        "id": "e021a6c8-41b6-4d15-82d6-5aba157328b3",
+        "date": "2026-09-09",
+        "title": "Union Health Ministry holds National Workshop to strengthen NPPCF",
+        "summary": "The Union Health Ministry organized a National Multi-Stakeholder Workshop on Fluorosis to strengthen the National Programme for Prevention and Control of Fluorosis (NPPCF). The workshop focused on enhancing the prevention, early detection, management, and control of fluorosis through research, innovation, and multisectoral action. Key stakeholders involved included the Ministry of Jal Shakti, ICAR, ICMR, AIIMS, and the National Dental Commission. The primary objectives discussed were expanding the reach and coverage of the NPPCF and improving real-time information sharing and coordination across diverse sectors to effectively combat the condition.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2308345"
+    },
+    {
+        "id": "0889625f-e8a2-481a-b417-2d53c02ede75",
+        "date": "2026-09-08",
+        "title": "India reports >175% increase in MBBS/PG seats and adopts Dili Declaration on Specialized Care",
+        "summary": "India has significantly expanded its medical education infrastructure, increasing MBBS and PG seats by over 175% since 2014. During the 79th WHO Regional Committee Session (RC79), Union Health Minister Shri J.P. Nadda highlighted that medical colleges have more than doubled to improve equitable access to specialized care for rural, tribal, and underserved populations. The WHO South-East Asia Region adopted the Dili Declaration on Equity in Specialized Care. Furthermore, India was honored with two WHO South-East Asia Regional Awards for its sustained leadership in Maternal Health and Noncommunicable Disease (NCD) management.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2307968"
+    },
+    {
+        "id": "db692e09-1160-4826-b353-2fff8a1f9d4b",
+        "date": "2026-09-03",
+        "title": "MoHFW Launches SUMAN Roadmap 2030 to Eliminate Preventable Maternal and Newborn Deaths",
+        "summary": "The Union Ministry of Health and Family Welfare has initiated the SUMAN Roadmap 2030 to accelerate the continuum of care and achieve zero preventable maternal and newborn deaths. The strategy specifically targets 13 high-focus states and 130 districts with tailored interventions for vulnerable and underserved areas. A key component highlighted is the registration of newly married couples to prevent unintended pregnancies and promote planned, healthy pregnancies. The roadmap emphasizes ensuring safe, respectful, and quality maternal and newborn healthcare across the continuum.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2306613"
+    },
+    {
+        "id": "df41442f-5364-481d-9baa-1e682a96455e",
+        "date": "2026-09-02",
+        "title": "UGC Standardizes Allied and Healthcare Education via 'One Nation, One Curriculum'",
+        "summary": "The University Grants Commission (UGC) has notified 33 new and 21 restructured undergraduate and postgraduate degrees under the National Commission for Allied and Healthcare Professions (NCAHP) regulatory framework. This initiative, published in the Gazette on August 31, 2026, implements the 'One Nation, One Curriculum' mandate to ensure uniformity in course duration, degree nomenclature, and entry qualifications nationwide. The move aims to strengthen professional standards and build a competent, future-ready allied healthcare workforce through the 5th Amendment to the Specification of Degrees under the UGC Act, 1956.",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2306000"
+    }
+]
