@@ -2,16 +2,54 @@ jest.mock("firebase/firestore", () => ({
   doc: jest.fn(),
   getDoc: jest.fn(),
 }));
+jest.mock("firebase/auth", () => ({
+  onAuthStateChanged: jest.fn(() => () => {}),
+}));
 jest.mock("../../config/firebase", () => ({
   db: {},
+  auth: { currentUser: null },
 }));
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { onAuthStateChanged } from "firebase/auth";
+import { getDoc } from "firebase/firestore";
+import { auth } from "../../config/firebase";
 import {
   getUpdateType,
   pickDashboardUpdates,
   normalizeMonthsMap,
   mergeMonthsMaps,
+  loadUpdatesMonths,
+  subscribeUpdatesFeed,
+  __resetUpdatesFeedStateForTests,
+  __setUpdatesFeedTimingsForTests,
 } from "../../services/updatesService";
+
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+const freshSnap = {
+  exists: () => true,
+  data: () => ({
+    months: {
+      "2026-09": [
+        {
+          id: "fresh-news",
+          date: "2026-09-21",
+          title: "September guideline",
+          tag: "NEWS",
+        },
+        {
+          id: "fresh-article",
+          date: "2026-09-20",
+          title: "September article",
+          tag: "ARTICLE",
+        },
+      ],
+    },
+  }),
+};
 
 describe("updatesFeedFilters", () => {
   describe("getUpdateType", () => {
@@ -113,6 +151,97 @@ describe("updatesFeedFilters", () => {
 
       const merged = mergeMonthsMaps(map1, map2);
       expect(merged["2026-09"].length).toBe(1);
+    });
+  });
+
+  describe("loadUpdatesMonths auth and late scan", () => {
+    beforeEach(async () => {
+      __resetUpdatesFeedStateForTests();
+      __setUpdatesFeedTimingsForTests({
+        authWaitMs: 40,
+        fetchTimeoutMs: 50,
+        retryDelayMs: 0,
+      });
+      auth.currentUser = null;
+      onAuthStateChanged.mockImplementation(() => () => {});
+      getDoc.mockReset();
+      await AsyncStorage.clear();
+    });
+
+    it("does not read Firestore until auth has restored", async () => {
+      let authCallback;
+      onAuthStateChanged.mockImplementation((_auth, callback) => {
+        authCallback = callback;
+        return () => {};
+      });
+      getDoc.mockResolvedValue({ exists: () => false });
+
+      const pending = loadUpdatesMonths();
+      await delay(15);
+      expect(getDoc).not.toHaveBeenCalled();
+
+      auth.currentUser = { uid: "user-1" };
+      authCallback(auth.currentUser);
+      const result = await pending;
+
+      expect(getDoc).toHaveBeenCalled();
+      expect(result.source).toBe("bundled");
+    });
+
+    it("scans again after a signed-out failure once the user is signed in", async () => {
+      getDoc.mockResolvedValue({ exists: () => false });
+      onAuthStateChanged.mockImplementation((_auth, callback) => {
+        callback(null);
+        return () => {};
+      });
+
+      const first = await loadUpdatesMonths();
+      expect(first.source).toBe("bundled");
+      const callsAfterSignedOut = getDoc.mock.calls.length;
+      expect(callsAfterSignedOut).toBeGreaterThan(0);
+
+      auth.currentUser = { uid: "user-1" };
+      getDoc.mockResolvedValue(freshSnap);
+      const second = await loadUpdatesMonths();
+
+      expect(getDoc.mock.calls.length).toBeGreaterThan(callsAfterSignedOut);
+      expect(second.source).toBe("remote");
+      expect(second.months["2026-09"].map((item) => item.id)).toEqual([
+        "fresh-news",
+        "fresh-article",
+      ]);
+    });
+
+    it("applies a remote result that arrives after the paint timeout", async () => {
+      auth.currentUser = { uid: "user-1" };
+      const resolvers = [];
+      getDoc.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            resolvers.push(resolve);
+          }),
+      );
+      const sources = [];
+      const unsubscribe = subscribeUpdatesFeed((result) => {
+        sources.push(result.source);
+      });
+
+      const pending = loadUpdatesMonths();
+      await delay(80);
+      const first = await pending;
+      expect(first.source).toBe("bundled");
+      expect(resolvers.length).toBeGreaterThan(0);
+
+      resolvers.splice(0).forEach((resolve) => resolve(freshSnap));
+      await delay(30);
+
+      expect(sources).toContain("remote");
+      const again = await loadUpdatesMonths();
+      expect(again.source).toBe("remote");
+      expect(again.months["2026-09"].some((item) => item.id === "fresh-article")).toBe(
+        true,
+      );
+      unsubscribe();
     });
   });
 });

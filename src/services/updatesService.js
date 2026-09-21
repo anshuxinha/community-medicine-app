@@ -3,8 +3,9 @@
  * and bundled JSON fallback.
  */
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../config/firebase";
+import { auth, db } from "../config/firebase";
 import bundledCurrent from "../data/updates.json";
 import bundledArchive from "../data/updates_archive.json";
 
@@ -14,12 +15,41 @@ export const UPDATES_FEED_DOC_PATH = ["appContent", "updatesFeed"];
 export const ARTICLES_FEED_DOC_PATH = ["appContent", "articlesFeed"];
 export const ARTICLES_FEED_ALT_DOC_PATH = ["appContent", "artcilesFeed"];
 
-const FETCH_TIMEOUT_MS = 5000;
+// Rules on appContent and articlesFeed require a signed-in user.
+// A scan started before auth restore used to fail, then the dashboard
+// reused that failure until the next process start.
+let authWaitMs = 10000;
+let fetchTimeoutMs = 8000;
+let retryDelayMs = 500;
 
-function timeoutPromise(ms) {
-  return new Promise((_, reject) =>
-    setTimeout(() => reject(new Error("Updates feed request timed out")), ms),
-  );
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+let authStateKnown = false;
+
+function waitForAuthResolved() {
+  if (auth.currentUser) {
+    authStateKnown = true;
+    return Promise.resolve(auth.currentUser);
+  }
+  if (authStateKnown) return Promise.resolve(null);
+  return new Promise((resolve) => {
+    let settled = false;
+    let timer;
+    let unsub = () => {};
+    const finish = (user) => {
+      if (settled) return;
+      settled = true;
+      authStateKnown = true;
+      clearTimeout(timer);
+      unsub();
+      resolve(user || null);
+    };
+    timer = setTimeout(() => finish(auth.currentUser), authWaitMs);
+    unsub = onAuthStateChanged(auth, (user) => finish(user));
+    if (settled) unsub();
+  });
 }
 
 function monthKeyFromDate(dateStr) {
@@ -198,37 +228,45 @@ async function writeCachedUpdatesMonths(months) {
   }
 }
 
+async function readFeedDocs() {
+  const fetchDocSafe = async (path) => {
+    try {
+      const snap = await getDoc(doc(db, ...path));
+      return snap?.exists?.() ? snap.data() : null;
+    } catch (_) {
+      return null;
+    }
+  };
+
+  const [newsData, articlesDataMain, articlesDataAlt, articlesDataTop] =
+    await Promise.all([
+      fetchDocSafe(UPDATES_FEED_DOC_PATH),
+      fetchDocSafe(ARTICLES_FEED_DOC_PATH),
+      fetchDocSafe(ARTICLES_FEED_ALT_DOC_PATH),
+      fetchDocSafe(["articlesFeed", "current"]),
+    ]);
+
+  const newsMonths = newsData ? normalizeMonthsMap(newsData, "NEWS") : {};
+  const articlesRaw = articlesDataMain || articlesDataAlt || articlesDataTop;
+  const articlesMonths = articlesRaw
+    ? normalizeMonthsMap(articlesRaw, "ARTICLE")
+    : {};
+  return mergeMonthsMaps(newsMonths, articlesMonths);
+}
+
 /**
  * Fetch remote feed. Returns months map or null on failure.
- * Does not throw.
+ * Does not throw. Waits until Firebase Auth has restored so the read
+ * is not rejected before the signed-in user exists.
  */
 export async function fetchRemoteUpdatesMonths() {
   try {
-    const fetchDocSafe = async (path) => {
-      try {
-        const snap = await Promise.race([
-          getDoc(doc(db, ...path)),
-          timeoutPromise(FETCH_TIMEOUT_MS),
-        ]);
-        return snap?.exists?.() ? snap.data() : null;
-      } catch (_) {
-        return null;
-      }
-    };
-
-    const [newsData, articlesDataMain, articlesDataAlt, articlesDataTop] =
-      await Promise.all([
-        fetchDocSafe(UPDATES_FEED_DOC_PATH),
-        fetchDocSafe(ARTICLES_FEED_DOC_PATH),
-        fetchDocSafe(ARTICLES_FEED_ALT_DOC_PATH),
-        fetchDocSafe(["articlesFeed", "current"]),
-      ]);
-
-    const newsMonths = newsData ? normalizeMonthsMap(newsData, "NEWS") : {};
-    const articlesRaw = articlesDataMain || articlesDataAlt || articlesDataTop;
-    const articlesMonths = articlesRaw ? normalizeMonthsMap(articlesRaw, "ARTICLE") : {};
-
-    const combined = mergeMonthsMaps(newsMonths, articlesMonths);
+    await waitForAuthResolved();
+    let combined = await readFeedDocs();
+    if (Object.keys(combined).length === 0 && auth.currentUser) {
+      await delay(retryDelayMs);
+      combined = await readFeedDocs();
+    }
     if (Object.keys(combined).length === 0) return null;
 
     await writeCachedUpdatesMonths(combined);
@@ -239,51 +277,152 @@ export async function fetchRemoteUpdatesMonths() {
   }
 }
 
-let inFlightLoad = null;
+let activeScan = null;
+let fallbackTimer = null;
+let scanGeneration = 0;
 let lastResult = null;
 let lastResultAt = 0;
 const RESULT_TTL_MS = 30 * 1000;
+const listeners = new Set();
 
-async function loadUpdatesMonthsInner() {
-  const remote = await fetchRemoteUpdatesMonths();
-  if (remote) {
-    return { months: remote, source: "remote" };
+function emit(result) {
+  lastResult = result;
+  lastResultAt = Date.now();
+  for (const listener of listeners) {
+    try {
+      listener(result);
+    } catch (err) {
+      console.warn("Updates feed listener failed:", err?.message);
+    }
   }
+}
 
+export function subscribeUpdatesFeed(listener) {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}
+
+function clearFallbackTimer() {
+  if (fallbackTimer) {
+    clearTimeout(fallbackTimer);
+    fallbackTimer = null;
+  }
+}
+
+async function fallbackResult() {
+  if (lastResult?.source === "remote") return lastResult;
   const cached = await readCachedUpdatesMonths();
-  if (cached) {
-    return { months: cached, source: "cache" };
-  }
+  if (lastResult?.source === "remote") return lastResult;
+  return cached
+    ? { months: cached, source: "cache" }
+    : { months: monthsFromBundled(), source: "bundled" };
+}
 
-  return { months: monthsFromBundled(), source: "bundled" };
+function beginScan() {
+  const generation = ++scanGeneration;
+  let resolveUi;
+  const uiPromise = new Promise((resolve) => {
+    resolveUi = resolve;
+  });
+  let uiResolved = false;
+  const resolveOnce = (result) => {
+    if (uiResolved || generation !== scanGeneration) return;
+    uiResolved = true;
+    resolveUi(result);
+  };
+
+  const work = (async () => {
+    await waitForAuthResolved();
+    if (generation !== scanGeneration) return;
+
+    const remotePromise = fetchRemoteUpdatesMonths();
+    clearFallbackTimer();
+    fallbackTimer = setTimeout(async () => {
+      if (generation !== scanGeneration || uiResolved) return;
+      const fallback = await fallbackResult();
+      if (generation !== scanGeneration || uiResolved) return;
+      if (fallback.source !== "remote") emit(fallback);
+      resolveOnce(fallback);
+    }, fetchTimeoutMs);
+
+    try {
+      const remote = await remotePromise;
+      if (generation !== scanGeneration) return;
+      clearFallbackTimer();
+      if (remote) {
+        const result = { months: remote, source: "remote" };
+        emit(result);
+        resolveOnce(result);
+        return;
+      }
+      const fallback = await fallbackResult();
+      if (generation !== scanGeneration) return;
+      if (fallback.source !== "remote") emit(fallback);
+      resolveOnce(fallback);
+    } catch (err) {
+      if (generation !== scanGeneration) return;
+      clearFallbackTimer();
+      console.warn("Updates feed scan failed:", err?.message);
+      const fallback = await fallbackResult();
+      if (fallback.source !== "remote") emit(fallback);
+      resolveOnce(fallback);
+    }
+  })().finally(() => {
+    if (generation === scanGeneration) {
+      clearFallbackTimer();
+      activeScan = null;
+    }
+  });
+
+  activeScan = { uiPromise, work };
+  return activeScan;
 }
 
 /**
- * Resolve feed with fallback order: network → cache → bundled.
+ * Resolve feed with fallback order: network, then device cache, then bundled.
+ * A signed-out or timed-out attempt does not block the next scan.
  * Concurrent callers share one in-flight request.
  * @returns {Promise<{ months: Object, source: 'remote'|'cache'|'bundled' }>}
  */
-export function loadUpdatesMonths() {
-  if (lastResult && Date.now() - lastResultAt < RESULT_TTL_MS) {
+export function loadUpdatesMonths({ force = false } = {}) {
+  if (
+    !force &&
+    lastResult?.source === "remote" &&
+    Date.now() - lastResultAt < RESULT_TTL_MS
+  ) {
     return Promise.resolve(lastResult);
   }
-  if (!inFlightLoad) {
-    inFlightLoad = loadUpdatesMonthsInner()
-      .then((result) => {
-        lastResult = result;
-        lastResultAt = Date.now();
-        return result;
-      })
-      .finally(() => {
-        inFlightLoad = null;
-      });
-  }
-  return inFlightLoad;
+  // A scan that already started (including one still finishing after the
+  // dashboard paint timeout) is the scan. Do not open a second read.
+  if (!activeScan) beginScan();
+  return activeScan.uiPromise.then((result) =>
+    lastResult?.source === "remote" ? lastResult : result,
+  );
 }
 
 /** Kick off the feed fetch at app start so Dashboard is not waiting on first paint. */
 export function prefetchUpdatesMonths() {
   return loadUpdatesMonths();
+}
+
+export function __resetUpdatesFeedStateForTests() {
+  scanGeneration += 1;
+  authStateKnown = false;
+  clearFallbackTimer();
+  activeScan = null;
+  lastResult = null;
+  lastResultAt = 0;
+  listeners.clear();
+}
+
+export function __setUpdatesFeedTimingsForTests({
+  authWaitMs: nextAuthWaitMs,
+  fetchTimeoutMs: nextFetchTimeoutMs,
+  retryDelayMs: nextRetryDelayMs,
+} = {}) {
+  if (nextAuthWaitMs != null) authWaitMs = nextAuthWaitMs;
+  if (nextFetchTimeoutMs != null) fetchTimeoutMs = nextFetchTimeoutMs;
+  if (nextRetryDelayMs != null) retryDelayMs = nextRetryDelayMs;
 }
 
 export function yearMonthKey(date = new Date()) {
