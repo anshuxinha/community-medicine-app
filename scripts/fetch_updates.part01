@@ -1,0 +1,266 @@
+] = list(current_items)
+
+    for key, items in list(months.items()):
+        # Dedup by link within month
+        seen: Set[str] = set()
+        deduped: List[Dict[str, Any]] = []
+        for item in items:
+            link = item.get("link")
+            if link:
+                if link in seen:
+                    continue
+                seen.add(link)
+            deduped.append(item)
+        deduped.sort(key=lambda x: x.get("date", ""), reverse=True)
+        months[key] = deduped
+    return months
+
+
+def _all_links_from_months(months: Dict[str, List[Dict[str, Any]]]) -> Set[str]:
+    links: Set[str] = set()
+    for items in months.values():
+        for item in items:
+            link = item.get("link")
+            if link:
+                links.add(link)
+    return links
+
+
+def publish_updates_feed(
+    months: Dict[str, List[Dict[str, Any]]],
+    *,
+    notify_items: Optional[List[Dict[str, Any]]] = None,
+    allow_notify: bool = True,
+    feed_doc_id: str = FEED_DOC_ID,
+) -> bool:
+    """Upsert appContent/<feed_doc_id>. Optionally push for notify_items only."""
+    sa = _load_service_account_info()
+    if not sa:
+        print(
+            "No Firebase credentials found; skipping Firestore publish. "
+            "Set FIREBASE_SERVICE_ACCOUNT_JSON or place serviceAccountKey.json."
+        )
+        return False
+
+    try:
+        import firebase_admin
+        from firebase_admin import credentials, firestore
+    except ImportError:
+        print("firebase_admin not installed; skipping Firestore publish.")
+        return False
+
+    if not firebase_admin._apps:
+        firebase_admin.initialize_app(credentials.Certificate(sa))
+    db = firestore.client()
+    ref = db.collection(FEED_COLLECTION).document(feed_doc_id)
+
+    prev_snap = ref.get()
+    prev_months: Dict[str, List[Dict[str, Any]]] = {}
+    if prev_snap.exists:
+        prev_data = prev_snap.to_dict() or {}
+        raw_months = prev_data.get("months") or {}
+        if isinstance(raw_months, dict):
+            prev_months = {
+                k: (v if isinstance(v, list) else [])
+                for k, v in raw_months.items()
+            }
+
+    payload = {
+        "months": months,
+        "updatedAt": datetime.now(timezone.utc).isoformat(),
+        "version": 1,
+    }
+    ref.set(payload, merge=True)
+    total = sum(len(v) for v in months.values())
+    print(
+        f"Published updates feed to {FEED_COLLECTION}/{FEED_DOC_ID} "
+        f"({len(months)} months, {total} items)."
+    )
+
+    if not allow_notify or not notify_items:
+        return True
+
+    # Only notify for items whose links were not already in the previous feed
+    prev_links = _all_links_from_months(prev_months)
+    truly_new = [
+        item
+        for item in notify_items
+        if item.get("link") and item.get("link") not in prev_links
+    ]
+    if not truly_new:
+        print("No brand-new feed links to notify about.")
+        return True
+
+    _notify_new_updates(truly_new)
+    return True
+
+
+# Lock-screen / collapsed notification limits. Full summaries stay in the app.
+PUSH_TITLE_MAX = 90
+PUSH_BODY_MAX = 320
+PUSH_DIGEST_LINE_MAX = 90
+
+
+def _collapse_ws(text: str) -> str:
+    return " ".join((text or "").split())
+
+
+def _clip_at_word(text: str, max_len: int) -> str:
+    """Trim to max_len on a word boundary so copy is not cut mid-word."""
+    text = _collapse_ws(text)
+    if not text:
+        return ""
+    if len(text) <= max_len:
+        return text
+    budget = max(16, max_len - 3)
+    window = text[:budget].rstrip()
+    idx = window.rfind(" ")
+    clipped = window[:idx] if idx >= 16 else window
+    return clipped.rstrip(" ,;:-") + "..."
+
+
+def _first_sentence(text: str) -> str:
+    """First complete sentence. Ignores abbreviations like Dr. and decimals."""
+    text = _collapse_ws(text)
+    if not text:
+        return ""
+    # Period counts as sentence end after two lowercase letters, a digit, or )/"'
+    # so "Dr." and "S.O." are skipped, while "7X7X7. Next" still splits.
+    match = re.search(
+        r"(.+?(?:[a-z]{2}|[0-9)\"'])[.!?])(?=\s+[A-Z\"'(]|\s*$)",
+        text,
+    )
+    if match:
+        candidate = match.group(1).strip()
+        if len(candidate) >= 40:
+            return candidate
+    return text
+
+
+def build_update_push_copy(items: List[Dict[str, Any]]) -> Tuple[str, str]:
+    """Title + body for Expo push. Summaries are 100+ words; lock screens are not."""
+    if not items:
+        return "New public health update", "Open the Updates tab for the full brief."
+
+    if len(items) == 1:
+        item = items[0]
+        title = _clip_at_word(
+            item.get("title") or "New public health update",
+            PUSH_TITLE_MAX,
+        )
+        summary = item.get("summary") or ""
+        sentence = _first_sentence(summary)
+        if sentence and len(sentence) <= PUSH_BODY_MAX:
+            body = sentence
+        elif sentence:
+            body = _clip_at_word(sentence, PUSH_BODY_MAX)
+        else:
+            body = "Open the Updates tab for the full brief."
+        return title, body
+
+    title = f"{len(items)} new public health updates"
+    lines: List[str] = []
+    shown = items[:3]
+    for item in shown:
+        headline = _clip_at_word(
+            item.get("title") or "New update",
+            PUSH_DIGEST_LINE_MAX,
+        )
+        lines.append(f"• {headline}")
+    leftover = len(items) - len(shown)
+    if leftover > 0:
+        lines.append(f"and {leftover} more in Updates.")
+    return title, "\n".join(lines)
+
+
+def _notify_new_updates(new_items: List[Dict[str, Any]]) -> None:
+    """One Expo broadcast for this run (single item or digest)."""
+    try:
+        from push_notifications import fetch_push_tokens, send_push_notifications
+    except ImportError:
+        # Same directory when run as script
+        import sys
+
+        scripts_dir = str(Path(__file__).resolve().parent)
+        if scripts_dir not in sys.path:
+            sys.path.insert(0, scripts_dir)
+        try:
+            from push_notifications import fetch_push_tokens, send_push_notifications
+        except ImportError as exc:
+            print(f"Could not import push_notifications: {exc}")
+            return
+
+    tokens = fetch_push_tokens()
+    if not tokens:
+        print("No push tokens; skipping notification.")
+        return
+
+    # Newest first
+    items = sorted(new_items, key=lambda x: x.get("date", ""), reverse=True)
+    title, body = build_update_push_copy(items)
+
+    print(f"Sending push for {len(items)} new update(s) to {len(tokens)} tokens...")
+    print(f"Push title: {title}")
+    print(f"Push body: {body}")
+    send_push_notifications(tokens, title, body, "Updates")
+
+
+def seed_feed_from_local(*, notify: bool = False, feed: str = "production") -> None:
+    """Publish local updates JSON + archive without scraping.
+
+    feed=production → updates.json → appContent/updatesFeed
+    feed=preview → updates_preview.json → appContent/updatesFeedPreview
+    """
+    feed = (feed or "production").strip().lower()
+    if feed not in ("production", "preview"):
+        raise SystemExit(f"Unknown feed {feed!r}; use production or preview.")
+
+    updates_path = UPDATES_PREVIEW_PATH if feed == "preview" else UPDATES_PATH
+    feed_doc_id = FEED_DOC_ID_PREVIEW if feed == "preview" else FEED_DOC_ID
+
+    existing_updates: List[Dict[str, Any]] = []
+    if updates_path.exists():
+        try:
+            with open(updates_path, "r", encoding="utf-8") as f:
+                existing_updates = json.load(f)
+        except Exception as e:
+            print(f"Error loading {updates_path.name}: {e}")
+    else:
+        print(f"Missing {updates_path}; nothing to seed for {feed}.")
+
+    archive: Dict[str, List[Dict[str, Any]]] = {}
+    if ARCHIVE_PATH.exists():
+        try:
+            with open(ARCHIVE_PATH, "r", encoding="utf-8") as f:
+                archive = json.load(f)
+        except Exception as e:
+            print(f"Error loading updates_archive.json: {e}")
+
+    now = datetime.now(timezone.utc)
+    current_month_key = now.strftime("%Y-%m")
+    current_year = str(now.year)
+    months = _build_months_map(archive, current_month_key, existing_updates, current_year)
+    if not months:
+        print("No local updates to seed.")
+        return
+    published = publish_updates_feed(
+        months,
+        notify_items=None,
+        allow_notify=notify,
+        feed_doc_id=feed_doc_id,
+    )
+    if not published:
+        raise SystemExit(
+            f"Firestore publish failed; {feed} Updates feed was not written."
+        )
+    print(f"Seed complete ({feed} → appContent/{feed_doc_id}).")
+
+
+_INCLUDE_TITLE_RE = re.compile(
+    r"suman|ayushman|pm-?jay|abdm|nhm|ntep|naco|nacp|immuni|vaccin|outbreak|"
+    r"maternal|child health|an[ae]mia|nutrition|poshan|icds|nfhs|srs|"
+    r"roadmap|guideline|ncd|tubercul|\btb\b|malaria|dengue|leprosy|"
+    r"family planning|rmnch|uhc|ncahp|allied and healthcare|"
+    r"national health|health programme|health program|vital statistic|"
+    r"continuum of care|health and wellness|hwc|iphs|"
+    r"midwife|nursi

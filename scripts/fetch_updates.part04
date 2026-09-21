@@ -1,0 +1,172 @@
+headline that states the actual change
+        - "summary": an English summary of the update, constrained to UNDER 150 words (try to be succint and include all the important information for a MD Community Medicine resident, especially changes, facts, figures, app names, etc.). Start with one self-contained sentence that states the change, because that sentence is used as the lock-screen notification.
+        - "date": the exact date of the release in YYYY-MM-DD format based on the text (default to today if unseen)
+        
+        Ensure the array length matches the number of articles provided.
+        
+        Articles:
+        {articles_json}
+        """
+        
+        print("Generating batch summaries with Ollama...")
+        batch_summaries = call_ollama(batch_prompt)
+
+        if not isinstance(batch_summaries, list):
+            print("Batch summarization failed; using extractive fallback summaries.")
+            title_by_id = {item["id"]: item.get("title") or "Health update" for item in selected_items}
+            batch_summaries = [
+                extractive_summary(article, title_by_id.get(article["id"], "Health update"), today_date)
+                for article in articles
+            ]
+        
+        # Map summaries by id
+        summary_by_id = {s["id"]: s for s in batch_summaries if "id" in s and "title" in s and "summary" in s}
+        
+        # Track links already added in this run to avoid duplicates within the batch
+        added_links_in_run = set()
+        for article in articles:
+            article_id = article["id"]
+            if article_id not in summary_by_id:
+                print(f"No valid summary generated for article id {article_id}")
+                continue
+            s = summary_by_id[article_id]
+            title = s["title"]
+            summary = s["summary"]
+            article_date = s.get("date", today_date)
+            
+            # Skip if link already exists in existing updates or already added in this run
+            if article["link"] in existing_links or article["link"] in added_links_in_run:
+                print(f"Skipping duplicate link: {article['link']}")
+                continue
+            
+            # Also deduplicate by title within the new updates (optional)
+            is_duplicate_title = any(u['title'].lower() == title.lower() for u in updates)
+            if is_duplicate_title:
+                print(f"Skipping duplicate title: {title}")
+                continue
+            
+            if title and summary:
+                updates.append({
+                    "id": str(uuid.uuid4()),
+                    "date": article_date if article_date else today_date,
+                    "title": title,
+                    "summary": summary,
+                    "link": article["link"]
+                })
+                added_links_in_run.add(article["link"])
+                
+    except SkipPIB as e:
+        print(f"PIB update check completed: {e}")
+        if "Failed to filter articles with Ollama" in str(e):
+            raise SystemExit(str(e))
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching PIB feed: {e}")
+        raise SystemExit(f"Error fetching PIB feed: {e}")
+    except Exception as e:
+         print(f"An unexpected error occurred during PIB fetch: {e}")
+         raise SystemExit(f"An unexpected error occurred during PIB fetch: {e}")
+
+    # Combine existing updates with new updates, deduplicate by link
+    combined = []
+    seen_links = set()
+    # First add existing updates
+    for u in existing_updates:
+        if u.get('link') not in seen_links:
+            seen_links.add(u['link'])
+            combined.append(u)
+    # Then add new updates (skip duplicates)
+    for u in updates:
+        if u.get('link') not in seen_links:
+            seen_links.add(u['link'])
+            combined.append(u)
+    
+    # Sort combined list by date descending (most recent first)
+    combined.sort(key=lambda x: x.get('date', ''), reverse=True)
+    
+    # Post-fetch rotation to archive (ensuring previous months go to archive)
+    final_current = []
+    for u in combined:
+        u_date = u.get("date", "")
+        u_month_key = u_date[:7] if len(u_date) >= 7 else ""
+        if u_month_key and u_month_key != current_month_key:
+            archive.setdefault(u_month_key, [])
+            archive_links = {a.get("link") for a in archive[u_month_key]}
+            if u.get("link") not in archive_links:
+                archive[u_month_key].append(u)
+                archive[u_month_key].sort(key=lambda x: x.get('date', ''), reverse=True)
+                archive_changed = True
+        else:
+            final_current.append(u)
+
+    # No per-month item cap: keep every current-month update.
+    final_current.sort(key=lambda x: x.get("date", ""), reverse=True)
+
+    # Newly scraped items this run (used for push; not full archive backfill)
+    newly_scraped = list(updates)
+
+    # Check if anything changed
+    if final_current == existing_updates and not archive_changed and not newly_scraped:
+        print("No new updates detected. Exiting.")
+        return
+
+    # Output to File
+    os.makedirs(output_dir, exist_ok=True)
+
+    if archive_changed:
+        with open(archive_path, "w", encoding="utf-8") as f:
+            json.dump(archive, f, indent=4)
+        print(f"Successfully updated archive at {archive_path}")
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(final_current, f, indent=4)
+
+    print(f"Successfully saved {len(final_current)} current updates to {output_path}")
+
+    months = _build_months_map(archive, current_month_key, final_current, current_year)
+    if publish:
+        published = publish_updates_feed(
+            months,
+            notify_items=newly_scraped if notify else None,
+            allow_notify=notify and bool(newly_scraped),
+        )
+        if not published:
+            raise SystemExit(
+                "Firestore publish failed; live Updates feed was not written. "
+                "Fix credentials and re-run."
+            )
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Fetch PIB health updates, write local JSON, publish Firestore feed."
+    )
+    parser.add_argument(
+        "--seed-only",
+        action="store_true",
+        help="Publish local updates JSON + archive to Firestore without scraping (no push).",
+    )
+    parser.add_argument(
+        "--feed",
+        choices=("production", "preview"),
+        default="production",
+        help="Which feed to seed with --seed-only (default: production).",
+    )
+    parser.add_argument(
+        "--no-publish",
+        action="store_true",
+        help="Skip Firestore publish (local JSON only).",
+    )
+    parser.add_argument(
+        "--no-notify",
+        action="store_true",
+        help="Skip Expo push even when new items are scraped.",
+    )
+    args = parser.parse_args()
+
+    if args.seed_only:
+        seed_feed_from_local(notify=False, feed=args.feed)
+    else:
+        fetch_health_updates(
+            publish=not args.no_publish,
+            notify=not args.no_notify,
+        )

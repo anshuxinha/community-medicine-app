@@ -1,0 +1,184 @@
+ride_day
+        need_date_post = bool(
+            override_month or override_year or (override_day not in ("", "0", None))
+        )
+
+        feed_items = extract_mohfw_feed_items(soup)
+        if feed_items:
+            print(f"Parsed {len(feed_items)} MoHFW release(s) from listing GET.")
+        else:
+            print("MoHFW section missing on GET page.")
+
+        if need_date_post or not feed_items:
+            viewstate = soup.find("input", {"id": "__VIEWSTATE"})
+            viewstate_val = viewstate["value"] if viewstate else ""
+            viewstategenerator = soup.find("input", {"id": "__VIEWSTATEGENERATOR"})
+            viewstategen_val = viewstategenerator["value"] if viewstategenerator else ""
+            eventvalidation = soup.find("input", {"id": "__EVENTVALIDATION"})
+            eventvalidation_val = eventvalidation["value"] if eventvalidation else ""
+
+            min_dropdown = soup.find("select", id=re.compile(r".*ddlMinistry.*", re.IGNORECASE))
+            min_name = min_dropdown.get("name") if min_dropdown else "ctl00$ContentPlaceHolder1$ddlMinistry"
+            day_dropdown = soup.find("select", id=re.compile(r".*ddlday.*", re.IGNORECASE))
+            day_name = day_dropdown.get("name") if day_dropdown else "ctl00$ContentPlaceHolder1$ddlday"
+            month_dropdown = soup.find("select", id=re.compile(r".*ddlMonth.*", re.IGNORECASE))
+            month_name = month_dropdown.get("name") if month_dropdown else "ctl00$ContentPlaceHolder1$ddlMonth"
+            year_dropdown = soup.find("select", id=re.compile(r".*ddlYear.*", re.IGNORECASE))
+            year_name = year_dropdown.get("name") if year_dropdown else "ctl00$ContentPlaceHolder1$ddlYear"
+
+            mohfw_id = "0"
+            if min_dropdown:
+                for option in min_dropdown.find_all("option"):
+                    if any(kw in option.text for kw in MOHFW_KEYWORDS):
+                        mohfw_id = option["value"]
+                        break
+            if mohfw_id == "0":
+                print(f"MoHFW not found in dropdown; using fallback ID {MOHFW_FALLBACK_ID}")
+                mohfw_id = MOHFW_FALLBACK_ID
+
+            print(
+                f"Querying MoHFW (ID: {mohfw_id}) via POST for Day: {current_day}, "
+                f"Month: {current_month}, Year: {current_year_to_fetch}..."
+            )
+            payload = {
+                "__EVENTTARGET": min_name,
+                "__EVENTARGUMENT": "",
+                "__VIEWSTATE": viewstate_val,
+                "__VIEWSTATEGENERATOR": viewstategen_val,
+                "__EVENTVALIDATION": eventvalidation_val,
+                "__VIEWSTATEENCRYPTED": "",
+                min_name: mohfw_id,
+                day_name: current_day,
+                month_name: current_month,
+                year_name: current_year_to_fetch,
+                "ctl00$ContentPlaceHolder1$hydregionid": "3",
+                "ctl00$ContentPlaceHolder1$hydLangid": "1",
+            }
+            try:
+                post_response = session.post(
+                    url, data=payload, headers=headers, timeout=PIB_POST_TIMEOUT
+                )
+                post_response.raise_for_status()
+                post_soup = BeautifulSoup(post_response.text, "html.parser")
+                posted_items = extract_mohfw_feed_items(post_soup)
+                if not posted_items:
+                    for a in post_soup.find_all("a"):
+                        href = a.get("href", "")
+                        text = a.get_text(" ", strip=True)
+                        link = _prid_canonical_link(href)
+                        if not text or not link:
+                            continue
+                        if any(i["link"] == link for i in posted_items):
+                            continue
+                        posted_items.append(
+                            {"id": len(posted_items), "title": text, "link": link}
+                        )
+                if posted_items:
+                    feed_items = posted_items
+            except requests.RequestException as exc:
+                print(f"PIB ministry POST failed: {exc}")
+                if not feed_items:
+                    raise
+
+        new_items: List[Dict[str, Any]] = []
+        for item in feed_items:
+            if item["link"] in existing_links:
+                continue
+            if any(i["link"] == item["link"] for i in new_items):
+                continue
+            new_items.append(
+                {"id": len(new_items), "title": item["title"], "link": item["link"]}
+            )
+        feed_items = new_items[:50]
+
+        if not feed_items:
+            raise SkipPIB("No new links found on PIB page for MoHFW this month.")
+
+        print(f"PIB candidate titles ({len(feed_items)}):")
+        for item in feed_items:
+            print(f"  [{item['id']}] {item['title']}")
+            
+        filter_prompt = f"""
+        You are an expert in Community Medicine, Public Health, and Epidemiology in India.
+        I have a list of press releases from the Government of India published this month.
+        
+        YOUR TASK:
+        Review the list of titles and select up to 6 that are relevant to Community Medicine.
+        
+        INCLUSION CRITERIA:
+        - National health programmes, roadmaps, guidelines, and strategy workshops that set programme direction (e.g. SUMAN, NHM, Ayushman Bharat)
+        - Vaccines, immunization, and infectious disease outbreaks
+        - Maternal and child health, family planning, nutrition
+        - Health workforce, allied health education, and regulatory frameworks (e.g. NCAHP)
+        - Public health infrastructure, epidemiology, surveys, or vital statistics
+        - NCD screening programmes, and drug or vaccine regulation that changes practice
+        
+        EXCLUSION CRITERIA:
+        - Purely ceremonial inaugurations of a single hospital machine or building, with no programme or policy content
+        - Ministerial review meetings or preparedness visits that announce no new guideline, data, or policy
+        - Telecom, TRAI, IT, 5G, or generic technology (unless eSanjeevani or ABDM)
+        - Defense, military, or routine political visits
+        - Topics unrelated to public health or community medicine
+        
+        Return ONLY a JSON array of objects containing the "id" of the selected items. 
+        Example: [{{"id": 4}}, {{"id": 12}}]
+        If NO articles meet the criteria, return an empty array: []
+        
+        List:
+        {json.dumps(feed_items, indent=2)}
+        """
+        
+        print("Filtering relevant Community Medicine articles with Ollama...")
+        selected_ids_response = call_ollama(filter_prompt)
+        print(
+            "Ollama filter response: "
+            + json.dumps(selected_ids_response, ensure_ascii=False, indent=2)
+        )
+
+        ollama_filter_failed = selected_ids_response is None
+        selected_ids = _ids_from_filter_response(selected_ids_response)
+        selected_items = [item for item in feed_items if item['id'] in selected_ids]
+        if not selected_items:
+            print("Ollama selected no titles; applying keyword fallback.")
+            selected_items = keyword_select(feed_items)
+        if not selected_items:
+            if ollama_filter_failed:
+                raise SkipPIB("Failed to filter articles with Ollama.")
+            raise SkipPIB("No relevant public-health updates selected this run.")
+        
+        today_date = datetime.now().strftime('%Y-%m-%d')
+        
+        # Fetch article contents for all selected items
+        articles = []
+        for item in selected_items:
+            try:
+                print(f"Fetching: {item['link']}")
+                pr_response = requests.get(item['link'], headers=headers, timeout=15)
+                pr_soup = BeautifulSoup(pr_response.text, 'html.parser')
+                raw_text: str = " ".join(pr_soup.get_text(separator=' ', strip=True).split())
+                truncated_text = raw_text[:6000]  # type: ignore
+                articles.append({
+                    "id": item['id'],
+                    "link": item['link'],
+                    "text": truncated_text
+                })
+            except Exception as e:
+                print(f"Error fetching {item['link']}: {e}")
+                # Skip this article; continue with others
+        
+        if not articles:
+            raise SkipPIB("No articles could be fetched.")
+        
+        # Build batch prompt
+        articles_json = json.dumps([
+            {"id": a["id"], "text": a["text"][:2000]}  # further truncate for token limits
+            for a in articles
+        ], indent=2)
+        
+        batch_prompt = f"""
+        You are a public health journalist. I give you raw texts from multiple Press Information Bureau (PIB) India releases.
+        For each article, extract the main health update.
+        
+        Return ONLY a valid JSON array of objects, each containing:
+        - "id": the same id as provided (integer)
+        - "title": a short English 
