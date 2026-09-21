@@ -1,1 +1,1 @@
-/workspace/ph-digest/out/fetch_updates.py
+@file:///workspace/ph-digest/out/fetch_updates.py
