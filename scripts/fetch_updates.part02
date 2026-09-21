@@ -1,0 +1,244 @@
+ng|community health officer|"
+    r"tele-?manas|mental health|tobacco|cotpa|fssai|food safety|"
+    r"hepatitis|hiv|measles|polio|japanese encephalitis|"
+    r"cancer screening|hypertension|diabetes|npcdcs|nvbdcp|"
+    r"drug rules|blood product|plasma|"
+    r"\bwho\b|census|mmr|imr|stillbirth|under.five",
+    re.I,
+)
+_EXCLUDE_TITLE_RE = re.compile(
+    r"inaugurat\w*.{0,120}(pet-?ct|spect|mri|ct scan)|"
+    r"\breviews?\b.{0,40}preparedness|"
+    r"chair\w* a review|"
+    r"\btrai\b|\b5g\b|telecom|defence minister|defense minister",
+    re.I,
+)
+
+
+def keyword_select(feed_items: List[Dict[str, Any]], limit: int = 6) -> List[Dict[str, Any]]:
+    """Keep public-health titles if the LLM filter is empty or unavailable."""
+    picked: List[Dict[str, Any]] = []
+    for item in feed_items:
+        title = item.get("title") or ""
+        if _EXCLUDE_TITLE_RE.search(title):
+            continue
+        if _INCLUDE_TITLE_RE.search(title):
+            picked.append(item)
+        if len(picked) >= limit:
+            break
+    print(f"Keyword fallback selected {len(picked)} title(s).")
+    for item in picked:
+        print(f"  [{item.get('id')}] {item.get('title')}")
+    return picked
+
+
+def _ids_from_filter_response(payload: Any) -> List[int]:
+    if payload is None:
+        return []
+    if isinstance(payload, dict):
+        payload = payload.get("ids") or payload.get("selected") or payload.get("items") or [payload]
+    ids: List[int] = []
+    if not isinstance(payload, list):
+        return ids
+    for item in payload:
+        raw = None
+        if isinstance(item, dict) and "id" in item:
+            raw = item["id"]
+        elif isinstance(item, int):
+            raw = item
+        elif isinstance(item, str) and item.strip().isdigit():
+            raw = item.strip()
+        if raw is None:
+            continue
+        try:
+            ids.append(int(raw))
+        except (TypeError, ValueError):
+            continue
+    return ids
+
+
+def extractive_summary(article: Dict[str, Any], title_hint: str, today_date: str) -> Dict[str, Any]:
+    text = article.get("text") or ""
+    words = text.split()
+    summary = " ".join(words[:140]).strip() or title_hint
+    return {
+        "id": article["id"],
+        "title": title_hint[:140],
+        "summary": summary[:900],
+        "date": today_date,
+    }
+
+
+PIB_LISTING_URLS = [
+    "https://www.pib.gov.in/allrelease.aspx?reg=3&lang=1",
+    "https://www.pib.gov.in/allRel.aspx?reg=3&lang=1",
+]
+PIB_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Referer": "https://www.pib.gov.in/indexd.aspx",
+}
+MOHFW_KEYWORDS = ["Health and Family Welfare", "स्वास्थ्य", "परिवार कल्याण"]
+MOHFW_FALLBACK_ID = "31"  # Known stable value on pib.gov.in
+PIB_GET_TIMEOUT = 30
+PIB_POST_TIMEOUT = 30
+
+
+def _prid_canonical_link(href: str) -> Optional[str]:
+    if not href or "PRID=" not in href:
+        return None
+    prid = href.split("PRID=")[-1].split("&")[0].strip()
+    if not prid:
+        return None
+    return f"https://pib.gov.in/PressReleasePage.aspx?PRID={prid}"
+
+
+def _is_mohfw_heading(text: str) -> bool:
+    return any(kw in (text or "") for kw in MOHFW_KEYWORDS)
+
+
+def extract_mohfw_feed_items(soup: Any) -> List[Dict[str, Any]]:
+    """MoHFW press releases from the all-releases page (h3 section, then sibling <li>s)."""
+    heading = None
+    for h3 in soup.find_all("h3"):
+        title = " ".join(h3.get_text(" ", strip=True).split())
+        if _is_mohfw_heading(title):
+            heading = h3
+            break
+    items: List[Dict[str, Any]] = []
+    seen: Set[str] = set()
+    if heading is None:
+        return items
+    for sib in heading.next_siblings:
+        if getattr(sib, "name", None) == "h3":
+            break
+        anchors = sib.find_all("a") if getattr(sib, "find_all", None) else []
+        for a in anchors:
+            text = a.get_text(" ", strip=True)
+            link = _prid_canonical_link(a.get("href", ""))
+            if not text or not link or link in seen:
+                continue
+            seen.add(link)
+            items.append({"id": len(items), "title": text, "link": link})
+    return items
+
+
+def load_local_update_files() -> Tuple[List[Dict[str, Any]], Dict[str, List[Dict[str, Any]]]]:
+    existing_updates: List[Dict[str, Any]] = []
+    if UPDATES_PATH.exists():
+        try:
+            with open(UPDATES_PATH, "r", encoding="utf-8") as f:
+                existing_updates = json.load(f)
+        except Exception as e:
+            print(f"Error loading existing updates: {e}")
+
+    archive: Dict[str, List[Dict[str, Any]]] = {}
+    if ARCHIVE_PATH.exists():
+        try:
+            with open(ARCHIVE_PATH, "r", encoding="utf-8") as f:
+                archive = json.load(f)
+        except Exception as e:
+            print(f"Error loading archive: {e}")
+    return existing_updates, archive
+
+
+def fetch_health_updates(*, publish: bool = True, notify: bool = True):
+    """Fetches real updates from the Government of India PIB feed for MoHFW."""
+    if not OLLAMA_API_KEY:
+        raise ValueError("OLLAMA_API_KEY environment variable is not set")
+    if requests is None:
+        raise ImportError("requests is required to scrape PIB updates")
+    from bs4 import BeautifulSoup  # type: ignore
+
+    # Force English (lang=1) and Delhi region (reg=3) to get consistent results.
+    # Prefer allrelease.aspx GET: it already groups releases by ministry. POST to
+    # allRel.aspx 404s from GitHub Actions (PIB WAF), which failed the 2026-09-10 run.
+    url = PIB_LISTING_URLS[0]
+    headers = PIB_HEADERS
+    
+    output_dir = str(DATA_DIR)
+    output_path = str(UPDATES_PATH)
+    archive_path = str(ARCHIVE_PATH)
+
+    existing_updates, archive = load_local_update_files()
+    
+    # ── Monthly rotation ──
+    now = datetime.now(timezone.utc)
+    current_month_key = now.strftime("%Y-%m")  # e.g. "2026-04"
+    current_year = str(now.year)
+    archive_changed = False
+
+    override_month = os.environ.get("OVERRIDE_MONTH")
+    override_year = os.environ.get("OVERRIDE_YEAR")
+    override_day = os.environ.get("OVERRIDE_DAY", "0")
+
+    # Move any updates from previous months into the archive
+    still_current = []
+    for u in existing_updates:
+        u_date = u.get("date", "")
+        u_month_key = u_date[:7] if len(u_date) >= 7 else ""  # "YYYY-MM"
+        if u_month_key and u_month_key != current_month_key:
+            archive.setdefault(u_month_key, [])
+            # Avoid duplicates in archive
+            archive_links = {a.get("link") for a in archive[u_month_key]}
+            if u.get("link") not in archive_links:
+                archive[u_month_key].append(u)
+                archive_changed = True
+        else:
+            still_current.append(u)
+
+    if len(still_current) != len(existing_updates):
+        print(f"Archived {len(existing_updates) - len(still_current)} updates from previous months.")
+        existing_updates = still_current
+
+    # Year rollover: delete previous years' data
+    stale_keys = [k for k in archive if not k.startswith(current_year)]
+    if stale_keys:
+        for k in stale_keys:
+            del archive[k]
+        archive_changed = True
+        print(f"Year rollover: removed archive months {stale_keys}")
+
+    # Persist archive if changed
+    if archive_changed:
+        os.makedirs(output_dir, exist_ok=True)
+        with open(archive_path, 'w', encoding='utf-8') as f:
+            json.dump(archive, f, indent=4)
+        # Also save the trimmed current updates
+        with open(output_path, 'w', encoding='utf-8') as f:
+            json.dump(existing_updates, f, indent=4)
+
+    # Create a mapping of link -> update for deduplication
+    existing_links = {u['link'] for u in existing_updates if 'link' in u}
+    
+    class SkipPIB(Exception):
+        pass
+
+    updates: List[Dict[str, Any]] = []
+            
+    try:
+        session = requests.Session()
+        
+        soup = None
+        last_get_error: Optional[BaseException] = None
+        for candidate in PIB_LISTING_URLS:
+            print(f"Fetching PIB listing: {candidate}")
+            try:
+                response = session.get(candidate, headers=headers, timeout=PIB_GET_TIMEOUT)
+                response.raise_for_status()
+                url = candidate
+                soup = BeautifulSoup(response.text, "html.parser")
+                last_get_error = None
+                break
+            except requests.RequestException as exc:
+                last_get_error = exc
+                print(f"PIB listing GET failed ({candidate}): {exc}")
+        if soup is None:
+            raise requests.exceptions.RequestException(
+                last_get_error or "PIB listing GET failed on all URLs"
+            )
+
+        current_month = override_month if override_month else str(now.month)
+        current_year_to_fetch = override_year if override_year else current_year
+        current_day = over
