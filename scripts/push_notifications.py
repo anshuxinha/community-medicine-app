@@ -114,7 +114,13 @@ def fetch_push_tokens() -> List[str]:
     return sorted(tokens)
 
 
-def send_push_notifications(tokens: List[str], title: str, body: str, screen: str) -> None:
+def send_push_notifications(
+    tokens: List[str],
+    title: str,
+    body: str,
+    screen: str,
+    extra_data: Optional[Dict[str, Any]] = None,
+) -> None:
     if not tokens:
         print("No valid push tokens found. Skipping notifications.")
         return
@@ -130,7 +136,7 @@ def send_push_notifications(tokens: List[str], title: str, body: str, screen: st
                 "title": title,
                 "body": body,
                 "channelId": "default",
-                "data": {"screen": screen},
+                "data": {"screen": screen, **(extra_data or {})},
             }
         )
 

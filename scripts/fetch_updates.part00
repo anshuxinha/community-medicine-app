@@ -8,6 +8,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import List, Dict, Any, Optional, Set, Tuple
 
+from dashboard_notify import links_worth_notifying
+
 try:
     import requests  # type: ignore
 except ImportError:  # seed-only path does not need requests

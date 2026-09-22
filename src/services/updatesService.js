@@ -392,6 +392,7 @@ async function fallbackResult() {
 
 function beginScan() {
   const generation = ++scanGeneration;
+  const startedAt = Date.now();
   let resolveUi;
   const uiPromise = new Promise((resolve) => {
     resolveUi = resolve;
@@ -446,7 +447,18 @@ function beginScan() {
     }
   });
 
-  activeScan = { uiPromise, work };
+  const supersede = () => {
+    if (generation !== scanGeneration) return;
+    scanGeneration += 1;
+    if (!uiResolved) {
+      uiResolved = true;
+      resolveUi(
+        lastResult || { months: monthsFromBundled(), source: "bundled" },
+      );
+    }
+  };
+
+  activeScan = { uiPromise, work, startedAt, supersede };
   return activeScan;
 }
 
@@ -466,10 +478,19 @@ export function loadUpdatesMonths({ force = false } = {}) {
   }
   // A scan that already started (including one still finishing after the
   // dashboard paint timeout) is the scan. Do not open a second read.
+  if (force && activeScan) {
+    clearFallbackTimer();
+    activeScan.supersede();
+    activeScan = null;
+  }
   if (!activeScan) beginScan();
-  return activeScan.uiPromise.then((result) =>
-    lastResult?.source === "remote" ? lastResult : result,
-  );
+  const scan = activeScan;
+  return scan.uiPromise.then((result) => {
+    if (lastResult?.source === "remote" && lastResultAt >= scan.startedAt) {
+      return lastResult;
+    }
+    return result;
+  });
 }
 
 let inFlightArticles = null;

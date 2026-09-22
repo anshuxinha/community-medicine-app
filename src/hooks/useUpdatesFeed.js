@@ -19,6 +19,7 @@ export default function useUpdatesFeed() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const didLoadRef = useRef(false);
+  const requestRef = useRef(0);
 
   const applyResult = useCallback((result) => {
     if (!result?.months) return;
@@ -31,25 +32,28 @@ export default function useUpdatesFeed() {
   useEffect(() => subscribeUpdatesFeed(applyResult), [applyResult]);
 
   const refresh = useCallback(async ({ silent = false, force = false } = {}) => {
+    const requestId = ++requestRef.current;
     if (!silent) setLoading(true);
     setError(null);
     try {
       if (silent) {
         const cached = await readCachedUpdatesMonths();
-        if (cached) {
+        if (cached && requestId === requestRef.current) {
           setMonths(cached);
           setSource("cache");
         }
       }
 
       const result = await loadUpdatesMonths({ force });
+      if (requestId !== requestRef.current) return;
       applyResult(result);
     } catch (err) {
+      if (requestId !== requestRef.current) return;
       setError(err?.message || "Failed to load updates");
       setMonths(monthsFromBundled());
       setSource("bundled");
     } finally {
-      setLoading(false);
+      if (requestId === requestRef.current) setLoading(false);
     }
   }, [applyResult]);
 

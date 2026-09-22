@@ -243,6 +243,27 @@ describe("updatesFeedFilters", () => {
       );
       unsubscribe();
     });
+
+    it("force starts a new Firestore read while a remote result is still fresh", async () => {
+      auth.currentUser = { uid: "user-1" };
+      onAuthStateChanged.mockImplementation((_auth, callback) => {
+        callback(auth.currentUser);
+        return () => {};
+      });
+      getDoc.mockResolvedValue(freshSnap);
+
+      const first = await loadUpdatesMonths();
+      expect(first.source).toBe("remote");
+      const callsAfterFirst = getDoc.mock.calls.length;
+
+      const cached = await loadUpdatesMonths();
+      expect(cached.source).toBe("remote");
+      expect(getDoc.mock.calls.length).toBe(callsAfterFirst);
+
+      const forced = await loadUpdatesMonths({ force: true });
+      expect(forced.source).toBe("remote");
+      expect(getDoc.mock.calls.length).toBeGreaterThan(callsAfterFirst);
+    });
   });
 });
 

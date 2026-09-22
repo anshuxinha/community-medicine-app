@@ -91,7 +91,17 @@ def publish_updates_feed(
         print("No brand-new feed links to notify about.")
         return True
 
-    _notify_new_updates(truly_new)
+    # The home strip shows five cards. A new link below that cut
+    # is in the feed, and it does not get a push.
+    shown = links_worth_notifying(months, truly_new)
+    if not shown:
+        print(
+            "New links are outside the dashboard strip "
+            f"({len(truly_new)} saved, no push)."
+        )
+        return True
+
+    _notify_new_updates(shown)
     return True
 
 
@@ -202,7 +212,13 @@ def _notify_new_updates(new_items: List[Dict[str, Any]]) -> None:
     print(f"Sending push for {len(items)} new update(s) to {len(tokens)} tokens...")
     print(f"Push title: {title}")
     print(f"Push body: {body}")
-    send_push_notifications(tokens, title, body, "Updates")
+    send_push_notifications(
+        tokens,
+        title,
+        body,
+        "Dashboard",
+        {"type": "updates_feed"},
+    )
 
 
 def seed_feed_from_local(*, notify: bool = False, feed: str = "production") -> None:

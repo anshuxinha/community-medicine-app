@@ -19,6 +19,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
+import { destinationForNotificationData } from "../utils/notificationRoute";
 
 function getNotifications() {
   try {
@@ -33,6 +34,55 @@ const VIDEO_NOTIFICATION_STORAGE_KEY = "video_notification_subscribed";
 const LEGACY_WEBINAR_NOTIFICATION_STORAGE_KEY =
   "webinar_notification_subscribed";
 const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
+const HANDLED_PUSH_RESPONSE_KEY = "lastHandledPushResponseId";
+const handledPushResponseIds = new Set();
+let tapSubscription = null;
+
+function navigationIsReady(navigationRef) {
+  if (!navigationRef) return false;
+  if (typeof navigationRef.isReady === "function") return navigationRef.isReady();
+  return Boolean(navigationRef.current);
+}
+
+function navigateWithRef(navigationRef, name, params) {
+  if (typeof navigationRef.navigate === "function") {
+    navigationRef.navigate(name, params);
+    return;
+  }
+  navigationRef.current?.navigate(name, params);
+}
+
+function openNotificationDestination(navigationRef, data, nonce, attempt = 0) {
+  const action = destinationForNotificationData(data, nonce);
+  if (!action || !navigationRef) return;
+  if (!navigationIsReady(navigationRef)) {
+    if (attempt >= 30) return;
+    setTimeout(
+      () => openNotificationDestination(navigationRef, data, nonce, attempt + 1),
+      100,
+    );
+    return;
+  }
+  navigateWithRef(navigationRef, action.name, action.params);
+}
+
+async function consumeNotificationResponse(response, navigationRef) {
+  if (!response) return;
+  const id = response.notification?.request?.identifier || "";
+  if (id) {
+    if (handledPushResponseIds.has(id)) return;
+    handledPushResponseIds.add(id);
+    try {
+      const seen = await AsyncStorage.getItem(HANDLED_PUSH_RESPONSE_KEY);
+      if (seen === id) return;
+      await AsyncStorage.setItem(HANDLED_PUSH_RESPONSE_KEY, id);
+    } catch (_) {
+      // Still open this response once in this process.
+    }
+  }
+  const data = response.notification?.request?.content?.data;
+  openNotificationDestination(navigationRef, data, id || Date.now());
+}
 
 const getTodayNotificationKey = () => new Date().toISOString().split("T")[0];
 
@@ -333,21 +383,17 @@ export function setupNotificationTapHandler(navigationRef) {
   const Notifications = getNotifications();
   if (!Notifications?.addNotificationResponseReceivedListener) return;
 
-  Notifications.addNotificationResponseReceivedListener((response) => {
-    const screen = response.notification.request.content.data?.screen;
-    if (screen && navigationRef?.current) {
-      if (["Dashboard", "Library", "Videos", "Updates"].includes(screen)) {
-        navigationRef.current.navigate("MainTabs", {
-          screen,
-          params:
-            screen === "Dashboard" ? { awaitUpdatesFeed: true } : undefined,
-        });
-        return;
-      }
+  tapSubscription?.remove?.();
+  tapSubscription = Notifications.addNotificationResponseReceivedListener(
+    (response) => {
+      consumeNotificationResponse(response, navigationRef);
+    },
+  );
 
-      navigationRef.current.navigate(screen);
-    }
-  });
+  // A tap that launches a killed app is not delivered to the listener.
+  Notifications.getLastNotificationResponseAsync?.()
+    .then((response) => consumeNotificationResponse(response, navigationRef))
+    .catch(() => {});
 }
 
 /**

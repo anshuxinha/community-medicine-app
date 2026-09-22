@@ -368,9 +368,17 @@ const DashboardScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     if (!route?.params?.awaitUpdatesFeed) return;
-    refreshUpdates();
-    navigation.setParams({ awaitUpdatesFeed: undefined });
-  }, [route?.params?.awaitUpdatesFeed, refreshUpdates, navigation]);
+    refreshUpdates({ force: true });
+    navigation.setParams({
+      awaitUpdatesFeed: undefined,
+      awaitUpdatesFeedAt: undefined,
+    });
+  }, [
+    route?.params?.awaitUpdatesFeed,
+    route?.params?.awaitUpdatesFeedAt,
+    refreshUpdates,
+    navigation,
+  ]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
