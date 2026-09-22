@@ -1540,6 +1540,16 @@
         "anchorText": "GANTT CHART",
         "placement": "after",
         "aspectRatio": 1
+      },
+      {
+        "id": "hp-23-niti-functions",
+        "fileName": "hp_23_niti_aayog_functions.png",
+        "alt": "Four functions of NITI Aayog around a centre circle: cooperative federalism, policy and program framework, monitoring and evaluation, and resource centre",
+        "caption": "Functions of NITI Aayog: cooperative federalism, policy and program framework, monitoring and evaluation, and the resource centre.",
+        "purpose": "",
+        "anchorText": "IMPORTANT FUNCTIONS OF THE NITI AAYOG",
+        "placement": "after",
+        "aspectRatio": 1
       }
     ]
   },
