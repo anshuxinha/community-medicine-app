@@ -66,6 +66,7 @@ def extractive_summary(article: Dict[str, Any], title_hint: str, today_date: str
         "title": title_hint[:140],
         "summary": summary[:900],
         "date": today_date,
+        "tag": "NEWS",
     }
 
 

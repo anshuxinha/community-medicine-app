@@ -1,16 +1,17 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { InteractionManager } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   loadUpdatesMonths,
   monthsFromBundled,
   readCachedUpdatesMonths,
+  subscribeUpdatesFeed,
 } from "../services/updatesService";
 
 /**
- * Load Updates feed (remote → cache → bundled).
- * First visit waits for the resolved feed so the Dashboard list does not
- * paint bundled items and then jump when the remote item arrives.
+ * Load Updates feed (remote, then device cache, then bundled).
+ * The startup scan can outlive the first paint. Subscribe so a late
+ * Firestore result replaces the list without a second app open.
  */
 export default function useUpdatesFeed() {
   const [months, setMonths] = useState(() => monthsFromBundled());
@@ -19,7 +20,17 @@ export default function useUpdatesFeed() {
   const [error, setError] = useState(null);
   const didLoadRef = useRef(false);
 
-  const refresh = useCallback(async ({ silent = false } = {}) => {
+  const applyResult = useCallback((result) => {
+    if (!result?.months) return;
+    setMonths(result.months);
+    setSource(result.source);
+    setLoading(false);
+    setError(null);
+  }, []);
+
+  useEffect(() => subscribeUpdatesFeed(applyResult), [applyResult]);
+
+  const refresh = useCallback(async ({ silent = false, force = false } = {}) => {
     if (!silent) setLoading(true);
     setError(null);
     try {
@@ -31,9 +42,8 @@ export default function useUpdatesFeed() {
         }
       }
 
-      const result = await loadUpdatesMonths();
-      setMonths(result.months);
-      setSource(result.source);
+      const result = await loadUpdatesMonths({ force });
+      applyResult(result);
     } catch (err) {
       setError(err?.message || "Failed to load updates");
       setMonths(monthsFromBundled());
@@ -41,7 +51,7 @@ export default function useUpdatesFeed() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [applyResult]);
 
   useFocusEffect(
     useCallback(() => {
@@ -56,7 +66,7 @@ export default function useUpdatesFeed() {
       }
 
       const handle = InteractionManager.runAfterInteractions(() => {
-        refresh({ silent: true });
+        refresh({ silent: true, force: true });
       });
       return () => handle.cancel();
     }, [refresh]),

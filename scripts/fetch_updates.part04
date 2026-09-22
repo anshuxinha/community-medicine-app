@@ -51,7 +51,8 @@ headline that states the actual change
                     "date": article_date if article_date else today_date,
                     "title": title,
                     "summary": summary,
-                    "link": article["link"]
+                    "link": article["link"],
+                    "tag": "NEWS",
                 })
                 added_links_in_run.add(article["link"])
                 

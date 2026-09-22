@@ -118,7 +118,47 @@ async function sendExpoPushMessages(messages) {
 }
 
 /**
- * Notify admins of a new video comment (videoDoubts create).
+ * Retrieve all registered user push tokens for announcements (articles/news).
+ */
+async function getAllUserPushTokens() {
+  const db = admin.firestore();
+  const tokens = new Set();
+  try {
+    const snap = await db.collection("users").get();
+    snap.forEach((docSnap) => {
+      const data = docSnap.data() || {};
+      const token = data.pushToken;
+      if (
+        typeof token === "string" &&
+        (token.startsWith("ExponentPushToken[") ||
+          token.startsWith("ExpoPushToken["))
+      ) {
+        tokens.add(token);
+      }
+    });
+  } catch (err) {
+    console.warn("getAllUserPushTokens failed:", err?.message);
+  }
+  return [...tokens];
+}
+
+function buildArticlePushCopy(item) {
+  const rawTitle = item?.title || "New public health article";
+  const title =
+    rawTitle.length > 90 ? `${rawTitle.slice(0, 87)}...` : rawTitle;
+  const summary = String(item?.summary || item?.content || "").trim();
+  const firstSentence =
+    summary.split(/(?<=[.?!])\s+/)[0] ||
+    "Open the Updates tab for the full article.";
+  const body =
+    firstSentence.length > 320
+      ? `${firstSentence.slice(0, 317)}...`
+      : firstSentence;
+  return { title, body };
+}
+
+/**
+ * Notify admins of a new comment (videoDoubts collection handles both videos and news/articles).
  */
 exports.onVideoDoubtCreated = functionsV1
   .region("us-central1")
@@ -133,8 +173,22 @@ exports.onVideoDoubtCreated = functionsV1
       text.length > 120 ? `${text.slice(0, 117)}...` : text || "(no text)";
     const videoId = data.videoId || null;
 
-    let videoTitle = "a video";
-    if (videoId) {
+    const isUpdate =
+      data.targetType === "update" ||
+      Boolean(data.updateId) ||
+      (typeof videoId === "string" && videoId.startsWith("update_"));
+
+    const updateTag = String(
+      data.targetTag || data.tag || (data.isArticle ? "ARTICLE" : "NEWS"),
+    ).toUpperCase();
+    const isArticle = isUpdate && updateTag === "ARTICLE";
+
+    let itemTitle = "a video";
+    if (isUpdate) {
+      itemTitle =
+        data.targetTitle ||
+        (isArticle ? "an article" : "a public health update");
+    } else if (videoId) {
       try {
         const videoSnap = await admin
           .firestore()
@@ -147,6 +201,7 @@ exports.onVideoDoubtCreated = functionsV1
       } catch (err) {
         console.warn("onVideoDoubtCreated video lookup:", err?.message);
       }
+      itemTitle = videoTitle;
     }
 
     const tokens = await getAdminPushTokens(authorUid);
@@ -155,17 +210,26 @@ exports.onVideoDoubtCreated = functionsV1
       return null;
     }
 
+    const notificationTitle = isUpdate
+      ? (isArticle ? "New article comment" : "New news comment")
+      : "New video comment";
+
     const messages = tokens.map((token) => ({
       to: token,
       sound: "default",
       priority: "high",
-      title: "New video comment",
-      body: `${username} on ${videoTitle}: ${preview}`,
+      title: notificationTitle,
+      body: `${username} on ${itemTitle}: ${preview}`,
       channelId: "default",
       data: {
-        screen: "Videos",
-        type: "admin_video_comment",
-        videoId,
+        screen: isUpdate ? "Updates" : "Videos",
+        type: isUpdate
+          ? (isArticle ? "admin_article_comment" : "admin_news_comment")
+          : "admin_video_comment",
+        videoId: isUpdate ? null : videoId,
+        updateId: data.updateId || null,
+        targetType: isUpdate ? "update" : "video",
+        targetTag: isUpdate ? (isArticle ? "ARTICLE" : "NEWS") : null,
         doubtId,
       },
     }));
@@ -173,6 +237,109 @@ exports.onVideoDoubtCreated = functionsV1
     const accepted = await sendExpoPushMessages(messages);
     console.log(
       `onVideoDoubtCreated: notified ${accepted}/${tokens.length} admin token(s)`,
+    );
+    return null;
+  });
+
+/**
+ * Notify all users when new articles are added to appContent/articlesFeed or artcilesFeed.
+ */
+exports.onArticlesFeedWritten = functionsV1
+  .region("us-central1")
+  .firestore.document("appContent/{docId}")
+  .onWrite(async (change, context) => {
+    const docId = context.params.docId;
+    if (docId !== "articlesFeed" && docId !== "artcilesFeed") return null;
+    if (!change.after.exists) return null;
+
+    const beforeData = change.before.exists ? change.before.data() || {} : {};
+    const afterData = change.after.data() || {};
+
+    const extractItems = (feedObj) => {
+      if (!feedObj) return [];
+      if (Array.isArray(feedObj)) return feedObj;
+      if (Array.isArray(feedObj.articles)) return feedObj.articles;
+      if (Array.isArray(feedObj.items)) return feedObj.items;
+      if (feedObj.months && typeof feedObj.months === "object") {
+        const list = [];
+        for (const m of Object.values(feedObj.months)) {
+          if (Array.isArray(m)) list.push(...m);
+        }
+        return list;
+      }
+      return [];
+    };
+
+    const beforeItems = extractItems(beforeData);
+    const afterItems = extractItems(afterData);
+
+    const beforeKeys = new Set(
+      beforeItems.map((it) => String(it?.id || it?.link || it?.title || "")),
+    );
+    const newItems = afterItems.filter(
+      (it) => !beforeKeys.has(String(it?.id || it?.link || it?.title || "")),
+    );
+
+    if (newItems.length === 0) return null;
+
+    const tokens = await getAllUserPushTokens();
+    if (tokens.length === 0) {
+      console.log("onArticlesFeedWritten: no push tokens registered");
+      return null;
+    }
+
+    const item = newItems[0];
+    const { title, body } = buildArticlePushCopy(item);
+
+    const messages = tokens.map((token) => ({
+      to: token,
+      sound: "default",
+      title,
+      body,
+      channelId: "default",
+      data: {
+        screen: "Updates",
+        type: "new_article",
+        articleId: item.id || null,
+      },
+    }));
+
+    const accepted = await sendExpoPushMessages(messages);
+    console.log(
+      `onArticlesFeedWritten: notified ${accepted}/${tokens.length} user token(s) for article: ${title}`,
+    );
+    return null;
+  });
+
+/**
+ * Notify all users when a new article doc is created in articlesFeed collection.
+ */
+exports.onArticleDocCreated = functionsV1
+  .region("us-central1")
+  .firestore.document("articlesFeed/{articleId}")
+  .onCreate(async (snap, context) => {
+    const item = snap.data() || {};
+    const tokens = await getAllUserPushTokens();
+    if (tokens.length === 0) return null;
+
+    const { title, body } = buildArticlePushCopy(item);
+
+    const messages = tokens.map((token) => ({
+      to: token,
+      sound: "default",
+      title,
+      body,
+      channelId: "default",
+      data: {
+        screen: "Updates",
+        type: "new_article",
+        articleId: context.params.articleId,
+      },
+    }));
+
+    const accepted = await sendExpoPushMessages(messages);
+    console.log(
+      `onArticleDocCreated: notified ${accepted}/${tokens.length} user token(s) for article: ${title}`,
     );
     return null;
   });

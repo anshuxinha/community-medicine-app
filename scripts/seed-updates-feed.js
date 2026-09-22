@@ -33,7 +33,10 @@ function dedupeSort(items) {
       if (seen.has(link)) continue;
       seen.add(link);
     }
-    out.push(item);
+    out.push({
+      ...item,
+      tag: (item?.tag || item?.type || "NEWS").toUpperCase() === "ARTICLE" ? "ARTICLE" : "NEWS",
+    });
   }
   out.sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
   return out;

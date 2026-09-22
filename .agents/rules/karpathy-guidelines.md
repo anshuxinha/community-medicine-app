@@ -1,14 +1,8 @@
-# CLAUDE.md
+# Karpathy Coding Guidelines
 
-Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
+Behavioral guidelines to reduce common LLM coding mistakes, derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876).
 
 **Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
-
-**Graph-First Protocol**: ALWAYS query the knowledge graph (using `/graphify query`) before using standard grep/search. This is MANDATORY for Antigravity CLI.
-
-- **graphify** ([SKILL.md](file:///C:/Users/Anshuman%20Sinha/.gemini/skills/graphify/SKILL.md)) - any input to knowledge graph. Trigger: `/graphify`
-
-**App Change Ship Protocol (MANDATORY):** After any change that affects the shipped app (`src/`, client JS, OTA-deliverable assets), always **commit → push → `eas update`**, then end with a **manual test checklist** for the user. Commit/push first (never OTA a dirty related tree). See `Agents.md` (App Change Ship Protocol) and `CUSTOM_INSTRUCTION_EAS.md`. Native-only changes need a store build, not just OTA. Still commit/push and say so.
 
 ## 1. Think Before Coding
 
@@ -53,19 +47,10 @@ The test: Every changed line should trace directly to the user's request.
 **Define success criteria. Loop until verified.**
 
 Transform tasks into verifiable goals:
-- "Add validation" → "Write tests for invalid inputs, then make them pass"
-- "Fix the bug" → "Write a test that reproduces it, then make it pass"
-- "Refactor X" → "Ensure tests pass before and after"
+- "Add validation" — "Write tests for invalid inputs, then make them pass"
+- "Fix the bug" — "Write a test that reproduces it, then make it pass"
+- "Refactor X" — "Ensure tests pass before and after"
 
-For multi-step tasks, state a brief plan:
-```
-1. [Step] → verify: [check]
-2. [Step] → verify: [check]
-3. [Step] → verify: [check]
-```
+For multi-step tasks, state a brief plan and verify each step.
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
-
----
-
-**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
