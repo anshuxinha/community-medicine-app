@@ -35,7 +35,7 @@ import {
 import { db } from "../config/firebase";
 import { useSession } from "../context/AppContext";
 import { useThemedStyles } from "../styles/useThemedStyles";
-import { theme, useResponsive } from "../styles/theme";
+import { lightColors, theme, useResponsive } from "../styles/theme";
 import { getUpdateType } from "../services/updatesService";
 import { isUserAdmin } from "../utils/adminUtils";
 import { ArticleMarkdownView } from "../utils/articleMarkdown";
@@ -405,7 +405,7 @@ const UpdateDetailScreen = ({ route, navigation }) => {
             collapsable={false}
             testID="update-share-card"
           >
-            <View style={styles.shareAccentBar} />
+            <View style={styles.shareAccentBar} testID="update-share-accent" />
             <View
               style={[
                 styles.shareContent,
@@ -1532,7 +1532,7 @@ const createStyles = (colors) =>
     },
     shareAccentBar: {
       height: 6,
-      backgroundColor: "#0D9488",
+      backgroundColor: lightColors.primary,
     },
     shareContent: {
       padding: 24,
@@ -1544,8 +1544,8 @@ const createStyles = (colors) =>
       marginBottom: 10,
     },
     shareTypeBadge: {
-      backgroundColor: "#CCFBF1",
-      color: "#0F766E",
+      backgroundColor: lightColors.primaryLight,
+      color: lightColors.primary,
       fontSize: 11,
       fontWeight: "800",
       paddingHorizontal: 8,
@@ -1556,7 +1556,7 @@ const createStyles = (colors) =>
     shareCategory: {
       fontSize: 12,
       fontWeight: "700",
-      color: "#0D9488",
+      color: lightColors.primary,
       textTransform: "uppercase",
     },
     shareTitle: {
@@ -1611,7 +1611,7 @@ const createStyles = (colors) =>
     shareAppName: {
       fontSize: 15,
       fontWeight: "800",
-      color: "#0D9488",
+      color: lightColors.primary,
       letterSpacing: 1,
     },
     shareAppTagline: {

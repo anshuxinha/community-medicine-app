@@ -5,6 +5,7 @@ import { PaperProvider } from "react-native-paper";
 import UpdateDetailScreen, {
   articleShareBodyLineCount,
 } from "../UpdateDetailScreen";
+import { lightColors } from "../../styles/theme";
 
 jest.mock("../../context/AppContext", () => ({
   useSession: () => ({ user: null, studyScore: 0 }),
@@ -139,7 +140,14 @@ describe("UpdateDetailScreen share image", () => {
     expect(body.props.numberOfLines).toBe(5);
     expect(body.props.children).toBe(summary);
     expect(getAllByText("Iron in pregnancy").length).toBeGreaterThan(0);
-    expect(getByText("STROMA")).toBeTruthy();
+    expect(StyleSheet.flatten(getByTestId("update-share-accent").props.style).backgroundColor).toBe(
+      lightColors.primary,
+    );
+    expect(StyleSheet.flatten(getByText("STROMA").props.style).color).toBe(lightColors.primary);
+    const shareCategory = getAllByText("Nutrition").find(
+      (node) => StyleSheet.flatten(node.props.style).color === lightColors.primary,
+    );
+    expect(shareCategory).toBeTruthy();
     expect(getByText("Source: ICMR")).toBeTruthy();
   });
 
