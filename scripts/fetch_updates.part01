@@ -32,8 +32,13 @@ def publish_updates_feed(
     notify_items: Optional[List[Dict[str, Any]]] = None,
     allow_notify: bool = True,
     feed_doc_id: str = FEED_DOC_ID,
+    replace: bool = False,
 ) -> bool:
-    """Upsert appContent/<feed_doc_id>. Optionally push for notify_items only."""
+    """Upsert appContent/<feed_doc_id>. Optionally push for notify_items only.
+
+    replace=True overwrites the whole doc (drops month keys not in `months`);
+    the default merge=True upsert is what the production updatesFeed uses.
+    """
     sa = _load_service_account_info()
     if not sa:
         print(
@@ -70,10 +75,14 @@ def publish_updates_feed(
         "updatedAt": datetime.now(timezone.utc).isoformat(),
         "version": 1,
     }
-    ref.set(payload, merge=True)
+    if replace:
+        ref.set(payload)
+    else:
+        ref.set(payload, merge=True)
     total = sum(len(v) for v in months.values())
+    feed_label = "articles" if feed_doc_id == FEED_DOC_ID_ARTICLES else "updates"
     print(
-        f"Published updates feed to {FEED_COLLECTION}/{FEED_DOC_ID} "
+        f"Published {feed_label} feed to {FEED_COLLECTION}/{feed_doc_id} "
         f"({len(months)} months, {total} items)."
     )
 
@@ -221,6 +230,29 @@ def _notify_new_updates(new_items: List[Dict[str, Any]]) -> None:
     )
 
 
+def _build_articles_months_map(
+    articles: List[Dict[str, Any]],
+    fallback_month_key: str,
+) -> Dict[str, List[Dict[str, Any]]]:
+    """Months map built only from articles.json, bucketed by each article's date."""
+    months: Dict[str, List[Dict[str, Any]]] = {}
+    seen: Set[str] = set()
+    for item in articles or []:
+        if not isinstance(item, dict):
+            continue
+        key = str(item.get("id") or item.get("link") or "")
+        if key:
+            if key in seen:
+                continue
+            seen.add(key)
+        date = str(item.get("date") or "")
+        month_key = date[:7] if re.match(r"^\d{4}-\d{2}", date) else fallback_month_key
+        months.setdefault(month_key, []).append(item)
+    for key in months:
+        months[key].sort(key=lambda x: x.get("date", ""), reverse=True)
+    return months
+
+
 def seed_feed_from_local(*, notify: bool = False, feed: str = "production") -> None:
     """Publish local updates JSON + archive without scraping.
 
@@ -246,18 +278,22 @@ def seed_feed_from_local(*, notify: bool = False, feed: str = "production") -> N
     else:
         print(f"Missing {updates_path}; nothing to seed for {feed}.")
 
-    archive: Dict[str, List[Dict[str, Any]]] = {}
-    if ARCHIVE_PATH.exists():
-        try:
-            with open(ARCHIVE_PATH, "r", encoding="utf-8") as f:
-                archive = json.load(f)
-        except Exception as e:
-            print(f"Error loading updates_archive.json: {e}")
-
     now = datetime.now(timezone.utc)
     current_month_key = now.strftime("%Y-%m")
     current_year = str(now.year)
-    months = _build_months_map(archive, current_month_key, existing_updates, current_year)
+
+    if feed == "articles":
+        # PH Digest: articles.json is the only source. No updates_archive.json.
+        months = _build_articles_months_map(existing_updates, current_month_key)
+    else:
+        archive: Dict[str, List[Dict[str, Any]]] = {}
+        if ARCHIVE_PATH.exists():
+            try:
+                with open(ARCHIVE_PATH, "r", encoding="utf-8") as f:
+                    archive = json.load(f)
+            except Exception as e:
+                print(f"Error loading updates_archive.json: {e}")
+        months = _build_months_map(archive, current_month_key, existing_updates, current_year)
     if not months:
         print("No local updates to seed.")
         return
@@ -266,6 +302,8 @@ def seed_feed_from_local(*, notify: bool = False, feed: str = "production") -> N
         notify_items=None,
         allow_notify=notify,
         feed_doc_id=feed_doc_id,
+        # Articles: overwrite so stale month keys (e.g. old archive months) are removed.
+        replace=(feed == "articles"),
     )
     if not published:
         raise SystemExit(

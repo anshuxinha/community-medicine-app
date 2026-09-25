@@ -6,11 +6,10 @@ on:
       feed:
         description: "Which Firestore feed to seed (Updates = production, PH Digest = articles)"
         required: true
-        default: production
         type: choice
         options:
-          - production
           - articles
+          - production
 
 jobs:
   seed:
@@ -18,6 +17,15 @@ jobs:
     permissions:
       contents: read
     steps:
+      - name: Require explicit feed input
+        env:
+          FEED: ${{ inputs.feed }}
+        run: |
+          case "$FEED" in
+            articles|production) echo "Seeding feed: $FEED" ;;
+            *) echo "::error::feed input must be 'articles' or 'production' (got '$FEED'). No default is allowed."; exit 1 ;;
+          esac
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -35,4 +43,5 @@ jobs:
         env:
           FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
           GOOGLE_CLOUD_PROJECT: community-med-app
-        run: python scripts/fetch_updates.py --seed-only --feed "${{ inputs.feed }}"
+          FEED: ${{ inputs.feed }}
+        run: python scripts/fetch_updates.py --seed-only --feed "$FEED"
